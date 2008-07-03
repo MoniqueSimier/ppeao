@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>aoos - liste de séries #1</title>
+<link href="css.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+<!--
+function MM_jumpCheckbox(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+//-->
+</script>
+<style type="text/css">
+<!--
+.editableHover {font-size: 12px}
+.editableHover:hover {
+	background-color:#FFFF00;
+	}
+	-->
+</style>
+</head>
+
+<body class="oneColLiqCtr">
+<div id="container">
+  <div id="mainContent">
+    <h1> sélection...</h1>
+    <p>sélectionnez la table de référence et les valeurs que vous souhaitez éditer...</p>
+    <form id="form1" name="form1" method="post" action="">
+      <div class="float_left criteria_select">
+        <label for="criteria_1"></label>
+        <label for="values_1">pays<br />
+        </label>
+        <p>
+          <select name="values_1" size="4" multiple="multiple" id="values_1">
+            <option>pays 1</option>
+            <option selected="selected">pays 2</option>
+            <option>pays 3</option>
+            <option selected="selected">pays 4</option>
+          </select>
+        </p>
+        <p><a href="">afficher les pays sélectionnés </a></p>
+      </div>
+      <div class="float_left  criteria_select">systèmes
+        <p>
+            <select name="values_2" size="4" multiple="multiple" id="label">
+              <option>système 1</option>
+              <option>système 2</option>
+              <option>système 6</option>
+              <option selected="selected">système 9</option>
+            </select>
+        </p>
+        <p><a href="">afficher  les systèmes sélectionnés</a></p>
+      </div>
+      <div class="float_left">secteurs
+        <p>
+            <select name="values_3" size="4" multiple="multiple" id="values_2">
+              <option selected="selected">secteur a</option>
+              <option>secteur e</option>
+              <option selected="selected">secteur f</option>
+              <option selected="selected">secteur n</option>
+              <option>secteur z</option>
+            </select>
+        </p>
+        <p><a href="">afficher  les secteurs sélectionnés</a></p>
+      </div>
+    </form>
+    <p class="clear"></p>
+    <p>
+      <!-- end #mainContent -->
+    </p>
+    <div id="mainContent2">
+      <h1> éditer les secteurs...</h1>
+      <p>cliquez sur  les valeurs que vous souhaitez modifier pour les rendre éditables ou <span class="buttonLink">+ajoutez</span> un nouveau secteur.</p>
+      <table width="579" border="0" cellspacing="3">
+        <tr>
+          <td width="175">nom</td>
+          <td width="158">superficie (km2)</td>
+          <td width="167">système</td>
+          <td width="56"><span class="editableHover"></span></td>
+        </tr>
+        <tr>
+          <td><span class="editableHover">secteur a</span></td>
+          <td><span class="editableHover">123</span></td>
+          <td><span class="editableHover">système 9</span></td>
+          <td><div align="center"><a href="">x</a></div></td>
+        </tr>
+        <tr>
+          <td><span class="editableHover">secteur f</span></td>
+          <td><input name="textfield" type="text" id="textfield" value="456" size="6" />
+          <br />
+          <a href="/wireframing/edit_3.html">sauver</a> <a href="/wireframing/edit_1.html">annuler</a></td>
+          <td><span class="editableHover">système 9</span></td>
+          <td><div align="center"><a href="">x</a></div></td>
+        </tr>
+        <tr>
+          <td><span class="editableHover">secteur n</span></td>
+          <td><span class="editableHover">789</span></td>
+          <td><span class="editableHover">système 9</span></td>
+          <td><div align="center"><a href="">x</a></div></td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+    </div>
+      </form>
+      <p class="clear"></p>
+      <p>
+        <!-- end #mainContent -->
+      </p>
+  </div>
+</div>
+  <!-- end #container -->
+</div>
+</body>
+</html>
