@@ -1,0 +1,213 @@
+/* *********************** */
+/* common styles */
+
+body {
+	font-family	: Verdana, Helvetica, Arial, sans-serif;
+	font-style	: normal;
+	font-size	: 14px;
+	line-height	: 16px;
+	margin 		: 0;
+}
+
+label {
+margin:0;
+padding:0;
+}
+
+p {
+margin:0;
+padding:0;
+}
+
+a{
+	color				: #007860;
+	text-decoration		: none;
+}
+
+a:hover{
+	color				: #fff;
+	background-color	: #007860;
+	text-decoration 	: none;
+	}
+	
+
+fieldset {
+	border 				: none;
+	margin 				: 0;
+	padding 			: 0;
+	}
+
+form {
+		margin: 0;
+		padding: 0;
+	}
+
+input {
+		margin: 0;
+		padding:0; 
+	}
+select {
+		margin: 0; 
+		padding:0; 
+	}
+	
+
+	
+h1 {
+font-size:14px;
+margin:0;
+padding:0;
+font-weight:bold;
+}
+
+h2 {
+font-size:13px;
+margin:0;
+padding:0;
+font-weight:bold;
+}	
+
+h3 {
+font-size:12px;
+margin:0;
+padding:0;
+font-weight:bold;
+}
+
+.small {
+font-size:10px;
+}
+
+.hidden {
+display:none;
+}
+
+/* *********************** */
+/* the top navigation bar */
+
+
+#nav_container {
+	min-width: 800px;
+	min-height :	56px;
+	background : #ffcc00;
+	margin: 0 0 8px 0;
+}
+
+#nav_menu {
+vertical-align: baseline;
+}
+
+
+
+#nav_menu a {
+	color:#007860;
+}
+
+#nav_menu .active {
+	color:#fff;
+}
+
+#nav_menu a:hover {
+	color:#fff;
+}
+
+.menu {
+	display:block;
+	float:left;
+	padding 	: 10px 15px 0 15px;
+	font-family : Georgia, 'Times New Roman', serif;
+	font-weight:bold;
+	font-style 	: bold;
+	font-size 	: 18px;
+	color 		: #007860;
+	min-height:46px;
+}
+
+.menu:hover, .active {
+	color 		: #fff;
+	background : #4dd3d2;
+}
+
+
+
+
+/* ************************ */
+/* the footer              */
+
+#footer {
+clear:both;
+text-align:center;
+font-family : Georgia, 'Times New Roman', serif;
+font-size:10px;
+margin-top:18px;
+
+}
+
+/* ************************ */
+/* the main container      */
+
+#main_container {
+min-height:500px;
+}
+
+
+/* *********************** */
+/* the log display        */
+
+#logTableDiv {
+	font-family	: Verdana, Helvetica, Arial, sans-serif;
+	font-style	: normal;
+	margin 		: 0;
+}
+
+
+#logTable {
+	font-size	: 9px;
+	min-width:650px;
+}
+
+.logTableHeaderRow {
+	font-size: 10px;
+	font-weight	: bold;
+	margin:2px 0 0 0;
+}
+
+.logTableRowEven {
+	background-color : #F2F2F2;
+}
+
+.logTableRowOdd {
+	background-color : white;
+}
+
+#logTable td {
+	padding:0 5px;
+}
+
+
+#logTable td.logTableTime {
+	width:120px;
+}
+
+#logTable td.logTableUser {
+	width:50px;
+}
+
+#logTable td.logTableModule {
+	width:120px;
+}
+
+#logTable td.logTableMessage {
+	min-width:150px;
+}
+
+#logTable td.logTableDo, #logTable td.logTableUndo, , #logTable td.logTableScript {
+	min-width:80px;
+}
+
+/* if the browser is NOT Internet Explorer, we pass a pixel font size*/
+<!--[if !IE]>-->
+body {
+    font-size 	: 16px;
+}
+<!--<[endif]-->
