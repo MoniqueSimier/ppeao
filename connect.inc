@@ -1,6 +1,6 @@
 <?php
 
-//effectue la connexion avec postgres
+//effectue la connexion avec la base postgres
 // LOCAL
 $connectPPEAO = pg_connect("port=5432 dbname=ppeao user=devppeao password=2devppe!!") or die('Connexion impossible a BD_PPEAO : ' . pg_last_error());
 
