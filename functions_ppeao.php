@@ -34,9 +34,9 @@ if (isset($_SESSION['s_ppeao_userId'])) {$userId=$_SESSION['s_ppeao_userId'];} e
 $scriptFile=$_SERVER['PHP_SELF'];
 
 // on teste si $messageType est dans la table admin_log_message_types
-	$typesSql="	SELECT  count(message_type)
-					FROM admin_log_message_types
-					WHERE message_type=$messageType
+	$typesSql="	SELECT  count(log_message_type)
+				FROM admin_log
+				WHERE log_message_type=$messageType
 					";
 	$typesResult = pg_query($connectPPEAO,$typesSql) or die('erreur dans la requete : ' . pg_last_error());
 	$typesCount=pg_fetch_all($typesResult);
