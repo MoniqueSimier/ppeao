@@ -1,0 +1,71 @@
+body {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #ffffff;
+	margin: 0; /* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+	padding: 0;
+	text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
+	color: #000000;
+}
+.oneColLiqCtr #container {
+	width: 80%;  /* this will create a container 80% of the browser width */
+	background: #FFFFFF;
+	margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
+	text-align: left; /* this overrides the text-align: center on the body element. */
+	min-height: 500px;
+}
+.oneColLiqCtr #mainContent {
+	padding: 0 20px; /* remember that padding is the space inside the div box and margin is the space outside the div box */
+}
+
+.float_left {
+display:block;
+float:left;
+	}
+
+.criteria_select {
+margin: 0 20px 0 0;
+padding: 0 20px 0 0;
+border-right: 3px #CCCCCC solid;
+
+}
+
+.clear {
+clear:both;
+
+}
+.smallText {
+	font-size: 9px;
+}
+
+.series {
+display:block;
+float:left;
+margin-right: 20px;
+}
+
+
+.item-body { 
+  width: 300px;
+  padding: 0 10px;
+  margin: 0px;
+  border: none;
+  background-color:#999999;
+  visibility: hidden; height: 0px;
+  text-align:left;}
+
+.item-body h3 {
+  padding:0;
+  margin:0;
+}
+.buttonLink {
+	border: 1px solid #0000FF;
+	padding: 2px;
+}
+.buttonLink:hover {
+background-color:#0000FF;
+color:white;
+
+}
+.gris {
+	color: #999999;
+}
