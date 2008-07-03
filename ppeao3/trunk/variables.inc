@@ -5,4 +5,8 @@ $debug = 1;
 
 $messageGen = "";
 
+
+// variable indiquant où archiver les journaux
+$logArchivePath='/journal/archives/';
+
 ?>

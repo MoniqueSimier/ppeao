@@ -3,7 +3,7 @@
 
 <?
 // definit a quelle section appartient la page
-$section="home";
+$section="journal";
 // definit la valeur de variables utilisees pour mettre la section courante en surbrillance dans le menu
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 ?>
@@ -23,7 +23,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 	// les balises meta communes  toutes les pages
 	include $_SERVER["DOCUMENT_ROOT"].'/meta.inc';
 	?>
-	<title>ppeao</title>
+	<title>journal des activit&eacute;s</title>
 	<link href="/styles/mainstyles.css" title="mainstyles" rel="stylesheet" type="text/css" />
 	<script src="/js/basic.js" type="text/javascript" charset="utf-8"></script>
 
@@ -39,12 +39,11 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc'
 
 <div id="main_container" class="home">
 
-Bienvenue &agrave; PPEAO.
+<h1>journal des activit&eacute;s</h1>
 
 <?
 
-logWriteTo(1,'warning','ceci est un avertissement','vous avez fait ceci','et pour annuler, faire cela',0);
-echo(logDisplayShort('','','',"",5,""));
+echo(logDisplayFull('','','',"","",""));
 
 ?>
 	

@@ -8,6 +8,9 @@ switch ($section) {
 	case "portage" : $portage=" active";
 	break;
 	case "contact" : $contact=" active";
+	break;
+	case "journal" : $journal=" active";
+	break;
 }
 
 

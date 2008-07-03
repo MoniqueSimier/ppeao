@@ -57,32 +57,6 @@ $logWriteResult = pg_query($connectPPEAO,$logWriteSql) or die('erreur dans la re
 }
 
 
-//***************************************************************************************************
-//efface le journal
-function logClear()
-// cette fonction archive le journal puis vide la table de journal
-// $clearMessage : le message retourné une fois l'effacement terminé
-
-{
-
-return $clearMessage;
-}
-
-//***************************************************************************************************
-//archive le journal au format texte compressé
-function logArchive($archivePath)
-// cette fonction archive le journal sous forme de fichier texte compressé
-// $archivePath : le chemin du dossier dans lequel archiver le log
-// $archiveMessage : le message retourné une fois l'archivage terminé
-{
-
-
-return $archiveMessage;
-}
-
-
-
-
 
 //***************************************************************************************************
 // lit une section de journal
@@ -104,7 +78,7 @@ $filter=array();
 	// on verifie que $date contient bien une date
 	$dateExploded=explode("-",$date);
 	//debug print_r($dateExploded);
-	if (checkdate($dateExploded[1],$dateExploded[2],$dateExploded[0]))
+	if (@checkdate($dateExploded[1],$dateExploded[2],$dateExploded[0]))
 		{
 		$filter["date"]=' l.log_time LIKE \''.$date.'%\' ';
 		}
@@ -160,7 +134,7 @@ $logReadSql="	SELECT l.log_time, l.log_module_id, l.log_script_file, l.log_messa
 			WHERE (l.log_module_id=lm.module_id) AND (l.log_user_id=u.user_id) $filterSql
 			ORDER BY l.log_time	DESC				
 			$limit	";
-$logReadResult = pg_query($logReadSql) or die('erreur dans la requete : ' . pg_last_error());
+$logReadResult = pg_query($connectPPEAO,$logReadSql) or die('erreur dans la requete : ' . pg_last_error());
 $logArray=pg_fetch_all($logReadResult);
 
 // debug echo($logReadSql);
@@ -179,14 +153,18 @@ function logTable($logArray,$format)
 {
 global $debug; // si $debug=1, alors on affiche des infos de débug dans le log (comme le script php)
 
+if (!empty($logArray)) { // si le log n'est pas vide
+
 switch ($format) {
 
 	// we generate for a CSV file
 	case "csv":
-	$logTable='date;utilisateur;module;message;action;annulation;script\r\n';
-	//on parcourt le tableau du journal pour generer un <tr>  par entree
+	$logTable='"date";"utilisateur";"module";"message";"action";"annulation";"script"
+	';
+	//on parcourt le tableau du journal pour generer une ligne  par entree
 	foreach ($logArray as $logRow) {
-			$logTable.=$logRow["log_time"].';'.$logRow["user_name"].';"'.$logRow["module_name"].'";"'.$logRow["log_message"].'";"'.$logRow["log_action_do"].'";"'.$logRow["log_action_undo"].'";"'.$logRow["log_script_file"].'"\r\n';
+			$logTable.=''.$logRow["log_time"].';"'.$logRow["user_name"].'";"'.$logRow["module_name"].'";"'.$logRow["log_message"].'";"'.$logRow["log_action_do"].'";"'.$logRow["log_action_undo"].'";"'.$logRow["log_script_file"].'"
+			';
 		} // end foreach $logArray
 	;
 	break;
@@ -206,7 +184,7 @@ switch ($format) {
 	foreach ($logArray as $logRow) {
 		if ( $j&1 ) {$rowStyle='logTableRowOdd';} else {$rowStyle='logTableRowEven';}
 		$logTable.='<tr class="'.$rowStyle.'">';
-		$logTable.='<td class="logTableTime">'.$logRow["log_time"].'</td><td class="logTableUser">'.$logRow["user_name"].'</td><td class="logTableModule">'.$logRow["module_name"].'</td><td class="logTableMessage">'.$logRow["log_message"].'</td><td class="logTableDo">'.$logRow["log_action_do"].'</td><td class="logTableUndo">'.$logRow["log_action_undo"].'</td>';
+		$logTable.='<td class="logTableTime">'.$logRow["log_time"].'</td><td class="logTableUser">'.htmlentities($logRow["user_name"]).'</td><td class="logTableModule">'.htmlentities($logRow["module_name"]).'</td><td class="logTableMessage">'.htmlentities($logRow["log_message"]).'</td><td class="logTableDo">'.htmlentities($logRow["log_action_do"]).'</td><td class="logTableUndo">'.htmlentities($logRow["log_action_undo"]).'</td>';
 		if ($debug) {$logTable.='<td class="logTableScript">'.$logRow["log_script_file"].'</td>';}
 		$logTable.='</tr>';
 		$j++;
@@ -216,6 +194,11 @@ switch ($format) {
 	$logTable.= '</table>'; //
 	;
 	break;
+}
+} // fin de (count($logArray!=0))
+
+else {
+	$logTable="le journal est vide";
 }
 
 return $logTable;
@@ -236,12 +219,15 @@ function logDisplayFull($date,$userId,$moduleId,$messageBit,$messageType)
 
 {
 
-// A FAIRE : les fonctions périphériques du type pagination, filtre interactif etc n'ont pas encore été réalisées
+// archivage et exportation du journal
+echo('<script src="/js/journal.js" type="text/javascript" charset="utf-8"></script>');
 
 // on recupere les entrees de journal souhaitees
-$logArray=logRead($date,$userId,$moduleId,$messageBit,$messageType);
+$logArray=logRead($date,$userId,$moduleId,$messageBit,0,$messageType);
 
-$logBlock='<div id="logTableDiv">';
+$logBlock='<div id="logMessage"></div>';
+$logBlock.='<div id="logTableDiv">';
+$logBlock.='<a href="javascript:deleteLog();">effacer le journal</a> (une version en sera archiv&eacute;e sur le serveur...)';
 $logBlock.=logTable($logArray,'');
 $logBlock.='</div>'; // end div id="logTableDiv"
 
@@ -271,10 +257,89 @@ $logBlock='<div id="logTableDiv">';
 $logBlock.=logTable($logArray,'');
 
 // A FAIRE : insérer un lien permettant d'accéder à la page de consultation du journal, utilisant logDisplayFull()
-
 $logBlock.='</div>'; // end div id="logTableDiv"
+$logBlock.='<div id="logTableDivLink"><a href="/journal.php" alt="consulter le journal" title="consulter le journal">consulter le journal</div>';
 
 return $logBlock;
 }
+
+
+//***************************************************************************************************
+//archive le journal au format texte compressé
+function logArchive($archivePath)
+// cette fonction archive le journal sous forme de fichier texte compressé
+// $archivePath : le chemin du dossier dans lequel archiver le log
+// $archiveMessage : le message retourné une fois l'archivage terminé
+{
+
+	// si $archivePath est vide, on utilise le chemin par defaut défini dans /variables.inc ($logArchivePath)
+	global $logArchivePath; 
+	if (empty($archivePath)) {$archivePath=$logArchivePath;}
+	// le nom de l'archive qui sera creee
+	$theArchiveName="journal_archive_".date("Y-m-d_G-i-s");
+	// le chemin de l'archive qui sera creee
+	$theArchivePath=$_SERVER["DOCUMENT_ROOT"].$archivePath.$theArchiveName.".csv.gz";
+
+	// on cree le fichier .gz
+	$theFile=gzopen($theArchivePath,"w");
+
+	// on genere le contenu du fichier
+	$theContent=logTable(logRead("","","","","",""),'csv');
+
+	// on écrit le contenu du journal dans le fichier (csv)
+	if (gzwrite($theFile,$theContent)) {$success=1;} else {$success=0;$error="gzwrite";}
+	// on ferme le fichier
+	gzclose($theFile);
+
+	// le chemin pour telecharger le fichier archive cree
+	$downloadPath=$archivePath.$theArchiveName.".csv.gz";
+	
+	if ($success==1) {logWriteTo(4,"notice","journal archivé","","",0);} else {logWriteTo(4,"error","impossible d\'archiver le journal","","",0);
+	;}
+	
+$return=array("success"=>$success,"error"=>$error,"downloadPath"=>$downloadPath);
+return $return;
+}
+
+//***************************************************************************************************
+//efface le journal
+function logDelete($archivePath)
+// cette fonction archive le journal puis vide la table de journal
+// $clearMessage : le message retourné une fois l'effacement terminé
+
+{
+	global $connectPPEAO;
+	// si $archivePath est vide, on utilise le chemin par defaut défini dans /variables.inc ($logArchivePath)
+	global $logArchivePath; 
+	if (empty($archivePath)) {$archivePath=$logArchivePath;}
+	
+$archived=logArchive($archivePath);
+
+$success=$archived["success"];
+$error=$archived["error"];
+
+if ($success==1) { // si l'archivage s'est passe correctement, on efface la table
+	// on efface la table de log puisque l'archivage s'est bien passe
+	$logDeleteSql="DELETE FROM admin_log";
+	if (pg_query($connectPPEAO,$logDeleteSql)) {$success=1;} else {$success=0;$error="sql";}
+	}
+
+if ($success==1) { // si tout a bien fonctionne, on indique a l'utilisateur l'URL pour recuperer l'archive
+
+$archiveUrl=$archived["downloadPath"];	
+	
+echo('journal effac&eacute; - <a href="'.$archiveUrl.'" alt="t&eacute;l&eacute;charger la version archiv&eacute;e" title="t&eacute;l&eacute;charger la version archiv&eacute;e">t&eacute;l&eacute;charger la version archiv&eacute;e</a>');
+logWriteTo(4,"notice","journal effacé","","",0);
+}
+else {
+	if ($error=='gzwrite') {$errorMessage='impossible d\'écrire l\'archive sur le serveur, effacement annul&eacute;.';}
+	if ($error=='sql') {$errorMessage='impossible de vider la table de journal, effacement annul&eacute;.';}
+
+logWriteTo(4,"error",$errorMessage,"","",0);
+}
+
+return $clearMessage;
+}
+
 
 ?>
