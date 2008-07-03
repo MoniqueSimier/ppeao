@@ -36,7 +36,7 @@ $scriptFile=$_SERVER['PHP_SELF'];
 // on teste si $messageType est dans la table admin_log_message_types
 	$typesSql="	SELECT  count(log_message_type)
 				FROM admin_log
-				WHERE log_message_type=$messageType
+				WHERE log_message_type='$messageType'
 					";
 	$typesResult = pg_query($connectPPEAO,$typesSql) or die('erreur dans la requete : ' . pg_last_error());
 	$typesCount=pg_fetch_all($typesResult);
@@ -47,7 +47,7 @@ $message=addslashes($message);
 $actionDo=addslashes($actionDo);
 $actionUndo=addslashes($actionUndo);
 
-$logWriteSql="	INSERT INTO admin_log (log_time,log_module_id,log_script_file,log_message,log_user_id,log_action_do,log_action_undo,message_type)
+$logWriteSql="	INSERT INTO admin_log (log_time,log_module_id,log_script_file,log_message,log_user_id,log_action_do,log_action_undo,log_message_type)
 				VALUES ('$timestamp',$moduleId,'$scriptFile','$message',$userId,'$actionDo','$actionUndo', '$messageType')";
 $logWriteResult = pg_query($connectPPEAO,$logWriteSql) or die('erreur dans la requete : ' . pg_last_error());
 }

@@ -43,8 +43,7 @@ Bienvenue &agrave; PPEAO.
 
 <?
 
-$debug=1;
-//logWriteTo(3,"hmmm ahhhhh","action","annulation",0);
+logWriteTo(1,'warning','ceci est un avertissement','vous avez fait ceci','et pour annuler, faire cela',0);
 echo(logDisplayShort('2008-07-01','','',"toto",5,""));
 
 ?>
