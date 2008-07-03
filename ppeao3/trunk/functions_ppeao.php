@@ -163,7 +163,7 @@ switch ($format) {
 	';
 	//on parcourt le tableau du journal pour generer une ligne  par entree
 	foreach ($logArray as $logRow) {
-			$logTable.=''.$logRow["log_time"].';"'.$logRow["user_name"].'";"'.$logRow["module_name"].'";"'.$logRow["log_message"].'";"'.$logRow["log_action_do"].'";"'.$logRow["log_action_undo"].'";"'.$logRow["log_script_file"].'"
+			$logTable.=''.$logRow["log_time"].';"'.$logRow["user_name"].'";"'.$logRow["module_name"].'";"'.$logRow["log_message"].'";"'.$logRow["log_action_do"].'";"'.$logRow["log_action_undo"].'";"'.$logRow["log_script_file"].'";"'.$logRow["log_message_type"].'"
 			';
 		} // end foreach $logArray
 	;
@@ -176,7 +176,7 @@ switch ($format) {
 	// les en-tete de la table
 	$logTable.='<tr class="logTableHeaderRow">';
 	$logTable.='<td class="logTableTime">date</td><td class="logTableUser">utilisateur</td><td class="logTablemodule">module</td><td class="logTableMessage">message</td><td class="logTableDo">action</td><td class="logTableUndo">annulation</td>';
-	if ($debug) {$logTable.='<td class="logTableScript">script</td>';}
+	if ($debug) {$logTable.='<td class="logTableScript">script</td><td>type message</td>';}
 	$logTable.='</tr>';
 	
 	$j=0; // counter used to differentiate odd and even rows
@@ -185,7 +185,7 @@ switch ($format) {
 		if ( $j&1 ) {$rowStyle='logTableRowOdd';} else {$rowStyle='logTableRowEven';}
 		$logTable.='<tr class="'.$rowStyle.'">';
 		$logTable.='<td class="logTableTime">'.$logRow["log_time"].'</td><td class="logTableUser">'.htmlentities($logRow["user_name"]).'</td><td class="logTableModule">'.htmlentities($logRow["module_name"]).'</td><td class="logTableMessage">'.htmlentities($logRow["log_message"]).'</td><td class="logTableDo">'.htmlentities($logRow["log_action_do"]).'</td><td class="logTableUndo">'.htmlentities($logRow["log_action_undo"]).'</td>';
-		if ($debug) {$logTable.='<td class="logTableScript">'.$logRow["log_script_file"].'</td>';}
+		if ($debug) {$logTable.='<td class="logTableScript">'.$logRow["log_script_file"].'</td><td>'.$logRow["log_message_type"].'</td>';}
 		$logTable.='</tr>';
 		$j++;
 	
