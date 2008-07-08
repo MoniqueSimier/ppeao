@@ -1,0 +1,171 @@
+
+#BDDetail{
+	display:block;
+	float:left;
+	padding-left:2px;
+	width: 15%;
+	font-size:65%;
+	min-height:500px;
+	border-right:solid 1px #999999;
+	text-align:left;
+	vertical-align:text-top;
+	background-color:#4dd3d2;
+	color:#FFFFFF;
+
+}
+#subContent{
+	display:block;
+	float:left;
+	width: 83%;
+	font-weight:normal;
+	padding-left:2px;
+	text-align:left;
+	vertical-align:text-top;
+	min-height:500px;
+	background-color:#FFFFFF;
+}
+
+.navbarlink {
+	font-weight:normal;
+	padding: 0px;
+	color:#FFFFFF;
+	text-decoration: none;
+}
+
+.navbarlink:hover, .active {
+	color: #666666;
+	font-weight:bold;
+	background-color : #FFFFFF;
+	text-decoration:underline;
+}
+
+
+
+.listemenu{
+	padding:0;
+	margin:0;
+}
+#port_manuel{
+	padding:0;
+	margin-left:10px;
+}
+.sublistmenuitem{
+list-style-type:none;
+}
+
+#version{
+text-align:center;
+color:#FFF;
+margin-top:40px;
+border-top:solid 1px #FFFFFF;
+font-size:80%;
+
+}
+/* Processus de portage automatique */
+#sauvegarde{
+	height:30px;
+	background-color:#F6D967;
+	width:100%;
+}
+#sauvegarde_img{
+	display:block;
+	float:left;
+	width:40px;
+}
+#sauvegarde_txt{
+	display:block;
+	float:left;
+	font-size:80%;
+}
+#comparaison{
+	height:100px;
+	background-color:#FFF;
+	width:100%;
+}
+#comparaison_img{
+	display:block;
+	float:left;
+	width:40px;
+}
+#comparaison_txt{
+	display:block;
+	float:left;
+	font-size:80%;
+}
+#copieScientifique{
+	height:100px;
+	background-color:#F6D967;
+	width:100%;
+}
+#copieScientifique_img{
+	display:block;
+	float:left;
+	width:40px;
+}
+#copieScientifique_txt{
+	display:block;
+	float:left;
+	font-size:80%;
+}
+#processAuto{
+	height:30px;
+	background-color:#FFF;
+	width:100%;
+	
+}
+#processAuto_img{
+	display:block;
+	float:left;
+	width:40px;
+}
+#processAuto_txt{
+	display:block;
+	float:left;
+	font-size:80%;
+}
+
+#copieRecomp{
+	height:30px;
+	background-color:#F6D967;
+	width:100%;
+}
+#copieRecomp_img{
+	display:block;
+	float:left;
+	width:40px;
+}
+#copieRecomp_txt{
+	display:block;
+	float:left;
+	font-size:80%;
+}
+#portageOK{
+	height:30px;
+	background-color:#FFF;
+	width:100%;
+}
+#portageOK_img{
+	display:block;
+	float:left;
+	width:40px;
+}
+#portageOK_txt{
+	display:block;
+	float:left;
+	font-size:80%;
+}
+#purge{
+	height:30px;
+	background-color:#F6D967;
+	width:100%;
+}
+#purge_img{
+	display:block;
+	float:left;
+	width:40px;
+}
+#purge_txt{
+	display:block;
+	float:left;
+	font-size:80%;
+}
