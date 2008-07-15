@@ -6,17 +6,18 @@
 <body BGCOLOR="#CCCCFF">
 
 <?php
+include_once("../connexion.php");
 if(! ini_set("max_execution_time", "480")) {echo "échec max_execution_time";}
 
-$user="devppeao";			// Le nom d'utilisateur 
+/*$user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 
 $host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
 //$bdd = "BD2_Peche";
+*/
 
 
 
-
-$bdd = $_POST['base'];
+//$bdd = $_POST['base'];
 //print("travail sur la base : ".$bdd);
 $choix = $_POST['choix'];
 $type_donnees = $_POST['type_donnees'];
@@ -69,8 +70,8 @@ print("</div></Font>");
 if ($requete_faite != 1)		//si requete globale pas encore faite
 	{
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	
 	
 	$query_globale = " select * 
@@ -194,8 +195,8 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<div align='center'>");
 	print ("La sélection fournit ".($k-1)." enquêtes d'activité");//car 1ere ligne est un intitulé
 	
-	pg_free_result();
-	pg_close();
+	//pg_free_result();
+	//pg_close();
 	//////////////////////////////////////
 	$requete_faite = 1;
 
@@ -540,8 +541,8 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	
 	
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	
 	
 	$query_globale = " select * 
@@ -678,8 +679,8 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	print ("<div align='center'>");
 	print ("La sélection fournit ".($k-1)." enquêtes de débarquement");//car 1ere ligne est un intitulé
 	
-	pg_free_result();
-	pg_close();
+	//pg_free_result();
+	//pg_close();
 	//////////////////////////////////////
 	$requete_faite = 1;
 
@@ -1013,8 +1014,8 @@ print("</div></Font>");
 if ($requete_faite != 1)		//si requete globale pas encore faite
 	{
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 
 	$query_globale = " select * 
 	from ref_pays, ref_systeme, ref_secteur, 
@@ -1150,8 +1151,8 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<div align='center'>");
 	//print ("Le fichier texte comporte ".($k-1)." lignes");//car 1ere ligne est un intitulé
 	
-	pg_free_result();
-	pg_close();
+	//pg_free_result();
+	//pg_close();
 	////////////////////////////////
 	$requete_faite = 1;
 
@@ -1187,8 +1188,8 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<br><br><table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
 	print ("<td ROWSPAN=5 align=center>Quelle(s) catégorie(s) écologiques</td>");
 		
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	$query = "select distinct ref_categorie_ecologique.id, ref_categorie_ecologique.libelle from ref_espece, ref_categorie_ecologique 
 	where ref_espece.ref_categorie_ecologique_id = ref_categorie_ecologique.id
 		
@@ -1207,7 +1208,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		$i++;
 		}
 	// Deconnexion de la base de donnees
-	pg_close();
+	//pg_close();
 	$nb =0;
 	$n = count($cat_ecol);
 	$i=0;
@@ -1237,8 +1238,8 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	
 	print ("</tr><tr>");
 	print ("<td ROWSPAN=5 align=center>Quelle(s) catégorie(s) trophiques</td>");
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	$query = "select distinct ref_categorie_trophique.id, ref_categorie_trophique.libelle from ref_espece, ref_categorie_trophique 
 	where ref_espece.ref_categorie_trophique_id = ref_categorie_trophique.id
 	";
@@ -1257,7 +1258,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		$i++;
 		}
 	// Deconnexion de la base de donnees
-	pg_close();
+	//pg_close();
 	$nb =0;
 	$n = count($cat_troph);
 	$i=0;
@@ -1836,6 +1837,7 @@ if($fp = fopen($filename, "rb"))
 	{
 	// lecture du contenu
 	$size1 = filesize($filename);
+	print "size=".$size1."<br/>";
 	$data = fread($fp, $size1);
 	// fermeture
 	fclose($fp);
@@ -1895,8 +1897,8 @@ print("</div></Font>");
 if ($requete_faite != 1)		//si requete globale pas encore faite
 	{
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 
 	$query_globale = " select * 
 	from ref_pays, ref_systeme, ref_secteur, 
@@ -2032,8 +2034,8 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<div align='center'>");
 	print ("Le fichier texte comporte ".($k-1)." lignes de tailles");//car 1ere ligne est un intitulé
 	
-	pg_free_result();
-	pg_close();
+	//pg_free_result();
+	//pg_close();
 	////////////////////////////////
 	$requete_faite = 1;
 
@@ -2069,8 +2071,8 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<br><br><table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
 	print ("<td ROWSPAN=5 align=center>Quelle(s) catégorie(s) écologiques</td>");
 		
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	$query = "select distinct ref_categorie_ecologique.id, ref_categorie_ecologique.libelle from ref_espece, ref_categorie_ecologique 
 	where ref_espece.ref_categorie_ecologique_id = ref_categorie_ecologique.id
 		
@@ -2089,7 +2091,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		$i++;
 		}
 	// Deconnexion de la base de donnees
-	pg_close();
+	//pg_close();
 	$nb =0;
 	$n = count($cat_ecol);
 	$i=0;
@@ -2120,8 +2122,8 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	
 	print ("</tr><tr>");
 	print ("<td ROWSPAN=5 align=center>Quelle(s) catégorie(s) trophiques</td>");
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	$query = "select distinct ref_categorie_trophique.id, ref_categorie_trophique.libelle from ref_espece, ref_categorie_trophique 
 	where ref_espece.ref_categorie_trophique_id = ref_categorie_trophique.id
 	";
@@ -2140,7 +2142,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		$i++;
 		}
 	// Deconnexion de la base de donnees
-	pg_close();
+	//pg_close();
 	$nb =0;
 	$n = count($cat_troph);
 	$i=0;
@@ -2764,8 +2766,8 @@ print("</div></Font>");
 if ($requete_faite != 1)		//si requete globale pas encore faite
 	{
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 
 	$query_globale = " select * 
 	from ref_pays, ref_systeme, ref_secteur, 
@@ -2880,8 +2882,8 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("La sélection comporte ".($k-1)." engins décrits");//car 1ere ligne est un intitulé
 	if ((k-1)==0)print ("Attention, il n'y a pas d'engins référencés dans votre sélection de départ");
 	
-	pg_free_result();
-	pg_close();
+	//pg_free_result();
+	//pg_close();
 	////////////////////////////////
 	$requete_faite = 1;
 
@@ -3170,6 +3172,7 @@ print("</div>");
 break;
 
 }
+pg_close();
 ?>
 </body>
 </html>

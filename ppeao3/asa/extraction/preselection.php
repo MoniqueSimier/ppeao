@@ -8,6 +8,7 @@
 
 
 <?php
+include_once("../connexion.php");
 $login = $_POST['login'];
 $passe = $_POST['passe'];
 $type = $_POST['type'];
@@ -16,8 +17,8 @@ $type_donnees = $_POST['type_donnees'];
 $annee_deb = $_POST['annee_deb'];
 $annee_fin = $_POST['annee_fin'];
 //print("log : ".$login."  , mtp : ".$passe." , type :".$type);
-if(isset($_POST['base']))$bdd = $_POST['base'];
-else $bdd="peche_exp_27_09";
+//if(isset($_POST['base']))$bdd = $_POST['base'];
+//else $bdd="peche_exp_27_09";
 //print("<br>travail sur la base : ".$bdd);
 $entete = "Consultation / Extraction de données";
 if(isset($_POST['type']))
@@ -42,14 +43,18 @@ if(isset($_POST['type']))
 
 
 <?php
-$user="devppeao";			// Le nom d'utilisateur 
+
+
+/*$user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 
-$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-//$bdd = "BD2_Peche";
+//$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
+$host= "localhost";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
 
+$bdd = "bd_peche";
 $connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-if (!$connection) { echo "Pas de connection"; exit;}
 
+if (!$connection) { echo "Pas de connection"; exit;}
+*/
 
 
 
@@ -57,8 +62,8 @@ if (!$connection) { echo "Pas de connection"; exit;}
 if($type=="")
 	{
 	//test si authentification s'est bien déroulée
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	
 	
 	$query_auth = "select login, password from ref_utilisateurs where login='".$login."';";
@@ -74,11 +79,7 @@ if($type=="")
 	if($password==$passe)print("");
 	else print("<div align=\"center\"><br>Attention, vous n'avez pas été identifié.</div>");
 	
-	
-	
-	
-	
-	
+		
 	
 	print ("<div align='center'>");
 	print ("<br><br><br><br><br>");
@@ -150,13 +151,9 @@ if (($type==artisanale)&&($type_donnees==""))
 
 exit;
 	}
-
-
-
-
 //$bdd="BD_Peche";
-if(($type=="artisanale")||($type=="statistique"))$bdd="jerome_manant";
-else $bdd="peche_exp_27_09";
+//if(($type=="artisanale")||($type=="statistique"))$bdd="jerome_manant";
+//else $bdd="peche_exp_27_09";
 
 
 
@@ -168,8 +165,8 @@ else $bdd="peche_exp_27_09";
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 
-$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-if (!$connection) { echo "Pas de connection"; exit;}
+//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//if (!$connection) { echo "Pas de connection"; exit;}
 
 
 //$query = "select distinct RP.nom from ref_pays as RP";
@@ -185,7 +182,7 @@ while($row = pg_fetch_row($result))
 	}
 
 // Deconnexion de la base de donnees
-pg_close();
+//pg_close();
 
 
 
@@ -606,12 +603,14 @@ else
 				
 
 				
-pg_freeresult();
-pg_close();
+
+//pg_close();
 				}
 			}
 		}
 	}
+//pg_freeresult();
+pg_close();
 
 ?>
 

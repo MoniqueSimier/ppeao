@@ -7,13 +7,15 @@
 <body>
 
 <?php
-$user="devppeao";                      // Le nom d'utilisateur 
+/*$user="devppeao";                      // Le nom d'utilisateur 
 $passwd="2devppe!!";                   // Le mot de passe 
 $host= "vmppeao.mpl.ird.fr";  // L'hôte (ordinateur sur lequel le SGBD est installé) 
+*/
 //$bdd = "BD2_Peche";
 
 
 $bdd = $_POST['base'];
+include("../connexion.php");
 print("travail sur la base : ".$bdd);
 
 
@@ -24,24 +26,25 @@ print("travail sur la base : ".$bdd);
 //                                      DE ART_FRACTION_REC                                 //
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-if (!$connection) {  echo "pas de connection"; exit;}
+//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//if (!$connection) {  echo "pas de connection"; exit;}
 
 $query = "delete from art_fraction_rec;";
 
 $result = pg_exec($connection, $query);
 if (!$result) {  echo "Une erreur s'est produite  "; print($query);  exit;}
-pg_close();
 
-$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-if (!$connection) {  echo "pas de connection"; exit;}
+//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//if (!$connection) {  echo "pas de connection"; exit;}
 
 $query = "delete from art_debarquement_rec;";
 
 $result = pg_exec($connection, $query);
 if (!$result) {  echo "Une erreur s'est produite  "; print($query);  exit;}
-pg_close();
 
+
+pg_free_result($result);
+pg_close();
 
 ?>
 

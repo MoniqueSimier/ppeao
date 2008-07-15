@@ -19,15 +19,18 @@ function pop_it(the_form) {
 
 
 <?php
-$bdd = $_POST['base'];
+include_once("../connexion.php");
+//$bdd = $_POST['base'];
 //print("travail sur la base : ".$bdd);
 
 
-$user="devppeao";			// Le nom d'utilisateur 
+/*$user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 
-$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-//$bdd = "BD2_Peche";
+//$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
+$host= "localhost";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
 
+$bdd = "bd_peche";
+*/
 
 
 if (isset($_POST['annee_deb']))$annee_deb = $_POST['annee_deb'];
@@ -108,8 +111,8 @@ if (!isset($_POST['secteur']))
 	print ("<br>Période : <Font Color =\"#663399\">".$annee_deb."</Font>-"."<Font Color =\"#663399\">".$annee_fin);
 	
 	
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	
 	$query = "select distinct RS.nom, RP.nom, RSy.libelle 
 	from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, exp_station, exp_coup_peche 
@@ -153,7 +156,7 @@ if (!isset($_POST['secteur']))
 		}
 	
 	// Deconnexion de la base de donnees
-	pg_close();
+	//pg_close();
 	
 	
 	$stx = count($STX);
@@ -240,12 +243,6 @@ if (!isset($_POST['secteur']))
 	print ("<br><table><tr ><td colspan=\"2\" align =\"middle\"><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
 	print ("</td></tr></form>");	
 	
-	
-	
-	
-	
-	
-	
 	/////////retour preselection
 
 	
@@ -267,7 +264,7 @@ if (!isset($_POST['secteur']))
 else
 	{
 	//print ("<div align='center'><br>");
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 	if (!$connection) { echo "Pas de connection"; exit;}
 	
 	print ("<div align='center'><Font Color =\"#333366\">");
@@ -321,8 +318,8 @@ print ("</div>");
 		//print ("<br>Sélection des campagnes de pêche");
 		
 		
-		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		if (!$connection) { echo "Pas de connection"; exit;}
+		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+		//if (!$connection) { echo "Pas de connection"; exit;}
 		
 		$query2 = "select distinct EC.id, EC.numero_campagne, EC.date_debut, EC.date_fin, RP.nom, RSY.libelle from exp_campagne as EC, ref_systeme as RSy, ref_pays as RP, ref_secteur as RS 
 		
@@ -398,11 +395,13 @@ print ("</div>");
 		}
 	//--></script>
 	<?php
-	print ("<table><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
+		print ("<table><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 		
-	print ("<table>");
+		print ("<table>");
 		//print ("<table  CELLSPACING=2 CELLPADDING=1><tr>");
 		reset ($T);
+		
+		
 		while (list($key, $val) = each($T))//pour chaque pays
 			{
 			while (list($key2, $val2) = each($val))//pour chaque systeme
@@ -511,7 +510,7 @@ print ("</div>");
 				$E[$i][1] = $row[1];	//libelle engin
 				$i++;
 				}
-			reset ($T);
+			reset ($E);
 			
 			//affichage engin
 			print ("<form name=\"form\" method=\"post\" action=\"selection.php\">"); 
@@ -675,7 +674,7 @@ print ("</div>");
 	
 	
 	// Deconnexion de la base de donnees
-	pg_close();
+	//pg_close();
 	
 	print ("<table><tr><td>");
 	print ("<form name=\"form2\" method=\"post\" action=\"selection.php\">");
@@ -759,8 +758,8 @@ if (!isset($_POST['secteur']))
 	print ("<div align='center'><Font Color =\"#333366\">");
 	
 	
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	
 	$query = "select distinct RS.nom, RP.nom, RSy.libelle 
 	from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, art_agglomeration, art_debarquement 
@@ -805,7 +804,7 @@ if (!isset($_POST['secteur']))
 		}
 	
 	// Deconnexion de la base de donnees
-	pg_close();
+	//pg_close();
 
 
 
@@ -1102,30 +1101,30 @@ else
 			print ("<div align='center'><Font Color =\"#333366\">");
 			print ("<br><br>");
 			
-			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			if (!$connection) { echo "Pas de connection"; exit;}
+			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//if (!$connection) { echo "Pas de connection"; exit;}
 			
-			$query_2 = "select distinct AAc.mois, AAc.annee 
+			$query_2 = "select distinct AAc.mois, AAc.annee\n 
 			from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, 
 			ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation, 
 			
-			art_agglomeration as AA, art_activite as AAc 
-			where AA.id=AAc.art_agglomeration_id 
+			art_agglomeration as AA, art_activite as AAc \n
+			where AA.id=AAc.art_agglomeration_id \n
 			
-			and RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
-			and RS.id=art_agglomeration.ref_secteur_id 
+			and RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id \n
+			and RS.id=AA.ref_secteur_id \n
 			
-			and AAc.date_activite < ref_systeme_date_butoir.date_butoire 
-			and ref_systeme_date_butoir.type_echant = 2 
-			and ref_utilisateurs.login = '".$login."' 
-			and ref_utilisateurs.password = '".$passe."' 
-			and ref_systeme_date_butoir.systeme = RSy.libelle 
-			and ref_autorisation_exploitation.login=ref_utilisateurs.login 
-			and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
-			and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
+			and AAc.date_activite < ref_systeme_date_butoir.date_butoire\n 
+			and ref_systeme_date_butoir.type_echant = 2 \n
+			and ref_utilisateurs.login = '".$login."' \n
+			and ref_utilisateurs.password = '".$passe."'\n 
+			and ref_systeme_date_butoir.systeme = RSy.libelle\n 
+			and ref_autorisation_exploitation.login=ref_utilisateurs.login\n 
+			and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id\n 
+			and ref_systeme_date_butoir.date_butoire != '1900-01-01' \n
 			
-			and AAc.date_activite > '".$annee_deb."-01-01' 
-			and AAc.date_activite < '".$annee_fin."-12-31' 
+			and AAc.date_activite > '".$annee_deb."-01-01' \n
+			and AAc.date_activite < '".$annee_fin."-12-31' \n
 			
 			
 			
@@ -1138,6 +1137,10 @@ else
 				}
 			$query_2 = substr($query_2, 0, -2); 		//on enleve le dernier or
 			$query_2 .= ") order by AAc.annee, AAc.mois";
+			/*print "<br/>";
+			print "requete ===".$query_2;
+			print "<br/>";
+			*/
 			$result_2 = pg_query($connection, $query_2);
 			//print("<br>".$query_2);
 			//print("<br>".pg_num_rows($result_2));
@@ -1577,7 +1580,7 @@ else
 	
 	
 	// Deconnexion de la base de donnees
-	pg_close();
+	//pg_close();
 	
 	print ("<table><tr><td>");
 	print ("<form name=\"form2\" method=\"post\" action=\"selection.php\">");
@@ -1692,7 +1695,7 @@ if (!isset($_POST['secteur']))
 		}
 	
 	// Deconnexion de la base de donnees
-	pg_close();
+	//pg_close();
 
 
 
@@ -1977,8 +1980,8 @@ else
 	
 			print ("<div align='center'>");
 			
-			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			if (!$connection) { echo "Pas de connection"; exit;}
+			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//if (!$connection) { echo "Pas de connection"; exit;}
 			
 			
 			
@@ -2580,7 +2583,7 @@ else
 
 	
 	// Deconnexion de la base de donnees
-	pg_close();
+	//pg_close();
 	
 	print ("<table><tr><td>");
 	print ("<form name=\"form2\" method=\"post\" action=\"selection.php\">");
@@ -2617,6 +2620,8 @@ else
 	
 	}
 }
+// Deconnexion de la base de donnees
+pg_close();
 
 
 

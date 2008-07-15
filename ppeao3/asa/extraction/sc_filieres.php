@@ -7,21 +7,19 @@
 <body BGCOLOR="#CCCCFF">
 
 <?php
-
+include_once("../connexion.php");
 //if(! ini_set("max_execution_time", "320")) {echo "échec max_execution_time";}
 
 
 
-$user="devppeao";			// Le nom d'utilisateur 
+
+/*$user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 
 $host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
 //$bdd = "BD2_Peche";
-
-
-
-
-$bdd = $_POST['base'];
+//$bdd = $_POST['base'];
 //print("travail sur la base : ".$bdd);
+*/
 $choix = $_POST['choix'];
 
 
@@ -32,8 +30,8 @@ print("</div></Font>");
 
 
 //pour faire apparaitre les données transmisent en post
-/*
-while (list($key, $val) = each($_POST))
+
+/*while (list($key, $val) = each($_POST))
 	{
 	if ($key == 'secteur')while (list($key2, $val2) = each($val))print("<br>!!!".$key." : ".$val2);
 	else if ($key == 'campagne')while (list($key2, $val2) = each($val))print("<br>!!!".$key." : ".$val2);
@@ -46,8 +44,9 @@ while (list($key, $val) = each($_POST))
 	else if ($key == 'pays')while (list($key2, $val2) = each($val))print("<br>!!!".$key." : ".$val2);
 	else if ($key == 'systeme')while (list($key2, $val2) = each($val))print("<br>!!!".$key." : ".$val2);
 	else print("<br>!!!".$key." , ".$val);
-	}*/
-
+	}
+*/
+print_r($_POST);
 
 $requete_faite = $_POST['requete_faite'];
 $selection_faite = $_POST['selection_faite'];
@@ -63,12 +62,12 @@ $colonnes_faites = $_POST['colonnes_faites'];
 if ($requete_faite != 1)		//si requete globale pas encore faite
 	{
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	/*$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 	if (!$connection) { echo "Pas de connection"; exit;}
-	
+	*/
 	
 	$query_globale = " select * 
-	from ref_pays, ref_systeme, exp_campagne, ref_secteur, exp_station
+		from ref_pays, ref_systeme, exp_campagne, ref_secteur, exp_station
 		left join exp_vegetation on exp_station.exp_vegetation_id=exp_vegetation.id 
 		left join exp_debris on  exp_station.exp_debris_id=exp_debris.id 
 		left join exp_sediment on exp_station.exp_sediment_id = exp_sediment.id 
@@ -141,6 +140,8 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 	and exp_coup_peche.exp_qualite_id = exp_qualite.id 
 	and exp_engin.id = exp_coup_peche.exp_engin_id ";
 	
+	print "query ==".$query_globale."<br/>";
+	
 	$nb_engin = count ($_POST['engin']);
 
 	reset($_POST['engin']);
@@ -155,6 +156,7 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 		$query_globale = substr($query_globale, 0, -3); 		//on enleve le dernier or
 		$query_globale .= ") ";
 		}
+	
 	$query_globale .= " and exp_fraction.exp_coup_peche_id=exp_coup_peche.id 
 	and ref_espece.id=exp_fraction.ref_espece_id 
 	and ref_famille.id=ref_espece.ref_famille_id 
@@ -262,8 +264,8 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 	print ("<br><div align='center'>La selection porte sur ".$j." coups de pêches");
 	print ("<br>Le fichier texte comporte ".($k-1)." lignes</div>");//car 1ere ligne est un intitulé
 	
-	pg_free_result();
-	pg_close();
+	//pg_free_result();
+	//pg_close();
 	////////////////////////////////
 	$requete_faite = 1;
 
@@ -358,8 +360,8 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 		print ("<br><br><table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
 		print ("<td ROWSPAN=5 align=center>Catégorie écologique</td>");
 		
-		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		if (!$connection) { echo "Pas de connection"; exit;}
+		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+		//if (!$connection) { echo "Pas de connection"; exit;}
 		$query = "select distinct ref_categorie_ecologique.id, ref_categorie_ecologique.libelle from ref_espece, ref_categorie_ecologique 
 		where ref_espece.ref_categorie_ecologique_id = ref_categorie_ecologique.id
 		
@@ -378,7 +380,7 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 			$i++;
 			}
 		// Deconnexion de la base de donnees
-		pg_close();
+		//pg_close();
 		$nb =0;
 		$n = count($cat_ecol);
 		$i=0;
@@ -408,8 +410,8 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 	
 		print ("</tr><tr>");
 		print ("<td ROWSPAN=5 align=center>Catégorie trophique</td>");
-		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		if (!$connection) { echo "Pas de connection"; exit;}
+		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+		//if (!$connection) { echo "Pas de connection"; exit;}
 		$query = "select distinct ref_categorie_trophique.id, ref_categorie_trophique.libelle from ref_espece, ref_categorie_trophique 
 		where ref_espece.ref_categorie_trophique_id = ref_categorie_trophique.id
 		";
@@ -428,7 +430,7 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 			$i++;
 			}
 		// Deconnexion de la base de donnees
-		pg_close();
+		//pg_close();
 		$nb =0;
 		$n = count($cat_troph);
 		$i=0;
@@ -473,6 +475,10 @@ else if(($requete_faite ==1)&&($selection_faite !=1))
 	else if ($choix == "    NT, PT    ")$file="selection_nt_pt.txt";
 	else if ($choix == "     Biologie     ")$file="selection_biolo.txt";
 	else if ($choix == "    Trophique     ")$file="selection_troph.txt";
+	
+	
+	print "choix === ".$choix."<br/>";
+	
 	//fclose($fpm);
 	$fpm = fopen($file, "r");
 	
@@ -499,38 +505,46 @@ else if(($requete_faite ==1)&&($selection_faite !=1))
 		{
 		$ligne_contient = Array();
 		$ligne_contient = explode ("\t",$val_ligne);
+		print "ligne_contient ===<br/><br/>";
+		print_r($ligne_contient);
+print "<br/><br/>";		
+		
 		//on garde la premiere ligne correspondant aux intitulés
 		if ($compt == 0){$compt++; continue;}
-		reset ($ligne_contient);
-		reset ($_POST['qualite']);
-		reset ($_POST['protocole']);
-		reset ($_POST['ecologique']);
-		reset ($_POST['trophique']);
+		
+		
+		if(is_array($_POST['qualite']))reset ($_POST['qualite']);
+		if(is_array($_POST['protocole'])) reset ($_POST['protocole']);
+		if(is_array($_POST['ecologique']))	reset ($_POST['ecologique']);
+		if(is_array($_POST['trophique']))reset ($_POST['trophique']);
 		
 		
 		
 		//pour les qualité, seules les valeurs de $qualite contenu dans $_POST['qualite'] doivent rester
 		if (!in_array ($ligne_contient[44], $_POST['qualite']))
 			{
-			//print ("<br><br>!!!qualite :".$val_ligne." , ".$compt);
+			print ("<br><br>!!!qualite :".$val_ligne." , ".$compt);
+			
 			unset($tab_ligne[$compt]);
 			}
 		//pour le protocole, seules les lignes dont la valeur est $protocole doivent rester
 		else if (($_POST['protocole']==1)&& ($ligne_contient[50] != $_POST['protocole']))
 			{
-			//print ("<br><br>!!!protocole :".$val_ligne." , ".$compt);
+			print ("<br><br>!!!protocole :".$val_ligne." , ".$compt);
 			unset($tab_ligne[$compt]);
 			}
 		//pour la categorie ecologique, les valeurs doivent etre une du tableau $_POST['ecologique']
-		else if ((!in_array (trim($ligne_contient[96]), $_POST['ecologique']))&&(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")))
+		else if ((($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")) && 
+		(!in_array (trim($ligne_contient[96]), $_POST['ecologique'])))
 			{
-			//print ("<br><br>!!!ecologique: ".$val_ligne." , ".$compt);
+			print ("<br><br>!!!ecologique: ".$val_ligne." , ".$compt);
 			if ($_POST['ecologique'][100] != "null")unset($tab_ligne[$compt]);
 			}
 		//pour la categorie trophique, les valeurs doivent etre une du tableau $_POST['trophique']
-		else if ((!in_array ($ligne_contient[97], $_POST['trophique']))&&(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")))
+		else if ((($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")) && 
+		(!in_array ($ligne_contient[97], $_POST['trophique'])))
 			{
-			//print ("<br><br>!!!trophique: ".$ligne_contient[97]." , ");
+			print ("<br><br>!!!trophique: ".$ligne_contient[97]." , ");
 			if ($_POST['trophique'][100] != "null")unset($tab_ligne[$compt]);
 			}
 		//pour les poisson
@@ -539,7 +553,7 @@ else if(($requete_faite ==1)&&($selection_faite !=1))
 			{
 			if ($ligne_contient[109] != 0)
 				{
-				//print ("<br><br>!!!non poisson : ".$val_ligne." , ".$compt);
+				print ("<br><br>!!!non poisson : ".$val_ligne." , ".$compt);
 				unset($tab_ligne[$compt]);
 				}
 			}
@@ -547,7 +561,7 @@ else if(($requete_faite ==1)&&($selection_faite !=1))
 			{
 			if ($ligne_contient[109] != 1)
 				{
-				//print ("<br><br>!!!poisson: ".$val_ligne." , ".$compt);
+				print ("<br><br>!!!poisson: ".$val_ligne." , ".$compt);
 				unset($tab_ligne[$compt]);
 				}
 			}
@@ -836,8 +850,8 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 				group by exp_fraction.id, exp_fraction.nombre_total ";
 				//print("<br><br>".$query_coeff);//128
 				$result_extra=Array();
-				$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-				if (!$connection) { echo "Pas de connection"; exit;}
+				//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+				//if (!$connection) { echo "Pas de connection"; exit;}
 				$result_extra = pg_query($connection, $query_coeff);
 				$row_extra =Array();
 				while($row_extra = pg_fetch_row($result_extra))
@@ -1403,7 +1417,9 @@ print("</div>");
 
 }//fin du else
 
-
+//pg_free_result($connection);
+pg_close();
+	
 
 ?>
 </body>

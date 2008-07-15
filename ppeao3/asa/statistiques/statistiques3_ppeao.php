@@ -7,6 +7,7 @@
 
 <?php
 $bdd = $_POST['base'];
+include_once("../connexion.php");
 $to = $_POST['adresse'];
 
 print("travail sur la base : ".$bdd);
@@ -23,15 +24,15 @@ if(! ini_set("max_execution_time", "120")) {echo "échec";}
 
 <?php
 
-$user="devppeao";			// Le nom d'utilisateur 
-$passwd="2devppe!!";			// Le mot de passe 
-$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
+//$user="devppeao";			// Le nom d'utilisateur 
+//$passwd="2devppe!!";			// Le mot de passe 
+//$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
 //$bdd = "bourlaye_rec";
 
 
 
-$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-if (!$connection) { echo "Pas de connection"; exit;}
+//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//if (!$connection) { echo "Pas de connection"; exit;}
 //$pays = $_POST['pays'];
 //$systeme = $_POST['systeme'];
 
@@ -71,8 +72,8 @@ while($row = pg_fetch_row($result_systeme))
 	$systeme = $row[1];	//systeme
 	$syst_etudie[$systeme] = $pays;
 	}
-pg_free_result($result_systeme);
-pg_close();
+//pg_free_result($result_systeme);
+//pg_close();
 
 
 
@@ -116,8 +117,8 @@ $systeme = str_replace("'","\'",$systeme);
 //                                 Estimation de pue_tot                                    //
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-if (!$connection) { echo "Pas de connection"; exit;}
+//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//if (!$connection) { echo "Pas de connection"; exit;}
 
 $query = "select distinct AD.art_agglomeration_id, AD.annee, AD.mois 
 from ref_pays as RP, ref_systeme as RSy, ref_secteur as RS, art_agglomeration as AA, art_debarquement as AD 
@@ -139,8 +140,8 @@ while($row = pg_fetch_row($result))
 	$ST[$i][2] = $row[2];	//periode
 	$i=$i+1;
 	}
-pg_free_result($result);
-pg_close();
+//pg_free_result($result);
+//pg_close();
 
 
 
@@ -192,8 +193,8 @@ while (list($key, $val) = each($ST))
 		}
 
 	}
-pg_free_result($result);
-pg_close();
+//pg_free_result($result);
+//pg_close();
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -337,9 +338,9 @@ while (list($key, $val) = each($ST))
 	
 		}
 }
-pg_free_result($result);
-pg_free_result($result2);
-pg_close();
+//pg_free_result($result);
+//pg_free_result($result2);
+//pg_close();
 //exit;
 //////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////STATISTIQUES PAR GRAND TYPE//////////////////////////////////////
@@ -561,10 +562,10 @@ while($ligne_enplus = pg_fetch_row($result_enplus))
 
 
 	}//fin de ST
-pg_free_result($result2);
-pg_free_result($result3);
-pg_free_result($result12);
-pg_close();
+//pg_free_result($result2);
+//pg_free_result($result3);
+//pg_free_result($result12);
+//pg_close();
 //exit;
 
 
@@ -783,10 +784,10 @@ while (list($key, $val) = each($ST))
 	
 	}//fin du while (list($key, $val) = each($ST))
 
-pg_free_result($result);
-pg_free_result($result13);
-pg_free_result($result14);
-pg_close();
+//pg_free_result($result);
+//pg_free_result($result13);
+//pg_free_result($result14);
+//pg_close();
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1818,7 +1819,7 @@ while($row = pg_fetch_row($result30)){
 	$coef_esp[$esp][2]= $ref;
 	}
 
-pg_close();
+//pg_close();
 
 
 //remise à zéro du pointeur
@@ -1897,8 +1898,10 @@ while (list($key_st, $val_st) = each($ST))
 		else $taille_stand=((substr($row[1],0,2))*10)+5;//ex 123->125
 		
 		//on somme les effectifs de même tailles.
-		if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[0];
-		else $tab_taille[$row[3]][$taille_stand][0]+=$row[0];//nb
+		//if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[0];
+		//else $tab_taille[$row[3]][$taille_stand][0]+=$row[0];//nb
+		if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[0];if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[1];
+		else $tab_taille[$row[3]][$taille_stand][0]+=$row[1];//nb
 		$tab_taille[$row[3]][$taille_stand][1]=$row[2];//cap_sp
 		$tab_taille[$row[3]][$taille_stand][2]=$row[4];//art_stat_sp_id
 		}
@@ -1997,8 +2000,10 @@ while (list($key_st, $val_st) = each($ST))
 		$tab_taille_gt[$row[6]][$row[3]][$row[1]][2]=$row[4];//art_stat_gt_sp_id
 		*/
 		//on somme les effectifs de même tailles.
-		if(!isset($tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]))$tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]=$row[0];
-		else $tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]+=$row[0];//nb
+		//if(!isset($tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]))$tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]=$row[0];
+		//else $tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]+=$row[0];//nb
+		if(!isset($tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]))$tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]=$row[1];
+		else $tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]+=$row[1];//nb
 		$tab_taille_gt[$row[6]][$row[3]][$taille_stand][1]=$row[2];//cap_gt_sp
 		$tab_taille_gt[$row[6]][$row[3]][$taille_stand][2]=$row[4];//art_stat_gt_sp_id
 		}
@@ -2052,7 +2057,7 @@ while (list($key_st, $val_st) = each($ST))
 	
 
 
-pg_close();
+//pg_close();
 
 
 }//fin pour 1 systeme
@@ -2076,6 +2081,8 @@ mail($to, $subject, $msg, $headers);
 
 
 print("<br><br><br>");
+
+pg_close();
 ?>
 
 <div align='center'>Statistiques réalisées

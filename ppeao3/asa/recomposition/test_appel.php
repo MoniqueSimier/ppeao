@@ -38,6 +38,7 @@ function pop_it3(the_form) {
 
 <?php
 $bdd = $_POST['base'];
+include_once("../connexion.php");
 //$bdd = "jerome_manant";
 //print("travail sur la base : ".$bdd);
 ?>
@@ -83,9 +84,9 @@ $host= "vmppeao.mpl.ird.fr";  // L'hôte (ordinateur sur lequel le SGBD est insta
 //                                 et du nb déjà traités                                    //
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+/*$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 if (!$connection) {  echo "Une erreur de connection au serveur s'est produite"; exit;}
-
+*/
 // Creation et envoi de la requete
 $query = "select count(art_debarquement.id) FROM art_debarquement";
 
@@ -98,12 +99,10 @@ $row= pg_fetch_row($result);
 $nb_enr = $row[0];
 print ("<div align='center'><br>".$nb_enr . " enquêtes à traiter dont");
 
-// Deconnexion de la base de donnees
-pg_close();
 
 
 
-$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+/*$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);*/
 $query = "select count(id) FROM art_debarquement_rec";
 $result = pg_query($connection, $query);
 $row= pg_fetch_row($result);

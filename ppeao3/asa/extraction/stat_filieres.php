@@ -6,16 +6,16 @@
 <body BGCOLOR="#CCCCFF">
 
 <?php
-
-$user="devppeao";			// Le nom d'utilisateur 
+include_once("../connexion.php");
+/*$user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 
 $host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
 //$bdd = "BD2_Peche";
+*/
 
 
 
-
-$bdd = $_POST['base'];
+//$bdd = $_POST['base'];
 //print("travail sur la base : ".$bdd);
 $choix = $_POST['choix'];
 
@@ -55,9 +55,9 @@ if(isset($_POST['case1']))
 	print("<br><b>Tableau Cap_tot</b><br><br>");
 	
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	/*$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 	if (!$connection) { echo "Pas de connection"; exit;}
-	
+	*/
 	
 	$query_globale = " select * 
 	from ref_pays, ref_systeme, ref_secteur
@@ -143,8 +143,8 @@ if(isset($_POST['case1']))
 	print ("<div align='center'>");
 	print ("La sélection porte sur ".($k-1)." lignes");//car 1ere ligne est un intitulé
 	
-	pg_free_result();
-	pg_close();
+	/*pg_free_result();
+	pg_close();*/
 	////////////////////////////////
 	$requete_faite = 1;
 
@@ -517,9 +517,9 @@ $bdd = "jerome_manant";
 	print("<br><b>Tableau Cap_sp</b><br><br>");
 	
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	/*$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 	if (!$connection) { echo "Pas de connection"; exit;}
-	
+	*/
 	
 	$query_globale = " select * 
 	from ref_pays, ref_systeme, ref_secteur
@@ -626,8 +626,9 @@ $bdd = "jerome_manant";
 	//print ("<div align='center'>");
 	print ("La sélection porte sur ".($k-1)." lignes");//car 1ere ligne est un intitulé
 	
-	pg_free_result();
+	/*pg_free_result();
 	pg_close();
+	*/
 	////////////////////////////////
 	$requete_faite = 1;
 
@@ -995,9 +996,9 @@ $bdd = "jerome_manant";
 
 	
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	/*$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 	if (!$connection) { echo "Pas de connection"; exit;}
-	
+	*/
 	
 	$query_globale = " select * 
 	from ref_pays, ref_systeme, ref_secteur
@@ -1111,8 +1112,8 @@ $bdd = "jerome_manant";
 	//print ("<div align='center'>");
 	print ("La sélection porte sur ".($k-1)." lignes");//car 1ere ligne est un intitulé
 	
-	pg_free_result();
-	pg_close();
+	/*pg_free_result();
+	pg_close();*/
 	////////////////////////////////
 	$requete_faite = 1;
 
@@ -1481,9 +1482,9 @@ if(isset($_POST['case4']))
 	print("<br><b>Tableau Cap_gt</b><br>");
 	
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	/*$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 	if (!$connection) { echo "Pas de connection"; exit;}
-	
+	*/
 	
 	$query_globale = " select * 
 	from ref_pays, ref_systeme, ref_secteur
@@ -1587,8 +1588,8 @@ if(isset($_POST['case4']))
 	//print ("<div align='center'>");
 
 	print ("<br>La sélection porte sur ".($k-1)." lignes");//car 1ere ligne est un intitulé
-	pg_free_result();
-	pg_close();
+	/*pg_free_result();
+	pg_close();*/
 	////////////////////////////////
 	$requete_faite = 1;
 
@@ -1953,9 +1954,9 @@ if(isset($_POST['case5']))
 	print("<br><b>Tableau Cap_gt_sp</b><br>");
 	
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	/*$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 	if (!$connection) { echo "Pas de connection"; exit;}
-	
+	*/
 	
 	$query_globale = " select * 
 	from ref_pays, ref_systeme, ref_secteur
@@ -2084,8 +2085,8 @@ if(isset($_POST['case5']))
 	print ("<br>La sélection porte sur ".($k-1)." lignes");//car 1ere ligne est un intitulé
 	
 	
-	pg_free_result();
-	pg_close();
+	/*pg_free_result();
+	pg_close();*/
 	////////////////////////////////
 	$requete_faite = 1;
 
@@ -2450,9 +2451,9 @@ $bdd = "jerome_manant";
 	print("<br><b>Tableau DFT_gt_sp</b><br>");
 
 	$query_globale = "";
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	/*$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 	if (!$connection) { echo "Pas de connection"; exit;}
-	
+	*/
 	
 	$query_globale = " select * 
 	from ref_pays, ref_systeme, ref_secteur
@@ -2582,8 +2583,8 @@ $bdd = "jerome_manant";
 
 	print ("<br>La sélection porte sur ".($k-1)." lignes");//car 1ere ligne est un intitulé
 	
-	pg_free_result();
-	pg_close();
+	/*pg_free_result();
+	pg_close();*/
 	////////////////////////////////
 	$requete_faite = 1;
 
@@ -2930,7 +2931,8 @@ print("<br><br><br><br><br><br><br><br><br><br><br><br><div align='center'>
 Extraction des statistiques terminée<br><br>
 <input type='button' value='Fermer' onClick='self.close()' name=\"button\"> </div>"); 
 
-
+//pg_free_result();
+pg_close();
 ?>
 </body>
 </html>
