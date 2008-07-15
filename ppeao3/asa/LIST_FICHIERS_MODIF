@@ -1,0 +1,16 @@
+extraction/art_filieres.php
+extraction/sc_filieres.php
+extraction/preselection.php
+extraction/selection.php
+extraction/stat_filieres.php
+recomposition/test_appel.php
+recomposition/test_recompose.php
+recomposition/test_efface.php
+statistiques/statistiques3_ppeao.php
+stat_syst/choix_mois.php
+stat_syst/choix_agglo.php
+stat_syst/choix_pays.php
+stat_syst/choix_systeme.php
+stat_syst/choix_secteur.php
+stat_syst/stat_syst_traitement.php
+stat_syst/choix_annee.php
