@@ -11,7 +11,7 @@ include_once("../connexion.php");
 $to = $_POST['adresse'];
 
 print("travail sur la base : ".$bdd);
-if(! ini_set("max_execution_time", "120")) {echo "échec";}
+if(! ini_set("max_execution_time", "500")) {echo "échec";}
 //phpinfo();
 ?>
 
@@ -1900,8 +1900,8 @@ while (list($key_st, $val_st) = each($ST))
 		//on somme les effectifs de même tailles.
 		//if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[0];
 		//else $tab_taille[$row[3]][$taille_stand][0]+=$row[0];//nb
-		if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[0];if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[1];
-		else $tab_taille[$row[3]][$taille_stand][0]+=$row[1];//nb
+		if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[0];if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=1;
+		else $tab_taille[$row[3]][$taille_stand][0]+=1;//nb
 		$tab_taille[$row[3]][$taille_stand][1]=$row[2];//cap_sp
 		$tab_taille[$row[3]][$taille_stand][2]=$row[4];//art_stat_sp_id
 		}
@@ -2002,8 +2002,8 @@ while (list($key_st, $val_st) = each($ST))
 		//on somme les effectifs de même tailles.
 		//if(!isset($tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]))$tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]=$row[0];
 		//else $tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]+=$row[0];//nb
-		if(!isset($tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]))$tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]=$row[1];
-		else $tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]+=$row[1];//nb
+		if(!isset($tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]))$tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]=1;
+		else $tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]+=1;//nb
 		$tab_taille_gt[$row[6]][$row[3]][$taille_stand][1]=$row[2];//cap_gt_sp
 		$tab_taille_gt[$row[6]][$row[3]][$taille_stand][2]=$row[4];//art_stat_gt_sp_id
 		}
