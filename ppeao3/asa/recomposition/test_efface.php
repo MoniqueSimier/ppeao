@@ -15,8 +15,8 @@ $host= "vmppeao.mpl.ird.fr";  // L'hôte (ordinateur sur lequel le SGBD est insta
 
 
 $bdd = $_POST['base'];
-include("../connexion.php");
-print("travail sur la base : ".$bdd);
+include_once("../connexion.php");
+//print("travail sur la base : ".$bdd);
 
 
 

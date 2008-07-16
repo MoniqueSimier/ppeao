@@ -11,6 +11,8 @@
 <?php
 $bdd = $_POST['base'];
 include_once("../connexion.php");
+ini_set("max_execution_time", "1000");
+ini_set("memory_limit","800M");
 $nb_enr = $_POST['nb_enr'];
 
 $to = $_POST['adresse'];
@@ -250,7 +252,7 @@ while (list($key, $val) = each($info_deb))                      //pour tous les 
 			//if (!$connection) {  echo "Non connecté"; exit;}
 			$query = "select distinct AF.id, AD.id 
 				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, 
-				, art_poisson_mesure as APM 
+				art_poisson_mesure as APM 
 				where AD.id = AF.art_debarquement_id 
 				and APM.art_fraction_id = AF.id 
 				and AD.art_agglomeration_id = AA.id 
@@ -4753,7 +4755,7 @@ $Wti =0;
 // Subject
 $subject = 'PPEAO';
 // Message
-$msg = 'Fin du taitement de recomposition des données';
+$msg = 'Fin du traitement de recomposition des données';
 // Headers
 $headers = 'From: base_PPEAO'."\r\n";
 $headers .= "\r\n";

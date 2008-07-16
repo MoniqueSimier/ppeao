@@ -70,9 +70,9 @@ Le but de ce module est de recomposer toutes les enquêtes, une par une, pour obt
 
 <?php
 
-$user="devppeao";                      // Le nom d'utilisateur 
-$passwd="2devppe!!";                   // Le mot de passe 
-$host= "vmppeao.mpl.ird.fr";  // L'hôte (ordinateur sur lequel le SGBD est installé) 
+//$user="devppeao";                      // Le nom d'utilisateur 
+//$passwd="2devppe!!";                   // Le mot de passe 
+//$host= "vmppeao.mpl.ird.fr";  // L'hôte (ordinateur sur lequel le SGBD est installé) 
 //$bdd = "BD2_Peche";
 //$bdd = $_POST['base'];
 
