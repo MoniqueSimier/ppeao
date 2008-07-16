@@ -265,7 +265,7 @@ else
 	{
 	//print ("<div align='center'><br>");
 	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	
 	print ("<div align='center'><Font Color =\"#333366\">");
 	if (!isset($_POST['campagne']))print ("<br><b>Sélection des campagnes de pêche</b></font>");
@@ -486,8 +486,8 @@ print ("</div>");
 			print ("<div align='center'><Font Color =\"#333366\">");
 			
 			
-			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			if (!$connection) { echo "Pas de connection"; exit;}
+			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//if (!$connection) { echo "Pas de connection"; exit;}
 			
 			$query3 = "select distinct exp_engin.id, exp_engin.libelle 
 			from exp_campagne as EC, exp_coup_peche  left join exp_engin on exp_engin.id=exp_coup_peche.exp_engin_id 
@@ -973,8 +973,8 @@ else
 		$query_1 .= ") order by RS.nom, AA.nom ";
 		
 		//print ("<br>".$query_1);
-		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		if (!$connection) { echo "Pas de connection"; exit;}
+		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+		//if (!$connection) { echo "Pas de connection"; exit;}
 		$result_1 = pg_query($connection,$query_1);
 		
 		$A=Array();
@@ -1077,8 +1077,8 @@ else
 		}//fin du if agglo non referencées
 	else
 		{
-		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		if (!$connection) { echo "Pas de connection"; exit;}
+		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+		//if (!$connection) { echo "Pas de connection"; exit;}
 		
 		
 		print ("<div align='center'>");
@@ -1326,8 +1326,8 @@ else
 			print ("<div align='center'><Font Color =\"#333366\">");
 			print ("<br>");
 			
-			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			if (!$connection) { echo "Pas de connection"; exit;}
+			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//if (!$connection) { echo "Pas de connection"; exit;}
 			
 			
 			
@@ -1664,8 +1664,8 @@ if (!isset($_POST['secteur']))
 
 	print ("<div align='center'><Font Color =\"#333366\">");
 	
-	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	
 	$query = "select distinct RS.nom, RP.nom, RSy.libelle 
 	from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, art_agglomeration, 
@@ -1863,8 +1863,8 @@ else
 		$query_1 .= ") order by RS.nom, RS.nom, AA.nom ";
 		
 		//print ("<br>".$query_1);
-		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		if (!$connection) { echo "Pas de connection"; exit;}
+		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+		//if (!$connection) { echo "Pas de connection"; exit;}
 		$result_1 = pg_query($connection,$query_1);
 		
 		$A=Array();
@@ -2171,8 +2171,8 @@ else
 			print ("<div align='center'><Font Color =\"#333366\">");
 			print ("<br>");
 			
-			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			if (!$connection) { echo "Pas de connection"; exit;}
+			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//if (!$connection) { echo "Pas de connection"; exit;}
 			
 			
 			
@@ -2314,8 +2314,8 @@ else
 	
 			print ("<div align='center'>");
 			
-			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			if (!$connection) { echo "Pas de connection"; exit;}
+			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//if (!$connection) { echo "Pas de connection"; exit;}
 			
 			
 			

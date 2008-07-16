@@ -1,9 +1,0 @@
- pays	 pays_lib	 syst	 syst_lib	 sect	 sect_lib	 agglo	 agglo_lib	 annee	 mois	 nbre_obs	 obs_min	 obs_max	 pue_ecart_type	 pue	 fm	 cap	 nb_unite_recencee	
-ML	Mali	5	Lac de Manantali	3	Amont	125	Bokadary daga	2002	5	15	10.75	48.24	9.539	22.623	149.833	3389.7	6	
-ML	Mali	5	Lac de Manantali	3	Amont	125	Bokadary daga	2002	6	24	6	49.99	9.779	19.254	126.667	2438.8	6	
-ML	Mali	5	Lac de Manantali	3	Amont	125	Bokadary daga	2002	7	36	8.5	75.98	12.429	25.237	318.42	8036	13	
-ML	Mali	5	Lac de Manantali	3	Amont	125	Bokadary daga	2002	8	42	9.5	52.51	11.513	30.649	326.878	10018.5	13	
-ML	Mali	5	Lac de Manantali	3	Amont	125	Bokadary daga	2002	9	28	3.58	153.01	30.376	29.236	220	6431.9	10	
-ML	Mali	5	Lac de Manantali	3	Amont	125	Bokadary daga	2002	10	35	2.36	79.92	17.438	16.047	223.889	3592.7	10	
-ML	Mali	5	Lac de Manantali	3	Amont	125	Bokadary daga	2002	11	52	4.25	68.12	17.047	24.659	253.333	6246.9	10	
-ML	Mali	5	Lac de Manantali	3	Amont	125	Bokadary daga	2002	12	55	3.5	89.99	22.224	25.178	220.444	5550.3	9	

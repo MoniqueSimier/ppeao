@@ -46,7 +46,7 @@ print("</div></Font>");
 	else print("<br>!!!".$key." , ".$val);
 	}
 */
-print_r($_POST);
+//print_r($_POST);
 
 $requete_faite = $_POST['requete_faite'];
 $selection_faite = $_POST['selection_faite'];
@@ -140,7 +140,7 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 	and exp_coup_peche.exp_qualite_id = exp_qualite.id 
 	and exp_engin.id = exp_coup_peche.exp_engin_id ";
 	
-	print "query ==".$query_globale."<br/>";
+	//print "query ==".$query_globale."<br/>";
 	
 	$nb_engin = count ($_POST['engin']);
 
@@ -477,7 +477,7 @@ else if(($requete_faite ==1)&&($selection_faite !=1))
 	else if ($choix == "    Trophique     ")$file="selection_troph.txt";
 	
 	
-	print "choix === ".$choix."<br/>";
+	//print "choix === ".$choix."<br/>";
 	
 	//fclose($fpm);
 	$fpm = fopen($file, "r");
@@ -505,9 +505,9 @@ else if(($requete_faite ==1)&&($selection_faite !=1))
 		{
 		$ligne_contient = Array();
 		$ligne_contient = explode ("\t",$val_ligne);
-		print "ligne_contient ===<br/><br/>";
-		print_r($ligne_contient);
-print "<br/><br/>";		
+		//print "ligne_contient ===<br/><br/>";
+		//print_r($ligne_contient);
+//print "<br/><br/>";		
 		
 		//on garde la premiere ligne correspondant aux intitulés
 		if ($compt == 0){$compt++; continue;}
@@ -523,28 +523,27 @@ print "<br/><br/>";
 		//pour les qualité, seules les valeurs de $qualite contenu dans $_POST['qualite'] doivent rester
 		if (!in_array ($ligne_contient[44], $_POST['qualite']))
 			{
-			print ("<br><br>!!!qualite :".$val_ligne." , ".$compt);
-			
+			//print ("<br><br>!!!qualite :".$val_ligne." , ".$compt);
 			unset($tab_ligne[$compt]);
 			}
 		//pour le protocole, seules les lignes dont la valeur est $protocole doivent rester
 		else if (($_POST['protocole']==1)&& ($ligne_contient[50] != $_POST['protocole']))
 			{
-			print ("<br><br>!!!protocole :".$val_ligne." , ".$compt);
+			//print ("<br><br>!!!protocole :".$val_ligne." , ".$compt);
 			unset($tab_ligne[$compt]);
 			}
 		//pour la categorie ecologique, les valeurs doivent etre une du tableau $_POST['ecologique']
 		else if ((($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")) && 
 		(!in_array (trim($ligne_contient[96]), $_POST['ecologique'])))
 			{
-			print ("<br><br>!!!ecologique: ".$val_ligne." , ".$compt);
+			//print ("<br><br>!!!ecologique: ".$val_ligne." , ".$compt);
 			if ($_POST['ecologique'][100] != "null")unset($tab_ligne[$compt]);
 			}
 		//pour la categorie trophique, les valeurs doivent etre une du tableau $_POST['trophique']
 		else if ((($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")) && 
 		(!in_array ($ligne_contient[97], $_POST['trophique'])))
 			{
-			print ("<br><br>!!!trophique: ".$ligne_contient[97]." , ");
+			//print ("<br><br>!!!trophique: ".$ligne_contient[97]." , ");
 			if ($_POST['trophique'][100] != "null")unset($tab_ligne[$compt]);
 			}
 		//pour les poisson
@@ -553,7 +552,7 @@ print "<br/><br/>";
 			{
 			if ($ligne_contient[109] != 0)
 				{
-				print ("<br><br>!!!non poisson : ".$val_ligne." , ".$compt);
+				//print ("<br><br>!!!non poisson : ".$val_ligne." , ".$compt);
 				unset($tab_ligne[$compt]);
 				}
 			}
@@ -561,7 +560,7 @@ print "<br/><br/>";
 			{
 			if ($ligne_contient[109] != 1)
 				{
-				print ("<br><br>!!!poisson: ".$val_ligne." , ".$compt);
+				//print ("<br><br>!!!poisson: ".$val_ligne." , ".$compt);
 				unset($tab_ligne[$compt]);
 				}
 			}
