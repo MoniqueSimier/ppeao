@@ -25,7 +25,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 	?>
 	<title>ppeao</title>
 	<link href="/styles/mainstyles.css" title="mainstyles" rel="stylesheet" type="text/css" />
-	<script src="/js/basic.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/js/basic.js" type="text/javascript"></script>
 
 	
 </head>
@@ -43,7 +43,6 @@ Bienvenue &agrave; PPEAO.
 
 <?
 
-logWriteTo(1,'warning','ceci est un avertissement','vous avez fait ceci','et pour annuler, faire cela',0);
 echo(logDisplayShort('','','',"",5,""));
 
 ?>

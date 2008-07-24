@@ -42,7 +42,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc'
 <h1>journal des activit&eacute;s</h1>
 
 <?
-
+logWriteTo(4,'notice','acc&egrave;s au journal','-','-',0);
 echo(logDisplayFull('','','',"","",""));
 
 ?>
