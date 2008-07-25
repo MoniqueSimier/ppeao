@@ -21,7 +21,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 	// les balises meta communes  toutes les pages
 	include $_SERVER["DOCUMENT_ROOT"].'/meta.inc';
 	?>
-	<title>PPEAO Recomposition des données</title>
+	<title>PPEAO Recomposition des donn&eacute;es</title>
 	<link href="/styles/mainstyles.css" title="mainstyles" rel="stylesheet" type="text/css" />
 	<script src="/js/basic.js" type="text/javascript" charset="utf-8"></script>
 	
@@ -48,7 +48,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 			<? include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 			</div>
 			<div id="subContent">
-				<h1>Recomposition des données</h1>
+				<h1>Recomposition des donn&eacute;es</h1>
 				<h2>Choix de la base</h2>
 				<br/>
 				Entrez le nom de la base:

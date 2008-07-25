@@ -1,10 +1,17 @@
+//**************************************************
+// ajaxEfface.js
+//**************************************************
+// Creation le 10-07-2008 par Yann Laurent
+// Permet de lancer sans popup les scripts du lot 2
+// pour la recomposition des données
+//**************************************************
 var xmlHttp
 
 function runRecomp(nbEnreg,DBname)
 {
 	adresse = document.getElementById("adresse").value;
 	
-	if (! confirm('Confirmez-vous l excécution de la recomposition des donnnées ?')) {
+	if (! confirm('Confirmez-vous l\'execution de la recomposition des donnees ?')) {
 		exit;
 	}
 	
@@ -15,19 +22,19 @@ function runRecomp(nbEnreg,DBname)
 	  	alert ("Your browser does not support AJAX!");
 	  	return;
 	  } 
-	var url="recomposition.php";
+	var url="rec_traitement.php";
 	xmlHttp.onreadystatechange=stateChanged2;
-	url=url+"?base="+DBname+"&nb_enr="+nbEnreg+"&adresse="+adresse;
+	url=url+"?base="+DBname+"&nb_enr="+nbEnreg+"&adresse="+adresse+"&aff=1";
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send(null);
-} 
+}  
 
 
 
 function runClear(DBname)
 {
 
-	if (! confirm('Confirmez-vous la suppression des donnnées ?')) {
+	if (! confirm('Confirmez-vous la suppression des donnnees ?')) {
 		exit;
 	}
 	

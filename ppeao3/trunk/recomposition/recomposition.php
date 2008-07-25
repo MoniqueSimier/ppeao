@@ -3,14 +3,24 @@
 // Création Yann LAURENT, 01-07-2008
 // A partir du fichier php initial du lot 2 PPEAO
 //***********************************************
-echo "debut programme";
+
+// YL 15/07/2008 on remplace les messages direct par une variable qu'on affiche ou non en fin de traitement
+$messageProcess = "Debut programme <br/>" ;
+
+//echo "debut programme";
+// Variables pour affichage ou non des messages
+if (isset($_GET['aff'])) {
+	$afficherMessage = $_GET['aff'] ;
+} else {
+	$afficherMessage = "0" ;
+}
 
 $nb_enr = $_GET['nb_enr'];
 $bdd = $_GET['base'];
 $to = $_GET['adresse'];
-print("<br/>travail sur la base : ".$bdd);
+$messageProcess .= "<br/>travail sur la base : ".$bdd ;
+//print("<br/>travail sur la base : ".$bdd);
 
-include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //                                   Prétraitement                                         //
@@ -186,12 +196,9 @@ reset($info_deb);
 while (list($key, $val) = each($info_deb))                      //pour tous les debarquements
 	{
 	
-	
-	
-	
-	
 	$numero = $numero+1;
-	print ("<div align='center'>Recomposition de l'enquête ".$numero . " sur ".$nb_enr ."</div>");
+	$messageProcess .= "Recomposition de l'enqu&ecirc;te ".$numero . " sur ".$nb_enr." <br/>";
+	//print ("Recomposition de l'enquête ".$numero . " sur ".$nb_enr);
 
 	while (list($key2, $val2) = each($val))			//pour chaque fraction
 		{
@@ -4608,18 +4615,16 @@ while (list($key, $val) = each($info_non_deb))
 reset($info_deb);
 $numero2 = 0;
 
-while (list($key, $val) = each($info_deb))
-	{
+while (list($key, $val) = each($info_deb)){
 	$numero2 = $numero2+1;
-	print ("<div align='center'>Insertion de l'enquête ".$numero2 . " sur ".$nb_enr ."</div>");
-	
-	
-$Wti =0;
-	while (list($key2, $val2) = each($val))
-		{
+	// Remplacement print par $messageProcess YL 15.07.2008
+	// print ("Insertion de l'enquête ".$numero2 . " sur ".$nb_enr ."<br/>");
+	$messageProcess.="Insertion de l'enqu&ecirc;te ".$numero2 . " sur ".$nb_enr ."<br/>";
+	$Wti =0;
+	while (list($key2, $val2) = each($val)){
 		$fr_deb =$key2;
 		$Wti += $info_deb[$key][$key2][8];
-		}
+	}
 
 	
 	$connection2 =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
@@ -4627,30 +4632,48 @@ $Wti =0;
 
 	$query2 = "insert into art_debarquement_rec ( id, poids_total, art_debarquement_id ) 
 	values ('rec_".$key."', ".$Wti.", ".$key.")";
+	// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
+	// if($Wti!=0)$result2 = pg_exec($connection2, $query2); // Ancienne ajout données. 
+	// nouvelle insertion données en utilisant la fonction runQuery
+	if($Wti!=0) {
+		$RunQErreur = runQuery($query2,$connection2);
+		if ( $RunQErreur){
+			
+		} else {
+			// traitement d'erreur ? On arrête ou seulement avertissement ?
+		
+		}
+	}
 
-	if($Wti!=0)$result2 = pg_exec($connection2, $query2);
 	pg_close();
 
 	reset($val);
-	while (list($key2, $val2) = each($val))
-		{
+	while (list($key2, $val2) = each($val)){
 		$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 		if (!$connection) {  echo "pas de connection"; exit;}
 
 		$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
 		values ('".$key2."', ".$info_deb[$key][$key2][8].", ".$info_deb[$key][$key2][9].", '".$info_deb[$key][$key2][7]."');";
-
-		$result = pg_exec($connection, $query);
-		//if (!$result) {  echo "pb d'insertion"; print ("<br>".$query); continue;}
-		pg_close();
+		// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
+		// $result = pg_exec($connection, $query);
+		// Ancienne ajout données. 
+		// nouvelle insertion données en utilisant la fonction runQuery
+		$RunQErreur = runQuery($query,$connection);
+		if ( $RunQErreur){
+			
+		} else {
+			// traitement d'erreur ? On arrête ou seulement avertissement ?
+		
 		}
-	}
 
+		pg_close();
+	} // fin while (list($key2, $val2) = each($val))
+} // fin (list($key, $val) = each($info_deb))
 
-
-
-
-
+// Ajout YL 15.07.2008 afficher le message en fin de traitement si demandé
+if ($afficherMessage == "1") {
+	echo $messageProcess ;
+}
 
 
 

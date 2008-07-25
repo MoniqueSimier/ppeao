@@ -21,29 +21,10 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 	// les balises meta communes  toutes les pages
 	include $_SERVER["DOCUMENT_ROOT"].'/meta.inc';
 	?>
-	<title>PPEAO Recomposition des données : choix BD</title>
+	<title>PPEAO Recomposition des donn&eacute;es : choix BD</title>
 	<link href="/styles/mainstyles.css" title="mainstyles" rel="stylesheet" type="text/css" />
 	<script src="/js/basic.js" type="text/javascript" charset="utf-8"></script>
-		
 	<script src="/js/ajaxEfface.js"></script>
-	<SCRIPT type="text/javaScript">
-	
-	
-	function fenetre(){
-	fenetre = open("ppeao1.php","Resultats","scrollbars=1,menubar=1, status=1, height=600,width=400,left=10,top=20,resizable=yes");
-	}
-	
-	dimensions="width="+(screen.width/3)+",height="+(screen.width/3)+",top=50,left=100,screenY=50, screenX=100, resizable=no";
-	
-	function pop_it3(the_form) {
-	   my_form = eval(the_form);
-	   window.open("blanc.html", "popup", "height=300,width=500,menubar=no,toolbar=no,location=no,status=no,scrollbars=yes,resizable=yes");
-	   my_form.target = "popup";
-	   my_form.submit();
-	}
-	
-	
-	</script>
 	</head>
 	<body>
 		<?
@@ -61,14 +42,15 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 			
 			<? // Code original a mettre à jour ?>
 			<div id='headerinfo'>
-			<h1>Recomposition automatique des données d’enquêtes.</h1><br/>
+			<h1>Recomposition automatique des donn&eacute;es d'enqu&ecirc;tes.</h1>
+			<br/>
 			</div>
-			Une enquête de pêche est l'opération élémentaire d'observation des débarquements. Dans un cas idéal, toutes les informations demandées sont relevées par l'enquêteur. Dans la plupart des cas, une partie de l'information manque.
-			Le but de ce module est de recomposer toutes les enquêtes, une par une, pour obtenir des enquêtes idéales. Cette recomposition comprend 3 phases : 
+			Une enqu&ecirc;te de p&ecirc;che est l'op&eacute;ration &eacute;l&eacute;mentaire d'observation des d&eacute;barquements. Dans un cas id&eacute;al, toutes les informations demand&eacute;es sont relev&eacute;es par l'enqu&ecirc;teur. Dans la plupart des cas, une partie de l'information manque.
+			Le but de ce module est de recomposer toutes les enqu&ecirc;tes, une par une, pour obtenir des enqu&ecirc;tes id&eacute;ales. Cette recomposition comprend 3 phases : 
 			<ul>
-				<li>une estimation du nombre et du poids des poissons d'une fraction dite débarquée</li>
-				<li>une comparaison des poids des fractions débarquées avec le poids total du débarquement annoncé par l'enquêteur</li>
-				<li>la prise en compte éventuelle de fractions non observées directement par l'enquêteur.</li>
+				<li>une estimation du nombre et du poids des poissons d'une fraction dite d&eacute;barqu&eacute;e</li>
+				<li>une comparaison des poids des fractions d&eacute;barqu&eacute;es avec le poids total du d&eacute;barquement annonc&eacute; par l'enqu&ecirc;teur</li>
+				<li>la prise en compte &eacute;ventuelle de fractions non observ&eacute;es directement par l'enqu&ecirc;teur.</li>
 			</ul>
 
 			<br/><br/>
@@ -95,7 +77,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 			// Recuperation du resultat
 			$row= pg_fetch_row($result);
 			$nb_enr = $row[0];
-			print ("<div id='nbEnquete'>".$nb_enr . " enquêtes à traiter dont");
+			print ("<div id='nbEnquete'>".$nb_enr . " enqu&ecirc;tes &agrave; traiter dont");
 			
 			// Deconnexion de la base de donnees
 			pg_close();
@@ -107,8 +89,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 			$result = pg_query($connection, $query);
 			$row= pg_fetch_row($result);
 			$nb_deja_rec = $row[0];
-			if ($nb_deja_rec == 0){print (" ".$nb_deja_rec . " enquête déjà recomposée. </div>");}
-			else {print (" ".$nb_deja_rec . " enquêtes déjà recomposées. </div>");}
+			if ($nb_deja_rec == 0){print (" ".$nb_deja_rec . " enqu&ecirc;te d&eacute;j&agrave; recompos&eacute;e. </div>");}
+			else {print (" ".$nb_deja_rec . " enqu&ecirc;tes d&eacute;j&agrave; recompos&eacute;es. </div>");}
 			pg_close();
 			?>
 			
@@ -116,23 +98,25 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 			<br/>
 			<form name="form" >
 			  <p>
-				Vous pouvez entrer une adresse mail.<br>
+				Vous pouvez entrer une adresse mail.<br/>
 				<input type="text" name="adresse" id="adresse">
 				<br/>
 				Si vous rentrez une adresse valide, 
-				il vous sera envoyé un mail de confirmation à la fin de la recomposition des données.<br/><br/>
+				il vous sera envoy&eacute; un mail de confirmation &agrave; la fin de la recomposition des donn&eacute;es.<br/>
+				<br/>
 				
-				<input type="hidden" name="nb_enr" value="<? print($nb_enr);?>" >
-				<input type="hidden" name="base" value="<? print($bdd);?>" >
+				<input type="hidden" name="nb_enr" value="<? print($nb_enr);?>" />
+				<input type="hidden" name="base" value="<? print($bdd);?>" />
+				<input type="hidden" name="aff" value="1" >
 				<!--<input type="submit" name="Recomposition" value="Recomposer les données" onClick="pop_it3(form);">-->
-			 	<input type="button" name="Recomposition" value="Recomposer les données" onClick="runRecomp('<? print($nb_enr);?>','<? print($bdd);?>');">
+			 	<input type="button" name="Recomposition" value="Recomposer les donnees" onClick="runRecomp('<? print($nb_enr);?>','<? print($bdd);?>');">
 			  </p>
 			</form>
 			</div>
 			
 			<div id="formEfface">
 			<form >
-				<input type="button" name="Effacement" value="Effacer les données recomposées" onClick="runClear('<? print($bdd);?>')"/>
+				<input type="button" name="Effacement" value="Effacer les donnees recomposees" onClick="runClear('<? print($bdd);?>')"/>
 			</form>
 			</div>
 			<div id="formEffaceResult"> <? // Pour y mettre le resultat de l'effacement des données ! ?>

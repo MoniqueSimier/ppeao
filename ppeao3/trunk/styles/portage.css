@@ -5,7 +5,7 @@
 	padding-left:2px;
 	width: 15%;
 	font-size:65%;
-	min-height:500px;
+	min-height:600px;
 	border-right:solid 1px #999999;
 	text-align:left;
 	vertical-align:text-top;
@@ -21,7 +21,7 @@
 	padding-left:2px;
 	text-align:left;
 	vertical-align:text-top;
-	min-height:500px;
+	min-height:600px;
 	background-color:#FFFFFF;
 }
 
@@ -62,6 +62,10 @@ font-size:80%;
 
 }
 /* Processus de portage automatique */
+#titleProcess{
+ font-size:100%;
+ font-weight:bold;
+}
 #sauvegarde{
 	height:30px;
 	background-color:#F6D967;
@@ -108,7 +112,7 @@ font-size:80%;
 	font-size:80%;
 }
 #processAuto{
-	height:30px;
+	height:100px;
 	background-color:#FFF;
 	width:100%;
 	
@@ -141,8 +145,10 @@ font-size:80%;
 }
 #portageOK{
 	height:30px;
-	background-color:#FFF;
+	background-color: #FF9900;
 	width:100%;
+	border-top:solid 2px #FFFFFF;
+	border-bottom:solid 2px #FFFFFF;
 }
 #portageOK_img{
 	display:block;
@@ -153,6 +159,8 @@ font-size:80%;
 	display:block;
 	float:left;
 	font-size:80%;
+	font-weight:bold;
+	color:#FFFFFF;
 }
 #purge{
 	height:30px;
