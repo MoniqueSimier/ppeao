@@ -19,10 +19,10 @@ if(! ini_set("max_execution_time", "120")) {echo "échec";}
 
 <?
 
-$user="devppeao";			// Le nom d'utilisateur 
-$passwd="2devppe!!";			// Le mot de passe 
+//$user="devppeao";			// Le nom d'utilisateur 
+//$passwd="2devppe!!";			// Le mot de passe 
 //$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-$host= "localhost";
+//$host= "localhost";
 //$bdd = "bourlaye_rec";
 
 
@@ -1894,8 +1894,10 @@ while (list($key_st, $val_st) = each($ST))
 		else $taille_stand=((substr($row[1],0,2))*10)+5;//ex 123->125
 		
 		//on somme les effectifs de même tailles.
-		if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[0];
-		else $tab_taille[$row[3]][$taille_stand][0]+=$row[0];//nb
+		//if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[0];
+		//else $tab_taille[$row[3]][$taille_stand][0]+=$row[0];//nb
+		if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[0];if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=1;
+		else $tab_taille[$row[3]][$taille_stand][0]+=1;//nb
 		$tab_taille[$row[3]][$taille_stand][1]=$row[2];//cap_sp
 		$tab_taille[$row[3]][$taille_stand][2]=$row[4];//art_stat_sp_id
 		}
@@ -1994,8 +1996,10 @@ while (list($key_st, $val_st) = each($ST))
 		$tab_taille_gt[$row[6]][$row[3]][$row[1]][2]=$row[4];//art_stat_gt_sp_id
 		*/
 		//on somme les effectifs de même tailles.
-		if(!isset($tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]))$tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]=$row[0];
-		else $tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]+=$row[0];//nb
+		//if(!isset($tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]))$tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]=$row[0];
+		//else $tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]+=$row[0];//nb
+		if(!isset($tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]))$tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]=1;
+		else $tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]+=1;//nb
 		$tab_taille_gt[$row[6]][$row[3]][$taille_stand][1]=$row[2];//cap_gt_sp
 		$tab_taille_gt[$row[6]][$row[3]][$taille_stand][2]=$row[4];//art_stat_gt_sp_id
 		}
