@@ -20,7 +20,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 	// les balises meta communes  toutes les pages
 	include $_SERVER["DOCUMENT_ROOT"].'/meta.inc';
 	?>
-	<title>PPEAO Manipulation de données</title>
+	<title>PPEAO Manipulation de donn&eacute;es</title>
 	<link href="/styles/mainstyles.css" title="mainstyles" rel="stylesheet" type="text/css" />
 
 </head> 
@@ -35,11 +35,11 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc'
 		<? include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 		</div>
 		<div id="subContent">
-		<h1>Base de Données PPEAO</h1>
+		<h1>Base de donn&eacute;es PPEAO</h1>
 		<br/>
-		<p>Cette section vous permet de lancer les traitements spécifiques sur les bases de données importées.</p>
+		<p>Cette section vous permet de lancer les traitements sp&eacute;cifiques sur les bases de donn&eacute;es import&eacute;es.</p>
 		<br/>
-		<p>Le traitement peut être soit manuel (traitement pas à pas sans sauvegarde) soit automatique (inclus les sauvegardes).</p>
+		<p>Le traitement peut &ecirc;tre soit manuel (traitement pas &agrave; pas sans sauvegarde) soit automatique (inclus les sauvegardes).</p>
 		<ul class="list">
 			<li class="listitem"><a href="/portage_auto.php" ><b>Portage automatique</b></a></li>
 			<li class="listitem"><a href="/portage_manuel.php" ><b>Portage manuel</b></a>
