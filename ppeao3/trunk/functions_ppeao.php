@@ -38,7 +38,7 @@ $scriptFile=$_SERVER['PHP_SELF'];
 				FROM admin_log
 				WHERE log_message_type='$messageType'
 					";
-	$typesResult = pg_query($connectPPEAO,$typesSql) or die('erreur dans la requete : ' . pg_last_error());
+	$typesResult = pg_query($connectPPEAO,$typesSql) or die('logWriteTo/typesResult dit - erreur dans la requete : ' . pg_last_error());
 	$typesCount=pg_fetch_all($typesResult);
 	if (count($typesCount)==0) {$messageType="notice";}
 
@@ -49,7 +49,7 @@ $actionUndo=addslashes($actionUndo);
 
 $logWriteSql="	INSERT INTO admin_log (log_time,log_module_id,log_script_file,log_message,log_user_id,log_action_do,log_action_undo,log_message_type)
 				VALUES ('$timestamp',$moduleId,'$scriptFile','$message',$userId,'$actionDo','$actionUndo', '$messageType')";
-$logWriteResult = pg_query($connectPPEAO,$logWriteSql) or die('erreur dans la requete : ' . pg_last_error());
+$logWriteResult = pg_query($connectPPEAO,$logWriteSql) or die("logWriteTo/logWriteResult dit - erreur dans la requete : $logWriteSql " . pg_last_error());
 }
 
 
@@ -72,9 +72,9 @@ function logRead($date,$userId,$moduleId,$messageBit,$rowsNumber,$messageType)
 
 {
 global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases : BD_PECHE et BD_PPEAO)
-	$limit="";
-	// on prepare un tableau contenant les elements a utiliser comme filtre
-	$filter=array();
+
+// on prepare un tableau contenant les elements a utiliser comme filtre
+$filter=array();
 	// on verifie que $date contient bien une date
 	$dateExploded=explode("-",$date);
 	//debug print_r($dateExploded);
@@ -88,7 +88,7 @@ global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases :
 						FROM admin_users
 						WHERE user_id=$userId
 						";
-		$userCheckResult = pg_query($connectPPEAO,$userCheckSql) or die('erreur dans la requete : ' . pg_last_error());
+		$userCheckResult = pg_query($connectPPEAO,$userCheckSql) or die('logRead dit - erreur dans la requete : ' . pg_last_error());
 		$userCount=pg_fetch_array($userCheckResult);
 		if ($userCount[0]!=0) {$filter["userId"]=" l.user_id=".$userId."";}
 	} // fin if (is_int($userId))
@@ -99,7 +99,7 @@ global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases :
 							FROM admin_log_modules
 							WHERE module_id=$moduleId
 						";
-		$moduleCheckResult = pg_query($connectPPEAO,$moduleCheckSql) or die('erreur dans la requete : ' . pg_last_error());
+		$moduleCheckResult = pg_query($connectPPEAO,$moduleCheckSql) or die('logRead erreur dans la requete : ' . pg_last_error());
 		$moduleCount=pg_fetch_array($moduleCheckResult);
 		if ($moduleCount[0]!=0) {$filter["moduleId"]=" l.module_id=".$moduleId." ";}
 	} // fin if (is_int($moduleId))
@@ -114,7 +114,7 @@ global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases :
 					FROM admin_log_message_types
 					WHERE message_type=$messageType
 					";
-			$typesResult = pg_query($connectPPEAO,$typesSql) or die('erreur dans la requete : ' . pg_last_error());
+			$typesResult = pg_query($connectPPEAO,$typesSql) or die('logRead dit - erreur dans la requete : ' . pg_last_error());
 			$typesCount=pg_fetch_all($typesResult);
 			if (count($typesCount)==0) {$filter["messageType"]=" l.log_message_type LIKE '".$messageType."' ";}
 		}
@@ -125,7 +125,7 @@ global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases :
 	$filterSql=" AND (".arrayToList($filter," AND ","").")";}
 		else {$filterSql="";}
 	// si $rowsNumber n'est pas nul, on limite le nombre de lignes retournées
-	if (!is_null($rowsNumber) && $rowsNumber!=0 ) {$limit.=" LIMIT ".$rowsNumber." ";} 
+	if (!is_null($rowsNumber) && $rowsNumber!=0 ) {$limit.=" LIMIT ".$rowsNumber." ";}
 
 
 // on fait la requete pour recuperer les entrees du journal correspondantes
@@ -134,7 +134,7 @@ $logReadSql="	SELECT l.log_time, l.log_module_id, l.log_script_file, l.log_messa
 			WHERE (l.log_module_id=lm.module_id) AND (l.log_user_id=u.user_id) $filterSql
 			ORDER BY l.log_time	DESC				
 			$limit	";
-$logReadResult = pg_query($connectPPEAO,$logReadSql) or die('erreur dans la requete : ' . pg_last_error());
+$logReadResult = pg_query($connectPPEAO,$logReadSql) or die('logRead dit - erreur dans la requete : ' . pg_last_error());
 $logArray=pg_fetch_all($logReadResult);
 
 // debug echo($logReadSql);
@@ -151,7 +151,8 @@ function logTable($logArray,$format)
 // $format : "html" pour l'affichage et "csv" pour l'exportation
 // $logTable : la table HTML générée par la fonction, prête à être affichée
 {
-$logTable = "";
+
+$logTable="";
 global $debug; // si $debug=1, alors on affiche des infos de débug dans le log (comme le script php)
 
 if (!empty($logArray)) { // si le log n'est pas vide
@@ -185,7 +186,7 @@ switch ($format) {
 	foreach ($logArray as $logRow) {
 		if ( $j&1 ) {$rowStyle='logTableRowOdd';} else {$rowStyle='logTableRowEven';}
 		$logTable.='<tr class="'.$rowStyle.'">';
-		$logTable.='<td class="logTableTime">'.$logRow["log_time"].'</td><td class="logTableUser">'.htmlentities($logRow["user_name"]).'</td><td class="logTableModule">'.htmlentities($logRow["module_name"]).'</td><td class="logTableMessage">'.htmlentities($logRow["log_message"]).'</td><td class="logTableDo">'.htmlentities($logRow["log_action_do"]).'</td><td class="logTableUndo">'.htmlentities($logRow["log_action_undo"]).'</td>';
+		$logTable.='<td class="logTableTime">'.$logRow["log_time"].'</td><td class="logTableUser">'.$logRow["user_name"].'</td><td class="logTableModule">'.$logRow["module_name"].'</td><td class="logTableMessage">'.$logRow["log_message"].'</td><td class="logTableDo">'.$logRow["log_action_do"].'</td><td class="logTableUndo">'.$logRow["log_action_undo"].'</td>';
 		if ($debug) {$logTable.='<td class="logTableScript">'.$logRow["log_script_file"].'</td><td>'.$logRow["log_message_type"].'</td>';}
 		$logTable.='</tr>';
 		$j++;
@@ -282,7 +283,7 @@ function logArchive($archivePath)
 	$theArchivePath=$_SERVER["DOCUMENT_ROOT"].$archivePath.$theArchiveName.".csv.gz";
 
 	// on cree le fichier .gz
-	$theFile=gzopen($theArchivePath,"w");
+	if ($theFile=@gzopen($theArchivePath,"w")) {
 
 	// on genere le contenu du fichier
 	$theContent=logTable(logRead("","","","","",""),'csv');
@@ -293,9 +294,9 @@ function logArchive($archivePath)
 	gzclose($theFile);
 
 	// le chemin pour telecharger le fichier archive cree
-	$downloadPath=$archivePath.$theArchiveName.".csv.gz";
+	$downloadPath=$archivePath.$theArchiveName.".csv.gz";} else {$success=0;$error="gzopen";}
 	
-	if ($success==1) {logWriteTo(4,"notice","journal archivé","","",0);} else {logWriteTo(4,"error","impossible d\'archiver le journal","","",0);
+	if ($success==1) {logWriteTo(4,"notice","journal archiv&eacute;","","",0);} else {logWriteTo(4,"error","impossible d'archiver le journal - $error","","",0);
 	;}
 	
 $return=array("success"=>$success,"error"=>$error,"downloadPath"=>$downloadPath);
@@ -314,10 +315,14 @@ function logDelete($archivePath)
 	global $logArchivePath; 
 	if (empty($archivePath)) {$archivePath=$logArchivePath;}
 	
+	
+	
 $archived=logArchive($archivePath);
+
 
 $success=$archived["success"];
 $error=$archived["error"];
+
 
 if ($success==1) { // si l'archivage s'est passe correctement, on efface la table
 	// on efface la table de log puisque l'archivage s'est bien passe
@@ -330,11 +335,16 @@ if ($success==1) { // si tout a bien fonctionne, on indique a l'utilisateur l'UR
 $archiveUrl=$archived["downloadPath"];	
 	
 echo('journal effac&eacute; - <a href="'.$archiveUrl.'" alt="t&eacute;l&eacute;charger la version archiv&eacute;e" title="t&eacute;l&eacute;charger la version archiv&eacute;e">t&eacute;l&eacute;charger la version archiv&eacute;e</a>');
-logWriteTo(4,"notice","journal effacé","","",0);
+logWriteTo(4,"notice","journal effac&eacute;","","",0);
 }
 else {
-	if ($error=='gzwrite') {$errorMessage='impossible d\'écrire l\'archive sur le serveur, effacement annul&eacute;.';}
-	if ($error=='sql') {$errorMessage='impossible de vider la table de journal, effacement annul&eacute;.';}
+	
+	switch ($error) {
+	case 'gzwrite' : $errorMessage="impossible d'c&eacute;crire l'archive sur le serveur, effacement annulc&eacute;.";
+	case 'sql' : $errorMessage="impossible de vider la table de journal, effacement annulc&eacute;.";
+	case 'gzopen' : $errorMessage="impossible de crc&eacute;er le fichier archive sur le serveur, effacement annulc&eacute;.";
+	
+	}
 
 logWriteTo(4,"error",$errorMessage,"","",0);
 }
