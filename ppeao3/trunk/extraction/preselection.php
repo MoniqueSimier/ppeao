@@ -8,7 +8,10 @@
 
 
 <?php
-include_once("../connexion.php");
+include_once("../connect.inc");
+$connection = pg_connect ("host=".$host." dbname=".$bdd_default." user=".$user." password=".$passwd);
+if (!$connection) { echo "Pas de connection"; exit;}
+
 $login = $_POST['login'];
 $passe = $_POST['passe'];
 $type = $_POST['type'];
@@ -62,7 +65,7 @@ if (!$connection) { echo "Pas de connection"; exit;}
 if($type=="")
 	{
 	//test si authentification s'est bien déroulée
-	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd_default." user=".$user." password=".$passwd);
 	//if (!$connection) { echo "Pas de connection"; exit;}
 	
 	
@@ -75,7 +78,7 @@ if($type=="")
 		$password=$row[1];
 		//print("<br>".$row[0].", ".$row[1]);
 		}
-	
+	//pg_close();
 	if($password==$passe)print("");
 	else print("<div align=\"center\"><br>Attention, vous n'avez pas été identifié.</div>");
 	
@@ -165,8 +168,6 @@ exit;
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-//if (!$connection) { echo "Pas de connection"; exit;}
 
 
 //$query = "select distinct RP.nom from ref_pays as RP";
@@ -318,6 +319,7 @@ else
 		print($ligne_a_afficher);
 	
 	
+		
 		$result2 = pg_query($connection, $query2);
 		
 		

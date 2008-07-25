@@ -2,7 +2,12 @@
 // Mis à jour Yann LAURENT, 01-07-2008
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 
-$bdd = $_GET['base'];
+$bdd = $_GET['base'];$
+if ($bdd==""){
+			$bdd=$bdd_default;
+		}
+
+
 print("<br/>travail sur la base : ".$bdd);
 
 //////////////////////////////////////////////////////////////////////////////////////////////

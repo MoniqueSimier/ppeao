@@ -19,6 +19,10 @@ $nb_enr = $_GET['nb_enr'];
 $bdd = $_GET['base'];
 $to = $_GET['adresse'];
 $messageProcess .= "<br/>travail sur la base : ".$bdd ;
+if($bdd==""){
+	$bdd=$bdd_default;
+}
+
 //print("<br/>travail sur la base : ".$bdd);
 
 

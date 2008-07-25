@@ -4,6 +4,10 @@
 // Mis à jour Yann LAURENT, 01-07-2008
 
 $bdd = $_GET['base'];
+if ($bdd==""){
+			$bdd=$bdd_default;
+		}
+
 $to = $_GET['adresse'];
 
 print("travail sur la base : ".$bdd);
