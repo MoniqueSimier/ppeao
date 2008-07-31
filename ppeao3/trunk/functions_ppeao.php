@@ -455,9 +455,9 @@ if ($_SESSION['s_ppeao_login_status']=='good') {
 	
 	
 	// on teste si la zone de la page appelée fait partie de la liste des zones autorisées pour l'utilisateur
-	// si la zone est 0 (publique), on donne l'accès
+	// si la zone est 0 (publique) ou si l'utilisateur a accès à la zone 9999 ("toutes zones"), on donne l'accès
 	// si oui, alors on exécute le code de la page
-	if (in_array($zone_id,$lesZones) || is_null($zone_id)) {$access=true;}
+	if (in_array($zone_id,$lesZones) || is_null($zone_id) || in_array(9999,$lesZones)) {$access=true;}
 }// end if ($_SESSION['s_ppeao_login_status']=='good')
 // si la zone est "vide" on considère que c'est une zone publique
 if ($zone_id=='') {$access=true;}
@@ -487,7 +487,7 @@ $zoneName=$zoneArray['zone_name'];
 
 // on teste le statut de connexion
 switch ($_SESSION['s_ppeao_login_status']) {
-	case 'good' : $message='<div id="access_denied">Vous n\'avez pas les droits d\'acc&egrave;s à la section '.$zoneName.'. <br />Contactez un administrateur si vous souhaitez y acc&eacute;der.</div>';
+	case 'good' : $message='<div id="access_denied">Vous n\'avez pas les droits d\'acc&egrave;s à la section "'.$zoneName.'". <br />Contactez un administrateur si vous souhaitez y acc&eacute;der.</div>';
 	break;
 	default : $message='<div id="access_denied">Vous devez vous connecter pour accéder à la section "'.$zoneName.'".</div>';
 	break;

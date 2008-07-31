@@ -4,7 +4,7 @@
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page
 $section="journal";
-$zone=1; // zone administration (voir table admin_zones)
+$zone=4; // zone journal (voir table admin_zones)
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
