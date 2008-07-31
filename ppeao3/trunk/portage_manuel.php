@@ -1,33 +1,29 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <?
+// Mis ˆ jour par Olivier ROUX, 29-07-2008
+// code commun ˆ toutes les pages (demarrage de session, doctype etc.)
+include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page
 $section="portage";
-// definit la valeur de variables utilisees pour mettre la section courante en surbrillance dans le menu
-include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
-?>
-
-<?
-
-include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
-include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
+$zone=3; // zone portage (voir table admin_zones)
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
-	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
 	<?
-	// les balises meta communes  toutes les pages
-	include $_SERVER["DOCUMENT_ROOT"].'/meta.inc';
+		// les balises head communes  toutes les pages
+		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
 	<title>PPEAO Manipulation de donn&eacute;es</title>
-	<link href="/styles/mainstyles.css" title="mainstyles" rel="stylesheet" type="text/css" />
+	
 
 </head> 
  <body>
- <?
+<?
 // le menu horizontal
-include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc'
+include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
+
+// on teste ˆ quelle zone l'utilisateur a accs
+if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 ?>
 <div id="main_container" class="home">
 		<div id="BDDetail">
@@ -43,10 +39,16 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc'
 		<p>Cette section reprend les traitements manuel d&eacute;velopp&eacute;s dans le lot 2 PPEAO r&eacute;alis&eacute;s en 2007.</p>
 		</div>	
 	
-</div>
+</div>		<!-- end div id="main_container"-->
+
 
 <?
-include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
+// note : on termine la boucle testant si l'utilisateur a accs ˆ la page demandŽe
+
+;} // end if (userHasAccess($_SESSION['user_id'],$zone))
+
+// si l'utilisateur n'a pas accs ou n'est pas connectŽ, on affiche un message l'invitant ˆ contacter un administrateur pour obtenir l'accs
+else {userAccessDenied($zone);}
 
 ?>
 
