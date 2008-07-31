@@ -489,7 +489,7 @@ $zoneName=$zoneArray['zone_name'];
 switch ($_SESSION['s_ppeao_login_status']) {
 	case 'good' : $message='<div id="access_denied">Vous n\'avez pas les droits d\'acc&egrave;s à la section "'.$zoneName.'". <br />Contactez un administrateur si vous souhaitez y acc&eacute;der.</div>';
 	break;
-	default : $message='<div id="access_denied">Vous devez vous connecter pour accéder à la section "'.$zoneName.'".</div>';
+	default : $message='<div id="access_denied">Vous devez vous connecter pour acc&eacute;der &agrave; la section "'.$zoneName.'".</div>';
 	break;
 } // end switch
 
