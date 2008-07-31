@@ -16,7 +16,7 @@ function runStat(nbEnreg,DBname)
 		exit;
 	}
 	
-	document.getElementById("formStatResult").innerHTML="<br/><img src='/assets/ajax-loader-comp.gif' alt=''/> Traitement en cours";
+	document.getElementById("formStatResult").innerHTML="<br/><img src='/assets/ajax-loader.gif' alt=''/> Traitement en cours";
 	xmlHttp=GetXmlHttpObject();
 	if (xmlHttp==null)
 	  {

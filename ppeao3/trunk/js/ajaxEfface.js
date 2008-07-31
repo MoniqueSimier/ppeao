@@ -15,7 +15,7 @@ function runRecomp(nbEnreg,DBname)
 		exit;
 	}
 	
-	document.getElementById("formRecomp").innerHTML="<br/><img src='/assets/ajax-loader-comp.gif' alt=''/>";
+	document.getElementById("formRecomp").innerHTML="<br/><img src='/assets/ajax-loader.gif' alt=''/>";
 	xmlHttp=GetXmlHttpObject();
 	if (xmlHttp==null)
 	  {
@@ -38,7 +38,7 @@ function runClear(DBname)
 		exit;
 	}
 	
-	document.getElementById("formEfface").innerHTML="<br/><img src='/assets/ajax-loader-comp.gif' alt=''/>";
+	document.getElementById("formEfface").innerHTML="<br/><img src='/assets/ajax-loader.gif' alt=''/>";
 	xmlHttp=GetXmlHttpObject();
 	if (xmlHttp==null)
 	  {

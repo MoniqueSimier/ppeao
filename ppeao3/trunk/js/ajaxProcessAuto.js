@@ -19,9 +19,9 @@ function runProcess()
 	nbEnreg = document.getElementById("NBEnr").value;
 
 	document.getElementById('titleProcess').innerHTML="Portage automatique en cours";
-	document.getElementById("sauvegarde_img").innerHTML="<img src='/assets/ajax-loader-comp.gif' alt=''/>";
+	document.getElementById("sauvegarde_img").innerHTML="<img src='/assets/ajax-loader.gif' alt=''/>";
 	document.getElementById("sauvegarde_txt").innerHTML="Sauvegarde en cours";
-	document.getElementById('portageOK_img').innerHTML="<img src='/assets/ajax-loader-comp.gif' alt=''/>";
+	document.getElementById('portageOK_img').innerHTML="<img src='/assets/ajax-loader.gif' alt=''/>";
 	document.getElementById('portageOK_txt').innerHTML="Status du portage = en cours de traitement";
 	xmlHttp=GetXmlHttpObject();
 	if (xmlHttp==null)
@@ -42,7 +42,7 @@ function runProcessNext(phpProcess,locFenID,locURL,locTexte)
 	fenID = locFenID;
 	fenIDImg = locFenID+"_img";
 	fenIDText = locFenID+"_txt";
-	document.getElementById(fenIDImg).innerHTML="<img src='/assets/ajax-loader-comp.gif' alt=''/>";
+	document.getElementById(fenIDImg).innerHTML="<img src='/assets/ajax-loader.gif' alt=''/>";
 	document.getElementById(fenIDText).innerHTML=locTexte;
 	xmlHttp=GetXmlHttpObject();
 	if (xmlHttp==null)
