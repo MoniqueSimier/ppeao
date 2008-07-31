@@ -1,3 +1,8 @@
+/* ******************************** */
+/* styles pour le module de portage*/
+@import url(portage.css);
+
+
 /* *********************** */
 /* common styles */
 
@@ -129,6 +134,20 @@ vertical-align: baseline;
 }
 
 
+/* ************************ */
+/* the login forms         */
+
+
+#smalloginform {
+	font-size: 10px;
+}
+
+#smalloginform dd {
+	display:inline;
+}
+#smalloginform dt {
+	display:inline;
+}
 
 
 /* ************************ */

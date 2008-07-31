@@ -28,7 +28,7 @@ if (is_null($moduleId)) {$moduleId=0;} // si le moduleId n'a pas été défini, on 
 $timestamp=date('Y-m-d G:i:s'); // on assigne un UNIX timestamp
 
 // on recupere le userId de la session, sinon on lui assigne 0 (zero)
-if (isset($_SESSION['s_ppeao_userId'])) {$userId=$_SESSION['s_ppeao_userId'];} else {$userId=0;}
+if (isset($_SESSION['s_ppeao_user_id'])) {$userId=$_SESSION['s_ppeao_user_id'];} else {$userId=0;}
 
 // on recupere le chemin du script actif
 $scriptFile=$_SERVER['PHP_SELF'];
@@ -129,7 +129,7 @@ $filter=array();
 
 
 // on fait la requete pour recuperer les entrees du journal correspondantes
-$logReadSql="	SELECT l.log_time, l.log_module_id, l.log_script_file, l.log_message, l.log_user_id, u.user_name, l.log_module_id, lm.module_name, l.log_action_do, l.log_action_undo, l.log_message_type
+$logReadSql="	SELECT l.log_time, l.log_module_id, l.log_script_file, l.log_message, l.log_user_id, u.user_name, l.log_module_id, lm.module_name, l.log_action_do, l.log_action_undo, l.log_message_type, u.user_email
  				FROM admin_log l, admin_users u, admin_log_modules lm
 			WHERE (l.log_module_id=lm.module_id) AND (l.log_user_id=u.user_id) $filterSql
 			ORDER BY l.log_time	DESC				
@@ -186,7 +186,12 @@ switch ($format) {
 	foreach ($logArray as $logRow) {
 		if ( $j&1 ) {$rowStyle='logTableRowOdd';} else {$rowStyle='logTableRowEven';}
 		$logTable.='<tr class="'.$rowStyle.'">';
-		$logTable.='<td class="logTableTime">'.$logRow["log_time"].'</td><td class="logTableUser">'.$logRow["user_name"].'</td><td class="logTableModule">'.$logRow["module_name"].'</td><td class="logTableMessage">'.$logRow["log_message"].'</td><td class="logTableDo">'.$logRow["log_action_do"].'</td><td class="logTableUndo">'.$logRow["log_action_undo"].'</td>';
+		
+		// si on a un email pour l'utilisateur, on transforme son nom en lien mailto:
+		// on inscrit la connexion dans le journal
+		if (!empty($logRow['user_email'])) {$theName='<a href="mailto:'.$logRow['user_email'].'">'.$logRow["user_name"].'</a>';} else {$theName=$logRow["user_name"];}
+		
+		$logTable.='<td class="logTableTime">'.$logRow["log_time"].'</td><td class="logTableUser">'.$theName.'</td><td class="logTableModule">'.$logRow["module_name"].'</td><td class="logTableMessage">'.$logRow["log_message"].'</td><td class="logTableDo">'.$logRow["log_action_do"].'</td><td class="logTableUndo">'.$logRow["log_action_undo"].'</td>';
 		if ($debug) {$logTable.='<td class="logTableScript">'.$logRow["log_script_file"].'</td><td>'.$logRow["log_message_type"].'</td>';}
 		$logTable.='</tr>';
 		$j++;
@@ -254,11 +259,14 @@ function logDisplayShort($date,$userId,$moduleId,$messageBit,$rowsNumber,$messag
 
 // on recupere les entrees de journal souhaitees
 $logArray=logRead($date,$userId,$moduleId,$messageBit,$rowsNumber,$messageType);
-
+// on stocke le tableau dans une variable
 $logBlock='<div id="logTableDiv">';
+
+// le titre
+echo('<h2>Activit&eacute; r&eacute;cente</h2>');
+	
 $logBlock.=logTable($logArray,'');
 
-// A FAIRE : insérer un lien permettant d'accéder à la page de consultation du journal, utilisant logDisplayFull()
 $logBlock.='</div>'; // end div id="logTableDiv"
 $logBlock.='<div id="logTableDivLink"><a href="/journal.php" alt="consulter le journal" title="consulter le journal">consulter le journal</div>';
 
@@ -352,5 +360,141 @@ logWriteTo(4,"error",$errorMessage,"","",0);
 return $clearMessage;
 }
 
+//***************************************************************************************************
+//retourne la liste des groupes auxquels l'utilisateur $user_id appartient
+function userGetGroups($user_id) {
+// cette fonction collecte liste des groupes auxquels l'utilisateur $user_id appartient
+// $groupsArray : tableau contenant la liste des groupes auxquels l'utilisateur $user_id appartient
+
+global $connectPPEAO;
+
+
+$groupsSql='	SELECT DISTINCT group_id
+				FROM admin_j_user_group jug
+				WHERE jug.user_id='.$user_id.'
+			';
+$groupsResult = pg_query($connectPPEAO,$groupsSql) or die('erreur dans la requete : '.$groupsSql. pg_last_error());
+$groupsArray=pg_fetch_all($groupsResult);
+
+
+foreach($groupsArray as $group)
+	{$groupsArray2[]=$group['group_id'];}
+
+return $groupsArray2;
+
+}
+
+
+//***************************************************************************************************
+//retourne la liste des zones auxquelles l'utilisateur $user_id a accès
+function userGetAuthorizedZones($user_id) {
+// cette fonction collecte les zones auxquelles l'utilisateur et le(s) groupe(s) au(x)quel(s) il appartient ont accès
+// $zonesArray : le tableau contenant la liste des zones auxquelles l'utilisateur a accès
+
+global $connectPPEAO;
+
+// si aucun utilisateur n'est indiqué, on considère que on a affaire à un visiteur
+if (empty($user_id)) {$user_id=0;}
+
+// on collecte la liste des zones auxquelles l'utilisateur a accès
+$zonesArray1=array();
+$zonesSql1='SELECT DISTINCT zone_id
+			FROM admin_j_user_zone juz
+			WHERE juz.user_id='.$user_id.'
+			';
+$zonesResult1 = pg_query($connectPPEAO,$zonesSql1) or die('erreur dans la requete : '.$zonesSql1. pg_last_error());
+while($data1=pg_fetch_array($zonesResult1)) {$zonesArray1[]=$data1['zone_id'];}
+// si aucun résultat, on considère que l'utilisateur n'a accès qu'aux zones publiques
+if (empty($zonesArray1)) {$zonesArray1=array();}
+
+
+//debug echo('$zonesArray1=');echo('<pre>');print_r($zonesArray1);echo('</pre>');
+
+// on collecte la liste des groupes auxquels appartient l'utilisateur
+$groupsArray=userGetGroups($user_id);
+
+//debug print_r($groupsArray);
+
+// on collecte la liste des zones auxquelles les groupes de l'utilisateur ont accès
+$zonesArray2=array();
+$zonesSql2='SELECT DISTINCT zone_id
+			FROM admin_j_group_zone jgz
+			WHERE jgz.group_id IN ('.implode(",",$groupsArray).')
+			';
+$zonesResult2 = pg_query($connectPPEAO,$zonesSql2) or die('erreur dans la requete : '.$zonesSql2. pg_last_error());
+while($data2=pg_fetch_array($zonesResult2)) {$zonesArray2[]=$data2['zone_id'];}
+// si aucun résultat, on considère que l'utilisateur n'a accès qu'aux zones publiques
+if (is_null($zonesArray2)) {$zonesArray2=array();}
+
+//debug echo('$zonesArray2=');echo('<pre>');print_r($zonesArray2);echo('</pre>');
+
+
+// on fusionne les deux listes en éliminant les valeurs dupliquées
+$zonesArray=array_unique(array_merge($zonesArray1,$zonesArray2));
+
+//debug echo('$zonesArray=');echo('<pre>');print_r($zonesArray);echo('</pre>');
+
+return $zonesArray;
+
+}
+
+//***************************************************************************************************
+//permet de vérifier si un utilisateur a accès à une zone
+function userHasAccess($user_id,$zone_id) {
+// $user_id : id de l'utilisateur
+// $zone_id : l'id de la zone à tester
+// on teste à quelle zone l'utilisateur a accès
+//debug echo('zone_id='.$zone_id);
+$access=false;
+if ($_SESSION['s_ppeao_login_status']=='good') {
+	// on récupère la liste des zones auxquelles l'utilisateur a accès
+	$lesZones=userGetAuthorizedZones($user_id);
+	
+	
+	//debug 	echo('$lesZones=');	echo('<pre>');	print_r($lesZones);	echo('</pre>');
+	
+	
+	// on teste si la zone de la page appelée fait partie de la liste des zones autorisées pour l'utilisateur
+	// si la zone est 0 (publique), on donne l'accès
+	// si oui, alors on exécute le code de la page
+	if (in_array($zone_id,$lesZones) || is_null($zone_id)) {$access=true;}
+}// end if ($_SESSION['s_ppeao_login_status']=='good')
+// si la zone est "vide" on considère que c'est une zone publique
+if ($zone_id=='') {$access=true;}
+
+return $access;
+}
+
+//***************************************************************************************************
+//affiche un message adéquat lorsque un utilisateur n'a pas accès à une zone
+function userAccessDenied($zone_id) {
+// $zone_id : id de la zone concernée
+
+global $connectPPEAO;
+
+// si on n'a pas spécifié de zone, on considère que c'est la zone publique
+if ($zone_id=='') {$zone_id=0;}
+
+// on récupère le nom de la zone concernée
+$zoneSql='SELECT DISTINCT zone_name
+			FROM admin_zones
+			WHERE zone_id='.$zone_id.'
+			';
+$zoneResult = pg_query($connectPPEAO,$zoneSql) or die('erreur dans la requete : '.$zonesSql. pg_last_error());
+$zoneArray=pg_fetch_array($zoneResult);
+
+$zoneName=$zoneArray['zone_name'];
+
+// on teste le statut de connexion
+switch ($_SESSION['s_ppeao_login_status']) {
+	case 'good' : $message='<div id="access_denied">Vous n\'avez pas les droits d\'acc&egrave;s à la section '.$zoneName.'. <br />Contactez un administrateur si vous souhaitez y acc&eacute;der.</div>';
+	break;
+	default : $message='<div id="access_denied">Vous devez vous connecter pour accéder à la section "'.$zoneName.'".</div>';
+	break;
+} // end switch
+
+echo($message);
+
+}
 
 ?>
