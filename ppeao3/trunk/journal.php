@@ -11,15 +11,12 @@ $zone=4; // zone journal (voir table admin_zones)
 <head>
 
 	
-	<?
-	// les balises meta communes  toutes les pages
-	include $_SERVER["DOCUMENT_ROOT"].'/meta.inc';
-	?>
+<?
+	// les balises head communes  toutes les pages
+	include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
+?>
 	<title>journal des activit&eacute;s</title>
-	<link href="/styles/mainstyles.css" title="mainstyles" rel="stylesheet" type="text/css" />
-	<script src="/js/basic.js" type="text/javascript" charset="utf-8"></script>
 
-	
 </head>
 
 <body>
@@ -29,13 +26,7 @@ $zone=4; // zone journal (voir table admin_zones)
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 // on teste à quelle zone l'utilisateur a accès
-
-
-//debug echo('user='.$_SESSION['s_ppeao_user_id'].'-la zone'.$zone.'<br />');
-
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
-
-
 ?>
 
 <div id="main_container" class="home">
@@ -43,7 +34,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 <h1>journal des activit&eacute;s</h1>
 
 <?
-logWriteTo(4,'notice','acc&egrave;s au journal','-','-',0);
+logWriteTo(4,'notice','acc&egrave;s au journal','','',0);
 echo(logDisplayFull('','','',"","",""));
 
 ?>

@@ -1,26 +1,17 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <?
-// Mis à jour Yann LAURENT, 07-07-2008
+// Mis à jour par Olivier ROUX, 29-07-2008
+// code commun à toutes les pages (demarrage de session, doctype etc.)
+include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page
 $section="portage";
-// definit la valeur de variables utilisees pour mettre la section courante en surbrillance dans le menu
-include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
-?>
-
-<?
-
-include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
-include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
-include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
+$zone=3; // zone portage (voir table admin_zones)
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
-	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
 	<?
-	// les balises meta communes  toutes les pages
-	include $_SERVER["DOCUMENT_ROOT"].'/meta.inc';
+		// les balises head communes  toutes les pages
+		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
 	<title>PPEAO Recomposition des donn&eacute;es</title>
 	<link href="/styles/mainstyles.css" title="mainstyles" rel="stylesheet" type="text/css" />
@@ -30,7 +21,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 	<body>
 		 <?
 		// le menu horizontal
-		include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc'
+		include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
+			// on teste à quelle zone l'utilisateur a accès
+			if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 		?>
 		<div id="main_container" class="home">
 			<div id="BDDetail">
@@ -62,6 +55,17 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 	
 				</div>
 			</div>	
-		</div>
+		</div>			<!-- end div id="main_container"-->
+
+
+<?
+// note : on termine la boucle testant si l'utilisateur a accès à la page demandée
+
+;} // end if (userHasAccess($_SESSION['user_id'],$zone))
+
+// si l'utilisateur n'a pas accès ou n'est pas connecté, on affiche un message l'invitant à contacter un administrateur pour obtenir l'accès
+else {userAccessDenied($zone);}
+
+?>
 	</body>
 </html>

@@ -1,18 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <?
-// Mis à jour Yann LAURENT, 01-07-2008
+// Mis à jour par Olivier ROUX, 29-07-2008
+// Mis à jour Yann LAURENT, 07-07-2008
+// code commun à toutes les pages (demarrage de session, doctype etc.)
+include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page
 $section="portage";
-// definit la valeur de variables utilisees pour mettre la section courante en surbrillance dans le menu
-include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
-?>
-
-<?
-
-include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
-include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
-include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">

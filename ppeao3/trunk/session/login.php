@@ -5,6 +5,8 @@
 
 //debug sleep(30);
 
+global $zone;
+
 session_start();
 // includes the file containing the db connection script
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
@@ -53,6 +55,8 @@ if(isset($_GET) && !empty($_GET['login']) && !empty($_GET['pass'])) {
 	
 	// on inscrit la connexion dans le journal
 	$loginMessage='connexion de '.$_SESSION['s_ppeao_longname'];
+	
+	$zoneName=$zoneArray['zone_name'];
 	logWriteTo(5,"notice",$loginMessage,'','',0);
 	
 	} // end if ($data['user_active']=='true')

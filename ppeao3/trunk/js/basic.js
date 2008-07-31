@@ -50,7 +50,7 @@ function createNamedElement(type, name) {
 
 
 /**
-* fonction appelée lorsque'l'utilisateur se connecte via le formulaire de login
+* fonction appelée lorsque l'utilisateur se connecte via le formulaire de login
 */
 function ajaxLogin(){
 
@@ -78,7 +78,7 @@ function ajaxLogin(){
 
 
 	// using GET to send the request
-					xhr.open("GET","session/login.php?login="+document.getElementById("slogin").value+"&pass="+document.getElementById("spass").value,true);
+					xhr.open("GET","/session/login.php?login="+document.getElementById("slogin").value+"&pass="+document.getElementById("spass").value,true);
 	xhr.send(null);
 }
 
@@ -109,7 +109,7 @@ function ajaxLogin(){
 
 
 		// using GET to send the request
-		xhr2.open("GET","session/logout.php",true);
+		xhr2.open("GET","/session/logout.php",true);
 		xhr2.send(null);
 	}
 
