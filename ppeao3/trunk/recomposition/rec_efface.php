@@ -1,4 +1,4 @@
-<?
+<?php
 // Mis à jour Yann LAURENT, 01-07-2008
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 
@@ -13,11 +13,12 @@ print("<br/>travail sur la base : ".$bdd);
 $traitement1 = "pasok";
 $traitement2 = "pasok";
 $connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+
 if (!$connection) {  echo "pas de connection"; exit;}
 
 $query = "delete from art_fraction_rec;";
-
 $result = pg_exec($connection, $query);
+
 if (!$result) {  
 	echo "Attention Une erreur s'est produite lors de la suppression de art_fraction_rec "; print($query);  exit;
 } else {
