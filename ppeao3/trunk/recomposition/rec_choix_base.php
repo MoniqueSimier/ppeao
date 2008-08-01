@@ -32,7 +32,7 @@ $zone=3; // zone portage (voir table admin_zones)
 		// le menu horizontal
 		include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 			// on teste à quelle zone l'utilisateur a accès
-			//if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
+			if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 		?>
 		<div id="main_container" class="home">
 			<div id="BDDetail">
@@ -59,10 +59,10 @@ $zone=3; // zone portage (voir table admin_zones)
 <?php
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
 
-//;} // end if (userHasAccess($_SESSION['user_id'],$zone))
+;} // end if (userHasAccess($_SESSION['user_id'],$zone))
 
 // si l'utilisateur n'a pas accès ou n'est pas connecté, on affiche un message l'invitant à contacter un administrateur pour obtenir l'accès
-//else {userAccessDenied($zone);}
+else {userAccessDenied($zone);}
 
 ?>
 	
