@@ -11,7 +11,7 @@ $section="portage";
 	<head>
 	<?php
 	// les balises meta communes  toutes les pages
-	include $_SERVER["DOCUMENT_ROOT"].'/meta.inc';
+	//include $_SERVER["DOCUMENT_ROOT"].'meta.inc';
 	?>
 	<title>PPEAO Recomposition des donn&eacute;es : choix BD</title>
 	<link href="/styles/mainstyles.css" title="mainstyles" rel="stylesheet" type="text/css" />
