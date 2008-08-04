@@ -1,6 +1,6 @@
 
 
-<?
+<?php
 // Mis à jour Yann LAURENT, 01-07-2008
 
 $bdd = $_GET['base'];
@@ -17,7 +17,7 @@ if(! ini_set("max_execution_time", "120")) {echo "échec";}
 </div>
 
 
-<?
+<?php
 
 $user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 

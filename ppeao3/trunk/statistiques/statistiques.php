@@ -1,11 +1,9 @@
-
-
-<?
+<?php
 // Mis à jour Yann LAURENT, 01-07-2008
 
 $bdd = $_GET['base'];
 if ($bdd==""){
-			$bdd=$bdd_default;
+			$bdd=$db_default;
 		}
 
 $to = $_GET['adresse'];
@@ -21,7 +19,7 @@ if(! ini_set("max_execution_time", "120")) {echo "échec";}
 </div>
 
 
-<?
+<?php
 
 //$user="devppeao";			// Le nom d'utilisateur 
 //$passwd="2devppe!!";			// Le mot de passe 
@@ -64,6 +62,7 @@ and art_debarquement.id = art_debarquement_rec.art_debarquement_id
 and art_debarquement_rec.id is not null 
 ";
 $result_systeme = pg_query($connection, $query_systeme);
+$syst_etudie=array();
 //print ($query_systeme);
 
 while($row = pg_fetch_row($result_systeme))

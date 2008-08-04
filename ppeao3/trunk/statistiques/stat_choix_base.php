@@ -1,4 +1,4 @@
-<?
+<?php
 // Mis à jour par Olivier ROUX, 29-07-2008
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
@@ -9,7 +9,7 @@ $zone=3; // zone portage (voir table admin_zones)
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
-	<?
+	<?php
 		// les balises head communes  toutes les pages
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
@@ -19,7 +19,7 @@ $zone=3; // zone portage (voir table admin_zones)
 	<script src="/js/ajaxStat.js"></script>	
 	</head>
 	<body>
-		 <?
+		 <?php
 		// le menu horizontal
 		include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 			// on teste à quelle zone l'utilisateur a accès
@@ -27,8 +27,8 @@ $zone=3; // zone portage (voir table admin_zones)
 		?>
 		<div id="main_container" class="home">
 			<div id="BDDetail">
-			<? $subsection="manuel_agglo"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
-			<? include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
+			<?php $subsection="manuel_agglo"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
+			<?php include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 			</div>
 			<div id="subContent">
 				<div id="formStat">
@@ -58,7 +58,7 @@ $zone=3; // zone portage (voir table admin_zones)
 		</div>			<!-- end div id="main_container"-->
 
 
-<?
+<?php
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
 
 ;} // end if (userHasAccess($_SESSION['user_id'],$zone))
