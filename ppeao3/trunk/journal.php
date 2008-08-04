@@ -1,4 +1,4 @@
-<?
+<?php
 // Mis à jour par Olivier ROUX, 29-07-2008
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
@@ -11,7 +11,7 @@ $zone=4; // zone journal (voir table admin_zones)
 <head>
 
 	
-<?
+<?php
 	// les balises head communes  toutes les pages
 	include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 ?>
@@ -21,7 +21,7 @@ $zone=4; // zone journal (voir table admin_zones)
 
 <body>
 
-<?
+<?php
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
@@ -33,7 +33,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 
 <h1>journal des activit&eacute;s</h1>
 
-<?
+<?php
 logWriteTo(4,'notice','acc&egrave;s au journal','','',0);
 echo(logDisplayFull('','','',"","",""));
 
@@ -42,7 +42,7 @@ echo(logDisplayFull('','','',"","",""));
 </div> <!-- end div id="main_container"-->
 
 
-<?
+<?php
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
 
 ;} // end if (userHasAccess($_SESSION['user_id'],$zone))
@@ -52,7 +52,7 @@ else {userAccessDenied($zone);}
 
 ?>
 
-<?
+<?php
 include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
 
 ?>

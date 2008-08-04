@@ -1,4 +1,4 @@
-<?
+<?php
 // Mis à jour par Olivier ROUX, 29-07-2008
 
 // démarrage de la session

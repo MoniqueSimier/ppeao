@@ -1,4 +1,4 @@
-<?
+<?php
 // LIST OF PHP FILES CONTAINING FUNCTIONS USED APPLICATION-WIDE
 
 // generic functions

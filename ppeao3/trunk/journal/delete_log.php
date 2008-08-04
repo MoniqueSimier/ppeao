@@ -1,4 +1,4 @@
-<?
+<?php
 // script used to archive (as a CSV file) and delete the log
 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';

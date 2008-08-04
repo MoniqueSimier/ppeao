@@ -1,4 +1,4 @@
-<?
+<?php
 
 // SPECIFIC FUNCTIONS FOR PPEAO
 
