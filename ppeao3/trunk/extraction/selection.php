@@ -19,7 +19,12 @@ function pop_it(the_form) {
 
 
 <?php
-include_once("../connexion.php");
+//connection à la BD
+//if(! ini_set("max_execution_time", "320")) {echo "échec max_execution_time";}
+include_once("../connect.inc");
+$connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
+if (!$connection) { echo "Pas de connection"; exit;}
+
 //$bdd = $_POST['base'];
 //print("travail sur la base : ".$bdd);
 
@@ -144,10 +149,14 @@ if (!isset($_POST['secteur']))
 		$query = substr($query, 0, -2); 		//on enleve le dernier or
 		$query .= ") order by RP.nom, RSy.libelle ";
 	
-	//print ($query);
+	print ($query);
+	print_r($connection);
+	
 	$result = pg_query($connection, $query);
 	
 	$ST=Array();
+	$STX=Array();
+	
 	$i = 0;
 	while($row = pg_fetch_row($result))
 		{

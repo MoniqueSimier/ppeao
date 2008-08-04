@@ -6,8 +6,10 @@
 <body BGCOLOR="#CCCCFF">
 
 <?php
-include_once("../connexion.php");
 if(! ini_set("max_execution_time", "480")) {echo "échec max_execution_time";}
+include_once("../connect.inc");
+$connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
+if (!$connection) { echo "Pas de connection"; exit;}
 
 /*$user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 
@@ -230,7 +232,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
@@ -247,7 +249,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
@@ -269,7 +271,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
@@ -286,7 +288,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
@@ -312,7 +314,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	////////////table unité de peche et activite
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
+	<div onClick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
 </div>
 
 <div id="_up" style="display:none">
@@ -342,7 +344,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_act').style.display = 'block';"><b>Activité</b>
+	<div onClick="document.getElementById('vue_act').style.display = 'block';"><b>Activité</b>
 </div>
 
 
@@ -376,7 +378,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('_date').style.display = 'block';"><b>Date</b>
+	<div onClick="document.getElementById('_date').style.display = 'block';"><b>Date</b>
 	</div>
 	
 	<div id="_date" style="display:none">
@@ -712,7 +714,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	
 		////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
@@ -729,7 +731,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
@@ -752,7 +754,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
@@ -769,7 +771,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
@@ -789,7 +791,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	////////////table unite peche et capture
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top ><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
+	<div onClick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
 </div>
 
 <div id="_up" style="display:none">
@@ -813,7 +815,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 ?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
+	<div onClick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
 </div>
 <div id="vue_cap" style="display:none">
 <?php 
@@ -1539,7 +1541,7 @@ else if($colonnes_faites !=1) //selection espece faite
 			
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
@@ -1556,7 +1558,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
@@ -1578,7 +1580,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
@@ -1595,7 +1597,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
@@ -1616,7 +1618,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	////////////table unite peche et capture
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
+	<div onClick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
 </div>
 
 <div id="_up" style="display:none">
@@ -1637,7 +1639,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
+	<div onClick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
 </div>
 
 <div id="vue_cap" style="display:none">
@@ -1695,7 +1697,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	//table fraction et espece 
 	
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_fr').style.display = 'block';"><b>Fractions et espèces</b>
+	?><div onClick="document.getElementById('_fr').style.display = 'block';"><b>Fractions et espèces</b>
 </div>
 	
 
@@ -2424,7 +2426,7 @@ else if($colonnes_faites !=1) //selection espece faite
 			
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
@@ -2441,7 +2443,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
@@ -2463,7 +2465,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
@@ -2480,7 +2482,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
@@ -2500,7 +2502,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	////////////table unite peche et capture
 	print ("<br><table  BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-		<div onclick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
+		<div onClick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
 </div>
 
 <div id="_up" style="display:none">
@@ -2521,7 +2523,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
+	<div onClick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
 </div>
 
 <div id="vue_cap" style="display:none">
@@ -2571,7 +2573,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	
 	print ("<br><table  BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_fr').style.display = 'block';"><b>Fractions et espèces</b>
+	<div onClick="document.getElementById('_fr').style.display = 'block';"><b>Fractions et espèces</b>
 </div>
 
 <div id="_fr" style="display:none">
@@ -2916,7 +2918,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 			
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
@@ -2933,7 +2935,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
@@ -2955,7 +2957,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
@@ -2972,7 +2974,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
@@ -2992,7 +2994,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	
 	////////////table debarquement et engin
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_deb').style.display = 'block';"><b>Débarquement</b>
+	?><div onClick="document.getElementById('_deb').style.display = 'block';"><b>Débarquement</b>
 </div>
 
 <div id="_deb" style="display:none">
@@ -3012,7 +3014,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_engin').style.display = 'block';"><b>Engin de pêche</b>
+	<div onClick="document.getElementById('vue_engin').style.display = 'block';"><b>Engin de pêche</b>
 </div>
 
 <div id="vue_engin" style="display:none">

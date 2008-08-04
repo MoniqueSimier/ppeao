@@ -7,8 +7,10 @@
 <body BGCOLOR="#CCCCFF">
 
 <?php
-include_once("../connexion.php");
 //if(! ini_set("max_execution_time", "320")) {echo "échec max_execution_time";}
+include_once("../connect.inc");
+$connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
+if (!$connection) { echo "Pas de connection"; exit;}
 
 
 
@@ -916,7 +918,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 ><tr VALIGN=top><td VALIGN=top align=center WIDTH=\"200\">");
 	?>
-<div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+<div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 <div id="_pays" style="display:none">
 <?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
@@ -931,7 +933,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	print ("</td><td VALIGN=top align=center WIDTH=\"200\">");
 	
 	?>
-<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div> 
 
 <div id="vue_syst" style="display:none">
@@ -950,7 +952,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	print ("</td><td align=center WIDTH=\"200\">");
 
 	?>
-	<div onclick="document.getElementById('vue_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('vue_sect').style.display = 'block';"><b>Secteur</b>
 </div> 
 
 <div id="vue_sect" style="display:none">
@@ -971,7 +973,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top align=center><td VALIGN=top width=\"200\">");
 	?>
-	<div onclick="document.getElementById('vue_camp').style.display = 'block';"><b>Campagnes</b>
+	<div onClick="document.getElementById('vue_camp').style.display = 'block';"><b>Campagnes</b>
 </div>
 
 <div id="vue_camp" style="display:none">
@@ -990,7 +992,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	?></div> <?php
 	print ("</td><td width=\"200\">");
 	?>
-	<div onclick="document.getElementById('vue_station').style.display = 'block';"><b>Stations</b>
+	<div onClick="document.getElementById('vue_station').style.display = 'block';"><b>Stations</b>
 </div>
 <div id="vue_station" style="display:none">
 <?php 
@@ -1027,7 +1029,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 ////////////////////////////////////////////tables coup de peche et fraction
 print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top align=center><td VALIGN=top width=\"200\">");
 	?>
-	<div onclick="document.getElementById('vue_coup').style.display = 'block';"><b>Coups de pêche</b>
+	<div onClick="document.getElementById('vue_coup').style.display = 'block';"><b>Coups de pêche</b>
 </div>
 
 <div id="vue_coup" style="display:none">
@@ -1064,7 +1066,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 ?></div> <?php
 	print ("</td><td width=\"200\">");
 	?>
-	<div onclick="document.getElementById('vue_fraction').style.display = 'block';"><b>Fractions</b>
+	<div onClick="document.getElementById('vue_fraction').style.display = 'block';"><b>Fractions</b>
 </div>
 
 <div id="vue_fraction" style="display:none">
@@ -1099,7 +1101,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 	{
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top align=center><td VALIGN=top  width=\"200\">");
 	?>
-	<div onclick="document.getElementById('vue_espece').style.display = 'block';"><b>Espèce</b>
+	<div onClick="document.getElementById('vue_espece').style.display = 'block';"><b>Espèce</b>
 </div>
 
 <div id="vue_espece" style="display:none">
@@ -1123,7 +1125,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 	?></div> <?php
 	print ("</td><td width=\"200\">");
 	?>
-	<div onclick="document.getElementById('vue_famille').style.display = 'block';"><b>Famille et ordre</b>
+	<div onClick="document.getElementById('vue_famille').style.display = 'block';"><b>Famille et ordre</b>
 </div>
 
 <div id="vue_famille" style="display:none">
@@ -1150,7 +1152,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 	if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement "))
 		{
 	?>
-	<td VALIGN=top WIDTH="200"><div onclick="document.getElementById('vue_engin').style.display = 'block';"><b>Engin</b>
+	<td VALIGN=top WIDTH="200"><div onClick="document.getElementById('vue_engin').style.display = 'block';"><b>Engin</b>
 </div>
 
 <div id="vue_engin" style="display:none">
@@ -1173,7 +1175,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 		{
 	?>
 	
-	<td WIDTH="200"><div onclick="document.getElementById('vue_envir').style.display = 'block';"><b>Environnement</b>
+	<td WIDTH="200"><div onClick="document.getElementById('vue_envir').style.display = 'block';"><b>Environnement</b>
 </div>
 
 <div id="vue_envir" style="display:none">
@@ -1209,7 +1211,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 	if(($choix == "     Biologie     ")||($choix == "    Trophique     "))
 		{
 		?>
-		<td WIDTH="200"><div onclick="document.getElementById('vue_biol').style.display = 'block';"><b>Biologie</b>
+		<td WIDTH="200"><div onClick="document.getElementById('vue_biol').style.display = 'block';"><b>Biologie</b>
 </div>
 
 <div id="vue_biol" style="display:none">

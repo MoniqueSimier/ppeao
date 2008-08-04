@@ -6,7 +6,9 @@
 <body BGCOLOR="#CCCCFF">
 
 <?php
-include_once("../connexion.php");
+include_once("../connect.inc");
+$connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
+if (!$connection) { echo "Pas de connection"; exit;}
 /*$user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 
 $host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
@@ -178,7 +180,7 @@ if(isset($_POST['case1']))
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
@@ -195,7 +197,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
@@ -216,7 +218,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
@@ -233,7 +235,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
@@ -258,7 +260,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques totales</b>
+	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques totales</b>
 	</div>
 	
 	<div id="_stat" style="display:none">
@@ -662,7 +664,7 @@ $bdd = "jerome_manant";
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
@@ -679,7 +681,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
@@ -700,7 +702,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
@@ -717,7 +719,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
@@ -742,7 +744,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par espèce</b>
+	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par espèce</b>
 	</div>
 	
 	<div id="_stat" style="display:none">
@@ -1146,7 +1148,7 @@ $bdd = "jerome_manant";
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
@@ -1163,7 +1165,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
@@ -1184,7 +1186,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
@@ -1201,7 +1203,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
@@ -1226,7 +1228,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"250\">");
 	
 	?>
-	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques et structures de taille</b>
+	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques et structures de taille</b>
 	</div>
 	
 	<div id="_stat" style="display:none">
@@ -1622,7 +1624,7 @@ if(isset($_POST['case4']))
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
@@ -1639,7 +1641,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
@@ -1660,7 +1662,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
@@ -1677,7 +1679,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
@@ -1702,7 +1704,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par Grand Type</b>
+	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par Grand Type</b>
 	</div>
 	
 	<div id="_stat" style="display:none">
@@ -2120,7 +2122,7 @@ if(isset($_POST['case5']))
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
@@ -2137,7 +2139,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
@@ -2158,7 +2160,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
@@ -2175,7 +2177,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
@@ -2200,7 +2202,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"300\">");
 	
 	?>
-	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par Grand Type et Espèce</b>
+	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par Grand Type et Espèce</b>
 	</div>
 	
 	<div id="_stat" style="display:none">
@@ -2619,7 +2621,7 @@ $bdd = "jerome_manant";
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
@@ -2636,7 +2638,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
@@ -2657,7 +2659,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
@@ -2674,7 +2676,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
@@ -2699,7 +2701,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"350\">");
 	
 	?>
-	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Structures de taille par Grand Type et Espèce</b>
+	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Structures de taille par Grand Type et Espèce</b>
 	</div>
 	
 	<div id="_stat" style="display:none">

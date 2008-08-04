@@ -9,7 +9,7 @@
 
 <?php
 include_once("../connect.inc");
-$connection = pg_connect ("host=".$host." dbname=".$bdd_default." user=".$user." password=".$passwd);
+$connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
 if (!$connection) { echo "Pas de connection"; exit;}
 
 $login = $_POST['login'];
@@ -65,7 +65,7 @@ if (!$connection) { echo "Pas de connection"; exit;}
 if($type=="")
 	{
 	//test si authentification s'est bien déroulée
-	//$connection = pg_connect ("host=".$host." dbname=".$bdd_default." user=".$user." password=".$passwd);
+	//$connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
 	//if (!$connection) { echo "Pas de connection"; exit;}
 	
 	
