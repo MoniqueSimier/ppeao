@@ -22,6 +22,9 @@ $section="portage";
 		<?php
 		// A virer a passer dans l'include commun connect.inc
 		$bdd = $_POST['base'];
+		if($bdd==""){
+			$bdd=$db_default;
+		}
 		// le menu horizontal
 		include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc'
 		?>
