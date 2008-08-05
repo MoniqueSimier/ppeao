@@ -6,7 +6,7 @@
 
 // YL 15/07/2008 on remplace les messages direct par une variable qu'on affiche ou non en fin de traitement
 $messageProcess = "Debut programme <br/>" ;
-
+print_r($_GET);
 //echo "debut programme";
 // Variables pour affichage ou non des messages
 if (isset($_GET['aff'])) {
@@ -14,6 +14,9 @@ if (isset($_GET['aff'])) {
 } else {
 	$afficherMessage = "0" ;
 }
+
+
+
 
 $nb_enr = $_GET['nb_enr'];
 $bdd = $_GET['base'];
