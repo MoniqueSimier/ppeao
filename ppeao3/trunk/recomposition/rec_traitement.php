@@ -5,5 +5,6 @@ include_once $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include_once $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include_once $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 include_once $_SERVER["DOCUMENT_ROOT"].'/functions.php';
+print_r($_GET);
 include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition.php'; ?>
 				
