@@ -64,33 +64,21 @@ $section="portage";
 			
 			// Creation et envoi de la requete
 			$query = "select count(art_debarquement.id) FROM art_debarquement";
-			
-			
 			$result = pg_query($connection, $query);
 			if (!$result) {  echo "Une erreur s'est produite";  exit;}
-			
-			
 			// Recuperation du resultat
 			$row= pg_fetch_row($result);
 			$nb_enr = $row[0];
 			print ("<div id='nbEnquete'>".$nb_enr . " enqu&ecirc;tes &agrave; traiter dont");
-			
-			// Deconnexion de la base de donnees
-			pg_close();
-			
-			
-			
-			$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 			$query = "select count(id)
 			 FROM art_debarquement_rec";
-			
-			
-			
 			$result = pg_query($connection, $query);
 			$row= pg_fetch_row($result);
 			$nb_deja_rec = $row[0];
-			if ($nb_deja_rec == 0){print (" ".$nb_deja_rec . " enqu&ecirc;te d&eacute;j&agrave; recompos&eacute;e. </div>");}
-			else {print (" ".$nb_deja_rec . " enqu&ecirc;tes d&eacute;j&agrave; recompos&eacute;es. </div>");}
+			if ($nb_deja_rec == 0){print (" ".$nb_deja_rec);}
+			else {print (" ".$nb_deja_rec);}
+			print " enqu&ecirc;tes d&eacute;j&agrave; recompos&eacute;es. </div>";
+			
 			pg_close();
 			?>
 			

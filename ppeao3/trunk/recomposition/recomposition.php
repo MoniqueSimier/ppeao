@@ -18,7 +18,7 @@ if (isset($_GET['aff'])) {
 	$afficherMessage = "0" ;
 }
 
-
+set_time_limit(30000);
 
 
 $nb_enr = $_GET['nb_enr'];
@@ -108,7 +108,7 @@ $query = "select AD.id, RF.ref_pays_id, RS.nom, AA.nom, AD.mois, AD.annee, AD.po
 	and AD.id = AF.art_debarquement_id 
 	and AF.debarquee = 1 
 	order by AD.id";
-//print "query==".$query."<br/>";
+print_debug($query);
 $result = pg_query($connection, $query);
 
 while($row = pg_fetch_row($result)){
@@ -4826,7 +4826,7 @@ while (list($key, $val) = each($info_deb)){
 	// print ("Insertion de l'enquête ".$numero2 . " sur ".$nb_enr ."<br/>");
 	//$messageProcess.="Insertion de l'enqu&ecirc;te ".$numero2 . " sur ".$nb_enr ."<br/>";
 	
-	$messageProcess.="<br/><b>Insertion de l'enqu&ecirc;te ".$numero2 . " sur ".$nb_enr ."</b><br/><br/>";
+	$messageProcess.="<br/><b>Recomposisiton de l'enqu&ecirc;te ".$numero2 . " sur ".$nb_enr ."</b><br/><br/>";
 	
 	$Wti =0;
 	while (list($key2, $val2) = each($val)){
@@ -4839,13 +4839,14 @@ while (list($key, $val) = each($info_deb)){
 	//if (!$connection) {  echo "pas de connection "; exit;}
 
 	$query2 = "insert into art_debarquement_rec ( id, poids_total, art_debarquement_id ) 
-	values ('rec_".$key."', ".$Wti.", ".$key.")";
-	$messageProcess .= "".$query2."<br/>";
+	values ('rec_".$key."', ".$Wti.", ".$key.");";
+	print_debug($query2);
 
 	// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
 	 //if($Wti!=0)$result2 = pg_exec($connection, $query2); // Ancienne ajout données. 
 	// nouvelle insertion données en utilisant la fonction runQuery
 	if($Wti!=0) {
+		$messageProcess .= "".$query2."<br/>";
 		$RunQErreur = runQuery($query2,$connection);
 		if ( $RunQErreur){
 			
@@ -4867,6 +4868,8 @@ while (list($key, $val) = each($info_deb)){
 
 		$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
 		values ('".$key2."', ".$info_deb[$key][$key2][8].", ".$info_deb[$key][$key2][9].", '".$info_deb[$key][$key2][7]."');";
+		
+		
 		$messageProcess .= "".$query."<br/>";
 
 		// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
@@ -4874,7 +4877,7 @@ while (list($key, $val) = each($info_deb)){
 		// Ancienne ajout données. 
 		// nouvelle insertion données en utilisant la fonction runQuery
 		$RunQErreur = runQuery($query,$connection);
-		print_r($RunQErreur);
+		
 		
 		if ( $RunQErreur){
 			

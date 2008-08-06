@@ -170,15 +170,34 @@ $runQueryOK = true;
 
 $lev=error_reporting (8); //NO WARNING!!
 $compINSResult = pg_query($connectionBD,$scriptSQLToRun);
+
+
+
+
 error_reporting ($lev); //DEFAULT!!
 if (strlen ($r=pg_last_error ($connectionBD))) {
 	$runQueryOK = false;
 	logWriteTo(4,"error","erreur execution : '".$scriptSQLToRun."' message = ".$r,"","","0");
+
+
 }
 
 return $runQueryOK;
 
 }
 
+/**
+ * Print out debug info (including arrays)
+ */
+function print_debug($dbgstr0){
+    ob_start();
+    print_r($dbgstr0);
+    $dbgstr = ob_get_contents();
+    ob_end_clean();   
+    
+    $fpOut = fopen("error.log", "a+");
+    fwrite($fpOut, "\n$dbgstr");
+    fclose($fpOut);
+}
 
 ?>
