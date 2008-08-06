@@ -6,7 +6,10 @@
 
 // YL 15/07/2008 on remplace les messages direct par une variable qu'on affiche ou non en fin de traitement
 $messageProcess = "Debut programme <br/>" ;
-print_r($_GET);
+//print "GEt ==== ".print_r($_GET);
+//print "<br/>";
+
+
 //echo "debut programme";
 // Variables pour affichage ou non des messages
 if (isset($_GET['aff'])) {
@@ -40,6 +43,7 @@ $connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password
 if (!$connection) {  echo "Non connecté"; exit;}
 
 $query = "select id, coefficient_k, coefficient_b, ref_espece_id FROM ref_espece order by id";
+//print "query ===".$query."<br/>";
 $result = pg_query($connection, $query);
 
 while($row = pg_fetch_row($result)){
@@ -53,8 +57,8 @@ while($row = pg_fetch_row($result)){
 	$coef_esp[$esp][2]= $ref;
 	}
 
-pg_free_result($result);
-pg_close();
+
+//pg_close();
 
 
 //remise à zéro du pointeur
@@ -92,8 +96,7 @@ while (list($key, $val) = each($coef_esp))
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-if (!$connection) {  echo "Non connecté"; exit;}
+
 //if(! ini_set("memory_limit", "256M")) {echo "échec";}
 $query = "select AD.id, RF.ref_pays_id, RS.nom, AA.nom, AD.mois, AD.annee, AD.poids_total,
 	AD.art_grand_type_engin_id, AF.ref_espece_id, AF.poids, AF.nbre_poissons, AF.id 
@@ -105,7 +108,7 @@ $query = "select AD.id, RF.ref_pays_id, RS.nom, AA.nom, AD.mois, AD.annee, AD.po
 	and AD.id = AF.art_debarquement_id 
 	and AF.debarquee = 1 
 	order by AD.id";
-
+//print "query==".$query."<br/>";
 $result = pg_query($connection, $query);
 
 while($row = pg_fetch_row($result)){
@@ -124,7 +127,7 @@ while($row = pg_fetch_row($result)){
 	}
 
 pg_free_result($result);
-pg_close();
+//pg_close();
 
 
 
@@ -133,8 +136,7 @@ pg_close();
 //                       création du tableau $FT                                //
 //////////////////////////////////////////////////////////////////////////////////
 
-$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-if (!$connection) {  echo "Non connecté"; exit;}
+
 
 $query = "select AF.id, APM.taille 
 	from art_fraction as AF, art_poisson_mesure as APM 
@@ -142,7 +144,7 @@ $query = "select AF.id, APM.taille
 	and AF.debarquee = 1 
 	order by AF.id";
 
-
+//print "query ==".$query."<br/>";
 $result = pg_query($connection, $query);
 
 while($row = pg_fetch_row($result))
@@ -151,7 +153,7 @@ while($row = pg_fetch_row($result))
 	$FT[$id][] = $row[1];                      //tailles incrementés auto dans tableau :
         }                                    //$FT[$id][0] = taille 1, $FT[$id][1] = taille 2...
 pg_free_result($result);//19 09
-pg_close();
+//pg_close();
 
 
 
@@ -200,12 +202,12 @@ while (list($key, $val) = each($info_deb))
 $nume_prodgr=1/$nb_enr;
 $numero = 0;
 reset($info_deb);
-while (list($key, $val) = each($info_deb))                      //pour tous les debarquements
-	{
+while (list($key, $val) = each($info_deb))//pour tous les debarquements
+{
 	
 	$numero = $numero+1;
 	$messageProcess .= "Recomposition de l'enqu&ecirc;te ".$numero . " sur ".$nb_enr." <br/>";
-	//print ("Recomposition de l'enquête ".$numero . " sur ".$nb_enr);
+	//print "Recomposition de l'enquête ".$numero . " sur ".$nb_enr;
 
 	while (list($key2, $val2) = each($val))			//pour chaque fraction
 		{
@@ -248,8 +250,7 @@ while (list($key, $val) = each($info_deb))                      //pour tous les 
 
 		elseif ( ($Wfdbq>0) && (($Nfdbq == 0)||($Nfdbq == "")) && (($Ndft == 0)||($Ndft == "")) )
 			{
-			$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			if (!$connection) {  echo "Non connecté"; exit;}
+			
 			$query = "select distinct AF.id, AD.id 
 				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, art_poisson_mesure as APM 
 				where AD.id = AF.art_debarquement_id 
@@ -263,16 +264,22 @@ while (list($key, $val) = each($info_deb))                      //pour tous les 
 				and AF.debarquee = 1 
 				and AF.id != '" . $key2 ."'";
 
+			//print "query ==".$query."<br/>";
 
 			$result = pg_query($connection, $query);
-			pg_close();
+			//pg_close();
 
 			$WdftI = 0;
 			$NdftI = 0;
 
 //si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 $nb = pg_num_rows($result);
-if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1"; $result = pg_query($connection, $query); pg_close();}
+if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1";
+//print "query ==".$query."<br/>";
+
+$result = pg_query($connection, $query); 
+//pg_close();
+}
 
 			while($row = pg_fetch_row($result))
 				{
@@ -295,7 +302,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 					}
 
 				else	{			//strate STE+
-					$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+					//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 					pg_free_result($result);
 					if ($info_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 						{
@@ -350,12 +357,18 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 						or AD.mois = " . $info_deb[$key][$key2][3] ." 
 						or AD.mois = " . (($info_deb[$key][$key2][3])+1) .")"; 
 						}
+//print "query2 ==".$query2."<br/>";
 
 					$result2 = pg_query($connection, $query2);
-					pg_close();
+					//pg_close();
 
 					$nb = pg_num_rows($result2);
-					if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 1"; $result2 = pg_query($connection, $query2); pg_close();}
+					if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 1";
+					//print "query2 ==".$query2."<br/>";
+
+					 $result2 = pg_query($connection, $query2); 
+					//pg_close();
+					}
 
 					while($row2 = pg_fetch_row($result2))
 						{
@@ -382,7 +395,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 							$val1 =$info_deb[$key][$key2][4]+1;
 							$valm1 =$info_deb[$key][$key2][4]-1;
 							
-							$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+							//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 							pg_free_result($result2);
 							
 							if ($info_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
@@ -625,11 +638,16 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 								}
 
 								$row3 = Array();
+								//print "query3 ===".$query3."<br/>";
+
 								$result3 = pg_query($connection, $query3);
-								pg_close();
+								//pg_close();
 
 								$nb = pg_num_rows($result3);
-								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1"; $result3 = pg_query($connection, $query3); pg_close();}
+								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1";
+								//print "query3 ===".$query3."<br/>";
+								 $result3 = pg_query($connection, $query3); //pg_close();
+								}
 
 								while($row3 = pg_fetch_row($result3))
 									{
@@ -651,7 +669,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 										}
 									else	{
 										pg_free_result($result3);
-										$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+										//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 										
 										//strate E
 										$query4 = "select distinct AF.id, AD.id 
@@ -666,12 +684,15 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 										and RS.nom = '" . $info_deb[$key][$key2][1]."'
 										and AF.debarquee = 1 
 										and AF.id != '" . $key2 ."'"; 
-
+//print "query4 ===".$query4."<br/>";
 										$result4 = pg_query($connection, $query4);
-										pg_close();
+										//pg_close();
 
 										$nb = pg_num_rows($result4);
-										if ($nb == 0){$query4 = "select id, art_debarquement_id from art_fraction limit 1"; $result4 = pg_query($connection, $query4); pg_close();}
+										if ($nb == 0){$query4 = "select id, art_debarquement_id from art_fraction limit 1";
+										//print "query4 ===".$query4."<br/>";
+										 $result4 = pg_query($connection, $query4); //pg_close();
+										}
 
 										while($row4 = pg_fetch_row($result4))
 											{
@@ -695,7 +716,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 
 											else	{
 												
-												$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+												//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 												pg_free_result($result4);
 												//strate E+
 												$query5 = "select distinct AF.id, AD.id 
@@ -708,12 +729,15 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 												and AD.art_grand_type_engin_id = '" . $info_deb[$key][$key2][6]."' 
 												and AF.debarquee = 1 
 												and AF.id != '" . $key2 ."'"; 
-
+//print "query5 ===".$query5."<br/>";
 												$result5 = pg_query($connection, $query5);
-												pg_close();
+												//pg_close();
 
 												$nb = pg_num_rows($result5);
-												if ($nb == 0){$query5 = "select id, art_debarquement_id from art_fraction limit 1"; $result5 = pg_query($connection, $query5); pg_close();}
+												if ($nb == 0){$query5 = "select id, art_debarquement_id from art_fraction limit 1";
+												//print "query5 ===".$query5."<br/>";
+												 $result5 = pg_query($connection, $query5); //pg_close();
+												}
 
 												while($row5 = pg_fetch_row($result5))
 													{
@@ -735,7 +759,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 														}
 													
 													else	{	//absence structure de taille ds le secteur
-														$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+														//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 														pg_free_result($result5);//19 09
 														//strate STE 
 														$query6 = "select AF.id, AD.id 
@@ -751,15 +775,19 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 														and AF.poids != 0 
 														and AF.nbre_poissons != 0 
 														and AF.id != '" . $key2 ."'";
-														
+														//print "query6 ===".$query6."<br/>";
 														$result6 = pg_query($connection, $query6);
-														pg_close();
+														//pg_close();
 														
 														$Wm_i = 0;
 														$Wm = 0;
 
 														$nb = pg_num_rows($result6);
-														if ($nb == 0){pg_free_result($result6);$query6 = "select id, art_debarquement_id from art_fraction limit 1"; $result6 = pg_query($connection, $query6); pg_close();}
+														if ($nb == 0){pg_free_result($result6);
+														$query6 = "select id, art_debarquement_id from art_fraction limit 1";
+														//print "query6 ===".$query6."<br/>";
+														 $result6 = pg_query($connection, $query6); //pg_close();
+														}
 
 														while($row6 = pg_fetch_row($result6))
 															{
@@ -788,7 +816,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																}
 															
 															else	{	//strate STE+
-																$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 
 																if ($info_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 																	{
@@ -844,12 +872,16 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																	or AD.mois = " . (($info_deb[$key][$key2][3])+1) .")"; 
 																	//print ("<br>query2 :".$query2);
 																	}
-															
+															//print "query7 ===".$query7."<br/>";
 																	$result7 = pg_query($connection, $query7);
-																	pg_close();
+																	//pg_close();
 
 																$nb = pg_num_rows($result7);
-																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1"; $result7 = pg_query($connection, $query7); pg_close();}
+																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1";
+																//print "query7 ===".$query7."<br/>";
+
+																 $result7 = pg_query($connection, $query7); //pg_close();
+																}
 
 																while($row7 = pg_fetch_row($result7))
 																	{
@@ -875,7 +907,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																			}
 																		}
 																	else	{	//strate SE
-																		$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																		//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 										
 																		if ($info_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 																			{
@@ -1110,11 +1142,15 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																			or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 																			or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 																			}
+																			//print "query8 ===".$query8."<br/>";
 																			$result8 = pg_query($connection, $query8);
-																			pg_close();
+																			//pg_close();
 
 																		$nb = pg_num_rows($result8);
-																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1"; $result8 = pg_query($connection, $query8); pg_close();}
+																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1";
+																		//print "query8 ===".$query8."<br/>";
+																		$result8 = pg_query($connection, $query8); //pg_close();
+																		}
 
 																		while($row8 = pg_fetch_row($result8))
 																			{
@@ -1140,7 +1176,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																					}
 																				}
 																			else	{
-																				$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																				//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 																				//strate E
 																				$query9 = "select AF.id, AD.id 
 																				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, ref_secteur as RS 
@@ -1154,12 +1190,15 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																				and AF.poids != 0 
 																				and AF.nbre_poissons != 0 
 																				and AF.id != '" . $key2 ."'"; 
-										
+										//print "query9 ===".$query9."<br/>";
 																				$result9 = pg_query($connection, $query9);
-																				pg_close();
+																				//pg_close();
 
 																				$nb = pg_num_rows($result9);
-																				if ($nb == 0){$query9 = "select id, art_debarquement_id from art_fraction limit 1"; $result9 = pg_query($connection, $query9); pg_close();}
+																				if ($nb == 0){$query9 = "select id, art_debarquement_id from art_fraction limit 1";
+																				//print "query9 ===".$query9."<br/>";
+																				 $result9 = pg_query($connection, $query9); //pg_close();
+																				}
 
 																				while($row9 = pg_fetch_row($result9))
 																					{
@@ -1185,7 +1224,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																						}
 																						
 																					else	{
-																						$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																						//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 																						//strate E+
 																						$query10 = "select AF.id, AD.id 
 																						from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
@@ -1197,12 +1236,15 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																						and AF.poids != 0 
 																						and AF.nbre_poissons != 0 
 																						and AF.id != '" . $key2 ."'"; 
-											
+											//print "query10 ===".$query10."<br/>";
 																						$result10 = pg_query($connection, $query10);
-																						pg_close();
+																						//pg_close();
 
 																						$nb = pg_num_rows($result10);
-																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1"; $result10 = pg_query($connection, $query10); pg_close();}
+																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1";
+																						//print "query10 ===".$query10."<br/>";
+																						 $result10 = pg_query($connection, $query10); //pg_close();
+																						}
 
 																						while($row10 = pg_fetch_row($result10))
 																							{
@@ -1280,7 +1322,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 		
 		elseif ( (($Wfdbq == 0)||($Wfdbq == "")) && ($Nfdbq>0) && (($Ndft == 0)||($Ndft == "")) )
 			{
-			$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 			if (!$connection) {  echo "Non connecté"; exit;}
 			$query = "select distinct AF.id, AD.id 
 				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, 
@@ -1295,16 +1337,21 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 				and AD.art_grand_type_engin_id = '" . $info_deb[$key][$key2][6]."' 
 				and AF.debarquee = 1 
 				and AF.id != '" . $key2 ."'";
-
+//print "query ===".$query."<br/>";
 			$result = pg_query($connection, $query);
-			pg_close();
+			//pg_close();
 
 			$WdftI = 0;
 			$NdftI = 0;
 			
 			//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 			$nb = pg_num_rows($result);
-			if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1"; $result = pg_query($connection, $query); pg_close();}
+			
+			if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1";
+			//print "query ===".$query."<br/>";
+			 $result = pg_query($connection, $query); //pg_close();
+			
+			}
 
 
 			while($row = pg_fetch_row($result))
@@ -1327,7 +1374,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 					}
 
 				else	{			//strate STE+
-					$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+					//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 					pg_free_result($result);//19 09
 					if ($info_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 						{
@@ -1382,12 +1429,16 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 						or AD.mois = " . $info_deb[$key][$key2][3] ." 
 						or AD.mois = " . (($info_deb[$key][$key2][3])+1) .")"; 
 						}
+						//print "query2 ===".$query2."<br/>";
 					$result2 = pg_query($connection, $query2);
-					pg_close();
+					//pg_close();
 							
 					//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 					$nb = pg_num_rows($result2);
-					if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 1"; $result2 = pg_query($connection, $query2); pg_close();}
+					if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 1";
+					//print "query2 ===".$query2."<br/>";
+					 $result2 = pg_query($connection, $query2); //pg_close();
+					}
 					
 					
 					while($row2 = pg_fetch_row($result2))
@@ -1413,7 +1464,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 							$val1 =$info_deb[$key][$key2][4]+1;
 							$valm1 =$info_deb[$key][$key2][4]-1;
 
-							$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+							//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 							pg_free_result($result2);
 							if ($info_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 								{
@@ -1648,11 +1699,15 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 								or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 								}
 								$result3 = pg_query($connection, $query3);
-								pg_close();
+								//print "query3 ===".$query3."<br/>";
+								//pg_close();
 
 								//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 								$nb = pg_num_rows($result3);
-								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1"; $result3 = pg_query($connection, $query3); pg_close();}
+								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1";
+								//print "query3 ===".$query3."<br/>";
+								 $result3 = pg_query($connection, $query3); //pg_close();
+								}
 
 
 								while($row3 = pg_fetch_row($result3))
@@ -1673,7 +1728,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 										$info_deb[$key][$key2][8] = $Wfdbq;
 										}
 									else	{
-										$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+										//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 										pg_free_result($result3);//19 09
 										//strate E
 										$query4 = "select distinct AF.id, AD.id 
@@ -1688,13 +1743,16 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 										and RS.nom = '" . $info_deb[$key][$key2][1]."'
 										and AF.debarquee = 1 
 										and AF.id != '" . $key2 ."'"; 
-
+//print "query4 ===".$query4."<br/>";
 										$result4 = pg_query($connection, $query4);
-										pg_close();
+										//pg_close();
 
 										//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 										$nb = pg_num_rows($result4);
-										if ($nb == 0){$query4 = "select id, art_debarquement_id from art_fraction limit 1"; $result4 = pg_query($connection, $query4); pg_close();}
+										if ($nb == 0){$query4 = "select id, art_debarquement_id from art_fraction limit 1";
+										//print "query4 ===".$query4."<br/>";
+										 $result4 = pg_query($connection, $query4); //pg_close();
+										}
 
 
 
@@ -1718,7 +1776,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 												}
 
 											else	{
-												$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+												//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 												pg_free_result($result4);
 												//strate E+
 												$query5 = "select distinct AF.id, AD.id 
@@ -1731,13 +1789,17 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 												and AD.art_grand_type_engin_id = '" . $info_deb[$key][$key2][6]."' 
 												and AF.debarquee = 1 
 												and AF.id != '" . $key2 ."'"; 
-
+//print "query5 ===".$query5."<br/>";
 												$result5 = pg_query($connection, $query5);
-												pg_close();
+												//pg_close();
 
 												//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 												$nb = pg_num_rows($result5);
-												if ($nb == 0){$query5 = "select id, art_debarquement_id from art_fraction limit 1"; $result5 = pg_query($connection, $query5); pg_close();}
+												if ($nb == 0){$query5 = "select id, art_debarquement_id from art_fraction limit 1";
+												//print "query5 ===".$query5."<br/>";
+
+												 $result5 = pg_query($connection, $query5); //pg_close();
+												}
 
 
 												while($row5 = pg_fetch_row($result5))
@@ -1762,7 +1824,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 													else	{
 													
 													//absence structure de taille ds le secteur
-														$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+														//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 														pg_free_result($result5);
 														//strate STE 
 														$query6 = "select AF.id, AD.id 
@@ -1778,15 +1840,19 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 														and AF.poids != 0 
 														and AF.nbre_poissons != 0 
 														and AF.id != '" . $key2 ."'";
-														
+														//print "query6 ===".$query6."<br/>";
 														$result6 = pg_query($connection, $query6);
-														pg_close();
+														//pg_close();
 														
 														$Wm_i = 0;
 														$Wm = 0;
 														//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 														$nb = pg_num_rows($result6);
-														if ($nb == 0){$query6 = "select id, art_debarquement_id from art_fraction limit 1"; $result6 = pg_query($connection, $query6); pg_close();}
+														if ($nb == 0){$query6 = "select id, art_debarquement_id from art_fraction limit 1";
+														//print "query6 ===".$query6."<br/>";
+
+														 $result6 = pg_query($connection, $query6); //pg_close();
+														}
 
 
 														while($row6 = pg_fetch_row($result6))
@@ -1817,7 +1883,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																}
 															
 															else	{	//strate STE+
-																$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 
 																if ($info_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 																	{
@@ -1872,13 +1938,18 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																	or AD.mois = " . $info_deb[$key][$key2][3] ." 
 																	or AD.mois = " . (($info_deb[$key][$key2][3])+1) .")"; 
 																	}
-															
+															//print "query7 ===".$query7."<br/>";
+
 																$result7 = pg_query($connection, $query7);
-																pg_close();
+																//pg_close();
 
 																//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 																$nb = pg_num_rows($result7);
-																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1"; $result7 = pg_query($connection, $query7); pg_close();}
+																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1";
+																
+																//print "query7 ===".$query7."<br/>";
+																 $result7 = pg_query($connection, $query7); //pg_close();
+																}
 
 
 																while($row7 = pg_fetch_row($result7))
@@ -1904,7 +1975,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																			}
 																		}
 																	else	{	//strate SE
-																		$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																		//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 										
 																		if ($info_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 																			{
@@ -2139,12 +2210,16 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																			or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 																			or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 																			}
+																			//print "query8 ===".$query8."<br/>";
 																			$result8 = pg_query($connection, $query8);
-																			pg_close();
+																			//pg_close();
 
 																		//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 																		$nb = pg_num_rows($result8);
-																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1"; $result8 = pg_query($connection, $query8); pg_close();}
+																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1";
+																		//print "query8 ===".$query8."<br/>";
+																		$result8 = pg_query($connection, $query8); //pg_close();
+																		}
 
 
 																		while($row8 = pg_fetch_row($result8))
@@ -2171,7 +2246,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																					}
 																				}
 																			else	{
-																				$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																			//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 																				//strate E
 																				$query9 = "select AF.id, AD.id 
 																				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, ref_secteur as RS 
@@ -2185,13 +2260,17 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																				and AF.poids != 0 
 																				and AF.nbre_poissons != 0 
 																				and AF.id != '" . $key2 ."'"; 
-										
+										//print "query9 ===".$query9."<br/>";
 																				$result9 = pg_query($connection, $query9);
-																				pg_close();
+																				//pg_close();
 
 																				//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 																				$nb = pg_num_rows($result9);
-																				if ($nb == 0){$query9 = "select id, art_debarquement_id from art_fraction limit 1"; $result9 = pg_query($connection, $query9); pg_close();}
+																				if ($nb == 0){$query9 = "select id, art_debarquement_id from art_fraction limit 1";
+																				
+																				//print "query9 ===".$query9."<br/>";
+																				 $result9 = pg_query($connection, $query9); //pg_close();
+																				}
 
 
 																				while($row9 = pg_fetch_row($result9))
@@ -2218,7 +2297,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																						}
 																						
 																					else	{
-																						$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																					//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 																						//strate E+
 																						$query10 = "select AF.id, AD.id 
 																						from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
@@ -2230,13 +2309,16 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																						and AF.poids != 0 
 																						and AF.nbre_poissons != 0 
 																						and AF.id != '" . $key2 ."'"; 
-											
+											//print "query10 ===".$query10."<br/>";
 																						$result10 = pg_query($connection, $query10);
-																						pg_close();
+																						//pg_close();
 
 																						//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 																						$nb = pg_num_rows($result10);
-																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1"; $result10 = pg_query($connection, $query10); pg_close();}
+																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1";
+																						//print "query10 ===".$query10."<br/>";
+																						 $result10 = pg_query($connection, $query10); //pg_close();
+																						}
 
 
 																						while($row10 = pg_fetch_row($result10))
@@ -2454,7 +2536,7 @@ while (list($key, $val) = each($info_deb))                      //pour tous les 
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 if (!$connection) {  echo "Non connecté"; exit;}
 
 $query = "select AD.id, RF.ref_pays_id, RS.nom, AA.nom, AD.mois, AD.annee, AD.poids_total,
@@ -2467,7 +2549,7 @@ $query = "select AD.id, RF.ref_pays_id, RS.nom, AA.nom, AD.mois, AD.annee, AD.po
 	and AD.id = AF.art_debarquement_id 
 	and AF.debarquee != 1 
 	order by AD.id";
-
+//print "query ===".$query."<br/>";
 $result = pg_query($connection, $query);
 $info_non_deb=array();
 while($row = pg_fetch_row($result)){
@@ -2486,7 +2568,7 @@ while($row = pg_fetch_row($result)){
 	$info_non_deb[$clé][$cle2][9] = $row[10];          //nombre poisson de la fraction = Nfdbq        
 	}
 
-pg_close();
+//pg_close();
 
 //remise à zéro du pointeur
 reset($info_non_deb);
@@ -2508,7 +2590,7 @@ while (list($key, $val) = each($info_non_deb))                      //pour tous 
 			{
 			//selection sur strate STE
 			//(pour une espece:agglo, mois, annee et grand type identiques)
-			$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 			if (!$connection) {  echo "Non connecté"; exit;}
 			$query = "select distinct AF.id, AD.id 
 				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
@@ -2523,16 +2605,21 @@ while (list($key, $val) = each($info_non_deb))                      //pour tous 
 				and AD.art_grand_type_engin_id = '" . $info_non_deb[$key][$key2][6]."' 
 				and AF.debarquee = 1 
 				and AF.id != '" . $key2 ."'";
+//print "query ===".$query."<br/>";
 
 			$result = pg_query($connection, $query);
-			pg_close();
+			//pg_close();
 
 			$WdftI = 0;
 			$NdftI = 0;
 
 			//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 			$nb = pg_num_rows($result);
-			if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1"; $result = pg_query($connection, $query); pg_close();}
+			if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1";
+			//print "query ===".$query."<br/>";
+
+			 $result = pg_query($connection, $query); //pg_close();
+			}
 
 
 			while($row = pg_fetch_row($result))
@@ -2557,7 +2644,7 @@ while (list($key, $val) = each($info_non_deb))                      //pour tous 
 					}
 
 				else	{			//strate STE+
-					$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+					//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 
 					if ($info_non_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 						{
@@ -2612,12 +2699,17 @@ while (list($key, $val) = each($info_non_deb))                      //pour tous 
 						or AD.mois = " . $info_non_deb[$key][$key2][3] ." 
 						or AD.mois = " . (($info_non_deb[$key][$key2][3])+1) .")"; 
 						}
+//print "query2 ===".$query2."<br/>";
 
 					$result2 = pg_query($connection, $query2);
-					pg_close();
+					//pg_close();
 
 $nb = pg_num_rows($result2);
-if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 1"; $result2 = pg_query($connection, $query2); pg_close();}
+if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 1";
+//print "query2 ===".$query2."<br/>";
+
+$result2 = pg_query($connection, $query2); //pg_close();
+}
 
 
 					while($row2 = pg_fetch_row($result2))
@@ -2646,7 +2738,7 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 							$val1 =$info_non_deb[$key][$key2][4]+1;
 							$valm1 =$info_non_deb[$key][$key2][4]-1;
 							
-							$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+							//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 							if ($info_non_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 								{
 								$query3 = "select distinct AF.id, AD.id 
@@ -2879,11 +2971,17 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 								or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 								or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 								}
+								//print "query3 ===".$query3."<br/>";
+
 								$result3 = pg_query($connection, $query3);
-								pg_close();
+								//pg_close();
 
 								$nb = pg_num_rows($result3);
-								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1"; $result3 = pg_query($connection, $query3); pg_close();}
+								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1";
+								//print "query3 ===".$query3."<br/>";
+
+								 $result3 = pg_query($connection, $query3); //pg_close();
+								}
 
 
 
@@ -2906,7 +3004,7 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 										$info_non_deb[$key][$key2][9] = $Nfdbq;
 										}
 									else	{
-										$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+										//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 										//strate E
 										$query4 = "select distinct AF.id, AD.id 
 										from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, ref_secteur as RS 
@@ -2920,12 +3018,17 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 										and RS.nom = '" . $info_non_deb[$key][$key2][1]."' 
 										and AF.debarquee = 1 
 										and AF.id != '" . $key2 ."'"; 
+//print "query4 ===".$query4."<br/>";
 
 										$result4 = pg_query($connection, $query4);
-										pg_close();
+										//pg_close();
 
 										$nb = pg_num_rows($result4);
-										if ($nb == 0){$query4 = "select id, art_debarquement_id from art_fraction limit 1"; $result4 = pg_query($connection, $query4); pg_close();}
+										if ($nb == 0){$query4 = "select id, art_debarquement_id from art_fraction limit 1";
+										//print "query4 ===".$query4."<br/>";
+
+										 $result4 = pg_query($connection, $query4); //pg_close();
+										}
 
 
 										while($row4 = pg_fetch_row($result4))
@@ -2949,7 +3052,7 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 												}
 
 											else	{
-												$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+												//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 												//strate E+
 												$query5 = "select distinct AF.id, AD.id 
 												from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
@@ -2961,12 +3064,17 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 												and AD.art_grand_type_engin_id = '" . $info_non_deb[$key][$key2][6]."' 
 												and AF.debarquee = 1 
 												and AF.id != '" . $key2 ."'"; 
+//print "query5 ===".$query5."<br/>";
 
 												$result5 = pg_query($connection, $query5);
-												pg_close();
+												//pg_close();
 
 												$nb = pg_num_rows($result5);
-												if ($nb == 0){$query5 = "select id, art_debarquement_id from art_fraction limit 1"; $result5 = pg_query($connection, $query5); pg_close();}
+												if ($nb == 0){$query5 = "select id, art_debarquement_id from art_fraction limit 1";
+												//print "query5 ===".$query5."<br/>";
+
+												 $result5 = pg_query($connection, $query5); //pg_close();
+												}
 
 
 												while($row5 = pg_fetch_row($result5))
@@ -2990,7 +3098,7 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 														}
 													
 													else	{	//absence structure de taille ds le secteur
-														$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+													//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 														//strate STE 
 														$query6 = "select AF.id, AD.id 
 														from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
@@ -3005,15 +3113,20 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 														and AF.poids != 0 
 														and AF.nbre_poissons != 0 
 														and AF.id != '" . $key2 ."'";
-														
+														//print "query6 ===".$query6."<br/>";
+
 														$result6 = pg_query($connection, $query6);
-														pg_close();
+														//pg_close();
 														
 														$Wm_i = 0;
 														$Wm = 0;
 
 														$nb = pg_num_rows($result6);
-														if ($nb == 0){$query6 = "select id, art_debarquement_id from art_fraction limit 1"; $result6 = pg_query($connection, $query6); pg_close();}
+														if ($nb == 0){$query6 = "select id, art_debarquement_id from art_fraction limit 1";
+														//print "query6 ===".$query6."<br/>";
+
+														 $result6 = pg_query($connection, $query6); //pg_close();
+														}
 
 
 														while($row6 = pg_fetch_row($result6))
@@ -3043,7 +3156,7 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 																}
 															
 															else	{	//strate STE+
-																$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 
 																if ($info_non_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 																	{
@@ -3099,12 +3212,18 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 																	or AD.mois = " . (($info_non_deb[$key][$key2][3])+1) .")"; 
 																	//print ("<br>query2 :".$query2);
 																	}
-															
+															//print "query7 ===".$query7."<br/>";
+
 																$result7 = pg_query($connection, $query7);
-																pg_close();
+																//pg_close();
 
 																$nb = pg_num_rows($result7);
-																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1"; $result7 = pg_query($connection, $query7); pg_close();}
+																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1";
+																$result7 = pg_query($connection, $query7);
+																//print "query7 ===".$query7."<br/>";
+
+																 //pg_close();
+																}
 
 
 																while($row7 = pg_fetch_row($result7))
@@ -3131,7 +3250,7 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 																			}
 																		}
 																	else	{	//strate SE
-																		$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																	//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 										
 																		if ($info_non_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 																			{
@@ -3365,11 +3484,17 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 																			or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 																			or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 																			}
+																			//print "query8 ===".$query8."<br/>";
+
 																		$result8 = pg_query($connection, $query8);
-																		pg_close();
+																		//pg_close();
 
 																		$nb = pg_num_rows($result8);
-																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1"; $result8 = pg_query($connection, $query8); pg_close();}
+																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1";
+																		//print "query8 ===".$query8."<br/>";
+
+																		$result8 = pg_query($connection, $query8); //pg_close();
+																		}
 
 
 																		while($row8 = pg_fetch_row($result8))
@@ -3396,7 +3521,7 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 																					}
 																				}
 																			else	{
-																				$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																			//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 																				//strate E
 																				$query9 = "select AF.id, AD.id 
 																				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, ref_secteur as RS 
@@ -3410,12 +3535,17 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 																				and AF.poids != 0 
 																				and AF.nbre_poissons != 0 
 																				and AF.id != '" . $key2 ."'"; 
-										
+										//print "query9 ===".$query9."<br/>";
+
 																				$result9 = pg_query($connection, $query9);
-																				pg_close();
+																				//pg_close();
 
 																				$nb = pg_num_rows($result9);
-																				if ($nb == 0){$query9 = "select id, art_debarquement_id from art_fraction limit 1"; $result9 = pg_query($connection, $query9); pg_close();}
+																				if ($nb == 0){$query9 = "select id, art_debarquement_id from art_fraction limit 1";
+																				//print "query9 ===".$query9."<br/>";
+
+																				$result9 = pg_query($connection, $query9); //pg_close();
+																				}
 
 
 																				while($row9 = pg_fetch_row($result9))
@@ -3442,7 +3572,7 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 																						}
 																						
 																					else	{
-																						$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																					//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 																						//strate E+
 																						$query10 = "select AF.id, AD.id 
 																						from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
@@ -3454,12 +3584,17 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 																						and AF.poids != 0 
 																						and AF.nbre_poissons != 0 
 																						and AF.id != '" . $key2 ."'"; 
-											
+											//print "query10 ===".$query10."<br/>";
+
 																						$result10 = pg_query($connection, $query10);
-																						pg_close();
+																						//pg_close();
 
 																						$nb = pg_num_rows($result10);
-																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1"; $result10 = pg_query($connection, $query10); pg_close();}
+																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1";
+																						//print "query10 ===".$query10."<br/>";
+
+																						$result10 = pg_query($connection, $query10); //pg_close();
+																						}
 
 
 																						while($row10 = pg_fetch_row($result10))
@@ -3544,7 +3679,7 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 			//selection sur strate STE
 			//(pour une espece:agglo, mois, annee et grand type identiques)
 
-			$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+		//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 			if (!$connection) {  echo "Non connecté"; exit;}
 			$query = "select distinct AF.id, AD.id 
 				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
@@ -3559,15 +3694,23 @@ if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 
 				and AD.art_grand_type_engin_id = '" . $info_non_deb[$key][$key2][6]."' 
 				and AF.debarquee = 1 
 				and AF.id != '" . $key2 ."'";
+//print "query ===".$query."<br/>";
 
 			$result = pg_query($connection, $query);
-			pg_close();
+			//pg_close();
 
 			$WdftI = 0;
 			$NdftI = 0;
 
 $nb = pg_num_rows($result);
-if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1"; $result = pg_query($connection, $query); pg_close();}
+if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1";
+//print "query ===".$query."<br/>";
+
+$result = pg_query($connection, $query);
+//print "query ===".$query."<br/>";
+
+ //pg_close();
+}
 
 			while($row = pg_fetch_row($result))
 				{
@@ -3589,7 +3732,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 					}
 
 				else	{			//strate STE+
-					$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+				//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 
 					if ($info_non_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 						{
@@ -3645,12 +3788,20 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 						or AD.mois = " . (($info_non_deb[$key][$key2][3])+1) .")"; 
 						//print ("<br>query2 :".$query2);
 						}
+//print "query2 ===".$query2."<br/>";
 
 					$result2 = pg_query($connection, $query2);
-					pg_close();
+					//pg_close();
 
 					$nb = pg_num_rows($result2);
-					if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 1"; $result2 = pg_query($connection, $query2); pg_close();}
+					if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 1";
+					//print "query2 ===".$query2."<br/>";
+
+					$result2 = pg_query($connection, $query2);
+					//print "query2 ===".$query2."<br/>";
+
+					 //pg_close();
+					}
 
 
 					while($row2 = pg_fetch_row($result2))
@@ -3676,7 +3827,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 							$val1 =$info_non_deb[$key][$key2][4]+1;
 							$valm1 =$info_non_deb[$key][$key2][4]-1;
 							
-							$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+							//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 
 							if ($info_non_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 								{
@@ -3910,11 +4061,17 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 								or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 								or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 								}
+								//print "query3 ===".$query3."<br/>";
+
 								$result3 = pg_query($connection, $query3);
-								pg_close();
+								//pg_close();
 
 								$nb = pg_num_rows($result3);
-								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1"; $result3 = pg_query($connection, $query3); pg_close();}
+								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1";
+								//print "query3 ===".$query3."<br/>";
+
+								$result3 = pg_query($connection, $query3); //pg_close();
+								}
 
 
 								while($row3 = pg_fetch_row($result3))
@@ -3935,7 +4092,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 										$info_non_deb[$key][$key2][8] = $Wfdbq;
 										}
 									else	{
-										$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+										//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 										//strate E
 										$query4 = "select distinct AF.id, AD.id 
 										from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, ref_secteur as RS 
@@ -3949,12 +4106,18 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 										and RS.nom = '" . $info_non_deb[$key][$key2][1]."'
 										and AF.debarquee = 1 
 										and AF.id != '" . $key2 ."'"; 
-										
+										//print "query4 ===".$query4."<br/>";
+
 										$result4 = pg_query($connection, $query4);
-										pg_close();
+										//pg_close();
 
 										$nb = pg_num_rows($result4);
-										if ($nb == 0){$query4 = "select id, art_debarquement_id from art_fraction limit 1"; $result4 = pg_query($connection, $query4); pg_close();}
+										if ($nb == 0){$query4 = "select id, art_debarquement_id from art_fraction limit 1";
+										
+										//print "query4 ===".$query4."<br/>";
+
+										$result4 = pg_query($connection, $query4); //pg_close();
+										}
 
 
 										while($row4 = pg_fetch_row($result4))
@@ -3977,7 +4140,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 												}
 
 											else	{
-												$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+											//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 												//strate E+
 												$query5 = "select distinct AF.id, AD.id 
 												from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
@@ -3990,11 +4153,18 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 												and AF.debarquee = 1 
 												and AF.id != '" . $key2 ."'"; 
 
+//print "query5 ===".$query5."<br/>";
+
 												$result5 = pg_query($connection, $query5);
-												pg_close();
+												//pg_close();
 
 												$nb = pg_num_rows($result5);
-												if ($nb == 0){$query5 = "select id, art_debarquement_id from art_fraction limit 1"; $result5 = pg_query($connection, $query5); pg_close();}
+												if ($nb == 0){$query5 = "select id, art_debarquement_id from art_fraction limit 1";
+												
+												//print "query5 ===".$query5."<br/>";
+
+												 $result5 = pg_query($connection, $query5); //pg_close();
+												}
 
 
 												while($row5 = pg_fetch_row($result5))
@@ -4020,7 +4190,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 													else	{
 													
 													//absence structure de taille ds le secteur
-														$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+													//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 														//strate STE 
 														$query6 = "select AF.id, AD.id 
 														from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
@@ -4035,15 +4205,21 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 														and AF.poids != 0 
 														and AF.nbre_poissons != 0 
 														and AF.id != '" . $key2 ."'";
-														
+														//print "query6 ===".$query6."<br/>";
+
 														$result6 = pg_query($connection, $query6);
-														pg_close();
+														//pg_close();
 														
 														$Wm_i = 0;
 														$Wm = 0;
 
 														$nb = pg_num_rows($result6);
-														if ($nb == 0){$query6 = "select id, art_debarquement_id from art_fraction limit 1"; $result6 = pg_query($connection, $query6); pg_close();}
+														if ($nb == 0){$query6 = "select id, art_debarquement_id from art_fraction limit 1";
+														
+														//print "query6 ===".$query6."<br/>";
+
+														$result6 = pg_query($connection, $query6); //pg_close();
+														}
 
 
 														while($row6 = pg_fetch_row($result6))
@@ -4074,7 +4250,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																}
 															
 															else	{	//strate STE+
-																$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 
 																if ($info_non_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 																	{
@@ -4130,12 +4306,18 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																	or AD.mois = " . (($info_non_deb[$key][$key2][3])+1) .")"; 
 																	//print ("<br>query2 :".$query2);
 																	}
-															
+															//print "query7 ===".$query7."<br/>";
+
 																$result7 = pg_query($connection, $query7);
-																pg_close();
+																//pg_close();
 
 																$nb = pg_num_rows($result7);
-																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1"; $result7 = pg_query($connection, $query7); pg_close();}
+																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1";
+																
+																//print "query7 ===".$query7."<br/>";
+
+																$result7 = pg_query($connection, $query7); //pg_close();
+																}
 
 
 																while($row7 = pg_fetch_row($result7))
@@ -4161,7 +4343,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																			}
 																		}
 																	else	{	//strate SE
-																		$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																	//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 										
 																		if ($info_non_deb[$key][$key2][3] == 1)   //si mois 1 (janvier)
 																			{
@@ -4395,11 +4577,17 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																			or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 																			or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 																			}
+																			//print "query8 ===".$query8."<br/>";
+
 																		$result8 = pg_query($connection, $query8);
-																		pg_close();
+																		//pg_close();
 
 																		$nb = pg_num_rows($result8);
-																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1"; $result8 = pg_query($connection, $query8); pg_close();}
+																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1";
+																		//print "query8 ===".$query8."<br/>";
+
+																		 $result8 = pg_query($connection, $query8); //pg_close();
+																		}
 
 
 																		while($row8 = pg_fetch_row($result8))
@@ -4426,7 +4614,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																					}
 																				}
 																			else	{
-																				$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																			//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 																				//strate E
 																				$query9 = "select AF.id, AD.id 
 																				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, ref_secteur as RS 
@@ -4440,12 +4628,18 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																				and AF.poids != 0 
 																				and AF.nbre_poissons != 0 
 																				and AF.id != '" . $key2 ."'"; 
-										
+										//print "query9 ===".$query9."<br/>";
+
 																				$result9 = pg_query($connection, $query9);
-																				pg_close();
+																				
+																				//pg_close();
 
 																				$nb = pg_num_rows($result9);
-																				if ($nb == 0){$query9 = "select id, art_debarquement_id from art_fraction limit 1"; $result9 = pg_query($connection, $query9); pg_close();}
+																				if ($nb == 0){$query9 = "select id, art_debarquement_id from art_fraction limit 1";
+																				//print "query9 ===".$query9."<br/>";
+
+																				 $result9 = pg_query($connection, $query9); //pg_close();
+																				}
 
 
 																				while($row9 = pg_fetch_row($result9))
@@ -4472,7 +4666,7 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																						}
 																						
 																					else	{
-																						$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+																					//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 																						//strate E+
 																						$query10 = "select AF.id, AD.id 
 																						from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
@@ -4484,12 +4678,17 @@ if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1
 																						and AF.poids != 0 
 																						and AF.nbre_poissons != 0 
 																						and AF.id != '" . $key2 ."'"; 
-											
+											//print "query10 ===".$query10."<br/>";
+
 																						$result10 = pg_query($connection, $query10);
-																						pg_close();
+																						//pg_close();
 
 																						$nb = pg_num_rows($result10);
-																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1"; $result10 = pg_query($connection, $query10); pg_close();}
+																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1";
+																						//print "query10 ===".$query10."<br/>";
+
+																						 $result10 = pg_query($connection, $query10); //pg_close();
+																						}
 
 
 																						while($row10 = pg_fetch_row($result10))
@@ -4625,7 +4824,10 @@ while (list($key, $val) = each($info_deb)){
 	$numero2 = $numero2+1;
 	// Remplacement print par $messageProcess YL 15.07.2008
 	// print ("Insertion de l'enquête ".$numero2 . " sur ".$nb_enr ."<br/>");
-	$messageProcess.="Insertion de l'enqu&ecirc;te ".$numero2 . " sur ".$nb_enr ."<br/>";
+	//$messageProcess.="Insertion de l'enqu&ecirc;te ".$numero2 . " sur ".$nb_enr ."<br/>";
+	
+	$messageProcess.="<br/><b>Insertion de l'enqu&ecirc;te ".$numero2 . " sur ".$nb_enr ."</b><br/><br/>";
+	
 	$Wti =0;
 	while (list($key2, $val2) = each($val)){
 		$fr_deb =$key2;
@@ -4633,11 +4835,13 @@ while (list($key, $val) = each($info_deb)){
 	}
 
 	
-	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	if (!$connection) {  echo "pas de connection "; exit;}
+	//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) {  echo "pas de connection "; exit;}
 
 	$query2 = "insert into art_debarquement_rec ( id, poids_total, art_debarquement_id ) 
 	values ('rec_".$key."', ".$Wti.", ".$key.")";
+	messageProcess .= "".$query2."<br/>";
+
 	// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
 	 //if($Wti!=0)$result2 = pg_exec($connection, $query2); // Ancienne ajout données. 
 	// nouvelle insertion données en utilisant la fonction runQuery
@@ -4652,15 +4856,17 @@ while (list($key, $val) = each($info_deb)){
 	
 	}
 
-	pg_close();
+	//pg_close();
 
 	reset($val);
 	while (list($key2, $val2) = each($val)){
-		$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		if (!$connection) {  echo "pas de connection"; exit;}
+	//	$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//	if (!$connection) {  echo "pas de connection"; exit;}
 
 		$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
 		values ('".$key2."', ".$info_deb[$key][$key2][8].", ".$info_deb[$key][$key2][9].", '".$info_deb[$key][$key2][7]."');";
+		messageProcess .= "".$query."<br/>";
+
 		// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
 		//$result = pg_exec($connection, $query);
 		// Ancienne ajout données. 
@@ -4673,22 +4879,22 @@ while (list($key, $val) = each($info_deb)){
 		
 		}
 
-		pg_close();
+		
 	} // fin while (list($key2, $val2) = each($val))
 } // fin (list($key, $val) = each($info_deb))
 
 // Ajout YL 15.07.2008 afficher le message en fin de traitement si demandé
 if ($afficherMessage == "1") {
-	echo $messageProcess ;
+	//echo $messageProcess ;
 }
 
-
+pg_close();
 
 //envoie mail confirm
 // To
 //$to = 'fauchier@mpl.ird.fr';
 // Subject
-$subject = 'PPEAO';
+$subject = 'Base de données'.$_GET['base'];
 // Message
 $msg = 'Fin du taitement de recomposition des données';
 // Headers
