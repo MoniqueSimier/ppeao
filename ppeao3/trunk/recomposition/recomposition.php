@@ -206,7 +206,7 @@ while (list($key, $val) = each($info_deb))//pour tous les debarquements
 {
 	
 	$numero = $numero+1;
-	$messageProcess .= "Recomposition de l'enqu&ecirc;te ".$numero . " sur ".$nb_enr." <br/>";
+	//$messageProcess .= "Recomposition de l'enqu&ecirc;te ".$numero . " sur ".$nb_enr." <br/>";
 	//print "Recomposition de l'enquête ".$numero . " sur ".$nb_enr;
 
 	while (list($key2, $val2) = each($val))			//pour chaque fraction
@@ -2591,7 +2591,7 @@ while (list($key, $val) = each($info_non_deb))                      //pour tous 
 			//selection sur strate STE
 			//(pour une espece:agglo, mois, annee et grand type identiques)
 			//$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			if (!$connection) {  echo "Non connecté"; exit;}
+			//if (!$connection) {  echo "Non connecté"; exit;}
 			$query = "select distinct AF.id, AD.id 
 				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
 				, art_poisson_mesure as APM 
@@ -4840,7 +4840,7 @@ while (list($key, $val) = each($info_deb)){
 
 	$query2 = "insert into art_debarquement_rec ( id, poids_total, art_debarquement_id ) 
 	values ('rec_".$key."', ".$Wti.", ".$key.")";
-	messageProcess .= "".$query2."<br/>";
+	$messageProcess .= "".$query2."<br/>";
 
 	// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
 	 //if($Wti!=0)$result2 = pg_exec($connection, $query2); // Ancienne ajout données. 
@@ -4865,7 +4865,7 @@ while (list($key, $val) = each($info_deb)){
 
 		$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
 		values ('".$key2."', ".$info_deb[$key][$key2][8].", ".$info_deb[$key][$key2][9].", '".$info_deb[$key][$key2][7]."');";
-		messageProcess .= "".$query."<br/>";
+		$messageProcess .= "".$query."<br/>";
 
 		// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
 		//$result = pg_exec($connection, $query);
@@ -4885,7 +4885,7 @@ while (list($key, $val) = each($info_deb)){
 
 // Ajout YL 15.07.2008 afficher le message en fin de traitement si demandé
 if ($afficherMessage == "1") {
-	//echo $messageProcess ;
+	echo $messageProcess ;
 }
 
 pg_close();
