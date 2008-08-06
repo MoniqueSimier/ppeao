@@ -50,7 +50,7 @@ $section="portage";
 
 			<br/><br/>
 			<div id="dbinfo">
-			<h2>La Base PPEAO contient :</h2>
+			<h2><?php echo "La Base ".$bdd." contient"; ?> :</h2>
 
 			<?php	include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 
@@ -64,6 +64,7 @@ $section="portage";
 			
 			// Creation et envoi de la requete
 			$query = "select count(art_debarquement.id) FROM art_debarquement";
+			
 			
 			$result = pg_query($connection, $query);
 			if (!$result) {  echo "Une erreur s'est produite";  exit;}
@@ -80,7 +81,11 @@ $section="portage";
 			
 			
 			$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			$query = "select count(id) FROM art_debarquement_rec";
+			$query = "select count(id)
+			 FROM art_debarquement_rec";
+			
+			
+			
 			$result = pg_query($connection, $query);
 			$row= pg_fetch_row($result);
 			$nb_deja_rec = $row[0];

@@ -34,7 +34,7 @@ $query = "delete from art_debarquement_rec;";
 
 $result = pg_exec($connection, $query);
 if (!$result) {
-  	echo "<br/>Attention une erreur s'est produite lors de la suppression de rt_debarquement_rec "; print($query);  
+  	echo "<br/>Attention une erreur s'est produite lors de la suppression de art_debarquement_rec "; print($query);  
 } else {
 	$traitement2 = "ok";
 	

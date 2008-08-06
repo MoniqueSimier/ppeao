@@ -4850,6 +4850,8 @@ while (list($key, $val) = each($info_deb)){
 		if ( $RunQErreur){
 			
 		} else {
+			
+			$messageProcess.="<font color='blue'>Pb insertion de cette requête</font><br/>";
 			// traitement d'erreur ? On arrête ou seulement avertissement ?
 		
 		}
@@ -4872,9 +4874,12 @@ while (list($key, $val) = each($info_deb)){
 		// Ancienne ajout données. 
 		// nouvelle insertion données en utilisant la fonction runQuery
 		$RunQErreur = runQuery($query,$connection);
+		print_r($RunQErreur);
+		
 		if ( $RunQErreur){
 			
 		} else {
+			$messageProcess.="<font color='blue'>Pb insertion de cette requête</font><br/>";
 			// traitement d'erreur ? On arrête ou seulement avertissement ?
 		
 		}
