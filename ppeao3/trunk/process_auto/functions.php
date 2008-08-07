@@ -195,9 +195,22 @@ function print_debug($dbgstr0){
     $dbgstr = ob_get_contents();
     ob_end_clean();   
     
-    $fpOut = fopen("error.log", "a+");
+    $fpOut = fopen("error.log2", "a+");
     fwrite($fpOut, "\n$dbgstr");
     fclose($fpOut);
+}
+
+function getTime() {
+    static $timer = false, $start;
+    if ($timer === false) {
+        $start = array_sum(explode(' ',microtime()));
+        $timer = true;
+        return NULL;
+    } else {
+        $timer = false;
+        $end = array_sum(explode(' ',microtime()));
+        return round(($end - $start) * 1000, 3);
+    }
 }
 
 ?>
