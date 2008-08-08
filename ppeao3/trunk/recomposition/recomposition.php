@@ -20,7 +20,7 @@ if (isset($_GET['aff'])) {
 	$afficherMessage = "0" ;
 }
 
-set_time_limit(30000);
+set_time_limit(300000);
 
 
 $nb_enr = $_GET['nb_enr'];
@@ -40,7 +40,7 @@ $messageProcess .= "<br/>travail sur la base : ".$bdd ;
 //                             Fafrication du tableau coef_esp                             //
 //                     receuillant les informations de k et b par espèce                   //
 /////////////////////////////////////////////////////////////////////////////////////////////
-
+set_time_limit(30000);
 $connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 if (!$connection) {  echo "Non connecté"; exit;}
 
@@ -2502,15 +2502,17 @@ print_debug($query4);
 
 reset($info_deb);
 while (list($key, $val) = each($info_deb))                      //pour tous les debarquements
-	{
+{
 	$WfdbqI =0;
 
 	while (list($key2, $val2) = each($val))			//pour chaque fraction
-		{
+	{
 		$Wt = $info_deb[$key][$key2][5];            //poid total du débarquement
 		$Wfdbq = $info_deb[$key][$key2][8];
 		$WfdbqI += $Wfdbq;			    //somme des poids des fractions
-		}
+	print "key == $key - $key2 - $Wt<br/>";
+	
+	}
 	reset($val);
 
 	//if ($Wt == 0){ $info_deb[$key][$key2][5] = round($WfdbqI,2);}	//Wt = somme(Wfdbq)
