@@ -1,4 +1,4 @@
-<?php
+<?php 
 // Mis à jour par Olivier ROUX, 29-07-2008
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
@@ -12,7 +12,7 @@ $zone=0; // zone publique (voir table admin_zones)
 <head>
 
 	
-	<?php
+	<?php 
 		// les balises head communes  toutes les pages
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
@@ -23,7 +23,7 @@ $zone=0; // zone publique (voir table admin_zones)
 
 <body>
 
-<?php
+<?php 
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
@@ -38,7 +38,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 
 Bienvenue &agrave; PPEAO.
 
-<?php
+<?php 
 
 echo(logDisplayShort('','','',"",5,""));
 
@@ -47,7 +47,7 @@ echo(logDisplayShort('','','',"",5,""));
 </div> <!-- end div id="main_container"-->
 
 
-<?php
+<?php 
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
 
 ;} // end if (userHasAccess($_SESSION['user_id'],$zone))
@@ -56,7 +56,7 @@ echo(logDisplayShort('','','',"",5,""));
 else {userAccessDenied($zone);}
 ?>
 
-<?php
+<?php 
 include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
 
 ?>
