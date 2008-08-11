@@ -1,4 +1,4 @@
-<?PHP
+<?php 
 
 $user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 

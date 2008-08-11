@@ -25,7 +25,7 @@ document.Formulaire.submit();
 <div align='center'>
 Contenu du fichier :
 
-<?php
+<?php 
 
 /////////////////////////////////Pour vider le fichier temp
 $vider = $_POST['vider'];

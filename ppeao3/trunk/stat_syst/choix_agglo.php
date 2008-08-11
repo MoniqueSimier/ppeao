@@ -1,4 +1,4 @@
-<?PHP
+<?php 
 $user="devppeao";
 $passwd="2devppe!!";
 $host= "vmppeao.mpl.ird.fr";

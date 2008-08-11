@@ -1,6 +1,6 @@
 <html>
 <body>
-<?php
+<?php 
 
 $file="temp.txt";
 $fpm = fopen($file, "r");

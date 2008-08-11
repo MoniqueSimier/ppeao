@@ -158,7 +158,7 @@ function OuvrirPopup(page,nom,option) {
 
 
 
-<?php
+<?php 
 $Liste1 = $_GET['Liste1'];
 $Liste2 =  $_GET['Liste2'];
 $Liste3 =  $_GET['Liste3'];
@@ -227,7 +227,7 @@ $id_pays = $Liste1;
 La dernière ligne remplie est : 
 <br><br>
 <Font Color ="#808080">
-<?php
+<?php 
 
 
 if (($Liste1 != "")&&($Liste2 != "")&&($Liste3 != "")&&($Liste4 != "")&&($Liste5 != "")&&($Liste6 != "")&&($effort != ""))
