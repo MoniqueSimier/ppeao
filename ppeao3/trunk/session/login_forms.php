@@ -1,4 +1,4 @@
-<?php 
+<?php  
 function showLoginForm() {
 $theLoginForm='<form action="/session/login.php" method="post" id="sloginform" name="sloginform">
 <dl>

@@ -1,4 +1,4 @@
-<?php
+<?php 
 // Mis à jour par Olivier ROUX, 29-07-2008
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
@@ -9,7 +9,7 @@ $zone=3; // zone portage (voir table admin_zones)
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
-	<?php
+	<?php 
 		// les balises head communes  toutes les pages
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
@@ -17,7 +17,7 @@ $zone=3; // zone portage (voir table admin_zones)
 
 </head> 
  <body>
-<?php
+<?php 
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
@@ -27,8 +27,8 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 
 <div id="main_container" class="home">
 		<div id="BDDetail">
-		<?php $subsection="home"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
-		<?php include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
+		<?php  $subsection="home"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
+		<?php  include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 		</div>
 		<div id="subContent">
 		<h1>Base de donn&eacute;es PPEAO</h1>
@@ -45,7 +45,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 </div> <!-- end div id="main_container"-->
 
 
-<?php
+<?php 
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
 
 ;} // end if (userHasAccess($_SESSION['user_id'],$zone))
@@ -55,7 +55,7 @@ else {userAccessDenied($zone);}
 
 ?>
 
-<?php
+<?php 
 include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
 
 ?>

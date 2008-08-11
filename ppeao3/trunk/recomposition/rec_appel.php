@@ -1,4 +1,4 @@
-<?php
+<?php 
 // Mis à jour par Olivier ROUX, 29-07-2008
 // Mis à jour Yann LAURENT, 07-07-2008
 // code commun à toutes les pages (demarrage de session, doctype etc.)
@@ -9,7 +9,7 @@ $section="portage";
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
-	<?php
+	<?php 
 	// les balises meta communes  toutes les pages
 	//include $_SERVER["DOCUMENT_ROOT"].'meta.inc';
 	?>
@@ -19,7 +19,7 @@ $section="portage";
 	<script src="/js/ajaxEfface.js"></script>
 	</head>
 	<body>
-		<?php
+		<?php 
 		// A virer a passer dans l'include commun connect.inc
 		$bdd = $_POST['base'];
 		if($bdd==""){
@@ -30,12 +30,12 @@ $section="portage";
 		?>
 		<div id="main_container" class="home">
 			<div id="BDDetail">
-			<?php $subsection="manuel_recomp"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
-			<?php include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
+			<?php  $subsection="manuel_recomp"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
+			<?php  include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 			</div>
 			<div id="subContent">
 			
-			<?php // Code original a mettre à jour ?>
+			<?php  // Code original a mettre à jour ?>
 			<div id='headerinfo'>
 			<h1>Recomposition automatique des donn&eacute;es d'enqu&ecirc;tes.</h1>
 			<br/>
@@ -52,7 +52,7 @@ $section="portage";
 			<div id="dbinfo">
 			<h2><?php echo "La Base ".$bdd." contient"; ?> :</h2>
 
-			<?php	include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
+			<?php 	include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 
 			//////////////////////////////////////////////////////////////////////////////////////////////
 			//                      Récupération du nb d'enregistrements à traiter                      //
@@ -93,28 +93,28 @@ $section="portage";
 				il vous sera envoy&eacute; un mail de confirmation &agrave; la fin de la recomposition des donn&eacute;es.<br/>
 				<br/>
 				
-				<input type="hidden" name="nb_enr" value="<?php print($nb_enr);?>" />
-				<input type="hidden" name="base" value="<?php print($bdd);?>" />
+				<input type="hidden" name="nb_enr" value="<?php  print($nb_enr);?>" />
+				<input type="hidden" name="base" value="<?php  print($bdd);?>" />
 				<input type="hidden" name="aff" value="1" >
 				<!--<input type="submit" name="Recomposition" value="Recomposer les données" onClick="pop_it3(form);">-->
-			 	<input type="button" name="Recomposition" value="Recomposer les donnees" onClick="runRecomp('<?php print($nb_enr);?>','<?php print($bdd);?>');">
+			 	<input type="button" name="Recomposition" value="Recomposer les donnees" onClick="runRecomp('<?php  print($nb_enr);?>','<?php  print($bdd);?>');">
 			  </p>
 			</form>
 			</div>
 			
 			<div id="formEfface">
 			<form >
-				<input type="button" name="Effacement" value="Effacer les donnees recomposees" onClick="runClear('<?php print($bdd);?>')"/>
+				<input type="button" name="Effacement" value="Effacer les donnees recomposees" onClick="runClear('<?php  print($bdd);?>')"/>
 			</form>
 			</div>
-			<div id="formEffaceResult"> <?php // Pour y mettre le resultat de l'effacement des données ! ?>
+			<div id="formEffaceResult"> <?php  // Pour y mettre le resultat de l'effacement des données ! ?>
 
 			</div>			
 			
 		</div>
 	</div>
 
-	<?php 
+	<?php  
 	// fin du code d'origine
 	include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
 	

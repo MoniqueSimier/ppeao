@@ -1,4 +1,4 @@
-<?php
+<?php 
 // Creation by Yann Laurent 2008 - July - 01
 // Handle vertical sub menu 
 
