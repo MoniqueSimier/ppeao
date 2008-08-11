@@ -12,7 +12,7 @@ Sélection des données en cours...
 
 <img src="gif.gif"> 
 <input type="file" name="image" accept="gif.gif">
-<?php
+<?php 
 
 
 

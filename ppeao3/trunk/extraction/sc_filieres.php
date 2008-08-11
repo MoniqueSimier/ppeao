@@ -6,7 +6,7 @@
 </head>
 <body BGCOLOR="#CCCCFF">
 
-<?php
+<?php 
 //if(! ini_set("max_execution_time", "320")) {echo "échec max_execution_time";}
 include_once("../connect.inc");
 $connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
@@ -634,7 +634,7 @@ else if(($requete_faite ==1)&&($selection_faite !=1))
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-			<?php
+			<?php 
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 		
@@ -744,7 +744,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-	<?php
+	<?php 
 	
 	print ("<table width=\"850\"><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr>");
 
@@ -912,7 +912,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-		<?php
+		<?php 
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
@@ -921,7 +921,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 <div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 <div id="_pays" style="display:none">
-<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("<tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[54]\" value=\"1\">");//id dans systeme
@@ -929,7 +929,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	print ("<input type=hidden name=\"voir[53]\" value=\"2\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align=center WIDTH=\"200\">");
 	
 	?>
@@ -937,7 +937,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 </div> 
 
 <div id="vue_syst" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");//id systeme
@@ -948,7 +948,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td><td align=center WIDTH=\"200\">");
 
 	?>
@@ -956,7 +956,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 </div> 
 
 <div id="vue_sect" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");//id dans systeme
 	print ("<input type=hidden name=\"voir[45]\" value=\"14\">");
@@ -965,7 +965,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	if($choix!=" Peuplement ")print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[43]\" value=\"16\"></td><td>sect_surf</td>");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -977,7 +977,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 </div>
 
 <div id="vue_camp" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//print ("</tr><tr><td>Champs facultatifs des campagnes</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>camp_deb</td>");//date debut
@@ -989,13 +989,13 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_camp').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td><td width=\"200\">");
 	?>
 	<div onClick="document.getElementById('vue_station').style.display = 'block';"><b>Stations</b>
 </div>
 <div id="vue_station" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//print ("</tr><tr><td>Champs facultatifs des stations</td>");
 	print ("<tr ALIGN=center><td WIDTH=30>x</td><td>station</td>");//id station
@@ -1023,7 +1023,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 	
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_station').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 ////////////////////////////////////////////tables coup de peche et fraction
@@ -1033,7 +1033,7 @@ print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top align=center><td VALIGN
 </div>
 
 <div id="vue_coup" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//print ("</tr><tr><td>Champs facultatifs des coups de pêches</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>coup</td>");
@@ -1063,14 +1063,14 @@ print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top align=center><td VALIGN
 if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement "))
 	{
 
-?></div> <?php
+?></div> <?php 
 	print ("</td><td width=\"200\">");
 	?>
 	<div onClick="document.getElementById('vue_fraction').style.display = 'block';"><b>Fractions</b>
 </div>
 
 <div id="vue_fraction" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//print ("</tr><tr><td>Champs facultatifs des fractions</td>");
 	if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement "))print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id_fraction</td>");
@@ -1086,7 +1086,7 @@ print ("<input type=hidden name=\"voir[12]\" value=\"87\">");}
 print ("<input type=hidden name=\"voir[13]\" value=\"86\">");}
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_fraction').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-	?></div> <?php
+	?></div> <?php 
 	
 }//fin du if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement "))
 	print ("</td></tr></table>");
@@ -1105,7 +1105,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 </div>
 
 <div id="vue_espece" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 		//print ("</tr><tr><td COLSPAN=2>Champs facultatifs des espèces</td>");
 		print ("<tr ALIGN=center><td WIDTH=30>x</td><td>codesp</td>");
@@ -1122,14 +1122,14 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 		print ("<input type=hidden name=\"voir[6]\" value=\"96\">");
 		print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_espece').style.display = 'none';\">fermer</td>");
 		print ("</tr></table>");
-	?></div> <?php
+	?></div> <?php 
 	print ("</td><td width=\"200\">");
 	?>
 	<div onClick="document.getElementById('vue_famille').style.display = 'block';"><b>Famille et ordre</b>
 </div>
 
 <div id="vue_famille" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 		print ("<tr ALIGN=center>");
 		
@@ -1140,7 +1140,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 		print ("<tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[60]\" value=\"111\" ></td><td>ordre</td>");
 		print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_famille').style.display = 'none';\">fermer</td>");
 		print ("</tr></table>");
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	}
 	
@@ -1156,7 +1156,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 </div>
 
 <div id="vue_engin" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//print ("</tr><tr><td>Champs facultatifs des engins</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>engin_lib</td>");//libelle
@@ -1167,7 +1167,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[18]\" value=\"79\" ></td><td>engin_long</td>");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_engin').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-	?></div> <?php
+	?></div> <?php 
 	print ("</td>");
 	}
 	
@@ -1179,7 +1179,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 </div>
 
 <div id="vue_envir" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 		print ("<tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[61]\" value=\"55\" ></td><td WIDTH=170>transp</td>");
 		print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[76]\" value=\"70\" ></td><td>envir_memo</td>");
@@ -1205,7 +1205,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 		print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[101]\" value=\"76\" ></td><td>fcour_lib</td>");
 		print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_envir').style.display = 'none';\">fermer</td>");
 		print ("</tr></table>");
-	?></div> <?php
+	?></div> <?php 
 	print ("</td>");
 	}
 	if(($choix == "     Biologie     ")||($choix == "    Trophique     "))
@@ -1215,7 +1215,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 </div>
 
 <div id="vue_biol" style="display:none">
-<?php 
+<?php  
 	print ("<br><table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 		print ("<tr ALIGN=center><td WIDTH=30>x</td><td>id_biologie</td>");
 		print ("<input type=hidden name=\"voir[120]\" value=\"112\">");
@@ -1247,7 +1247,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 		
 		print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_biol').style.display = 'none';\">fermer</td>");
 		print ("</tr></table>");
-	?></div> <?php
+	?></div> <?php 
 	print ("</td>");
 }
 	print ("</tr></table>");
@@ -1406,7 +1406,7 @@ function fermer() {
 if(confirm("Etes vous sûr ?"))window.close();}
 </script>
 
-<?php
+<?php 
 
 print("<div align='center'><br><br>");
 //print("<input type='button' value='Fermer' onClick= 'confirm(\"Etes vous sûr ?\");' 'self.close();' name=\"button\">"); 

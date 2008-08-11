@@ -7,7 +7,7 @@
 
 
 
-<?php
+<?php 
 include_once("../connect.inc");
 $connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
 if (!$connection) { echo "Pas de connection"; exit;}
@@ -38,14 +38,14 @@ if(isset($_POST['type']))
 <h4><Font Color ="#333366">Peuplements de poissons et Pêche artisanale des Ecosystèmes estuariens,</font>
 <br>
 <Font Color ="#333366">lagunaires ou continentaux d’Afrique de l’Ouest</font></h4>
-<Font Color ="#333366"><?php print($entete); ?></font>
+<Font Color ="#333366"><?php  print($entete); ?></font>
 </td></tr>
 </table>
 </div>
 
 
 
-<?php
+<?php 
 
 
 /*$user="devppeao";			// Le nom d'utilisateur 
@@ -216,7 +216,7 @@ print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever 
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-			<?php
+			<?php 
 			print ("<br><br><table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 	
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
@@ -347,7 +347,7 @@ else
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-			<?php
+			<?php 
 			print ("</tr><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr>");
 			
 			

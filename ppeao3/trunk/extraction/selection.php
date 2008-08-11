@@ -18,7 +18,7 @@ function pop_it(the_form) {
 <body BGCOLOR="#CCCCFF">
 
 
-<?php
+<?php 
 //connection à la BD
 //if(! ini_set("max_execution_time", "320")) {echo "échec max_execution_time";}
 include_once("../connect.inc");
@@ -58,7 +58,7 @@ else $type_donnees ="";
 <table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH="600">
 <tr><td align='center'><h3><b><Font Color ="#333366">Base de Données PPEAO</font></b></h3>
 
-<?php
+<?php 
 if ($type == "scientifique")print ("<Font Color =\"#333366\">Consultation / Extraction de données de pêche scientifiques</Font>");
 else if ($type == "artisanale")print ("<Font Color =\"#333366\">Consultation / Extraction de données de pêche artisanales</Font>");
 else if ($type == "statistique")print ("<Font Color =\"#333366\">Consultation / Extraction de données statistiques</Font>");
@@ -67,7 +67,7 @@ else print("</b></Font>");
 </td></tr>
 </table>
 </div>
-<?php
+<?php 
 
 
 
@@ -193,7 +193,7 @@ if (!isset($_POST['secteur']))
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-	<?php
+	<?php 
 	
 	if($stx!=0)print ("<table width=\"850\"><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr>");
 	print ("<table >");
@@ -403,7 +403,7 @@ print ("</div>");
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-	<?php
+	<?php 
 		print ("<table><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 		
 		print ("<table>");
@@ -534,7 +534,7 @@ print ("</div>");
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php
+			<?php 
 			print ("<table><tr><td align=center><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 			
@@ -833,7 +833,7 @@ if (!isset($_POST['secteur']))
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php
+			<?php 
 	print ("<table><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 
 	print ("<table>");
@@ -1008,7 +1008,7 @@ else
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php
+			<?php 
 			print ("<table><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 		
 		
@@ -1222,14 +1222,14 @@ else
 			//$colonne = ceil($n/5);	//affichage de 5 par colonne
 			?>
 			<script language="JavaScript"><!--
-			function clicTous<?php print($key_P); ?>(form,booleen) 
+			function clicTous<?php  print($key_P); ?>(form,booleen) 
 				{
 				for (i=0, n=form.elements.length; i<n; i++)
 				if (form.elements[i].name.indexOf('periode') != -1)
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php
+			<?php 
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td><td align = right>Tout</td></tr></table>");
 		
 			
@@ -1251,14 +1251,14 @@ else
 				
 				?>
 			<script language="JavaScript"><!--
-			function clicTous<?php print($key_P); ?>(form,booleen) 
+			function clicTous<?php  print($key_P); ?>(form,booleen) 
 				{
 				for (i=0, n=form.elements.length; i<n; i++)
-				if (form.elements[i].name.indexOf('periode[<?php print($key_P); ?>]') != -1)
+				if (form.elements[i].name.indexOf('periode[<?php  print($key_P); ?>]') != -1)
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php
+			<?php 
 			print ("<td align = right>Tout</td><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td>");
 		
 		
@@ -1404,7 +1404,7 @@ else
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php
+			<?php 
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td align='center'>Tout</td></tr></table>");
 			
 			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
@@ -1724,7 +1724,7 @@ if (!isset($_POST['secteur']))
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php
+			<?php 
 	print ("<table><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 
 	
@@ -1898,7 +1898,7 @@ else
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php
+			<?php 
 			print ("<table><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 		
 		
@@ -2058,14 +2058,14 @@ else
 			
 			?>
 			<script language="JavaScript"><!--
-			function clicTous<?php print($key_P); ?>(form,booleen) 
+			function clicTous<?php  print($key_P); ?>(form,booleen) 
 				{
 				for (i=0, n=form.elements.length; i<n; i++)
 				if (form.elements[i].name.indexOf('periode') != -1)
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php
+			<?php 
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td><td align = right>Tout</td></tr></table>");
 		
 			
@@ -2085,14 +2085,14 @@ else
 				
 				?>
 			<script language="JavaScript"><!--
-			function clicTous<?php print($key_P); ?>(form,booleen) 
+			function clicTous<?php  print($key_P); ?>(form,booleen) 
 				{
 				for (i=0, n=form.elements.length; i<n; i++)
-				if (form.elements[i].name.indexOf('periode[<?php print($key_P); ?>]') != -1)
+				if (form.elements[i].name.indexOf('periode[<?php  print($key_P); ?>]') != -1)
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php
+			<?php 
 			print ("<td align = right>Tout</td><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td>");
 		
 		
@@ -2226,7 +2226,7 @@ else
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php
+			<?php 
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td align='center'>Tout</td></tr></table>");
 			
 			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
@@ -2366,7 +2366,7 @@ else
 			    form.elements[i].checked = booleen;
 			  }
 			//--></script>
-			<?php
+			<?php 
 			
 
 			
@@ -2559,7 +2559,7 @@ else
 			    form.elements[i].checked = booleen;
 			  }
 			//--></script>
-			<?php
+			<?php 
 			
 			
 				print ("<table><tr><td align='center' width=\"30\"><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td>Tout</td></tr></table>");

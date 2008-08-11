@@ -5,7 +5,7 @@
 </head>
 <body BGCOLOR="#CCCCFF">
 
-<?php
+<?php 
 if(! ini_set("max_execution_time", "480")) {echo "échec max_execution_time";}
 include_once("../connect.inc");
 $connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
@@ -225,7 +225,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php
+		<?php 
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
@@ -237,7 +237,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 
 
 <div id="_pays" style="display:none">
-<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -245,7 +245,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -253,7 +253,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");
@@ -263,7 +263,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -275,7 +275,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 </div>
 
 <div id="_sect" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -284,7 +284,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -292,7 +292,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo</td>");
@@ -307,7 +307,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -318,7 +318,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 </div>
 
 <div id="_up" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>up</td>");
 		print ("<input type=hidden name=\"voir[24]\" value=\"22\">");
@@ -340,7 +340,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_up').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -349,7 +349,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 
 
 <div id="vue_act" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"300\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>activite</td>");
 	print ("<input type=hidden name=\"voir[9]\" value=\"21\">");
@@ -370,7 +370,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_act').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -382,7 +382,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	</div>
 	
 	<div id="_date" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[351]\" value=\"27\" ></td><td>date</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[352]\" value=\"29\" ></td><td>annee</td>");
@@ -511,7 +511,7 @@ function fermer() {
 if(confirm("Etes vous sûr ?"))window.close();}
 </script>
 
-<?php
+<?php 
 
 print("<div align='center'><br><br>");
 print("<input type='button' value='Fermer' onClick= 'fermer()'   name=\"button\">"); 
@@ -708,7 +708,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php
+		<?php 
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
@@ -719,7 +719,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 
 
 <div id="_pays" style="display:none">
-<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -727,7 +727,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -735,7 +735,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");
@@ -745,7 +745,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -758,7 +758,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 </div>
 
 <div id="_sect" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -767,7 +767,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -775,7 +775,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo_lib</td>");
@@ -784,7 +784,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -795,7 +795,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 </div>
 
 <div id="_up" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>grd_type_engin</td>");
 	print ("<input type=hidden name=\"voir[26]\" value=\"58\">");
@@ -812,13 +812,13 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_up').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
 	<div onClick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
 </div>
 <div id="vue_cap" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[9]\" value=\"45\" ></td><td>dbq_date</td>");
@@ -863,7 +863,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_cap').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -990,7 +990,7 @@ function fermer() {
 if(confirm("Etes vous sûr ?"))window.close();}
 </script>
 
-<?php
+<?php 
 
 print("<div align='center'><br><br>");
 print("<input type='button' value='Fermer' onClick= 'fermer()'   name=\"button\">"); 
@@ -1424,7 +1424,7 @@ else if($selection_faite !=1)
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-			<?php
+			<?php 
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 		
@@ -1536,7 +1536,7 @@ else if($colonnes_faites !=1) //selection espece faite
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php
+		<?php 
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	////////////table pays et systeme
@@ -1546,7 +1546,7 @@ else if($colonnes_faites !=1) //selection espece faite
 
 
 <div id="_pays" style="display:none">
-<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -1554,7 +1554,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -1562,7 +1562,7 @@ else if($colonnes_faites !=1) //selection espece faite
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");
@@ -1572,7 +1572,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -1584,7 +1584,7 @@ else if($colonnes_faites !=1) //selection espece faite
 </div>
 
 <div id="_sect" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -1593,7 +1593,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -1601,7 +1601,7 @@ else if($colonnes_faites !=1) //selection espece faite
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo_lib</td>");
@@ -1610,7 +1610,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -1622,7 +1622,7 @@ else if($colonnes_faites !=1) //selection espece faite
 </div>
 
 <div id="_up" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>grd_type_engin</td>");
 	print ("<input type=hidden name=\"voir[26]\" value=\"58\">");
@@ -1635,7 +1635,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_up').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -1643,7 +1643,7 @@ else if($colonnes_faites !=1) //selection espece faite
 </div>
 
 <div id="vue_cap" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"300\">");
 	
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[9]\" value=\"45\" ></td><td>dbq_date</td>");
@@ -1690,7 +1690,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 
@@ -1702,7 +1702,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	
 
 <div id="_fr" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	if($type_donnees=="brutes")
 		{
@@ -1742,7 +1742,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	
 	
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</tr></table>");
 
 	print ("<input type=hidden name=\"voir[200]\" value=\"0\">");//pour l'identifiant debarquement 
@@ -1874,7 +1874,7 @@ function fermer() {
 if(confirm("Etes vous sûr ?"))window.close();}
 </script>
 
-<?php
+<?php 
 
 print("<div align='center'><br><br>");
 print("<input type='button' value='Fermer' onClick= 'fermer()'   name=\"button\">"); 
@@ -2310,7 +2310,7 @@ else if($selection_faite !=1)
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-			<?php
+			<?php 
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
@@ -2421,7 +2421,7 @@ else if($colonnes_faites !=1) //selection espece faite
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php
+		<?php 
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	////////////table pays et systeme
@@ -2431,7 +2431,7 @@ else if($colonnes_faites !=1) //selection espece faite
 
 
 <div id="_pays" style="display:none">
-<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -2439,7 +2439,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -2447,7 +2447,7 @@ else if($colonnes_faites !=1) //selection espece faite
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");
@@ -2457,7 +2457,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -2469,7 +2469,7 @@ else if($colonnes_faites !=1) //selection espece faite
 </div>
 
 <div id="_sect" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -2478,7 +2478,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -2486,7 +2486,7 @@ else if($colonnes_faites !=1) //selection espece faite
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo_lib</td>");
@@ -2495,7 +2495,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -2506,7 +2506,7 @@ else if($colonnes_faites !=1) //selection espece faite
 </div>
 
 <div id="_up" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>grd_type_engin</td>");
 	print ("<input type=hidden name=\"voir[26]\" value=\"58\">");
@@ -2519,7 +2519,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_up').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -2527,7 +2527,7 @@ else if($colonnes_faites !=1) //selection espece faite
 </div>
 
 <div id="vue_cap" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"300\">");
 	
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[9]\" value=\"45\" ></td><td>dbq_date</td>");
@@ -2565,7 +2565,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_cap').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 
@@ -2577,7 +2577,7 @@ else if($colonnes_faites !=1) //selection espece faite
 </div>
 
 <div id="_fr" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"300\">");
 	if($type_donnees=="brutes")
 		{
@@ -2615,7 +2615,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_fr').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</tr></table>");
 
 	print ("<input type=hidden name=\"voir[200]\" value=\"0\">");
@@ -2742,7 +2742,7 @@ function fermer() {
 if(confirm("Etes vous sûr ?"))window.close();}
 </script>
 
-<?php
+<?php 
 
 print("<div align='center'><br><br>");
 print("<input type='button' value='Fermer' onClick= 'fermer()'   name=\"button\">"); 
@@ -2913,7 +2913,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php
+		<?php 
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	////////////table pays et systeme
@@ -2923,7 +2923,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 
 
 <div id="_pays" style="display:none">
-<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -2931,7 +2931,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -2939,7 +2939,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");
@@ -2949,7 +2949,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -2961,7 +2961,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 </div>
 
 <div id="_sect" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -2970,7 +2970,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -2978,7 +2978,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo_lib</td>");
@@ -2987,7 +2987,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -2998,7 +2998,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 </div>
 
 <div id="_deb" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq</td>");
 	print ("<input type=hidden name=\"voir[9]\" value=\"21\">");
@@ -3010,7 +3010,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<input type=hidden name=\"voir[12]\" value=\"38\">");
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_deb').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php
+?></div> <?php 
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
@@ -3018,7 +3018,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 </div>
 
 <div id="vue_engin" style="display:none">
-<?php 
+<?php  
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>up</td>");
@@ -3042,7 +3042,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	
 	print ("</tr></table>");
 	
-	?></div> <?php
+	?></div> <?php 
 	print ("</td></tr></table>");
 	
 	
@@ -3161,7 +3161,7 @@ function fermer() {
 if(confirm("Etes vous sûr ?"))window.close();}
 </script>
 
-<?php
+<?php 
 
 print("<div align='center'><br><br>");
 //print("<input type='button' value='Fermer' onClick= 'confirm(\"Etes vous sûr ?\");' 'self.close();' name=\"button\">"); 
