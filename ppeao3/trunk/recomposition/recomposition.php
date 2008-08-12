@@ -19,10 +19,7 @@ if (isset($_GET['aff'])) {
 } else {
 	$afficherMessage = "0" ;
 }
-
 set_time_limit(300000);
-
-
 $nb_enr = $_GET['nb_enr'];
 $bdd = $_GET['base'];
 $to = $_GET['adresse'];
@@ -211,11 +208,9 @@ pg_free_result($result);//19 09
 //               calcul et ajout des Wdft et Ndft pour chaque fraction        //
 //                     dans le tableau recapitulatif $info_deb                //
 ////////////////////////////////////////////////////////////////////////////////
-
-
 reset($info_deb);
-while (list($key, $val) = each($info_deb))
-	{
+while (list($key, $val) = each($info_deb)){
+	
 	while (list($key2, $val2) = each($val))
 		{
 		$Ndft = 0;
@@ -253,7 +248,9 @@ $numero = 0;
 reset($info_deb);
 while (list($key, $val) = each($info_deb))//pour tous les debarquements
 {
-	
+	if($key==10){
+		break;
+	}
 	$numero = $numero+1;
 	//$messageProcess .= "Recomposition de l'enqu&ecirc;te ".$numero . " sur ".$nb_enr." <br/>";
 	//print "Recomposition de l'enquête ".$numero . " sur ".$nb_enr;
@@ -2512,6 +2509,8 @@ while (list($key, $val) = each($info_deb))                      //pour tous les 
 		$WfdbqI += $Wfdbq;			    //somme des poids des fractions
 	
 	}
+	print_debug($key." ".$Wt. " " .$WfdbqI);
+	
 	reset($val);
 
 	//if ($Wt == 0){ $info_deb[$key][$key2][5] = round($WfdbqI,2);}	//Wt = somme(Wfdbq)
@@ -2584,7 +2583,7 @@ while (list($key, $val) = each($info_deb))                      //pour tous les 
 //                                           Fndbq                                                //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
+/*
 //$connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 if (!$connection) {  echo "Non connecté"; exit;}
 
@@ -4850,7 +4849,7 @@ while (list($key, $val) = each($info_non_deb))
 		unset($info_non_deb[$key][$key2]);
 		}
 	}
-
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
@@ -4871,7 +4870,9 @@ while (list($key, $val) = each($info_deb)){
 	//$messageProcess.="Insertion de l'enqu&ecirc;te ".$numero2 . " sur ".$nb_enr ."<br/>";
 	
 	$messageProcess.="<br/><b>Recomposisiton de l'enqu&ecirc;te ".$numero2 . " sur ".$nb_enr ."</b><br/><br/>";
-	
+	if($numero2==10){
+		break;
+	}
 	$Wti =0;
 	while (list($key2, $val2) = each($val)){
 		$fr_deb =$key2;
@@ -4884,12 +4885,13 @@ while (list($key, $val) = each($info_deb)){
 
 	$query2 = "insert into art_debarquement_rec ( id, poids_total, art_debarquement_id ) 
 	values ('rec_".$key."', ".$Wti.", ".$key.");";
-	//print_debug($query2);
+	
 
 	// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
 	 //if($Wti!=0)$result2 = pg_exec($connection, $query2); // Ancienne ajout données. 
 	// nouvelle insertion données en utilisant la fonction runQuery
 	if($Wti!=0) {
+		print_debug($query2);
 		$messageProcess .= "".$query2."<br/>";
 		$RunQErreur = runQuery($query2,$connection);
 		if ( $RunQErreur){
@@ -4912,7 +4914,7 @@ while (list($key, $val) = each($info_deb)){
 
 		$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
 		values ('".$key2."', ".$info_deb[$key][$key2][8].", ".$info_deb[$key][$key2][9].", '".$info_deb[$key][$key2][7]."');";
-		//print_debug($query);
+		print_debug($query);
 		
 		$messageProcess .= "".$query."<br/>";
 
@@ -4941,7 +4943,7 @@ if ($afficherMessage == "1") {
 }
 
 pg_close();
-
+/*
 //envoie mail confirm
 // To
 //$to = 'fauchier@mpl.ird.fr';
@@ -4954,7 +4956,7 @@ $headers = 'From: base_PPEAO'."\r\n";
 $headers .= "\r\n";
 // Function mail()
  mail($to, $subject, $msg, $headers);
-
-//print_debug(getTime()."ms");
+*/
+print_debug(getTime()."ms");
 
 ?>

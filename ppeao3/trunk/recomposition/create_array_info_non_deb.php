@@ -26,5 +26,5 @@ while($row = pg_fetch_row($result)){
 	$info_non_deb[$clé][$cle2][7] = $row[8];           //espece péchée = espece de la fraction
 	$info_non_deb[$clé][$cle2][8] = $row[9];           //poid de la fraction = Wfdbq
 	$info_non_deb[$clé][$cle2][9] = $row[10];          //nombre poisson de la fraction = Nfdbq        
-	}
+}
 ?>

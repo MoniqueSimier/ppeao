@@ -1,5 +1,4 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //                   Récupération des informations nécessaires aux calculs                    //
 //                        des données manquantes (pour chaque débarquement)                   // 
@@ -67,14 +66,12 @@ $info_deb=array();
 		                           //cle = identifiant du débarquement
 		/*print_debug($row[0]);
 		print_debug($row[1]);
-		/*print_debug($row[2]);
+		print_debug($row[2]);
 		print_debug($row[3]);
 	 	print_debug($row[4]);
 		print_debug($row[5]);
-		print_debug($row[6]);*/
-	/*	print_debug($row[7]);    
-		/*
-		
+		print_debug($row[6]);
+		print_debug($row[7]);    
 		print_debug($row[8]);                          //cle2 = identifiant de la fraction
 		print_debug($row[9]);                          //cle2 = identifiant de la fraction
 		print_debug($row[10]);    */                      //cle2 = identifiant de la fraction

@@ -201,21 +201,18 @@ function query_from_ste_plus($values,$key, $key2,$round){
 			and ((AD.annee = " . $values[$key][$key2][4] .""; 
 			break;
 	}
-	
-	if ($values[$key][$key2][3] == 1)   //si mois 1 (janvier)
-	{
-						$query2.= " and (AD.mois = 1 or AD.mois = 2)) 
-						or (AD.annee = " . ($values[$key][$key2][4]-1) ." 
-						and AD.mois = 12))";
-	}elseif ($values[$key][$key2][3] == 12)   //si mois 12
-	{
-						$query2.= " and (AD.mois = 12 or AD.mois = 11)) 
-						or (AD.annee = " . ($values[$key][$key2][4]+1) ." 
-						and AD.mois = 1))";
+	if ($values[$key][$key2][3] == 1){   //si mois 1 (janvier)
+		$query2.= " and (AD.mois = 1 or AD.mois = 2)) 
+			or (AD.annee = " . ($values[$key][$key2][4]-1) ." 
+			and AD.mois = 12))";
+	}elseif ($values[$key][$key2][3] == 12){   //si mois 12
+		$query2.= " and (AD.mois = 12 or AD.mois = 11)) 
+			or (AD.annee = " . ($values[$key][$key2][4]+1) ." 
+			and AD.mois = 1))";
 	}else{
-						$query2.= " and ( AD.mois = " . (($values[$key][$key2][3])-1) ." 
-						or AD.mois = " . $values[$key][$key2][3] ." 
-						or AD.mois = " . (($values[$key][$key2][3])+1) .")))"; 
+		$query2.= " and ( AD.mois = " . (($values[$key][$key2][3])-1) ." 
+			or AD.mois = " . $values[$key][$key2][3] ." 
+			or AD.mois = " . (($values[$key][$key2][3])+1) .")))"; 
 	}
 	//print_debug("STE +  : ".$query2);	
 	return $query2;
@@ -309,19 +306,24 @@ function INSERTION DES DONNEES RESULTATS CONTENUES DANS $info_deb DANS LA BASE D
 @param string $afficherMessage
 @return $afficherMessage 
 */
-
 function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 	global $connection;
 	$compteur = 0;
 	$messageProcess="";
+	reset($datas);
 	foreach($datas as $key =>$val){
+		
 		$compteur++;
+		print_debug("compteur=".$compteur);
+		if($compteur==3){
+			break;
+		}
 		$messageProcess.="<br/><b>Recomposisiton de l'enqu&ecirc;te ".$compteur . " sur ".$nb_enr ."</b><br/><br/>";
 		$Wti =0;
 		foreach ($val as $key2=>$val2){
 			$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
 				values ('".$key2."', ".$datas[$key][$key2][8].", ".$datas[$key][$key2][9].", '".$datas[$key][$key2][7]."');";
-				//print_debug($query);
+				print_debug($query);
 			$RunQErreur = runQuery($query,$connection);
 			if ($RunQErreur){
 			
@@ -337,7 +339,9 @@ function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 		// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
 		//if($Wti!=0)$result2 = pg_exec($connection, $query2); // Ancienne ajout données. 
 		// nouvelle insertion données en utilisant la fonction runQuery
+		
 		if($Wti!=0) {
+			print_debug($query);
 			$messageProcess .= "".$query."<br/>";
 			$RunQErreur = runQuery($query,$connection);
 			if ( $RunQErreur){

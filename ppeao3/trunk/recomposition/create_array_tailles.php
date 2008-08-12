@@ -1,21 +1,15 @@
 <?php
-
 //////////////////////////////////////////////////////////////////////////////////
 //                          Pour les tailles:                                   //
 //                       création du tableau $FT                                //
 //////////////////////////////////////////////////////////////////////////////////
-
-
-
 $query = "select AF.id, APM.taille 
 	from art_fraction as AF, art_poisson_mesure as APM 
 	where APM.art_fraction_id = AF.id 
 	and AF.debarquee = 1 
 	order by AF.id";
-
 //print_debug("ligne 190=".$query);
 $result = pg_query($connection, $query);
-
 while($row = pg_fetch_row($result))
 	{
 	$id = $row[0];                             //clé = identifiant fraction

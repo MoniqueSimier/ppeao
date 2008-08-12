@@ -24,30 +24,32 @@ if($bdd==""){
 $messageProcess .= "<br/>travail sur la base : ".$bdd ;
 $connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 if (!$connection) {  echo "Non connecté"; exit;}
-
-//print("<br/>travail sur la base : ".$bdd);
 include_once ("functions_recomposition_generique.inc.php");
 include_once ("functions_query.inc.php");
+
 //Créationdes variables
 include_once("create_array_coef_esp.php");
 include_once("create_array_info_deb.php");
 include_once("create_array_tailles.php");
 include_once("create_array_info_non_deb.php");
 
+
+//calcul et ajout des Wdft et Ndft pour chaque fraction dans le tableau recapitulatif $info_deb       
+$info_deb=calcul_Wdft_Ndft_par_fraction($info_deb,$FT,$coef_esp);
+	
 // TRAITEMENT DES FRACTIONS DEBARQUEES Et compraison des poids               //
 include_once ("recomposition_info_deb.php");
-
+//print_debug($info_deb);
 //  TRAITEMENT DES FRACTIONS NON DEBARQUEES                            Fndbq                               Et nex fractions                 //
-include_once("recomposition_info_non_deb.php");
+//include_once("recomposition_info_non_deb.php");
 //INSERT
 insert_values_recompose($info_deb,$afficherMessage,$nb_enr);
-//include_once("insert_results.php");
 
 pg_close();
 
-//envoie mail confirm
-// To
-//$to = 'fauchier@mpl.ird.fr';
+/*
+//envoi mail
+//$to = 'f@.ird.fr';
 // Subject
 $subject = 'Base de données'.$_GET['base'];
 // Message
@@ -56,8 +58,8 @@ $msg = 'Fin du taitement de recomposition des données';
 $headers = 'From: base_PPEAO'."\r\n";
 $headers .= "\r\n";
 // Function mail()
- mail($to, $subject, $msg, $headers);
-
+mail($to, $subject, $msg, $headers);
+*/
 print_debug(getTime()."ms");
 
 ?>
