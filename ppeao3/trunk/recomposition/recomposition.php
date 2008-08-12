@@ -40,7 +40,7 @@ $messageProcess .= "<br/>travail sur la base : ".$bdd ;
 //                             Fafrication du tableau coef_esp                             //
 //                     receuillant les informations de k et b par espèce                   //
 /////////////////////////////////////////////////////////////////////////////////////////////
-set_time_limit(30000);
+
 $connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 if (!$connection) {  echo "Non connecté"; exit;}
 
@@ -112,7 +112,7 @@ while (list($key, $val) = each($coef_esp))
 	and AD.id = AF.art_debarquement_id 
 	and AF.debarquee = 1 
 	order by AD.id";
-	print_debug($query);
+	//print_debug($query);
 */
 //fin méthode 1
 //méthode 2
@@ -129,7 +129,7 @@ $result = pg_query($connection, $query);
 //méthode 2
 $row = pg_fetch_row($result);
 $compteur=$row[0];
-print_debug("compteur ==".$compteur);
+//print_debug("compteur ==".$compteur);
 //fin méthode 2
 
 $info_deb=array();
@@ -148,7 +148,7 @@ for($index=1; $index<=$compteur; $index+=1000){
 	LIMIT 1000 OFFSET ".$index."";
 //fin méthode 2	
 	
-	print_debug("ligne 147=".$query);
+	//print_debug("ligne 147=".$query);
 	$result = pg_query($connection, $query);
 
 
@@ -193,7 +193,7 @@ $query = "select AF.id, APM.taille
 	and AF.debarquee = 1 
 	order by AF.id";
 
-print_debug("ligne 190=".$query);
+//print_debug("ligne 190=".$query);
 $result = pg_query($connection, $query);
 
 while($row = pg_fetch_row($result))
@@ -299,7 +299,7 @@ while (list($key, $val) = each($info_deb))//pour tous les debarquements
 
 		elseif ( ($Wfdbq>0) && (($Nfdbq == 0)||($Nfdbq == "")) && (($Ndft == 0)||($Ndft == "")) )
 			{
-			
+			//strate STE
 			$query = "select distinct AF.id, AD.id 
 				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, art_poisson_mesure as APM 
 				where AD.id = AF.art_debarquement_id 
@@ -313,7 +313,7 @@ while (list($key, $val) = each($info_deb))//pour tous les debarquements
 				and AF.debarquee = 1 
 				and AF.id != '" . $key2 ."'";
 
-		print_debug("ligne 310=".$query);
+		//print_debug("ligne 310=".$query);
 
 			$result = pg_query($connection, $query);
 			//pg_close();
@@ -406,7 +406,7 @@ $result = pg_query($connection, $query);
 						or AD.mois = " . $info_deb[$key][$key2][3] ." 
 						or AD.mois = " . (($info_deb[$key][$key2][3])+1) .")"; 
 						}
-print_debug($query2);
+//print_debug($query2);
 					$result2 = pg_query($connection, $query2);
 					//pg_close();
 
@@ -686,14 +686,14 @@ print_debug($query2);
 								}
 
 								$row3 = Array();
-								print_debug($query3);
+								//print_debug($query3);
 
 								$result3 = pg_query($connection, $query3);
 								//pg_close();
 
 								$nb = pg_num_rows($result3);
 								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1";
-								print_debug($query3);
+								//print_debug($query3);
 								 $result3 = pg_query($connection, $query3); //pg_close();
 								}
 
@@ -732,7 +732,7 @@ print_debug($query2);
 										and RS.nom = '" . $info_deb[$key][$key2][1]."'
 										and AF.debarquee = 1 
 										and AF.id != '" . $key2 ."'"; 
-										print_debug("ligne 729=".$query4);
+										//print_debug("ligne 729=".$query4);
 										$result4 = pg_query($connection, $query4);
 										//pg_close();
 
@@ -777,7 +777,7 @@ print_debug($query2);
 												and AD.art_grand_type_engin_id = '" . $info_deb[$key][$key2][6]."' 
 												and AF.debarquee = 1 
 												and AF.id != '" . $key2 ."'"; 
-print_debug($query5);
+//print_debug($query5);
 												$result5 = pg_query($connection, $query5);
 												//pg_close();
 
@@ -823,7 +823,7 @@ print_debug($query5);
 														and AF.poids != 0 
 														and AF.nbre_poissons != 0 
 														and AF.id != '" . $key2 ."'";
-														print_debug("ligne 820=".$query6);
+														//print_debug("ligne 820=".$query6);
 														$result6 = pg_query($connection, $query6);
 														//pg_close();
 														
@@ -833,7 +833,7 @@ print_debug($query5);
 														$nb = pg_num_rows($result6);
 														if ($nb == 0){pg_free_result($result6);
 														$query6 = "select id, art_debarquement_id from art_fraction limit 1";
-														print_debug($query6);
+														//print_debug($query6);
 														 $result6 = pg_query($connection, $query6); //pg_close();
 														}
 
@@ -920,13 +920,13 @@ print_debug($query5);
 																	or AD.mois = " . (($info_deb[$key][$key2][3])+1) .")"; 
 																	
 																	}
-															print_debug($query27);
+															//print_debug($query27);
 																	$result7 = pg_query($connection, $query7);
 																	//pg_close();
 
 																$nb = pg_num_rows($result7);
 																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1";
-															print_debug($query7);
+															//print_debug($query7);
 
 																 $result7 = pg_query($connection, $query7); //pg_close();
 																}
@@ -1190,13 +1190,13 @@ print_debug($query5);
 																			or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 																			or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 																			}
-																			print_debug($query8);
+																			//print_debug($query8);
 																			$result8 = pg_query($connection, $query8);
 																			//pg_close();
 
 																		$nb = pg_num_rows($result8);
 																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1";
-																		print_debug($query8);
+																		//print_debug($query8);
 																		$result8 = pg_query($connection, $query8); //pg_close();
 																		}
 
@@ -1238,7 +1238,7 @@ print_debug($query5);
 																				and AF.poids != 0 
 																				and AF.nbre_poissons != 0 
 																				and AF.id != '" . $key2 ."'"; 
-										print_debug($query9);
+										//print_debug($query9);
 																				$result9 = pg_query($connection, $query9);
 																				//pg_close();
 
@@ -1284,13 +1284,13 @@ print_debug($query5);
 																						and AF.poids != 0 
 																						and AF.nbre_poissons != 0 
 																						and AF.id != '" . $key2 ."'"; 
-											print_debug($query10);
+											//print_debug($query10);
 																						$result10 = pg_query($connection, $query10);
 																						//pg_close();
 
 																						$nb = pg_num_rows($result10);
 																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1";
-																					print_debug($query10);
+																					//print_debug($query10);
 																						 $result10 = pg_query($connection, $query10); //pg_close();
 																						}
 
@@ -1385,7 +1385,7 @@ print_debug($query5);
 				and AD.art_grand_type_engin_id = '" . $info_deb[$key][$key2][6]."' 
 				and AF.debarquee = 1 
 				and AF.id != '" . $key2 ."'";
-print_debug($query);
+//print_debug($query);
 			$result = pg_query($connection, $query);
 			//pg_close();
 
@@ -1396,7 +1396,7 @@ print_debug($query);
 			$nb = pg_num_rows($result);
 			
 			if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1";
-			print_debug($query);
+			//print_debug($query);
 			 $result = pg_query($connection, $query); //pg_close();
 			
 			}
@@ -1477,14 +1477,14 @@ print_debug($query);
 						or AD.mois = " . $info_deb[$key][$key2][3] ." 
 						or AD.mois = " . (($info_deb[$key][$key2][3])+1) .")"; 
 						}
-						print_debug($query2);
+						//print_debug($query2);
 					$result2 = pg_query($connection, $query2);
 					//pg_close();
 							
 					//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 					$nb = pg_num_rows($result2);
 					if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 1";
-					print_debug($query2);
+					//print_debug($query2);
 					 $result2 = pg_query($connection, $query2); //pg_close();
 					}
 					
@@ -1747,13 +1747,13 @@ print_debug($query);
 								or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 								}
 								$result3 = pg_query($connection, $query3);
-								print_debug($query3);
+								//print_debug($query3);
 								//pg_close();
 
 								//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 								$nb = pg_num_rows($result3);
 								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1";
-								print_debug($query3);
+								//print_debug($query3);
 								 $result3 = pg_query($connection, $query3); //pg_close();
 								}
 
@@ -1791,14 +1791,14 @@ print_debug($query);
 										and RS.nom = '" . $info_deb[$key][$key2][1]."'
 										and AF.debarquee = 1 
 										and AF.id != '" . $key2 ."'"; 
-print_debug($query4);
+//print_debug($query4);
 										$result4 = pg_query($connection, $query4);
 										//pg_close();
 
 										//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 										$nb = pg_num_rows($result4);
 										if ($nb == 0){$query4 = "select id, art_debarquement_id from art_fraction limit 1";
-										print_debug($query4);
+										//print_debug($query4);
 										 $result4 = pg_query($connection, $query4); //pg_close();
 										}
 
@@ -1837,14 +1837,14 @@ print_debug($query4);
 												and AD.art_grand_type_engin_id = '" . $info_deb[$key][$key2][6]."' 
 												and AF.debarquee = 1 
 												and AF.id != '" . $key2 ."'"; 
-												print_debug("ligne 1834=".$query5);
+												//print_debug("ligne 1834=".$query5);
 												$result5 = pg_query($connection, $query5);
 												//pg_close();
 
 												//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 												$nb = pg_num_rows($result5);
 												if ($nb == 0){$query5 = "select id, art_debarquement_id from art_fraction limit 1";
-												print_debug($query5);
+												//print_debug($query5);
 
 												 $result5 = pg_query($connection, $query5); //pg_close();
 												}
@@ -1888,7 +1888,7 @@ print_debug($query4);
 														and AF.poids != 0 
 														and AF.nbre_poissons != 0 
 														and AF.id != '" . $key2 ."'";
-													print_debug($query6);
+													//print_debug($query6);
 														$result6 = pg_query($connection, $query6);
 														//pg_close();
 														
@@ -1897,7 +1897,7 @@ print_debug($query4);
 														//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 														$nb = pg_num_rows($result6);
 														if ($nb == 0){$query6 = "select id, art_debarquement_id from art_fraction limit 1";
-														print_debug($query6);
+														//print_debug($query6);
 
 														 $result6 = pg_query($connection, $query6); //pg_close();
 														}
@@ -1986,7 +1986,7 @@ print_debug($query4);
 																	or AD.mois = " . $info_deb[$key][$key2][3] ." 
 																	or AD.mois = " . (($info_deb[$key][$key2][3])+1) .")"; 
 																	}
-															print_debug($query7);
+															//print_debug($query7);
 
 																$result7 = pg_query($connection, $query7);
 																//pg_close();
@@ -1995,7 +1995,7 @@ print_debug($query4);
 																$nb = pg_num_rows($result7);
 																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1";
 																
-																print_debug($query7);
+																//print_debug($query7);
 																 $result7 = pg_query($connection, $query7); //pg_close();
 																}
 
@@ -2258,14 +2258,14 @@ print_debug($query4);
 																			or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 																			or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 																			}
-																			print_debug($query8);
+																			//print_debug($query8);
 																			$result8 = pg_query($connection, $query8);
 																			//pg_close();
 
 																		//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 																		$nb = pg_num_rows($result8);
 																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1";
-																		print_debug($query8);
+																		//print_debug($query8);
 																		$result8 = pg_query($connection, $query8); //pg_close();
 																		}
 
@@ -2308,7 +2308,7 @@ print_debug($query4);
 																				and AF.poids != 0 
 																				and AF.nbre_poissons != 0 
 																				and AF.id != '" . $key2 ."'"; 
-										print_debug($query9);
+										//print_debug($query9);
 																				$result9 = pg_query($connection, $query9);
 																				//pg_close();
 
@@ -2316,7 +2316,7 @@ print_debug($query4);
 																				$nb = pg_num_rows($result9);
 																				if ($nb == 0){$query9 = "select id, art_debarquement_id from art_fraction limit 1";
 																				
-																				print_debug($query9);
+																				//print_debug($query9);
 																				 $result9 = pg_query($connection, $query9); //pg_close();
 																				}
 
@@ -2357,14 +2357,14 @@ print_debug($query4);
 																						and AF.poids != 0 
 																						and AF.nbre_poissons != 0 
 																						and AF.id != '" . $key2 ."'"; 
-											print_debug($query10);
+											//print_debug($query10);
 																						$result10 = pg_query($connection, $query10);
 																						//pg_close();
 
 																						//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 																						$nb = pg_num_rows($result10);
 																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1";
-																						print_debug($query10);
+																						//print_debug($query10);
 																						 $result10 = pg_query($connection, $query10); //pg_close();
 																						}
 
@@ -2510,7 +2510,6 @@ while (list($key, $val) = each($info_deb))                      //pour tous les 
 		$Wt = $info_deb[$key][$key2][5];            //poid total du débarquement
 		$Wfdbq = $info_deb[$key][$key2][8];
 		$WfdbqI += $Wfdbq;			    //somme des poids des fractions
-	print "key == $key - $key2 - $Wt<br/>";
 	
 	}
 	reset($val);
@@ -2599,7 +2598,7 @@ $query = "select AD.id, RF.ref_pays_id, RS.nom, AA.nom, AD.mois, AD.annee, AD.po
 	and AD.id = AF.art_debarquement_id 
 	and AF.debarquee != 1 
 	order by AD.id";
-print_debug($query);
+//print_debug($query);
 $result = pg_query($connection, $query);
 $info_non_deb=array();
 while($row = pg_fetch_row($result)){
@@ -2655,7 +2654,7 @@ while (list($key, $val) = each($info_non_deb))                      //pour tous 
 				and AD.art_grand_type_engin_id = '" . $info_non_deb[$key][$key2][6]."' 
 				and AF.debarquee = 1 
 				and AF.id != '" . $key2 ."'";
-print_debug("ligne 2650=".$query);
+//print_debug("ligne 2650=".$query);
 
 			$result = pg_query($connection, $query);
 			//pg_close();
@@ -2749,14 +2748,14 @@ print_debug("ligne 2650=".$query);
 						or AD.mois = " . $info_non_deb[$key][$key2][3] ." 
 						or AD.mois = " . (($info_non_deb[$key][$key2][3])+1) .")"; 
 						}
-print_debug($query2);
+//print_debug($query2);
 
 					$result2 = pg_query($connection, $query2);
 					//pg_close();
 
 $nb = pg_num_rows($result2);
 if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 1";
-print_debug($query2);
+//print_debug($query2);
 
 $result2 = pg_query($connection, $query2); //pg_close();
 }
@@ -3021,14 +3020,14 @@ $result2 = pg_query($connection, $query2); //pg_close();
 								or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 								or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 								}
-								print_debug($query3);
+								//print_debug($query3);
 
 								$result3 = pg_query($connection, $query3);
 								//pg_close();
 
 								$nb = pg_num_rows($result3);
 								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1";
-								print_debug($query3);
+								//print_debug($query3);
 
 								 $result3 = pg_query($connection, $query3); //pg_close();
 								}
@@ -3069,13 +3068,13 @@ $result2 = pg_query($connection, $query2); //pg_close();
 										and AF.debarquee = 1 
 										and AF.id != '" . $key2 ."'"; 
 
-print_debug($query4);
+//print_debug($query4);
 										$result4 = pg_query($connection, $query4);
 										//pg_close();
 
 										$nb = pg_num_rows($result4);
 										if ($nb == 0){$query4 = "select id, art_debarquement_id from art_fraction limit 1";
-										print_debug($query4);
+										//print_debug($query4);
 
 										 $result4 = pg_query($connection, $query4); //pg_close();
 										}
@@ -3114,14 +3113,14 @@ print_debug($query4);
 												and AD.art_grand_type_engin_id = '" . $info_non_deb[$key][$key2][6]."' 
 												and AF.debarquee = 1 
 												and AF.id != '" . $key2 ."'"; 
-print_debug($query5);
+//print_debug($query5);
 
 												$result5 = pg_query($connection, $query5);
 												//pg_close();
 
 												$nb = pg_num_rows($result5);
 												if ($nb == 0){$query5 = "select id, art_debarquement_id from art_fraction limit 1";
-												print_debug($query5);
+												//print_debug($query5);
 
 												 $result5 = pg_query($connection, $query5); //pg_close();
 												}
@@ -3163,7 +3162,7 @@ print_debug($query5);
 														and AF.poids != 0 
 														and AF.nbre_poissons != 0 
 														and AF.id != '" . $key2 ."'";
-														print_debug($query6);
+														//print_debug($query6);
 
 														$result6 = pg_query($connection, $query6);
 														//pg_close();
@@ -3173,7 +3172,7 @@ print_debug($query5);
 
 														$nb = pg_num_rows($result6);
 														if ($nb == 0){$query6 = "select id, art_debarquement_id from art_fraction limit 1";
-														print_debug($query6);
+														//print_debug($query6);
 
 														 $result6 = pg_query($connection, $query6); //pg_close();
 														}
@@ -3262,7 +3261,7 @@ print_debug($query5);
 																	or AD.mois = " . (($info_non_deb[$key][$key2][3])+1) .")"; 
 																	//print ("<br>query2 :".$query2);
 																	}
-															print_debug($query7);
+															//print_debug($query7);
 
 																$result7 = pg_query($connection, $query7);
 																//pg_close();
@@ -3270,7 +3269,7 @@ print_debug($query5);
 																$nb = pg_num_rows($result7);
 																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1";
 																$result7 = pg_query($connection, $query7);
-																print_debug($query7);
+																//print_debug($query7);
 
 																 //pg_close();
 																}
@@ -3534,13 +3533,13 @@ print_debug($query5);
 																			or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 																			or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 																			}
-																			print_debug($query8);
+																			//print_debug($query8);
 																		$result8 = pg_query($connection, $query8);
 																		//pg_close();
 
 																		$nb = pg_num_rows($result8);
 																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1";
-																		print_debug($query8);
+																		//print_debug($query8);
 																		$result8 = pg_query($connection, $query8); //pg_close();
 																		}
 
@@ -3583,14 +3582,14 @@ print_debug($query5);
 																				and AF.poids != 0 
 																				and AF.nbre_poissons != 0 
 																				and AF.id != '" . $key2 ."'"; 
-										print_debug($query9);
+										//print_debug($query9);
 
 																				$result9 = pg_query($connection, $query9);
 																				//pg_close();
 
 																				$nb = pg_num_rows($result9);
 																				if ($nb == 0){$query9 = "select id, art_debarquement_id from art_fraction limit 1";
-																				print_debug("ligne 3584=".$query9);
+																				//print_debug("ligne 3584=".$query9);
 
 																				$result9 = pg_query($connection, $query9); //pg_close();
 																				}
@@ -3632,14 +3631,14 @@ print_debug($query5);
 																						and AF.poids != 0 
 																						and AF.nbre_poissons != 0 
 																						and AF.id != '" . $key2 ."'"; 
-											print_debug($query10);
+											//print_debug($query10);
 
 																						$result10 = pg_query($connection, $query10);
 																						//pg_close();
 
 																						$nb = pg_num_rows($result10);
 																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1";
-																					print_debug($query10);
+																					//print_debug($query10);
 
 																						$result10 = pg_query($connection, $query10); //pg_close();
 																						}
@@ -3742,7 +3741,7 @@ print_debug($query5);
 				and AD.art_grand_type_engin_id = '" . $info_non_deb[$key][$key2][6]."' 
 				and AF.debarquee = 1 
 				and AF.id != '" . $key2 ."'";
-print_debug($query);
+//print_debug($query);
 
 			$result = pg_query($connection, $query);
 			//pg_close();
@@ -3752,7 +3751,7 @@ print_debug($query);
 
 $nb = pg_num_rows($result);
 if ($nb == 0){$query = "select id, art_debarquement_id from art_fraction limit 1";
-print_debug("ligne 3747=".$query);
+//print_debug("ligne 3747=".$query);
 
 $result = pg_query($connection, $query);
 //print "query ===".$query."<br/>";
@@ -3836,14 +3835,14 @@ $result = pg_query($connection, $query);
 						or AD.mois = " . (($info_non_deb[$key][$key2][3])+1) .")"; 
 						//print ("<br>query2 :".$query2);
 						}
-					print_debug("ligne 3831=".$query2);
+					//print_debug("ligne 3831=".$query2);
 
 					$result2 = pg_query($connection, $query2);
 					//pg_close();
 
 					$nb = pg_num_rows($result2);
 					if ($nb == 0){$query2 = "select id, art_debarquement_id from art_fraction limit 1";
-					print_debug($query2);
+					//print_debug($query2);
 					$result2 = pg_query($connection, $query2);
 					//print "query2 ===".$query2."<br/>";
 
@@ -4108,14 +4107,14 @@ $result = pg_query($connection, $query);
 								or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 								or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 								}
-								print_debug($query3);
+								//print_debug($query3);
 
 								$result3 = pg_query($connection, $query3);
 								//pg_close();
 
 								$nb = pg_num_rows($result3);
 								if ($nb == 0){$query3 = "select id, art_debarquement_id from art_fraction limit 1";
-								print_debug($query3);
+								//print_debug($query3);
 
 								$result3 = pg_query($connection, $query3); //pg_close();
 								}
@@ -4153,7 +4152,7 @@ $result = pg_query($connection, $query);
 										and RS.nom = '" . $info_non_deb[$key][$key2][1]."'
 										and AF.debarquee = 1 
 										and AF.id != '" . $key2 ."'"; 
-										print_debug($query4);
+										//print_debug($query4);
 
 										$result4 = pg_query($connection, $query4);
 										//pg_close();
@@ -4161,7 +4160,7 @@ $result = pg_query($connection, $query);
 										$nb = pg_num_rows($result4);
 										if ($nb == 0){$query4 = "select id, art_debarquement_id from art_fraction limit 1";
 										
-										print_debug($query4);
+										//print_debug($query4);
 										$result4 = pg_query($connection, $query4); //pg_close();
 										}
 
@@ -4199,7 +4198,7 @@ $result = pg_query($connection, $query);
 												and AF.debarquee = 1 
 												and AF.id != '" . $key2 ."'"; 
 
-												print_debug("ligne 4194=".$query5);
+												//print_debug("ligne 4194=".$query5);
 
 												$result5 = pg_query($connection, $query5);
 												//pg_close();
@@ -4207,7 +4206,7 @@ $result = pg_query($connection, $query);
 												$nb = pg_num_rows($result5);
 												if ($nb == 0){$query5 = "select id, art_debarquement_id from art_fraction limit 1";
 												
-												print_debug($query5);
+												//print_debug($query5);
 
 												 $result5 = pg_query($connection, $query5); //pg_close();
 												}
@@ -4251,7 +4250,7 @@ $result = pg_query($connection, $query);
 														and AF.poids != 0 
 														and AF.nbre_poissons != 0 
 														and AF.id != '" . $key2 ."'";
-														print_debug($query6);
+														//print_debug($query6);
 
 														$result6 = pg_query($connection, $query6);
 														//pg_close();
@@ -4352,7 +4351,7 @@ $result = pg_query($connection, $query);
 																	or AD.mois = " . (($info_non_deb[$key][$key2][3])+1) .")"; 
 																	//print ("<br>query2 :".$query2);
 																	}
-																print_debug("ligne 4346=".$query7);
+																//print_debug("ligne 4346=".$query7);
 
 																$result7 = pg_query($connection, $query7);
 																//pg_close();
@@ -4360,7 +4359,7 @@ $result = pg_query($connection, $query);
 																$nb = pg_num_rows($result7);
 																if ($nb == 0){$query7 = "select id, art_debarquement_id from art_fraction limit 1";
 																
-																print_debug($query7);
+																//print_debug($query7);
 
 																$result7 = pg_query($connection, $query7); //pg_close();
 																}
@@ -4623,14 +4622,14 @@ $result = pg_query($connection, $query);
 																			or (AD.annee = " . $val1 ." and (AD.mois =1 or AD.mois =2 
 																			or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 																			}
-																			print_debug($query8);
+																			//print_debug($query8);
 
 																		$result8 = pg_query($connection, $query8);
 																		//pg_close();
 
 																		$nb = pg_num_rows($result8);
 																		if ($nb == 0){$query8 = "select id, art_debarquement_id from art_fraction limit 1";
-																		print_debug($query8);
+																		//print_debug($query8);
 																		 $result8 = pg_query($connection, $query8); //pg_close();
 																		}
 
@@ -4673,7 +4672,7 @@ $result = pg_query($connection, $query);
 																				and AF.poids != 0 
 																				and AF.nbre_poissons != 0 
 																				and AF.id != '" . $key2 ."'"; 
-										print_debug($query9);
+										//print_debug($query9);
 
 																				$result9 = pg_query($connection, $query9);
 																				
@@ -4681,7 +4680,7 @@ $result = pg_query($connection, $query);
 
 																				$nb = pg_num_rows($result9);
 																				if ($nb == 0){$query9 = "select id, art_debarquement_id from art_fraction limit 1";
-																			print_debug($query9);
+																			//print_debug($query9);
 
 																				 $result9 = pg_query($connection, $query9); //pg_close();
 																				}
@@ -4723,14 +4722,14 @@ $result = pg_query($connection, $query);
 																						and AF.poids != 0 
 																						and AF.nbre_poissons != 0 
 																						and AF.id != '" . $key2 ."'"; 
-																						print_debug("ligne 4720=".$query10);
+																						//print_debug("ligne 4720=".$query10);
 
 																						$result10 = pg_query($connection, $query10);
 																						//pg_close();
 
 																						$nb = pg_num_rows($result10);
 																						if ($nb == 0){$query10 = "select id, art_debarquement_id from art_fraction limit 1";
-																						print_debug($query10);
+																						//print_debug($query10);
 
 																						 $result10 = pg_query($connection, $query10); //pg_close();
 																						}
@@ -4864,7 +4863,7 @@ while (list($key, $val) = each($info_non_deb))
 
 reset($info_deb);
 $numero2 = 0;
-print_debug("\n\n\n**********************************\nINSERTION DES DATAS\n****************************************\n\n\n");
+//print_debug("\n\n\n**********************************\nINSERTION DES DATAS\n****************************************\n\n\n");
 while (list($key, $val) = each($info_deb)){
 	$numero2 = $numero2+1;
 	// Remplacement print par $messageProcess YL 15.07.2008
@@ -4885,7 +4884,7 @@ while (list($key, $val) = each($info_deb)){
 
 	$query2 = "insert into art_debarquement_rec ( id, poids_total, art_debarquement_id ) 
 	values ('rec_".$key."', ".$Wti.", ".$key.");";
-	print_debug($query2);
+	//print_debug($query2);
 
 	// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
 	 //if($Wti!=0)$result2 = pg_exec($connection, $query2); // Ancienne ajout données. 
@@ -4913,7 +4912,7 @@ while (list($key, $val) = each($info_deb)){
 
 		$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
 		values ('".$key2."', ".$info_deb[$key][$key2][8].", ".$info_deb[$key][$key2][9].", '".$info_deb[$key][$key2][7]."');";
-		print_debug($query);
+		//print_debug($query);
 		
 		$messageProcess .= "".$query."<br/>";
 
@@ -4956,6 +4955,6 @@ $headers .= "\r\n";
 // Function mail()
  mail($to, $subject, $msg, $headers);
 
-print_debug(getTime()."ms");
+//print_debug(getTime()."ms");
 
 ?>

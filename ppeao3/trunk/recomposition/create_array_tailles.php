@@ -13,7 +13,7 @@ $query = "select AF.id, APM.taille
 	and AF.debarquee = 1 
 	order by AF.id";
 
-print_debug("ligne 190=".$query);
+//print_debug("ligne 190=".$query);
 $result = pg_query($connection, $query);
 
 while($row = pg_fetch_row($result))
