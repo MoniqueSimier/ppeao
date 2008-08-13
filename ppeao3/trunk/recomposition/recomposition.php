@@ -19,7 +19,7 @@ if (isset($_GET['aff'])) {
 } else {
 	$afficherMessage = "0" ;
 }
-set_time_limit(300000);
+//set_time_limit(300000);
 $nb_enr = $_GET['nb_enr'];
 $bdd = $_GET['base'];
 $to = $_GET['adresse'];

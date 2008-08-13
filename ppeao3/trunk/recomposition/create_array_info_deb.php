@@ -5,9 +5,6 @@
 //                                    tableau $info_deb                                       // 
 //                 et tableau $FT receuillant les infos sur les tailles par fraction          //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 //if(! ini_set("memory_limit", "256M")) {echo "échec";}
 
 //méthode 1
@@ -22,7 +19,7 @@ $query = "select AD.id, RF.ref_pays_id, RS.nom, AA.nom, AD.mois, AD.annee, AD.po
 	and AF.debarquee = 1 
 	order by AD.id";
 
-	print $query;
+	//print $query;
 
 	//fin méthode 1
 //méthode 2
