@@ -1,7 +1,8 @@
 <?php
 reset($info_non_deb);
-while (list($key, $val) = each($info_non_deb)){                      //pour tous les debarquements
-	while (list($key2, $val2) = each($val)){		  		//pour chaque fraction
+foreach($info_non_deb as $key=>$val){                      //pour tous les debarquements
+	print_debug("ND".$key);
+	foreach($val as $key2=>$val2){		  		//pour chaque fraction
 		//Recomposition info_non_deb
 		$Wfdbq = $info_non_deb[$key][$key2][8];
 		$Nfdbq = $info_non_deb[$key][$key2][9];

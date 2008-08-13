@@ -7,10 +7,6 @@ function selection STE
 @return query sql
 */
 function query_from_ste($values,$key,$key2,$round){
-//print_debug( "DEBUT FONCTION STE");
-//print_debug("key=".$key);	
-//print_debug("key=".$key2);	
-//print_debug("values=".$values[$key][$key2][7]);	
 	switch($round){	
 		case "0":return "select distinct AF.id, AD.id 
 				from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, art_poisson_mesure as APM 
@@ -39,7 +35,7 @@ function query_from_ste($values,$key,$key2,$round){
 				and AF.nbre_poissons != 0 
 				and AF.id != '" . $key2 ."'";
 				break;
-//print_debug("STE : ".$query);	
+
 	return $query;
 	}
 }
@@ -56,10 +52,9 @@ function query_from_se($values,$key,$key2,$round){
 	$month=$values[$key][$key2][3];
 	$val1 =$values[$key][$key2][4]+1;
 	$valm1 =$values[$key][$key2][4]-1;
-	//print_debug ("round=".$round);	
+
 	switch($round){
 		case "0": 
-		//	print_debug ("cas 0");	
 			$query3="select distinct AF.id, AD.id 
 			from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
 			, art_poisson_mesure as APM 
@@ -74,7 +69,6 @@ function query_from_se($values,$key,$key2,$round){
 			and ((AD.annee = " . $values[$key][$key2][4] ."";
 			break;
 		case "1":
-			//		print_debug ("cas 1");	
 			$query3="select AF.id, AD.id 
 			from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA 
 			where AD.id = AF.art_debarquement_id 
@@ -158,7 +152,6 @@ function query_from_se($values,$key,$key2,$round){
 				or AD.mois =3 or AD.mois =4 or AD.mois =5 or AD.mois =6)))";
 	}
 	
-	//print_debug("SE  : ".$query3);	
 	return $query3;
 }
 
@@ -214,7 +207,6 @@ function query_from_ste_plus($values,$key, $key2,$round){
 			or AD.mois = " . $values[$key][$key2][3] ." 
 			or AD.mois = " . (($values[$key][$key2][3])+1) .")))"; 
 	}
-	//print_debug("STE +  : ".$query2);	
 	return $query2;
 }
 
@@ -256,7 +248,6 @@ function query_from_e($values,$key, $key2,$round){
 		and AF.id != '" . $key2 ."'";
 		break;
 	}
-	//print_debug("E  : ".$query);	
 	return $query;
 	
 }
@@ -295,8 +286,7 @@ function query_from_e_plus($values,$key,$key2,$round){
 		break;
 	}
 	
-	//print_debug("E+  : ".$query);	
-	//return $query;
+	return "";
 }
 
 
@@ -308,22 +298,17 @@ function INSERTION DES DONNEES RESULTATS CONTENUES DANS $info_deb DANS LA BASE D
 */
 function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 	global $connection;
-	$compteur = 0;
 	$messageProcess="";
 	reset($datas);
+	$compteur=0;
 	foreach($datas as $key =>$val){
-		
 		$compteur++;
-		print_debug("compteur=".$compteur);
-		if($compteur==3){
-			break;
-		}
 		$messageProcess.="<br/><b>Recomposisiton de l'enqu&ecirc;te ".$compteur . " sur ".$nb_enr ."</b><br/><br/>";
 		$Wti =0;
 		foreach ($val as $key2=>$val2){
 			$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
 				values ('".$key2."', ".$datas[$key][$key2][8].", ".$datas[$key][$key2][9].", '".$datas[$key][$key2][7]."');";
-				print_debug($query);
+			print_debug($query);
 			$RunQErreur = runQuery($query,$connection);
 			if ($RunQErreur){
 			

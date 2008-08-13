@@ -9,13 +9,11 @@ $query = "select AD.id, RF.ref_pays_id, RS.nom, AA.nom, AD.mois, AD.annee, AD.po
 	and AD.id = AF.art_debarquement_id 
 	and AF.debarquee != 1 
 	order by AD.id";
-//print_debug($query);
 $result = pg_query($connection, $query);
 $info_non_deb=array();
 while($row = pg_fetch_row($result)){
 	$clé = $row[0];                                //cle = identifiant du débarquement
 	$cle2 = $row[11];                              //cle2 = identifiant de la fraction
-	
 	$info_non_deb[$clé][$cle2][0] = $row[1];           //pays
 	$info_non_deb[$clé][$cle2][1] = $row[2];           //secteur
 	$info_non_deb[$clé][$cle2][2] = $row[3];           //agglomeration

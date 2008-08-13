@@ -8,13 +8,11 @@ $query = "select AF.id, APM.taille
 	where APM.art_fraction_id = AF.id 
 	and AF.debarquee = 1 
 	order by AF.id";
-//print_debug("ligne 190=".$query);
 $result = pg_query($connection, $query);
-while($row = pg_fetch_row($result))
-	{
+while($row = pg_fetch_row($result)){
 	$id = $row[0];                             //clé = identifiant fraction
 	$FT[$id][] = $row[1];                      //tailles incrementés auto dans tableau :
-        }                                    //$FT[$id][0] = taille 1, $FT[$id][1] = taille 2...
+}                                    //$FT[$id][0] = taille 1, $FT[$id][1] = taille 2...
 pg_free_result($result);//19 09
 //pg_close();
 

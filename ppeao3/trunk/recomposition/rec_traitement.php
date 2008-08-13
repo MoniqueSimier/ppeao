@@ -6,5 +6,6 @@ include_once $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include_once $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 include_once $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition_pas_a_pas.php'; 
-				
-//include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition.php'; ?>
+//include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition.php';
+
+?>

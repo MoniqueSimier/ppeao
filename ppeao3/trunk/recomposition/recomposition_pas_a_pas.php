@@ -22,33 +22,36 @@ if($bdd==""){
 	$bdd=$db_default;
 }
 $messageProcess .= "<br/>travail sur la base : ".$bdd ;
+
+//CONNECTION A LA BD
 $connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 if (!$connection) {  echo "Non connecté"; exit;}
 include_once ("functions_recomposition_generique.inc.php");
 include_once ("functions_query.inc.php");
 
-//Créationdes variables
+//CREATION DES TABLEAUX DE DONNEES
 include_once("create_array_coef_esp.php");
 include_once("create_array_info_deb.php");
 include_once("create_array_tailles.php");
 include_once("create_array_info_non_deb.php");
 
 
-//calcul et ajout des Wdft et Ndft pour chaque fraction dans le tableau recapitulatif $info_deb       
+//CALCUL ET AJOUT DES Wdft et Ndft POUR CHAQUE FRACTION DANS LE TABLEAU  $info_deb       
 $info_deb=calcul_Wdft_Ndft_par_fraction($info_deb,$FT,$coef_esp);
 	
 // TRAITEMENT DES FRACTIONS DEBARQUEES Et compraison des poids               //
 include_once ("recomposition_info_deb.php");
-//print_debug($info_deb);
+
 //  TRAITEMENT DES FRACTIONS NON DEBARQUEES                            Fndbq                               Et nex fractions                 //
-//include_once("recomposition_info_non_deb.php");
-//INSERT
-insert_values_recompose($info_deb,$afficherMessage,$nb_enr);
+include_once("recomposition_info_non_deb.php");
+
+//INSERT DATAS RECOMPOSEES
+echo insert_values_recompose($info_deb,$afficherMessage,$nb_enr);
 
 pg_close();
 
 /*
-//envoi mail
+//ENVOI MAIL
 //$to = 'f@.ird.fr';
 // Subject
 $subject = 'Base de données'.$_GET['base'];
