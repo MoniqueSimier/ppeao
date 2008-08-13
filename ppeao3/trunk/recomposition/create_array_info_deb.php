@@ -22,7 +22,7 @@ $query = "select AD.id, RF.ref_pays_id, RS.nom, AA.nom, AD.mois, AD.annee, AD.po
 	and AF.debarquee = 1 
 	order by AD.id";
 
-	print_debug($query);
+	print $query;
 
 	//fin méthode 1
 //méthode 2
