@@ -67,7 +67,7 @@ $info_deb=array();
 		$clef = $row[0];     
 		$clef2 = $row[11];
 	//Pour debug
-	if($clef==12206){
+	//if($clef==12206){
 			
 				
 		$info_deb[$clef][$clef2][0] = $row[1];           //pays
@@ -80,14 +80,13 @@ $info_deb=array();
 		$info_deb[$clef][$clef2][7] = $row[8];           //espece péchée = espece de la fraction
 		$info_deb[$clef][$clef2][8] = $row[9];           //poid de la fraction = Wfdbq
 		$info_deb[$clef][$clef2][9] = $row[10];          //nombre poisson de la fraction = Nfdbq        
-	}elseif($clef>12206){
-		break;
-	}
+	//}elseif($clef>12206){
+	//	break;
+	//}
 	
 	}
 //méthode 2
 //}
 //fin méthode 2
-print_debug("fin requête");
 pg_free_result($result);
 ?>
