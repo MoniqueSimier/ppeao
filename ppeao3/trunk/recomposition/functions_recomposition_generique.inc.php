@@ -41,11 +41,9 @@ function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb=true,$
 	$WdftI = 0;
 	$NdftI = 0;
 	$nb_enleve=0;
-	//global $Wfdbq,$Nfdbq;
 	$Wm_i=0;
-	//global $Ndft,$Wdft;
+	print_debug("cas = ".$cas." strate= ".$strate." round= ".$round);
 	
-	//global $Wm;
 	//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 	$nb = pg_num_rows($result);
 	if($nb>5){
@@ -216,26 +214,26 @@ function choix_cas_recomposition($deb,$datas,$key,$key2,$Wfdbq,$Nfdbq,$Ndft=0,$W
 	//cas n°1 :   Wfdbq = 0 , Nfdbq > 0, DFT existe   //
 	if ( (($Wfdbq == 0)||($Wfdbq == "")) && ($Nfdbq>0) && ($Ndft>0)){
 
-		//print_debug("CAS 1");
+		print_debug("CAS 1");
 		return recomposition_cas_1($datas,$key,$key2,$Nfdbq,$Wdft,$Wm);
 	}elseif ( ($Wfdbq>0) && (($Nfdbq == 0)||($Nfdbq == "")) && ($Ndft>0)){//cas n°2 : Wfdbq > 0 , Nfdbq = 0, DFT existe   //
-		//print_debug("CAS 2");
+		print_debug("CAS 2");
 	
 		return recomposition_cas_2($datas,$key,$key2,$Wfdbq,$Ndft,$Wdft,$Wm);
 	}elseif ( ($Wfdbq>0) && (($Nfdbq == 0)||($Nfdbq == "")) && (($Ndft == 0)||($Ndft == "")) ){//cas n°3 : Wfdbq >0  , Nfdbq = 0, pas de DFT   //
-		//print_debug("CAS 3");
+		print_debug("CAS 3");
 		return recomposition_cas_3_4("3",$datas,$key,$key2,"ste","0",$deb,$Wfdbq,$Nfdbq,$Wm);
 	}elseif ( (($Wfdbq == 0)||($Wfdbq == "") || ($Wfdbq == "0")) && ($Nfdbq>0) && (($Ndft == 0)||($Ndft == "")||($Ndft == "0")) ){//cas n°4 : Wfdbq =0  , Nfdbq > 0, pas de DFT   //
-		//print_debug("CAS 4");
+		print_debug("CAS 4");
 		return recomposition_cas_3_4("4",$datas,$key,$key2,"ste","0",$deb,$Wfdbq,$Nfdbq,$Wm);
 	}elseif ( (($Wfdbq == 0)||($Wfdbq == "")) && (($Nfdbq == 0)||($Nfdbq == "")) && ($Ndft>0) ){//cas n°5 : Wfdbq =0  , Nfdbq = 0, DFT       //
-		//print_debug("CAS 5");
+		print_debug("CAS 5");
 		return recomposition_cas_5($datas,$key,$key2,$Ndft,$Wdft);
 	}elseif ( ($Wfdbq >0) && ($Nfdbq > 0) ){//cas n°6 et 7 : Wfdbq >0  et Nfdbq > 0        //
-		//print_debug("CAS 6 et 7");
+		print_debug("CAS 6 et 7");
 		//print ("<br>cas 6 et 7 Wfdbq =".$Wfdbq." , Nfdbq =".$Nfdbq);
 	}elseif ( (($Wfdbq == 0)||($Wfdbq == "")) && (($Nfdbq == 0)||($Nfdbq == "")) && (($Ndft == 0)||($Ndft == "")) ){//cas n°8 :Wfdbq =0, Nfdbq=0, pas de DFT     //
-		//print_debug("CAS 8");
+		print_debug("CAS 8");
 		unset($datas[$key][$key2]);
 	}else{
 		//print_debug("AUTRE CAS PB!!!!!!!!!!!!");

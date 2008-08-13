@@ -22,7 +22,7 @@ $query = "select AD.id, RF.ref_pays_id, RS.nom, AA.nom, AD.mois, AD.annee, AD.po
 	and AF.debarquee = 1 
 	order by AD.id";
 
-	print_debug($query);
+	//print_debug($query);
 
 	//fin méthode 1
 //méthode 2
@@ -67,7 +67,7 @@ $info_deb=array();
 		$clef = $row[0];     
 		$clef2 = $row[11];
 	//Pour debug
-	//if($clé<7){
+	if($clef==12206){
 			
 				
 		$info_deb[$clef][$clef2][0] = $row[1];           //pays
@@ -80,9 +80,9 @@ $info_deb=array();
 		$info_deb[$clef][$clef2][7] = $row[8];           //espece péchée = espece de la fraction
 		$info_deb[$clef][$clef2][8] = $row[9];           //poid de la fraction = Wfdbq
 		$info_deb[$clef][$clef2][9] = $row[10];          //nombre poisson de la fraction = Nfdbq        
-	//}elseif($clé>7){
-	//	break;
-	//}
+	}elseif($clef>12206){
+		break;
+	}
 	
 	}
 //méthode 2

@@ -13,7 +13,7 @@ reset($info_deb);
 foreach($info_deb as $key=>$val){
 	//if($numero<2000){;}
 	//$messageProcess .= "Recomposition de l'enqu&ecirc;te ".$numero . " sur ".$nb_enr." <br/>";
-	print_debug($key);
+	print_debug("D".$key);
 	$WfdbqI=0;
 	foreach($val as $key2=>$val2){			//pour chaque fraction
 		//     calcul et ajout des Wdft et Ndft pour chaque fraction         dans le tableau recapitulatif $info_deb                //

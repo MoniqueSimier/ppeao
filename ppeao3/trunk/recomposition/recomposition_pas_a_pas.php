@@ -1,5 +1,6 @@
 <?php
 getTime();
+set_time_limit(0);
 //***********************************************
 // Création Yann LAURENT, 01-07-2008
 // A partir du fichier php initial du lot 2 PPEAO
