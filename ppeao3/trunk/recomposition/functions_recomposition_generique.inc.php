@@ -25,6 +25,8 @@ function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb=true,$
 	//global $info_deb;
 	//global $key;
 	//global $key2;
+	getTime();
+	print_debug("cas = ".$cas." strate= ".$strate." round= ".$round);
 	switch($strate."_".$round){
 		case "ste_0":$query=query_from_ste($datas,$key,$key2,"0");break;
 		case "ste_plus_0":$query=query_from_ste_plus($datas,$key,$key2,"0");break;
@@ -37,12 +39,17 @@ function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb=true,$
 		case "e_1":$query=query_from_e($datas,$key,$key,"1");break;
 		case "e_plus_1":$query=query_from_e_plus($datas,$key,$key2,"1");
 	}
+	print_debug($query);
 	$result = pg_query($connection, $query);
+	print_debug(getTime()."ms");
+
+	
+	
 	$WdftI = 0;
 	$NdftI = 0;
 	$nb_enleve=0;
 	$Wm_i=0;
-	print_debug("cas = ".$cas." strate= ".$strate." round= ".$round);
+	
 	
 	//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 	$nb = pg_num_rows($result);
