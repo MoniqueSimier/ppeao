@@ -7,6 +7,6 @@
 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
 <link href="/styles/mainstyles.css" title="mainstyles" rel="stylesheet" type="text/css" />
-<script src="/js/basic.js" type="text/javascript" charset="utf-8"></script>
-
-
+<script src="/js/basic.js" type="text/javascript"></script>
+<!-- le framework javascript MOOTOOLS (www.mootools.net)-->
+<script src="/js/mootools.js" type="text/javascript"></script>
