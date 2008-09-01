@@ -15,6 +15,7 @@ session_start();
 // on stocke les infos sur l'utilisateur avant de détruire la session, pour pouvoir les noter dans le journal
 $longName=$_SESSION['s_ppeao_longname'];
 $email=$_SESSION['s_ppeao_email'];
+$userId=$_SESSION['s_ppeao_user_id'];
 
 // clearing the session array
 $_SESSION = array();

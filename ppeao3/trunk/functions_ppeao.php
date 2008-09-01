@@ -21,14 +21,16 @@ function logWriteTo($moduleId,$messageType,$message,$actionDo,$actionUndo,$logLe
 {
 global $debug; // variable definie dans /variables.inc (0=production, 1=debug)
 global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases : BD_PECHE et BD_PPEAO)
+global $userId; // id de l'utilisateur connecté
 
 if ($logLevel<=$debug) { // si le niveau du message ($logLevel) est inférieur au niveau de l'application ($debug) alors on écrit 
 if (is_null($moduleId)) {$moduleId=0;} // si le moduleId n'a pas été défini, on lui assigne 0 (inconnu)
 
 $timestamp=date('Y-m-d G:i:s'); // on assigne un UNIX timestamp
-
 // on recupere le userId de la session, sinon on lui assigne 0 (zero)
-if (isset($_SESSION['s_ppeao_user_id'])) {$userId=$_SESSION['s_ppeao_user_id'];} else {$userId=0;}
+if (isset($_SESSION['s_ppeao_user_id'])) {$userId=$_SESSION['s_ppeao_user_id'];} else {
+		if (empty($userId))  {$userId=0;}; // if there is no $userId set, we assume it is a visitor
+	} // end else
 
 // on recupere le chemin du script actif
 $scriptFile=$_SERVER['PHP_SELF'];
