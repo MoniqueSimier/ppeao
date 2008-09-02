@@ -4,24 +4,7 @@
 // démarrage de la session
 session_start();
 
-//debug print_r($_SESSION);
-//end debug
-
-
-// adds " active" to the style of each menu entry to highlight the current one in the navigation menu
-switch ($section) {
-	case "home" : $home=" active";
-	break;
-	case "edition" : $edition=" active";
-	break;
-	case "portage" : $portage=" active";
-	break;
-	case "contact" : $contact=" active";
-	break;
-	case "journal" : $journal=" active";
-	break;
-}
-
+// inclusion de divers fichiers communs
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
