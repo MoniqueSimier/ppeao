@@ -1,6 +1,8 @@
 /* ******************************** */
 /* styles pour le module de portage*/
 @import url(portage.css);
+/* styles pour le module d'édition des tables'*/
+@import url(edition.css);
 
 
 /* *********************** */
@@ -59,10 +61,11 @@ select {
 
 	
 h1 {
-font-size:14px;
+font-size:16px;
 margin:0;
 padding:0;
 font-weight:bold;
+margin:12px 0 0 0;
 }
 
 h2 {
@@ -70,6 +73,7 @@ font-size:13px;
 margin:0;
 padding:0;
 font-weight:bold;
+margin:6px 0 0 0;
 }	
 
 h3 {
