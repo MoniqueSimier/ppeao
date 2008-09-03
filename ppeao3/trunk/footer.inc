@@ -1,1 +1,1 @@
-<div id="footer">copyright &copy; 2008 <a href="http://www.ird.fr" target="_blank" title="go to IRD website">IRD</a>. All rights reserved | original code &amp; design by <a href="http://otolithe.com" target="_blank" title="go to otolithe website">otolithe</a></div>
+<div id="footer">copyright &copy; 2008 <a href="http://www.ird.fr" target="_blank" title="go to IRD website">IRD</a>. tous droits r&eacute;serv&eacute;s | code &amp; et design originaux par <a href="http://otolithe.com" target="_blank" title="go to otolithe website">otolithe</a></div>
