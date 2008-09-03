@@ -16,7 +16,7 @@ $zone=0; // zone publique (voir table admin_zones)
 		// les balises head communes  toutes les pages
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
-	<title>ppeao</title>
+	<title>ppeao::accueil</title>
 
 	
 </head>
