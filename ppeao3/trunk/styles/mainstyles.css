@@ -98,7 +98,7 @@ display:none;
 #nav_container {
 	min-width: 800px;
 	min-height :	56px;
-	background : #ffcc00;
+	background : #E4E4E4;
 	margin: 0 0 8px 0;
 }
 
@@ -110,14 +110,17 @@ vertical-align: baseline;
 
 #nav_menu a {
 	color:#007860;
+	text-decoration 	: none;
 }
 
 #nav_menu .active {
 	color:#fff;
+	text-decoration 	: none;
 }
 
 #nav_menu a:hover {
 	color:#fff;
+	text-decoration 	: none;
 }
 
 .menu {
@@ -135,6 +138,7 @@ vertical-align: baseline;
 .menu:hover, .active {
 	color 		: #fff;
 	background : #4dd3d2;
+	text-decoration 	: none;
 }
 
 

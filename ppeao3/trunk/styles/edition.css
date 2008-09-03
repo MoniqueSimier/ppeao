@@ -1,0 +1,22 @@
+/* *********************** */
+/* styles pour le module d'édition des tables */
+
+
+#tables_reference, #tables_codage, #tables_utilisateurs {
+	margin: 12px 0;
+	padding: 12px;
+	border: 1px solid gray;
+	width: 500px;
+}
+
+#tables_reference h2, #tables_codage h2 {
+	margin:0;
+}
+
+#tables_reference h3, #tables_codage h3 {
+	margin:0;
+}
+
+#tables_reference select, #tables_codage select {
+	margin:0;
+}
