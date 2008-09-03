@@ -270,7 +270,7 @@ echo('<h2>Activit&eacute; r&eacute;cente</h2>');
 $logBlock.=logTable($logArray,'');
 
 $logBlock.='</div>'; // end div id="logTableDiv"
-$logBlock.='<div id="logTableDivLink"><a href="/journal.php" alt="consulter le journal" title="consulter le journal">consulter le journal</div>';
+$logBlock.='<div id="logTableDivLink"><a href="/journal.php" alt="consulter le journal" title="consulter le journal">consulter le journal</a></div>';
 
 return $logBlock;
 }
