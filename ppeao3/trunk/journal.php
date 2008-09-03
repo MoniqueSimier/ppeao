@@ -15,7 +15,7 @@ $zone=4; // zone journal (voir table admin_zones)
 	// les balises head communes  toutes les pages
 	include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 ?>
-	<title>journal des activit&eacute;s</title>
+	<title>ppeao::journal des activit&eacute;s</title>
 
 </head>
 
