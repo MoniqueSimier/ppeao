@@ -21,7 +21,7 @@ if ($_SESSION['s_ppeao_login_status']!='good')
 	// sinon on affiche le formulaire de déconnexion
 	else {
 		
-		echo(showLogoutForm($_SESSION['s_ppeao_user_longname']));
+		echo(showLogoutForm($_SESSION['s_ppeao_longname']));
 		} // end else
 					
 
