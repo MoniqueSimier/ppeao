@@ -52,6 +52,20 @@ if(isset($_GET) && !empty($_GET['login']) && !empty($_GET['pass'])) {
 	$_SESSION['s_ppeao_longname'] = $loginData["user_longname"];
     $_SESSION['s_ppeao_login_status']='good';
 	$_SESSION['s_ppeao_user_active']=$loginData['user_active'];
+	// initialisation des variables pour le process auto // YL 02-09-08
+	$_SESSION['s_cpt_champ_total'] = 0;		// Lecture d'une table, nombre d'enregistrements lus total
+	$_SESSION['s_cpt_champ_diff'] = 0;		// Lecture d'une table, nombre d'enregistrements différents
+	$_SESSION['s_cpt_champ_egal'] = 0;		// Lecture d'une table, nombre d'enregistrements identiques
+	$_SESSION['s_cpt_champ_vide'] = 0;		// Lecture d'une table, nombre d'enregistrements vide
+	$_SESSION['s_cpt_table_total'] = 0;		// Nombre global de tables lues
+	$_SESSION['s_cpt_table_diff'] = 0;		// Nombre global de tables différentes entre reference et cible
+	$_SESSION['s_cpt_table_egal'] = 0;		// Nombre global de tables identiques entre reference et cible
+	$_SESSION['s_cpt_table_vide'] = 0;		// Nombre global de tables vides dans cible 
+	$_SESSION['s_cpt_table_manquant'] = 0;	// Nombre global de tables avec des enreg manquants dans cible 
+	$_SESSION['s_num_encours_fichier_SQL'] = 1; // Numero du fichier SQL en cours
+	$_SESSION['s_cpt_lignes_fic_sql'] = 0;		// Nombre de lignes dans le fichier SQL en cours
+	$_SESSION['s_cpt_erreurs_sql'] = 0;		// Nombre d'erreur lors de la mise a jour de la table
+	// Fin variables process auto
 	
 	// on inscrit la connexion dans le journal
 	$loginMessage='connexion de '.$_SESSION['s_ppeao_longname'];
