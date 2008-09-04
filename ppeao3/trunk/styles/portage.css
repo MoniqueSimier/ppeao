@@ -5,7 +5,7 @@
 	padding-left:2px;
 	width: 15%;
 	font-size:65%;
-	min-height:600px;
+	min-height:700px;
 	border-right:solid 1px #999999;
 	text-align:left;
 	vertical-align:text-top;
@@ -21,7 +21,7 @@
 	padding-left:2px;
 	text-align:left;
 	vertical-align:text-top;
-	min-height:600px;
+	min-height:700px;
 	background-color:#FFFFFF;
 }
 
@@ -67,8 +67,8 @@ font-size:80%;
  font-weight:bold;
 }
 #sauvegarde{
-	height:30px;
-	background-color:#F6D967;
+	height:70px;
+	background-color:#E4E4E4;
 	width:100%;
 }
 #sauvegarde_img{
@@ -79,10 +79,10 @@ font-size:80%;
 #sauvegarde_txt{
 	display:block;
 	float:left;
-	font-size:80%;
+	font-size:70%;
 }
 #comparaison{
-	height:100px;
+	height:70px;
 	background-color:#FFF;
 	width:100%;
 }
@@ -94,11 +94,11 @@ font-size:80%;
 #comparaison_txt{
 	display:block;
 	float:left;
-	font-size:80%;
+	font-size:70%;
 }
 #copieScientifique{
-	height:100px;
-	background-color:#F6D967;
+	height:70px;
+	background-color:#E4E4E4;
 	width:100%;
 }
 #copieScientifique_img{
@@ -109,10 +109,10 @@ font-size:80%;
 #copieScientifique_txt{
 	display:block;
 	float:left;
-	font-size:80%;
+	font-size:70%;
 }
 #processAuto{
-	height:100px;
+	height:70px;
 	background-color:#FFF;
 	width:100%;
 	
@@ -125,12 +125,12 @@ font-size:80%;
 #processAuto_txt{
 	display:block;
 	float:left;
-	font-size:80%;
+	font-size:70%;
 }
 
 #copieRecomp{
-	height:30px;
-	background-color:#F6D967;
+	height:70px;
+	background-color:#E4E4E4;
 	width:100%;
 }
 #copieRecomp_img{
@@ -141,11 +141,11 @@ font-size:80%;
 #copieRecomp_txt{
 	display:block;
 	float:left;
-	font-size:80%;
+	font-size:70%;
 }
 #portageOK{
 	height:30px;
-	background-color: #FF9900;
+	background-color: #666666;
 	width:100%;
 	border-top:solid 2px #FFFFFF;
 	border-bottom:solid 2px #FFFFFF;
@@ -158,13 +158,13 @@ font-size:80%;
 #portageOK_txt{
 	display:block;
 	float:left;
-	font-size:80%;
+	font-size:90%;
 	font-weight:bold;
 	color:#FFFFFF;
 }
 #purge{
 	height:30px;
-	background-color:#F6D967;
+	background-color:#E4E4E4;
 	width:100%;
 }
 #purge_img{
