@@ -56,7 +56,7 @@ function CloseFileReverseSQL ($fileRevSQL,$PasAutorisation) {
 // -
 //*********************************************************************
 	if (! $PasAutorisation) {
-		fclose($fileRevSQL,$PasAutorisation);
+		fclose($fileRevSQL);
 	}
 }
 
