@@ -27,6 +27,7 @@ if ($logLevel<=$debug) { // si le niveau du message ($logLevel) est inférieur au
 if (is_null($moduleId)) {$moduleId=0;} // si le moduleId n'a pas été défini, on lui assigne 0 (inconnu)
 
 $timestamp=date('Y-m-d G:i:s'); // on assigne un UNIX timestamp
+
 // on recupere le userId de la session, sinon on lui assigne 0 (zero)
 if (isset($_SESSION['s_ppeao_user_id'])) {$userId=$_SESSION['s_ppeao_user_id'];} else {
 		if (empty($userId))  {$userId=0;}; // if there is no $userId set, we assume it is a visitor
@@ -74,7 +75,7 @@ function logRead($date,$userId,$moduleId,$messageBit,$rowsNumber,$messageType)
 
 {
 global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases : BD_PECHE et BD_PPEAO)
-
+$limit="";
 // on prepare un tableau contenant les elements a utiliser comme filtre
 $filter=array();
 	// on verifie que $date contient bien une date
