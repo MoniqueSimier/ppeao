@@ -17,6 +17,7 @@ $PathFicConf = $_SERVER["DOCUMENT_ROOT"]."/conf/processAuto.txt" ;//*
 $user="devppeao";                   // Le nom d'utilisateur 		*
 $passwd="2devppe!!";                // Le mot de passe 				*
 $host= "localhost";  				// L'hôte						*
+//$host= "vmppeao-l3.mpl.ird.fr";  	// L'hôte			IRD			*
 $bdd = "devppeao";  				//								*
 // ******************************************************************
 
