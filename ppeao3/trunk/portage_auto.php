@@ -71,7 +71,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 					Vous pouvez saisir une adresse mail pour recevoir le compte-rendu de traitement.<br/>
 					<input type="text" name="adresse" id="adresse"/>
 					<br/>
-					<input type="checkbox" name="logsupp" id="logsupp"/>Générer un fichier de log spécial (attention, peut ralentir le processus)<br/><br/>
+					<input type="checkbox" name="logsupp" id="logsupp"/>G&eacute;n&eacute;rer un fichier de log sp&eacute;cial (attention, peut ralentir notablement le processus)<br/><br/>
 					<input id="startProcess" type="button" value="Lancer le traitement" onClick="runProcess()"/>
 					<?php  // Input pour recomposition automatique ?>
 					<input type="hidden" id="BDName" value="<?php  echo "$bdd"; ?>">

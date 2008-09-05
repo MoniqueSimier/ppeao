@@ -23,6 +23,7 @@ $bdd = "devppeao";  				//								*
 //*** Config pour comparaison BD_PPEAO / BD_PECHE *******************
 // connexion a BD_PECHE												*
 $bd_peche="BD_PECHE_01";			// Nom BD						*
+// $bd_peche="bdpeche";			// Nom BD	IRD
 // ******************************************************************
 
 ?>

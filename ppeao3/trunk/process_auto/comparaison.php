@@ -48,15 +48,14 @@ if (isset($_GET['action'])) {
 	// Pour plus de clarté, dans la comparaison, la base de reference est la base PPEAO (=  source)
 	// Dans le cas de la mise a jour, la base de reference est la base BD_PECHE (ou s'exécutent les mises à jour)
 	// En résumé, la base source est la base de reference, et la base cible est la base à comparer ou à mettre à jour
-//		$BDSource = "connectPPEAO";
-//		$BDCible = "connectBDPECHE";
-		$BDSource = "connectBDPECHE"; // test
-		$BDCible = "connectPPEAO"; // test
+		$BDSource = "connectPPEAO";
+		$BDCible = "connectBDPECHE";
+		//$BDSource = "connectBDPECHE"; // test
+		//$BDCible = "connectPPEAO"; // test
 		$nomFenetre = "comparaison";
 		$nomAction = "comparaison";
 	} else {
 	// La mise à jour se fait de BD_PECHE dans BD_PPEAO
-		//$BDSource = "connectBDPECHE";
 		$BDSource = "connectBDPECHE";
 		$BDCible = "connectPPEAO";
 		if ( $typeAction == "majsc" ) {
