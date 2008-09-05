@@ -66,10 +66,19 @@ function formatSQL($value,$fieldType) {
 // Le SQL généré sera de la forme :
 // Principalement si la valeur est du texte, alors, on ajoute des apostrophes autour.
 $formattedValue = "";
-if ( $fieldType == "integer" ) {
-	$formattedValue = $value;
+if ( $fieldType == "integer" or $fieldType == "real") {
+	if ($value == null) {
+		$formattedValue = "NULL";
+	} else {
+		$formattedValue = $value;
+	}
 } else {
-	$formattedValue = "'".$value."'";}
+	if ($value == null) {
+		$formattedValue = "NULL";
+	} else {
+		$formattedValue = "'".$value."'";
+	}
+}	
 
 return $formattedValue;
 }
@@ -111,10 +120,12 @@ if (pg_num_rows($getAttrBD) == 0) {
  	logWriteTo(4,"error","Erreur dans la lecture definition de la table ".$tableName." dans la BD ".$nomBD." (function // GetSQL portage automatique)","","","0");
 } else {
 	while ($getAttrBDRow = pg_fetch_row($getAttrBD)) {
+	
 		// construit la liste des champs pour l'insert
 		// Liste des colonnes
 		// numChamp stocke le numéro d'ordre du champs
 		$numChamp = $getAttrBDRow[2] - 1;
+		//logWriteTo(4,"notice","","numchamp = ".$numChamp." ".$getAttrBDRow[3]." valeur = ".$value[$numChamp],"","1");
 		if ($LocListAttrIn1 == "" ) {
  			$LocListAttrIn1 = $getAttrBDRow[1];
 		} else {
@@ -134,11 +145,11 @@ if (pg_num_rows($getAttrBD) == 0) {
 		}
 	}
 	
-	logWriteTo(4,"notice","LocListAttr= ".$tableName.$LocListAttrUp,"","","1");
+	//logWriteTo(4,"notice",$SQLAction." pour ".$tableName." LocListAttr = ".$LocListAttrUp,"","","1");
 } 
 // Etape 2 - on construit l'instruction SQL complète.
 switch ($SQLAction) {
-	case "udpdate":
+	case "update":
 		$LocScriptSQL ="update ".$tableName." set ".$LocListAttrUp." ".$whereStatement ;
 		break;
 	case "insert":
@@ -177,7 +188,7 @@ $compINSResult = pg_query($connectionBD,$scriptSQLToRun);
 error_reporting ($lev); //DEFAULT!!
 if (strlen ($r=pg_last_error ($connectionBD))) {
 	$runQueryOK = false;
-	logWriteTo(4,"error","erreur execution : '".$scriptSQLToRun."' message = ".$r,"","","0");
+	logWriteTo(4,"error","erreur execution : '".$scriptSQLToRun."'" ,"message = ".$r,"","0");
 
 
 }
@@ -213,4 +224,52 @@ function getTime() {
     }
 }
 
+// Function timer() : pour gérer un chronomètre 
+function timer(){ //chronomètre - http://www.phpcs.com/code.aspx?ID=32471
+	$time=explode(' ',microtime());
+	return $time[0] + $time[1];
+} 
+
+//*********************************************************************
+// GetParam : recupere dans le fichier de configuration la valeur d'un parametre
+function GetParam($nomParam,$nomFichier) {
+// Cette fonction permet de lire le fichier de parametrage et de renvoyer la valeur du parametre
+// Si le parametre n'existe pas dans le fichier, on renvoie false.
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $nomParam : nom du paramètre à extraire.
+// $nomFichier : nom du fichier de paramètre à ouvrir
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie la valeur du paramètre (string) sinon false si le paramètre n'est pas trouvée
+//*********************************************************************
+
+if ( file_exists($nomFichier)) {
+
+	$ficParam = fopen($nomFichier,"r");
+	while (!feof($ficParam)) {
+   		$ficLine = fgets($ficParam);
+		if (substr  ( $ficLine  , 0,1  ) ==";") {
+			continue;
+		} ;
+		$posParam = strpos($ficLine,$nomParam);
+		if ( $posParam === false ){
+		// Le paramètre n'est pas trouvé dans le fichier
+			$ParamValue = false;
+		} else {
+		// On a trouve le paramètre, on récupère sa valeur
+		// Cette valeur est comprise en le signe = et ;
+			$longNomParam = strlen($nomParam) +1;
+			$valeurParam = substr  ( $ficLine  , $longNomParam  );
+			$ParamValue = str_replace(";","",$valeurParam);
+			$ParamValue = trim( $ParamValue);
+			break;
+		}
+	} 
+	fclose($ficParam);
+} else {
+	$ParamValue = false;
+}
+return $ParamValue;
+}
 ?>

@@ -4,7 +4,18 @@
 // démarrage de la session
 session_start();
 
-// inclusion de divers fichiers communs
+//debug print_r($_SESSION);
+//end debug
+
+// Ajout YL 25-08-2008 compatibilité php
+//$home="";
+//$edition="";
+//$portage="";
+//$contact="";
+//$journal="";
+
+
+
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions.php';

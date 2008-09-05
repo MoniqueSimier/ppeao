@@ -22,11 +22,18 @@ include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 $traitRecompOk = false;
 $CRexecution = "";
 
+session_start();
+// Si le traitement précédent a échoué, arrêt du traitement
+
+if (isset($_SESSION['s_status_process_auto'])) {
+	if ($_SESSION['s_status_process_auto'] == 'ko') {
+		logWriteTo(4,"error","**- ARRET du traitement car le processus precedent est en erreur.","","","0");
+		echo "<div id=\"processAuto_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"processAuto_txt\">ARRET du traitement Recomposition / calcul statistique car le processus precedent est en erreur</div>" ;
+		exit;
+	}
+}
 
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
-
-
-
 	// le processus de recomposition des données
 	include $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition.php';
 	$messageinfo = "";

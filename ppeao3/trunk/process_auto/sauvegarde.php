@@ -17,9 +17,10 @@
 
 
 // Mettre les noms des fichiers dans un fichier texte
-
-// Variable de test
-$pasdetraitement = false;
+session_start();
+$_SESSION['s_status_process_auto'] = 'ok';
+// Variable de test (en fonctionnement production, les deux variables sont false)
+$pasdetraitement = true;
 $pasdefichier = false; // Variable de test pour linux. Meme valeur que dans comparaison.php
 
 // Include standard
@@ -27,6 +28,16 @@ include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
+include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
+include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
+
+// Recuperation des parametres (nom repertoire, nom fichiers etc..) depuis le fichier de parametres
+$dirLog = GetParam("repLogAuto",$PathFicConf);
+$dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
+$pathBackup = GetParam("repBackupFicRep",$PathFicConf);
+$pathBackup = $_SERVER["DOCUMENT_ROOT"]."/".$pathBackup;
+$backupName = GetParam("repBackupFicNom",$PathFicConf);
+$pathBin = GetParam("repPGDump",$PathFicConf);
 
 // On remet à zéro le fichier reverse SQL. On le fait ici même si on n'utilise pas le fichier ici
 // car il sera plus difficile d'identifier dans comparaison.php le premier appel de ce programme
@@ -88,21 +99,26 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		//if (file_exists($pathBackup."\\".$backupName)) {
 		if (file_exists($pathBackup."/".$backupName)) {
 			echo "<div id=\"sauvegarde_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde ex&eacute;cut&eacute;e avec succ&egrave;s dans ".$pathBackup."/".$backupName." ".$messageGen."</div>" ;
-			logWriteTo(4,"notice","Sauvegarde executee avec succes dans ".$pathBackup."/".$backupName." ".$messageGen,"","","0");
+			logWriteTo(4,"notice","**- Fin Sauvegarde : executee avec succes dans ".$pathBackup."/".$backupName." ".$messageGen,"","","0");
 		} else {
+			if (isset($_SESSION['s_status_process_auto'])) { $_SESSION['s_status_process_auto'] = "ko"; }
 			echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde en erreur : pas de fichier de sauvegarde cr&eacute;&eacute; ".$messageGen."</div>" ;
-			logWriteTo(4,"error","Sauvegarde en erreur : pas de fichier de sauvegarde cree ".$messageGen,"","","0");
+			logWriteTo(4,"error","**- Fin Sauvegarde : en erreur : pas de fichier de sauvegarde cree ".$messageGen,"","","0");
 		}
 	} else {
+			if (isset($_SESSION['s_status_process_auto'])) { $_SESSION['s_status_process_auto'] = "ko"; }
 			echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde en erreur : pas de fichier de sauvegarde cr&eacute;&eacute; ".$messageGen."</div>" ;
-			logWriteTo(4,"error","Sauvegarde en erreur : pas de fichier de sauvegarde cree ".$messageGen,"","","0");
+			logWriteTo(4,"error","**- Fin Sauvegarde : en erreur : pas de fichier de sauvegarde cree ".$messageGen,"","","0");
 	}
 
 
 } else {
 	echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">En Test Etape de sauvegarde non ex&eacute;cut&eacute;e (var pasdetraitement = true)</div>" ;
-	logWriteTo(4,"error","En Test Etape de sauvegarde non executee (var pasdetraitement = true)","","","0");
+	logWriteTo(4,"error","**- En Test Etape de sauvegarde non executee (var pasdetraitement = true)","","","0");
 }
+
+
+
 exit;
 
 ?>

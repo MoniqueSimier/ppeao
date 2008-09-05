@@ -5,8 +5,9 @@
 	padding-left:2px;
 	width: 15%;
 	font-size:65%;
-	min-height:700px;
+	min-height:740px;
 	border-right:solid 1px #999999;
+	border-bottom:solid 1px #999999;
 	text-align:left;
 	vertical-align:text-top;
 	background-color:#4dd3d2;
@@ -21,7 +22,7 @@
 	padding-left:2px;
 	text-align:left;
 	vertical-align:text-top;
-	min-height:700px;
+	min-height:740px;
 	background-color:#FFFFFF;
 }
 
@@ -82,7 +83,7 @@ font-size:80%;
 	font-size:70%;
 }
 #comparaison{
-	height:70px;
+	height:600px;
 	background-color:#FFF;
 	width:100%;
 }
@@ -97,7 +98,7 @@ font-size:80%;
 	font-size:70%;
 }
 #copieScientifique{
-	height:70px;
+	height:200px;
 	background-color:#E4E4E4;
 	width:100%;
 }
@@ -129,7 +130,7 @@ font-size:80%;
 }
 
 #copieRecomp{
-	height:70px;
+	height:100px;
 	background-color:#E4E4E4;
 	width:100%;
 }

@@ -2,9 +2,10 @@
 // Mis à jour par Olivier ROUX, 29-07-2008
 // Mis à jour Yann LAURENT, 07-07-2008
 // code commun à toutes les pages (demarrage de session, doctype etc.)
-include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page
 $section="portage";
+include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
+$zone=3; // zone portage (voir table admin_zones)
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
