@@ -120,7 +120,10 @@ if (pg_num_rows($getAttrBD) == 0) {
  	logWriteTo(4,"error","Erreur dans la lecture definition de la table ".$tableName." dans la BD ".$nomBD." (function // GetSQL portage automatique)","","","0");
 } else {
 	while ($getAttrBDRow = pg_fetch_row($getAttrBD)) {
-	
+		// On n'ajoute pas le champs ID
+		if ($getAttrBDRow[1] =="id") {
+			continue;
+		}
 		// construit la liste des champs pour l'insert
 		// Liste des colonnes
 		// numChamp stocke le numéro d'ordre du champs

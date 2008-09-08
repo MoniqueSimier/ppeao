@@ -178,6 +178,23 @@ $dirLog = GetParam("repLogAuto",$PathFicConf);
 $dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
 $fileLogComp = GetParam("nomFicLogSupp",$PathFicConf);
 
+
+
+// Initialisation si on demarre un nouveau traitement
+if ($tableEnCours == "") {
+	$_SESSION['s_CR_processAuto'] = "";
+	$_SESSION['s_cpt_champ_total'] = 0;
+	$_SESSION['s_cpt_champ_diff'] = 0;
+	$_SESSION['s_cpt_champ_egal'] = 0;
+	$_SESSION['s_cpt_champ_vide'] = 0;	
+	$_SESSION['s_cpt_table_diff'] = 0;
+	$_SESSION['s_cpt_table_diff_manquant'] = 0;
+	$_SESSION['s_cpt_table_egal'] = 0;
+	$_SESSION['s_cpt_table_vide'] = 0;
+	$_SESSION['s_cpt_table_manquant'] = 0; 
+	$_SESSION['s_cpt_erreurs_sql'] = 0; 
+}
+
 // ***** Debut du traitement
 
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
@@ -237,7 +254,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		// Données recomposées à mettre à jour
 			$listTable = GetParam("listeTableMajrec",$PathFicConf);
 //"art_debarquement_rec,art_fraction_rec,art_stat_gt,art_stat_gt_sp,art_stat_sp,art_stat_totale,art_taille_gt_sp,art_taille_sp,art_activite,art_debarquement,art_engin_activite,art_engin_peche,art_fraction,art_lieu_de_peche,art_poisson_mesure,art_unite_peche"
-			$listTable="art_debarquement"; //TEST
+			//$listTable="art_debarquement"; //TEST
 			 break;
 	}
 
@@ -306,7 +323,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$_SESSION['s_cpt_champ_egal']	= 0;
 			$_SESSION['s_cpt_champ_vide']	= 0;
 			$_SESSION['s_en_erreur'] = false;
-			$_SESSION['s_cpt_erreurs_sql'] = 0;			
+			$_SESSION['s_cpt_erreurs_sql'] = 0;	
 		} else {
 			// on reinitialise les valeurs avec les variables de session mise à jour lors du traitement précédent
 			$CRexecution = $_SESSION['s_CR_processAuto'];
