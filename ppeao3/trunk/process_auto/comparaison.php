@@ -140,22 +140,22 @@ if (isset($_SESSION['s_status_process_auto'])) {
 
 
 // ***** Variables de traitements
-$CRexecution = ""; 	// Variable contenant le résultat du traitement
-$cptChampTotal = 0;	// Lecture d'une table, nombre d'enregistrements lus total
-$cptChampDiff = 0; 	// Lecture d'une table, nombre d'enregistrements différents
-$cptChampEq = 0;	// Lecture d'une table, nombre d'enregistrements identiques
-$cptChampVide = 0;	// Lecture d'une table, nombre d'enregistrements vide
-$cptTableTotal = 0;	// Nombre global de tables lues
-$cptTableDiff = 0;	// Nombre global de tables différentes entre reference et cible
-$cptTableEq = 0;	// Nombre global de tables identiques entre reference et cible
-$cptTableVide = 0;	// Nombre global de tables vides dans cible 
-$cptTableLignesVidesDiff =0;// // Nombre global de tables avec des enreg manquants ou diffenrets dans cible
-$cptTableLignesVides = 0; // Nombre global de tables avec des enreg manquants dans cible
-$cptSQLErreur = 0 ;	// Nombre d'erreur lors de la mise a jour de la table
-
-$scriptSQL = "";	// Stockage du script SQL à exécuter pour créer ou maj les données
+$CRexecution = ""; 			// Variable contenant le résultat du traitement
+$cptChampTotal = 0;			// Lecture d'une table, nombre d'enregistrements lus total
+$cptChampDiff = 0; 			// Lecture d'une table, nombre d'enregistrements différents
+$cptChampEq = 0;			// Lecture d'une table, nombre d'enregistrements identiques
+$cptChampVide = 0;			// Lecture d'une table, nombre d'enregistrements vide
+$cptTableTotal = 0;			// Nombre global de tables lues
+$cptTableDiff = 0;			// Nombre global de tables différentes entre reference et cible
+$cptTableEq = 0;			// Nombre global de tables identiques entre reference et cible
+$cptTableVide = 0;			// Nombre global de tables vides dans cible 
+$cptTableSourceVide = 0;	// Nombre global de tables vides dans source 
+$cptTableLignesVidesDiff =0;// Nombre global de tables avec des enreg manquants ou diffenrets dans cible
+$cptTableLignesVides = 0; 	// Nombre global de tables avec des enreg manquants dans cible
+$cptSQLErreur = 0 ;			// Nombre d'erreur lors de la mise a jour de la table
+$scriptSQL = "";			// Stockage du script SQL à exécuter pour créer ou maj les données
 $logComp="";
-$TotalLignesFichier = 0; // compteur pour gerer la taille des fichiers SQL
+$TotalLignesFichier = 0; 	// compteur pour gerer la taille des fichiers SQL
 $SeuilLignesFichier = 5000; // constante contenant le nombre max de lignes par fichier
 
 
@@ -225,8 +225,8 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	switch($typeAction){
 		case "comp":
 			// Comparaison
-			//$listTable = GetParam("listeTableComp",$PathFicConf);
-			$listTable="ref_pays"; //TEST
+			$listTable = GetParam("listeTableComp",$PathFicConf);
+			//$listTable="ref_pays"; //TEST
 			 break;
 		case "majsc":
 			// Données scientifiques à mettre à jour
@@ -297,6 +297,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		$cptChampVide = 0;
 		$cptSQLErreur = 0 ;
 		$tableVide = false;
+		$tableSourceVide = false;
 		$dumpTable = false;
 		if ($tableEnCours == "") {
 			$cptTableTotal++;
@@ -353,7 +354,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$testCibleReadSql = " select * from ".$tables[$cpt] ;
 			$testCibleReadResult = pg_query(${$BDCible},$testCibleReadSql) or die('erreur dans la requete : '.pg_last_error());
 			if (pg_num_rows($testCibleReadResult) == 0) {
-				logWriteTo(4,"notice","table ".$tables[$cpt]." dans ".$nomBDcible." vide","","","0");
+				logWriteTo(4,"notice","table ".$tables[$cpt]." dans ".$nomBDCible." vide","","","0");
 				$dumpTable = true;
 			}
 			// ==> faire un dump de la table source
@@ -385,7 +386,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			// La table dans BD_PPEAO est vide
 				logWriteTo(4,"notice","Table de reference ".$tables[$cpt]." dans ".$nomBDSource." vide","","","0");
 				if ($EcrireLogComp ) { WriteCompLog ($logComp,"Table de reference ".$tables[$cpt]." dans ".$nomBDSource." vide",$pasdefichier);}
-				$tableVide = true;
+				$tableSourceVide = true;
 
 			} else {
 				// La table dans la base source (de référence) n'est pas vide
@@ -425,20 +426,36 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 						$ArretTimeOut =true;
 						break;
 					}
+					// Attention, l'ID n'est pas toujours en position 1 (donc 0 dans le tableau des donnees en sortie du pg_fetch_row
+					$ListeTableIdpasRang0 = "art_type_activite";
+					$ListeTablepasRang0ID = "3";
+					$testTtypeID = strpos($ListeTableIdpasRang0 ,$tables[$cpt]);
+					if ($testTtypeID === false) {
+						$RangId = 0; 
+					} else {
+						$RangId = 2; /// pour l'instant qu'une table, on code un peu a la husarde...
+					}					
 					if (! $dumpTable) {
-						$IDEnLecture = $compRow[0] ;
-						$where = "where id = '".$compRow[0]."'" ;
+						$IDEnLecture = $compRow[$RangId] ;
+						if ($testTtypeID === false) {
+							// L'ID est bien un numérique
+							$where = "where id = ".intval($compRow[$RangId]) ; 
+						} else {
+							// L'ID est une chaine
+							$where = "where id = '".$compRow[$RangId]."'" ;
+						}
+
 						// comparaison avec l'enreg dans l'autre DB
-						logWriteTo(4,"notice",$cpt." lecture table ".$nomBDCible." ".$tables[$cpt]," select * from ".$tables[$cpt]." where id = '".$compRow[0]."'","","1");
-						$compCibleReadSql = " select * from ".$tables[$cpt]." where id = '".$compRow[0]."'" ; //
+						logWriteTo(4,"notice",$cpt." lecture table ".$nomBDCible." ".$tables[$cpt]," select * from ".$tables[$cpt]." where id = '".$compRow[$RangId]."'","","1");
+						$compCibleReadSql = " select * from ".$tables[$cpt]." where id = '".$compRow[$RangId]."'" ; //
 						$compCibleReadResult = pg_query(${$BDCible},$compCibleReadSql) or die('erreur dans la requete : '.pg_last_error());
 						$compCibleRow = pg_fetch_row($compCibleReadResult); // une seule ligne en retour, pas besoin de faire une boucle
 						
 						if (pg_num_rows($compCibleReadResult) == 0) {
 							// L'enregistrement n'existe pas dans la base cible
 							$cptChampVide++ ;
-							logWriteTo(4,"notice","id = ".$compRow[0]." enreg manquant dans base cible","","","1");
-							if ($EcrireLogComp ) { WriteCompLog ($logComp," MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[0]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
+							logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
+							if ($EcrireLogComp ) { WriteCompLog ($logComp," MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
 							$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
 							
 							
@@ -476,11 +493,11 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 								}
 								 else {
 									// différent
-									logWriteTo(4,"notice","id = ".$compRow[0]." enreg different ","","","1");
+									logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg different ","","","1");
 									$cptChampDiff++ ;
 									$enregDiff = true;
-									logWriteTo(4,"notice"," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[0]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")","","","1");
-									if ($EcrireLogComp ) {WriteCompLog ($logComp," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[0]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")",$pasdefichier);}
+									logWriteTo(4,"notice"," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")","","","1");
+									if ($EcrireLogComp ) {WriteCompLog ($logComp," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")",$pasdefichier);}
 								}
 							} // end for ($cpt1 = 0; $cpt1 <= $nbChamp; $cpt1++)
 							
@@ -512,8 +529,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					// *** fin du traitement de comparaison des tables
 					} else { // fin du if (! $dumpTable)
 						// On fait un dump bourrin de la table
-						logWriteTo(4,"notice","id = ".$compRow[0]." enreg manquant dans base cible","","","1");
-						if ($EcrireLogComp ) { WriteCompLog ($logComp," TOUT MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[0]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
+						$tableVide = true;
+						logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
+						if ($EcrireLogComp ) { WriteCompLog ($logComp," TOUT MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
 						$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
 						if ($typeAction == "majsc" || $typeAction == "majrec") {
 						// Création de l'enreg dans BD_PPPEAO
@@ -551,7 +569,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 
 		// On fait le bilan sur la table.
 		// sortie ecran et sortie fichier
-		// A ameliorer, cas d'une table avec champs manquants mais pas de champs différentes, CR foireux
+
 		if (!$ArretTimeOut) {
 			// On aura deux comptes-rendus selon si c'est une comparaison ou une mise à jour
 			// Dans le cas de la comparaison, on indique les différents cas trouvés.
@@ -559,73 +577,83 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$CRexecution = $CRexecution." *-".$tables[$cpt]." : ";
 			if ($EcrireLogComp ) {
 				WriteCompLog ($logComp,"TABLE ".$tables[$cpt]." : ".$nomAction,$pasdefichier);
+				//WriteCompLog ($logComp,"TEST champvide = ".$cptChampVide." champDiff ".$cptChampDiff." tableVide ".$tableVide,$pasdefichier);
 			}
-			
-				
-			// Cas d'une table ou il manque des données
-			if ($cptChampVide > 0) {
-				if ($cptChampDiff == 0) {
-					$cptTableLignesVides++; 
-				} else {
-					$cptTableLignesVidesDiff++;
-				}
-				if ($typeAction == "comp") {
-					$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>".$cptChampVide." donn&eacute;es manquantes - ";
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp,"   - donnees manquantes = ".$cptChampVide.". ",$pasdefichier);
-					}
-				} else {
-					$CRexecution = $CRexecution." ".$cptChampVide." donn&eacute;es ajout&eacute;es |";
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp,"   - donnees ajoutees = ".$cptChampVide.". ",$pasdefichier);
-					}
-				}
-			}	
-			// Cas d'enregistrements différents	
-			if ($cptChampDiff > 0) {
-				if ($cptChampVide == 0) {
-					$cptTableDiff++;
-				}
-				if ($typeAction == "comp") {
-					$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> ".$cptChampDiff." donn&eacute;es diff&eacute;rents - ";
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp,"   - donnees differentes = ".$cptChampDiff." ",$pasdefichier);
-					}
-				} else {
-					$CRexecution = $CRexecution." ".$cptChampDiff." donn&eacute;es modifi&eacute;es -";
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp,"   - donnees modifiees = ".$cptChampDiff." ",$pasdefichier);
-					}					
-				
+			if ($tableSourceVide) {
+				$cptTableSourceVide++;
+				$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;".$tables[$cpt]." source vide -";
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp," Cette table source est vide.",$pasdefichier);
 				}
 			} else {
-			//	Cas de la table vide
-				if ($tableVide) {
-					$cptTableVide++;
-					$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>".$tables[$cpt]." source vide -";
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp," Cette table source est vide.",$pasdefichier);
+				
+					
+				// Cas d'une table ou il manque des données
+				if ($cptChampVide > 0) {
+					if ($cptChampDiff == 0) {
+						$cptTableLignesVides++; 
+					} else {
+						$cptTableLignesVidesDiff++;
+					}
+					if ($typeAction == "comp") {
+						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;".$cptChampVide." donn&eacute;es manquantes - ";
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp,"   - donnees manquantes = ".$cptChampVide.". ",$pasdefichier);
+						}
+					} else {
+						$CRexecution = $CRexecution." ".$cptChampVide." donn&eacute;es ajout&eacute;es |";
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp,"   - donnees ajoutees = ".$cptChampVide.". ",$pasdefichier);
+						}
+					}
+				}	
+				// Cas d'enregistrements différents	
+				if ($cptChampDiff > 0) {
+					if ($cptChampVide == 0) {
+						$cptTableDiff++;
+					}
+					if ($typeAction == "comp") {
+						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;".$cptChampDiff." donn&eacute;es diff&eacute;rentes - ";
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp,"   - donnees differentes = ".$cptChampDiff." ",$pasdefichier);
+						}
+					} else {
+						$CRexecution = $CRexecution." ".$cptChampDiff." donn&eacute;es modifi&eacute;es -";
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp,"   - donnees modifiees = ".$cptChampDiff." ",$pasdefichier);
+						}					
+					
 					}
 				} else {
-					if ($cptChampVide == 0) {
-						$cptTableEq ++;
-						$CRexecution = $CRexecution." identique -";
+				//	Cas de la table vide
+					if ($tableVide) {
+						$cptTableVide++;
+						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>".$tables[$cpt]." vide ==> dump total de la table depuis la base cible (voir fichier sql).-";
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp," Cette table est vide ==> dump total de la table depuis la base cible.",$pasdefichier);
+						}
+					} else {
+						if ($cptChampVide == 0) {
+							$cptTableEq ++;
+							$CRexecution = $CRexecution." identique -";
+							if ($EcrireLogComp ) {			
+								WriteCompLog ($logComp,"   -->  identique",$pasdefichier);
+							}
+						}
+					}
+				} // End for statement if ($cptChampDiff > 0)
+				
+				if ($ErreurProcess) {
+					if ($typeAction == "comp"){
+					
+					} else {
+						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> ".$cptSQLErreur." erreurs de traitement - ";
 						if ($EcrireLogComp ) {			
-							WriteCompLog ($logComp,"   -->  identique",$pasdefichier);
+								WriteCompLog ($logComp,"   - ATTENTION ".$cptSQLErreur." erreurs de traitement.",$pasdefichier);
 						}
 					}
 				}
-			} // End for statement if ($cptChampDiff > 0)
-			if ($ErreurProcess) {
-				if ($typeAction == "comp"){
-				
-				} else {
-					$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> ".$cptSQLErreur." erreurs de traitement - ";
-					if ($EcrireLogComp ) {			
-							WriteCompLog ($logComp,"   - ATTENTION ".$cptSQLErreur." erreurs de traitement.",$pasdefichier);
-					}
-				}
-			}
+			} 
 			$CRexecution = $CRexecution." -* <br/>" ;
 		} // End for statement if ((!$ArretTimeOut)
 		
@@ -638,16 +666,17 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	// On faire le decompte total
 	// Les valeurs sur les champs sont stockees dans le cas ou le process est relancé pour cause de time out.
 	$_SESSION['s_CR_processAuto'] 	= $_SESSION['s_CR_processAuto'].$CRexecution;
-	$_SESSION['s_cpt_champ_total'] 	+= $cptChampTotal;// Lecture d'une table, nombre d'enregistrements lus total
+	$_SESSION['s_cpt_champ_total'] 	+= 	$cptChampTotal;// Lecture d'une table, nombre d'enregistrements lus total
 	$_SESSION['s_cpt_champ_diff']	+=	$cptChampDiff;// Lecture d'une table, nombre d'enregistrements différents
 	$_SESSION['s_cpt_champ_egal']	+=	$cptChampEq;// Lecture d'une table, nombre d'enregistrements identiques
 	$_SESSION['s_cpt_champ_vide']	+=	$cptChampVide;// Lecture d'une table, nombre d'enregistrements vide
-	$_SESSION['s_cpt_table_total']	+=$cptTableTotal; 	// Nombre global de tables lues
+	$_SESSION['s_cpt_table_total']	+=	$cptTableTotal; 	// Nombre global de tables lues
 	$_SESSION['s_cpt_table_diff']	+=	$cptTableDiff;// Nombre global de tables différentes entre reference et cible
 	$_SESSION['s_cpt_table_diff_manquant']+=$cptTableLignesVidesDiff; // Nombre global de tables avec des enreg differents et manquants dans cible
 	$_SESSION['s_cpt_table_egal']	+=	$cptTableEq;// Nombre global de tables identiques entre reference et cible
 	$_SESSION['s_cpt_table_vide']	+=	$cptTableVide;// Nombre global de tables vides dans cible
-	$_SESSION['s_cpt_table_manquant']+=	$cptTableLignesVides;// Nombre global de tables avec des enreg manquants dans cible 
+	$_SESSION['s_cpt_table_source_vide']+=	$cptTableSourceVide;// Nombre global de tables vides dans cible
+	$_SESSION['s_cpt_table_manquant']	+=	$cptTableLignesVides;// Nombre global de tables avec des enreg manquants dans cible 
 	$_SESSION['s_cpt_erreurs_sql']	+= $cptSQLErreur; //
 	if (!$_SESSION['s_erreur_process']){
 		$_SESSION['s_erreur_process'] = $ErreurProcess;

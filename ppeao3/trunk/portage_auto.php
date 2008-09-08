@@ -35,6 +35,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 	$_SESSION['s_cpt_table_diff'] = 0;	// Nombre global de tables différentes entre reference et cible
 	$_SESSION['s_cpt_table_egal'] = 0;	// Nombre global de tables identiques entre reference et cible
 	$_SESSION['s_cpt_table_vide'] = 0;	// Nombre global de tables vides dans cible 
+	$_SESSION['s_cpt_table_source_vide'] = 0;	// Nombre global de tables vides dans source 
 	$_SESSION['s_cpt_table_manquant'] = 0;	// Nombre global de tables avec des enreg manquants dans cible 
 	$_SESSION['s_num_encours_fichier_SQL'] = 1; // Numero du fichier SQL en cours
 	$_SESSION['s_cpt_lignes_fic_sql'] = 0;		// Nombre de lignes dans le fichier SQL en cours
@@ -68,7 +69,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 				?>
 				<div id="runProcess">
 				<form id="formProcessAuto">
-					Vous pouvez saisir une adresse mail pour recevoir le compte-rendu de traitement.<br/>
+					Vous pouvez saisir une adresse mail pour recevoir le compte-rendu de traitement de recomposition automatique.<br/>
 					<input type="text" name="adresse" id="adresse"/>
 					<br/>
 					<input type="checkbox" name="logsupp" id="logsupp"/>G&eacute;n&eacute;rer un fichier de log sp&eacute;cial (attention, peut ralentir notablement le processus)<br/><br/>

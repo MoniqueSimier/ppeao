@@ -12,7 +12,8 @@
 		logWriteTo(4,"notice","*-- Nombre de tables avec uniquement des donnees differences = ".$_SESSION['s_cpt_table_diff'],$_SESSION['s_cpt_champ_diff'],"","0");
 		logWriteTo(4,"notice","*-- Nombre de tables avec uniquement des donnees manquantes = ".$_SESSION['s_cpt_table_manquant'],$_SESSION['s_cpt_table_manquant'],"","0");
 				logWriteTo(4,"notice","*-- Nombre de tables avec des donnees manquantes et differentes = ".$_SESSION['s_cpt_table_diff_manquant'],$_SESSION['s_cpt_table_diff_manquant'],"","0");
-		logWriteTo(4,"notice","*-- Nombre de tables de references vides = ".$_SESSION['s_cpt_table_vide'],$_SESSION['s_cpt_table_vide'],"","0");
+		logWriteTo(4,"notice","*-- Nombre de tables vides = ".$_SESSION['s_cpt_table_vide'],$_SESSION['s_cpt_table_vide'],"","0");
+		logWriteTo(4,"notice","*-- Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide'],$_SESSION['s_cpt_table_source_vide'],"","0");
 		logWriteTo(4,"notice","*-- Nombre d'erreur lors de la maj = ".$_SESSION['s_cpt_erreurs_sql'],$_SESSION['s_cpt_erreurs_sql'],"","0");
 	
 		if ($EcrireLogComp ) {
@@ -26,7 +27,8 @@
 			WriteCompLog ($logComp,"* Nombre de tables avec uniquement des donnees differentes = ".$_SESSION['s_cpt_table_diff'],$pasdefichier);
 			WriteCompLog ($logComp,"* Nombre de tables avec uniquement des donnees manquantes = ".$_SESSION['s_cpt_table_manquant'],$pasdefichier);
 			WriteCompLog ($logComp,"* Nombre de tables avec des donnees manquantes et differentes = ".$_SESSION['s_cpt_table_diff_manquant'],$pasdefichier);
-			WriteCompLog ($logComp,"* Nombre de tables de references vides = ".$_SESSION['s_cpt_table_vide'],$pasdefichier);
+			WriteCompLog ($logComp,"* Nombre de tables vides = ".$_SESSION['s_cpt_table_vide'],$pasdefichier); 
+			WriteCompLog ($logComp,"* Pour info Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide'],$pasdefichier); 
 		}
 		// Affichage d'avertissement si erreur dans le traitement
 		if ($_SESSION['s_erreur_process']) {
