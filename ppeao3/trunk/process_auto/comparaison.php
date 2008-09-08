@@ -240,7 +240,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		case "comp":
 			// Comparaison
 			//$listTable = GetParam("listeTableComp",$PathFicConf);
-			$listTable="exp_sexe"; //TEST
+			$listTable="ref_espece"; //TEST
 			 break;
 		case "majsc":
 			// Données scientifiques à mettre à jour
@@ -456,17 +456,19 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 						
 						//echo "Traitement de l'enregistrement ".$cptChampTotal." sur ".$totalLignes;
 						$IDEnLecture = $compRow[$RangId] ;
+						$ListeTableIDPasNum = GetParam("listeTableIDPasNum",$PathFicConf);
+						$testTtypeID = strpos($ListeTableIDPasNum ,$tables[$cpt]);
 						if ($testTtypeID === false) {
 							// L'ID est bien un numérique
-							$where = "where id = ".intval($compRow[$RangId]) ; 
+							$where = " where id = ".intval($compRow[$RangId]) ; 
 						} else {
 							// L'ID est une chaine
-							$where = "where id = '".$compRow[$RangId]."'" ;
+							$where = " where id = '".$compRow[$RangId]."'" ;
 						}
 
 						// comparaison avec l'enreg dans l'autre DB
-						logWriteTo(4,"notice",$cpt." lecture table ".$nomBDCible." ".$tables[$cpt]," select * from ".$tables[$cpt]." where id = '".$compRow[$RangId]."'","","1");
-						$compCibleReadSql = " select * from ".$tables[$cpt]." where id = '".$compRow[$RangId]."'" ; //
+						logWriteTo(4,"notice",$cpt." lecture table ".$nomBDCible." ".$tables[$cpt]," select * from ".$tables[$cpt].$where,"","1");
+						$compCibleReadSql = " select * from ".$tables[$cpt].$where ; //
 						$compCibleReadResult = pg_query(${$BDCible},$compCibleReadSql) or die('erreur dans la requete : '.pg_last_error());
 						$compCibleRow = pg_fetch_row($compCibleReadResult); // une seule ligne en retour, pas besoin de faire une boucle
 						
