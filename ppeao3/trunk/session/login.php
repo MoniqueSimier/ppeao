@@ -55,7 +55,6 @@ if(isset($_GET) && !empty($_GET['login']) && !empty($_GET['pass'])) {
 	// initialisation des variables pour le process auto // YL 02-09-08
 	$_SESSION['s_cpt_champ_total'] = 0;		// Lecture d'une table, nombre d'enregistrements lus total
 	$_SESSION['s_cpt_champ_diff'] = 0;		// Lecture d'une table, nombre d'enregistrements différents
-	$_SESSION['s_cpt_champ_egal'] = 0;		// Lecture d'une table, nombre d'enregistrements identiques
 	$_SESSION['s_cpt_champ_vide'] = 0;		// Lecture d'une table, nombre d'enregistrements vide
 	$_SESSION['s_cpt_table_total'] = 0;		// Nombre global de tables lues
 	$_SESSION['s_cpt_table_diff'] = 0;		// Nombre global de tables différentes entre reference et cible

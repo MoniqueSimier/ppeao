@@ -111,7 +111,7 @@ select c.relname,a.attname,a.attnum,
 pg_catalog.format_type(a.atttypid, a.atttypmod) as type
 from pg_class as c, pg_attribute as a
 where relname = '".$tableName."' and c.oid = a.attrelid and a.attnum > 0;";
-// Lance la requete
+// Lance la requete dans la base de reference (base source)
 if (!$connectionBD) {
  	logWriteTo(4,"error","Erreur connection ".$nomBD." dans la fonction getSQL de comparaison.php","","","0");
  }
@@ -121,7 +121,7 @@ if (pg_num_rows($getAttrBD) == 0) {
 } else {
 	while ($getAttrBDRow = pg_fetch_row($getAttrBD)) {
 		// On n'ajoute pas le champs ID
-		if ($getAttrBDRow[1] =="id") {
+		if ($getAttrBDRow[1] =="id" && $SQLAction == "update") {
 			continue;
 		}
 		// construit la liste des champs pour l'insert
