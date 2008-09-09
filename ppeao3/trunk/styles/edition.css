@@ -1,7 +1,8 @@
 /* *********************** */
 /* styles pour le module d'édition des tables */
 
-
+/* ********************** */
+/* page edition.php      */
 #tables_reference, #tables_codage, #tables_utilisateurs {
 	margin: 12px 0;
 	padding: 12px;
@@ -19,4 +20,59 @@
 
 #tables_reference select, #tables_codage select {
 	margin:0;
+}
+
+/* **************************** */
+/* le selecteur de tables      */
+
+#selector_container, #editor_container {
+	border: 1px solid grey;
+}
+
+
+.showHide {
+padding: 0 25px;
+font-size: 10px;
+font-weight: bold;
+padding: 0 9px 0 2px;
+}
+
+
+
+.level_div {
+	float:left;
+	margin:0 12px 0 0;
+}
+
+
+.edit_link {
+	font-size:10px;
+}
+
+.hints {
+	clear:both;
+	background-color:	transparent;
+	width			: 100%;
+	padding: 18px 0 9px 0;
+	font-size: 14px;
+	font-weight:normal;
+}
+
+.hints_small {
+	clear:both;
+	background-color:	transparent;
+	width			: 100%;
+	padding: 18px 0 9px 0;
+	font-size: 10px;
+	font-weight:normal;
+}
+
+
+
+.hint_label {
+font-weight: bold;
+}
+
+.hint_text {
+font-style: italic;
 }

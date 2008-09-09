@@ -16,9 +16,34 @@ $zone=2; // zone edition (voir table admin_zones)
 	// les balises head communes  toutes les pages
 	include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 ?>
-	<title>ppeao::&eacute;dition des donn&eacute;es::s&eacute;lection de la table &agrave; &eacute;diter</title>
+	<title>ppeao::&eacute;dition des donn&eacute;es::&eacute;dition de la table s&eacute;lectionn&eacute;e</title>
 
 <script src="/js/edition.js" type="text/javascript"></script>
+
+<!-- l'effet "tiroir" pour afficher/masquer le sélecteur -->
+<script type="text/javascript" charset="iso-8859-1">
+/* <![CDATA[ */
+	window.addEvent('domready', function(){
+				// note: the onComplete is there to set an automatic height to the wrapper div
+				var selectorSlide = new Fx.Slide('selector_content',{duration: 500, mode: 'vertical', onComplete: function(){if(this.wrapper.offsetHeight != 0) this.wrapper.setStyle('height', 'auto');}});
+				// when the result page loads, the selector is displayed, then it slides out and is hidden
+				selectorSlide.slideOut.delay(500, selectorSlide);
+				//since the selector hides away, display a "show" link
+				$('showHideSelect').innerHTML='[afficher la s&eacute;lection]';
+				// when the user clicks on the hide/show button, the slider's visibility is toggled
+				$('showHideSelect').addEvent('click', function(e){
+					e = new Event(e);
+					selectorSlide.toggle();
+					e.stop();
+					// if the selector is displayed, the link reads "hide",
+					//if it is hidden, the link reads "show"
+					if(selectorSlide.wrapper.offsetHeight==0) {$('showHideSelect').innerHTML='[masquer la s&eacute;lection]';} else {$('showHideSelect').innerHTML='[masquer la s&eacute;lection]';}
+				});
+			});	
+
+		
+/* ]]> */
+</script>
 
 </head>
 
@@ -42,6 +67,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 ?>
 
+<!-- le SELECTEUR -->
 <div id="selector_container">
 
 <?php
@@ -51,11 +77,17 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 </div> <!-- end div selector_container -->
 
 
+<!-- l'ÉDITEUR -->
+<div id="editor_container">
+<h1>ici l&#x27;&eacute;diteur</h1>
+</div> <!-- end div id="editor_container" -->
+
+
 <?php
 
 $theType=$_GET["type"];
 $theHierarchy=$_GET["hierarchy"];
-$targetTable=$_GET["targetTable"];
+$theTable=$_GET["table"];
 
 switch ($theType) {
 	case "reference" : $theTypeString=" de r&eacute;f&eacute;rence"; $theSelectorType="tableSelectors";
@@ -65,7 +97,7 @@ switch ($theType) {
 	default: $theTypeString="";
 	break;
 		}
-$theLogString=' : '.$theTypeString.' '.${$theSelectorType}[$theHierarchy][$targetTable]["label"];
+$theLogString=' : '.$theTypeString.' '.${$theSelectorType}[$theHierarchy][$theTable]["label"];
 
 
 logWriteTo(2,'notice','acc&egrave;s &agrave; l\'&eacute;dition de la table de '.$theLogString,'','',0);

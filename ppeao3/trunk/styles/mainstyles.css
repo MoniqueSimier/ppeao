@@ -91,6 +91,12 @@ font-size:10px;
 display:none;
 }
 
+a.link_button {
+	padding: 1px;
+	border: 1px solid grey;
+	text-align:center;
+}
+
 /* *********************** */
 /* the top navigation bar */
 

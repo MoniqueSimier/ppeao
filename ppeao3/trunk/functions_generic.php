@@ -243,6 +243,31 @@ if ($string=='' || is_null($string)) {$stringOut=$replace;}
 return $stringOut;
 }
 
+//***************************************************************************************************
+//does a lookup for a &queryParam=value pair in a string $vars holding $_SERVER["QUERY_STRING"]
+// and replaces the old queryParam value with the $newValue
 
+function replaceQueryParam ($queryString,$queryParam,$newValue) {
+
+$queryParam2=$queryParam.'=';
+$newQueryString='';
+$string=split('&',$queryString);
+$i=0;
+foreach($string as $pair)
+{
+if (ereg($queryParam2,$pair)) {
+$trim=strstr($pair,'=');
+$newpair=ereg_replace($trim,'',$pair);
+$pair=$newpair.'='.$newValue;
+$found=1;
+}
+$string[$i]=$pair;
+$newQueryString.=$pair.'&';
+$i++;
+}
+
+if ($found==1) {$newQueryString=substr($newQueryString, 0, strlen($newQueryString)-1); } else {$newQueryString.=$queryParam2.$newValue;}
+return $newQueryString;
+}
 
 ?>

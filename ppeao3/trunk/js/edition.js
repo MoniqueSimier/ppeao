@@ -45,6 +45,145 @@ function showCodageTablesSelect(typePeche){
 	xhr.send(null);}
 	
 	// "else" si la valeur  "-choisissez un domaine-" est sélectionnée, on efface le SELECT des tables
-	else {$("codage_"+typePeche+"_tables_select").dispose();}
+	else {$("codage_"+typePeche+"_tables_select").remove();}
 	
 }
+
+
+/**
+* Fonction utilisée pour supprimer les DIVs suivants quand on change les valeurs d'un DIV parent
+*/
+function removedependentSelects(level) {
+	
+	// uses the "getElements" method from mootools.js
+	var theSelects = $('selector_content').getElements('div[id^=select_]');
+	//debug 	alert(theSelects);
+	var ln=theSelects.length;
+	for (var i=0; i<ln; i++) {
+		//cuts the id value after "level_" to get the level number
+		theLevel=theSelects[i].id.substring(7);
+		//debug 		alert('theLevel'+theLevel);
+		// removes the div from the dom if it level is higher than the level of the div that was onchanged
+		// uses the "remove" method from mootools.js
+		if (theLevel>level) {$(theSelects[i].innerHTML='');
+		;}
+	}
+	
+}
+
+
+/*
+* Fonction utilisée pour insérer un nouveau <div><select> correspondant à une nouvelle table
+*/
+
+function showNewLevel(newLevel,theParentTable) {
+	// newLevel: the level of the new div to create (used in <div id="level_n">)
+	// theParentTable: la table à partir de laquelle on crée le nouveau select
+	level=parseInt(newLevel)-1; // les niveaux sont 1,2,3 etc alors que les tableaux sont indexés à partir de 0
+	//debug	alert(level);
+	var theLevel='level_'+level;
+	var theValues=$(theLevel);
+	var select=$(theParentTable);
+
+	
+	// on teste d'abord si on n'est pas arrivé à la fin du sélecteur (nouvelle table à ajouter)
+	var selecteurLength=$('selector_content').getElements('div[id^=level_]').length;
+	// debug	alert('longueur='+selecteurLength+'next level='+newLevel);
+	if (newLevel<=selecteurLength) {
+	// si une valeur est sélectionnée
+	//debug	alert(select.selectedIndex);
+	if ((select.selectedIndex!=-1)) {
+		//debug			alert('valeur sélectionnée');
+		var xhr = getXhr();
+		// what to do when the response is received
+		xhr.onreadystatechange = function(){
+			// only do something if the whole response has been received and the server says OK
+			if(xhr.readyState == 4 && xhr.status == 200){
+				//on récupère la réponse du serveur (le SELECT)
+				theNewDivCode = xhr.responseText;
+				// debug				alert(theNewDivCode);
+				// on sélectionne le DIV  :
+				var theDiv=$('level_'+newLevel);
+				theDiv.innerHTML = '';
+				theDiv.innerHTML=theNewDivCode;
+			;} // end ifxhr.readyState == 4
+		} // end xhr.onreadystatechange
+	
+	// on met à jour le lien "edit_link"
+	updateEditLink(level);
+	// on appelle cette fonction pour supprimer d'éventuels SELECTs suivants	
+	removedependentSelects(parseInt(newLevel)-1);
+	// on passe les valeurs sélectionnées des SELECT dans l'URL
+	var theString="&"+$('selector_form').toQueryString();
+		
+	// using GET to send the request
+	// on récupère les valeurs des paramètres de l'URL (fonction gup() définie dans basic.js)
+	var type=gup('type');
+	var hierarchy=gup('hierarchy');
+	var targetTable=gup('targetTable');
+	xhr.open("GET","addTableSelect_ajax.php?type="+type+"&hierarchy="+hierarchy+"&targetTable="+targetTable+"&level="+newLevel+theString,true);
+	xhr.send(null);
+
+	}// end xhr.onreadystatechange
+	
+	// else if no value is selected, we remove the next criteria select and update the edit link
+	else {
+		//debug		alert("plus de valeurs");
+		removedependentSelects(parseInt(newLevel)-1);
+		updateEditLink(level)
+		;}
+	} // end if 
+	else {
+		//debug		alert('on ne fait rien');
+	// si on est à la fin du sélecteur, on se contente de mettre à jour le lien edit_link
+	updateEditLink(level);
+	}
+}
+
+/**
+* Fonction qui met à jour le lien permettant d'éditer une table ou ses valeurs sous chaque sélecteur
+*/
+function updateEditLink(level) {
+	// level : le niveau du sélecteur pour lequel mettre le lien à jour
+	
+	// on sélectionne le lien à mettre à jour
+	var theLink=$('editlink_'+level);
+	var theLevel=$('select_'+level);
+	var theSelect=theLevel.firstChild;
+	var targetTable=gup('targetTable');
+	// on récupère ls valeurs des tables déjà sélectionnées
+	var theSelection='';
+	for (var i = 1; i <= level; i++) {theSelection+='&'+$('select_'+i).toQueryString();}
+	//debug 	alert(theSelection);
+	// on récupère le nom de la table
+	var editTable=theSelect.name.replace("[]","");
+	// on récupère les valeurs sélectionnées dans theSelect et on en faire une chaine pour URL
+	var selectedValues=getMultipleSelect(theSelect);	
+	// on met à jour le lien
+	// si aucune valeur n'est sélectionnée on insère un lien "éditer la table"
+	if (selectedValues=='') {
+		var theUrl= "/edition/edition_table.php?type="+gup('type')+"&hierarchy="+gup('hierarchy')+"&targetTable="+gup('targetTable')+"&editTable="+editTable+theSelection;
+		var theLinkText="&eacute;diter la table";
+		}
+	// si au moins une valeur est sélectionnée on insère un lien "éditer la sélection"
+	else {
+		var theUrl= "/edition/edition_table.php?type="+gup('type')+"&hierarchy="+gup('hierarchy')+"&targetTable="+gup('targetTable')+"&editTable="+editTable+theSelection;
+		var theLinkText="&eacute;diter la s&eacute;lection";
+		;}
+		
+	// on change le contenu de la balise <p id="editlink_n">
+	theLink.innerHTML='<a id="edita_'+level+'" class="link_button" href="'+theUrl+'">'+theLinkText+'</a>';
+	
+	// on attire l'attention de l'utilisateur sur le fait que le lien a changé
+	theEditA=$("edita_"+level);
+	var backgroundChange = new Fx.Style(theEditA, 'background-color', {duration:1500, transition: Fx.Transitions.linear,onComplete:function() {theEditA.setStyle('background-color','');}});
+	
+	backgroundChange.start('#FF8000','#FFF');
+	
+
+}
+
+
+
+
+
