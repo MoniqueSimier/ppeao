@@ -83,37 +83,61 @@ function ajaxLogin(){
 }
 
 
-	/**
-	* fonction appelée lorsque'l'utilisateur se déconnecte via le formulaire de login
-	*/
-	function ajaxLogout(){
+/**
+* fonction appelée lorsque'l'utilisateur se déconnecte via le formulaire de login
+*/
+function ajaxLogout(){
 
-		var xhr2 = getXhr();
-
-
-		// what to do when the response is received
-		xhr2.onreadystatechange = function(){
-			// while waiting for the response, display the loading animation
-			var theLoader=' <div align="center">d&eacute;connexion...<img src="/assets/ajax-loader.gif" alt="d&eacute;connexion..." title="d&eacute;connexion..." valign="center"/></div>';
-
-			var theLoginForm=document.getElementById("smalloginform");
-
-			if(xhr2.readyState < 4) { theLoginForm.innerHTML = theLoader;}
-			// only do something if the whole response has been received and the server says OK
-			if(xhr2.readyState == 4 && xhr2.status == 200){
-				theMessage = xhr2.responseText;
-				// une fois la déconnexion faite, on rafraichit la page
-				if(theMessage == 'success') {document.location.reload(true);}
-			}// end function()
-		} // end ajaxLogout
+	var xhr2 = getXhr();
 
 
-		// using GET to send the request
-		xhr2.open("GET","/session/logout.php",true);
-		xhr2.send(null);
-	}
+	// what to do when the response is received
+	xhr2.onreadystatechange = function(){
+		// while waiting for the response, display the loading animation
+		var theLoader=' <div align="center">d&eacute;connexion...<img src="/assets/ajax-loader.gif" alt="d&eacute;connexion..." title="d&eacute;connexion..." valign="center"/></div>';
+
+		var theLoginForm=document.getElementById("smalloginform");
+
+		if(xhr2.readyState < 4) { theLoginForm.innerHTML = theLoader;}
+		// only do something if the whole response has been received and the server says OK
+		if(xhr2.readyState == 4 && xhr2.status == 200){
+			theMessage = xhr2.responseText;
+			// une fois la déconnexion faite, on rafraichit la page
+			if(theMessage == 'success') {document.location.reload(true);}
+		}// end function()
+	} // end ajaxLogout
 
 
+	// using GET to send the request
+	xhr2.open("GET","/session/logout.php",true);
+	xhr2.send(null);
+}
 
 
 
+/**
+* Fonction utilisée pour récupérer la valeur d'un paramètre dans une URL
+*/
+
+function gup( urlParam ) {
+// urlParam : le nom du paramètre d'URL dont on veut récupérer la valeur
+  var regexS = "[\\?&]"+urlParam+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var tmpURL = window.location.href;
+  var results = regex.exec( tmpURL );
+  if( results == null )
+    return "";
+  else
+    return results[1];
+}
+
+/**
+* Fonction utilisée pour récupérer les valeurs des OPTIONS sélectionnées dans un SELECT
+*/
+
+function getMultipleSelect(theSelect) {
+// theSelect : objet DOM de type SELECT dont on veut récupérer les valeurs sélectionnées
+var selected = new Array(); 
+for (var i = 0; i < theSelect.options.length; i++) if (theSelect.options[i].selected) selected.push(theSelect.options[i].value);
+return selected;
+}
