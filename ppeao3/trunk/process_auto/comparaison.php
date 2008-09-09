@@ -26,7 +26,7 @@ session_start();
 // Variable de test (en fonctionnement production, les deux variables sont false)
 $pasdetraitement = false;
 $pasdefichier = false; // Variable de test pour linux. 
-
+$pasderevSQL = true;
 
 // Variables de traitement
 $ErreurProcess = false; // Flag si erreur process
@@ -123,6 +123,8 @@ $dumpTable = false;
 $max_time = ini_get('max_execution_time');
 // 30 secondes par défaut:
 if ($max_time == '') $max_time = 60;
+// pour test
+$max_time = 30;
 // on prend 10% du temps maximal comme marge de sécurité
 $ourtime = ceil(0.9*$max_time);
 // fin test
@@ -239,13 +241,14 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	switch($typeAction){
 		case "comp":
 			// Comparaison
-			//$listTable = GetParam("listeTableComp",$PathFicConf);
-			$listTable="ref_espece"; //TEST
+			$listTable = GetParam("listeTableComp",$PathFicConf);
+			//$listTable="ref_espece"; //TEST
 			 break;
 		case "majsc":
 			// Données scientifiques à mettre à jour
-			//$listTable = GetParam("listeTableMajsc",$PathFicConf);
-			$listTable="exp_campagne"; //TEST
+			$listTable = GetParam("listeTableMajsc",$PathFicConf);
+			//$listTable="exp_environnement,exp_campagne,exp_coup_peche"; //TEST
+			//$listTable="exp_campagne"; //TEST
 			 break;
 		case "majrec":
 		// Données recomposées à mettre à jour
@@ -308,7 +311,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
 		// controle de la table en cours si besoin (gestion TIMEOUT)
 		if ((!$tableEnCours == "" && $tableEnCours == $tables[$cpt]) || $tableEnCours == "") {
-			
+		
 		// Reinitialisation des compteurs
 		$cptChampTotal = 0;
 		$cptChampDiff = 0;
@@ -322,11 +325,11 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$_SESSION['s_cpt_champ_total'] 	= 0;
 			$_SESSION['s_cpt_champ_diff']	= 0;
 			$_SESSION['s_cpt_champ_vide']	= 0;
-			$_SESSION['s_en_erreur'] = false;
-			$_SESSION['s_cpt_erreurs_sql'] = 0;	
+			$_SESSION['s_en_erreur'] 		= false;
+			$_SESSION['s_cpt_erreurs_sql'] 	= 0;	
 		} else {
 			// on reinitialise les valeurs avec les variables de session mise à jour lors du traitement précédent
-			$CRexecution = $_SESSION['s_CR_processAuto'];
+			$CRexecution 	= $_SESSION['s_CR_processAuto'];
 			$cptChampTotal 	= $_SESSION['s_cpt_champ_total'];
 			$cptChampDiff	= $_SESSION['s_cpt_champ_diff'];
 			$cptChampVide	= $_SESSION['s_cpt_champ_vide'];	
@@ -336,7 +339,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$cptTableVide	= $_SESSION['s_cpt_table_vide'];
 			$cptTableLignesVides = $_SESSION['s_cpt_table_manquant']; 
 			$cptSQLErreur	= $_SESSION['s_cpt_erreurs_sql'] ; 
-			$ErreurProcess = $_SESSION['s_erreur_process'];
+			$ErreurProcess 	= $_SESSION['s_erreur_process'];
 			// On reinitialise pour eviter de compter deux fois les memes donnees
 			$_SESSION['s_CR_processAuto'] = "";
 			$_SESSION['s_cpt_champ_total'] = 0;
@@ -392,8 +395,14 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			}
 			// Lecture de la table $tables[$cpt] dans la base source (BD_PPEAO dans le cas de la comparaison, 
 			// BD_PECHE dans le cas de la mise à jour)
-			logWriteTo(4,"notice",$cpt." lecture table ".$nomBDSource." ".$tables[$cpt]," select * from ".$tables[$cpt].$condWhere. " order by id ASC","","1");
+			//logWriteTo(4,"notice",$cpt." lecture table ".$nomBDSource." ".$tables[$cpt]," select * from ".$tables[$cpt].$condWhere. " order by id ASC","","1");
 			//echo "Traitement de la table ".$cpt." sur ".$NbrTableAlire;		
+			
+			// Compteur 
+			$compReadSqlC = " select count(id) from ".$tables[$cpt];
+			$compReadResultC = pg_query(${$BDSource},$compReadSqlC) or die('erreur dans la requete : '.pg_last_error());
+			$compRowC = pg_fetch_row($compReadResultC);
+			$totalLignes = $compRowC[0];
 			
 			$compReadSql = " select * from ".$tables[$cpt].$condWhere. " order by id ASC";
 			$compReadResult = pg_query(${$BDSource},$compReadSql) or die('erreur dans la requete : '.pg_last_error());
@@ -405,8 +414,8 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 
 			} else {
 				// La table dans la base source (de référence) n'est pas vide
-				logWriteTo(4,"notice",$cpt." ".$tables[$cpt]." nombre lignes = ".pg_num_rows($compReadResult)." dans ".$nomBDSource," ","","1");
-				$totalLignes = pg_num_rows($compReadResult);
+				//logWriteTo(4,"notice",$cpt." ".$tables[$cpt]." nombre lignes = ".pg_num_rows($compReadResult)." dans ".$nomBDSource," ","","1");
+				
 				// On va balayer tous les enreg (ligne) de la table controlée
 				while ($compRow = pg_fetch_row($compReadResult) ) {
 					// Controle sur le nombre de ligne deja mise dans le fichier,
@@ -467,7 +476,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 						}
 
 						// comparaison avec l'enreg dans l'autre DB
-						logWriteTo(4,"notice",$cpt." lecture table ".$nomBDCible." ".$tables[$cpt]," select * from ".$tables[$cpt].$where,"","1");
+						//logWriteTo(4,"notice",$cpt." lecture table ".$nomBDCible." ".$tables[$cpt]," select * from ".$tables[$cpt].$where,"","1");
 						$compCibleReadSql = " select * from ".$tables[$cpt].$where ; //
 						$compCibleReadResult = pg_query(${$BDCible},$compCibleReadSql) or die('erreur dans la requete : '.pg_last_error());
 						$compCibleRow = pg_fetch_row($compCibleReadResult); // une seule ligne en retour, pas besoin de faire une boucle
@@ -475,7 +484,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 						if (pg_num_rows($compCibleReadResult) == 0) {
 							// L'enregistrement n'existe pas dans la base cible
 							$cptChampVide++ ;
-							logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
+							//logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
 							if ($EcrireLogComp ) { WriteCompLog ($logComp," MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
 							$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
 							
@@ -485,7 +494,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 								$RunQErreur = runQuery($scriptSQL,${$BDCible});
 								if ( $RunQErreur){
 									$scriptDeleteSQL = GetSQL('delete',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
-									WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
+									if (!$pasderevSQL ) {
+										WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
+									}
 									logWriteTo(4,"notice"," Pour ".$tables[$cpt]." ajout de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
 								if ($EcrireLogComp ) {WriteCompLog ($logComp," AJOUT script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}
 								} else {
@@ -517,10 +528,10 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 								}
 								 else {
 									// différent
-									logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg different ","","","1");
+									//logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg different ","","","1");
 									$cptChampDiff++ ;
 									$enregDiff = true;
-									logWriteTo(4,"notice"," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")","","","1");
+									//logWriteTo(4,"notice"," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")","","","1");
 									if ($EcrireLogComp ) {WriteCompLog ($logComp," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")",$pasdefichier);}
 									break;
 								}
@@ -528,6 +539,10 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 							
 							if 	($enregDiff) {
 								// On lance ici la mise à jour globale de l'enregistrement	
+								// Attention, il faudra etre plus malin, si donnees existent deja, faire une demande a l'utilisateur.
+								
+								
+								
 								$scriptSQL = GetSQL('update',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
 								
 								if ($typeAction == "majsc" || $typeAction == "majrec") {
@@ -535,7 +550,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 									$RunQErreur = runQuery($scriptSQL,${$BDCible});
 									if ( $RunQErreur){
 										$scriptDeleteSQL = GetSQL('update',  $tables[$cpt], $where, $compCibleRow,${$BDSource},$nomBDSource);
-										WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
+										if (!$pasderevSQL ) {
+											WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
+										}
 										logWriteTo(4,"notice"," ==> maj de l'enreg id = ".$compRow[$RangId],$scriptSQL,$scriptDeleteSQL,"0");
 										if ($EcrireLogComp ) {WriteCompLog ($logComp," MAJ script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}										
 									} else {
@@ -561,7 +578,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					} else { // fin du if (! $dumpTable)
 						// On fait un dump bourrin de la table
 						$tableVide = true;
-						logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
+						//logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
 						if ($EcrireLogComp ) { WriteCompLog ($logComp," TOUT MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
 						$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
 						if ($typeAction == "majsc" || $typeAction == "majrec") {
@@ -569,7 +586,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 							$RunQErreur = runQuery($scriptSQL,${$BDCible});
 							if ( $RunQErreur){
 								$scriptDeleteSQL = GetSQL('delete',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
-								WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
+								if (!$pasderevSQL ) {
+									WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
+								}
 								logWriteTo(4,"notice"," Pour ".$tables[$cpt]." ajout dans cadre dump de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
 								if ($EcrireLogComp ) {WriteCompLog ($logComp," AJOUT TOUT script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}
 								

@@ -120,7 +120,7 @@
 		}
 		logWriteTo(4,"notice","Interruption gestion timeout pour la table ".$tableEnLecture." et Id = ".$IDEnLecture,"","","0");
 		// test
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction."Arret Timeout : execution en ".$delai." time maxi = ".$max_time." </div>";
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Traitement de la table ".$tableEnLecture." (".$_SESSION['s_cpt_table_total']." sur ".$NbrTableAlire." ) / enregistrement ".$cptChampTotal." sur ".$totalLignes." <br/>".$nomAction." en cours (relance pour eviter Timeout : execution en ".$delai." time maxi = ".$max_time.") </div>";
 		echo "<form id=\"formtest\"> 
 		<input id=\"nomtable\" 	type=\"hidden\" value=\"".$tableEnLecture."\"/>
 		<input id=\"numID\" 	type=\"hidden\" value=\"".$IDEnLecture."\"/>

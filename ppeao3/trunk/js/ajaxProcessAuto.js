@@ -12,6 +12,7 @@ var adresse ;
 var DBname;
 var nbEnreg;
 var checkLog;
+var relancetrt = false;
 function runProcess()
 {
 	adresse = document.getElementById("adresse").value;
@@ -19,9 +20,9 @@ function runProcess()
 	nbEnreg = document.getElementById("NBEnr").value;
 	checkLog = document.getElementById("logsupp").checked;
 	document.getElementById('titleProcess').innerHTML="Portage automatique en cours";
-	document.getElementById("sauvegarde_img").innerHTML="<img src='/assets/ajax-loader.gif' alt=''/>";
+	document.getElementById("sauvegarde_img").innerHTML="<img src='/assets/ajax-loader_32px.gif' alt=''/>";
 	document.getElementById("sauvegarde_txt").innerHTML="Sauvegarde en cours";
-	document.getElementById('portageOK_img').innerHTML="<img src='/assets/ajax-loader.gif' alt=''/>";
+	document.getElementById('portageOK_img').innerHTML="<img src='/assets/ajax-loader_32px_gris.gif' alt=''/>";
 	document.getElementById('portageOK_txt').innerHTML="Status du portage = en cours de traitement";
 	xmlHttp=GetXmlHttpObject();
 	if (xmlHttp==null)
@@ -42,8 +43,10 @@ function runProcessNext(phpProcess,locFenID,locURL,locTexte)
 	fenID = locFenID;
 	fenIDImg = locFenID+"_img";
 	fenIDText = locFenID+"_txt";
-	document.getElementById(fenIDImg).innerHTML="<img src='/assets/ajax-loader.gif' alt=''/>";
-	document.getElementById(fenIDText).innerHTML=locTexte;
+		document.getElementById(fenIDImg).innerHTML="<img src='/assets/ajax-loader_32px.gif' alt=''/>";	
+	if (!relancetrt) {
+		document.getElementById(fenIDText).innerHTML=locTexte;
+	}
 	xmlHttp=GetXmlHttpObject();
 	if (xmlHttp==null)
 	  {
@@ -67,7 +70,7 @@ function runProcessEnd()
 	fenID = "portageOK";
 	fenIDImg = fenID+"_img";
 	fenIDText = fenID+"_txt";
-	document.getElementById(fenIDImg).innerHTML="<img src='/assets/ajax-loader.gif' alt=''/>";
+	document.getElementById(fenIDImg).innerHTML="<img src='/assets/ajax-loader_32px.gif' alt=''/>";
 	document.getElementById(fenIDText).innerHTML="Analyse Status process";
 	xmlHttp=GetXmlHttpObject();
 	if (xmlHttp==null)
@@ -92,6 +95,9 @@ function stateChanged1()
 			// One of the processes needs to be restarted with some parameters because of server TIMEOUT
 			numProcess = parseInt(document.getElementById("numproc").value);
 			URLSupp = "&table="+document.getElementById("nomtable").value+"&numenreg="+document.getElementById("numID").value;
+			relancetrt = true;
+		} else {
+			relancetrt = false;
 		}
 
 			
@@ -145,8 +151,57 @@ function stateChanged2()
 	if (xmlHttp.readyState==4)
 	{ 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
+		runClean("");
 	}
 }
+
+function runClean(locURL)
+{
+	
+	fenID = "purge";
+	fenIDImg = fenID+"_img";
+	fenIDText = fenID+"_txt";
+	document.getElementById(fenIDImg).innerHTML="<img src='/assets/ajax-loader_32px.gif' alt=''/>";
+	document.getElementById(fenIDText).innerHTML="Purge en cours";
+	xmlHttp=GetXmlHttpObject();
+	if (xmlHttp==null)
+	  {
+	  	alert ("Your browser does not support AJAX!");
+	  	return;
+	  } 
+	xmlHttp.onreadystatechange=stateChanged3;
+	if (locURL== "") {
+		addURL = "";
+	} else {
+		addURL = "?"+locURL;
+	}
+	xmlHttp.open("GET","/process_auto/purgeTable.php"+addURL,true);
+	xmlHttp.send(null);
+}
+
+function stateChanged3() 
+{ 
+
+	if (xmlHttp.readyState==4)
+	{ 		
+		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
+		URLSupp = "";
+		if (document.getElementById("nomtable")) {
+			// One of the processes needs to be restarted with some parameters because of server TIMEOUT
+			numProcess = parseInt(document.getElementById("numproc").value);
+			URLSupp = "&table="+document.getElementById("nomtable").value;
+			relancetrt = true;
+		} else {
+			URLSupp ="";
+			relancetrt = false;
+		}
+		if (relancetrt) {
+			runClean(URLSupp);
+			
+		}
+	}
+}
+
 
 function GetXmlHttpObject()
 {

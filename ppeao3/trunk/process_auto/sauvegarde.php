@@ -37,7 +37,7 @@ $dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
 $pathBackup = GetParam("repBackupFicRep",$PathFicConf);
 $pathBackup = $_SERVER["DOCUMENT_ROOT"]."/".$pathBackup;
 $backupName = GetParam("repBackupFicNom",$PathFicConf);
-$pathBin = GetParam("repPGDump",$PathFicConf);
+$pathBin = GetParam("repPGDump",$PathFicConf); // pour windows
 
 // On remet à zéro le fichier reverse SQL. On le fait ici même si on n'utilise pas le fichier ici
 // car il sera plus difficile d'identifier dans comparaison.php le premier appel de ce programme
