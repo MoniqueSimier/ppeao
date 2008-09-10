@@ -79,7 +79,59 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 <!-- l'ÉDITEUR -->
 <div id="editor_container">
-<h1>ici l&#x27;&eacute;diteur</h1>
+<h1>votre s&eacute;lection : </h1>
+<?php 
+// on construit la requête SQL pour obtenir les valeurs de la table à afficher
+$editTable=$_GET["editTable"];
+if (isset($_GET[$editTable])) {
+	$theTableValues=implode($_GET[$editTable],"','");
+	$whereClause=' AND '.$tablesDefinitions[$editTable]["id_col"].' IN (\''.$theTableValues.'\') ';
+	}
+	else {$whereClause=NULL;}
+$tableSql='	SELECT * FROM '.$tablesDefinitions[$editTable]["table"].'
+				WHERE  TRUE '.$whereClause.' 
+				ORDER BY '.$tablesDefinitions[$editTable]["id_col"].'
+			';
+
+//debug 		echo($tableSql);
+
+$tableResult=pg_query($connectPPEAO,$tableSql) or die('erreur dans la requete : '.$tableSql. pg_last_error());
+$tableArray=pg_fetch_all($tableResult);
+
+// on affiche la table
+/*debug 
+echo('<pre>');
+	print_r($tableArray);
+echo('</pre>'); */
+
+echo('<table id="la_table" border="0" cellspacing="0" cellpadding="5">');
+
+// on affiche l'en-tête de table
+$theHeads=array_keys($tableArray[0]);
+echo('<hr>');
+foreach ($theHeads as $oneHead) {echo('<td class="small">'.$oneHead.'</td>');}
+echo('<td class="small">action</td>');
+echo('</hr>');
+
+$i=0;
+foreach ($tableArray as $theRow) {
+	// affiche la ligne avec un style différent si c'est un rang pair ou impair 
+	if ( $i&1 ) {$rowStyle='edit_row_odd';} else {$rowStyle='edit_row_even';}
+	echo('<tr id="row_'.$theRow["id"].'" class="'.$rowStyle.'">');
+		foreach ($theRow as $theColumn) {
+			echo('<td class="'.$rowStyle.' small">');
+			echo($theColumn);
+			echo('</td>');
+		}
+	// la colonne d'outils
+	echo('<td><a href="" class="small link_button">supprimer</a></td>');
+	echo('</tr>');
+	$i++;
+}
+echo('</table>')
+	
+
+?>
 </div> <!-- end div id="editor_container" -->
 
 
