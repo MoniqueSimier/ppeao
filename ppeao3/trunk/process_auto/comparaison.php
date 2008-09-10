@@ -23,10 +23,10 @@
 // Mettre les noms des fichiers dans un fichier texte
 session_start();
 
-// Variable de test (en fonctionnement production, les deux variables sont false)
+// Variable de test (en fonctionnement production, les trois variables sont false)
 $pasdetraitement = false;
 $pasdefichier = false; // Variable de test pour linux. 
-$pasderevSQL = true;
+$pasderevSQL = false; // Ne pas generer le fichier reverseSQL
 
 // Variables de traitement
 $ErreurProcess = false; // Flag si erreur process
@@ -246,8 +246,8 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			 break;
 		case "majsc":
 			// Données scientifiques à mettre à jour
-			$listTable = GetParam("listeTableMajsc",$PathFicConf);
-			//$listTable="exp_environnement,exp_campagne,exp_coup_peche"; //TEST
+			//$listTable = GetParam("listeTableMajsc",$PathFicConf);
+			$listTable="exp_environnement,exp_campagne,exp_coup_peche"; //TEST
 			//$listTable="exp_campagne"; //TEST
 			 break;
 		case "majrec":
@@ -403,6 +403,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$compReadResultC = pg_query(${$BDSource},$compReadSqlC) or die('erreur dans la requete : '.pg_last_error());
 			$compRowC = pg_fetch_row($compReadResultC);
 			$totalLignes = $compRowC[0];
+			pg_free_result($compReadResultC);
 			
 			$compReadSql = " select * from ".$tables[$cpt].$condWhere. " order by id ASC";
 			$compReadResult = pg_query(${$BDSource},$compReadSql) or die('erreur dans la requete : '.pg_last_error());

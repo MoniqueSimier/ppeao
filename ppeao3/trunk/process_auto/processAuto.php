@@ -35,7 +35,7 @@ if (isset($_SESSION['s_status_process_auto'])) {
 
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
 	// le processus de recomposition des données
-	include $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition.php';
+	include $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition_pas_a_pas.php';
 	$messageinfo = "";
 	$query = "select count(id) FROM art_debarquement_rec";
 	$result = pg_query($connectPPEAO, $query);
