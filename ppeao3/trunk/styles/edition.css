@@ -27,6 +27,7 @@
 
 #selector_container, #editor_container {
 	border: 1px solid grey;
+	min-width:800px;
 }
 
 
@@ -76,3 +77,18 @@ font-weight: bold;
 .hint_text {
 font-style: italic;
 }
+
+/* **************************** */
+/* l'éditeur de tables      */
+
+.edit_row_even {
+background-color: transparent;
+}
+
+.edit_row_odd {
+background-color:	#E6E6E6;
+
+}
+
+
+
