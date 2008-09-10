@@ -126,7 +126,7 @@ echo('<div id="selector_content">');
 	echo('</form>');
 
 	// le div pour l'affichage de l'aide
-	echo('<div id="select_hints" class="hints"><span class="hint_label">aide : </span><span class="hint_text">vous pouvez sélectionner plusieurs valeurs en cliquant tout en tenant la touche "CTRL" (Windows, Linux) ou "CMD" (Mac) enfoncée.</span></div>');
+	echo('<div id="select_hints" class="hints"><span class="hint_label">aide : </span><span class="hint_text">vous pouvez s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e.</span></div>');
 
 
 

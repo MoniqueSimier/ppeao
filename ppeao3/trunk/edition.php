@@ -97,7 +97,7 @@ echo('</div>');
 <?php if (userHasAccess($_SESSION['s_ppeao_user_id'],1)) { ?>
 <div id="tables_utilisateurs">
 <h2>&eacute;dition des utilisateurs</h2>
-En utilisant <a href="">la page d'édition des utilisateurs</a>, vous pourrez créer ou supprimer un compte ou un groupe, modifier les permissions d'accès d'un utilisateur ou d'un groupe existant.
+En utilisant <a href="">la page d&#x27;&eacute;dition des utilisateurs</a>, vous pourrez cr&eacute;er ou supprimer un compte ou un groupe, modifier les permissions d&#x27;acc&egrave;s d&#x27;un utilisateur ou d&#x27;un groupe existant.
 </div>
 <?php } ?>
 
