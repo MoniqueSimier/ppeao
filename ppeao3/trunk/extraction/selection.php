@@ -149,14 +149,10 @@ if (!isset($_POST['secteur']))
 		$query = substr($query, 0, -2); 		//on enleve le dernier or
 		$query .= ") order by RP.nom, RSy.libelle ";
 	
-	print ($query);
-	print_r($connection);
-	
+	//print ($query);
 	$result = pg_query($connection, $query);
 	
 	$ST=Array();
-	$STX=Array();
-	
 	$i = 0;
 	while($row = pg_fetch_row($result))
 		{
@@ -274,7 +270,7 @@ else
 	{
 	//print ("<div align='center'><br>");
 	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	//if (!$connection) { echo "Pas de connection"; exit;}
+//	if (!$connection) { echo "Pas de connection"; exit;}
 	
 	print ("<div align='center'><Font Color =\"#333366\">");
 	if (!isset($_POST['campagne']))print ("<br><b>Sélection des campagnes de pêche</b></font>");
@@ -495,8 +491,8 @@ print ("</div>");
 			print ("<div align='center'><Font Color =\"#333366\">");
 			
 			
-			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			//if (!$connection) { echo "Pas de connection"; exit;}
+		//	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+		//	if (!$connection) { echo "Pas de connection"; exit;}
 			
 			$query3 = "select distinct exp_engin.id, exp_engin.libelle 
 			from exp_campagne as EC, exp_coup_peche  left join exp_engin on exp_engin.id=exp_coup_peche.exp_engin_id 
@@ -982,8 +978,8 @@ else
 		$query_1 .= ") order by RS.nom, AA.nom ";
 		
 		//print ("<br>".$query_1);
-		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		//if (!$connection) { echo "Pas de connection"; exit;}
+//		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//		if (!$connection) { echo "Pas de connection"; exit;}
 		$result_1 = pg_query($connection,$query_1);
 		
 		$A=Array();
@@ -1086,8 +1082,8 @@ else
 		}//fin du if agglo non referencées
 	else
 		{
-		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		//if (!$connection) { echo "Pas de connection"; exit;}
+//		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//		if (!$connection) { echo "Pas de connection"; exit;}
 		
 		
 		print ("<div align='center'>");
@@ -1113,27 +1109,27 @@ else
 			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 			//if (!$connection) { echo "Pas de connection"; exit;}
 			
-			$query_2 = "select distinct AAc.mois, AAc.annee\n 
+			$query_2 = "select distinct AAc.mois, AAc.annee 
 			from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, 
 			ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation, 
 			
-			art_agglomeration as AA, art_activite as AAc \n
-			where AA.id=AAc.art_agglomeration_id \n
+			art_agglomeration as AA, art_activite as AAc 
+			where AA.id=AAc.art_agglomeration_id 
 			
-			and RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id \n
-			and RS.id=AA.ref_secteur_id \n
+			and RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
+			and RS.id=AA.ref_secteur_id 
 			
-			and AAc.date_activite < ref_systeme_date_butoir.date_butoire\n 
-			and ref_systeme_date_butoir.type_echant = 2 \n
-			and ref_utilisateurs.login = '".$login."' \n
-			and ref_utilisateurs.password = '".$passe."'\n 
-			and ref_systeme_date_butoir.systeme = RSy.libelle\n 
-			and ref_autorisation_exploitation.login=ref_utilisateurs.login\n 
-			and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id\n 
-			and ref_systeme_date_butoir.date_butoire != '1900-01-01' \n
+			and AAc.date_activite < ref_systeme_date_butoir.date_butoire 
+			and ref_systeme_date_butoir.type_echant = 2 
+			and ref_utilisateurs.login = '".$login."' 
+			and ref_utilisateurs.password = '".$passe."' 
+			and ref_systeme_date_butoir.systeme = RSy.libelle 
+			and ref_autorisation_exploitation.login=ref_utilisateurs.login 
+			and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
+			and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
 			
-			and AAc.date_activite > '".$annee_deb."-01-01' \n
-			and AAc.date_activite < '".$annee_fin."-12-31' \n
+			and AAc.date_activite > '".$annee_deb."-01-01' 
+			and AAc.date_activite < '".$annee_fin."-12-31' 
 			
 			
 			
@@ -1146,10 +1142,6 @@ else
 				}
 			$query_2 = substr($query_2, 0, -2); 		//on enleve le dernier or
 			$query_2 .= ") order by AAc.annee, AAc.mois";
-			/*print "<br/>";
-			print "requete ===".$query_2;
-			print "<br/>";
-			*/
 			$result_2 = pg_query($connection, $query_2);
 			//print("<br>".$query_2);
 			//print("<br>".pg_num_rows($result_2));
@@ -1335,8 +1327,8 @@ else
 			print ("<div align='center'><Font Color =\"#333366\">");
 			print ("<br>");
 			
-			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			//if (!$connection) { echo "Pas de connection"; exit;}
+//			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//			if (!$connection) { echo "Pas de connection"; exit;}
 			
 			
 			
@@ -1393,7 +1385,7 @@ else
 			
 			//affichage
 			print ("<form name=\"form\" method=\"post\" action=\"selection.php\">"); 
-											print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
+			print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
 			
 			?>
 			<script language="JavaScript"><!--
@@ -1416,7 +1408,7 @@ else
 			$colonne = 2;
 			while (list($key_E, $val_E) = each($E))
 				{
-				if(($key_E =="")||($key_E =="INCON"))continue;
+				if(($key_E =="")) continue;          //||($key_E =="INCON")
 					/*{
 					$key_E_affich = "non renseigné";
 					$val_E = " ";
@@ -1673,8 +1665,8 @@ if (!isset($_POST['secteur']))
 
 	print ("<div align='center'><Font Color =\"#333366\">");
 	
-	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	//if (!$connection) { echo "Pas de connection"; exit;}
+//	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//	if (!$connection) { echo "Pas de connection"; exit;}
 	
 	$query = "select distinct RS.nom, RP.nom, RSy.libelle 
 	from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, art_agglomeration, 
@@ -1872,8 +1864,8 @@ else
 		$query_1 .= ") order by RS.nom, RS.nom, AA.nom ";
 		
 		//print ("<br>".$query_1);
-		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		//if (!$connection) { echo "Pas de connection"; exit;}
+//		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//		if (!$connection) { echo "Pas de connection"; exit;}
 		$result_1 = pg_query($connection,$query_1);
 		
 		$A=Array();
@@ -2180,8 +2172,8 @@ else
 			print ("<div align='center'><Font Color =\"#333366\">");
 			print ("<br>");
 			
-			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			//if (!$connection) { echo "Pas de connection"; exit;}
+//			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//			if (!$connection) { echo "Pas de connection"; exit;}
 			
 			
 			
@@ -2238,7 +2230,7 @@ else
 			$colonne = 2;
 			while (list($key_E, $val_E) = each($E))
 				{
-				if(($key_E =="")||($key_E =="INCON"))continue;
+				if(($key_E ==""))continue;                   //||($key_E =="INCON")
 					
 				else $key_E_affich = $key_E;
 				$nb = $nb + 1;
@@ -2323,8 +2315,8 @@ else
 	
 			print ("<div align='center'>");
 			
-			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-			//if (!$connection) { echo "Pas de connection"; exit;}
+//			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+//			if (!$connection) { echo "Pas de connection"; exit;}
 			
 			
 			

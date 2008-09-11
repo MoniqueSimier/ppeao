@@ -5,7 +5,8 @@
 </head>
 <body BGCOLOR="#CCCCFF">
 
-<?php 
+<?php
+//include_once("../connexion.php");
 if(! ini_set("max_execution_time", "480")) {echo "échec max_execution_time";}
 include_once("../connect.inc");
 $connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
@@ -56,8 +57,6 @@ $colonnes_faites = $_POST['colonnes_faites'];
 $regroupement = $_POST['regroupement'];
 
 
-
-
 /////////////////////////////////////////////////////////////////////////////////////
 //fabrication de la requete globale recueillant les informations apres preselection//
 /////////////////////////////////////////////////////////////////////////////////////
@@ -88,19 +87,12 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	left join (art_unite_peche
 	left join art_categorie_socio_professionnelle on art_unite_peche.art_categorie_socio_professionnelle_id=art_categorie_socio_professionnelle.id)
 	on art_activite.art_unite_peche_id=art_unite_peche.id 
-	, art_type_engin, art_engin_activite 
+	left join (art_engin_activite left join art_type_engin on art_engin_activite.art_type_engin_id = art_type_engin.id ) on art_activite.id = art_engin_activite.art_activite_id 
 	where ref_pays.id=ref_systeme.ref_pays_id 
 	and ref_systeme.id=ref_secteur.ref_systeme_id 
 	and ref_secteur.id=art_agglomeration.ref_secteur_id 
 	and art_agglomeration.id=art_activite.art_agglomeration_id 
-	
-	and art_activite.id = art_engin_activite.art_activite_id 
-	and art_engin_activite.art_type_engin_id=art_type_engin.id 
-	
-	
-
-	
-	 ";
+		 ";
 
 	
 	$nb_campagne = count ($_POST['agglo']);
@@ -118,10 +110,9 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		$query_globale .= ") ";
 		}
 
-
 	
 	$nb_engin = count ($_POST['engin']);
-
+/* supprimer le 02/09/08
 	reset($_POST['engin']);
 	if ($nb_engin == 1)$query_globale .= "and art_grand_type_engin.id = '".$_POST['engin'][0]."' ";
 	else
@@ -134,7 +125,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		$query_globale = substr($query_globale, 0, -3); 		//on enleve le dernier or
 		$query_globale .= ") ";
 		}
-	
+*/	
 	
 	reset($_POST['periode']);
 	$nb_annee=count(array_keys($_POST['periode']));
@@ -154,10 +145,9 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 			}
 			$query_globale = substr($query_globale, 0, -3); 		//on enleve le dernier or
 			$query_globale .= ") order by ref_pays.id asc, ref_systeme.id asc, art_agglomeration.nom, art_activite.annee asc 
-	,art_activite.mois asc ,art_activite.id asc, art_activite.art_grand_type_engin_id ";
+			,art_activite.mois asc 	 ";
 	
-	
-	
+	//,art_activite.id asc, art_activite.art_grand_type_engin_id             //supprimer le 02/09/08
 	
 	
 	//print ("<br>".$query_globale);
@@ -171,7 +161,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	$fpm = fopen($file, "w");
 	$i = 0;
 	$k=1;//nombre lignes
-	$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t idtype_agglo\t type_agglo\t activ\t up\t agglo\t type_sortie\t grd_type_engin\t milieu\t activ_date\t nup_recens\t activ_an\t activ_mois\t cccoode\t activ_nb_hom\t activ_nb_fem\t activ_nb_enf\t type_activ\t grd_type_engin\t grd_type_engin_lib\t type_activ_lib1\t type_activ_lib2\t type_activ\t type_sortie\t type_sortie_lib\t milieu\t milieu_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_ep\t type_engin_lib \t eee\t \t nbre_engin\n";
+	$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t idtype_agglo\t type_agglo_lib\t activ\t up\t agglo\t type_sortie\t grd_type_engin\t milieu\t activ_date\t nup_recens\t activ_an\t activ_mois\t cccoode\t activ_nb_hom\t activ_nb_fem\t activ_nb_enf\t type_activ\t grd_type_engin\t grd_type_engin_lib\t type_activ_lib1\t type_activ_lib2\t type_activ\t type_sortie\t type_sortie_lib\t milieu\t milieu_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo_orig\t bbbasepays\t csp\t csp_lib\t eee\t \t nbre_engin\t inc01\t inc02\t type_engin\t grd_type_ep\t type_engin_lib \n";
 	fputs($fpm,$intitule);
 	$nombre_enreg = pg_num_rows($result);
 
@@ -182,7 +172,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		$contenu.= $row[20]."\t";
 		
 		//si $row[0]different, numero +1
-		for ($i=0; $i<64; $i++)	//il y a 56 champs dans la requete
+		for ($i=0; $i<64; $i++)	//il y a 56 champs dans la requete FAUX 62sur intitulé
 			{
 			$contenu .= trim($row[$i])."\t";
 			}
@@ -202,6 +192,8 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	//////////////////////////////////////
 	$requete_faite = 1;
 
+
+	
 	///////////////////////////////////////////////////////////
 	///tri des lignes à garder dans le fichier texte
 	///////////////////////////////////////////////////////////
@@ -225,19 +217,19 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php 
+		<?php
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
 <div id="_pays" style="display:none">
-<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -245,58 +237,59 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");
 	print ("<input type=hidden name=\"voir[3]\" value=\"3\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst_lib</td>");
 	print ("<input type=hidden name=\"voir[4]\" value=\"4\">");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[130]\" value=\"6\"></td><td>surface</td>");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
-	
-	
+		
 	
 	////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
 	print ("<input type=hidden name=\"voir[5]\" value=\"8\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect_lib</td>");
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[131]\" value=\"10\"></td><td>surface</td>");	
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo</td>");
-	print ("<input type=hidden name=\"voir[300]\" value=\"13\">");
+	print ("<input type=hidden name=\"voir[300]\" value=\"12\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo_lib</td>");
 	print ("<input type=hidden name=\"voir[7]\" value=\"15\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[302]\" value=\"13\"></td><td>type_agglo</td>");
@@ -307,52 +300,53 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
 	////////////table unité de peche et activite
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
+	<div onclick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
 </div>
 
 <div id="_up" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>up</td>");
 		print ("<input type=hidden name=\"voir[24]\" value=\"22\">");
-	print ("<td WIDTH=30>x</td><td>grd_type_engin</td>");
-		print ("<input type=hidden name=\"voir[28]\" value=\"36\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[25]\" value=\"47\" ></td><td>up_lib</td>");
 	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[26]\" value=\"48\" ></td><td>up_lib_menage</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>grd_type_engin</td>");
+		print ("<input type=hidden name=\"voir[28]\" value=\"36\">");
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[28]\" value=\"36\" ></td><td>grd_type_engin</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[29]\" value=\"37\" ></td><td>grd_type_engin_lib</td>");	
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[18]\" value=\"52\" ></td><td>csp</td>");
 	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[19]\" value=\"53\" ></td><td>csp_lib</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[15]\" value=\"32\" ></td><td>activ_nb_hom</td>");
 	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[16]\" value=\"33\" ></td><td>activ_nb_fem</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[17]\" value=\"34\" ></td><td>activ_nb_enf</td>");
-		print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[27]\" value=\"54\" ></td><td>type_engin</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[222]\" value=\"59\" ></td><td>nbre_engin</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[203]\" value=\"55\" ></td><td>grd_type_ep</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[29]\" value=\"37\" ></td><td>grd_type_engin_lib</td>");
-	
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[708]\" value=\"65\" ></td><td>agglo_orig</td>");	
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[27]\" value=\"59\" ></td><td>type_engin</td>");
+    print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[204]\" value=\"61\" ></td><td>engin_lib</td>");	
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[222]\" value=\"56\" ></td><td>nbre_engin</td>");
 
 
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_up').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_act').style.display = 'block';"><b>Activité</b>
+	<div onclick="document.getElementById('vue_act').style.display = 'block';"><b>Activité</b>
 </div>
 
 
 <div id="vue_act" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"300\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>activite</td>");
-	print ("<input type=hidden name=\"voir[9]\" value=\"21\">");
+	print ("<input type=hidden name=\"voir[9]\" value=\"35\">");
 	print ("<td WIDTH=30>x</td><td>nbre_unite_recencee</td>");
 	print ("<input type=hidden name=\"voir[301]\" value=\"28\">");
 	
@@ -370,7 +364,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_act').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -378,13 +372,15 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('_date').style.display = 'block';"><b>Date</b>
+	<div onclick="document.getElementById('_date').style.display = 'block';"><b>Date</b>
 	</div>
 	
 	<div id="_date" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[351]\" value=\"27\" ></td><td>date</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>date</td>");
+	print ("<input type=hidden name=\"voir[351]\" value=\"27\">");
+//print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[351]\" value=\"27\" ></td><td>date</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[352]\" value=\"29\" ></td><td>annee</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[353]\" value=\"30\" ></td><td>mois</td>");
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_date').style.display = 'none';\">fermer</td>");
@@ -502,8 +498,8 @@ print ("<div align='center'><br><br><br>Le fichier texte contenant les résultats
 print ("<br>Celui ci comporte ".($nombre_ligne-1)." lignes.
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 
-//print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/temp_selection_globale.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
-print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/selection_activ.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/temp_selection_globale.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+print ("<br><br><a href=\"https://localhost/extraction/selection_activ.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 ?>
 <SCRIPT LANGUAGE="JavaScript"> 
@@ -511,7 +507,7 @@ function fermer() {
 if(confirm("Etes vous sûr ?"))window.close();}
 </script>
 
-<?php 
+<?php
 
 print("<div align='center'><br><br>");
 print("<input type='button' value='Fermer' onClick= 'fermer()'   name=\"button\">"); 
@@ -546,6 +542,10 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 	//if (!$connection) { echo "Pas de connection"; exit;}
 	
+	//left join art_engin_peche on art_engin_peche.art_debarquement_id = art_debarquement.id
+	//, art_type_engin
+	//and art_engin_peche.art_type_engin_id=art_type_engin.id
+	//and art_debarquement.id = art_engin_peche.art_debarquement_id 
 	
 	$query_globale = " select * 
 	from ref_pays, ref_systeme, ref_secteur, 
@@ -561,18 +561,15 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	left join (art_unite_peche
 	left join art_categorie_socio_professionnelle on art_unite_peche.art_categorie_socio_professionnelle_id=art_categorie_socio_professionnelle.id)
 	on art_debarquement.art_unite_peche_id=art_unite_peche.id 
-	, art_type_engin , art_debarquement_rec, art_engin_peche 
+	left join art_debarquement_rec on art_debarquement.id = art_debarquement_rec.art_debarquement_id 
+	
+	
 	where ref_pays.id=ref_systeme.ref_pays_id 
-	
-	and art_debarquement.id = art_engin_peche.art_debarquement_id 
-	and art_engin_peche.art_type_engin_id=art_type_engin.id 
-	
 	
 	and ref_systeme.id=ref_secteur.ref_systeme_id 
 	and ref_secteur.id=art_agglomeration.ref_secteur_id 
 	and art_agglomeration.id=art_debarquement.art_agglomeration_id 
 	
-	and art_debarquement.id = art_debarquement_rec.art_debarquement_id 
 	";
 
 	
@@ -641,8 +638,12 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	$fpm = fopen($file, "w");
 	$i = 0;
 	$k=1;//nombre lignes
-	if($type_donnees=="brutes")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t libellé type\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t dbq_date_dep\t dbq_heure_deb\t dbq_heure\t dbq_heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t dbq_liste_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sirtie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_engin\t type_engin_lib\n";
-	if($type_donnees=="elaboree")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t libellé type\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t dbq_date_dep\t dbq_heure_deb\t dbq_heure\t dbq_heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t dbq_liste_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sirtie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_engin\t type_engin_lib\t id\t poids\t ref\n";
+	//if($type_donnees=="brutes")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t type_agglo_lib\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t Ptot_dbq\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sortie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect_peche\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\n";
+	//if($type_donnees=="elaboree")
+	$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t type_agglo_lib\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t Ptot_dbq\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sortie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect_peche\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t id\t Ptot_rec\t ref\n";
+	//if($type_donnees=="brutes")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t type_agglo_lib\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t Ptot_dbq\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sortie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect_peche\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_engin\t type_engin_lib\n";
+	//if($type_donnees=="elaboree")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t type_agglo_lib\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t Ptot_dbq\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sortie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect_peche\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_engin\t type_engin_lib\t id\t Ptot_rec\t ref\n";
+	
 	
 	fputs($fpm,$intitule);
 	$nombre_enreg = pg_num_rows($result);
@@ -655,8 +656,9 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 		$contenu.= $row[20]."\t";
 		
 		
-		if($type_donnees=="brutes")$iii=71;
-		if($type_donnees=="elaboree")$iii=74;
+		//if($type_donnees=="brutes")$iii=71;
+		//if($type_donnees=="elaboree")
+		$iii=72;
 		//si $row[0]different, numero +1
 		for ($i=0; $i<$iii; $i++)	//il y a 71 champs dans la requete
 			{
@@ -708,18 +710,18 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php 
+		<?php
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
 		////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
 <div id="_pays" style="display:none">
-<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -727,25 +729,26 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");
 	print ("<input type=hidden name=\"voir[3]\" value=\"3\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst_lib</td>");
 	print ("<input type=hidden name=\"voir[4]\" value=\"4\">");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[130]\" value=\"6\"></td><td>surface</td>");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -754,119 +757,177 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
 	print ("<input type=hidden name=\"voir[5]\" value=\"8\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect_lib</td>");
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[131]\" value=\"10\"></td><td>surface</td>");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
+
+	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo_code</td>");
+	print ("<input type=hidden name=\"voir[7\" value=\"12\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo_lib</td>");
-	print ("<input type=hidden name=\"voir[7]\" value=\"15\">");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[8]\" value=\"20\"></td><td>type_agglo</td>");
+	print ("<input type=hidden name=\"voir[8]\" value=\"15\">");
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[7]\" value=\"25\"></td><td>agglo_code</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[9]\" value=\"19\"></td><td>type_agglo</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[118]\" value=\"20\"></td><td>type_agglo_lib</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[303]\" value=\"17\"></td><td>agglo_lat</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[304]\" value=\"16\"></td><td>agglo_long</td>");
+	
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
 	////////////table unite peche et capture
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top ><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
+	<div onclick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
 </div>
 
 <div id="_up" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
+
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>grd_type_engin</td>");
 	print ("<input type=hidden name=\"voir[26]\" value=\"58\">");
 	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[27]\" value=\"59\" ></td><td>grd_type_engin_lib</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[28]\" value=\"69\" ></td><td>type_engin</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[701]\" value=\"60\" ></td><td>up</td>");
+//Instrcution supprimée car extraite par sélection Engin
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[28]\" value=\"69\" ></td><td>type_engin</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[701]\" value=\"60\" ></td><td>up</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[708]\" value=\"65\" ></td><td>agglo_orig</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[702]\" value=\"62\" ></td><td>up_lib</td>");
 	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[703]\" value=\"63\" ></td><td>lib_men</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[708]\" value=\"65\" ></td><td>agglo</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[709]\" value=\"8\" ></td><td>sect_ori</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[18]\" value=\"67\" ></td><td>csp</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[19]\" value=\"68\" ></td><td>csp_lib</td>");
 
-	
-	
-	
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_up').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
+	<div onclick="document.getElementById('vue_sortie').style.display = 'block';"><b>Sortie</b>
 </div>
-<div id="vue_cap" style="display:none">
-<?php  
+<div id="vue_sortie" style="display:none">
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
-	
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[9]\" value=\"45\" ></td><td>dbq_date</td>");
-	print ("<td WIDTH=30>x</td><td>dbq_an</td>");
-	print ("<input type=hidden name=\"voir[10]\" value=\"38\">");
-	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq_mois</td>");
-	print ("<input type=hidden name=\"voir[11]\" value=\"39\">");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[13]\" value=\"32\" ></td><td>dbq_heure</td>");
-	
+/*	
 	if($type_donnees=="brutes")
 		{
-	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq_pt</td>");
-	print ("<input type=hidden name=\"voir[12]\" value=\"35\">");
+	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>Ptot_dbq</td>");
+	print ("<input type=hidden name=\"voir[13]\" value=\"35\">");
 		}
 	if($type_donnees=="elaboree")
 		{
-		print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq_pt</td>");
-		print ("<input type=hidden name=\"voir[12]\" value=\"73\">");
+		print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>Ptot_rec</td>");
+		print ("<input type=hidden name=\"voir[13]\" value=\"73\">");
 		}
+*/
 	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[113]\" value=\"34\" ></td><td>nb_coups</td>");
 	
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[16]\" value=\"42\" ></td><td>dbq_nb_hom</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[116]\" value=\"43\" ></td><td>dbq_nb_fem</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[124]\" value=\"43\" ></td><td>dbq_nb_fem</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[17]\" value=\"44\" ></td><td>dbq_nb_enf</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[18]\" value=\"67\" ></td><td>csp</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[19]\" value=\"68\" ></td><td>csp_lib</td>");
+// Instrcution deplacée	
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[114]\" value=\"36\" ></td><td>glacière</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[20]\" value=\"50\" ></td><td>type_sortie</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[21]\" value=\"51\" ></td><td>type_sortie_lib</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[122]\" value=\"52\" ></td><td>milieu</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[22]\" value=\"53\" ></td><td>milieu_lib</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[123]\" value=\"46\" ></td><td>vent</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[23]\" value=\"47\" ></td><td>vent_lib</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[24]\" value=\"48\" ></td><td>etat_ciel</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[25]\" value=\"49\" ></td><td>etat_ciel_lib</td>");
+//Instructions déplcée	ou ajoutée
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[15]\" value=\"54\" ></td><td>lieu_peche</td>");	
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[710]\" value=\"56\" ></td><td>lieu_peche_lib</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[709]\" value=\"55\" ></td><td>sect_peche</td>");	
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[711]\" value=\"37\" ></td><td>dist_lieu_peche</td>");
 	
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[14]\" value=\"36\" ></td><td>glacière</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[15]\" value=\"54\" ></td><td>lieu_peche</td>");
+	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_sortie').style.display = 'none';\">fermer</td>");
+	print ("</tr></table>");
 	
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[20]\" value=\"50\" ></td><td>type_sortie</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[21]\" value=\"51\" ></td><td>type_sortie_lib</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[22]\" value=\"52\" ></td><td>milieu</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[22]\" value=\"53\" ></td><td>milieu_lib</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[23]\" value=\"46\" ></td><td>vent</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[23]\" value=\"47\" ></td><td>vent_lib</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[24]\" value=\"48\" ></td><td>etat_ciel</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[25]\" value=\"49\" ></td><td>etat_ciel_lib</td>");
+	?></div> <?php
+	print ("</td></tr></table>");
+
+//insertion 
+
+		//table date
+	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	
+	?>
+	<div onclick="document.getElementById('_date').style.display = 'block';"><b>Date</b>
+	</div>
 	
+	<div id="_date" style="display:none">
+<?php 
+	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
+
+	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq_an</td>");
+	print ("<input type=hidden name=\"voir[10]\" value=\"38\">");
+	print ("<td WIDTH=30>x</td><td>dbq_mois</td>");
+	print ("<input type=hidden name=\"voir[11]\" value=\"39\">");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[9]\" value=\"45\" ></td><td>dbq_date</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[14]\" value=\"32\" ></td><td>dbq_heure</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[115]\" value=\"30\" ></td><td>date_dep</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[116]\" value=\"31\" ></td><td>heure_dep</td>");	
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[117]\" value=\"33\" ></td><td>heure_pose</td>");
 	
+	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_date').style.display = 'none';\">fermer</td>");
+	print ("</tr></table>");
+
+//essai de création d'un bloc Captures strictes
+?></div> <?php
+	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
+	?>
+	<div onclick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
+</div>
+<div id="vue_cap" style="display:none">
+<?php 
+	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
+	
+	//if($type_donnees=="brutes")
+		//{
+	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>Ptot_dbq</td>");
+	print ("<input type=hidden name=\"voir[13]\" value=\"35\">");
+		//}
+	//if($type_donnees=="elaboree")
+		//{
+		print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>Ptot_rec</td>");
+		print ("<input type=hidden name=\"voir[100]\" value=\"70\">");
+		//}
+
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_cap').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+
+?></div> <?php
 	print ("</td></tr></table>");
 	
 	
+// fin insertion test	
+
 	print ("<input type=hidden name=\"voir[200]\" value=\"0\">");
 	print ("<br><input type=\"submit\" name=\"\" value=\"    Valider    \">");
 	print ("</form></div>");
@@ -990,7 +1051,7 @@ function fermer() {
 if(confirm("Etes vous sûr ?"))window.close();}
 </script>
 
-<?php 
+<?php
 
 print("<div align='center'><br><br>");
 print("<input type='button' value='Fermer' onClick= 'fermer()'   name=\"button\">"); 
@@ -1011,7 +1072,15 @@ print("</div></Font>");
 
 
 
-
+//left join art_type_agglomeration on art_agglomeration.art_type_agglomeration_id=art_type_agglomeration.id 
+//left join art_vent on art_debarquement.art_vent_id=art_vent.id 
+//left join art_etat_ciel on art_debarquement.art_etat_ciel_id=art_etat_ciel.id 
+//left join art_unite_peche on art_debarquement.art_unite_peche_id=art_unite_peche.id 
+//left join art_type_sortie on art_debarquement.art_type_sortie_id=art_type_sortie.id 
+//	left join art_millieu on art_debarquement.art_millieu_id=art_millieu.id 
+//	left join art_lieu_de_peche on art_debarquement.art_lieu_de_peche_id=art_lieu_de_peche.id 
+//	left join art_grand_type_engin on art_debarquement.art_grand_type_engin_id=art_grand_type_engin.id //
+//	(      left join art_categorie_socio_professionnelle on art_unite_peche.art_categorie_socio_professionnelle_id=art_categorie_socio_professionnelle.id)
 
 if ($requete_faite != 1)		//si requete globale pas encore faite
 	{
@@ -1022,39 +1091,22 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	$query_globale = " select * 
 	from ref_pays, ref_systeme, ref_secteur, 
 	art_agglomeration 
-	left join art_type_agglomeration on art_agglomeration.art_type_agglomeration_id=art_type_agglomeration.id 
 	, art_debarquement 
-	left join art_vent on art_debarquement.art_vent_id=art_vent.id 
-	left join art_etat_ciel on art_debarquement.art_etat_ciel_id=art_etat_ciel.id 
-	left join art_type_sortie on art_debarquement.art_type_sortie_id=art_type_sortie.id 
-	left join art_millieu on art_debarquement.art_millieu_id=art_millieu.id 
-	left join art_lieu_de_peche on art_debarquement.art_lieu_de_peche_id=art_lieu_de_peche.id 
-	left join art_grand_type_engin on art_debarquement.art_grand_type_engin_id=art_grand_type_engin.id 
-	left join (art_unite_peche
-	left join art_categorie_socio_professionnelle on art_unite_peche.art_categorie_socio_professionnelle_id=art_categorie_socio_professionnelle.id)
-	on art_debarquement.art_unite_peche_id=art_unite_peche.id 
-	, art_type_engin 
+	left join art_debarquement_rec on art_debarquement.id = art_debarquement_rec.art_debarquement_id 
 	, art_fraction 
 	left join (ref_espece 
 	left join ref_categorie_ecologique on ref_espece.ref_categorie_ecologique_id=ref_categorie_ecologique.id 
 	left join ref_categorie_trophique on ref_espece.ref_categorie_trophique_id=ref_categorie_trophique.id 
 	left join (ref_famille left join ref_ordre on ref_famille.ref_ordre_id=ref_ordre.id) on ref_espece.ref_famille_id=ref_famille.id 
-	)on art_fraction.ref_espece_id=ref_espece.id 
-	,  art_debarquement_rec, art_fraction_rec , art_engin_peche 
-	
+	) on art_fraction.ref_espece_id=ref_espece.id
+	left join art_fraction_rec on art_fraction.id = art_fraction_rec.id 
 	
 	where ref_pays.id=ref_systeme.ref_pays_id 
-	
-	and art_debarquement.id = art_engin_peche.art_debarquement_id 
-	and art_engin_peche.art_type_engin_id=art_type_engin.id 
-	
 	and ref_systeme.id=ref_secteur.ref_systeme_id 
 	and ref_secteur.id=art_agglomeration.ref_secteur_id 
 	and art_agglomeration.id=art_debarquement.art_agglomeration_id 
-	
 	and art_debarquement.id=art_fraction.art_debarquement_id 
-	and art_debarquement.id = art_debarquement_rec.art_debarquement_id 
-	and art_fraction.id = art_fraction_rec.id ";
+	";
 
 	
 	$nb_campagne = count ($_POST['agglo']);
@@ -1076,13 +1128,13 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	$nb_engin = count ($_POST['engin']);
 	//print ("!!!!!!".$nb_secteur);
 	reset($_POST['engin']);
-	if ($nb_engin == 1)$query_globale .= "and art_grand_type_engin.id = '".$_POST['engin'][0]."' ";
+	if ($nb_engin == 1)$query_globale .= "and art_debarquement.art_grand_type_engin_id = '".$_POST['engin'][0]."' ";
 	else
 		{
 		$query_globale .= "and (";
 		while (list($key, $val) = each($_POST['engin']))
 			{
-			$query_globale .= "(art_grand_type_engin.id = '".$val."') or ";
+			$query_globale .= "(art_debarquement.art_grand_type_engin_id = '".$val."') or ";
 			}
 		$query_globale = substr($query_globale, 0, -3); 		//on enleve le dernier or
 		$query_globale .= ") ";
@@ -1114,7 +1166,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	//print ("<br>".$query_globale);
 	$result = pg_query($connection, $query_globale);
 
-	
+	//t type_agglo\t type_agglo_lib\
 	
 	///////////////////////////////////////
 	//ecriture des resultats dans un fichier text
@@ -1123,8 +1175,9 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	$fpm = fopen($file, "w");
 	$i = 0;
 	$k=1;//nombre lignes
-	if($type_donnees=="brutes")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t libellé type\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t dbq_date_dep\t dbq_heure_deb\t dbq_heure\t dbq_heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t dbq_liste_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sirtie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_engin\t type_engin_lib\t fraction\t cooode\t fdbq_pt\t fdbq_nt\t fdbq_observee\t code_sp\t artdebid\t fdbq_prix\t codesp\t espece\t informationespece\t reffamilleid\t cat_ecol\t cat_troph\t coefK\t coefb\t reforiginekbid\t refespeceid\t cat_ecol\t cat_ecol_lib\t cat_troph\t cat_troph_lib\t idfamille\t famille\t refordreid\t non_poisson\t idordre\t ordre\n";
-	if($type_donnees=="elaboree")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t libellé type\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t dbq_date_dep\t dbq_heure_deb\t dbq_heure\t dbq_heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t dbq_liste_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sirtie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_engin\t type_engin_lib\t fraction\t cooode\t fdbq_pt\t fdbq_nt\t fdbq_observee\t code_sp\t artdebid\t fdbq_prix\t codesp\t espece\t informationespece\t reffamilleid\t cat_ecol\t cat_troph\t coefK\t coefb\t reforiginekbid\t refespeceid\t cat_ecol\t cat_ecol_lib\t cat_troph\t cat_troph_lib\t idfamille\t famille\t refordreid\t non_poisson\t idordre\t ordre\t id\t poids_total\t id\t fraction\t fdbq\t ndbq\t esp\n";
+	//if($type_donnees=="brutes")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t id_fraction\t cooode\t fdbq_pt\t fdbq_nt\t fdbq_observee\t code_sp\t artdebid\t fdbq_prix\t codesp\t espece\t informationespece\t reffamilleid\t cat_ecol\t cat_troph\t coefK\t coefb\t reforiginekbid\t refespeceid\t cat_ecol\t cat_ecol_lib\t cat_troph\t cat_troph_lib\t idfamille\t famille\t refordreid\t non_poisson\t idordre\t ordre\n";
+	//if($type_donnees=="elaboree")
+	$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t idpds_rec\t poids_rec\t id\t id_fraction\t cooode\t fdbq_pt\t fdbq_nt\t fdbq_observee\t code_sp\t artdebid\t fdbq_prix\t codesp\t espece\t informationespece\t reffamilleid\t cat_ecol\t cat_troph\t coefK\t coefb\t reforiginekbid\t refespeceid\t cat_ecol\t cat_ecol_lib\t cat_troph\t cat_troph_lib\t idfamille\t famille\t refordreid\t non_poisson\t idordre\t ordre\t id\t fdbq_pt_rec\t fdbq_nt_rec\t esp\n";
 	
 	fputs($fpm,$intitule);
 	$nombre_enreg = pg_num_rows($result);
@@ -1132,10 +1185,11 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	while($row = pg_fetch_row($result))
 		{
 		$contenu="";
-		$contenu.= $row[20]."\t";
+		$contenu.= $row[18]."\t";     //correction
 		
-		if($type_donnees=="brutes")$iii=99;
-		if($type_donnees=="elaboree")$iii=106;
+		//if($type_donnees=="brutes")$iii=71;     //correction
+		//if($type_donnees=="elaboree")
+		$iii=79;    //correction
 		
 		for ($i=0; $i<$iii; $i++)	//il y a 99 champs dans la requete
 			{
@@ -1335,12 +1389,12 @@ else if($selection_faite !=1)
 		reset ($_POST['trophique']);
 
 	//pour la categorie ecologique, les valeurs doivent etre une du tableau $_POST['ecologique']
-	 if (!in_array (trim($ligne_contient[90]), $_POST['ecologique']))
+	 if (!in_array (trim($ligne_contient[62]), $_POST['ecologique']))
 			{
 			if ($_POST['ecologique'][100] != "null")unset($tab_ligne[$compt]);
 			}
 		//pour la categorie trophique, les valeurs doivent etre une du tableau $_POST['trophique']
-		else if (!in_array ($ligne_contient[92], $_POST['trophique']))
+		else if (!in_array ($ligne_contient[64], $_POST['trophique']))
 			{
 			//print ("<br><br>!!!trophique: ".$val_ligne." , ".$compt);
 			if ($_POST['trophique'][100] != "null")unset($tab_ligne[$compt]);
@@ -1349,7 +1403,7 @@ else if($selection_faite !=1)
 		//if (($_POST['poisson']=="oui")&&($_POST['non_poisson']=="oui"))continue;
 		else if (($_POST['poisson']=="oui")&&($_POST['non_poisson']=="non"))
 			{
-			if ($ligne_contient[97] != 0)
+			if ($ligne_contient[69] != 0)
 				{
 				//print ("<br><br>!!!non poisson : ".$val_ligne." , ".$compt);
 				unset($tab_ligne[$compt]);
@@ -1357,7 +1411,7 @@ else if($selection_faite !=1)
 			}
 		else if (($_POST['poisson']=="non")&&($_POST['non_poisson']=="oui"))
 			{
-			if ($ligne_contient[97] != 1)
+			if ($ligne_contient[69] != 1)
 				{
 				unset($tab_ligne[$compt]);
 				}
@@ -1391,8 +1445,8 @@ else if($selection_faite !=1)
 		{
 		$ligne_contient = Array();
 		$ligne_contient = explode ("\t",$val_ligne);
-		$espece = $ligne_contient[81];
-		$famille = $ligne_contient[95];
+		$espece = $ligne_contient[56];     //correction
+		$famille = $ligne_contient[70];    //correction
 		if (trim($espece) != "espece")
 			{
 			if (isset ($tab_espece[$espece])) continue;
@@ -1424,7 +1478,7 @@ else if($selection_faite !=1)
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-			<?php 
+			<?php
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 		
@@ -1490,8 +1544,8 @@ else if($colonnes_faites !=1) //selection espece faite
 		reset ($ligne_contient);
 		reset ($_POST['espece']);
 		
-		//pour les especes, seules les valeurs de $espece contenu dans $_POST['espece'] doivent rester
-		if (!in_array ($ligne_contient[81], $_POST['espece']))
+		//pour les especes, seules les valeurs de $espece contenu dans $_POST['espece'] doivent rester      Correction JME
+		if (!in_array ($ligne_contient[56], $_POST['espece']))
 			{
 			//print ("<br><br>!!!espece :".$val_ligne." , ".$compt);
 			unset($tab_ligne[$compt]);
@@ -1536,17 +1590,17 @@ else if($colonnes_faites !=1) //selection espece faite
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php 
+		<?php
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
 <div id="_pays" style="display:none">
-<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -1554,15 +1608,15 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");
@@ -1572,7 +1626,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -1580,11 +1634,11 @@ else if($colonnes_faites !=1) //selection espece faite
 	////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -1593,24 +1647,24 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
-	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo_lib</td>");
-	print ("<input type=hidden name=\"voir[7]\" value=\"15\">");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[8]\" value=\"20\"></td><td>type_agglo</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo</td>");
+	print ("<input type=hidden name=\"voir[7]\" value=\"12\">");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[8]\" value=\"15\"></td><td>agglo_lib</td>");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -1618,122 +1672,120 @@ else if($colonnes_faites !=1) //selection espece faite
 	////////////table unite peche et capture
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
+	<div onclick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
 </div>
 
 <div id="_up" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>grd_type_engin</td>");
-	print ("<input type=hidden name=\"voir[26]\" value=\"58\">");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[27]\" value=\"59\" ></td><td>grd_type_engin_lib</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[28]\" value=\"69\" ></td><td>type_engin</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[29]\" value=\"71\" ></td><td>type_engin_lib</td>");
+	print ("<input type=hidden name=\"voir[26]\" value=\"26\">");
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[27]\" value=\"59\" ></td><td>grd_type_engin_lib</td>");
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[28]\" value=\"69\" ></td><td>type_engin</td>");
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[29]\" value=\"71\" ></td><td>type_engin_lib</td>");
 
-	
-	
-	
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_up').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
+	<div onclick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures </b>
 </div>
 
 <div id="vue_cap" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"300\">");
 	
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[9]\" value=\"45\" ></td><td>dbq_date</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[9]\" value=\"43\" ></td><td>dbq_date</td>");
 	print ("<td WIDTH=30>x</td><td>dbq_an</td>");
-	print ("<input type=hidden name=\"voir[10]\" value=\"38\">");
+	print ("<input type=hidden name=\"voir[10]\" value=\"36\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq_mois</td>");
-	print ("<input type=hidden name=\"voir[11]\" value=\"39\">");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[13]\" value=\"32\" ></td><td>dbq_heure</td>");
+	print ("<input type=hidden name=\"voir[11]\" value=\"37\">");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[13]\" value=\"30\" ></td><td>dbq_heure</td>");
 	
 	
-	if($type_donnees=="brutes")
-		{
+	//if($type_donnees=="brutes")
+		//{
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq_pt</td>");
-	print ("<input type=hidden name=\"voir[12]\" value=\"35\">");
-		}
-	if($type_donnees=="elaboree")
-		{
-		print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq_pt</td>");
-		print ("<input type=hidden name=\"voir[12]\" value=\"101\">");
-		}
+	print ("<input type=hidden name=\"voir[12]\" value=\"33\">");
+		//}
+	//if($type_donnees=="elaboree")
+		//{
+		print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq_pt_rec</td>");
+		print ("<input type=hidden name=\"voir[70]\" value=\"45\">");
+		//}
 	
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[113]\" value=\"34\" ></td><td>nb_coups</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[113]\" value=\"32\" ></td><td>nb_coups</td>");
+// ATTENTION les value sont fausses elles correspondent à la version 100 colonnes	
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[116]\" value=\"42\" ></td><td>dbq_nb_hom</td>");
+//	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[16]\" value=\"43\" ></td><td>dbq_nb_fem</td>");
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[17]\" value=\"44\" ></td><td>dbq_nb_enf</td>");
+//	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[18]\" value=\"67\" ></td><td>csp</td>");
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[19]\" value=\"68\" ></td><td>csp_lib</td>");
 	
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[116]\" value=\"42\" ></td><td>dbq_nb_hom</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[16]\" value=\"43\" ></td><td>dbq_nb_fem</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[17]\" value=\"44\" ></td><td>dbq_nb_enf</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[18]\" value=\"67\" ></td><td>csp</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[19]\" value=\"68\" ></td><td>csp_lib</td>");
+//	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[14]\" value=\"36\" ></td><td>glacière</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[15]\" value=\"24\" ></td><td>lieu_peche</td>");
 	
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[14]\" value=\"36\" ></td><td>glacière</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[15]\" value=\"54\" ></td><td>lieu_peche</td>");
-	
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[20]\" value=\"50\" ></td><td>type_sortie</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[21]\" value=\"51\" ></td><td>type_sortie_lib</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[22]\" value=\"52\" ></td><td>milieu</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[122]\" value=\"53\" ></td><td>milieu_lib</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[23]\" value=\"46\" ></td><td>vent</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[123]\" value=\"47\" ></td><td>vent_lib</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[24]\" value=\"48\" ></td><td>etat_ciel</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[25]\" value=\"49\" ></td><td>etat_ciel_lib</td>");
+//	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[20]\" value=\"50\" ></td><td>type_sortie</td>");
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[21]\" value=\"51\" ></td><td>type_sortie_lib</td>");
+//	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[22]\" value=\"52\" ></td><td>milieu</td>");
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[122]\" value=\"53\" ></td><td>milieu_lib</td>");
+//	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[23]\" value=\"46\" ></td><td>vent</td>");
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[123]\" value=\"47\" ></td><td>vent_lib</td>");
+//	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[24]\" value=\"48\" ></td><td>etat_ciel</td>");
+//	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[25]\" value=\"49\" ></td><td>etat_ciel_lib</td>");
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_cap').style.display = 'none';\">fermer</td>");
 	
 	
 	
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 
 	//table fraction et espece 
 	
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_fr').style.display = 'block';"><b>Fractions et espèces</b>
+	?><div onclick="document.getElementById('_fr').style.display = 'block';"><b>Fractions - Fdbq</b>
 </div>
 	
 
 <div id="_fr" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
-	if($type_donnees=="brutes")
-		{
-	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>fdbq_nt</td>");
-	print ("<input type=hidden name=\"voir[100]\" value=\"75\">");
-	
-	print ("<td WIDTH=30>x</td><td>fdbq_pt</td>");
-	print ("<input type=hidden name=\"voir[101]\" value=\"74\">");
-}
-	if($type_donnees=="elaboree")
-		{
-	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>fdbq_nt</td>");
-	print ("<input type=hidden name=\"voir[100]\" value=\"105\">");
-	print ("<td WIDTH=30>x</td><td>fdbq_pt</td>");
-	print ("<input type=hidden name=\"voir[101]\" value=\"104\">");
-}
+	//if($type_donnees=="brutes")
+		//{
+		print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>fdbq_pt</td>");
+		print ("<input type=hidden name=\"voir[40]\" value=\"49\">");
+		print ("<td WIDTH=30>x</td><td>fdbq_nt</td>");
+		print ("<input type=hidden name=\"voir[41]\" value=\"50\">");
+		//}
+		
+	//if($type_donnees=="elaboree")
+		//{
+		print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>fdbq_pt_rec</td>");
+		print ("<input type=hidden name=\"voir[101]\" value=\"76\">");
+		print ("<td WIDTH=30>x</td><td>fdbq_nt_rec</td>");
+		print ("<input type=hidden name=\"voir[100]\" value=\"77\">");
+
+		//}
 	
 	
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>code_sp</td>");
-	print ("<input type=hidden name=\"voir[30]\" value=\"80\">");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[31]\" value=\"81\" ></td><td>espece</td>");
+	print ("<input type=hidden name=\"voir[30]\" value=\"55\">");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[31]\" value=\"56\" ></td><td>espece</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>cat_ecol</td>");
-	print ("<input type=hidden name=\"voir[32]\" value=\"90\">");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[13]\" value=\"91\" ></td><td>cat_ecol_lib</td>");
+	print ("<input type=hidden name=\"voir[32]\" value=\"65\">");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[13]\" value=\"66\" ></td><td>cat_ecol_lib</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>cat_troph</td>");
-	print ("<input type=hidden name=\"voir[33]\" value=\"92\">");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[34]\" value=\"93\" ></td><td>cat_troph_lib</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[35]\" value=\"95\" ></td><td>famille</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[400]\" value=\"99\" ></td><td>ordre</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[35]\" value=\"76\" ></td><td>deb</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[401]\" value=\"79\" ></td><td>prix</td>");
+	print ("<input type=hidden name=\"voir[33]\" value=\"67\">");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[34]\" value=\"68\" ></td><td>cat_troph_lib</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[103]\" value=\"70\" ></td><td>famille</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[400]\" value=\"74\" ></td><td>ordre</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[104]\" value=\"51\" ></td><td>Fdbq_obs</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[401]\" value=\"54\" ></td><td>prix</td>");
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_fr').style.display = 'none';\">fermer</td>");
 	
 	
@@ -1742,11 +1794,11 @@ else if($colonnes_faites !=1) //selection espece faite
 	
 	
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</tr></table>");
 
 	print ("<input type=hidden name=\"voir[200]\" value=\"0\">");//pour l'identifiant debarquement 
-	print ("<input type=hidden name=\"voir[500]\" value=\"72\">");//pour l'identifiant fraction
+	print ("<input type=hidden name=\"voir[500]\" value=\"47\">");//pour l'identifiant fraction
 	print ("<br><br><br><input type=\"submit\" name=\"\" value=\"    Valider    \">");
 	print ("</form></div>");
 	}
@@ -1839,7 +1891,7 @@ if($fp = fopen($filename, "rb"))
 	{
 	// lecture du contenu
 	$size1 = filesize($filename);
-	print "size=".$size1."<br/>";
+	//print "size=".$size1."<br/>";
 	$data = fread($fp, $size1);
 	// fermeture
 	fclose($fp);
@@ -1864,7 +1916,7 @@ print ("<br>La sélection représente ".($nombre_ligne -1)." lignes dans le fichie
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 
 
-print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/selection_nt_pt.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+print ("<br><br><a href=\"https://localhost/extraction/selection_nt_pt.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
 
@@ -1874,7 +1926,7 @@ function fermer() {
 if(confirm("Etes vous sûr ?"))window.close();}
 </script>
 
-<?php 
+<?php
 
 print("<div align='center'><br><br>");
 print("<input type='button' value='Fermer' onClick= 'fermer()'   name=\"button\">"); 
@@ -2310,7 +2362,7 @@ else if($selection_faite !=1)
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-			<?php 
+			<?php
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
@@ -2421,17 +2473,17 @@ else if($colonnes_faites !=1) //selection espece faite
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php 
+		<?php
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
 <div id="_pays" style="display:none">
-<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -2439,15 +2491,15 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");
@@ -2457,7 +2509,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -2465,11 +2517,11 @@ else if($colonnes_faites !=1) //selection espece faite
 	////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -2478,15 +2530,15 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo_lib</td>");
@@ -2495,18 +2547,18 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
 	////////////table unite peche et capture
 	print ("<br><table  BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-		<div onClick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
+		<div onclick="document.getElementById('_up').style.display = 'block';"><b>Unité de pêche</b>
 </div>
 
 <div id="_up" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>grd_type_engin</td>");
 	print ("<input type=hidden name=\"voir[26]\" value=\"58\">");
@@ -2519,15 +2571,15 @@ else if($colonnes_faites !=1) //selection espece faite
 	
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_up').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
+	<div onclick="document.getElementById('vue_cap').style.display = 'block';"><b>Captures</b>
 </div>
 
 <div id="vue_cap" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"300\">");
 	
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[9]\" value=\"45\" ></td><td>dbq_date</td>");
@@ -2565,7 +2617,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_cap').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 
@@ -2573,11 +2625,11 @@ else if($colonnes_faites !=1) //selection espece faite
 	
 	print ("<br><table  BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_fr').style.display = 'block';"><b>Fractions et espèces</b>
+	<div onclick="document.getElementById('_fr').style.display = 'block';"><b>Fractions et espèces</b>
 </div>
 
 <div id="_fr" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"300\">");
 	if($type_donnees=="brutes")
 		{
@@ -2615,7 +2667,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_fr').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</tr></table>");
 
 	print ("<input type=hidden name=\"voir[200]\" value=\"0\">");
@@ -2732,7 +2784,7 @@ print ("<br>La sélection représente ".($nombre_ligne -1)." lignes dans le fichie
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 
 
-print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/selection_taille.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+print ("<br><br><a href=\"https://localhost/extraction/selection_taille.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
 
@@ -2742,7 +2794,7 @@ function fermer() {
 if(confirm("Etes vous sûr ?"))window.close();}
 </script>
 
-<?php 
+<?php
 
 print("<div align='center'><br><br>");
 print("<input type='button' value='Fermer' onClick= 'fermer()'   name=\"button\">"); 
@@ -2913,17 +2965,17 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php 
+		<?php
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
 <div id="_pays" style="display:none">
-<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -2931,15 +2983,15 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");
@@ -2949,7 +3001,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -2957,11 +3009,11 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -2970,15 +3022,15 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo_lib</td>");
@@ -2987,18 +3039,18 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
 	
 	////////////table debarquement et engin
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_deb').style.display = 'block';"><b>Débarquement</b>
+	?><div onclick="document.getElementById('_deb').style.display = 'block';"><b>Débarquement</b>
 </div>
 
 <div id="_deb" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq</td>");
 	print ("<input type=hidden name=\"voir[9]\" value=\"21\">");
@@ -3010,15 +3062,15 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	print ("<input type=hidden name=\"voir[12]\" value=\"38\">");
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_deb').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_engin').style.display = 'block';"><b>Engin de pêche</b>
+	<div onclick="document.getElementById('vue_engin').style.display = 'block';"><b>Engin de pêche</b>
 </div>
 
 <div id="vue_engin" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>up</td>");
@@ -3042,7 +3094,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -3151,7 +3203,7 @@ print ("<br>La sélection représente ".($nombre_ligne -1)." lignes dans le fichie
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 
 //print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/temp_selection_globale.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
-print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/selection_engin.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+print ("<br><br><a href=\"https://localhost/extraction/selection_engin.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
 
@@ -3161,7 +3213,7 @@ function fermer() {
 if(confirm("Etes vous sûr ?"))window.close();}
 </script>
 
-<?php 
+<?php
 
 print("<div align='center'><br><br>");
 //print("<input type='button' value='Fermer' onClick= 'confirm(\"Etes vous sûr ?\");' 'self.close();' name=\"button\">"); 
