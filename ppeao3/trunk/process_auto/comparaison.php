@@ -246,8 +246,8 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			 break;
 		case "majsc":
 			// Données scientifiques à mettre à jour
-			//$listTable = GetParam("listeTableMajsc",$PathFicConf);
-			$listTable="exp_environnement,exp_campagne,exp_coup_peche"; //TEST
+			$listTable = GetParam("listeTableMajsc",$PathFicConf);
+			//$listTable="exp_environnement,exp_campagne,exp_coup_peche"; //TEST
 			//$listTable="exp_campagne"; //TEST
 			 break;
 		case "majrec":
