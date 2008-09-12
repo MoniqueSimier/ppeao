@@ -17,7 +17,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
 			// les balises head communes  toutes les pages
 			include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 		?>
-		<title>PPEAO Portage automatique</title>
+		<title>ppeao::portage automatique</title>
 		<script src="/js/ajaxProcessAuto.js" type="text/javascript" charset="iso-8859-1"></script>
 	</head> 
 	<body>

@@ -13,7 +13,7 @@ $zone=3; // zone portage (voir table admin_zones)
 			// les balises head communes  toutes les pages
 			include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 		?>
-	<title>PPEAO Recomposition des donn&eacute;es</title>
+	<title>ppeao::recomposition des donn&eacute;es</title>
 	
 	<script type="text/javascript">
 	

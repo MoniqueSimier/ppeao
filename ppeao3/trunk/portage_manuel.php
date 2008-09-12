@@ -14,7 +14,7 @@ $zone=3; // zone portage (voir table admin_zones)
 		// les balises head communes  toutes les pages
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
-	<title>PPEAO Manipulation de donn&eacute;es</title>
+	<title>ppeao::manipulation de donn&eacute;es</title>
 	
 
 </head> 
