@@ -81,12 +81,16 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 				<div id="titleProcess">D&eacute;tail des process.</div>
 				<br/>
 				<div id="sauvegarde"><div id="sauvegarde_img"><img src="/assets/incomplete.png" alt=""/></div><div id="sauvegarde_txt">Sauvegarde.</div></div>
-				<div id="comparaison"><div id="comparaison_img"><img src="/assets/incomplete.png" alt=""/></div><div id="comparaison_txt">Comparaison.</div></div>
+				<div id="comparaison"><div id="comparaison_img"><img src="/assets/incomplete.png" alt=""/></div><div id="comparaison_txt">Comparaison r&eacute;f&eacute;rentiel et param&eacute;trage (De BDPECHE par rapport à la base de r&eacute;f&eacute;rence).</div></div>
+				<div id="comparaisonInv"><div id="comparaisonInv_img"><img src="/assets/incomplete.png" alt=""/></div><div id="comparaisonInv_txt">Comparaison du param&eacute;trage de BDPECHE avec la base de r&eacute;f&eacute;rence.</div></div>
 				<div id="copieScientifique"><div id="copieScientifique_img"><img src="/assets/incomplete.png" alt=""/></div>
 				<div id="copieScientifique_txt">Copie des donn&eacute;es scientifiques.</div>
 				</div>
-				<div id="processAuto"><div id="processAuto_img"><img src="/assets/incomplete.png" alt=""/></div>
-				<div id="processAuto_txt">Process recalcul donn&eacute;es.</div>
+				<div id="processAutoRec"><div id="processAutoRec_img"><img src="/assets/incomplete.png" alt=""/></div>
+				<div id="processAutoRec_txt">Process recalcul donn&eacute;es.</div>
+				</div>
+				<div id="processAutoStat"><div id="processAutoStat_img"><img src="/assets/incomplete.png" alt=""/></div>
+				<div id="processAutoStat_txt">Process calcul statistiques.</div>
 				</div>
 				<div id="copieRecomp"><div id="copieRecomp_img"><img src="/assets/incomplete.png" alt=""/></div>
 				<div id="copieRecomp_txt">Copie des donn&eacute;es recompos&eacute;es.</div>

@@ -14,8 +14,10 @@
 //*****************************************
 // Paramètres en entrée
 // comp : contient le type d'action 
-// comp = 'comp' : on lance une comparaison sans maj
-// comp = 'maj'  : on lance une comparaison avec maj
+// comp = 'comp' : on lance une comparaison sans maj (de la base de reference vers la base BDPECHE)
+// comp = 'compinv' : on lance une comparaison sans maj (du parametrage de BDPECHE par rapport a la reference)
+// comp = 'majsc'  : on lance une comparaison avec maj (donnees scientifiques)
+// comp = 'majrec'  : on lance une comparaison avec maj (donnees recomposees)
 
 // Paramètres en sortie
 // La liste des différences par table est affichée à l'écran et est stockée dans un fichier
@@ -43,29 +45,41 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
 // On récupère le type d'action. Le même programme gère la comparaison et la mise à jour de données
 if (isset($_GET['action'])) {
 	$typeAction = $_GET['action'];
-	if ( $typeAction == "comp" ) {
-	// La comparaison se fait BD_PPEAO vers BD_PECHE
-	// Pour plus de clarté, dans la comparaison, la base de reference est la base PPEAO (=  source)
-	// Dans le cas de la mise a jour, la base de reference est la base BD_PECHE (ou s'exécutent les mises à jour)
-	// En résumé, la base source est la base de reference, et la base cible est la base à comparer ou à mettre à jour
-		$BDSource = "connectPPEAO";
-		$BDCible = "connectBDPECHE";
-		//$BDSource = "connectBDPECHE"; // test
-		//$BDCible = "connectPPEAO"; // test
-		$nomFenetre = "comparaison";
-		$nomAction = "comparaison";
-	} else {
-	// La mise à jour se fait de BD_PECHE dans BD_PPEAO
-		$BDSource = "connectBDPECHE";
-		$BDCible = "connectPPEAO";
-		if ( $typeAction == "majsc" ) {
+	switch($typeAction){
+		case "comp":
+			// Comparaison du referentiel / parametrage 
+			$BDSource = "connectPPEAO";
+			$BDCible = "connectBDPECHE";
+			$nomFenetre = "comparaison";
+			$nomAction = "comparaison du referentiel / parametrage";
+			$nomFicSQL = "ref_param_ppeao";
+			 break;
+		case "compinv":
+			// Comparaison du parametrage de BDPECHE
+			$BDSource = "connectBDPECHE";
+			$BDCible = "connectPPEAO";
+			$nomFenetre = "comparaisonInv";
+			$nomAction = "comparaison du parametrage BDPECHE";
+			$nomFicSQL = "param_bdpeche";
+			 break;
+		case "majsc":
+			// Données scientifiques à mettre à jour
+			$BDSource = "connectBDPECHE";
+			$BDCible = "connectPPEAO";
 			$nomFenetre = "copieScientifique";
 			$nomAction = "mise a jour donnees scientifiques";
-		} else {
+			$nomFicSQL = "majdatascient";
+			 break;
+		case "majrec":
+			// Données recomposées à mettre à jour
+			$BDSource = "connectBDPECHE";
+			$BDCible = "connectPPEAO";
 			$nomFenetre = "copieRecomp";
-			$nomAction = "mise a jour donnees recomponsees";		
-		}
+			$nomAction = "mise a jour donnees recomponsees";
+			$nomFicSQL = "majdatarecomp";
+			 break;
 	}
+
 } else { 
 	$nomFenetre = "comparaison";
 	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Il manque le parametre action. Contactez votre admin PPEAO</div>" ;
@@ -225,7 +239,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		}
 	//	Si en comparaison, on peut générer le SQL
 		$numfic = str_pad($_SESSION['s_num_encours_fichier_SQL'], 3, "0", STR_PAD_LEFT);
-		$SQLComp = fopen($dirLog."/".date('y\-m\-d').$typeAction."-".$numfic.".sql", "a+");
+		$SQLComp = fopen($dirLog."/".date('y\-m\-d')."-".$nomFicSQL."-".$numfic.".sql", "a+");
 		if (! $SQLComp ) {
 			$messageGen = " erreur de cr&eacute;ation du fichier SQL contenant les scripts";
 			logWriteTo(4,"error","Erreur de creation du fichier de SQL dans comparaison.php","","","0");
@@ -244,9 +258,14 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$listTable = GetParam("listeTableComp",$PathFicConf);
 			//$listTable="ref_espece"; //TEST
 			 break;
+		case "compinv":
+			// Comparaison
+			$listTable = GetParam("listeTableCompInv",$PathFicConf);
+			//$listTable="ref_espece"; //TEST
+			 break;
 		case "majsc":
-			// Données scientifiques à mettre à jour
-			$listTable = GetParam("listeTableMajsc",$PathFicConf);
+			Données scientifiques à mettre à jour
+			//$listTable = GetParam("listeTableMajsc",$PathFicConf);
 			//$listTable="exp_environnement,exp_campagne,exp_coup_peche"; //TEST
 			//$listTable="exp_campagne"; //TEST
 			 break;
@@ -650,7 +669,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					} else {
 						$cptTableLignesVidesDiff++;
 					}
-					if ($typeAction == "comp") {
+					if ($typeAction == "comp" || $typeAction == "compinv") {
 						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;".$cptChampVide." donn&eacute;es manquantes - ";
 						if ($EcrireLogComp ) {
 							WriteCompLog ($logComp,"   - donnees manquantes = ".$cptChampVide.". ",$pasdefichier);
@@ -667,7 +686,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					if ($cptChampVide == 0) {
 						$cptTableDiff++;
 					}
-					if ($typeAction == "comp") {
+					if ($typeAction == "comp" || $typeAction == "compinv") {
 						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;".$cptChampDiff." donn&eacute;es diff&eacute;rentes - ";
 						if ($EcrireLogComp ) {
 							WriteCompLog ($logComp,"   - donnees differentes = ".$cptChampDiff." ",$pasdefichier);
@@ -683,9 +702,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				//	Cas de la table vide
 					if ($tableVide) {
 						$cptTableVide++;
-						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>".$tables[$cpt]." vide ==> dump total de la table depuis la base cible (voir fichier sql).-";
+						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>".$tables[$cpt]." vide ==> dump total de la table depuis la base source (voir fichier sql).-";
 						if ($EcrireLogComp ) {
-							WriteCompLog ($logComp," Cette table est vide ==> dump total de la table depuis la base cible.",$pasdefichier);
+							WriteCompLog ($logComp," Cette table est vide ==> dump total de la table depuis la base source.",$pasdefichier);
 						}
 					} else {
 						if ($cptChampVide == 0) {
@@ -699,7 +718,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				} // End for statement if ($cptChampDiff > 0)
 				
 				if ($ErreurProcess) {
-					if ($typeAction == "comp"){
+					if ($typeAction == "comp" || $typeAction == "compinv"){
 					
 					} else {
 						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> ".$cptSQLErreur." erreurs de traitement - ";

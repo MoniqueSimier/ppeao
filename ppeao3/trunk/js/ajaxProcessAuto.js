@@ -108,30 +108,42 @@ function stateChanged1()
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "comparaison" ;
 				nomURL = "action=comp&log="+checkLog+"&numproc="+numProcess+URLSupp;
-				texte = "Comparaison des base en cours...";
+				texte = "Comparaison du referentiel / parametrage de reference en cours...";
 			  break;    
 			case 2:
+				progPhp = "/process_auto/comparaison.php" ;
+				nomFen = "comparaisonInv" ;
+				nomURL = "action=compinv&log="+checkLog+"&numproc="+numProcess+URLSupp;
+				texte = "Comparaison du parametrage de BDPECHE en cours...";
+			  break;
+			case 3:
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "copieScientifique" ;
 				nomURL = "action=majsc&log="+checkLog+"&numproc="+numProcess+URLSupp;
 				texte = "Copie des donn&eacute;es scientifiques en cours...";
 			  break;
-			case 3:
+			case 4:
 				progPhp = "/process_auto/processAuto.php" ;
-				nomFen = "processAuto" ;
-				nomURL = "base="+DBname+"&nb_enr="+nbEnreg+"&adresse="+adresse+"&numproc="+numProcess;
+				nomFen = "processAutoRec" ;
+				nomURL = "base="+DBname+"&nb_enr="+nbEnreg+"&adresse="+adresse+"&numproc="+numProcess+"&pg=rec";
 				texte = "Recalcul automatique des données en cours ...";
 			  break;
-			 case 4:
+			case 5:
+				progPhp = "/process_auto/processAuto.php" ;
+				nomFen = "processAutoStat" ;
+				nomURL = "base="+DBname+"&nb_enr="+nbEnreg+"&adresse="+adresse+"&numproc="+numProcess+"&pg=stat";
+				texte = "Calcul statistique automatique des données en cours ...";
+			  break;
+			case 6:
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "copieRecomp" ;
 				nomURL = "action=majrec&log="+checkLog+"&numproc="+numProcess+URLSupp;
 				texte = "Copie des donn&eacute;es recompos&eacute;es en cours...";
 			  break;
-			case 5:
+			case 7:
 			  finTrt = true;
 			  break;
-			case 6:
+			case 8:
 			  return;
 		}
 		if (!finTrt) {

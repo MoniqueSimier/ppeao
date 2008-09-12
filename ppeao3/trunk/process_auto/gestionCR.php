@@ -32,7 +32,7 @@
 		}
 		// Affichage d'avertissement si erreur dans le traitement
 		if ($_SESSION['s_erreur_process']) {
-			if ($typeAction == "comp" ) {
+			if ($typeAction == "comp" || $typeAction == "compinv") {
 				// Avertissement dans le cas de la comparaison
 				if ($EcrireLogComp ) {
 					WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
@@ -64,7 +64,7 @@
 	
 		// ***********************************************
 		// On gére l'affichage a l'ecran d'un compte rendu
-		if ($typeAction == "comp") {
+		if ($typeAction == "comp" || $typeAction == "compinv") {
 			if (!$_SESSION['s_erreur_process']) {
 					// Pas de différences
 				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s et toutes les tables sont identiques .<br/>".$CRexecution." ".$messageGen;
