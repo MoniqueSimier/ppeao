@@ -179,7 +179,7 @@ foreach ($tableArray as $theRow) {
 echo('</table>');
 
 // on affiche la pagination
-echo paginate($_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'], '&amp;page=', $countPages, $currentPage);
+echo paginate($_SERVER['PHP_SELF'].'?'.removeQueryStringParam($_SERVER['QUERY_STRING'],'page'), '&amp;page=', $countPages, $currentPage);
 	
 
 ?>

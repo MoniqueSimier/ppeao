@@ -270,6 +270,17 @@ if ($found==1) {$newQueryString=substr($newQueryString, 0, strlen($newQueryStrin
 return $newQueryString;
 }
 
+
+//***************************************************************************************************
+// fonction permettant de supprimer un paramètre et sa valeur d'une URL
+// 
+
+function removeQueryStringParam($url, $key) {
+    $url = preg_replace('/(.*)(\?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
+    $url = substr($url, 0, -1);
+    return ($url);
+}
+
 //***************************************************************************************************
 // cette fonction affiche une barre de pagination du type de celle utilisée par flickr
 /**
