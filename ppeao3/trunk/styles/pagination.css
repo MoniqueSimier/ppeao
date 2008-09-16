@@ -5,32 +5,28 @@ text-align:center
 }
 
 .pagination a {
-background:#fff;
-border:1px solid #06c;
-color:#06c;
+/*background:#fff;*/
+border:1px solid grey;
 margin:2px;
 padding:.2em .4em;
 text-decoration:none
 }
 
 .pagination a:hover {
-background:#fff;
-border:1px solid #bd88fe;
-color:#bd88fe
+/*background:#fff;*/
+border:1px solid grey;
 }
 
-.pagination span.inactive {
-background:#fff;
-border:1px solid #f0f0ff;
-color:#f0f0ff;
+.pagination span.inactive_page {
+/*background:#fff;*/
+border:1px solid grey;
 margin:2px;
 padding:.2em .4em
 }
 
-.pagination span.active {
-background:#f4ebff;
-border:1px solid #bd88fe;
-color:#bd88fe;
+.pagination span.active_page {
+/*background:#f4ebff;*/
+border:none;
 font-weight:700;
 margin:2px;
 padding:.2em .4em

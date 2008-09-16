@@ -281,6 +281,8 @@ function removeQueryStringParam($url, $key) {
     return ($url);
 }
 
+
+
 //***************************************************************************************************
 // cette fonction affiche une barre de pagination du type de celle utilisée par flickr
 /**
@@ -327,13 +329,13 @@ function paginate($url, $param, $total, $current, $adj=3)
 		if ($total < 7 + ($adj * 2))
 		{
 			/* Ajout de la page 1 : on la traite en dehors de la boucle pour n'avoir que index.php au lieu de index.php?p=1 et ainsi éviter le duplicate content */
-			$pagination .= ($current == 1) ? '<span class="active">1</span>' : "<a href=\"{$url}\">1</a>"; // Opérateur ternaire : (condition) ? 'valeur si vrai' : 'valeur si fausse'
+			$pagination .= ($current == 1) ? '<span class="active_page">1</span>' : "<a href=\"{$url}\">1</a>"; // Opérateur ternaire : (condition) ? 'valeur si vrai' : 'valeur si fausse'
 
 			/* Pour les pages restantes on utilise une boucle for */
 			for ($i = 2; $i<=$total; $i++)
 			{
 				if ($i == $current) // Le numéro de la page courante est mis en évidence (cf fichier CSS)
-				$pagination .= "<span class=\"active\">{$i}</span>";
+				$pagination .= "<span class=\"active_page\">{$i}</span>";
 				else // Les autres sont affichés normalement
 				$pagination .= "<a href=\"{$url}{$param}{$i}\">{$i}</a>";
 			}
@@ -349,13 +351,13 @@ function paginate($url, $param, $total, $current, $adj=3)
 			if ($current < 2 + ($adj * 2))
 			{
 				/* Affichage du numéro de page 1 */
-				$pagination .= ($current == 1) ? "<span class=\"active\">1</span>" : "<a href=\"{$url}\">1</a>";
+				$pagination .= ($current == 1) ? "<span class=\"active_page\">1</span>" : "<a href=\"{$url}\">1</a>";
 
 				/* puis des huit autres suivants */
 				for ($i = 2; $i < 4 + ($adj * 2); $i++)
 				{
 				if ($i == $current)
-					$pagination .= "<span class=\"active\">{$i}</span>";
+					$pagination .= "<span class=\"active_page\">{$i}</span>";
 					else
 					$pagination .= "<a href=\"{$url}{$param}{$i}\">{$i}</a>";
 				}
@@ -384,7 +386,7 @@ function paginate($url, $param, $total, $current, $adj=3)
 				for ($i = $current - $adj; $i <= $current + $adj; $i++)
 				{
 					if ($i == $current)
-					$pagination .= "<span class=\"active\">{$i}</span>";
+					$pagination .= "<span class=\"active_page\">{$i}</span>";
 					else
 					$pagination .= "<a href=\"{$url}{$param}{$i}\">{$i}</a>";
 				}
@@ -412,7 +414,7 @@ function paginate($url, $param, $total, $current, $adj=3)
 				for ($i = $total - (2 + ($adj * 2)); $i <= $total; $i++)
 				{
 					if ($i == $current)
-						$pagination .= "<span class=\"active\">{$i}</span>";
+						$pagination .= "<span class=\"active_page\">{$i}</span>";
 					else
 						$pagination .= "<a href=\"{$url}{$param}{$i}\">{$i}</a>";
 				}
@@ -422,7 +424,7 @@ function paginate($url, $param, $total, $current, $adj=3)
 
 		/* ////////// Début affichage du bouton [suivant] ////////// */
 		if ($current == $total)
-			$pagination .= "<span class=\"inactive\"> > </span>\n";
+			$pagination .= "<span class=\"inactive_page\"> > </span>\n";
 		else
 			$pagination .= "<a href=\"{$url}{$param}{$next}\"> > </a>\n";
 		/* Fin affichage du bouton [suivant] */
