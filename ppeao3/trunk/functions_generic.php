@@ -272,15 +272,45 @@ return $newQueryString;
 
 
 //***************************************************************************************************
-// fonction permettant de supprimer un paramètre et sa valeur d'une URL
+// fonction permettant de supprimer un paramètre et sa/ses valeur(s) d'une URL
 // 
 
 function removeQueryStringParam($url, $key) {
-    $url = preg_replace('/(.*)(\?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
-    $url = substr($url, 0, -1);
-    return ($url);
+// note : dans le cas de paramètres à valeurs multiples (&param[]=value1&param[]=value2)
+//        il convient de passer $key en protégeant les [] : 'param\[\]'
+	$previousUrl='';
+	$newUrl=$url;
+	$i=0;
+	// tant que le résultat du preg_replace est différent de l'url source, on continue à l'effectuer récursivement
+	while ($newUrl!=$previousUrl) {
+		$previousUrl=$newUrl;
+		$newUrl = preg_replace('/(.*)(\?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $previousUrl . '&');
+    	$newUrl = substr($newUrl, 0, -1);
+	
+		// note : ceci est une sécurité au cas où le while pête un cable
+		$i++;
+		if ($i>200) {break;}
+	
+	} // end while
+
+    return ($newUrl);
 }
 
+//***************************************************************************************************
+// fonction permettant de d'ajouter un paramètre et sa valeur à une URL
+// si le paramètre est déjà présent dans l'URL, sa valeur est remplacée par la nouvelle
+// note : dans le cas de paramètres à valeurs multiples (param[]), la fonction ajoute toujours une nouvelle valeur
+// 		  pour supprimer les valeurs existantes, utiliser la fonction removeQueryStringParam() ci-dessus
+//
+function addQueryStringParam($url, $key, $value) {
+    $url = preg_replace('/(.*)(\?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
+    $url = substr($url, 0, -1);
+    if (strpos($url, '?') === false) {
+        return ($url . '?' . $key . '=' . $value);
+    } else {
+        return ($url . '&' . $key . '=' . $value);
+    }
+}
 
 
 //***************************************************************************************************
