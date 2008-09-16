@@ -186,6 +186,12 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 				echo('<option value="'.$value["value"].'" '.$selected.'>'.$value["text"].'</option>');
 			}
 			echo('</select>');
+			
+			// les boutons permettant de sélectionner/désélectionner toutes les valeurs du SELECT
+			echo('<p id="selectlink__'.$level.'" class="select_link">s&eacute;lectionner ');
+				echo('<a href="#" onclick="javascript:toggleSelect(\''.$level.'\',\''.$theTable.'\',\'all\');" class="link_button">tout</a> ');echo(' <a href="#" onclick="javascript:toggleSelect(\''.$level.'\',\''.$theTable.'\',\'none\');"  class="link_button">rien</a>');
+			echo('</p>');
+			
 			// le lien permettant d'éditer la table ou les valeurs sélectionnées
 			echo('<p id="editlink_'.$level.'" class="edit_link">');
 			

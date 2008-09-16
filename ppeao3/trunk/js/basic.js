@@ -141,3 +141,28 @@ var selected = new Array();
 for (var i = 0; i < theSelect.options.length; i++) if (theSelect.options[i].selected) selected.push(theSelect.options[i].value);
 return selected;
 }
+
+
+/**
+* Fonction générique qui permet de sélectionner ou désélectionner toutes les valeurs d'un SELECT
+*/
+function toggleSelectSelection(select,what) {
+	// select : l'id du SELECT à utiliser
+	// what : que sélectionner ('all' ou 'none')
+	
+	// on pointe le SELECT à utiliser
+	var theSelect=$(select);
+	// on récupère les OPTIONS de ce SELECT
+	var theOptions=theSelect.getElements('option');
+	
+	//debug 	alert(theOptions.length);
+	
+	// on boucle sur les options
+	for (i=0;i<theOptions.length;i++) {
+		// si on veut tout sélectionner
+		if (what=='all') {theOptions[i].setProperty('selected','selected');}
+		// si on veut tout désélectionner
+		if (what=='none') {theOptions[i].removeProperty('selected');}
+	} // end for
+	
+}

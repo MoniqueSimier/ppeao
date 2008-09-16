@@ -75,12 +75,12 @@ echo('<h2>&eacute;dition des tables de codage</h2>');
 	echo('</select>');
 	echo('</div>');
 	
-	echo('<div id="peche_experimentale">');
-	echo('<h3>p&ecirc;che exp&eacute;rimentale</h3>');
-	echo('<select name="codage_experimentale_select" id="codage_experimentale_select" onchange="javascript:showCodageTablesSelect(\'experimentale\');">');
+	echo('<div id="peche_artisanale">');
+	echo('<h3>p&ecirc;che artisanale</h3>');
+	echo('<select name="artisanale_select" id="codage_artisanale_select" onchange="javascript:showCodageTablesSelect(\'artisanale\');">');
 		// la première OPTION ne sert à rien...
 		echo('<option value="choose">- choisir un domaine -</option>');
-		foreach ($experimentaleHierarchie as $domaine) {
+		foreach ($artisanaleHierarchie as $domaine) {
 			echo('<option value="'.$domaine.'">'.$domainesListe[$domaine]["label"].'</option>');	
 		} //end for each
 	echo('</select>');

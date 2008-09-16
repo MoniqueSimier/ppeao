@@ -46,8 +46,9 @@ padding: 0 9px 0 2px;
 }
 
 
-.edit_link {
+.edit_link, .select_link {
 	font-size:10px;
+	margin: 3px 0;
 }
 
 .hints {
@@ -81,6 +82,10 @@ font-style: italic;
 /* **************************** */
 /* l'éditeur de tables      */
 
+#la_table td {
+border-right: 1px solid grey;
+}
+
 .edit_row_even {
 background-color: transparent;
 }
@@ -89,6 +94,7 @@ background-color: transparent;
 background-color:	#E6E6E6;
 
 }
+
 
 
 

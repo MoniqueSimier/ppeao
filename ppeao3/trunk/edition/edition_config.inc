@@ -7,7 +7,7 @@
 // utilisé pour construire les deux sélecteurs servant à sélectionner les domaines des tables de codage
 // et donnant la liste des sous-domaines
 $scientifiqueHierarchie=Array("stations","peche","biologie");
-$experimentaleHierarchie=Array("agglomeration","unite","activite","debarquement","sortie");
+$artisanaleHierarchie=Array("agglomeration","unite","activite","debarquement","sortie");
 
 // la liste des domaines de premier niveau, avec leur nom complet et leur type
 $domainesListe=Array(

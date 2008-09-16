@@ -3,7 +3,7 @@
 */
 
 function showCodageTablesSelect(typePeche){
-	// typePeche : le type de pêche concerné : 'experimentale' ou 'scientifique'
+	// typePeche : le type de pêche concerné : 'artisanale' ou 'scientifique'
 	//alert(typePeche);
 	var theDomainSelect=$("codage_"+typePeche+"_select");
 	// si une valeur autre que "-choisissez un domaine-" est sélectionnée
@@ -184,6 +184,21 @@ function updateEditLink(level) {
 }
 
 
-
+/**
+* Fonction qui permet de sélectionner ou désélectionner toutes les valeurs d'un SELECT dans le sélecteur de tables PPEAO
+*/
+function toggleSelect(level,select,what) {
+	// level : le niveau du SELECT dans le sélecteur de tables PPEAO
+	// select : l'id du SELECT à utiliser
+	// what : que sélectionner ('all' ou 'none')
+	
+	// on sélectionne ou désélectionne les OPTIONS du SELECT
+	toggleSelectSelection(select,what);
+	
+	
+	// on provoque le rafraichissement des éventuels SELECT suivants dans le sélecteur de tables
+	var theLevel=parseInt(level)+1;
+	showNewLevel(theLevel,select);
+}
 
 

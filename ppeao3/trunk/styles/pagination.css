@@ -1,0 +1,37 @@
+.pagination {
+font:12px Arial, Helvetica, sans-serif;
+margin:40px 0;
+text-align:center
+}
+
+.pagination a {
+background:#fff;
+border:1px solid #06c;
+color:#06c;
+margin:2px;
+padding:.2em .4em;
+text-decoration:none
+}
+
+.pagination a:hover {
+background:#fff;
+border:1px solid #bd88fe;
+color:#bd88fe
+}
+
+.pagination span.inactive {
+background:#fff;
+border:1px solid #f0f0ff;
+color:#f0f0ff;
+margin:2px;
+padding:.2em .4em
+}
+
+.pagination span.active {
+background:#f4ebff;
+border:1px solid #bd88fe;
+color:#bd88fe;
+font-weight:700;
+margin:2px;
+padding:.2em .4em
+}
