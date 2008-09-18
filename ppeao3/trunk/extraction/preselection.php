@@ -7,7 +7,7 @@
 
 
 
-<?php 
+<?php
 include_once("../connect.inc");
 $connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
 if (!$connection) { echo "Pas de connection"; exit;}
@@ -38,26 +38,16 @@ if(isset($_POST['type']))
 <h4><Font Color ="#333366">Peuplements de poissons et Pêche artisanale des Ecosystèmes estuariens,</font>
 <br>
 <Font Color ="#333366">lagunaires ou continentaux d’Afrique de l’Ouest</font></h4>
-<Font Color ="#333366"><?php  print($entete); ?></font>
+<Font Color ="#333366"><?php print($entete); ?></font>
 </td></tr>
 </table>
 </div>
 
 
 
-<?php 
+<?php
 
 
-/*$user="devppeao";			// Le nom d'utilisateur 
-$passwd="2devppe!!";			// Le mot de passe 
-//$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-$host= "localhost";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-
-$bdd = "bd_peche";
-$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-
-if (!$connection) { echo "Pas de connection"; exit;}
-*/
 
 
 
@@ -115,10 +105,16 @@ if($type=="")
 	exit;
 	}
 
+$type_donnees= "brutes";
 
+/*
 //choix données brutes/elaborées
 if (($type==artisanale)&&($type_donnees==""))
 	{
+/*
+SUPPRESSION de ce menu car les données brutes ou élaborées sont systématiquement extraites
+LA VARIABLE type_donnees est forcée à Données brutes
+	
 	print ("<div align='center'>");
 	print ("<br><br><br><br><br>");
 	print ("<form name=\"form_s\" method=\"post\" action=\"preselection.php\">");
@@ -137,10 +133,11 @@ if (($type==artisanale)&&($type_donnees==""))
 	print ("<br><br><table><tr><td colspan=2 align=center><input type=\"submit\" name=\"\" value=\"    Valider    \">");
 	print ("</td></tr></form><tr><td>");
 	
+
 	
 	
 	
-	
+
 	print ("<form name=\"fortion\" method=\"post\" action=\"preselection.php\">");
 	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
 	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
@@ -151,9 +148,13 @@ if (($type==artisanale)&&($type_donnees==""))
 	print ("<input type=\"submit\" name=\"\" value=\"      Fin     \" onClick= \"return confirm('Etes vous sûr ?')\"></form></td></tr></table>");
 
 
-
 exit;
 	}
+	  FIN SUPPRESSION
+*/	
+
+	
+	
 //$bdd="BD_Peche";
 //if(($type=="artisanale")||($type=="statistique"))$bdd="jerome_manant";
 //else $bdd="peche_exp_27_09";
@@ -166,7 +167,6 @@ exit;
 //                         Sélection de du pays et du système                               //
 //                                                                                          //
 //////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 
@@ -216,7 +216,7 @@ print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever 
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-			<?php 
+			<?php
 			print ("<br><br><table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 	
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
@@ -319,7 +319,6 @@ else
 		print($ligne_a_afficher);
 	
 	
-		
 		$result2 = pg_query($connection, $query2);
 		
 		
@@ -347,7 +346,7 @@ else
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-			<?php 
+			<?php
 			print ("</tr><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr>");
 			
 			

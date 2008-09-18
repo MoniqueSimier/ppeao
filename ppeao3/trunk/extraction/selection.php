@@ -18,7 +18,7 @@ function pop_it(the_form) {
 <body BGCOLOR="#CCCCFF">
 
 
-<?php 
+<?php
 //connection à la BD
 //if(! ini_set("max_execution_time", "320")) {echo "échec max_execution_time";}
 include_once("../connect.inc");
@@ -27,16 +27,6 @@ if (!$connection) { echo "Pas de connection"; exit;}
 
 //$bdd = $_POST['base'];
 //print("travail sur la base : ".$bdd);
-
-
-/*$user="devppeao";			// Le nom d'utilisateur 
-$passwd="2devppe!!";			// Le mot de passe 
-//$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-$host= "localhost";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-
-$bdd = "bd_peche";
-*/
-
 
 if (isset($_POST['annee_deb']))$annee_deb = $_POST['annee_deb'];
 else $annee_deb ="";
@@ -58,7 +48,7 @@ else $type_donnees ="";
 <table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH="600">
 <tr><td align='center'><h3><b><Font Color ="#333366">Base de Données PPEAO</font></b></h3>
 
-<?php 
+<?php
 if ($type == "scientifique")print ("<Font Color =\"#333366\">Consultation / Extraction de données de pêche scientifiques</Font>");
 else if ($type == "artisanale")print ("<Font Color =\"#333366\">Consultation / Extraction de données de pêche artisanales</Font>");
 else if ($type == "statistique")print ("<Font Color =\"#333366\">Consultation / Extraction de données statistiques</Font>");
@@ -67,7 +57,12 @@ else print("</b></Font>");
 </td></tr>
 </table>
 </div>
-<?php 
+
+<div align = center>
+<br>09/2008<br>version 2.3 JME             //******************* A ENLEVER en final
+</div>
+
+<?php
 
 
 
@@ -189,7 +184,7 @@ if (!isset($_POST['secteur']))
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-	<?php 
+	<?php
 	
 	if($stx!=0)print ("<table width=\"850\"><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr>");
 	print ("<table >");
@@ -269,8 +264,6 @@ if (!isset($_POST['secteur']))
 else
 	{
 	//print ("<div align='center'><br>");
-	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-//	if (!$connection) { echo "Pas de connection"; exit;}
 	
 	print ("<div align='center'><Font Color =\"#333366\">");
 	if (!isset($_POST['campagne']))print ("<br><b>Sélection des campagnes de pêche</b></font>");
@@ -399,7 +392,7 @@ print ("</div>");
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-	<?php 
+	<?php
 		print ("<table><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 		
 		print ("<table>");
@@ -491,8 +484,8 @@ print ("</div>");
 			print ("<div align='center'><Font Color =\"#333366\">");
 			
 			
-		//	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		//	if (!$connection) { echo "Pas de connection"; exit;}
+			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//if (!$connection) { echo "Pas de connection"; exit;}
 			
 			$query3 = "select distinct exp_engin.id, exp_engin.libelle 
 			from exp_campagne as EC, exp_coup_peche  left join exp_engin on exp_engin.id=exp_coup_peche.exp_engin_id 
@@ -530,7 +523,7 @@ print ("</div>");
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php 
+			<?php
 			print ("<table><tr><td align=center><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 			
@@ -829,7 +822,7 @@ if (!isset($_POST['secteur']))
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php 
+			<?php
 	print ("<table><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 
 	print ("<table>");
@@ -978,8 +971,8 @@ else
 		$query_1 .= ") order by RS.nom, AA.nom ";
 		
 		//print ("<br>".$query_1);
-//		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-//		if (!$connection) { echo "Pas de connection"; exit;}
+		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+		//if (!$connection) { echo "Pas de connection"; exit;}
 		$result_1 = pg_query($connection,$query_1);
 		
 		$A=Array();
@@ -1004,7 +997,7 @@ else
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php 
+			<?php
 			print ("<table><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 		
 		
@@ -1082,8 +1075,8 @@ else
 		}//fin du if agglo non referencées
 	else
 		{
-//		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-//		if (!$connection) { echo "Pas de connection"; exit;}
+		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+		//if (!$connection) { echo "Pas de connection"; exit;}
 		
 		
 		print ("<div align='center'>");
@@ -1214,14 +1207,14 @@ else
 			//$colonne = ceil($n/5);	//affichage de 5 par colonne
 			?>
 			<script language="JavaScript"><!--
-			function clicTous<?php  print($key_P); ?>(form,booleen) 
+			function clicTous<?php print($key_P); ?>(form,booleen) 
 				{
 				for (i=0, n=form.elements.length; i<n; i++)
 				if (form.elements[i].name.indexOf('periode') != -1)
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php 
+			<?php
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td><td align = right>Tout</td></tr></table>");
 		
 			
@@ -1243,14 +1236,14 @@ else
 				
 				?>
 			<script language="JavaScript"><!--
-			function clicTous<?php  print($key_P); ?>(form,booleen) 
+			function clicTous<?php print($key_P); ?>(form,booleen) 
 				{
 				for (i=0, n=form.elements.length; i<n; i++)
-				if (form.elements[i].name.indexOf('periode[<?php  print($key_P); ?>]') != -1)
+				if (form.elements[i].name.indexOf('periode[<?php print($key_P); ?>]') != -1)
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php 
+			<?php
 			print ("<td align = right>Tout</td><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td>");
 		
 		
@@ -1327,8 +1320,8 @@ else
 			print ("<div align='center'><Font Color =\"#333366\">");
 			print ("<br>");
 			
-//			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-//			if (!$connection) { echo "Pas de connection"; exit;}
+			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//if (!$connection) { echo "Pas de connection"; exit;}
 			
 			
 			
@@ -1396,7 +1389,7 @@ else
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php 
+			<?php
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td align='center'>Tout</td></tr></table>");
 			
 			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
@@ -1665,8 +1658,8 @@ if (!isset($_POST['secteur']))
 
 	print ("<div align='center'><Font Color =\"#333366\">");
 	
-//	$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-//	if (!$connection) { echo "Pas de connection"; exit;}
+	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+	//if (!$connection) { echo "Pas de connection"; exit;}
 	
 	$query = "select distinct RS.nom, RP.nom, RSy.libelle 
 	from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, art_agglomeration, 
@@ -1716,7 +1709,7 @@ if (!isset($_POST['secteur']))
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php 
+			<?php
 	print ("<table><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 
 	
@@ -1864,8 +1857,8 @@ else
 		$query_1 .= ") order by RS.nom, RS.nom, AA.nom ";
 		
 		//print ("<br>".$query_1);
-//		$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-//		if (!$connection) { echo "Pas de connection"; exit;}
+		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+		//if (!$connection) { echo "Pas de connection"; exit;}
 		$result_1 = pg_query($connection,$query_1);
 		
 		$A=Array();
@@ -1890,7 +1883,7 @@ else
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php 
+			<?php
 			print ("<table><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 		
 		
@@ -2050,14 +2043,14 @@ else
 			
 			?>
 			<script language="JavaScript"><!--
-			function clicTous<?php  print($key_P); ?>(form,booleen) 
+			function clicTous<?php print($key_P); ?>(form,booleen) 
 				{
 				for (i=0, n=form.elements.length; i<n; i++)
 				if (form.elements[i].name.indexOf('periode') != -1)
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php 
+			<?php
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td><td align = right>Tout</td></tr></table>");
 		
 			
@@ -2077,14 +2070,14 @@ else
 				
 				?>
 			<script language="JavaScript"><!--
-			function clicTous<?php  print($key_P); ?>(form,booleen) 
+			function clicTous<?php print($key_P); ?>(form,booleen) 
 				{
 				for (i=0, n=form.elements.length; i<n; i++)
-				if (form.elements[i].name.indexOf('periode[<?php  print($key_P); ?>]') != -1)
+				if (form.elements[i].name.indexOf('periode[<?php print($key_P); ?>]') != -1)
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php 
+			<?php
 			print ("<td align = right>Tout</td><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td>");
 		
 		
@@ -2172,8 +2165,8 @@ else
 			print ("<div align='center'><Font Color =\"#333366\">");
 			print ("<br>");
 			
-//			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-//			if (!$connection) { echo "Pas de connection"; exit;}
+			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//if (!$connection) { echo "Pas de connection"; exit;}
 			
 			
 			
@@ -2218,7 +2211,7 @@ else
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
-			<?php 
+			<?php
 			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td align='center'>Tout</td></tr></table>");
 			
 			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
@@ -2315,8 +2308,8 @@ else
 	
 			print ("<div align='center'>");
 			
-//			$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-//			if (!$connection) { echo "Pas de connection"; exit;}
+			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+			//if (!$connection) { echo "Pas de connection"; exit;}
 			
 			
 			
@@ -2358,7 +2351,7 @@ else
 			    form.elements[i].checked = booleen;
 			  }
 			//--></script>
-			<?php 
+			<?php
 			
 
 			
@@ -2551,7 +2544,7 @@ else
 			    form.elements[i].checked = booleen;
 			  }
 			//--></script>
-			<?php 
+			<?php
 			
 			
 				print ("<table><tr><td align='center' width=\"30\"><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td>Tout</td></tr></table>");

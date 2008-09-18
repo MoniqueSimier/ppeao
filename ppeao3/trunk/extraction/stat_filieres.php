@@ -5,10 +5,8 @@
 </head>
 <body BGCOLOR="#CCCCFF">
 
-<?php 
-include_once("../connect.inc");
-$connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
-if (!$connection) { echo "Pas de connection"; exit;}
+<?php
+include_once("../connexion.php");
 /*$user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 
 $host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
@@ -173,19 +171,19 @@ if(isset($_POST['case1']))
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php 
+		<?php
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
 <div id="_pays" style="display:none">
-<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -193,15 +191,15 @@ if(isset($_POST['case1']))
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le systeme
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -211,18 +209,18 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -231,15 +229,15 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -252,7 +250,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -260,11 +258,11 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques totales</b>
+	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques totales</b>
 	</div>
 	
 	<div id="_stat" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>année</td>");
 	print ("<input type=hidden name=\"voir[10]\" value=\"22\">");
@@ -657,19 +655,19 @@ $bdd = "jerome_manant";
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php 
+		<?php
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
 <div id="_pays" style="display:none">
-<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -677,15 +675,15 @@ $bdd = "jerome_manant";
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le systeme
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -695,18 +693,18 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -715,15 +713,15 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -736,7 +734,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -744,11 +742,11 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par espèce</b>
+	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par espèce</b>
 	</div>
 	
 	<div id="_stat" style="display:none">
-<?php  
+<?php 
 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>année</td>");
@@ -1141,19 +1139,19 @@ $bdd = "jerome_manant";
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php 
+		<?php
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
 <div id="_pays" style="display:none">
-<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -1161,15 +1159,15 @@ $bdd = "jerome_manant";
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le systeme
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -1179,18 +1177,18 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -1199,15 +1197,15 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -1220,7 +1218,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -1228,11 +1226,11 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"250\">");
 	
 	?>
-	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques et structures de taille</b>
+	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques et structures de taille</b>
 	</div>
 	
 	<div id="_stat" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>année</td>");
 	print ("<input type=hidden name=\"voir[10]\" value=\"22\">");
@@ -1617,19 +1615,19 @@ if(isset($_POST['case4']))
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php 
+		<?php
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
 <div id="_pays" style="display:none">
-<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -1637,15 +1635,15 @@ if(isset($_POST['case4']))
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le systeme
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -1655,18 +1653,18 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -1675,15 +1673,15 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -1696,7 +1694,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -1704,11 +1702,11 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par Grand Type</b>
+	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par Grand Type</b>
 	</div>
 	
 	<div id="_stat" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"250\">");
 		print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>année</td>");
 	print ("<input type=hidden name=\"voir[10]\" value=\"22\">");
@@ -2115,19 +2113,19 @@ if(isset($_POST['case5']))
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php 
+		<?php
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
 <div id="_pays" style="display:none">
-<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -2135,15 +2133,15 @@ if(isset($_POST['case5']))
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le systeme
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -2153,18 +2151,18 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -2173,15 +2171,15 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -2194,7 +2192,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -2202,11 +2200,11 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"300\">");
 	
 	?>
-	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par Grand Type et Espèce</b>
+	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Statistiques par Grand Type et Espèce</b>
 	</div>
 	
 	<div id="_stat" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>année</td>");
 	print ("<input type=hidden name=\"voir[10]\" value=\"22\">");
@@ -2614,19 +2612,19 @@ $bdd = "jerome_manant";
 		form.elements[i].checked = booleen;
 		}
 	</script>
-		<?php 
+		<?php
 		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 			
 	
 	
 	////////////table pays et systeme
 	print ("<table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"200\">");
-	?><div onClick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	?><div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
 </div> 
 
 
 <div id="_pays" style="display:none">
-<?php    print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le pays
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
 	print ("<input type=hidden name=\"voir[1]\" value=\"1\">");
@@ -2634,15 +2632,15 @@ $bdd = "jerome_manant";
 	print ("<input type=hidden name=\"voir[2]\" value=\"2\">");
 print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+	<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
 </div>  
 
 <div id="vue_syst" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
 	//pour le systeme
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -2652,18 +2650,18 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
 		////////////table secteur et agglomération
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top  align = center WIDTH=\"200\">");
 	?>
-	<div onClick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
+	<div onclick="document.getElementById('_sect').style.display = 'block';"><b>Secteur</b>
 </div>
 
 <div id="_sect" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour le secteur
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");
@@ -2672,15 +2670,15 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<input type=hidden name=\"voir[6]\" value=\"9\">");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_sect').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
-?></div> <?php 
+?></div> <?php
 	print ("</td><td VALIGN=top align = center WIDTH=\"200\">");
 	
 	?>
-	<div onClick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
+	<div onclick="document.getElementById('vue_agglo').style.display = 'block';"><b>Agglomération</b>
 </div>
 
 <div id="vue_agglo" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id</td>");
@@ -2693,7 +2691,7 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
-	?></div> <?php 
+	?></div> <?php
 	print ("</td></tr></table>");
 	
 	
@@ -2701,11 +2699,11 @@ print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_
 	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top><td VALIGN=top align = center WIDTH=\"350\">");
 	
 	?>
-	<div onClick="document.getElementById('_stat').style.display = 'block';"><b>Structures de taille par Grand Type et Espèce</b>
+	<div onclick="document.getElementById('_stat').style.display = 'block';"><b>Structures de taille par Grand Type et Espèce</b>
 	</div>
 	
 	<div id="_stat" style="display:none">
-<?php  
+<?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"350\">");
 		print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>année</td>");
 	print ("<input type=hidden name=\"voir[10]\" value=\"22\">");

@@ -12,11 +12,8 @@ include_once("../connect.inc");
 $connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
 if (!$connection) { echo "Pas de connection"; exit;}
 
-/*$user="devppeao";			// Le nom d'utilisateur 
-$passwd="2devppe!!";			// Le mot de passe 
-$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-//$bdd = "BD2_Peche";
-*/
+
+
 
 
 
@@ -66,6 +63,10 @@ case "   Activité    ":
 print("<div align='center'>");
 print("<Font Color =\"#333366\">");
 print("<b>Base de Données PPEAO</b><br><br>Filière sur l'activité de pêche<br><br>");
+
+print("<div align = center>");
+print("<br><br>09/2008<br>version 2.3 JME");                      //*** A ENLEVER
+//</div>
 print("</div></Font>");
 
 if ($requete_faite != 1)		//si requete globale pas encore faite
@@ -161,7 +162,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	$fpm = fopen($file, "w");
 	$i = 0;
 	$k=1;//nombre lignes
-	$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t idtype_agglo\t type_agglo_lib\t activ\t up\t agglo\t type_sortie\t grd_type_engin\t milieu\t activ_date\t nup_recens\t activ_an\t activ_mois\t cccoode\t activ_nb_hom\t activ_nb_fem\t activ_nb_enf\t type_activ\t grd_type_engin\t grd_type_engin_lib\t type_activ_lib1\t type_activ_lib2\t type_activ\t type_sortie\t type_sortie_lib\t milieu\t milieu_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo_orig\t bbbasepays\t csp\t csp_lib\t eee\t \t nbre_engin\t inc01\t inc02\t type_engin\t grd_type_ep\t type_engin_lib \n";
+	$intitule = "numero\tpays\tpays_lib\tsyst\tsyst_lib\trefpaysid\tsyst_surf\tidsecteur\tsect\tsect_lib\tsect_surf\trefsystemeid\tagglo\ttype_agglo\tsect\tagglo_lib\tagglo_long\tagglo_lat\tmmagglo\tidtype_agglo\ttype_agglo_lib\tactiv\tup\tagglo\ttype_sortie\tgrd_type_engin\tmilieu\tactiv_date\tnup_recens\tactiv_an\tactiv_mois\tcccoode\tactiv_nb_hom\tactiv_nb_fem\tactiv_nb_enf\ttype_activ\tgrd_type_engin\tgrd_type_engin_lib\ttype_activ_lib1\ttype_activ_lib2\ttype_activ\ttype_sortie\ttype_sortie_lib\tmilieu\tmilieu_lib\tup\tcsp\tup_lib\tup_lib_menage\tcccoode\tagglo_orig\tbbbasepays\tcsp\tcsp_lib\teee\t\tnbre_engin\tinc01\tinc02\ttype_engin\tgrd_type_ep\ttype_engin_lib \n";
 	fputs($fpm,$intitule);
 	$nombre_enreg = pg_num_rows($result);
 
@@ -499,7 +500,7 @@ print ("<br>Celui ci comporte ".($nombre_ligne-1)." lignes.
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 
 print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/temp_selection_globale.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
-print ("<br><br><a href=\"https://localhost/extraction/selection_activ.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+//print ("<br><br><a href=\"https://localhost/extraction/selection_activ.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 ?>
 <SCRIPT LANGUAGE="JavaScript"> 
@@ -534,6 +535,8 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	print("<div align='center'>");
 	print("<Font Color =\"#333366\">");
 	print("<b>Base de Données PPEAO</b><br><br>Filière sur les captures totales<br><br>");
+print("<div align = center>");
+print("<br><br>09/2008<br>version 2.3 JME");                      //*** A ENLEVER
 	print("</div></Font>");
 	
 	
@@ -563,9 +566,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	on art_debarquement.art_unite_peche_id=art_unite_peche.id 
 	left join art_debarquement_rec on art_debarquement.id = art_debarquement_rec.art_debarquement_id 
 	
-	
 	where ref_pays.id=ref_systeme.ref_pays_id 
-	
 	and ref_systeme.id=ref_secteur.ref_systeme_id 
 	and ref_secteur.id=art_agglomeration.ref_secteur_id 
 	and art_agglomeration.id=art_debarquement.art_agglomeration_id 
@@ -640,7 +641,7 @@ if ($requete_faite != 1)		//si requête globale pas encore faite
 	$k=1;//nombre lignes
 	//if($type_donnees=="brutes")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t type_agglo_lib\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t Ptot_dbq\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sortie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect_peche\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\n";
 	//if($type_donnees=="elaboree")
-	$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t type_agglo_lib\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t Ptot_dbq\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sortie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect_peche\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t id\t Ptot_rec\t ref\n";
+	$intitule = "numero\tpays\tpays_lib\tsyst\tsyst_lib\trefpaysid\tsyst_surf\tidsecteur\tsect\tsect_lib\tsect_surf\trefsystemeid\tagglo\ttype_agglo\tsect\tagglo_lib\tagglo_long\tagglo_lat\tmmagglo\ttype_agglo\ttype_agglo_lib\tiddeb\tmilieu\tvent\tetat_ciel\tagglo\tlieu_peche\tup\tgrd_type_engin\ttype_sortie\tdate_dep\theure_dep\tdbq_heure\theure_pose_engin\tnb_coups\tPtot_dbq\tglaciere\tdistance_lieu_peche\tdbq_an\tdbq_mois\tmmmemo\tcccccode\tdbq_nb_hom\tdbq_nb_fem\tdbq_nb_enf\tdbq_date\tvent\tvent_lib\tetat_ciel\tetat_ciel_lib\ttype_sortie\ttype_sortie_lib\tmilieu\tmilieu_lib\tlieu_peche\tsect_peche\tlieu_peche_lib\tcccode\tgrd_type_engin\tgrd_type_engin_lib\tup\tcsp\tup_lib\tup_lib_menage\tcccoode\tagglo\tbbbasepays\tcsp\tcsp_lib\tid\tPtot_rec\tref\n";
 	//if($type_donnees=="brutes")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t type_agglo_lib\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t Ptot_dbq\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sortie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect_peche\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_engin\t type_engin_lib\n";
 	//if($type_donnees=="elaboree")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t type_agglo_lib\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t Ptot_dbq\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sortie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect_peche\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_engin\t type_engin_lib\t id\t Ptot_rec\t ref\n";
 	
@@ -1068,6 +1069,8 @@ case "     Nt, Pt     ":
 print("<div align='center'>");
 print("<Font Color =\"#333366\">");
 print("<b>Base de Données PPEAO</b><br><br>Filière sur les fractions débarquées (Nt-Pt)<br>");
+print("<div align = center>");
+print("<br><br>09/2008<br>version 2.3 JME");                      //*** A ENLEVER
 print("</div></Font>");
 
 
@@ -1171,13 +1174,13 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	///////////////////////////////////////
 	//ecriture des resultats dans un fichier text
 	//////////////////////////////////////
-	$file="selection_nt_pt.txt";
+	$file="selection_Fdbq.txt";
 	$fpm = fopen($file, "w");
 	$i = 0;
 	$k=1;//nombre lignes
 	//if($type_donnees=="brutes")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t id_fraction\t cooode\t fdbq_pt\t fdbq_nt\t fdbq_observee\t code_sp\t artdebid\t fdbq_prix\t codesp\t espece\t informationespece\t reffamilleid\t cat_ecol\t cat_troph\t coefK\t coefb\t reforiginekbid\t refespeceid\t cat_ecol\t cat_ecol_lib\t cat_troph\t cat_troph_lib\t idfamille\t famille\t refordreid\t non_poisson\t idordre\t ordre\n";
 	//if($type_donnees=="elaboree")
-	$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t date_dep\t heure_dep\t dbq_heure\t heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t distance_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t idpds_rec\t poids_rec\t id\t id_fraction\t cooode\t fdbq_pt\t fdbq_nt\t fdbq_observee\t code_sp\t artdebid\t fdbq_prix\t codesp\t espece\t informationespece\t reffamilleid\t cat_ecol\t cat_troph\t coefK\t coefb\t reforiginekbid\t refespeceid\t cat_ecol\t cat_ecol_lib\t cat_troph\t cat_troph_lib\t idfamille\t famille\t refordreid\t non_poisson\t idordre\t ordre\t id\t fdbq_pt_rec\t fdbq_nt_rec\t esp\n";
+	$intitule = "numero\tpays\tpays_lib\tsyst\tsyst_lib\trefpaysid\tsyst_surf\tidsecteur\tsect\tsect_lib\tsect_surf\trefsystemeid\tagglo\ttype_agglo\tsect\tagglo_lib\tagglo_long\tagglo_lat\tmmagglo\tiddeb\tmilieu\tvent\tetat_ciel\tagglo\tlieu_peche\tup\tgrd_type_engin\ttype_sortie\tdate_dep\theure_dep\tdbq_heure\theure_pose_engin\tnb_coups\tdbq_pt\tglaciere\tdistance_lieu_peche\tdbq_an\tdbq_mois\tmmmemo\tcccccode\tdbq_nb_hom\tdbq_nb_fem\tdbq_nb_enf\tdbq_date\tidpds_rec\tpoids_rec\tid\tid_fraction\tid_Fdbq\tfdbq_pt\tfdbq_nt\tfdbq_observee\tcode_sp\tartdebid\tfdbq_prix\tcodesp\tespece\tinformationespece\treffamilleid\tcat_ecol\tcat_troph\tcoefK\tcoefb\treforiginekbid\trefespeceid\tcat_ecol\tcat_ecol_lib\tcat_troph\tcat_troph_lib\tidfamille\tfamille\trefordreid\tnon_poisson\tidordre\tordre\tid\tfdbq_pt_rec\tfdbq_nt_rec\tesp\n";
 	
 	fputs($fpm,$intitule);
 	$nombre_enreg = pg_num_rows($result);
@@ -1185,7 +1188,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	while($row = pg_fetch_row($result))
 		{
 		$contenu="";
-		$contenu.= $row[18]."\t";     //correction
+		$contenu.= $row[18]."\t";     //correction QUID cette ligne????
 		
 		//if($type_donnees=="brutes")$iii=71;     //correction
 		//if($type_donnees=="elaboree")
@@ -1193,7 +1196,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 		
 		for ($i=0; $i<$iii; $i++)	//il y a 99 champs dans la requete
 			{
-			$contenu .= trim($row[$i])."\t";
+			$contenu .= trim($row[$i])."\t";                          
 			}
 		//$contenu .= $row[0]."\t".$row[1]."\t".$row[2]."\t".$row[3]."\t".$row[4]."\t".$row[5]."\t";
 		$contenu = substr($contenu, 0, -1);
@@ -1349,14 +1352,14 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 
 
 
-	}//fin du if $requete_faite !=1
+	}                //fin du if $requete_faite !=1
 else if($selection_faite !=1)
 	{
 	////////////////////////////////////////////////////////
 	//on trie les lignes du resultat en fonction des choix//
 	////////////////////////////////////////////////////////
 	
-	$file="selection_nt_pt.txt";
+	$file="selection_Fdbq.txt";
 	$fpm2 = fopen($file, "r");
 	
 	
@@ -1389,21 +1392,23 @@ else if($selection_faite !=1)
 		reset ($_POST['trophique']);
 
 	//pour la categorie ecologique, les valeurs doivent etre une du tableau $_POST['ecologique']
-	 if (!in_array (trim($ligne_contient[62]), $_POST['ecologique']))
+	 if (!in_array ($ligne_contient[59], $_POST['ecologique']))         //Correction
+//				if  (!in_array (trim($ligne_contient[62]), $_POST['ecologique']))         //Correction
 			{
 			if ($_POST['ecologique'][100] != "null")unset($tab_ligne[$compt]);
 			}
 		//pour la categorie trophique, les valeurs doivent etre une du tableau $_POST['trophique']
-		else if (!in_array ($ligne_contient[64], $_POST['trophique']))
+		else if (!in_array ($ligne_contient[60], $_POST['trophique']))                  //Correction
 			{
 			//print ("<br><br>!!!trophique: ".$val_ligne." , ".$compt);
 			if ($_POST['trophique'][100] != "null")unset($tab_ligne[$compt]);
 			}
 		//pour les poisson
 		//if (($_POST['poisson']=="oui")&&($_POST['non_poisson']=="oui"))continue;
-		else if (($_POST['poisson']=="oui")&&($_POST['non_poisson']=="non"))
+//		else   JME 09/08
+		if (($_POST['poisson']=="oui")&&($_POST['non_poisson']=="non"))
 			{
-			if ($ligne_contient[69] != 0)
+			if ($ligne_contient[72] != 0)                  //Correction
 				{
 				//print ("<br><br>!!!non poisson : ".$val_ligne." , ".$compt);
 				unset($tab_ligne[$compt]);
@@ -1411,7 +1416,7 @@ else if($selection_faite !=1)
 			}
 		else if (($_POST['poisson']=="non")&&($_POST['non_poisson']=="oui"))
 			{
-			if ($ligne_contient[69] != 1)
+			if ($ligne_contient[72] != 1)                    //Correction
 				{
 				unset($tab_ligne[$compt]);
 				}
@@ -1515,7 +1520,7 @@ else if($selection_faite !=1)
 else if($colonnes_faites !=1) //selection espece faite
 	{
 	$colonnes_faites=1;
-	$file="selection_nt_pt.txt";
+	$file="selection_Fdbq.txt";
 	$fpm = fopen($file, "r");
 	
 	
@@ -1784,8 +1789,9 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[34]\" value=\"68\" ></td><td>cat_troph_lib</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[103]\" value=\"70\" ></td><td>famille</td>");
 	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[400]\" value=\"74\" ></td><td>ordre</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[104]\" value=\"51\" ></td><td>Fdbq_obs</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[140]\" value=\"72\" ></td><td>Poisson?</td>");	
 	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[401]\" value=\"54\" ></td><td>prix</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[104]\" value=\"51\" ></td><td>Fdbq_obs</td>");
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_fr').style.display = 'none';\">fermer</td>");
 	
 	
@@ -1798,14 +1804,14 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr></table>");
 
 	print ("<input type=hidden name=\"voir[200]\" value=\"0\">");//pour l'identifiant debarquement 
-	print ("<input type=hidden name=\"voir[500]\" value=\"47\">");//pour l'identifiant fraction
+	print ("<input type=hidden name=\"voir[500]\" value=\"48\">");//pour l'identifiant fraction
 	print ("<br><br><br><input type=\"submit\" name=\"\" value=\"    Valider    \">");
 	print ("</form></div>");
 	}
 	else
 	{
 	//////on enlève des colonnes en trop du fichier temp
-	$file="selection_nt_pt.txt";
+	$file="selection_Fdbq.txt";
 	$fpm = fopen($file, "r");
 	$nombre_ligne=0;
 	//creation du tableau $tab_ligne contenant les lignes du fichier temp
@@ -1823,7 +1829,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	$non_doublon=Array();
 	
 	//ouverture fichier pour ecriture en local
-	$file="selection_nt_pt.txt";
+	$file="selection_Fdbq.txt";
 	$fpm = fopen($file, "w+");
 	reset($tab_ligne);
 	$compt = 0;
@@ -1884,7 +1890,7 @@ else if($colonnes_faites !=1) //selection espece faite
 		
 
 //compression du fichier pour le telechargement
-$filename = './selection_nt_pt.txt';
+$filename = './selection_Fdbq.txt';
 
 // ouverture du fichier à compresser
 if($fp = fopen($filename, "rb"))
@@ -1915,8 +1921,8 @@ print ("<div align='center'><br><br><br>");
 print ("<br>La sélection représente ".($nombre_ligne -1)." lignes dans le fichier de sortie.
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 
-
-print ("<br><br><a href=\"https://localhost/extraction/selection_nt_pt.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+//print ("<br><br><a href=\"https://localhost/extraction/selection_Fdbq.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/selection_Fdbq.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
 
@@ -1944,21 +1950,10 @@ print("<div align='center'>");
 print("<Font Color =\"#333366\">");
 print("<b>Base de Données PPEAO</b><br><br>Filière sur les structures de tailles<br><br>");
 print("</div></Font>");
-
-
-
-
-if ($requete_faite != 1)		//si requete globale pas encore faite
-	{
-	$query_globale = "";
-	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	//if (!$connection) { echo "Pas de connection"; exit;}
-
-	$query_globale = " select * 
-	from ref_pays, ref_systeme, ref_secteur, 
-	art_agglomeration 
+print("<div align = center>");
+print("<br><br>09/2008<br>version 2.3 JME");                      //*** A ENLEVER
+/*
 	left join art_type_agglomeration on art_agglomeration.art_type_agglomeration_id=art_type_agglomeration.id 
-	, art_debarquement 
 	left join art_vent on art_debarquement.art_vent_id=art_vent.id 
 	left join art_etat_ciel on art_debarquement.art_etat_ciel_id=art_etat_ciel.id 
 	left join art_type_sortie on art_debarquement.art_type_sortie_id=art_type_sortie.id 
@@ -1969,26 +1964,31 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	left join art_categorie_socio_professionnelle on art_unite_peche.art_categorie_socio_professionnelle_id=art_categorie_socio_professionnelle.id)
 	on art_debarquement.art_unite_peche_id=art_unite_peche.id 
 	, art_type_engin 
-	, art_fraction 
-	left join (ref_espece 
-	left join ref_categorie_ecologique on ref_espece.ref_categorie_ecologique_id=ref_categorie_ecologique.id 
+left join ref_categorie_ecologique on ref_espece.ref_categorie_ecologique_id=ref_categorie_ecologique.id 
 	left join ref_categorie_trophique on ref_espece.ref_categorie_trophique_id=ref_categorie_trophique.id 
-	left join (ref_famille left join ref_ordre on ref_famille.ref_ordre_id=ref_ordre.id) on ref_espece.ref_famille_id=ref_famille.id 
-	)on art_fraction.ref_espece_id=ref_espece.id 
-	, art_poisson_mesure, art_debarquement_rec, art_fraction_rec, art_engin_peche 
+	
+*/
+
+if ($requete_faite != 1)		//si requete globale pas encore faite
+	{
+	$query_globale = "";
+	$query_globale = " select * 
+	from ref_pays, ref_systeme, ref_secteur, 
+	art_agglomeration 
+	, art_debarquement 
+	left join art_debarquement_rec on art_debarquement.id = art_debarquement_rec.art_debarquement_id
+	left join art_fraction 
+		left join (ref_espece 
+			left join ref_famille  on ref_espece.ref_famille_id=ref_famille.id)  on art_fraction.ref_espece_id=ref_espece.id
+		left join art_fraction_rec on art_fraction.id = art_fraction_rec.id
+		left join art_poisson_mesure on art_fraction.id=art_poisson_mesure.art_fraction_id
+		on  art_debarquement.id=art_fraction.art_debarquement_id 
+	
 	where ref_pays.id=ref_systeme.ref_pays_id 
-	
-	and art_debarquement.id=art_engin_peche.art_debarquement_id 
-	and art_engin_peche.art_type_engin_id=art_type_engin.id 
-	
 	and ref_systeme.id=ref_secteur.ref_systeme_id 
 	and ref_secteur.id=art_agglomeration.ref_secteur_id 
 	and art_agglomeration.id=art_debarquement.art_agglomeration_id 
-	
-	and art_debarquement.id=art_fraction.art_debarquement_id 
-	and art_fraction.id=art_poisson_mesure.art_fraction_id 
-	and art_debarquement.id = art_debarquement_rec.art_debarquement_id 
-	and art_fraction.id = art_fraction_rec.id ";
+	 ";
 
 	
 	$nb_campagne = count ($_POST['agglo']);
@@ -2010,13 +2010,13 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	$nb_engin = count ($_POST['engin']);
 	//print ("!!!!!!".$nb_secteur);
 	reset($_POST['engin']);
-	if ($nb_engin == 1)$query_globale .= "and art_grand_type_engin.id = '".$_POST['engin'][0]."' ";
+	if ($nb_engin == 1)$query_globale .= "and art_debarquement.art_grand_type_engin_id = '".$_POST['engin'][0]."' ";
 	else
 		{
 		$query_globale .= "and (";
 		while (list($key, $val) = each($_POST['engin']))
 			{
-			$query_globale .= "(art_grand_type_engin.id = '".$val."') or ";
+			$query_globale .= "(art_debarquement.art_grand_type_engin_id = '".$val."') or ";
 			}
 		$query_globale = substr($query_globale, 0, -3); 		//on enleve le dernier or
 		$query_globale .= ") ";
@@ -2058,8 +2058,9 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	$fpm = fopen($file, "w");
 	$i = 0;
 	$k=1;//nombre lignes
-	if($type_donnees=="brutes")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t libellé type\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t dbq_date_dep\t dbq_heure_deb\t dbq_heure\t dbq_heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t dbq_liste_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sirtie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_engin\t type_engin_lib\t fraction\t cooode\t fdbq_pt\t fdbq_nt\t fdbq_observee\t code_sp\t artdebid\t fdbq_prix\t codesp\t espece\t informationespece\t reffamilleid\t cat_ecol\t cat_troph\t coefK\t coefb\t reforiginekbid\t refespeceid\t cat_ecol\t cat_ecol_lib\t cat_troph\t cat_troph_lib\t idfamille\t famille\t refordreid\t non_poisson\t idordre\t ordre\t id_mes\t cccode\t long_lf\t art_fractionid\n";
-	if($type_donnees=="elaboree")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t libellé type\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t dbq_date_dep\t dbq_heure_deb\t dbq_heure\t dbq_heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t dbq_liste_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sirtie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_engin\t type_engin_lib\t fraction\t cooode\t fdbq_pt\t fdbq_nt\t fdbq_observee\t code_sp\t artdebid\t fdbq_prix\t codesp\t espece\t informationespece\t reffamilleid\t cat_ecol\t cat_troph\t coefK\t coefb\t reforiginekbid\t refespeceid\t cat_ecol\t cat_ecol_lib\t cat_troph\t cat_troph_lib\t idfamille\t famille\t refordreid\t non_poisson\t idordre\t ordre\t id_mes\t cccode\t long_lf\t art_fractionid\t id\t poids_total\t id\t fraction\t fdbq\t ndbq\t esp\n";
+	//if($type_donnees=="brutes")$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t libellé type\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t dbq_date_dep\t dbq_heure_deb\t dbq_heure\t dbq_heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t dbq_liste_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t vent\t vent_lib\t etat_ciel\t etat_ciel_lib\t type_sirtie\t type_sortie_lib\t milieu\t milieu_lib\t lieu_peche\t sect\t lieu_peche_lib\t cccode\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t csp\t csp_lib\t type_engin\t grd_type_engin\t type_engin_lib\t fraction\t cooode\t fdbq_pt\t fdbq_nt\t fdbq_observee\t code_sp\t artdebid\t fdbq_prix\t codesp\t espece\t informationespece\t reffamilleid\t cat_ecol\t cat_troph\t coefK\t coefb\t reforiginekbid\t refespeceid\t cat_ecol\t cat_ecol_lib\t cat_troph\t cat_troph_lib\t idfamille\t famille\t refordreid\t non_poisson\t idordre\t ordre\t id_mes\t cccode\t long_lf\t art_fractionid\n";
+	//if($type_donnees=="elaboree")
+	$intitule = "numero\tpays\tpays_lib\tsyst\tsyst_lib\trefpaysid\tsyst_surf\tidsecteur\tsect\tsect_lib\tsect_surf\trefsystemeid\tagglo\ttype_agglo\tsect\tagglo_lib\tagglo_long\tagglo_lat\tmmagglo\tiddeb\tmilieu\tvent\tetat_ciel\tagglo\tlieu_peche\tup\tgrd_type_engin\ttype_sortie\tdbq_date_dep\tdbq_heure_deb\tdbq_heure\tdbq_heure_pose_engin\tnb_coups\tdbq_pt\tglaciere\tdbq_liste_lieu_peche\tdbq_an\tdbq_mois\tmmmemo\tcccccode\tdbq_nb_hom\tdbq_nb_fem\tdbq_nb_enf\tdbq_date\tidpds_rec\tpoids_rec\tid\tid_fraction\tid_Fdbq\tfdbq_pt\tfdbq_nt\tfdbq_observee\tcode_sp\tartdebid\tfdbq_prix\tcodesp\tespece\tinformationespece\treffamilleid\tcat_ecol\tcat_troph\tcoefK\tcoefb\tOrigineKbid\trefespeceid\tidfamille\tfamille\trefordreid\tnon_poisson\tid\tfdbq_pt_rec\tfdbq_nt_rec\tesp\tid_mes\tcccode\tlong_lf\tart_fractionid\n";
 
 	fputs($fpm,$intitule);
 	$nombre_enreg = pg_num_rows($result);
@@ -2067,12 +2068,13 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	while($row = pg_fetch_row($result))
 		{
 		$contenu="";
-		$contenu.= $row[20]."\t";
+		$contenu.= $row[18]."\t";      //correction
 		
-		if($type_donnees=="brutes")$iii=103;
-		if($type_donnees=="elaboree")$iii=110;
+		//if($type_donnees=="brutes")$iii=103;
+		//if($type_donnees=="elaboree")
+		$iii=77;
 		//si $row[0]different, numero +1
-		for ($i=0; $i<$iii; $i++)	//il y a 103 champs dans la requete
+		for ($i=0; $i<$iii; $i++)	//il y a 77 champs dans la requete
 			{
 			$contenu .= trim($row[$i])."\t";
 			}
@@ -2271,22 +2273,24 @@ else if($selection_faite !=1)
 		reset ($_POST['trophique']);
 
 	//pour la categorie ecologique, les valeurs doivent etre une du tableau $_POST['ecologique']
-	 if (!in_array (trim($ligne_contient[90]), $_POST['ecologique']))
+	 	 if (!in_array ($ligne_contient[59], $_POST['ecologique']))           //Correction
+//		 if (!in_array (trim($ligne_contient[59]), $_POST['ecologique']))           //Correction
 			{
 			//print ("<br><br>!!!ecologique: ".$val_ligne." , ".$compt);
 			if ($_POST['ecologique'][100] != "null")unset($tab_ligne[$compt]);
 			}
 		//pour la categorie trophique, les valeurs doivent etre une du tableau $_POST['trophique']
-		else if (!in_array ($ligne_contient[92], $_POST['trophique']))
+		else if (!in_array ($ligne_contient[60], $_POST['trophique']))           //Correction
 			{
 			//print ("<br><br>!!!trophique: ".$val_ligne." , ".$compt);
 			if ($_POST['trophique'][100] != "null")unset($tab_ligne[$compt]);
 			}
 		//pour les poisson
 		//if (($_POST['poisson']=="oui")&&($_POST['non_poisson']=="oui"))continue;
-		else if (($_POST['poisson']=="oui")&&($_POST['non_poisson']=="non"))
+//		else 
+		if (($_POST['poisson']=="oui")&&($_POST['non_poisson']=="non"))
 			{
-			if ($ligne_contient[97] != 0)
+			if ($ligne_contient[68] != 0)                        //Correction
 				{
 				//print ("<br><br>!!!non poisson : ".$val_ligne." , ".$compt);
 				unset($tab_ligne[$compt]);
@@ -2294,7 +2298,7 @@ else if($selection_faite !=1)
 			}
 		else if (($_POST['poisson']=="non")&&($_POST['non_poisson']=="oui"))
 			{
-			if ($ligne_contient[97] != 1)
+			if ($ligne_contient[68] != 1)                      //Correction
 				{
 				//print ("<br><br>!!!poisson: ".$val_ligne." , ".$compt);
 				unset($tab_ligne[$compt]);
@@ -2328,8 +2332,8 @@ else if($selection_faite !=1)
 		{
 		$ligne_contient = Array();
 		$ligne_contient = explode ("\t",$val_ligne);
-		$espece = $ligne_contient[81];
-		$famille = $ligne_contient[95];
+		$espece = $ligne_contient[56];              // Correction
+		$famille = $ligne_contient[66];             //Correction
 		if (trim($espece) != "espece")
 			{
 			if (isset ($tab_espece[$espece])) continue;
@@ -2428,7 +2432,7 @@ else if($colonnes_faites !=1) //selection espece faite
 		reset ($_POST['espece']);
 		
 		//pour les especes, seules les valeurs de $espece contenu dans $_POST['espece'] doivent rester
-		if (!in_array ($ligne_contient[81], $_POST['espece']))
+		if (!in_array ($ligne_contient[56], $_POST['espece']))                  //Correction
 			{
 			unset($tab_ligne[$compt]);
 			}
@@ -2543,7 +2547,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	//pour les agglomerations
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>agglo_lib</td>");
 	print ("<input type=hidden name=\"voir[7]\" value=\"15\">");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[8]\" value=\"20\"></td><td>type_agglo</td>");
+	//print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[8]\" value=\"20\"></td><td>type_agglo</td>");
 	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_agglo').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 	
@@ -2561,10 +2565,10 @@ else if($colonnes_faites !=1) //selection espece faite
 <?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>grd_type_engin</td>");
-	print ("<input type=hidden name=\"voir[26]\" value=\"58\">");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[27]\" value=\"59\" ></td><td>grd_type_engin_lib</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[28]\" value=\"69\" ></td><td>type_engin</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[29]\" value=\"71\" ></td><td>type_engin_lib</td>");
+	print ("<input type=hidden name=\"voir[26]\" value=\"26\">");
+	//print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[27]\" value=\"59\" ></td><td>grd_type_engin_lib</td>");
+	//print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[28]\" value=\"69\" ></td><td>type_engin</td>");
+	//print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[29]\" value=\"71\" ></td><td>type_engin_lib</td>");
 
 	
 	
@@ -2582,16 +2586,19 @@ else if($colonnes_faites !=1) //selection espece faite
 <?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"300\">");
 	
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[9]\" value=\"45\" ></td><td>dbq_date</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[9]\" value=\"43\" ></td><td>dbq_date</td>");
 	print ("<td WIDTH=30>x</td><td>dbq_an</td>");
-	print ("<input type=hidden name=\"voir[10]\" value=\"38\">");
+	print ("<input type=hidden name=\"voir[10]\" value=\"36\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq_mois</td>");
-	print ("<input type=hidden name=\"voir[11]\" value=\"39\">");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[13]\" value=\"32\" ></td><td>dbq_heure</td>");
+	print ("<input type=hidden name=\"voir[11]\" value=\"37\">");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[13]\" value=\"30\" ></td><td>dbq_heure</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>dbq_pt</td>");
-	if($type_donnees=="brutes")print ("<input type=hidden name=\"voir[12]\" value=\"35\">");
-	if($type_donnees=="elaboree")print ("<input type=hidden name=\"voir[12]\" value=\"105\">");
-
+	//if($type_donnees=="brutes")
+	print ("<input type=hidden name=\"voir[12]\" value=\"33\">");
+	//if($type_donnees=="elaboree")
+	print ("<td WIDTH=30>x</td><td>dbq_pt_rec</td>");
+	print ("<input type=hidden name=\"voir[70]\" value=\"45\">");
+/*
 	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[13]\" value=\"34\" ></td><td>nb_coups</td>");
 	
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[16]\" value=\"42\" ></td><td>dbq_nb_hom</td>");
@@ -2611,8 +2618,7 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[123]\" value=\"47\" ></td><td>vent_lib</td>");
 	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[24]\" value=\"48\" ></td><td>etat_ciel</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[25]\" value=\"49\" ></td><td>etat_ciel_lib</td>");
-	
-	
+*/	
 	
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_cap').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
@@ -2631,39 +2637,41 @@ else if($colonnes_faites !=1) //selection espece faite
 <div id="_fr" style="display:none">
 <?php 
 	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"300\">");
-	if($type_donnees=="brutes")
-		{
+	//if($type_donnees=="brutes")
+//		{
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>fdbq_nt</td>");
-	print ("<input type=hidden name=\"voir[100]\" value=\"75\">");
+	print ("<input type=hidden name=\"voir[40]\" value=\"49\">");
 	print ("<td WIDTH=30>x</td><td>fdbq_pt</td>");
-	print ("<input type=hidden name=\"voir[101]\" value=\"74\">");
-		}
+	print ("<input type=hidden name=\"voir[41]\" value=\"50\">");
+//		}
 		
-	if($type_donnees=="elaboree")
-		{
-	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>fdbq_nt</td>");
-	print ("<input type=hidden name=\"voir[100]\" value=\"109\">");
-	print ("<td WIDTH=30>x</td><td>fdbq_pt</td>");
-	print ("<input type=hidden name=\"voir[101]\" value=\"108\">");
-		}
+	//if($type_donnees=="elaboree")
+	
+	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>fdbq_pt_rec</td>");
+	print ("<input type=hidden name=\"voir[101]\" value=\"70\">");		
+	print ("<td WIDTH=30>x</td><td>fdbq_nt_rec</td>");
+	print ("<input type=hidden name=\"voir[100]\" value=\"71\">");
+
+//		}
 	
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>code_sp</td>");
-	print ("<input type=hidden name=\"voir[30]\" value=\"80\">");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[31]\" value=\"81\" ></td><td>espece</td>");
+	print ("<input type=hidden name=\"voir[30]\" value=\"55\">");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[31]\" value=\"56\" ></td><td>espece</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>cat_ecol</td>");
-	print ("<input type=hidden name=\"voir[32]\" value=\"90\">");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[113]\" value=\"91\" ></td><td>cat_ecol_lib</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>cat_troph</td>");
-	print ("<input type=hidden name=\"voir[33]\" value=\"92\">");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[34]\" value=\"93\" ></td><td>cat_troph_lib</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[35]\" value=\"95\" ></td><td>famille</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[36]\" value=\"99\" ></td><td>ordre</td>");
+	print ("<input type=hidden name=\"voir[32]\" value=\"59\">");
+	//print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[113]\" value=\"91\" ></td><td>cat_ecol_lib</td>");
+	print ("<td WIDTH=30>x</td><td>cat_troph</td>");
+	print ("<input type=hidden name=\"voir[33]\" value=\"60\">");
+	//print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[34]\" value=\"93\" ></td><td>cat_troph_lib</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[103]\" value=\"66\" ></td><td>famille</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[36]\" value=\"51\" ></td><td>Fdbq_obs</td>");
 	
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[100]\" value=\"86\" ></td><td>coefK</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[101]\" value=\"87\" ></td><td>coefb</td>");
-	
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[50]\" value=\"60\" ></td><td>coefK</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[80]\" value=\"61\" ></td><td>coefb</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[81]\" value=\"62\" ></td><td>OrigineKb</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[82]\" value=\"63\" ></td><td>Espece_RefKb</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>long_lf</td>");
-	print ("<input type=hidden name=\"voir[37]\" value=\"102\">");
+	print ("<input type=hidden name=\"voir[37]\" value=\"75\">");
 	
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('_fr').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
@@ -2671,8 +2679,8 @@ else if($colonnes_faites !=1) //selection espece faite
 	print ("</tr></table>");
 
 	print ("<input type=hidden name=\"voir[200]\" value=\"0\">");
-	print ("<input type=hidden name=\"voir[500]\" value=\"72\">");//pour l'identifiant fraction
-	print ("<input type=hidden name=\"voir[501]\" value=\"100\">");//pour l'identifiant taille
+	print ("<input type=hidden name=\"voir[500]\" value=\"48\">");//pour l'identifiant fraction
+	print ("<input type=hidden name=\"voir[501]\" value=\"73\">");//pour l'identifiant taille
 	print ("<br><br><br><input type=\"submit\" name=\"\" value=\"    Valider    \">");
 	print ("</form></div>");
 	}
@@ -2812,8 +2820,8 @@ print("<div align='center'>");
 print("<Font Color =\"#333366\">");
 print("<b>Base de Données PPEAO</b><br><br>Filière sur les engins de pêche<br><br>");
 print("</div></Font>");
-
-
+print("<div align = center>");
+print("<br><br>09/2008<br>version 2.3 JME");                      //*** A ENLEVER
 
 
 
@@ -2908,7 +2916,7 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	$fpm = fopen($file, "w");
 	$i = 0;
 	$k=1;//nombre lignes
-	$intitule = "numero\t pays\t pays_lib\t syst\t syst_lib\t refpaysid\t syst_surf\t idsecteur\t sect\t sect_lib\t sect_surf\t refsystemeid\t agglo\t type_agglo\t sect\t agglo_lib\t agglo_long\t agglo_lat\t mmagglo\t type_agglo\t libellé type\t iddeb\t milieu\t vent\t etat_ciel\t agglo\t lieu_peche\t up\t grd_type_engin\t type_sortie\t dbq_date_dep\t dbq_heure_deb\t dbq_heure\t dbq_heure_pose_engin\t nb_coups\t dbq_pt\t glaciere\t dbq_liste_lieu_peche\t dbq_an\t dbq_mois\t mmmemo\t cccccode\t dbq_nb_hom\t dbq_nb_fem\t dbq_nb_enf\t dbq_date\t grd_type_engin\t grd_type_engin_lib\t up\t csp\t up_lib\t up_lib_menage\t cccoode\t agglo\t bbbasepays\t type_engin\t grd_type_engin\t type_engin_lib\t idengin\t engin\t engin_long\t engin_haut\t engin_nb_nap\t engin_nb\t engin_nb_effort\t engin_maille_ham\t engin_nb_ham\t engin_proprietaire\t arttypeenginid\t artdebid\n";
+	$intitule = "numero\tpays\tpays_lib\tsyst\tsyst_lib\trefpaysid\tsyst_surf\tidsecteur\tsect\tsect_lib\tsect_surf\trefsystemeid\tagglo\ttype_agglo\tsect\tagglo_lib\tagglo_long\tagglo_lat\tmmagglo\ttype_agglo\tlibellé type\tiddeb\tmilieu\tvent\tetat_ciel\tagglo\tlieu_peche\tup\tgrd_type_engin\ttype_sortie\tdbq_date_dep\tdbq_heure_deb\tdbq_heure\tdbq_heure_pose_engin\tnb_coups\tdbq_pt\tglaciere\tdbq_liste_lieu_peche\tdbq_an\tdbq_mois\tmmmemo\tcccccode\tdbq_nb_hom\tdbq_nb_fem\tdbq_nb_enf\tdbq_date\tgrd_type_engin\tgrd_type_engin_lib\tup\tcsp\tup_lib\tup_lib_menage\tcccoode\tagglo\tbbbasepays\ttype_engin\tgrd_type_engin\ttype_engin_lib\tidengin\tengin\tengin_long\tengin_haut\tengin_nb_nap\tengin_nb\tengin_nb_effort\tengin_maille_ham\tengin_nb_ham\tengin_proprietaire\tarttypeenginid\tartdebid\n";
 	fputs($fpm,$intitule);
 	$nombre_enreg = pg_num_rows($result);
 	
@@ -3075,21 +3083,21 @@ if ($requete_faite != 1)		//si requete globale pas encore faite
 	
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>up</td>");
 	print ("<input type=hidden name=\"voir[13]\" value=\"27\">");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[14]\" value=\"50\" ></td><td>up_lib</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[14]\" value=\"50\" ></td><td>up_lib</td>");
 
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[15]\" value=\"51\" ></td><td>up_lib_menage</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[16]\" value=\"46\" ></td><td>grd_type_engin</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[17]\" value=\"47\" ></td><td>grd_type_engin_lib</td>");
-	print ("<td WIDTH=30>x</td><td>type_engin</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[15]\" value=\"51\" ></td><td>up_lib_menage</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[16]\" value=\"46\" ></td><td>grd_type_engin</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[17]\" value=\"47\" ></td><td>grd_type_engin_lib</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>type_engin</td>");
 	print ("<input type=hidden name=\"voir[18]\" value=\"55\">");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[19]\" value=\"57\" ></td><td>type_engin_lib</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[20]\" value=\"60\" ></td><td>engin_long</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[21]\" value=\"61\" ></td><td>engin_haut</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[22]\" value=\"62\" ></td><td>engin_nb_nap</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[23]\" value=\"63\" ></td><td>engin_nb</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[24]\" value=\"64\" ></td><td>engin_nb_effort</td>");
-	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[25]\" value=\"65\" ></td><td>engin_maille_ham</td>");
-	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[26]\" value=\"67\" ></td><td>engin_proprietaire</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[19]\" value=\"57\" ></td><td>type_engin_lib</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[20]\" value=\"60\" ></td><td>engin_long</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[21]\" value=\"61\" ></td><td>engin_haut</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[22]\" value=\"62\" ></td><td>engin_nb_nap</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[23]\" value=\"63\" ></td><td>engin_nb</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[24]\" value=\"64\" ></td><td>engin_nb_effort</td>");
+	print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[25]\" value=\"65\" ></td><td>engin_maille_ham</td>");
+	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[26]\" value=\"67\" ></td><td>engin_proprietaire</td>");
 	print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_engin').style.display = 'none';\">fermer</td>");
 	
 	print ("</tr></table>");
