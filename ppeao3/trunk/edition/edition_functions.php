@@ -56,6 +56,8 @@ function createSelector($page) {
 	$selectedParentValues=$_GET[$parentTable];
 	$tablesList=explode(",",$selectorCascades[$targetTable]);
 	$whereClause=NULL;
+	$theType=$_GET["type"];
+	$editTable=$_GET["editTable"];
 
 
 
@@ -69,7 +71,8 @@ switch ($theType) {
 	default: $theTypeString="";
 	break;
 		}
-echo(' : table '.$theTypeString.' "'.$tablesDefinitions[$targetTable]["label"].'" <span class="showHide"><a href="" id="showHideSelect"></a></span></h1>');
+if ($page=='edition') {$theSelectedTable=$tablesDefinitions[$editTable]["label"];} else {$theSelectedTable=$tablesDefinitions[$targetTable]["label"];;}
+echo(' : table '.$theTypeString.' "'.$theSelectedTable.'" <span class="showHide"><a href="" id="showHideSelect"></a></span></h1>');
 
 	
 // le sélecteur	
@@ -217,9 +220,257 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 			echo('<div id="select_'.$level.'" name="select_'.$level.'"></div>');	
 			}
 	
+}
+
+
+//******************************************************************************
+// retourne l'alias dans la variable de config $tablesDefinitions de la table $tableName (nom dans la base)
+function getTableAliasFromName($tableName) {
+	global $tablesDefinitions;
+	$tableAlias='';
+	foreach ($tablesDefinitions as $key=>$value) {
+		if ($value["table"]==$tableName) {$tableAlias=$key;}
+	}
+	return $tableAlias;
 	
-	
-	
+}
+
+
+//******************************************************************************
+// affiche un champ de formulaire permettant d'éditer un champ d'une table
+function makeField($cDetails,$table,$column,$value,$action) {
+// $cDetails : tableau retourné par la fonction getTableColumnsDetails()
+// table : la table concernée (identifiant de la table dans la variable $tablesDefinitions de edition_config.inc)
+// $column : la colonne concernée
+// $value : la valeur du champ de la colonne concernée
+// $ action : 'edit=xxx' pour créer un champ éditable de l'enregistrement xxx, 'filter' pour un champ de filtre
+
+// la connection à la base
+global $connectPPEAO;
+global $tablesDefinitions;
+global $theUrl;
+
+// la longueur (et longueur max) par défaut des champs INPUT de type TEXT
+$defaultTextInputLength=15;
+$defaultTextInputMaxLength=30;
+// nombre de rows par défaut des <textarea>
+$defaultTextRows=5;
+
+if (substringBefore($action,'=')=='edit') {$editRow=substringAfter($action,'=');$action='edit';}
+
+// valeur à utiliser comme ID, NAME et CLASS des champs de formulaire, selon que l'on édite ou filtre
+if ($action=='filter') {
+	$theClass="filterField";
+	$theId='f_'.$column;
+	} 
+	else {
+		$action=substringBefore($action,'=');
+		$theClass="editableField";
+		$theId=$column.'_'.substringAfter($action,'=');
+		}
+
+// variable dans laquelle on stocke ce qui doit être affiché
+$theField='';
+
+$theDetails=$cDetails[$column];
+	// si la colonne concernée a une contrainte
+	if (!empty($theDetails["constraints"])) {
+		//debug		echo('contrainte');
+		
+		// on teste le type de contrainte
+		$theConstraint=current($theDetails["constraints"]);
+		//debug print_r($theConstraint);
+		switch ($theConstraint["constraint_type"]) {
+		
+			// cas d'une clé primaire
+			case 'PRIMARY KEY' : 
+				// les clés primaires ne sont pas éditables mais filtrables
+				switch ($action) {
+					
+					case 'filter':
+						if (!empty($theDetails["character_maximum_length"])) {
+							$maxLength=$theDetails["character_maximum_length"];}
+						else {
+							$length=$defaultTextInputLength;
+							$maxLength=$defaultTextInputLength;
+							}
+						$theField='<input type="text" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onkeydown="javascript:filterTableOnEnter(\''.$theUrl.'\')"></input>';;
+					break;
+
+					case 'display':
+						 // on modifie la classe du champ non éditable
+						$theClass='nonEditableField';
+						$theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</span>';
+					break;
+
+					case 'edit' : // on modifie la classe du champ non éditable
+					$theClass='nonEditableField';
+					$theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</span>';
+					break;
+
+				} // end switch $action
+				;
+			break; // end case 'PRIMARY KEY'
+			
+			// cas d'une énumération : on construit un <SELECT> avec les valeurs de l'énumération
+			case 'ENUM':
+				$theOptions=explode(",", $theConstraint["check_clause"]);
+				
+				switch ($action) {
+						case 'filter':
+						$theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onchange="javascript:filterTable(\''.$theUrl.'\');">';
+							// on ajoute une valeur "vide"
+								$theField.='<option value="" '.$selected.'>-</option>';
+							foreach($theOptions as $theOption) {
+								// on selectionne eventuellement l'option correspondant à la valeur courante du champ
+								if ($theOption==$value) {$selected='selected="selected"';} else {$selected='';}
+								$theField.='<option value='.$theOption.' '.$selected.'>'.$theOption.'</option>';
+								}
+						$theField.='</select>';
+					break;
+					case 'display' : $theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</span>';
+					break;
+					case 'edit': $theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
+						// on ajoute une valeur "vide"
+							$theField.='<option value="" '.$selected.'>-</option>';
+						foreach($theOptions as $theOption) {
+							// on selectionne eventuellement l'option correspondant à la valeur courante du champ
+							if ($theOption==$value) {$selected='selected="selected"';} else {$selected='';}
+							$theField.='<option value='.$theOption.' '.$selected.'>'.$theOption.'</option>';
+							}
+					$theField.='</select>';;
+					break;
+					
+				}// end switch $action
+				;
+			break;
+			
+			// cas d'une clé étrangère : on construit un <SELECT> avec les valeurs de la table/colonne référencée
+			case 'FOREIGN KEY':
+				
+				switch ($action) {
+					//******* A FAIRE : il faut récuperer le LABEL de la clé étrangère en cas de DISPLAY
+					case 'display':
+					
+					// on recupere la valeurs de la clé etrangere -> on utilise la table indiquée dans $cDetails
+					$theFtable=$theConstraint["references_table"];
+					$theFtableAlias=getTableAliasFromName($theFtable);
+					$theFKeys=$tablesDefinitions[$theFtableAlias]["id_col"];
+					$theFValues=$tablesDefinitions[$theFtableAlias]["noms_col"];
+
+					$sqlFValue='SELECT '.$theFValues.'
+								FROM '.$theFtable.'
+								WHERE '.$theFKeys.'=\''.$value.'\' 
+								ORDER BY '.$theFValues;
+					$resultFvalue=pg_query($connectPPEAO,$sqlFValue) or die('erreur dans la requete : '.$sqlFValue. pg_last_error());
+					$fValue=pg_fetch_all($resultFvalue);
+					pg_free_result($resultFvalue);
+										
+					$theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$fValue[0]["libelle"].'</span>';
+					break;
+
+					case 'edit': 
+					case 'filter':
+						// on recupere les valeurs de la clé etrangere -> on utilise la table indiquée dans $cDetails
+						$theFtable=$theConstraint["references_table"];
+						$theFtableAlias=getTableAliasFromName($theFtable);
+						$theFKeys=$tablesDefinitions[$theFtableAlias]["id_col"];
+						$theFValues=$tablesDefinitions[$theFtableAlias]["noms_col"];
+
+						$sqlFkey='SELECT '.$theFKeys.', '.$theFValues.'
+									FROM '.$theFtable.'
+									WHERE TRUE
+									ORDER BY '.$theFValues;
+						$resultFkey=pg_query($connectPPEAO,$sqlFkey) or die('erreur dans la requete : '.$sqlFkey. pg_last_error());
+						$fKeys=pg_fetch_all($resultFkey);
+						pg_free_result($resultFkey);
+
+						if ($action=='filter')
+							{$onAction='onchange="javascript:filterTable(\''.$theUrl.'\');"';} 
+							else {
+							$onAction='';}
+						$theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" '.$onAction.'>';
+						// on ajoute une valeur "vide"
+						$theField.='<option value="" '.$selected.'>-</option>';
+						foreach ($fKeys as $fKey) {
+							if ($fKey[$theFKeys]==$value) {$selected='selected="selected"';} else {$selected='';}
+							$theField.='<option value='.$fKey[$theFKeys].' '.$selected.'>'.$fKey[$theFValues].'</option>';
+						}
+						$theField.='</select>';
+					break;
+
+				}
+				;
+			break;
+		
+		}// end switch constraint_type
+	}
+	// si la colonne n'a pas de contrainte
+	else {
+		// si c'est pour le filtre
+		
+		if ($action=='filter') {
+			if (!empty($theDetails["character_maximum_length"])) {
+				$maxLength=$theDetails["character_maximum_length"];}
+			else {
+				$length=$defaultTextInputLength;
+				$maxLength=$defaultTextInputMaxLength;
+				}
+				
+		switch ($action) {
+
+			case 'display': $theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</span>';
+			break;
+
+
+			case 'filter': 	$theField='<input type="text" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input>';
+			break;
+			
+			case 'edit' :
+				// pour l'édition, on doit prendre en compte la longueur du champ et si il est de type TEXT
+				// type text : on affiche une <textarea> sans limite de taille
+				if ($theDetails["data_type"]=='text') {$theType='textarea';$theMaxLength='';}
+				// autres types avec un character_maximum_length > valeur par défaut : on affiche une <textarea> avec limite de taille 
+				if ($theDetails["character_maximum_length"]>$defaultTextInputMaxLength) {
+					$theType='textarea';$theMaxLength=$theDetails["character_maximum_length"];
+					}
+				// autres types avec un character_maximum_length <= valeur par défaut : on affiche un <inpu type=text>
+				if ($theDetails["character_maximum_length"]<=$defaultTextInputMaxLength) {
+					$theType='input';$theMaxLength=$theDetails["character_maximum_length"];
+				}
+
+				// on affiche une <textarea>
+				if ($theType=='textarea') {
+
+					// si on a une longueur maximale autorisée pour la <textarea>, on ajoute le javascript de controle
+					// (il est impossible de limiter le contenu d'une <textarea> en HTML)
+					if (!empty($theMaxLength)) {
+						$args='$(\''.$theId.'\'),$(\''.$theId.'_counter\'),'.$theMaxLength.'';
+						$theLengthLimitation='onKeyDown="fieldTextLimiter('.$args.')" onKeyUp="fieldTextLimiter('.$args.')"  onFocus="fieldTextLimiter('.$args.')" onBlur="fieldTextLimiter('.$args.')"';
+						$textRows=round($theMaxLength/$defaultTextInputMaxLength)+1;}
+					else {$theLengthLimitation='';$textRows=$defaultTextRows;}
+					
+					$theField='<textarea id="'.$theId.'" name="'.$theId.'" 
+					cols="'.$defaultTextInputMaxLength.'" rows="'.$textRows.'" '.$theLengthLimitation.'  '.$onAction.'>'.$value.'</textarea>
+					<span id="'.$theId.'_counter" class="small"></span>';
+
+			} // end if textarea
+
+
+				// on affiche un <input>
+				if ($theType=='input') {
+					$theField='<input type="text" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
+				} // end if input
+			break;
+				}
+				
+			
+			} // end switch $action
+			
+		}
+
+return $theField;
+
 }
 
 ?>

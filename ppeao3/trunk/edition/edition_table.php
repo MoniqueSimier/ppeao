@@ -27,7 +27,8 @@ $zone=2; // zone edition (voir table admin_zones)
 				// note: the onComplete is there to set an automatic height to the wrapper div
 				var selectorSlide = new Fx.Slide('selector_content',{duration: 500, mode: 'vertical', onComplete: function(){if(this.wrapper.offsetHeight != 0) this.wrapper.setStyle('height', 'auto');}});
 				// when the result page loads, the selector is displayed, then it slides out and is hidden
-				selectorSlide.slideOut.delay(500, selectorSlide);
+				//selectorSlide.slideOut.delay(500, selectorSlide);
+				selectorSlide.hide();
 				//since the selector hides away, display a "show" link
 				$('showHideSelect').innerHTML='[afficher la s&eacute;lection]';
 				// when the user clicks on the hide/show button, the slider's visibility is toggled
@@ -44,6 +45,7 @@ $zone=2; // zone edition (voir table admin_zones)
 		
 /* ]]> */
 </script>
+
 
 </head>
 
@@ -72,7 +74,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 <?php
 	// insertion du sélecteur, en mode "page de selection"
-	createSelector("selection");
+	createSelector("edition");
 ?>
 </div> <!-- end div selector_container -->
 
@@ -82,11 +84,37 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 <?php
 
 $editTable=$_GET["editTable"];
+
+// on compile les informations sur les colonnes de la table $editTable
+$cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["table"]);
+
+/*debug
+echo('<pre>');
+print_r($cDetails);
+echo('</pre>');*/
+
+// si on a sélectionné des valeurs particulières à éditer
 if (isset($_GET[$editTable])) {
 	$theTableValues=implode($_GET[$editTable],"','");
 	$whereClause=' AND '.$tablesDefinitions[$editTable]["id_col"].' IN (\''.$theTableValues.'\') ';
 	}
 	else {$whereClause=NULL;}
+	// si on a filtré les valeurs à afficher/éditer : on ajoute les valeurs du filtre à la clause WHERE
+	// note : on compare les valeurs en les passant en minuscules, afin de contourner la sensibilité à la casse
+	// des requêtes SQL
+		foreach ($cDetails as $key=>$value) {
+			if (isset($_GET['f_'.$key]) && !empty($_GET['f_'.$key])) {
+				// si la valeur passée est un nombre, on fait un =
+				if (is_numeric($_GET['f_'.$key]) ) {
+					$whereClause.=' AND '.$key.' = '.$_GET['f_'.$key].'';}
+				// si la valeur passée n'est pas nombre on fait un LIKE '%%'
+				else {
+					$whereClause.=' AND lower('.$key.') LIKE \'%'.strtolower($_GET['f_'.$key]).'%\'';}
+
+			}// end if isset
+		} // en foreach $cDetails
+
+
 	
 // on construit la requête SQL pour obtenir le nombre total de valeurs de la table à afficher
 $countSql='	SELECT COUNT(*) FROM '.$tablesDefinitions[$editTable]["table"].'
@@ -122,8 +150,8 @@ $countTotal=$countRow[0];
     $startRow = ($currentPage * $rowsPerPage - $rowsPerPage);
 
 
-// on construit la requête SQL pour obtenir les valeurs de la table à afficher
-
+// on construit la requête SQL pour obtenir les valeurs de la table à afficher si il y en a
+if ($countTotal!=0) {
 $tableSql='	SELECT * FROM '.$tablesDefinitions[$editTable]["table"].'
 				WHERE  TRUE '.$whereClause.' 
 				ORDER BY '.$tablesDefinitions[$editTable]["id_col"].'
@@ -134,7 +162,7 @@ $tableResult=pg_query($connectPPEAO,$tableSql) or die('erreur dans la requete : 
 $tableArray=pg_fetch_all($tableResult);
 
 // libération du résultat
-pg_free_result($tableResult);
+pg_free_result($tableResult);}
 
 
 // on prépare l'affichage du titre
@@ -151,32 +179,64 @@ if ($countTotal>$rowsPerPage) {
 <h1>votre s&eacute;lection : <?php echo($countTotal.' '.$tablesDefinitions[$editTable]["label"].$paginationString);?></h1>
 <?php 
 // on affiche la table
+echo('<form id="the_table_form" name="the_table_form" action="/edition/edition_table.php">');
 
 echo('<table id="la_table" border="0" cellspacing="0" cellpadding="5">');
 
 // on affiche l'en-tête de table
-$theHeads=array_keys($tableArray[0]);
+$theHeads=array_keys($cDetails);
+$numberOfColumns=count($theHeads);
+
 echo('<tr>');
 foreach ($theHeads as $oneHead) {echo('<td class="small" style="font-weight:bold;">'.$oneHead.'</td>');}
-echo('<td class="small">action</td>');
+echo('<td class="small"><a href="#" id="show_filter">&nbsp;</a></td>');
 echo('</tr>');
 
-$i=0;
-foreach ($tableArray as $theRow) {
-	// affiche la ligne avec un style différent si c'est un rang pair ou impair 
-	if ( $i&1 ) {$rowStyle='edit_row_odd';} else {$rowStyle='edit_row_even';}
-	echo('<tr id="row_'.$theRow["id"].'" class="'.$rowStyle.'">');
-		foreach ($theRow as $theColumn) {
-			echo('<td class="'.$rowStyle.' small">');
-			echo($theColumn);
-			echo('</td>');
-		}
-	// la colonne d'outils
-	echo('<td><a href="" class="small link_button">supprimer</a></td>');
-	echo('</tr>');
-	$i++;
+// la ligne contenant le filtre
+echo('<tr id="the_filter">');
+	
+	// le lien permettant de filtrer
+	// on commence par "nettoyer" l'url courante
+	$theUrl=removeQueryStringParam($_SERVER['FULL_URL'], "page");
+	
+foreach ($theHeads as $oneHead) {
+	// on enlève de l'url le paramètre de filtre correspondant à la colonne courante
+	$theUrl=removeQueryStringParam($theUrl, 'f_'.$oneHead);
+	$theFilterValue='';
+	// on prépare la valeur de l'input du filtre pour la colonne courante
+	if (isset($_GET['f_'.$oneHead]) && !is_null($_GET['f_'.$oneHead])) {$theFilterValue=$_GET['f_'.$oneHead];} else {$theFilterValue='';}
+	echo('<td class="small">'.makeField($cDetails,$editTable,$oneHead,$theFilterValue,'filter').'</td>');
+	}
+	
+//debug echo($theUrl);
+
+echo('<td class="small"><a href="#" onclick="javascript:filterTable(\''.$theUrl.'\');" class="small link_button">&gt;&gt;filtrer</a></td>');
+
+echo('</tr>'); // fin de la ligne de filtre
+
+// on affiche les résultats si il y en a
+if ($countTotal!=0) {
+	$i=0;
+	foreach ($tableArray as $theRow) {
+		// affiche la ligne avec un style différent si c'est un rang pair ou impair 
+		if ( $i&1 ) {$rowStyle='edit_row_odd';} else {$rowStyle='edit_row_even';}
+		echo('<tr id="row_'.$theRow["id"].'" class="'.$rowStyle.'">');
+			foreach ($theRow as $theColumn) {
+				echo('<td class="'.$rowStyle.' small">');
+				echo($theColumn);
+				echo('</td>');
+			}
+		// la colonne d'outils
+		echo('<td><a href="" class="small link_button">supprimer</a></td>');
+		echo('</tr>');
+		$i++;
+	} // end foreach $tableArray
+} // end if ($countTotal!=0)
+else {
+	echo('<tr><td colspan="'.count($theHeads).'">aucun r&eacute;sultat correspondant &agrave; ce filtre</td></tr>');
 }
 echo('</table>');
+echo('</form>');
 
 // on affiche la pagination
 echo paginate($_SERVER['PHP_SELF'].'?'.removeQueryStringParam($_SERVER['QUERY_STRING'],'page'), '&amp;page=', $countPages, $currentPage);

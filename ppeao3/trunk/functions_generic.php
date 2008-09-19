@@ -2,6 +2,30 @@
 
 // VARIOUS UTILITIES USED IN OTHER SCRIPTS
 
+
+//***************************************************************************************************
+// stocke l'URL complète de la page courante dans le tableau de variables superglobales
+function storeUrl() {
+	
+	$_SERVER['FULL_URL'] = 'http';
+	$script_name = '';
+	if(isset($_SERVER['REQUEST_URI'])) {
+	    $script_name = $_SERVER['REQUEST_URI'];
+	} else {
+	    $script_name = $_SERVER['PHP_SELF'];
+	    if($_SERVER['QUERY_STRING']>' ') {
+	        $script_name .=  '?'.$_SERVER['QUERY_STRING'];
+	    }
+	}
+	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on') {
+	    $_SERVER['FULL_URL'] .=  's';
+	}
+	$_SERVER['FULL_URL'] .=  '://';
+	$_SERVER['FULL_URL'] .=  $_SERVER['HTTP_HOST'].$script_name;
+	
+}
+
+
 //***************************************************************************************************
 //returns a human-readable file size
 function readableFileSize($file_size)
@@ -230,6 +254,16 @@ return $newDate;
 function substringAfter($haystack, $needle)
 {
 $result=substr(strchr($haystack,$needle),1);
+if ($result=='') {$result=$haystack;}
+return $result;
+}
+
+//***************************************************************************************************
+// does a substring to the left of $haystack after a certain string $needle
+function substringBefore($haystack,$needle)
+{
+$explode=explode($needle,$haystack);
+$result=$explode[0];
 if ($result=='') {$result=$haystack;}
 return $result;
 }

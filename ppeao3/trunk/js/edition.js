@@ -201,4 +201,62 @@ function toggleSelect(level,select,what) {
 	showNewLevel(theLevel,select);
 }
 
+/**
+* Fonction qui permet de filtrer la table à éditer
+*/
+function filterTable(theUrl) {
+	// the Url : l'URL de la page courante (sans les paramètres de pagination ou de filtre)
+	// cette fonction retourne une Url composée de theUrl et des paramètres de filtre, et redirige la page courante
+	// vers cette Url
+	
+	// l'URL de redirection
+	var newUrl=theUrl;
+	//debug 	alert(newUrl);
+	
+	// on sélectionne tous les champs du filtre 
+	var theParams=$('la_table').getElements('.filterField');
+		
+	// pour chaque champ, si une valeur non nulle est sélectionnée, on l'ajoute à l'url newUrl
+	
+	var ln=theParams.length;
+	for (var i=0; i<ln; i++) {
+		// si on a affaire à un input
+		theElement=theParams[i];
+		//debug alert(theElement.nodeName);
+		if (theParams[i].nodeName=='INPUT') {
+			if (theParams[i].value!='') {newUrl+='&'+theParams[i].name+'='+theParams[i].value;}
+		}
+		//si on a affaire à un select
+		if (theParams[i].nodeName=='SELECT') {
+			if (theParams[i].selectedIndex!=0) {newUrl+='&'+theParams[i].name+'='+theParams[i].value;}
+		}
+	}
+	
+	//debug 	alert(newUrl);
+	document.location=newUrl;
+	
+}
+/**
+* Cette fonction déclenche filterTable() lorsque l'utilisateur appuie sur la touche ENTER
+*/
+function filterTableOnEnter(theUrl) {
+// permet de déclencher le filtrage de la table quand l'utilisateur entre une valeur dans un <input text> et appuie sur ENTER
+	if(event.keyCode == 13) {filterTable(theUrl);}
+}
 
+
+/**
+* Fonction permettant de limiter le nombre de caractères saisis dans un élément TEXTAREA
+*/
+
+function fieldTextLimiter(field,cntspan,maxlimit) {
+// field : le champ de formulaire à controler
+// cntspan : le <span> dans lequel on affiche le compteur de caractères restants
+// maxlimit : le nombre maximum de caractères 
+if (field.value.length > maxlimit) // si c'est trop long, on coupe!
+field.value = field.value.substring(0, maxlimit);
+// sinon on met à jour le compteur de caractères restants
+else 
+cntspan.innerHTML = (maxlimit - field.value.length)+' caract&egrave;res restants';
+
+}

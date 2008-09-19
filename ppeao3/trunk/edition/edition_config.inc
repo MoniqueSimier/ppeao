@@ -101,9 +101,9 @@ $tablesDefinitions=Array(
 // par exemple, si l'on veut éditer la table "espece" il faudra d'abord sélectionner des valeurs dans
 // les tables ordre puis famille
 $selectorCascades=Array(	
-"pays"=>"pays,systeme,secteur",
-"systeme"=>"pays,systeme,secteur",
-"secteur"=>"pays,systeme,secteur",
+"pays"=>"pays,systeme,secteur,station",
+"systeme"=>"pays,systeme,secteur,station",
+"secteur"=>"pays,systeme,secteur,station",
 "ordre"=>"ordre,famille,espece",
 "famille"=>"ordre,famille,espece",
 "espece"=>"ordre,famille,espece",
@@ -112,7 +112,7 @@ $selectorCascades=Array(
 "originekb"=>"originekb,espece",
 "station"=>"pays,systeme,secteur,station",
 "grand_type_engin"=>"grand_type_engin,type_engin",
+"type_engin"=>"grand_type_engintype_engin",
 "type_agglomeration"=>"type_agglomeration,agglomeration",
-"agglomeration"=>"pays,systeme,secteur",
-"type_engin"=>"grand_type_engin,type_engin")
+"agglomeration"=>"type_agglomeration,agglomeration")
 ?>
