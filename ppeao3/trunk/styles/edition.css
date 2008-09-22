@@ -95,6 +95,9 @@ background-color:	#E6E6E6;
 
 }
 
+td.tools {
+text-align:right;
+}
 
 .filterField {
 font-size:9px;

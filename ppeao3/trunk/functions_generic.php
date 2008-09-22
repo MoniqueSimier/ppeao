@@ -21,7 +21,10 @@ function storeUrl() {
 	    $_SERVER['FULL_URL'] .=  's';
 	}
 	$_SERVER['FULL_URL'] .=  '://';
-	$_SERVER['FULL_URL'] .=  $_SERVER['HTTP_HOST'].$script_name;
+	
+	if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {$theHost=$_SERVER['HTTP_X_FORWARDED_HOST'];} else {$theHost=$_SERVER['HTTP_HOST'];}
+	
+	$_SERVER['FULL_URL'] .=  $theHost.$script_name;
 	
 }
 

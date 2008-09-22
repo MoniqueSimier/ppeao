@@ -203,7 +203,7 @@ echo('<table id="la_table" border="0" cellspacing="0" cellpadding="5">');
 
 // on affiche l'en-tête de table (avec les liens de tri)
 echo('<tr>');
-echo('<td class="small"><a href="#" id="show_filter">&nbsp;</a></td>');
+echo('<td class="small tools">trier &gt;&gt;</td>');
 foreach ($theHeads as $oneHead) {
 	// on construit l'URL de tri
 	$sortUrl=replaceQueryParam ($_SERVER['FULL_URL'],"s_key",$oneHead);
@@ -228,7 +228,7 @@ echo('<tr id="the_filter">');
 	// on commence par "nettoyer" l'url courante
 	$filterUrl=removeQueryStringParam($_SERVER['FULL_URL'], "page");
 
-echo('<td class="small"><a href="#" onclick="javascript:filterTable(\''.$filterUrl.'\');" class="small link_button">&gt;&gt;filtrer</a></td>');
+echo('<td class="small tools"><a href="#" onclick="javascript:filterTable(\''.$filterUrl.'\');" class="small link_button">filtrer&gt;&gt;</a></td>');
 	
 foreach ($theHeads as $oneHead) {
 	// on enlève de l'url le paramètre de filtre correspondant à la colonne courante

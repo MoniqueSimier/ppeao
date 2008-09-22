@@ -294,7 +294,7 @@ $theDetails=$cDetails[$column];
 							$length=$defaultTextInputLength;
 							$maxLength=$defaultTextInputLength;
 							}
-						$theField='<input type="text" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onkeydown="javascript:filterTableOnEnter(\''.$theUrl.'\')"></input>';;
+						$theField='<input type="text"  title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onkeydown="javascript:filterTableOnEnter(\''.$theUrl.'\')"></input>';;
 					break;
 
 					case 'display':
@@ -421,7 +421,7 @@ $theDetails=$cDetails[$column];
 			case 'display': $theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</span>';
 			break;
 
-			case 'filter': 	$theField='<input type="text" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input>';
+			case 'filter': 	$theField='<input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input>';
 			break;
 			
 			case 'edit' :
@@ -457,7 +457,7 @@ $theDetails=$cDetails[$column];
 
 				// on affiche un <input>
 				if ($theType=='input') {
-					$theField='<input type="text" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
+					$theField='<input title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
 				} // end if input
 			break;
 				}
