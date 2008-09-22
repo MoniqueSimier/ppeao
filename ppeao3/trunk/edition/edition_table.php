@@ -87,10 +87,14 @@ $editTable=$_GET["editTable"];
 
 // on compile les informations sur les colonnes de la table $editTable
 $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["table"]);
+// la liste des colonnes concernées
+$theHeads=array_keys($cDetails);
+// et leur nombre
+$numberOfColumns=count($theHeads);
 
 /*debug
 echo('<pre>');
-print_r($cDetails);
+print_r($theHeads);
 echo('</pre>');*/
 
 // si on a sélectionné des valeurs particulières à éditer
@@ -114,7 +118,20 @@ if (isset($_GET[$editTable])) {
 			}// end if isset
 		} // en foreach $cDetails
 
-
+// si on a trié la table sur une clé
+// on construit la clause SQL de tri
+	if (isset($_GET["s_key"]) && in_array($_GET["s_key"],$theHeads)) {
+		$s_key=$_GET["s_key"];
+		$orderClause='ORDER BY '.$_GET["s_key"];
+		if ($_GET["s_dir"]=='d') {$orderClause.=' DESC'; $s_dir='d';} else {$orderClause.=' ASC'; $s_dir='u';}
+	}
+	// sinon on trie par défaut sur la colonne de "libellé"
+	else {
+		$s_key=$tablesDefinitions[$editTable]["noms_col"];
+		$orderClause='ORDER BY '.$tablesDefinitions[$editTable]["noms_col"].' ';
+		$s_dir='u';
+	}
+	//debug	echo($s_dir);
 	
 // on construit la requête SQL pour obtenir le nombre total de valeurs de la table à afficher
 $countSql='	SELECT COUNT(*) FROM '.$tablesDefinitions[$editTable]["table"].'
@@ -154,8 +171,9 @@ $countTotal=$countRow[0];
 if ($countTotal!=0) {
 $tableSql='	SELECT * FROM '.$tablesDefinitions[$editTable]["table"].'
 				WHERE  TRUE '.$whereClause.' 
-				ORDER BY '.$tablesDefinitions[$editTable]["id_col"].'
-				LIMIT '.$rowsPerPage.' OFFSET '.$startRow.'  
+				'.$orderClause.' 
+				LIMIT '.$rowsPerPage.' OFFSET '.$startRow.' 
+				 
 			';
 
 $tableResult=pg_query($connectPPEAO,$tableSql) or die('erreur dans la requete : '.$tableSql. pg_last_error());
@@ -183,13 +201,24 @@ echo('<form id="the_table_form" name="the_table_form" action="/edition/edition_t
 
 echo('<table id="la_table" border="0" cellspacing="0" cellpadding="5">');
 
-// on affiche l'en-tête de table
-$theHeads=array_keys($cDetails);
-$numberOfColumns=count($theHeads);
-
+// on affiche l'en-tête de table (avec les liens de tri)
 echo('<tr>');
-foreach ($theHeads as $oneHead) {echo('<td class="small" style="font-weight:bold;">'.$oneHead.'</td>');}
 echo('<td class="small"><a href="#" id="show_filter">&nbsp;</a></td>');
+foreach ($theHeads as $oneHead) {
+	// on construit l'URL de tri
+	$sortUrl=replaceQueryParam ($_SERVER['FULL_URL'],"s_key",$oneHead);
+
+
+	// si l'on est sur la colonne de tri, on détermine l'ordre inverse de l'ordre courant et on définit une classe CSS particulière
+	if ($s_key==$oneHead) {
+		$c_sort_class='c_sorted';
+		if ($s_dir=='u' || $s_dir=='') {$newSortDir='d';} else {$newSortDir='u';}
+	}
+	else {$newSortDir='u'; $c_sort_class='c_unsorted';} 
+	$sortUrl=replaceQueryParam ($sortUrl,"s_dir",$newSortDir);
+
+	echo('<td class="small"><a href="'.$sortUrl.'" id="'.$c_sort_id.'" name="'.$c_sort_id.'" class="'.$c_sort_class.'">'.$oneHead.'</a></td>');
+} // end foreach $theHeads
 echo('</tr>');
 
 // la ligne contenant le filtre
@@ -197,37 +226,38 @@ echo('<tr id="the_filter">');
 	
 	// le lien permettant de filtrer
 	// on commence par "nettoyer" l'url courante
-	$theUrl=removeQueryStringParam($_SERVER['FULL_URL'], "page");
+	$filterUrl=removeQueryStringParam($_SERVER['FULL_URL'], "page");
+
+echo('<td class="small"><a href="#" onclick="javascript:filterTable(\''.$filterUrl.'\');" class="small link_button">&gt;&gt;filtrer</a></td>');
 	
 foreach ($theHeads as $oneHead) {
 	// on enlève de l'url le paramètre de filtre correspondant à la colonne courante
-	$theUrl=removeQueryStringParam($theUrl, 'f_'.$oneHead);
+	$filterUrl=removeQueryStringParam($_SERVER['FULL_URL'], 'f_'.$oneHead);
 	$theFilterValue='';
 	// on prépare la valeur de l'input du filtre pour la colonne courante
 	if (isset($_GET['f_'.$oneHead]) && !is_null($_GET['f_'.$oneHead])) {$theFilterValue=$_GET['f_'.$oneHead];} else {$theFilterValue='';}
-	echo('<td class="small">'.makeField($cDetails,$editTable,$oneHead,$theFilterValue,'filter').'</td>');
+	echo('<td class="small">'.makeField($cDetails,$editTable,$oneHead,$theFilterValue,'filter',$filterUrl).'</td>');
 	}
 	
-//debug echo($theUrl);
 
-echo('<td class="small"><a href="#" onclick="javascript:filterTable(\''.$theUrl.'\');" class="small link_button">&gt;&gt;filtrer</a></td>');
 
 echo('</tr>'); // fin de la ligne de filtre
 
 // on affiche les résultats si il y en a
 if ($countTotal!=0) {
 	$i=0;
+	
 	foreach ($tableArray as $theRow) {
 		// affiche la ligne avec un style différent si c'est un rang pair ou impair 
 		if ( $i&1 ) {$rowStyle='edit_row_odd';} else {$rowStyle='edit_row_even';}
 		echo('<tr id="row_'.$theRow["id"].'" class="'.$rowStyle.'">');
+			// la colonne d'outils
+			echo('<td><a href="" class="small link_button">supprimer</a></td>');
 			foreach ($theRow as $theColumn) {
 				echo('<td class="'.$rowStyle.' small">');
 				echo($theColumn);
 				echo('</td>');
 			}
-		// la colonne d'outils
-		echo('<td><a href="" class="small link_button">supprimer</a></td>');
 		echo('</tr>');
 		$i++;
 	} // end foreach $tableArray

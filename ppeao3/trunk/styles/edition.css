@@ -95,13 +95,16 @@ background-color:	#E6E6E6;
 
 }
 
-.click_to_clear {
-color:#CCC;
-font-style:italic;
-}
 
 .filterField {
 font-size:9px;
 }
 
+.c_sorted {
+font-weight:bold;
+}
+
+.c_unsorted {
+font-weight:normal;
+}
 

@@ -238,17 +238,17 @@ function getTableAliasFromName($tableName) {
 
 //******************************************************************************
 // affiche un champ de formulaire permettant d'éditer un champ d'une table
-function makeField($cDetails,$table,$column,$value,$action) {
+function makeField($cDetails,$table,$column,$value,$action,$theUrl) {
 // $cDetails : tableau retourné par la fonction getTableColumnsDetails()
 // table : la table concernée (identifiant de la table dans la variable $tablesDefinitions de edition_config.inc)
 // $column : la colonne concernée
 // $value : la valeur du champ de la colonne concernée
-// $ action : 'edit=xxx' pour créer un champ éditable de l'enregistrement xxx, 'filter' pour un champ de filtre
+// $action : 'display=xxx'/'edit=xxx' pour créer un champ afichable/éditable de l'enregistrement xxx, 'filter' pour un champ de filtre
+// $theUrl : l'URL à utiliser pour les champs de tri de type SELECT ()
 
 // la connection à la base
 global $connectPPEAO;
 global $tablesDefinitions;
-global $theUrl;
 
 // la longueur (et longueur max) par défaut des champs INPUT de type TEXT
 $defaultTextInputLength=15;
@@ -349,9 +349,8 @@ $theDetails=$cDetails[$column];
 			case 'FOREIGN KEY':
 				
 				switch ($action) {
-					//******* A FAIRE : il faut récuperer le LABEL de la clé étrangère en cas de DISPLAY
-					case 'display':
 					
+					case 'display':
 					// on recupere la valeurs de la clé etrangere -> on utilise la table indiquée dans $cDetails
 					$theFtable=$theConstraint["references_table"];
 					$theFtableAlias=getTableAliasFromName($theFtable);
@@ -421,7 +420,6 @@ $theDetails=$cDetails[$column];
 
 			case 'display': $theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</span>';
 			break;
-
 
 			case 'filter': 	$theField='<input type="text" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input>';
 			break;
