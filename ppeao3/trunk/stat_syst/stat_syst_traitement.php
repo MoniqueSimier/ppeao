@@ -24,13 +24,8 @@ print ("<br><br>");
 fclose($fpm);
 
 
-
-
-////////////////////connection base 
-$user="devppeao";                      // Le nom d'utilisateur 
-$passwd="2devppe!!";                   // Le mot de passe 
-$host= "vmppeao.mpl.ird.fr";  // L'hôte (ordinateur sur lequel le SGBD est installé) 
-$bdd = "bourlaye_rec";                    // Le nom de la base de données 
+// YL 17-Sept-2008 - call to connect.inc instead replacing variables wihtin the code 
+include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';                  // Le nom de la base de données 
 
 $connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 if (!$connection) {  echo "Non connecté"; exit;}

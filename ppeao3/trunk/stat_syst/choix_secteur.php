@@ -1,8 +1,6 @@
-<?php 
-$user="devppeao";
-$passwd="2devppe!!";
-$host= "vmppeao.mpl.ird.fr";
-$bdd = "bourlaye_rec";
+<?php
+// YL 17-Sept-2008 - call to connect.inc instead replacing variables wihtin the code 
+include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 
 $connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 if (!$connection) { echo "Pas de connection"; exit;}
