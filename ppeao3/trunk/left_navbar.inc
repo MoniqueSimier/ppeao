@@ -29,7 +29,7 @@ switch ($subsection) {
 	<ul id="port_manuel">
 		<li class="sublistmenuitem"><a class="navbarlink<?php echo($manuel_recomp)?>" href="/recomposition/rec_choix_base.php" >Recomposition donn&eacute;es</a></li>
 		<li class="sublistmenuitem"><a class="navbarlink<?php echo($manuel_agglo)?>" href="/statistiques/stat_choix_base.php" >Stats p&ecirc;che par aggl</a></li>
-		<li class="sublistmenuitem" class="navbarlink">Statistiques de p&ecirc;che g&eacute;n&eacute;rales</li>
+		<li class="sublistmenuitem" class="navbarlink"><a class="navbarlink<?php echo($manuel_agglo)?>" href="/stat_syst/stat_syst.php" >Statistiques de p&ecirc;che g&eacute;n&eacute;rales</a></li>
 	</ul>
 	</li>
 

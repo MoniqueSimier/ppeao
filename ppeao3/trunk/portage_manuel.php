@@ -23,8 +23,14 @@ $zone=3; // zone portage (voir table admin_zones)
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
-// on teste ˆ quelle zone l'utilisateur a accs
-if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
+	if (isset($_SESSION['s_ppeao_user_id'])){ 
+		$userID = $_SESSION['s_ppeao_user_id'];
+	} else {
+		$userID=null;
+	}
+	
+	// on teste à quelle zone l'utilisateur a accès
+	if (userHasAccess($userID,$zone)) {{
 ?>
 <div id="main_container" class="home">
 		<div id="BDDetail">

@@ -9,6 +9,8 @@ $zone=3; // zone portage (voir table admin_zones)
 
 <?php 
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
+//Include for documentation
+include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -25,8 +27,14 @@ include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
-// on teste à quelle zone l'utilisateur a accès
-if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
+	if (isset($_SESSION['s_ppeao_user_id'])){ 
+		$userID = $_SESSION['s_ppeao_user_id'];
+	} else {
+		$userID=null;
+	}
+	
+	// on teste à quelle zone l'utilisateur a accès
+	if (userHasAccess($userID,$zone)) {
 	$_SESSION['s_cpt_champ_total'] = 0;	// Lecture d'une table, nombre d'enregistrements lus total
 	$_SESSION['s_cpt_champ_diff'] = 0;	// Lecture d'une table, nombre d'enregistrements différents
 	$_SESSION['s_cpt_champ_vide'] = 0;	// Lecture d'une table, nombre d'enregistrements vide
@@ -54,7 +62,10 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 				<p>Peuplements de poissons et P&ecirc;che artisanale des Ecosyst&egrave;mes estuariens,
 				lagunaires ou continentaux d'Afrique de l'Ouest</p>
 				<br/>
-				<p>Ce processus permet un portage automatique des bases issues des bases access dans la base principale PPEAO.</p>
+				<p>Ce processus permet un portage automatique des bases issues des bases access dans la base principale PPEAO.
+				<?php // get the help/documentation for this page 
+				getDocumentation("portage_auto","icon");
+				?></p>
 				<br/>
 				<?php 
 					logWriteTo(4,"notice","*** Ouverture page portage automatique","","","0");
