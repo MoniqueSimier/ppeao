@@ -5,7 +5,8 @@
 @import url(edition.css);
 /* styles pour le module de pagination des tables'*/
 @import url(pagination.css);
-
+/* styles pour le module d'extraction*/
+@import url(extraction.css);
 
 /* *********************** */
 /* common styles */
