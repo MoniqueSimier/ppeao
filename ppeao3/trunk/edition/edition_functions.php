@@ -256,27 +256,36 @@ $defaultTextInputMaxLength=30;
 // nombre de rows par défaut des <textarea>
 $defaultTextRows=5;
 
+
+
 if (substringBefore($action,'=')=='edit') {$editRow=substringAfter($action,'=');$action='edit';}
+if (substringBefore($action,'=')=='display') {$editRow=substringAfter($action,'=');$action='display';}
+
 
 // valeur à utiliser comme ID, NAME et CLASS des champs de formulaire, selon que l'on édite ou filtre
-if ($action=='filter') {
-	$theClass="filterField";
-	$theId='f_'.$column;
-	} 
-	else {
-		$action=substringBefore($action,'=');
-		$theClass="editableField";
-		$theId=$column.'_'.substringAfter($action,'=');
-		}
+switch ($action) {
+	case 'filter': $theClass='filter_field';
+		$theId='f_'.$column;
+	break;
+	case 'edit': $theClass='edit_field';
+		$theId='e_'.$column.'_'.$editRow;
+	break;
+	case 'display': $theClass='editable_field';
+		$theId='d_'.$column.'_'.$editRow;
+	break;
+}// end switch $action
 
 // variable dans laquelle on stocke ce qui doit être affiché
 $theField='';
 
 $theDetails=$cDetails[$column];
+/*debug	
+echo('<pre>');
+	print_r($theDetails);
+	echo('</pre>');*/
 	// si la colonne concernée a une contrainte
-	if (!empty($theDetails["constraints"])) {
-		//debug		echo('contrainte');
-		
+	if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
+			
 		// on teste le type de contrainte
 		$theConstraint=current($theDetails["constraints"]);
 		//debug print_r($theConstraint);
@@ -294,19 +303,19 @@ $theDetails=$cDetails[$column];
 							$length=$defaultTextInputLength;
 							$maxLength=$defaultTextInputLength;
 							}
-						$theField='<input type="text"  title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onkeydown="javascript:filterTableOnEnter(\''.$theUrl.'\')"></input>';;
+						$theField='<div class="filter"><input type="text"  title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onkeydown="javascript:filterTableOnEnter(\''.$theUrl.'\')"></input></div>';
 					break;
 
 					case 'display':
 						 // on modifie la classe du champ non éditable
-						$theClass='nonEditableField';
-						$theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</span>';
+						$theClass='non_editable_field';
+						$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="les cl&eacute;s primaires ne sont pas &eacute;ditables">'.$value.'</div>';
 					break;
 
-					case 'edit' : // on modifie la classe du champ non éditable
-					$theClass='nonEditableField';
+					/*case 'edit' : // on modifie la classe du champ non éditable
+					$theClass='non_editable_field';
 					$theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</span>';
-					break;
+					break;*/
 
 				} // end switch $action
 				;
@@ -318,7 +327,7 @@ $theDetails=$cDetails[$column];
 				
 				switch ($action) {
 						case 'filter':
-						$theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onchange="javascript:filterTable(\''.$theUrl.'\');">';
+						$theField='<div class="filter>"<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onchange="javascript:filterTable(\''.$theUrl.'\');">';
 							// on ajoute une valeur "vide"
 								$theField.='<option value="" '.$selected.'>-</option>';
 							foreach($theOptions as $theOption) {
@@ -328,7 +337,7 @@ $theDetails=$cDetails[$column];
 								}
 						$theField.='</select>';
 					break;
-					case 'display' : $theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</span>';
+					case 'display' : $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</div>';
 					break;
 					case 'edit': $theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
 						// on ajoute une valeur "vide"
@@ -338,7 +347,7 @@ $theDetails=$cDetails[$column];
 							if ($theOption==$value) {$selected='selected="selected"';} else {$selected='';}
 							$theField.='<option value='.$theOption.' '.$selected.'>'.$theOption.'</option>';
 							}
-					$theField.='</select>';;
+					$theField.='</select></div>';
 					break;
 					
 				}// end switch $action
@@ -357,15 +366,26 @@ $theDetails=$cDetails[$column];
 					$theFKeys=$tablesDefinitions[$theFtableAlias]["id_col"];
 					$theFValues=$tablesDefinitions[$theFtableAlias]["noms_col"];
 
+					
+					// dans le cas où une valeur de la clé étrangère est définie
+					if (!empty($value)) {
 					$sqlFValue='SELECT '.$theFValues.'
 								FROM '.$theFtable.'
 								WHERE '.$theFKeys.'=\''.$value.'\' 
 								ORDER BY '.$theFValues;
+																
 					$resultFvalue=pg_query($connectPPEAO,$sqlFValue) or die('erreur dans la requete : '.$sqlFValue. pg_last_error());
 					$fValue=pg_fetch_all($resultFvalue);
 					pg_free_result($resultFvalue);
-										
-					$theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$fValue[0]["libelle"].'</span>';
+					
+					// la valeur à afficher
+					$theDisplayValue=$fValue[0]["libelle"];
+					} // end if !empty($value)
+					// si la valeur de la clé étrangère est NULL
+					else {
+						$theDisplayValue='';
+					}
+					$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquer pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$value.'\',\''.$editRow.'\',\'edit\');">'.$theDisplayValue.'</div>';
 					break;
 
 					case 'edit': 
@@ -388,14 +408,14 @@ $theDetails=$cDetails[$column];
 							{$onAction='onchange="javascript:filterTable(\''.$theUrl.'\');"';} 
 							else {
 							$onAction='';}
-						$theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" '.$onAction.'>';
+						$theField='<div class="filter"><select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" '.$onAction.'>';
 						// on ajoute une valeur "vide"
 						$theField.='<option value="" '.$selected.'>-</option>';
 						foreach ($fKeys as $fKey) {
 							if ($fKey[$theFKeys]==$value) {$selected='selected="selected"';} else {$selected='';}
 							$theField.='<option value='.$fKey[$theFKeys].' '.$selected.'>'.$fKey[$theFValues].'</option>';
 						}
-						$theField.='</select>';
+						$theField.='</select></div>';
 					break;
 
 				}
@@ -406,22 +426,25 @@ $theDetails=$cDetails[$column];
 	}
 	// si la colonne n'a pas de contrainte
 	else {
+		//debug		echo('**pas de contrainte sur '.$theDetails["column_name"].' ('.$value.')->'.$action.'<br>');
 		// si c'est pour le filtre
 		
 		if ($action=='filter') {
 			if (!empty($theDetails["character_maximum_length"])) {
-				$maxLength=$theDetails["character_maximum_length"];}
+				$maxLength=$theDetails["character_maximum_length"];
+			}
 			else {
 				$length=$defaultTextInputLength;
 				$maxLength=$defaultTextInputMaxLength;
-				}
+			}
+		} // end if $action==filter
 				
 		switch ($action) {
 
-			case 'display': $theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</span>';
+			case 'display' : if (empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$value.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
 			break;
 
-			case 'filter': 	$theField='<input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input>';
+			case 'filter': 	$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input></div>';
 			break;
 			
 			case 'edit' :
@@ -431,7 +454,7 @@ $theDetails=$cDetails[$column];
 				// autres types avec un character_maximum_length > valeur par défaut : on affiche une <textarea> avec limite de taille 
 				if ($theDetails["character_maximum_length"]>$defaultTextInputMaxLength) {
 					$theType='textarea';$theMaxLength=$theDetails["character_maximum_length"];
-					}
+				}
 				// autres types avec un character_maximum_length <= valeur par défaut : on affiche un <inpu type=text>
 				if ($theDetails["character_maximum_length"]<=$defaultTextInputMaxLength) {
 					$theType='input';$theMaxLength=$theDetails["character_maximum_length"];
@@ -449,21 +472,18 @@ $theDetails=$cDetails[$column];
 					else {$theLengthLimitation='';$textRows=$defaultTextRows;}
 					
 					$theField='<textarea id="'.$theId.'" name="'.$theId.'" 
-					cols="'.$defaultTextInputMaxLength.'" rows="'.$textRows.'" '.$theLengthLimitation.'  '.$onAction.'>'.$value.'</textarea>
+					cols="'.$defaultTextInputMaxLength.'" rows="'.$textRows.'" '.$theLengthLimitation.'  '.$onAction.'  class="'.$theClass.'">'.$value.'</textarea>
 					<span id="'.$theId.'_counter" class="small"></span>';
 
-			} // end if textarea
-
+				} // end if textarea
 
 				// on affiche un <input>
 				if ($theType=='input') {
-					$theField='<input title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
+					$theField='<input title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.$value.'"  class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
 				} // end if input
 			break;
-				}
-				
 			
-			} // end switch $action
+		} // end switch $action
 			
 		}
 
@@ -471,4 +491,49 @@ return $theField;
 
 }
 
+//******************************************************************************
+// permet de vérifier si une valeur est compatible avec un champ de la base de donnée
+function checkValidity($cDetails,$column,$value) {
+// $cDetails : tableau retourné par la fonction getTableColumnsDetails()
+// $column : la colonne concernée
+// $value : la valeur dont on veut tester la validité
+
+// on stocke les informations sur la colonne concernée
+$cDetail=$cDetails[$column];
+
+// on suppose que la valeur est valide
+$validityCheck=array("validity"=>true, "errorMessage"=>'');
+
+// on commence les vérifications
+// si la valeur saisie est "null" et que la colonne ne le permet pas
+if (is_null($value) && $cDetail["is_nullable"]!='YES') {
+	$validityCheck=array("validity"=>false, "errorMessage"=>'cette valeur ne peut pas être vide');	
+} // end if null
+else {
+	
+	
+
+	// on teste la compatibilité entre les types de données
+	switch ($cDetail["data_type"]) {
+
+		// entier
+		case 'integer': if (!is_int($value)) {$validityCheck=array("validity"=>false, "errorMessage"=>'cette valeur doit &ecirc;tre un entier');}
+		break;
+
+		// réel
+		case 'real': 
+			if (!is_numeric($value)) {$validityCheck=array("validity"=>false, "errorMessage"=>'cette valeur doit &ecirc;tre un nombre');}
+		break;
+
+		//note : on ne teste pas la longueur des chaines pour les champs text et character varying,
+		//puisque cette contrainte est appliquée à la saisie
+
+	}// end switch
+
+	
+} // end else null
+
+return $validityCheck;
+
+}
 ?>

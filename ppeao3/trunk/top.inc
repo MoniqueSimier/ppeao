@@ -1,13 +1,13 @@
 <?php 
-// Mis à jour par Olivier ROUX, 29-07-2008
+// Mis Ã  jour par Olivier ROUX, 29-07-2008
 
-// démarrage de la session
+// dÃ©marrage de la session
 session_start();
 
 //debug print_r($_SESSION);
 //end debug
 
-// Ajout YL 25-08-2008 compatibilité php
+// Ajout YL 25-08-2008 compatibilitÃ© php
 //$home="";
 //$edition="";
 //$portage="";

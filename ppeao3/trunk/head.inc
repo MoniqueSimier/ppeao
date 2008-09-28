@@ -1,4 +1,4 @@
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="robots" content="index,follow" />
 <meta name="description" content="ppeao" />
 <meta name="keywords" content="otolithe otolithe.com olivier roux yann laurent" />

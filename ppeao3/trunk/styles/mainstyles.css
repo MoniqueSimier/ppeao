@@ -5,8 +5,7 @@
 @import url(edition.css);
 /* styles pour le module de pagination des tables'*/
 @import url(pagination.css);
-/* styles pour le module d'extraction*/
-@import url(extraction.css);
+
 
 /* *********************** */
 /* common styles */
@@ -84,6 +83,15 @@ font-size:12px;
 margin:0;
 padding:0;
 font-weight:bold;
+}
+
+
+
+/* ***************************** */
+/* styles personnalisés globaux */
+
+.error {
+color:red;
 }
 
 .small {

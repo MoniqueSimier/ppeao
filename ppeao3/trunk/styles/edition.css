@@ -84,6 +84,8 @@ font-style: italic;
 
 #la_table td {
 border-right: 1px solid grey;
+padding:0;
+margin:0;
 }
 
 .edit_row_even {
@@ -95,11 +97,12 @@ background-color:	#E6E6E6;
 
 }
 
-td.tools {
+.tools {
 text-align:right;
+padding: 6px;
 }
 
-.filterField {
+.filter_field, .filter_field {
 font-size:9px;
 }
 
@@ -111,3 +114,35 @@ font-weight:bold;
 font-weight:normal;
 }
 
+.edit_field_container {
+background:#FFF8A7;
+}
+
+.edit_field {
+font-family: Verdana,Helvetica,Arial,sans-serif;
+font-size: 10px;
+}
+
+.edit_buttons {
+text-align:right;
+}
+
+.edit_button {
+margin-left: 10px;
+}
+
+#the_headers a, .filter, .editable_field, .non_editable_field, .edit_field_container  {
+padding:3px 6px;
+display:block;
+line-height:2em;
+min-height:20px;
+}
+
+.editable_field:hover  {
+background:#FFF8A7;
+height:100%;
+}
+
+td.edit_row_even div.error, td.edit_row_odd div.error {
+padding:6px;
+}

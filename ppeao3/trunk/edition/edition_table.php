@@ -199,10 +199,10 @@ if ($countTotal>$rowsPerPage) {
 // on affiche la table
 echo('<form id="the_table_form" name="the_table_form" action="/edition/edition_table.php">');
 
-echo('<table id="la_table" border="0" cellspacing="0" cellpadding="5">');
+echo('<table id="la_table" border="0" cellspacing="0" cellpadding="0">');
 
 // on affiche l'en-tête de table (avec les liens de tri)
-echo('<tr>');
+echo('<tr id="the_headers">');
 echo('<td class="small tools">trier &gt;&gt;</td>');
 foreach ($theHeads as $oneHead) {
 	// on construit l'URL de tri
@@ -224,11 +224,17 @@ echo('</tr>');
 // la ligne contenant le filtre
 echo('<tr id="the_filter">');
 	
-	// le lien permettant de filtrer
-	// on commence par "nettoyer" l'url courante
+	// les liens permettant de filtrer ou de remettre le filtre à zéro
+	// l'URL pour filtrer
 	$filterUrl=removeQueryStringParam($_SERVER['FULL_URL'], "page");
+	//l'URL pour supprimer le filtre
+	$unfilterUrl=$_SERVER['FULL_URL'];
+	foreach ($theHeads as $oneHead) {
+		// on enlève de l'url le paramètre de filtre correspondant à la colonne courante
+		$unfilterUrl=removeQueryStringParam($unfilterUrl, 'f_'.$oneHead);}
+		
 
-echo('<td class="small tools"><a href="#" onclick="javascript:filterTable(\''.$filterUrl.'\');" class="small link_button">filtrer&gt;&gt;</a></td>');
+echo('<td class="small tools"><div class="tools"><a href="'.$unfilterUrl.'" class="small link_button" title="cliquez pour remettre le filtre à zéro">r&agrave;z filtre</a> <!--<a href="#" onclick="javascript:filterTable(\''.$filterUrl.'\');" class="small link_button" title="cliquez pour filtrer la table">filtrer&gt;&gt;</a>--></div></td>');
 	
 foreach ($theHeads as $oneHead) {
 	// on enlève de l'url le paramètre de filtre correspondant à la colonne courante
@@ -239,23 +245,31 @@ foreach ($theHeads as $oneHead) {
 	echo('<td class="small">'.makeField($cDetails,$editTable,$oneHead,$theFilterValue,'filter',$filterUrl).'</td>');
 	}
 	
-
-
 echo('</tr>'); // fin de la ligne de filtre
 
 // on affiche les résultats si il y en a
 if ($countTotal!=0) {
 	$i=0;
+	/*debug
+	echo('<pre>');
+	print_r($tableArray);
+	echo('</pre>');*/
 	
 	foreach ($tableArray as $theRow) {
 		// affiche la ligne avec un style différent si c'est un rang pair ou impair 
 		if ( $i&1 ) {$rowStyle='edit_row_odd';} else {$rowStyle='edit_row_even';}
 		echo('<tr id="row_'.$theRow["id"].'" class="'.$rowStyle.'">');
 			// la colonne d'outils
-			echo('<td><a href="" class="small link_button">supprimer</a></td>');
-			foreach ($theRow as $theColumn) {
-				echo('<td class="'.$rowStyle.' small">');
-				echo($theColumn);
+			echo('<td class="small tools"><div class="tools"><a href="" class="small link_button">supprimer</a></div></td>');
+			
+		
+			foreach ($theRow as $key=>$value) {
+								
+				echo('<td id="edit_cell_'.$key.'_'.$theRow["id"].'" name="edit_cell_'.$key.'_'.$theRow["id"].'" class="'.$rowStyle.' small">');
+								
+				echo(makeField($cDetails,$editTable,$key,$value,'display='.$theRow["id"],$theUrl));
+				
+				//echo($theColumn);
 				echo('</td>');
 			}
 		echo('</tr>');

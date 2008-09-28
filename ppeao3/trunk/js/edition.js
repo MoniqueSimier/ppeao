@@ -214,7 +214,7 @@ function filterTable(theUrl) {
 	//debug 	alert(newUrl);
 	
 	// on sélectionne tous les champs du filtre 
-	var theParams=$('la_table').getElements('.filterField');
+	var theParams=$('la_table').getElements('.filter_field');
 		
 	// pour chaque champ, si une valeur non nulle est sélectionnée, on l'ajoute à l'url newUrl
 	
@@ -232,7 +232,7 @@ function filterTable(theUrl) {
 		}
 	}
 	
-	//debug 	alert(newUrl);
+	//debug 		alert(newUrl);
 	document.location=newUrl;
 	
 }
@@ -258,5 +258,108 @@ field.value = field.value.substring(0, maxlimit);
 // sinon on met à jour le compteur de caractères restants
 else 
 cntspan.innerHTML = (maxlimit - field.value.length)+' caract&egrave;res restants';
+
+}
+
+/**
+* Fonction qui rend une valeur éditable dans le module d'édition des tables
+*/
+function makeEditable(table,column,value,record,action) {
+// table : la table concernée (son pointeur dans le tableau $tablesDefinitions)
+// column : la colonne concernée (son nom dans la base)
+// value : la valeur du champ concerné
+// record : l'identifiant unique dans la table de l'enregistrement concerné
+// action : l'action à faire (edit/save/cancel)
+	
+// la cellule concernée
+var theCell=$("edit_cell_"+column+"_"+record);
+	
+// on initialise l'objet AJAX	
+var xhr = getXhr();
+// what to do when the response is received
+xhr.onreadystatechange = function(){
+		// while waiting for the response, display the loading animation
+	var theLoader=' <div align="center"><img src="/assets/ajax-loader.gif" alt="en cours..." title="en cours..." valign="center"/></div>';
+	if(xhr.readyState < 4) { theCell.innerHTML = theLoader;}
+	// only do something if the whole response has been received and the server says OK
+	if(xhr.readyState == 4 && xhr.status == 200){
+		theCellContent = xhr.responseText;
+		theCell.innerHTML=theCellContent;
+	}  
+} // end xhr.onreadystatechange
+
+// using GET to send the request
+xhr.open("GET","/edition/edition_rendre_editable_ajax.php?editAction="+action+"&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&editValue="+value,true);
+xhr.send(null);	
+}
+
+
+/**
+* Fonction qui vérifie la valeur saisie et la stocke dans la base si elle est valide (dans le module d'édition des tables)
+*/
+function saveChange(table,column,oldValue,record) {
+// table : la table concernée (son pointeur dans le tableau $tablesDefinitions)
+// column : la colonne concernée (son nom dans la base)
+// oldValue : la valeur originale du champ concerné (en cas de nouvelle saisie non valide)
+// record : l'identifiant unique dans la table de l'enregistrement concerné
+
+
+// la cellule concernée
+var theCell=$("edit_cell_"+column+"_"+record);
+// le div contenant les boutons d'enregistrement/annulation
+var theEditButtons=$("edit_buttons_"+column+"_"+record);
+var theEditButtonsContent=theEditButtons.innerHTML;
+// le champ concerné
+var theField=$("e_"+column+"_"+record);
+var newValue=theField.value;
+//debug alert (newValue);
+
+
+// on initialise l'objet AJAX	
+var xhr = getXhr();
+// what to do when the response is received
+xhr.onreadystatechange = function(){
+		// en attendant la réponse, on remplace les boutons d'enregistrement/annulation par un loader
+	var theLoader=' <div align="center"><img src="/assets/ajax-loader.gif" alt="validation en cours..." title="validation en cours..." valign="center"/></div>';
+	if(xhr.readyState < 4) { theEditButtons.innerHTML = theLoader;}
+	// only do something if the whole response has been received and the server says OK
+	if(xhr.readyState == 4 && xhr.status == 200){
+		var theResponseNode = xhr.responseXML.documentElement;
+		var isValid=theResponseNode.attributes.getNamedItem("valid").value;
+		
+		//debug		alert(isValid);
+		
+		// si la valeur soumise est non valide, on affiche un message d'erreur
+		if (isValid=='invalid') {
+			// note : le firstChild est là car le contenu de l'élément <responseContent> est un TEXTNODE
+			var theMessage=theResponseNode.getElementsByTagName('responseContent')[0].firstChild.nodeValue.replace(/^\[CDATA\[/,'')
+			.replace(/\]\]$/,'');
+			//debug			alert(theMessage);
+			
+			// on crée l'élément pour afficher le message d'erreur
+			var theMessageDiv= new Element('div', {'class' : 'small error'});
+			theMessageDiv.innerHTML=theMessage;
+			// on injecte l'objet contenant le message
+			theMessageDiv.injectInside(theCell);
+			// on restaure les boutons enregistrer/annuler
+			theEditButtons.innerHTML=theEditButtonsContent
+		}
+			
+		
+			
+
+		// sinon, on affiche le champ avec la nouvelle valeur
+		else {
+			var theNewCellContent=theResponseNode.getElementsByTagName('responseContent')[0].firstChild.nodeValue.replace(/^\[CDATA\[/,'')
+			.replace(/\]\]$/,'');
+			theCell.innerHTML=theNewCellContent;
+		}
+		
+	}  
+} // end xhr.onreadystatechange
+
+// using GET to send the request
+xhr.open("GET","/edition/edition_enregistrer_modification_ajax.php?&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&newValue="+newValue+"&oldValue="+oldValue,true);
+xhr.send(null);	
 
 }

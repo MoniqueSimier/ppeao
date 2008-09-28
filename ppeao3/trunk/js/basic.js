@@ -29,6 +29,35 @@ function getXhr(){
 }
 
 /* 
+* cette fonction retourne le contenu d'un élément CDATA dans un document XML
+*/
+
+function getCDATA(element){
+
+var ie = (typeof window.ActiveXObject != 'undefined');
+var returnText;
+
+if(ie){
+
+if(element.hasChildNodes){
+returnText = element.childNodes[0].nodeValue;
+}
+}
+else{
+
+if(element.hasChildNodes){
+returnText = element.childNodes[1].nodeValue;
+}
+
+
+}
+
+return returnText;
+
+}
+
+
+/* 
 * function that allows to create named elements in Internet Explorer
 * IE doesn't allow to name a created element using the standard theElement.setAttribute("name","theElementName");
 * so you need to try it first the IE way using the IE-only createElement('<input name="">...')
