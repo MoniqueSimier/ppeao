@@ -449,7 +449,7 @@ function userHasAccess($user_id,$zone_id) {
 // on teste à quelle zone l'utilisateur a accès
 //debug echo('zone_id='.$zone_id);
 $access=false;
-if ($_SESSION['s_ppeao_login_status']=='good') {
+if (isset($_SESSION['s_ppeao_login_status']) && $_SESSION['s_ppeao_login_status']=='good') {
 	// on récupère la liste des zones auxquelles l'utilisateur a accès
 	$lesZones=userGetAuthorizedZones($user_id);
 	
@@ -489,12 +489,16 @@ $zoneArray=pg_fetch_array($zoneResult);
 $zoneName=$zoneArray['zone_name'];
 
 // on teste le statut de connexion
-switch ($_SESSION['s_ppeao_login_status']) {
-	case 'good' : $message='<div id="access_denied">Vous n\'avez pas les droits d\'acc&egrave;s à la section "'.$zoneName.'". <br />Contactez un administrateur si vous souhaitez y acc&eacute;der.</div>';
-	break;
-	default : $message='<div id="access_denied">Vous devez vous connecter pour acc&eacute;der &agrave; la section "'.$zoneName.'".</div>';
-	break;
-} // end switch
+if (isset($_SESSION['s_ppeao_login_status'])) {
+	switch ($_SESSION['s_ppeao_login_status']) {
+		case 'good' : $message='<div id="access_denied">Vous n\'avez pas les droits d\'acc&egrave;s à la section "'.$zoneName.'". <br />Contactez un administrateur si vous souhaitez y acc&eacute;der.</div>';
+		break;
+		default : $message='<div id="access_denied">Vous devez vous connecter pour acc&eacute;der &agrave; la section "'.$zoneName.'".</div>';
+		break;
+	} // end switch
+} else {
+$message='<div id="access_denied">Vous devez vous connecter pour acc&eacute;der &agrave; la section "'.$zoneName.'".</div>';
+}
 
 echo($message);
 

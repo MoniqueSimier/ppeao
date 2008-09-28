@@ -1,0 +1,56 @@
+/*Yann Laurent
+Creation 21/09/2007
+Style pour le module d'extraction
+*/
+
+
+#formSel{
+margin-left:5px;
+width:800px;
+background:#E4E4E4;
+border:1px dotted #666666;
+
+}
+.listType{
+
+}
+
+.selType{
+list-style:none;
+}
+
+#versionTemp{
+	font-weight:bold;
+	font-size:70%;
+	margin-left:5px;
+	width:800px;
+	background:#CCCCCC;
+	border:1px dotted #000000;
+
+}
+
+#selection{
+	margin-left:5px;
+	width:800px;
+	background:#E4E4E4;
+	border:1px dotted #666666;
+
+}
+.checkall{
+	font-weight:bold;
+	background:#CCCCCC;
+}
+.list{
+
+}
+.list td {
+}
+.sublist{
+	background:#CCCCCC;
+	
+}
+.sublist td {
+	background:#FFF;
+	border:1px dotted #000000;
+
+}

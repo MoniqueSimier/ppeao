@@ -9,7 +9,7 @@
 
 //debug
 
-if ($_SESSION['s_ppeao_login_status']!='good') 
+if ( !isset($_SESSION['s_ppeao_login_status']) || ( isset($_SESSION['s_ppeao_login_status']) && $_SESSION['s_ppeao_login_status']!='good')) 
 	{
 	
 
