@@ -63,7 +63,7 @@ if ($validityCheck["validity"]) {
 		$undoSql='UPDATE '.$tablesDefinitions[$editTable]["table"].'
 					SET '.$editColumn.'=\''.$oldValue.'\' WHERE '.$tablesDefinitions[$editTable]["id_col"].'=\''.$editRecord.'\'';
 		// on inscrit la requête effectuée dans le log
-		logWriteTo(1,'notice','édition réussie de la valeur de "'.$editColumn.'" de l\'enregistrement "'.$editRecord.'" dans la table "'.$editTable.'".',$saveSql,$undoSql,0);
+		logWriteTo(1,'notice','&eacute;dition r&eacute;ussie de la valeur de "'.$editColumn.'" de l\'enregistrement "'.$editRecord.'" dans la table "'.$editTable.'".',$saveSql,$undoSql,0);
 	} // end if $saveResult
 	// si la requête d'enregistrement n'a pas pu être effectuée, on retourne "invalid" et un message d'erreur
 	else {
