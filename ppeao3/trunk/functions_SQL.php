@@ -234,7 +234,7 @@ return $columnConstraints;
 function getTableColumnsDetails($connection,$table) {
 
 // $connection : la connexion à la base postgres
-// $table : le nom de la table
+// $table : le nom de la table dans la base de données
 
 // on collecte les metadonnees sur les colonnes
 $meta=getTableColumnsMetadata($connection,$table);

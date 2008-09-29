@@ -16,6 +16,30 @@ $zone=4; // zone journal (voir table admin_zones)
 	include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 ?>
 	<title>ppeao::journal des activit&eacute;s</title>
+	
+	<!-- l'effet "tiroir" pour afficher/masquer la liste des archives -->
+	<script type="text/javascript" charset="iso-8859-1">
+	/* <![CDATA[ */
+		window.addEvent('domready', function(){
+					// note: the onComplete is there to set an automatic height to the wrapper div
+					var archivesSlide = new Fx.Slide('archives_list_ul',{duration: 500, mode: 'vertical', onComplete: function(){if(this.wrapper.offsetHeight != 0) this.wrapper.setStyle('height', 'auto');}});
+					archivesSlide.hide();
+					//since the selector hides away, display a "show" link
+					$('showHideArchives').innerHTML='[afficher les archives]';
+					// when the user clicks on the hide/show button, the slider's visibility is toggled
+					$('showHideArchives').addEvent('click', function(e){
+						e = new Event(e);
+						archivesSlide.toggle();
+						e.stop();
+						// if the selector is displayed, the link reads "hide",
+						//if it is hidden, the link reads "show"
+						if(archivesSlide.wrapper.offsetHeight==0) {$('showHideArchives').innerHTML='[masquer les archives]';} else {$('showHideArchives').innerHTML='[afficher les archives]';}
+					});
+				});	
+
+
+	/* ]]> */
+	</script>
 
 </head>
 
@@ -38,6 +62,8 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 
 logWriteTo(4,'notice','acc&egrave;s au journal','','',0);
 echo(logDisplayFull('','','','','','paginate'));
+// on affiche la liste des journaux archivés
+echo(logArchivesList(""));
 
 ?>
 	

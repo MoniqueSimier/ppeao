@@ -22,6 +22,7 @@ function logWriteTo($moduleId,$messageType,$message,$actionDo,$actionUndo,$logLe
 global $debug; // variable definie dans /variables.inc (0=production, 1=debug)
 global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases : BD_PECHE et BD_PPEAO)
 global $userId; // id de l'utilisateur connecté
+global $logAutoArchiveEntriesNumber; // le nombre d'enregistrements au delà duquel on autoarchive le journal
 
 if ($logLevel<=$debug) { // si le niveau du message ($logLevel) est inférieur au niveau de l'application ($debug) alors on écrit 
 if (is_null($moduleId)) {$moduleId=0;} // si le moduleId n'a pas été défini, on lui assigne 0 (inconnu)
@@ -35,6 +36,24 @@ if (isset($_SESSION['s_ppeao_user_id'])) {$userId=$_SESSION['s_ppeao_user_id'];}
 
 // on recupere le chemin du script actif
 $scriptFile=$_SERVER['PHP_SELF'];
+
+
+// avant d'écrire dans le log, on teste pour voir si il faut lancer l'autoarchivage
+// on récupère le nombre d'enregistrements dans la table de journal
+$logCountSql='	SELECT COUNT(*) FROM admin_log
+			';
+$logCountResult=@pg_query($connectPPEAO,$logCountSql);
+$logCountRow=@pg_fetch_row($logCountResult);
+
+$logCountTotal=$logCountRow[0];
+ /* Libération du résultat */ 
+ pg_free_result($logCountResult);
+// on le compare au nombre maximum défini dans variables.inc
+if ($logCountTotal>=$logAutoArchiveEntriesNumber) {
+	// si il est supérieur ou égal, on autoarchive	
+	logDelete("");	
+}
+
 
 // on teste si $messageType est dans la table admin_log_message_types
 	$typesSql="	SELECT  count(log_message_type)
@@ -365,11 +384,52 @@ function logArchive($archivePath)
 	// le chemin pour telecharger le fichier archive cree
 	$downloadPath=$archivePath.$theArchiveName.".csv.gz";} else {$success=0;$error="gzopen";}
 	
-	if ($success==1) {logWriteTo(4,"notice","journal archiv&eacute;","","",0);} else {logWriteTo(4,"error","impossible d'archiver le journal - $error","","",0);
-	;}
 	
 $return=array("success"=>$success,"error"=>$error,"downloadPath"=>$downloadPath);
 return $return;
+}
+
+
+//***************************************************************************************************
+//affiche la liste des journaux archivés sur le serveur
+function logArchivesList($archivePath)
+// $archivePath : le chemin du dossier dans sont archivés les journaux
+// $archiveMessage : le message retourné une fois l'archivage terminé
+{
+
+	// si $archivePath est vide, on utilise le chemin par defaut défini dans /variables.inc ($logArchivePath)
+	global $logArchivePath; 
+	if (empty($archivePath)) {$archivePath=$_SERVER["DOCUMENT_ROOT"].$logArchivePath;}
+
+	// on récupère la liste des fichiers dans le dossier d'archivage
+	
+	if ($handle = @opendir($archivePath)) {
+
+	    /* Ceci est la façon correcte de traverser un dossier. */
+	    while (false !== ($file = readdir($handle))) {
+	        // on filtre les fichiers autres que .csv.gz
+			$thePos=strpos($file,".csv.gz")+7;
+			if ($thePos==strlen($file)) {
+				$logArchiveFiles[]=$file;}
+	    		}
+	    closedir($handle);
+	}
+	
+	if (!empty($logArchiveFiles)) {
+		$archiveList='<div id="archives_list">';
+		$archiveList.='<p><a id="showHideArchives">afficher la liste des archives</a></p>';
+		$archiveList.='<ul id="archives_list_ul">';
+			$archiveList.='<li>cliquez sur une des archives pour la télécharger</li>';
+			foreach ($logArchiveFiles as $file) {
+				$archiveList.='<li><a href="'.$archivePath.$file.'">'.$file.'</a></li>';
+			}
+		$archiveList.='</ul>';
+		$archiveList.='</div>';		
+	}
+	
+
+	
+return $archiveList;
 }
 
 //***************************************************************************************************
