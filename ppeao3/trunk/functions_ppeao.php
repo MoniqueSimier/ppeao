@@ -49,6 +49,10 @@ $logCountTotal=$logCountRow[0];
  /* Libération du résultat */ 
  pg_free_result($logCountResult);
 // on le compare au nombre maximum défini dans variables.inc
+// sécurité : si on n'a pas défini de valeur maxi, on utilise 1000
+if (!isset($logAutoArchiveEntriesNumber) || !is_numeric($logAutoArchiveEntriesNumber) || empty($logAutoArchiveEntriesNumber)) {
+	$logAutoArchiveEntriesNumber=1000;
+}
 if ($logCountTotal>=$logAutoArchiveEntriesNumber) {
 	// si il est supérieur ou égal, on autoarchive	
 	logDelete("");	
@@ -419,7 +423,7 @@ function logArchivesList($archivePath)
 		$archiveList='<div id="archives_list">';
 		$archiveList.='<p><a id="showHideArchives">afficher la liste des archives</a></p>';
 		$archiveList.='<ul id="archives_list_ul">';
-			$archiveList.='<li>cliquez sur une des archives pour la télécharger</li>';
+			$archiveList.='<li>cliquez sur une des archives pour la t&eacute;l&eacute;charger</li>';
 			foreach ($logArchiveFiles as $file) {
 				$archiveList.='<li><a href="'.$archivePath.$file.'">'.$file.'</a></li>';
 			}

@@ -5,8 +5,7 @@
 @import url(edition.css);
 /* styles pour le module de pagination des tables'*/
 @import url(pagination.css);
-/* styles pour le module d'extraction*/
-@import url(extraction.css);
+
 
 /* *********************** */
 /* common styles */
@@ -193,8 +192,16 @@ margin-top:18px;
 
 #main_container {
 min-height:500px;
+margin: 6px;
 }
 
+
+/* ************************ */
+/* the login block      */
+
+#login_block {
+margin: 6px;
+}
 
 /* *********************** */
 /* the log display        */
@@ -249,11 +256,12 @@ min-height:500px;
 #logTable td.logTableDo, #logTable td.logTableUndo, , #logTable td.logTableScript {
 	min-width:80px;
 }
-/* Documentation */
-#infoAuto{
-	background:#E4E4E4;
-	border:1px dotted #666666;
+
+#archives_list {
+margin: 18px 0 0 0;
+font-size: 9px;
 }
+
 /* if the browser is NOT Internet Explorer, we pass a pixel font size*/
 <!--[if !IE]>-->
 body {
