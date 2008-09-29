@@ -29,7 +29,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
+
 
 // Recuperation des parametres (nom repertoire, nom fichiers etc..) depuis le fichier de parametres
 $dirLog = GetParam("repLogAuto",$PathFicConf);

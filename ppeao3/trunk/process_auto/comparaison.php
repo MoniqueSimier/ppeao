@@ -22,6 +22,11 @@
 // Paramètres en sortie
 // La liste des différences par table est affichée à l'écran et est stockée dans un fichier
 
+
+// Attention l'activation de l'ecriture dans la table des logs peut amener a des performances catastrophiques (la table peut rapidement etre enorme
+// Privilegier plutot l'ecriture dans le fichier log complémentaire
+
+
 // Mettre les noms des fichiers dans un fichier texte
 session_start();
 
@@ -39,7 +44,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
 include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
+
 
 // ***** Recuperation des parameters en entree 
 // On récupère le type d'action. Le même programme gère la comparaison et la mise à jour de données
@@ -376,7 +381,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		$where="";
 		$alias="";
     	logWriteTo(4,"notice","*-- Comparaison de la table ".$tables[$cpt],"","","0");
-
+		$ListeTableIDPasNum = GetParam("listeTableIDPasNum",$PathFicConf);
 		// Gestion TIMEOUT
 		$tableEnLecture = $tables[$cpt];
 
@@ -423,12 +428,12 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$compRowC = pg_fetch_row($compReadResultC);
 			$totalLignes = $compRowC[0];
 			pg_free_result($compReadResultC);
-			
+			// Lecture de la table dans la base source
 			$compReadSql = " select * from ".$tables[$cpt].$condWhere. " order by id ASC";
 			$compReadResult = pg_query(${$BDSource},$compReadSql) or die('erreur dans la requete : '.pg_last_error());
 			if (pg_num_rows($compReadResult) == 0) {
 			// La table dans BD_PPEAO est vide
-				logWriteTo(4,"notice","Table de reference ".$tables[$cpt]." dans ".$nomBDSource." vide","","","0");
+				//logWriteTo(4,"notice","Table de reference ".$tables[$cpt]." dans ".$nomBDSource." vide","","","0");
 				if ($EcrireLogComp ) { WriteCompLog ($logComp,"Table de reference ".$tables[$cpt]." dans ".$nomBDSource." vide",$pasdefichier);}
 				$tableSourceVide = true;
 
@@ -485,7 +490,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 						
 						//echo "Traitement de l'enregistrement ".$cptChampTotal." sur ".$totalLignes;
 						$IDEnLecture = $compRow[$RangId] ;
-						$ListeTableIDPasNum = GetParam("listeTableIDPasNum",$PathFicConf);
+						
 						$testTtypeID = strpos($ListeTableIDPasNum ,$tables[$cpt]);
 						if ($testTtypeID === false) {
 							// L'ID est bien un numérique
@@ -517,7 +522,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 									if (!$pasderevSQL ) {
 										WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
 									}
-									logWriteTo(4,"notice"," Pour ".$tables[$cpt]." ajout de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
+									//logWriteTo(4,"notice"," Pour ".$tables[$cpt]." ajout de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
 								if ($EcrireLogComp ) {WriteCompLog ($logComp," AJOUT script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}
 								} else {
 									// traitement d'erreur ? On arrête ou seulement avertissement ?
@@ -573,7 +578,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 										if (!$pasderevSQL ) {
 											WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
 										}
-										logWriteTo(4,"notice"," ==> maj de l'enreg id = ".$compRow[$RangId],$scriptSQL,$scriptDeleteSQL,"0");
+										//logWriteTo(4,"notice"," ==> maj de l'enreg id = ".$compRow[$RangId],$scriptSQL,$scriptDeleteSQL,"0");
 										if ($EcrireLogComp ) {WriteCompLog ($logComp," MAJ script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}										
 									} else {
 										// traitement d'erreur ? On arrête ou seulement avertissement ?
@@ -609,7 +614,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 								if (!$pasderevSQL ) {
 									WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
 								}
-								logWriteTo(4,"notice"," Pour ".$tables[$cpt]." ajout dans cadre dump de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
+								//logWriteTo(4,"notice"," Pour ".$tables[$cpt]." ajout dans cadre dump de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
 								if ($EcrireLogComp ) {WriteCompLog ($logComp," AJOUT TOUT script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}
 								
 								

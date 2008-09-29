@@ -163,7 +163,7 @@ switch ($SQLAction) {
 		break;
 } 
 
-
+pg_free_result($getAttrBD);
 return $LocScriptSQL;
 }
 

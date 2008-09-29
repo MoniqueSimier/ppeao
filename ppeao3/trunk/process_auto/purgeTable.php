@@ -26,7 +26,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
+
 
 // Variables
 $nomFenetre="purge";
