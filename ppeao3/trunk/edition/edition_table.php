@@ -242,7 +242,9 @@ foreach ($theHeads as $oneHead) {
 	$theFilterValue='';
 	// on prépare la valeur de l'input du filtre pour la colonne courante
 	if (isset($_GET['f_'.$oneHead]) && !is_null($_GET['f_'.$oneHead])) {$theFilterValue=$_GET['f_'.$oneHead];} else {$theFilterValue='';}
-	echo('<td class="small">'.makeField($cDetails,$editTable,$oneHead,$theFilterValue,'filter',$filterUrl).'</td>');
+	echo('<td class="small">');
+	echo(makeField($cDetails,$editTable,$oneHead,$theFilterValue,'filter',$filterUrl));
+	echo('</td>');
 	}
 	
 echo('</tr>'); // fin de la ligne de filtre
@@ -266,7 +268,11 @@ if ($countTotal!=0) {
 			foreach ($theRow as $key=>$value) {
 								
 				echo('<td id="edit_cell_'.$key.'_'.$theRow["id"].'" name="edit_cell_'.$key.'_'.$theRow["id"].'" class="'.$rowStyle.' small">');
-								
+					
+				//debug 
+	//$debug=array("cDetails"=>$cDetails,"editTable"=>$editTable,"key"=>$key,"value"=>$value,"display"=>'display='.$theRow["id"],"url"=>$theUrl);
+	//echo('<pre>');print_r($debug["display"]);echo('</pre>');
+	
 				echo(makeField($cDetails,$editTable,$key,$value,'display='.$theRow["id"],$theUrl));
 				
 				//echo($theColumn);

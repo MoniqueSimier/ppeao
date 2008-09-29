@@ -379,7 +379,7 @@ echo('<pre>');
 					pg_free_result($resultFvalue);
 					
 					// la valeur à afficher
-					$theDisplayValue=$fValue[0]["libelle"];
+					$theDisplayValue=$fValue[0][$theFValues];
 					} // end if !empty($value)
 					// si la valeur de la clé étrangère est NULL
 					else {
