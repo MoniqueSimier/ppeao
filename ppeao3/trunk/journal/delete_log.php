@@ -5,7 +5,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 
-//debug sleep(2);
+session_start();
 
 logDelete("");
 

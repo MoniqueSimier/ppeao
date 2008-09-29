@@ -63,7 +63,7 @@ $logWriteResult = pg_query($connectPPEAO,$logWriteSql) or die("logWriteTo/logWri
 
 //***************************************************************************************************
 // lit une section de journal
-function logRead($date,$userId,$moduleId,$messageBit,$rowsNumber,$messageType)
+function logRead($date,$userId,$moduleId,$messageBit,$rowsNumber,$messageType,$paginate)
 // cette fonction lit une section de journal, éventuellement filtrée
 // $date : format date (YYYY-MM-DD), si renseigné, affiche uniquement les entrées pour la date définie
 // $userId : si renseigné, affiche uniquement les entrées pour l'utilisateur correspondant (table admin_users)
@@ -71,10 +71,13 @@ function logRead($date,$userId,$moduleId,$messageBit,$rowsNumber,$messageType)
 // $messageBit : si renseigné, affiche uniquement les entrées dont le message (log_message) contient $messageBit
 // $rowsNumber : nombre d'entrées à retourner (si 0, tout retourner)
 // $messageType : type de message (error, sql, warning, notice)
+// $paginate : si 'paginate', on pagine la tablea de résultats
 // retourne $logArray, le tableau contenant les entrées de journal sélectionnées 
 
 {
 global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases : BD_PECHE et BD_PPEAO)
+
+
 $limit="";
 // on prepare un tableau contenant les elements a utiliser comme filtre
 $filter=array();
@@ -130,6 +133,41 @@ $filter=array();
 	// si $rowsNumber n'est pas nul, on limite le nombre de lignes retournées
 	if (!is_null($rowsNumber) && $rowsNumber!=0 ) {$limit.=" LIMIT ".$rowsNumber." ";}
 
+	// sinon, on pagine
+	else { 
+		if ($paginate=='paginate') {
+
+		// on construit la requête SQL pour obtenir le nombre total de valeurs de la table à afficher
+		$countSql="	SELECT COUNT(*) FROM admin_log l, admin_users u, admin_log_modules lm
+					WHERE (l.log_module_id=lm.module_id) AND (l.log_user_id=u.user_id) $filterSql
+					";
+		$countResult=pg_query($connectPPEAO,$countSql) or die('erreur dans la requete : '.$countSql. pg_last_error());
+		$countRow=pg_fetch_row($countResult);
+		$countTotal=$countRow[0];
+		 /* Libération du résultat */ 
+		 pg_free_result($countResult);	
+
+		/* Déclaration des variables */ 
+		    $rowsPerPage = 50; // nombre d'entrées à afficher par page (entries per page) 
+		    $countPages = ceil($countTotal/$rowsPerPage); // calcul du nombre de pages $countPages (on arrondit à l'entier supérieur avec la fonction ceil() ) 
+
+		    /* Récupération du numéro de la page courante depuis l'URL avec la méthode GET */ 
+		    if(!isset($_GET['page']) || !is_numeric($_GET['page']) ) // si $_GET['page'] n'existe pas OU $_GET['page'] n'est pas un nombre (petite sécurité supplémentaire) 
+		        $currentPage = 1; // la page courante devient 1 
+		    else 
+		    { 
+		        $currentPage = intval($_GET['page']); // stockage de la valeur entière uniquement 
+		        if ($currentPage < 1) $currentPage=1; // cas où le numéro de page est inférieure 1 : on affecte 1 à la page courante 
+		        elseif ($currentPage > $countPages) $currentPage=$countPages; //cas où le numéro de page est supérieur au nombre total de pages : on affecte le numéro de la dernière page à la page courante 
+		        else $currentPage=$currentPage; // sinon la page courante est bien celle indiquée dans l'URL 
+		    } 
+
+		    /* $start est la valeur de départ du LIMIT dans notre requête SQL (est fonction de la page courante) */ 
+		    $startRow = ($currentPage * $rowsPerPage - $rowsPerPage);
+		
+		$limit=' LIMIT '.$rowsPerPage.' OFFSET '.$startRow;}
+	}
+
 
 // on fait la requete pour recuperer les entrees du journal correspondantes
 $logReadSql="	SELECT l.log_time, l.log_module_id, l.log_script_file, l.log_message, l.log_user_id, u.user_name, l.log_module_id, lm.module_name, l.log_action_do, l.log_action_undo, l.log_message_type, u.user_email
@@ -137,11 +175,14 @@ $logReadSql="	SELECT l.log_time, l.log_module_id, l.log_script_file, l.log_messa
 			WHERE (l.log_module_id=lm.module_id) AND (l.log_user_id=u.user_id) $filterSql
 			ORDER BY l.log_time	DESC				
 			$limit	";
+			
+			//debug 			echo($logReadSql);
+			
 $logReadResult = pg_query($connectPPEAO,$logReadSql) or die('logRead dit - erreur dans la requete : ' . pg_last_error());
-$logArray=pg_fetch_all($logReadResult);
+$logEntriesArray=pg_fetch_all($logReadResult);
 
-// debug echo($logReadSql);
-// debug print_r($logArray);
+
+$logArray=array("pagination"=>array("rowsPerPage"=>$rowsPerPage,"startRow"=>$startRow,"countPages"=>$countPages,"currentPage"=>$currentPage),"logRows"=>$logEntriesArray);
 
 return $logArray;
 }
@@ -150,15 +191,16 @@ return $logArray;
 // affiche sous forme de table formattée une section de journal
 function logTable($logArray,$format)
 // cette fonction génère une table pour l'affichage d'une section du journal
-// $logArray : le tableau contenant les entrées de journal à tabuler (array(timestamp,userName,moduleName,scriptFile,message))
+// $logArray : le tableau contenant les entrées de journal à tabuler (retourné par la fonction logRead)
 // $format : "html" pour l'affichage et "csv" pour l'exportation
-// $logTable : la table HTML générée par la fonction, prête à être affichée
+// $paginate : si 'paginate', on pagine la tablea de résultats
+// returns $logTable : la table HTML générée par la fonction, prête à être affichée
 {
 
 $logTable="";
 global $debug; // si $debug=1, alors on affiche des infos de débug dans le log (comme le script php)
 
-if (!empty($logArray)) { // si le log n'est pas vide
+if (!empty($logArray["logRows"])) { // si le log n'est pas vide
 
 switch ($format) {
 
@@ -186,7 +228,7 @@ switch ($format) {
 	
 	$j=0; // counter used to differentiate odd and even rows
 	//on parcourt le tableau du journal pour generer un <tr>  par entree
-	foreach ($logArray as $logRow) {
+	foreach ($logArray["logRows"] as $logRow) {
 		if ( $j&1 ) {$rowStyle='logTableRowOdd';} else {$rowStyle='logTableRowEven';}
 		$logTable.='<tr class="'.$rowStyle.'">';
 		
@@ -199,9 +241,22 @@ switch ($format) {
 		$logTable.='</tr>';
 		$j++;
 	
-	} // end foreach $logArray
+	} // end foreach $logArray["logRow"]
 	
-	$logTable.= '</table>'; //
+	// si on doit paginer, on insère la pagination
+	if (!empty($logArray["pagination"])) {
+		
+			// on insère la pagination
+		$logTable.='<tr><td colspan="8">';
+		$logTable.= paginate($_SERVER['PHP_SELF'].'?'.removeQueryStringParam($_SERVER['QUERY_STRING'],'page'), '&amp;page=', $logArray["pagination"]["countPages"], $logArray["pagination"]["currentPage"]);
+		$logTable.='</td></tr>';
+		
+	}
+	
+	
+	$logTable.= '</table>';
+
+	
 	;
 	break;
 }
@@ -216,13 +271,14 @@ return $logTable;
 
 //***************************************************************************************************
 // récupere sous forme de tableau long une section de journal
-function logDisplayFull($date,$userId,$moduleId,$messageBit,$messageType)
+function logDisplayFull($date,$userId,$moduleId,$messageBit,$messageType,$paginate)
 // cette fonction crée un tableau contenant une section de journal, éventuellement filtrée
 // pour affichage complet avec pagination, champs de tri/filtres etc.
 // $date : format date (YYYY-MM-DD), si renseigné, affiche uniquement les entrées pour la date définie
 // $userId : si renseigné, affiche uniquement les entrées pour l'utilisateur correspondant (table admin_users)
 // $moduleId : si renseigné, affiche uniquement les entrées pour le module correspondant (table admin_log_modules)
 // $messageBit : si renseigné, affiche uniquement les entrées dont le message (log_message) contient $messageBit
+// $paginate : si 'paginate', on pagine la tablea de résultats
 // $messageType : type de message (error, sql, warning, notice)
 // cette fonction appelle la fonction logRead() pour extraire les entrées de journal adéquates
 // et la fonction logTable() pour générer la table html de journal
@@ -233,12 +289,14 @@ function logDisplayFull($date,$userId,$moduleId,$messageBit,$messageType)
 echo('<script src="/js/journal.js" type="text/javascript" charset="utf-8"></script>');
 
 // on recupere les entrees de journal souhaitees
-$logArray=logRead($date,$userId,$moduleId,$messageBit,0,$messageType);
+
+
+$logArray=logRead($date,$userId,$moduleId,$messageBit,0,$messageType,$paginate);
 
 $logBlock='<div id="logMessage"></div>';
 $logBlock.='<div id="logTableDiv">';
 $logBlock.='<a href="javascript:deleteLog();">effacer le journal</a> (une version en sera archiv&eacute;e sur le serveur...)';
-$logBlock.=logTable($logArray,'');
+$logBlock.=logTable($logArray,'',$paginate);
 $logBlock.='</div>'; // end div id="logTableDiv"
 
 return $logBlock;
@@ -261,14 +319,14 @@ function logDisplayShort($date,$userId,$moduleId,$messageBit,$rowsNumber,$messag
 {
 
 // on recupere les entrees de journal souhaitees
-$logArray=logRead($date,$userId,$moduleId,$messageBit,$rowsNumber,$messageType);
+$logArray=logRead($date,$userId,$moduleId,$messageBit,$rowsNumber,$messageType,'');
 // on stocke le tableau dans une variable
 $logBlock='<div id="logTableDiv">';
 
 // le titre
 echo('<h2>Activit&eacute; r&eacute;cente</h2>');
 	
-$logBlock.=logTable($logArray,'');
+$logBlock.=logTable($logArray,'','');
 
 $logBlock.='</div>'; // end div id="logTableDiv"
 $logBlock.='<div id="logTableDivLink"><a href="/journal.php" alt="consulter le journal" title="consulter le journal">consulter le journal</a></div>';
@@ -297,7 +355,7 @@ function logArchive($archivePath)
 	if ($theFile=@gzopen($theArchivePath,"w")) {
 
 	// on genere le contenu du fichier
-	$theContent=logTable(logRead("","","","","",""),'csv');
+	$theContent=logTable(logRead("","","","","","",""),'csv');
 
 	// on écrit le contenu du journal dans le fichier (csv)
 	if (gzwrite($theFile,$theContent)) {$success=1;} else {$success=0;$error="gzwrite";}
@@ -346,6 +404,8 @@ if ($success==1) { // si tout a bien fonctionne, on indique a l'utilisateur l'UR
 $archiveUrl=$archived["downloadPath"];	
 	
 echo('journal effac&eacute; - <a href="'.$archiveUrl.'" alt="t&eacute;l&eacute;charger la version archiv&eacute;e" title="t&eacute;l&eacute;charger la version archiv&eacute;e">t&eacute;l&eacute;charger la version archiv&eacute;e</a>');
+
+
 logWriteTo(4,"notice","journal effac&eacute;","","",0);
 }
 else {
