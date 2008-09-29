@@ -33,9 +33,11 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 
 <h1>journal des activit&eacute;s</h1>
 
-<?php 
+<?php
+
+
 logWriteTo(4,'notice','acc&egrave;s au journal','','',0);
-echo(logDisplayFull('','','',"","",""));
+echo(logDisplayFull('','','','','','paginate'));
 
 ?>
 	
