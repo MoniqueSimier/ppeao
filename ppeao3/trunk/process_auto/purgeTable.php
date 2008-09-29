@@ -93,7 +93,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	// Etape 2 de la purge : nettoyage des fichiers de paramétrage et de référence dans la base bdpeche
 	// **********************************************************
 	$ListeTableAVider = GetParam("listeTableAViderParam",$PathFicConf); 
-	$ListeTableAVider = "ref_espece"; // TEST
+	$ListeTableAVider = ""; // TEST
 	
 	$tables = explode(",",$ListeTableAVider);
 	$nbTables = count($tables) - 1;
