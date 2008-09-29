@@ -45,8 +45,10 @@ while (($file = readdir())!=false) {
 	}
 } 
 closedir($handle); 
-echo "<div id=\"infotitre\"><br/><img src=\"/assets/icone_info.png\" alt=\"Informations Complementaires\" />&nbsp;Une documentation compl&eacute;mentaire est disponible et est regroup&eacute;e dans la liste ci-dessous.</div>";
-echo "<div id=\"infotitre\">".$listDoc."</div>";
+if (!$listDoc ==""){
+	echo "<br/><br/><div id=\"infoAuto\"><div id=\"infotitre\"><img src=\"/assets/icone_info.png\" alt=\"Informations Complementaires\" />&nbsp;Une documentation compl&eacute;mentaire est disponible et est regroup&eacute;e dans la liste ci-dessous.</div>";
+	echo "<div id=\"infotexte\">".$listDoc."</div></div>";
+}
 //end function
 
 }
