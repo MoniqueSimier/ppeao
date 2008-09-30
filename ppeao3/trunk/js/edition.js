@@ -1,5 +1,5 @@
 /*
-* Fonction qui affiche un SELECT listant les tables de codage suite au choix d'un domaine (pêche, biologie...)
+* Fonction qui affiche un SELECT listant les tables de parametrage suite au choix d'un domaine (pêche, biologie...)
 */
 
 function showCodageTablesSelect(typePeche){
@@ -285,6 +285,14 @@ xhr.onreadystatechange = function(){
 	if(xhr.readyState == 4 && xhr.status == 200){
 		theCellContent = xhr.responseText;
 		theCell.innerHTML=theCellContent;
+		// si on passe en mode édition, on met toute la ligne <tr> en surbrillance
+		var theRow=$("row_"+record); // la ligne
+		if (action=='edit') {
+			theRow.addClass("edit_field_row");
+		}
+		else {
+			theRow.removeClass("edit_field_row");
+		}
 	}  
 } // end xhr.onreadystatechange
 
@@ -344,9 +352,6 @@ xhr.onreadystatechange = function(){
 			// on restaure les boutons enregistrer/annuler
 			theEditButtons.innerHTML=theEditButtonsContent
 		}
-			
-		
-			
 
 		// sinon, on affiche le champ avec la nouvelle valeur
 		else {

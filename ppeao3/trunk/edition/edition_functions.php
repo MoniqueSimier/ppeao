@@ -66,7 +66,7 @@ echo('<h1 class="selector"><a href="/edition.php">&eacute;dition des donn&eacute
 switch ($theType) {
 	case "reference" : $theTypeString=" de r&eacute;f&eacute;rence"; $theSelectorType="tableSelectors";
 	break;
-	case "codage" : $theTypeString=" de codage"; $theSelectorType="tableSelectors";
+	case "parametrage" : $theTypeString=" de param&eacute;trage"; $theSelectorType="tableSelectors";
 	break;
 	default: $theTypeString="";
 	break;
@@ -303,7 +303,7 @@ echo('<pre>');
 							$length=$defaultTextInputLength;
 							$maxLength=$defaultTextInputLength;
 							}
-						$theField='<div class="filter"><input type="text"  title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onkeydown="javascript:filterTableOnEnter(\''.$theUrl.'\')"></input></div>';
+						$theField='<div class="filter"><input type="text"  title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\')"></input></div>';
 					break;
 
 					case 'display':
@@ -516,13 +516,13 @@ else {
 	// on teste la compatibilité entre les types de données
 	switch ($cDetail["data_type"]) {
 
-		// entier
-		case 'integer': if (!is_int($value)) {$validityCheck=array("validity"=>false, "errorMessage"=>'cette valeur doit &ecirc;tre un entier');}
+		// entier (on n'utilise pas is_int() car même si le script retourne "7", PHP considère que c'est une variable string)
+		case 'integer': if (intval($value)!=$value) {$validityCheck=array("validity"=>false, "errorMessage"=>'cette valeur doit &ecirc;tre un entier',"valeur"=>$value);}
 		break;
 
 		// réel
 		case 'real': 
-			if (!is_numeric($value)) {$validityCheck=array("validity"=>false, "errorMessage"=>'cette valeur doit &ecirc;tre un nombre');}
+			if (!is_numeric($value)) {$validityCheck=array("validity"=>false, "errorMessage"=>'cette valeur doit &ecirc;tre un nombre',"valeur"=>$value);}
 		break;
 
 		//note : on ne teste pas la longueur des chaines pour les champs text et character varying,

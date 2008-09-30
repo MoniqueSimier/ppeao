@@ -4,7 +4,7 @@
 //**************************************************************
 // construction des sélecteurs de la page "edition.php" et "étiquettes" des domaines et tables
 //**************************************************************
-// utilisé pour construire les deux sélecteurs servant à sélectionner les domaines des tables de codage
+// utilisé pour construire les deux sélecteurs servant à sélectionner les domaines des tables de paramétrage
 // et donnant la liste des sous-domaines
 $scientifiqueHierarchie=Array("stations","peche","biologie");
 $artisanaleHierarchie=Array("agglomeration","unite","activite","debarquement","sortie");
@@ -13,14 +13,14 @@ $artisanaleHierarchie=Array("agglomeration","unite","activite","debarquement","s
 $domainesListe=Array(
 	"geographie"=>array("label"=>"g&eacute;ographie","type"=>"reference"),
 	"especes"=>array("label"=>"esp&egrave;ces","type"=>"reference"),
-	"stations"=>array("label"=>"stations","type"=>"codage"),
-	"peche"=>array("label"=>"p&ecirc;che","type"=>"codage"),
-	"biologie"=>array("label"=>"biologie","type"=>"codage"),
-	"agglomeration"=>array("label"=>"agglom&eacute;rations","type"=>"codage"),
-	"unite"=>array("label"=>"unit&eacute;s de p&ecirc;che","type"=>"codage"),
-	"activite"=>array("label"=>"activit&eacute;s","type"=>"codage"),
-	"debarquement"=>array("label"=>"d&eacute;barquements","type"=>"codage"),
-	"sortie"=>array("label"=>"sorties de p&ecirc;che","type"=>"codage"),
+	"stations"=>array("label"=>"stations","type"=>"parametrage"),
+	"peche"=>array("label"=>"p&ecirc;che","type"=>"parametrage"),
+	"biologie"=>array("label"=>"biologie","type"=>"parametrage"),
+	"agglomeration"=>array("label"=>"agglom&eacute;rations","type"=>"parametrage"),
+	"unite"=>array("label"=>"unit&eacute;s de p&ecirc;che","type"=>"parametrage"),
+	"activite"=>array("label"=>"activit&eacute;s","type"=>"parametrage"),
+	"debarquement"=>array("label"=>"d&eacute;barquements","type"=>"parametrage"),
+	"sortie"=>array("label"=>"sorties de p&ecirc;che","type"=>"parametrage"),
 	);
 
 
@@ -89,7 +89,8 @@ $tablesDefinitions=Array(
 		"etat_ciel"=>array("label"=>"&eacute;tat du ciel","table"=>"art_etat_ciel", "id_col"=>"id","noms_col"=>"libelle"),
 		"vent"=>array("label"=>"vent","table"=>"art_vent", "id_col"=>"id","noms_col"=>"libelle"),	
 		"type_sortie"=>array("label"=>"types de sorties","table"=>"art_type_sortie", "id_col"=>"id","noms_col"=>"libelle"),
-		"milieu"=>array("label"=>"milieux","table"=>"art_millieu", "id_col"=>"id","noms_col"=>"libelle"),	
+		"milieu"=>array("label"=>"milieux","table"=>"art_millieu", "id_col"=>"id","noms_col"=>"libelle"),
+		"lieu_peche"=>array("label"=>"lieux de p&ecirc;che","table"=>"art_lieu_de_peche", "id_col"=>"id","noms_col"=>"libelle"),
 	);	
 
 
@@ -101,18 +102,19 @@ $tablesDefinitions=Array(
 // par exemple, si l'on veut éditer la table "espece" il faudra d'abord sélectionner des valeurs dans
 // les tables ordre puis famille
 $selectorCascades=Array(	
-"pays"=>"pays,systeme,secteur,station",
-"systeme"=>"pays,systeme,secteur,station",
-"secteur"=>"pays,systeme,secteur,station",
+"pays"=>"pays,systeme,secteur",
+"systeme"=>"systeme,secteur",
+"secteur"=>"secteur",
 "station"=>"pays,systeme,secteur,station",
 "ordre"=>"ordre,famille,espece",
-"famille"=>"ordre,famille,espece",
-"espece"=>"ordre,famille,espece",
+"famille"=>"famille,espece",
+"espece"=>"espece",
 "ecologique"=>"ecologique,espece",
 "trophique"=>"trophique,espece",
 "originekb"=>"originekb,espece",
 "grand_type_engin"=>"grand_type_engin,type_engin",
-"type_engin"=>"grand_type_engintype_engin",
+"type_engin"=>"type_engin",
 "type_agglomeration"=>"type_agglomeration,agglomeration",
-"agglomeration"=>"type_agglomeration,agglomeration")
+"agglomeration"=>"pays,systeme,secteur,agglomeration",
+"lieu_peche"=>"pays,systeme,secteur,lieu_peche")
 ?>

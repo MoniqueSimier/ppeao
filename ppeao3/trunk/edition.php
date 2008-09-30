@@ -60,9 +60,9 @@ echo('<h2>&eacute;dition des tables de r&eacute;f&eacute;rence</h2>');
 echo('</div>');
 
 
-// on affiche les choix pour les tables de codage
+// on affiche les choix pour les tables de parametrage
 echo('<div id="tables_codage">');	
-echo('<h2>&eacute;dition des tables de codage</h2>');
+echo('<h2>&eacute;dition des tables de param&eacute;trage</h2>');
 	// pêche scientifique
 	echo('<div id="peche_scientifique">');
 	echo('<h3>p&ecirc;che scientifique</h3>');

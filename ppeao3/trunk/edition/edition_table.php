@@ -132,15 +132,22 @@ if (isset($_GET[$editTable])) {
 		$s_dir='u';
 	}
 	//debug	echo($s_dir);
-	
+
+// on construit la requête SQL pour obtenir le nombre total d'enregistrements dans la table
+$countAllSql='	SELECT COUNT(*) FROM '.$tablesDefinitions[$editTable]["table"].'
+				WHERE  TRUE';
+$countAllResult=pg_query($connectPPEAO,$countAllSql) or die('erreur dans la requete : '.$countSql. pg_last_error());
+$countAllRow=pg_fetch_row($countAllResult);
+$countAllTotal=$countAllRow[0];
+ /* Libération du résultat */ 
+ pg_free_result($countAllResult);
+
 // on construit la requête SQL pour obtenir le nombre total de valeurs de la table à afficher
 $countSql='	SELECT COUNT(*) FROM '.$tablesDefinitions[$editTable]["table"].'
 				WHERE  TRUE '.$whereClause.'
 			';
-
 $countResult=pg_query($connectPPEAO,$countSql) or die('erreur dans la requete : '.$countSql. pg_last_error());
 $countRow=pg_fetch_row($countResult);
-
 $countTotal=$countRow[0];
  /* Libération du résultat */ 
  pg_free_result($countResult);
@@ -190,11 +197,12 @@ if ($countTotal>$rowsPerPage) {
 	$to=intval($startRow)+intval($rowsPerPage);
 		// si on arrive à la fin du tableau
 		if ($to>$countTotal) {$to=$countTotal;}
-	$paginationString=' ('.$from.'-'.$to.')';
+	$paginationString=' (affichage : '.$from.'-'.$to.')';
 	}
 
 ?>
-<h1>votre s&eacute;lection : <?php echo($countTotal.' '.$tablesDefinitions[$editTable]["label"].$paginationString);?></h1>
+<h1>votre s&eacute;lection : <?php echo($countTotal.' '.$tablesDefinitions[$editTable]["label"].' sur '.$countAllTotal.' '.$paginationString);?></h1>
+<p class="hint small">aide : pour trier la table, cliquer sur un nom de colonne, cliquer &agrave; nouveau pour inverser l'ordre de tri; pour filtrer la table, saisissez ou choisissez une valeur et appuyez sur ENTR&Eacute;E (le filtrage est cumulatif et de type "contient"); pour éditer une valeur, cliquer dessus.</p>
 <?php 
 // on affiche la table
 echo('<form id="the_table_form" name="the_table_form" action="/edition/edition_table.php">');
@@ -203,7 +211,7 @@ echo('<table id="la_table" border="0" cellspacing="0" cellpadding="0">');
 
 // on affiche l'en-tête de table (avec les liens de tri)
 echo('<tr id="the_headers">');
-echo('<td class="small tools">trier &gt;&gt;</td>');
+echo('<td class="small tools">cliquer pour trier &gt; </td>');
 foreach ($theHeads as $oneHead) {
 	// on construit l'URL de tri
 	$sortUrl=replaceQueryParam ($_SERVER['FULL_URL'],"s_key",$oneHead);
@@ -234,7 +242,7 @@ echo('<tr id="the_filter">');
 		$unfilterUrl=removeQueryStringParam($unfilterUrl, 'f_'.$oneHead);}
 		
 
-echo('<td class="small tools"><div class="tools"><a href="'.$unfilterUrl.'" class="small link_button" title="cliquez pour remettre le filtre à zéro">r&agrave;z filtre</a> <!--<a href="#" onclick="javascript:filterTable(\''.$filterUrl.'\');" class="small link_button" title="cliquez pour filtrer la table">filtrer&gt;&gt;</a>--></div></td>');
+echo('<td class="small tools"><div class="tools"><a href="'.$unfilterUrl.'" class="small link_button" title="cliquez pour remettre le filtre à zéro">effacer</a> <a href="#" onclick="javascript:filterTable(\''.$filterUrl.'\');" class="small link_button" title="cliquez pour filtrer la table">filtrer&nbsp;&gt; </a></div></td>');
 	
 foreach ($theHeads as $oneHead) {
 	// on enlève de l'url le paramètre de filtre correspondant à la colonne courante
@@ -267,12 +275,9 @@ if ($countTotal!=0) {
 		
 			foreach ($theRow as $key=>$value) {
 								
-				echo('<td id="edit_cell_'.$key.'_'.$theRow["id"].'" name="edit_cell_'.$key.'_'.$theRow["id"].'" class="'.$rowStyle.' small">');
-					
-				//debug 
-	//$debug=array("cDetails"=>$cDetails,"editTable"=>$editTable,"key"=>$key,"value"=>$value,"display"=>'display='.$theRow["id"],"url"=>$theUrl);
-	//echo('<pre>');print_r($debug["display"]);echo('</pre>');
-	
+				echo('<td id="edit_cell_'.$key.'_'.$theRow["id"].'" name="edit_cell_'.$key.'_'.$theRow["id"].'" class="small">');
+				// on doit d'abord rendre la valeur "safe"
+				//$value='';	
 				echo(makeField($cDetails,$editTable,$key,$value,'display='.$theRow["id"],$theUrl));
 				
 				//echo($theColumn);
@@ -305,7 +310,7 @@ $theTable=$_GET["table"];
 switch ($theType) {
 	case "reference" : $theTypeString=" de r&eacute;f&eacute;rence"; $theSelectorType="tableSelectors";
 	break;
-	case "codage" : $theTypeString=" de codage"; $theSelectorType="tableSelectors";
+	case "parametrage" : $theTypeString=" de param&eacute;trage"; $theSelectorType="tableSelectors";
 	break;
 	default: $theTypeString="";
 	break;

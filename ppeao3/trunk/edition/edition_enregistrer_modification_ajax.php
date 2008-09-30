@@ -86,7 +86,18 @@ else {
 
 // si la valeur soumise est valide, on fait l'update sur la base et on remet le champ en mode display avec la nouvelle valeur
 if ($valid=='valid') {
-	$response='<!--[CDATA['.makeField($cDetails,$editTable,$editColumn,$newValue,'display='.$editRecord,'').']]-->';
+	
+	// on récupère la nouvelle valeur dans la base (moins performant mais plus sûr)
+	// on construit la requête SQL pour obtenir le nombre total d'enregistrements dans la table
+	$newValueSql='	SELECT '.$tablesDefinitions[$editTable]["noms_col"].' FROM '.$tablesDefinitions[$editTable]["table"].'
+					WHERE  '.$tablesDefinitions[$editTable]["id_col"].'=\''.$editRecord.'\'';
+	$newValueResult=pg_query($connectPPEAO,$newValueSql) or die('erreur dans la requete : '.$newValueSql. pg_last_error());
+	$newValueRow=pg_fetch_row($newValueResult);
+	$theNewValue=$newValueRow[0];
+	 /* Libération du résultat */ 
+	 pg_free_result($newValueResult);
+	
+	$response='<!--[CDATA['.makeField($cDetails,$editTable,$editColumn,$theNewValue,'display='.$editRecord,'').']]-->';
 ;}
 //sinon on retourne un message explicant l'erreur et on invite l'utilisateur à recommencer
 else {
@@ -100,7 +111,7 @@ $theXml='<?xml version="1.0"?>';
 // on indique dans un attribut de la réponse le statut de la valeur soumise
 $theXml.='<response valid="'.$valid.'">';
 // on insère le contenu de la réponse
-$theXml.='<responseContent>';
+$theXml.='<responseContent value="'.$validityCheck["valeur"].'">';
 $theXml.=$response;
 $theXml.='</responseContent>';
 

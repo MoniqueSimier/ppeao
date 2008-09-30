@@ -46,19 +46,18 @@ switch ($editAction) {
 
 	// on ajoute les boutons "OK/ANNULER"
 	$theField.='<div id="edit_buttons_'.$editColumn.'_'.$editRecord.'" name="edit_buttons_'.$editColumn.'_'.$editRecord.'" class="small edit_buttons">';
-		$theField.='<a href="javascript:saveChange(\''.$editTable.'\',\''.$editColumn.'\',\''.$editValue.'\',\''.$editRecord.'\',\'cancel\');"" class="edit_button" title="enregistrer la modification">enregistrer</a>';
+		$theField.='<a href="javascript:saveChange(\''.$editTable.'\',\''.$editColumn.'\',\''.$editValue.'\',\''.$editRecord.'\',\'save\');"" class="edit_button" title="enregistrer la modification">enregistrer</a>';
 		$theField.='<a href="javascript:makeEditable(\''.$editTable.'\',\''.$editColumn.'\',\''.$editValue.'\',\''.$editRecord.'\',\'cancel\');" class="edit_button" title="annuler la modification">annuler</a>';
 
 	$theField.='</div>';
+
 	break;
 	
 	// on veut annuler les modifications faites au champ
 	case 'cancel':
 		$theField=makeField($cDetails,$editTable,$editColumn,$editValue,'display='.$editRecord,'');
 	break;
-	
-	case 'save':
-	break;
+
 
 } // end switch $action
 

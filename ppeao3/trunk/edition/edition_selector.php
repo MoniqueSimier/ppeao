@@ -60,7 +60,7 @@ $targetTable=$_GET["targetTable"];
 switch ($theType) {
 	case "reference" : $theTypeString=" de r&eacute;f&eacute;rence"; $theSelectorType="tableSelectors";
 	break;
-	case "codage" : $theTypeString=" de codage"; $theSelectorType="tableSelectors";
+	case "parametrage" : $theTypeString=" de param&eacute;trage"; $theSelectorType="tableSelectors";
 	break;
 	default: $theTypeString="";
 	break;
