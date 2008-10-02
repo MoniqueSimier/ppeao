@@ -473,7 +473,7 @@ echo('<pre>');
 					
 					$theField='<textarea id="'.$theId.'" name="'.$theId.'" 
 					cols="'.$defaultTextInputMaxLength.'" rows="'.$textRows.'" '.$theLengthLimitation.'  '.$onAction.'  class="'.$theClass.'">'.stripSlashes($value).'</textarea>
-					<span id="'.$theId.'_counter" class="small"></span>';
+					<p id="'.$theId.'_counter" class="small"></p>';
 					
 					
 					//debug

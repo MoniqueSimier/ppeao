@@ -249,15 +249,15 @@ function filterTableOnEnter(theUrl) {
 * Fonction permettant de limiter le nombre de caractères saisis dans un élément TEXTAREA
 */
 
-function fieldTextLimiter(field,cntspan,maxlimit) {
+function fieldTextLimiter(field,cntelement,maxlimit) {
 // field : le champ de formulaire à controler
-// cntspan : le <span> dans lequel on affiche le compteur de caractères restants
+// cntspan : l'élément dans lequel on affiche le compteur de caractères restants
 // maxlimit : le nombre maximum de caractères 
 if (field.value.length > maxlimit) // si c'est trop long, on coupe!
 field.value = field.value.substring(0, maxlimit);
 // sinon on met à jour le compteur de caractères restants
 else 
-cntspan.innerHTML = (maxlimit - field.value.length)+' caract&egrave;res restants';
+cntelement.innerHTML = (maxlimit - field.value.length)+' caract&egrave;re(s) restant(s)';
 
 }
 
