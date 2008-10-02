@@ -385,7 +385,7 @@ echo('<pre>');
 					else {
 						$theDisplayValue='';
 					}
-					$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquer pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$value.'\',\''.$editRow.'\',\'edit\');">'.$theDisplayValue.'</div>';
+					$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquer pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.addSlashes($value).'\',\''.$editRow.'\',\'edit\');">'.$theDisplayValue.'</div>';
 					break;
 
 					case 'edit': 
@@ -441,7 +441,7 @@ echo('<pre>');
 				
 		switch ($action) {
 
-			case 'display' : if (empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$value.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
+			case 'display' : if (empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.addSlashes($value).'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
 			break;
 
 			case 'filter': 	$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input></div>';
@@ -472,14 +472,19 @@ echo('<pre>');
 					else {$theLengthLimitation='';$textRows=$defaultTextRows;}
 					
 					$theField='<textarea id="'.$theId.'" name="'.$theId.'" 
-					cols="'.$defaultTextInputMaxLength.'" rows="'.$textRows.'" '.$theLengthLimitation.'  '.$onAction.'  class="'.$theClass.'">'.$value.'</textarea>
+					cols="'.$defaultTextInputMaxLength.'" rows="'.$textRows.'" '.$theLengthLimitation.'  '.$onAction.'  class="'.$theClass.'">'.stripSlashes($value).'</textarea>
 					<span id="'.$theId.'_counter" class="small"></span>';
+					
+					
+					//debug
+					
+					
 
 				} // end if textarea
 
 				// on affiche un <input>
 				if ($theType=='input') {
-					$theField='<input title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.$value.'"  class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
+					$theField='<input title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
 				} // end if input
 			break;
 			

@@ -18,10 +18,10 @@ $zone=2; // zone edition (voir table admin_zones)
 ?>
 	<title>ppeao::&eacute;dition des donn&eacute;es::&eacute;dition de la table s&eacute;lectionn&eacute;e</title>
 
-<script src="/js/edition.js" type="text/javascript"></script>
+<script src="/js/edition.js" type="text/javascript"  charset="iso-8859-15"></script>
 
 <!-- l'effet "tiroir" pour afficher/masquer le sélecteur -->
-<script type="text/javascript" charset="iso-8859-1">
+<script type="text/javascript" charset="iso-8859-15">
 /* <![CDATA[ */
 	window.addEvent('domready', function(){
 				// note: the onComplete is there to set an automatic height to the wrapper div
@@ -109,7 +109,7 @@ if (isset($_GET[$editTable])) {
 		foreach ($cDetails as $key=>$value) {
 			if (isset($_GET['f_'.$key]) && !empty($_GET['f_'.$key])) {
 				// si la valeur passée est un nombre, on fait un =
-				if (is_numeric($_GET['f_'.$key]) ) {
+				if (is_numeric($_GET['f_'.$key]) && ($key["data_type"]=="real" || $key["data_type"]=="integer") ) {
 					$whereClause.=' AND '.$key.' = '.$_GET['f_'.$key].'';}
 				// si la valeur passée n'est pas nombre on fait un LIKE '%%'
 				else {
@@ -277,7 +277,9 @@ if ($countTotal!=0) {
 								
 				echo('<td id="edit_cell_'.$key.'_'.$theRow["id"].'" name="edit_cell_'.$key.'_'.$theRow["id"].'" class="small">');
 				// on doit d'abord rendre la valeur "safe"
-				//$value='';	
+				// on encode la chaine pour la passer au javascript
+				//$value=htmlentities($value, ENT_QUOTES,  'ISO-8859-15', FALSE );
+
 				echo(makeField($cDetails,$editTable,$key,$value,'display='.$theRow["id"],$theUrl));
 				
 				//echo($theColumn);

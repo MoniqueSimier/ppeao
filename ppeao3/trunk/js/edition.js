@@ -271,6 +271,8 @@ function makeEditable(table,column,value,record,action) {
 // record : l'identifiant unique dans la table de l'enregistrement concerné
 // action : l'action à faire (edit/save/cancel)
 	
+	//debug		alert(value);
+	
 // la cellule concernée
 var theCell=$("edit_cell_"+column+"_"+record);
 	
@@ -350,7 +352,7 @@ xhr.onreadystatechange = function(){
 			// on injecte l'objet contenant le message
 			theMessageDiv.injectInside(theCell);
 			// on restaure les boutons enregistrer/annuler
-			theEditButtons.innerHTML=theEditButtonsContent
+			theEditButtons.innerHTML=theEditButtonsContent;
 		}
 
 		// sinon, on affiche le champ avec la nouvelle valeur
@@ -358,6 +360,9 @@ xhr.onreadystatechange = function(){
 			var theNewCellContent=theResponseNode.getElementsByTagName('responseContent')[0].firstChild.nodeValue.replace(/^\[CDATA\[/,'')
 			.replace(/\]\]$/,'');
 			theCell.innerHTML=theNewCellContent;
+			// on remet le style de la ligne éditée à sa valeur initiale
+			var theRow=$("row_"+record); // la ligne
+			theRow.removeClass("edit_field_row");
 		}
 		
 	}  

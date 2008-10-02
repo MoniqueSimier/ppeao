@@ -18,7 +18,7 @@ $zone=2; // zone edition (voir table admin_zones)
 ?>
 	<title>ppeao::&eacute;dition des donn&eacute;es</title>
 	
-<script src="/js/edition.js" type="text/javascript"></script>
+<script src="/js/edition.js" type="text/javascript"  charset="iso-8859-15"></script>
 
 </head>
 

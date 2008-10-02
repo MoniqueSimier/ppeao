@@ -34,6 +34,9 @@ $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["t
 
 //debug echo('<pre>');print_r($cDetails);echo('</pre>');
 
+// on encode la valeur "editValue" pour les caracteres spéciaux
+//$editValue=htmlentities($editValue);
+
 // selon l'action requise, on réagit différemment
 
 switch ($editAction) {
@@ -41,13 +44,15 @@ switch ($editAction) {
 	case 'edit':
 	// le DIV contenant la zone d'édition
 	$theField.='<div id="edit_'.$editColumn.'_'.$editRecord.'" name="edit_'.$editColumn.'_'.$editRecord.'" class="edit_field_container small">';
+	
+	
 	// on ajoute le champ éditable
-	$theField.=makeField($cDetails,$editTable,$editColumn,$editValue,'edit='.$editRecord,'');
+	$theField.=iconv('ISO-8859-15','UTF-8',makeField($cDetails,$editTable,$editColumn,$editValue,'edit='.$editRecord,''));
 
 	// on ajoute les boutons "OK/ANNULER"
 	$theField.='<div id="edit_buttons_'.$editColumn.'_'.$editRecord.'" name="edit_buttons_'.$editColumn.'_'.$editRecord.'" class="small edit_buttons">';
-		$theField.='<a href="javascript:saveChange(\''.$editTable.'\',\''.$editColumn.'\',\''.$editValue.'\',\''.$editRecord.'\',\'save\');"" class="edit_button" title="enregistrer la modification">enregistrer</a>';
-		$theField.='<a href="javascript:makeEditable(\''.$editTable.'\',\''.$editColumn.'\',\''.$editValue.'\',\''.$editRecord.'\',\'cancel\');" class="edit_button" title="annuler la modification">annuler</a>';
+		$theField.='<a href="javascript:saveChange(\''.$editTable.'\',\''.$editColumn.'\',\''.addSlashes($editValue).'\',\''.$editRecord.'\',\'save\');"" class="edit_button" title="enregistrer la modification">enregistrer</a>';
+		$theField.='<a href="javascript:makeEditable(\''.$editTable.'\',\''.$editColumn.'\',\''.addSlashes($editValue).'\',\''.$editRecord.'\',\'cancel\');" class="edit_button" title="annuler la modification">annuler</a>';
 
 	$theField.='</div>';
 
@@ -55,13 +60,14 @@ switch ($editAction) {
 	
 	// on veut annuler les modifications faites au champ
 	case 'cancel':
-		$theField=makeField($cDetails,$editTable,$editColumn,$editValue,'display='.$editRecord,'');
+		$theField=makeField($cDetails,$editTable,$editColumn,stripSlashes($editValue),'display='.$editRecord,'');
 	break;
 
 
 } // end switch $action
 
 
-echo($theField);
+echo(iconv('UTF-8','ISO-8859-15',$theField));
+//echo($theField);
 
 ?>

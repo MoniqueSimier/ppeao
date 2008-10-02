@@ -309,7 +309,7 @@ function logDisplayFull($date,$userId,$moduleId,$messageBit,$messageType,$pagina
 {
 
 // archivage et exportation du journal
-echo('<script src="/js/journal.js" type="text/javascript" charset="utf-8"></script>');
+echo('<script src="/js/journal.js" type="text/javascript"  charset="iso-8859-15"></script>');
 
 // on recupere les entrees de journal souhaitees
 

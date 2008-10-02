@@ -44,20 +44,25 @@ $cDetail=$cDetails[$editColumn];
 if ($cDetail["data_type"]=='real') {
 	$newValue=str_replace(',','.',$newValue);
 }
-// on encode les caractères spéciaux
-/************ A FAIRE - VOIR AVEC ENCODAGE UTF8/ISO8859.1 etc de la BASE et du SITE*****************/
 
 // on teste la validité de la valeur saisie
 $validityCheck=checkValidity($cDetails,$editColumn,$newValue);
 
 // si la valeur saisie est valide, on exécute la requête SQL
 if ($validityCheck["validity"]) {
+	
+	
+	// on encode les caractères spéciaux
+	$newValue=iconv("UTF-8", "ISO-8859-15",$newValue);
 	// si la requête s'est bien passée, on retourne "valid"
-	$saveSql='UPDATE '.$tablesDefinitions[$editTable]["table"].'
+		
+	$saveSql=' UPDATE '.$tablesDefinitions[$editTable]["table"].'
 				SET '.$editColumn.'=\''.$newValue.'\' WHERE '.$tablesDefinitions[$editTable]["id_col"].'=\''.$editRecord.'\'';
-	if ($saveResult=@pg_query($connectPPEAO,$saveSql)) {
+	if ($saveResult=@pg_query($connectPPEAO,$saveSql)) {		
 		pg_free_result($saveResult);
 		$valid='valid';
+		
+		
 
 		// on construit le SQL inverse pour une éventuelle annulation de la modification
 		$undoSql='UPDATE '.$tablesDefinitions[$editTable]["table"].'
@@ -89,13 +94,15 @@ if ($valid=='valid') {
 	
 	// on récupère la nouvelle valeur dans la base (moins performant mais plus sûr)
 	// on construit la requête SQL pour obtenir le nombre total d'enregistrements dans la table
-	$newValueSql='	SELECT '.$tablesDefinitions[$editTable]["noms_col"].' FROM '.$tablesDefinitions[$editTable]["table"].'
+	$newValueSql='	SELECT '.$editColumn.' FROM '.$tablesDefinitions[$editTable]["table"].'
 					WHERE  '.$tablesDefinitions[$editTable]["id_col"].'=\''.$editRecord.'\'';
 	$newValueResult=pg_query($connectPPEAO,$newValueSql) or die('erreur dans la requete : '.$newValueSql. pg_last_error());
 	$newValueRow=pg_fetch_row($newValueResult);
 	$theNewValue=$newValueRow[0];
 	 /* Libération du résultat */ 
 	 pg_free_result($newValueResult);
+	
+	//$theNewValue=iconv("ISO-8859-15", "UTF-8",$theNewValue);
 	
 	$response='<!--[CDATA['.makeField($cDetails,$editTable,$editColumn,$theNewValue,'display='.$editRecord,'').']]-->';
 ;}
@@ -112,7 +119,7 @@ $theXml='<?xml version="1.0"?>';
 $theXml.='<response valid="'.$valid.'">';
 // on insère le contenu de la réponse
 $theXml.='<responseContent value="'.$validityCheck["valeur"].'">';
-$theXml.=$response;
+$theXml.=iconv('ISO-8859-15','UTF-8',$response);
 $theXml.='</responseContent>';
 
 $theXml.='</response>';

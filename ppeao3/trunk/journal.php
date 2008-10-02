@@ -18,7 +18,7 @@ $zone=4; // zone journal (voir table admin_zones)
 	<title>ppeao::journal des activit&eacute;s</title>
 	
 	<!-- l'effet "tiroir" pour afficher/masquer la liste des archives -->
-	<script type="text/javascript" charset="iso-8859-1">
+	<script type="text/javascript" charset="iso-8859-15">
 	/* <![CDATA[ */
 		window.addEvent('domready', function(){
 					// note: the onComplete is there to set an automatic height to the wrapper div
