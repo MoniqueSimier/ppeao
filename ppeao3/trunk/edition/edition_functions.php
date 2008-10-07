@@ -243,7 +243,7 @@ function makeField($cDetails,$table,$column,$value,$action,$theUrl) {
 // table : la table concernée (identifiant de la table dans la variable $tablesDefinitions de edition_config.inc)
 // $column : la colonne concernée
 // $value : la valeur du champ de la colonne concernée
-// $action : 'display=xxx'/'edit=xxx' pour créer un champ afichable/éditable de l'enregistrement xxx, 'filter' pour un champ de filtre
+// $action : 'display=xxx'/'edit=xxx' pour créer un champ afichable/éditable de l'enregistrement xxx, 'filter' pour un champ de filtre, 'add' pour l'ajout d'un nouvel enregistrement
 // $theUrl : l'URL à utiliser pour les champs de tri de type SELECT ()
 
 // la connection à la base
@@ -273,6 +273,9 @@ switch ($action) {
 	case 'display': $theClass='editable_field';
 		$theId='d_'.$column.'_'.$editRow;
 	break;
+	case 'add': $theClass='add_field';
+		$theId='a_'.$column;
+	break;
 }// end switch $action
 
 // variable dans laquelle on stocke ce qui doit être affiché
@@ -283,13 +286,23 @@ $theDetails=$cDetails[$column];
 echo('<pre>');
 	print_r($theDetails);
 	echo('</pre>');*/
-	// si la colonne concernée a une contrainte
+	// on teste si la colonne concernée a une contrainte de type clé primaire, clé étrangère ou énumération
+	$keyConstraint=FALSE;
 	if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
-			
+		$constraintsToCheck=array('PRIMARY KEY','ENUM','FOREIGN KEY');
 		// on teste le type de contrainte
-		$theConstraint=current($theDetails["constraints"]);
-		//debug print_r($theConstraint);
-		switch ($theConstraint["constraint_type"]) {
+		
+		foreach($theDetails["constraints"] as $theConstraint) {
+			if (in_array($theConstraint["constraint_type"],$constraintsToCheck)){
+				$constraint=$theConstraint["constraint_type"];
+				$keyConstraint=TRUE;
+			}
+		} // end foreach
+		
+		
+	} // end if (isset($theDetails["constraints"]) 
+	if ($keyConstraint) {
+		switch ($constraint) {
 		
 			// cas d'une clé primaire
 			case 'PRIMARY KEY' : 
@@ -311,11 +324,35 @@ echo('<pre>');
 						$theClass='non_editable_field';
 						$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="les cl&eacute;s primaires ne sont pas &eacute;ditables">'.$value.'</div>';
 					break;
-
-					/*case 'edit' : // on modifie la classe du champ non éditable
-					$theClass='non_editable_field';
-					$theField='<span id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</span>';
-					break;*/
+						
+					// si on ajoute un nouvel enregistrement
+					case 'add' :
+					// si il existe une séquence sur la clé, on génère automatiquement la valeur et le champ n'est pas éditable
+					$ifSequence=getTableColumnSequence($connectPPEAO,$tablesDefinitions[$table]["table"],$column);
+					if ($ifSequence) {
+						$theClass='non_editable_field';
+						$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="valeur déterminée par une s&eacute;quence automatique">(auto)</div>';
+					}
+					else {
+					// sinon, on insère un champ input
+					
+					if ($theDetails["character_maximum_length"]>=$defaultTextInputMaxLength) {
+						$theMaxLength=$theDetails["character_maximum_length"];
+						$theSize=$defaultTextInputMaxLength;
+					}
+					else {
+						if (!empty($theDetails["character_maximum_length"])) {
+							$theSize=$theDetails["character_maximum_length"];
+							$theMaxLength=$theDetails["character_maximum_length"];
+							}
+						else {
+							$theSize=$defaultTextInputMaxLength;
+							$theMaxSizeLength=255;
+							}
+					}
+					
+					$theField='<input id="'.$theId.'" name="'.$theId.'" size="'.$theSize.'" maxlength="'.$theMaxLength.'" class="'.$theClass.'" value="" />';}
+					break;
 
 				} // end switch $action
 				;
@@ -339,6 +376,7 @@ echo('<pre>');
 					break;
 					case 'display' : $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</div>';
 					break;
+					case 'add':
 					case 'edit': $theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
 						// on ajoute une valeur "vide"
 							$theField.='<option value="" '.$selected.'>-</option>';
@@ -388,6 +426,7 @@ echo('<pre>');
 					$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquer pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.addSlashes($value).'\',\''.$editRow.'\',\'edit\');">'.$theDisplayValue.'</div>';
 					break;
 
+					case 'add':
 					case 'edit': 
 					case 'filter':
 						// on recupere les valeurs de la clé etrangere -> on utilise la table indiquée dans $cDetails
@@ -447,6 +486,7 @@ echo('<pre>');
 			case 'filter': 	$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input></div>';
 			break;
 			
+			case 'add':
 			case 'edit' :
 				// pour l'édition, on doit prendre en compte la longueur du champ et si il est de type TEXT
 				// type text : on affiche une <textarea> sans limite de taille
@@ -498,36 +538,64 @@ return $theField;
 
 //******************************************************************************
 // permet de vérifier si une valeur est compatible avec un champ de la base de donnée
-function checkValidity($cDetails,$column,$value) {
+function checkValidity($cDetails,$table,$column,$value) {
 // $cDetails : tableau retourné par la fonction getTableColumnsDetails()
 // $column : la colonne concernée
 // $value : la valeur dont on veut tester la validité
+
+global $connectPPEAO;
 
 // on stocke les informations sur la colonne concernée
 $cDetail=$cDetails[$column];
 
 // on suppose que la valeur est valide
-$validityCheck=array("validity"=>true, "errorMessage"=>'');
+$validityCheck=array("validity"=>1, "errorMessage"=>'',"valeur"=>$value);
 
 // on commence les vérifications
 // si la valeur saisie est "null" et que la colonne ne le permet pas
 if (is_null($value) && $cDetail["is_nullable"]!='YES') {
-	$validityCheck=array("validity"=>false, "errorMessage"=>'cette valeur ne peut pas être vide');	
+	$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur ne peut pas être vide',"valeur"=>$value);	
 } // end if null
 else {
+	// on vérifie si la valeur doit être unique
+	// on commence par supposer que la valeur ne doit pas être unique
+	$mustBeUnique=FALSE;
+	if (!empty($cDetail["constraints"])) {
+		foreach ($cDetail["constraints"] as $constraint) {
+			if ($constraint["constraint_type"]=='UNIQUE' || $constraint["constraint_type"]=='PRIMARY KEY') {$mustBeUnique=TRUE;}
+		}// end foreach $cDetail["constraints"]
+	} // end if (!empty($cDetail["constraints"]))
+	// si la valeur doit être unique, on recherche dans la table si une valeur égale à celle saisie existe déjà
+	if ($mustBeUnique) {
+		// on suppose que la valeur n'existe pas déjà dans la base
+		$isUnique=TRUE;
+		$uniqueSql='SELECT count('.$column.') FROM '.$table.' WHERE '.$column.'=\''.$value.'\'';
+		$uniqueResult=pg_query($connectPPEAO,$uniqueSql) or die('erreur dans la requete : '.$uniqueSql. pg_last_error());
+		$uniqueRow=pg_fetch_row($uniqueResult);
+		$uniqueCount=$uniqueRow[0];
+		 /* Libération du résultat */ 
+		 pg_free_result($uniqueResult);
+		// si il existe au moins une valeur égale dans la table, la valeur n'est pas valide
+		if ($uniqueCount>0) {
+			$isUnique=FALSE;
+		}	
+	}
 	
 	
-
+	if ($mustBeUnique && !$isUnique) {
+		$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur existe d&eacute;j&agrave; dans la table et doit &ecirc;tre unique',"valeur"=>$value);
+	}
+	else {
 	// on teste la compatibilité entre les types de données
 	switch ($cDetail["data_type"]) {
 
 		// entier (on n'utilise pas is_int() car même si le script retourne "7", PHP considère que c'est une variable string)
-		case 'integer': if (intval($value)!=$value) {$validityCheck=array("validity"=>false, "errorMessage"=>'cette valeur doit &ecirc;tre un entier',"valeur"=>$value);}
+		case 'integer': if (intval($value)!=$value) {$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur doit &ecirc;tre un entier',"valeur"=>$value);}
 		break;
 
 		// réel
 		case 'real': 
-			if (!is_numeric($value)) {$validityCheck=array("validity"=>false, "errorMessage"=>'cette valeur doit &ecirc;tre un nombre',"valeur"=>$value);}
+			if (!is_numeric($value)) {$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur doit &ecirc;tre un nombre',"valeur"=>$value);}
 		break;
 
 		//note : on ne teste pas la longueur des chaines pour les champs text et character varying,
@@ -535,7 +603,7 @@ else {
 
 	}// end switch
 
-	
+	} // end else (valeur unique)	
 } // end else null
 
 return $validityCheck;

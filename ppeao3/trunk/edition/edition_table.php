@@ -46,7 +46,6 @@ $zone=2; // zone edition (voir table admin_zones)
 /* ]]> */
 </script>
 
-
 </head>
 
 <body>
@@ -201,8 +200,8 @@ if ($countTotal>$rowsPerPage) {
 	}
 
 ?>
-<h1>votre s&eacute;lection : <?php echo($countTotal.' '.$tablesDefinitions[$editTable]["label"].' sur '.$countAllTotal.' '.$paginationString);?></h1>
-<p class="hint small">aide : pour trier la table, cliquer sur un nom de colonne, cliquer &agrave; nouveau pour inverser l'ordre de tri; pour filtrer la table, saisissez ou choisissez une valeur et appuyez sur ENTR&Eacute;E (le filtrage est cumulatif et de type "contient"); pour éditer une valeur, cliquer dessus.</p>
+<h1>votre s&eacute;lection : <?php echo($countTotal.' '.$tablesDefinitions[$editTable]["label"].' sur '.$countAllTotal.' '.$paginationString);?><span class="showHide"><a id="add_new_record" href="#" onclick="modalDialogAddRecord('add_record_overlay',1,'<?php echo($editTable) ?>');">[ajouter un enregistrement]</a></span></h1>
+<p class="hint small">aide : pour trier la table, cliquer sur un nom de colonne, cliquer &agrave; nouveau pour inverser l'ordre de tri; pour filtrer la table, saisissez ou choisissez une valeur et appuyez sur ENTR&Eacute;E (le filtrage est cumulatif et de type "contient"); pour &eacute;diter une valeur, cliquer dessus.</p>
 <?php 
 // on affiche la table
 echo('<form id="the_table_form" name="the_table_form" action="/edition/edition_table.php">');
@@ -300,6 +299,7 @@ echo paginate($_SERVER['PHP_SELF'].'?'.removeQueryStringParam($_SERVER['QUERY_ST
 	
 
 ?>
+
 </div> <!-- end div id="editor_container" -->
 
 

@@ -195,3 +195,38 @@ function toggleSelectSelection(select,what) {
 	} // end for
 	
 }
+
+/**
+* Fonction générique qui permet de constuire une chaine de type url à partir d'un formulaire
+* récupère l'ensemble des champs d'un formulaire et construit une chaine du type &param1=value1&param2=value2
+*/
+
+function formToUrl(theFormId,theClass) {
+// theFormId : l'id du formulaire
+// theClass : la classe des éléments du formulaire dont on veut récupérer les valeurs
+	// on sélectionne tous les champs du filtre 
+	var theParams=$(theFormId).getElements('.'+theClass);
+
+	var ln=theParams.length;
+	var theUrl='';
+	// pour chaque champ, si une valeur non nulle est sélectionnée, on l'ajoute à l'url theUrl
+	for (var i=0; i<ln; i++) {
+	
+		theElement=theParams[i];
+		//debug  alert(theElement.nodeName);
+		// si on a affaire à un input ou une textarea
+		if (theParams[i].nodeName=='INPUT' || theParams[i].nodeName=='TEXTAREA') {
+			if (theParams[i].value!='') {theUrl+='&'+theParams[i].name+'='+theParams[i].value;}
+		}
+		
+		//si on a affaire à un select
+		if (theParams[i].nodeName=='SELECT') {
+			if (theParams[i].selectedIndex!=0) {theUrl+='&'+theParams[i].name+'='+theParams[i].value;}
+		}
+		}
+		
+		return theUrl;			
+}
+
+
+

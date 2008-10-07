@@ -46,7 +46,7 @@ if ($cDetail["data_type"]=='real') {
 }
 
 // on teste la validité de la valeur saisie
-$validityCheck=checkValidity($cDetails,$editColumn,$newValue);
+$validityCheck=checkValidity($cDetails,$editTable,$editColumn,$newValue);
 
 // si la valeur saisie est valide, on exécute la requête SQL
 if ($validityCheck["validity"]) {
@@ -84,9 +84,6 @@ else {
 	$errorMessage=$validityCheck["errorMessage"];
 	
 }
-
-
-
 
 
 // si la valeur soumise est valide, on fait l'update sur la base et on remet le champ en mode display avec la nouvelle valeur

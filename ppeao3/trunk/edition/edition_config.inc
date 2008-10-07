@@ -91,6 +91,7 @@ $tablesDefinitions=Array(
 		"type_sortie"=>array("label"=>"types de sorties","table"=>"art_type_sortie", "id_col"=>"id","noms_col"=>"libelle"),
 		"milieu"=>array("label"=>"milieux","table"=>"art_millieu", "id_col"=>"id","noms_col"=>"libelle"),
 		"lieu_peche"=>array("label"=>"lieux de p&ecirc;che","table"=>"art_lieu_de_peche", "id_col"=>"id","noms_col"=>"libelle"),
+		"test"=>array("label"=>"test","table"=>"test", "id_col"=>"id","noms_col"=>"code"),
 	);	
 
 

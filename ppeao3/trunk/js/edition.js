@@ -373,3 +373,223 @@ xhr.open("GET","/edition/edition_enregistrer_modification_ajax.php?&editTable="+
 xhr.send(null);	
 
 }
+
+/**
+* Fonction qui bascule la visibilité d'un élement entre affiché et masqué
+* theHideClass : le nom de la classe permettant de masquer l'elément
+* theElementId : attribut id de l'élément DOM à afficher/masquer
+* theLinkId : attribut id de l'élément DOM qui contient le lien permettant d'afficher/masquer
+* theDisplayText : texte à afficher dans le lien quand l'élément est masqué
+* theHideText : texte à afficher dans le lien quand l'élément est affiché
+
+*/
+function toggleElementVisibility(theHideClass,theElementId,theDisplayLinkId,theHideLinkId,theDisplayText,theHideText) {
+	var theElement=$(theElementId);
+	theElement.toggleClass(theHideClass);
+	var theDisplayLink=$(theDisplayLinkId);
+	var theHideLink=$(theHideLinkId);
+	if (theElement.hasClass(theHideClass)) {
+	theDisplayLink.innerHTML=theDisplayText;
+	theHideLink.innerHTML='';}
+	else {
+	theHideLink.innerHTML=theHideText;
+	theDisplayLink.innerHTML='';	
+	}
+}
+	
+	
+/**
+* Fonction qui affiche la fenetre de dialogue modale pour ajouter un nouvel enregistrement
+* table : la table à laquelle on veut ajouter un enregistrement
+*/
+function modalDialogAddRecord(theOverlayId,theLevel,theTable) {
+		
+	// on crée le nouvel élément
+	
+	var theOverlay=new Element ('div', {
+		'id': theOverlayId+"_"+theLevel,
+		'class': "overlay",
+		'style': "z-index:"+theLevel*1000,
+	}
+	);
+	
+	var theOverlayDialog= new  Element ('div', {
+		'id': theOverlayId+"_dialog"+"_"+theLevel,
+		'class': "overlay_dialog",
+	}
+	);
+	
+	var theOverlayContent= new  Element ('div', {
+		'id': theOverlayId+"_content"+"_"+theLevel,
+		'class': "overlay_content",
+	}
+	);
+		
+	var theOverlayButtons= new  Element ('div', {
+		'id': theOverlayId+"_buttons"+"_"+theLevel,
+		'class': "overlay_buttons",
+	}
+	);
+	
+	var theOverlayLoaderDiv =new  Element ('div', {
+		'id': theOverlayId+"_loader"+"_"+theLevel,
+		'class': "overlay_loader",
+	}
+	); 
+	
+	theOverlayButtons.innerHTML='<a id="'+theOverlayId+'_close_'+theLevel+'" href="#" onclick="javascript:modalDialogClose(\''+theOverlayId+'_'+theLevel+'\',\'\')" class="small link_button">fermer</a>';
+	
+	
+	theOverlay.injectInside($E('body'));
+	theOverlayDialog.injectInside(theOverlayId+"_"+theLevel);
+	theOverlayContent.injectInside(theOverlayId+"_dialog"+"_"+theLevel);
+	theOverlayButtons.injectInside(theOverlayId+"_dialog"+"_"+theLevel);
+	theOverlayLoaderDiv.injectInside(theOverlayId+"_dialog"+"_"+theLevel);
+	
+	
+	// on initialise l'objet AJAX	
+	var xhr = getXhr();
+	// what to do when the response is received
+	xhr.onreadystatechange = function(){
+			// en attendant la réponse, on remplace les boutons d'enregistrement/annulation par un loader
+		var theLoader='<div align="center" id="the_loader_'+theLevel+'"><img src="/assets/ajax-loader.gif" alt="chargement en cours..." title="chargement en cours..." valign="center"/></div>';
+		if(xhr.readyState < 4) { theOverlayContent.innerHTML = theLoader;}
+		// only do something if the whole response has been received and the server says OK
+		if(xhr.readyState == 4 && xhr.status == 200){
+			var theResponseText = xhr.responseText;
+			
+			// on affiche les champs de saisie pour le nouvel enregistrement
+			theOverlayContent.innerHTML=theResponseText;
+			
+			// on affiche le bouton "enregistrer"			
+			var theSaveButton=new Element('a', {
+			    'class': 'small link_button',
+			    'href': '#',
+				'id': "add_record_save"+"_"+theLevel,
+				'onclick': 'sendRecordToSave(\'add_record_form_'+theLevel+'\',\'add_field\','+theLevel+',\''+theTable+'\')',
+			});
+			theSaveButton.innerHTML="enregistrer";
+			theSaveButton.injectBefore(theOverlayId+"_close"+"_"+theLevel);
+			
+			// on met à jour la hauteur de l'overlay au cas où le dialogue soit plus haut que l'écran
+			// si on ne fait pas ça, l'overlay ne couvre qu'une partie de la page
+			window.addEvent('domready', function(){$('add_record_overlay'+"_"+theLevel).setStyle('height', '100%');});
+			
+			}  
+	} // end xhr.onreadystatechange
+
+	// using GET to send the request
+	xhr.open("GET","/edition/edition_ajouter_enregistrement_ajax.php?&editTable="+theTable+"&level="+theLevel,true);
+	xhr.send(null);
+}
+
+
+/**
+* Fonction qui ferme la fenetre de dialogue modale 
+*/
+function modalDialogClose(theDialogOverlay,refresh) {
+	//theDialogOverlay : id de l'élément "overlay"
+	// refresh : si "refresh", on force le refresh de la page
+	$(theDialogOverlay).remove();
+	if (refresh=='refresh') {
+		window.location.reload(true);
+	}
+}
+
+/**
+* Fonction pour enregistrer les valeurs lors de l'ajout d'un nouvel enregistrement
+*/
+function sendRecordToSave(theFormId,theFormFieldClass,theLevel,theTable) {
+ var theUrl=formToUrl(theFormId,theFormFieldClass);
+
+var theSaveButton=$('add_record_save_'+theLevel);
+var theLoader="add_record_loader_"+theLevel;
+// on initialise l'objet AJAX	
+var xhr = getXhr();
+// what to do when the response is received
+xhr.onreadystatechange = function(){
+		
+	if(xhr.readyState < 4) {
+		theSaveButton.setStyle("visibility","hidden");
+		// en attendant la réponse, on remplace les boutons d'enregistrement/annulation par un loader
+		theLoader.innerHTML='<img src="/assets/ajax-loader.gif" alt="validation en cours..." title="validation en cours..." valign="center"/>';
+	}
+	// only do something if the whole response has been received and the server says OK
+	if(xhr.readyState == 4 && xhr.status == 200){
+		theLoader.innerHTML='';
+		var theResponseNode = xhr.responseXML.documentElement;
+		var theNodes=theResponseNode.childNodes;
+		//debug alert(theNodes.length);
+		// la validité des valeurs saisies
+		var isValid=theResponseNode.attributes.getNamedItem("validity").value;
+		//debug alert(theResponseNode.attributes.getNamedItem("validity").value);
+		// si la saisie n'est pas valide, on réactive le bouton enregistrer
+		if (isValid=='invalid') {
+			theSaveButton.setStyle("visibility","visible");
+			// et on affiche les messages d'erreur sous chaque champ non valide
+			for (var i=0; i<theNodes.length; i++) {
+				var theNode=theNodes[i];
+				var theKey=theNode.attributes.getNamedItem("key").value;
+				var theValue=$('a_'+theKey).value;
+				var theValidity=theNode.attributes.getNamedItem("valid").value;
+				//debug alert(theValidity);
+				if (theNode.firstChild) {
+					var theMessage=theNode.firstChild.nodeValue.replace(/^\[CDATA\[/,'').replace(/\]\]$/,'');
+					}
+				
+				// si la valeur n'est pas valide et que on a un message d'erreur
+				if (theValidity==0 && theMessage!='') {
+					//debug alert(theMessage);
+					var theError=new Element('div',{
+						'id' : 'a_error_'+theKey+'_'+theLevel,
+						'class' : 'small error'
+					}
+					);
+					theError.innerHTML=theMessage;
+					theError.injectAfter('a_'+theKey);
+
+				} // end if theValidity==0
+				
+				} // end for
+				
+				
+			} // end if isValid=='invalid'
+			else {
+				// on change le texte du <h1>
+				var theH1=$('add_record_overlay_content_'+theLevel).getElement('h1');
+				theConfirmation='enregistrement ajouté dans la table "'+theResponseNode.attributes.getNamedItem("table").value+'"';
+				theH1.innerHTML=theConfirmation;
+				for (var i=0; i<theNodes.length; i++) {
+					var theNode=theNodes[i];
+					var theKey=theNode.attributes.getNamedItem("key").value;
+					var theValue=$('a_'+theKey).value;
+					var theValidity=theNode.attributes.getNamedItem("valid").value;
+					// on enlève le message d'erreur si il existe
+					if ($('a_error_'+theKey+'_'+theLevel)) {$('a_error_'+theKey+'_'+theLevel).remove();}
+					// on crée un nouvel élément contenant seulement la valeur à afficher
+					var theNewElement=new Element('div',{
+						'class' : 'small',
+					}
+					);
+					theNewElement.innerHTML=theValue;
+					// on sélectionne l'élément de formulaire qu'il doit remplacer
+					//debug alert('a_'+theKey);
+					var theOldElement=$('a_'+theKey);
+					// on remplace l'ancien élément par le nouveau
+					theOldElement.replaceWith(theNewElement);
+				}// end for
+				
+			// maintenant, on change le comportement du bouton "fermer"
+			var theCloseButton=$('add_record_overlay_close_'+theLevel);
+			var over='add_record_overlay_'+theLevel;
+			theCloseButton.setProperty("onclick","javascript:modalDialogClose(\'"+over+"\',\'refresh\')")
+			} // end else isValid
+		} // end if xhr.readyState == 4 && xhr.status == 200
+	
+} // end xhr.onreadystatechange
+
+// using GET to send the request
+xhr.open("GET","/edition/edition_ajouter_enregistrement_validation_ajax.php?&table="+theTable+"&level="+theLevel+theUrl,true);
+xhr.send(null);
+
+}

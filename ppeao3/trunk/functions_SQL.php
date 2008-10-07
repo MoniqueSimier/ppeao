@@ -257,4 +257,28 @@ foreach($meta as $column) {
 return $columnsDetails;
 }
 
+//*********************************************************************
+// retourne l'éventuelle séquence associée à une colonne d'une table postgresql
+function getTableColumnSequence($connection,$table,$column) {
+
+// $connection : la connexion à la base postgres
+// $table : le nom de la table dans la base de données
+// note : dirty hack, il doit y avoir une meilleure façon de faire
+$seqSql='SELECT relname
+  FROM pg_class
+ WHERE relkind = \'S\' and relname = \''.$table.'_'.$column.'_seq\' 
+   AND relnamespace IN (
+        SELECT oid
+          FROM pg_namespace
+         WHERE nspname NOT LIKE \'pg_%\'
+           AND nspname != \'information_schema\');'
+;
+
+$seqResult=pg_query($connection,$seqSql) or die('erreur dans la requete : '.$seqSql. pg_last_error());
+$seqCount=pg_num_rows($seqResult);
+if ($seqCount>0) {$ifSequence=TRUE;} else {$ifSequence=FALSE;}
+
+return $ifSequence;
+}
+
 ?>
