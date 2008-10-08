@@ -165,7 +165,7 @@ padding:6px;
 	background-image : url(../assets/modal_background.png);
 }
 
-.overlay_dialog {
+.overlay_window {
 	width:500px;
 	margin: 100px auto;
 	background-color: #fff;
@@ -175,7 +175,16 @@ padding:6px;
 	overflow: auto;
 }
 
-#add_record_buttons {
+.overlay_loader {
+	text-align:center;
+	height:10px;
+}
+
+.overlay_buttons {
  text-align:right;
+}
+
+.overlay_buttons .link_button {
+	margin-left: 12px;
 }
 
