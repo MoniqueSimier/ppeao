@@ -345,12 +345,14 @@ xhr.onreadystatechange = function(){
 			var theMessage=theResponseNode.getElementsByTagName('responseContent')[0].firstChild.nodeValue.replace(/^\[CDATA\[/,'')
 			.replace(/\]\]$/,'');
 			//debug			alert(theMessage);
-			
-			// on crée l'élément pour afficher le message d'erreur
-			var theMessageDiv= new Element('div', {'class' : 'small error'});
+			// si le message d'erreur existe déjà, on le remplace
+			if ($('e_'+column+'_'+record+'_error')) {$('e_'+column+'_'+record+'_error').innerHTML=theMessage} else {
+			// sinon crée l'élément pour afficher le message d'erreur
+			var theMessageDiv= new Element('div', {'id':'e_'+column+'_'+record+'_error','class' : 'small error'});
 			theMessageDiv.innerHTML=theMessage;
 			// on injecte l'objet contenant le message
 			theMessageDiv.injectInside(theCell);
+			} // end if $('e_'+column+'_'+record+'_error')
 			// on restaure les boutons enregistrer/annuler
 			theEditButtons.innerHTML=theEditButtonsContent;
 		}
@@ -402,49 +404,49 @@ function toggleElementVisibility(theHideClass,theElementId,theDisplayLinkId,theH
 * Fonction qui affiche la fenetre de dialogue modale pour ajouter un nouvel enregistrement
 * table : la table à laquelle on veut ajouter un enregistrement
 */
-function modalDialogAddRecord(theOverlayId,theLevel,theTable) {
+function modalDialogAddRecord(theLevel,theTable) {
 		
 	// on crée le nouvel élément
 	
 	var theOverlay=new Element ('div', {
-		'id': theOverlayId+"_"+theLevel,
+		'id': "overlay_"+theLevel,
 		'class': "overlay",
 		'style': "z-index:"+theLevel*1000,
 	}
 	);
 	
-	var theOverlayDialog= new  Element ('div', {
-		'id': theOverlayId+"_dialog"+"_"+theLevel,
-		'class': "overlay_dialog",
+	var theOverlayWindow= new  Element ('div', {
+		'id': "overlay_"+theLevel+"_window",
+		'class': "overlay_window",
 	}
 	);
 	
 	var theOverlayContent= new  Element ('div', {
-		'id': theOverlayId+"_content"+"_"+theLevel,
+		'id': "overlay_"+theLevel+"_content",
 		'class': "overlay_content",
 	}
 	);
 		
 	var theOverlayButtons= new  Element ('div', {
-		'id': theOverlayId+"_buttons"+"_"+theLevel,
+		'id': "overlay_"+theLevel+"_buttons",
 		'class': "overlay_buttons",
 	}
 	);
 	
 	var theOverlayLoaderDiv =new  Element ('div', {
-		'id': theOverlayId+"_loader"+"_"+theLevel,
+		'id': "overlay_"+theLevel+"_loader",
 		'class': "overlay_loader",
 	}
 	); 
 	
-	theOverlayButtons.innerHTML='<a id="'+theOverlayId+'_close_'+theLevel+'" href="#" onclick="javascript:modalDialogClose(\''+theOverlayId+'_'+theLevel+'\',\'\')" class="small link_button">fermer</a>';
+	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\')" class="small link_button">fermer</a>';
 	
 	
 	theOverlay.injectInside($E('body'));
-	theOverlayDialog.injectInside(theOverlayId+"_"+theLevel);
-	theOverlayContent.injectInside(theOverlayId+"_dialog"+"_"+theLevel);
-	theOverlayButtons.injectInside(theOverlayId+"_dialog"+"_"+theLevel);
-	theOverlayLoaderDiv.injectInside(theOverlayId+"_dialog"+"_"+theLevel);
+	theOverlayWindow.injectInside(theOverlay);
+	theOverlayLoaderDiv.injectInside(theOverlayWindow);
+	theOverlayContent.injectInside(theOverlayWindow);
+	theOverlayButtons.injectInside(theOverlayWindow);
 	
 	
 	// on initialise l'objet AJAX	
@@ -465,15 +467,20 @@ function modalDialogAddRecord(theOverlayId,theLevel,theTable) {
 			var theSaveButton=new Element('a', {
 			    'class': 'small link_button',
 			    'href': '#',
-				'id': "add_record_save"+"_"+theLevel,
-				'onclick': 'sendRecordToSave(\'add_record_form_'+theLevel+'\',\'add_field\','+theLevel+',\''+theTable+'\')',
+				'id': "overlay_"+theLevel+"_save",
+				'onclick': 'sendRecordToSave(\'add_record_'+theLevel+'_form\',\'add_field\','+theLevel+',\''+theTable+'\')',
 			});
 			theSaveButton.innerHTML="enregistrer";
-			theSaveButton.injectBefore(theOverlayId+"_close"+"_"+theLevel);
+			theSaveButton.injectBefore("overlay_"+theLevel+"_close");
 			
 			// on met à jour la hauteur de l'overlay au cas où le dialogue soit plus haut que l'écran
 			// si on ne fait pas ça, l'overlay ne couvre qu'une partie de la page
-			window.addEvent('domready', function(){$('add_record_overlay'+"_"+theLevel).setStyle('height', '100%');});
+			window.addEvent('domready', function(){
+			// il faudrait trouver comment declarer correctement la hauteur de l'overlay
+			//	var theHeight=$E('body').height;
+			//	alert(theHeight);
+				$('overlay'+"_"+theLevel).setStyle('height','100%');
+				});
 			
 			}  
 	} // end xhr.onreadystatechange
@@ -502,8 +509,8 @@ function modalDialogClose(theDialogOverlay,refresh) {
 function sendRecordToSave(theFormId,theFormFieldClass,theLevel,theTable) {
  var theUrl=formToUrl(theFormId,theFormFieldClass);
 
-var theSaveButton=$('add_record_save_'+theLevel);
-var theLoader="add_record_loader_"+theLevel;
+var theSaveButton=$('overlay_'+theLevel+'_save');
+var theLoader=$("overlay_"+theLevel+"_loader");
 // on initialise l'objet AJAX	
 var xhr = getXhr();
 // what to do when the response is received
@@ -530,9 +537,8 @@ xhr.onreadystatechange = function(){
 			for (var i=0; i<theNodes.length; i++) {
 				var theNode=theNodes[i];
 				var theKey=theNode.attributes.getNamedItem("key").value;
-				var theValue=$('a_'+theKey).value;
+				var theValue=$('add_record_'+theLevel+'_'+theKey).value;
 				var theValidity=theNode.attributes.getNamedItem("valid").value;
-				//debug alert(theValidity);
 				if (theNode.firstChild) {
 					var theMessage=theNode.firstChild.nodeValue.replace(/^\[CDATA\[/,'').replace(/\]\]$/,'');
 					}
@@ -540,14 +546,18 @@ xhr.onreadystatechange = function(){
 				// si la valeur n'est pas valide et que on a un message d'erreur
 				if (theValidity==0 && theMessage!='') {
 					//debug alert(theMessage);
-					var theError=new Element('div',{
-						'id' : 'a_error_'+theKey+'_'+theLevel,
+					if (theError=$('add_record_'+theLevel+'_'+theKey+'_error')) {
+						theError.innerHTML=theMessage;
+						} 
+					else {
+						var theError=new Element('div',{
+						'id' : 'add_record_'+theLevel+'_'+theKey+'_error',
 						'class' : 'small error'
-					}
-					);
-					theError.innerHTML=theMessage;
-					theError.injectAfter('a_'+theKey);
-
+						}
+						);
+						theError.innerHTML=theMessage;
+						theError.injectAfter('add_record_'+theLevel+'_'+theKey);
+					} // end else theError
 				} // end if theValidity==0
 				
 				} // end for
@@ -556,37 +566,46 @@ xhr.onreadystatechange = function(){
 			} // end if isValid=='invalid'
 			else {
 				// on change le texte du <h1>
-				var theH1=$('add_record_overlay_content_'+theLevel).getElement('h1');
+				var theH1=$('overlay_'+theLevel).getElement('h1');
 				theConfirmation='enregistrement ajouté dans la table "'+theResponseNode.attributes.getNamedItem("table").value+'"';
 				theH1.innerHTML=theConfirmation;
 				for (var i=0; i<theNodes.length; i++) {
 					var theNode=theNodes[i];
 					var theKey=theNode.attributes.getNamedItem("key").value;
-					var theValue=$('a_'+theKey).value;
+					// on traite différemment les valeurs "normales" et les "sequences"
+					if (theNode.attributes.getNamedItem("sequence").value=="sequence") {
+						var theValue=$('add_record_'+theLevel+'_'+theKey).innerHTML;
+					} else 
+					{
+						var theValue=$('add_record_'+theLevel+'_'+theKey).value;
+					}
 					var theValidity=theNode.attributes.getNamedItem("valid").value;
+					//debug					alert(theKey+':'+theValue);
 					// on enlève le message d'erreur si il existe
-					if ($('a_error_'+theKey+'_'+theLevel)) {$('a_error_'+theKey+'_'+theLevel).remove();}
+					if ($('add_record_'+theLevel+'_'+theKey+'_error')) {$('add_record_'+theLevel+'_'+theKey+'_error').remove();}
 					// on crée un nouvel élément contenant seulement la valeur à afficher
 					var theNewElement=new Element('div',{
 						'class' : 'small',
+						'id' : 'add_record_'+theLevel+'_'+theKey,
 					}
 					);
 					theNewElement.innerHTML=theValue;
 					// on sélectionne l'élément de formulaire qu'il doit remplacer
 					//debug alert('a_'+theKey);
-					var theOldElement=$('a_'+theKey);
+					var theOldElement=$('add_record_'+theLevel+'_'+theKey);
 					// on remplace l'ancien élément par le nouveau
 					theOldElement.replaceWith(theNewElement);
 				}// end for
 				
 			// maintenant, on change le comportement du bouton "fermer"
-			var theCloseButton=$('add_record_overlay_close_'+theLevel);
-			var over='add_record_overlay_'+theLevel;
+			var theCloseButton=$('overlay_'+theLevel+'_close');
+			var over='overlay_'+theLevel;
 			theCloseButton.setProperty("onclick","javascript:modalDialogClose(\'"+over+"\',\'refresh\')")
 			} // end else isValid
 		} // end if xhr.readyState == 4 && xhr.status == 200
 	
 } // end xhr.onreadystatechange
+
 
 // using GET to send the request
 xhr.open("GET","/edition/edition_ajouter_enregistrement_validation_ajax.php?&table="+theTable+"&level="+theLevel+theUrl,true);

@@ -274,7 +274,7 @@ switch ($action) {
 		$theId='d_'.$column.'_'.$editRow;
 	break;
 	case 'add': $theClass='add_field';
-		$theId='a_'.$column;
+		$theId='add_record_'.$_GET["level"].'_'.$column;
 	break;
 }// end switch $action
 
@@ -553,7 +553,7 @@ $validityCheck=array("validity"=>1, "errorMessage"=>'',"valeur"=>$value);
 
 // on commence les vérifications
 // si la valeur saisie est "null" et que la colonne ne le permet pas
-if (is_null($value) && $cDetail["is_nullable"]!='YES') {
+if ((is_null($value) || $value=='') && $cDetail["is_nullable"]!='YES') {
 	$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur ne peut pas être vide',"valeur"=>$value);	
 } // end if null
 else {
@@ -569,7 +569,7 @@ else {
 	if ($mustBeUnique) {
 		// on suppose que la valeur n'existe pas déjà dans la base
 		$isUnique=TRUE;
-		$uniqueSql='SELECT count('.$column.') FROM '.$table.' WHERE '.$column.'=\''.$value.'\'';
+		$uniqueSql='SELECT count('.$column.') FROM '.$table.' WHERE lower('.$column.')=\''.strtolower($value).'\'';
 		$uniqueResult=pg_query($connectPPEAO,$uniqueSql) or die('erreur dans la requete : '.$uniqueSql. pg_last_error());
 		$uniqueRow=pg_fetch_row($uniqueResult);
 		$uniqueCount=$uniqueRow[0];
@@ -586,6 +586,8 @@ else {
 		$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur existe d&eacute;j&agrave; dans la table et doit &ecirc;tre unique',"valeur"=>$value);
 	}
 	else {
+		// on ne traite que le cas où la valeur n'est pas vide
+		if (!is_null($value) && $value!='') {
 	// on teste la compatibilité entre les types de données
 	switch ($cDetail["data_type"]) {
 
@@ -602,7 +604,7 @@ else {
 		//puisque cette contrainte est appliquée à la saisie
 
 	}// end switch
-
+}
 	} // end else (valeur unique)	
 } // end else null
 

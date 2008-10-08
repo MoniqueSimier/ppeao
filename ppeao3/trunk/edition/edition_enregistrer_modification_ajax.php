@@ -13,7 +13,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 
 global $tablesDefinitions;
 
-//debug sleep(1);
+//debug sleep(50);
 
 // la table concernée
 $editTable=$_GET["editTable"];
@@ -46,7 +46,7 @@ if ($cDetail["data_type"]=='real') {
 }
 
 // on teste la validité de la valeur saisie
-$validityCheck=checkValidity($cDetails,$editTable,$editColumn,$newValue);
+$validityCheck=checkValidity($cDetails,$tablesDefinitions[$editTable]["table"],$editColumn,$newValue);
 
 // si la valeur saisie est valide, on exécute la requête SQL
 if ($validityCheck["validity"]) {
