@@ -1,6 +1,6 @@
 <?php 
 // Mis à jour par Olivier ROUX, 29-07-2008
-
+header("Content-Type: text/html; charset=iso-8859-15");
 // démarrage de la session
 session_start();
 
