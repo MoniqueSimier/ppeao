@@ -5,7 +5,6 @@
 -- Started on 2008-10-13 15:34:31 CEST
 
 SET client_encoding = 'LATIN9';
-SET standard_conforming_strings = off;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET escape_string_warning = off;
@@ -1670,14 +1669,6 @@ CREATE SEQUENCE admin_log_modules_module_id_seq
 
 ALTER TABLE public.admin_log_modules_module_id_seq OWNER TO devppeao;
 
---
--- TOC entry 2357 (class 0 OID 0)
--- Dependencies: 1784
--- Name: admin_log_modules_module_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_log_modules_module_id_seq OWNED BY admin_log_modules.module_id;
-
 
 --
 -- TOC entry 1789 (class 1259 OID 33250)
@@ -1693,14 +1684,6 @@ CREATE SEQUENCE admin_users_groups_group_id_seq
 
 
 ALTER TABLE public.admin_users_groups_group_id_seq OWNER TO devppeao;
-
---
--- TOC entry 2358 (class 0 OID 0)
--- Dependencies: 1789
--- Name: admin_users_groups_group_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_users_groups_group_id_seq OWNED BY admin_usergroups.group_id;
 
 
 --
@@ -1719,15 +1702,6 @@ CREATE SEQUENCE admin_users_user_id_seq
 ALTER TABLE public.admin_users_user_id_seq OWNER TO devppeao;
 
 --
--- TOC entry 2359 (class 0 OID 0)
--- Dependencies: 1786
--- Name: admin_users_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_users_user_id_seq OWNED BY admin_users.user_id;
-
-
---
 -- TOC entry 1794 (class 1259 OID 33285)
 -- Dependencies: 1795 6
 -- Name: admin_zones_zone_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
@@ -1742,13 +1716,6 @@ CREATE SEQUENCE admin_zones_zone_id_seq
 
 ALTER TABLE public.admin_zones_zone_id_seq OWNER TO devppeao;
 
---
--- TOC entry 2360 (class 0 OID 0)
--- Dependencies: 1794
--- Name: admin_zones_zone_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_zones_zone_id_seq OWNED BY admin_zones.zone_id;
 
 
 --
@@ -2384,14 +2351,6 @@ CREATE SEQUENCE j_user_group_group_id_seq
 
 ALTER TABLE public.j_user_group_group_id_seq OWNER TO devppeao;
 
---
--- TOC entry 2361 (class 0 OID 0)
--- Dependencies: 1792
--- Name: j_user_group_group_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE j_user_group_group_id_seq OWNED BY admin_j_user_group.group_id;
-
 
 --
 -- TOC entry 1791 (class 1259 OID 33262)
@@ -2409,13 +2368,6 @@ CREATE SEQUENCE j_user_group_user_id_seq
 
 ALTER TABLE public.j_user_group_user_id_seq OWNER TO devppeao;
 
---
--- TOC entry 2362 (class 0 OID 0)
--- Dependencies: 1791
--- Name: j_user_group_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE j_user_group_user_id_seq OWNED BY admin_j_user_group.user_id;
 
 
 --
@@ -2498,14 +2450,6 @@ CREATE SEQUENCE sys_activites_a_migrer_id_seq
 
 ALTER TABLE public.sys_activites_a_migrer_id_seq OWNER TO devppeao;
 
---
--- TOC entry 2363 (class 0 OID 0)
--- Dependencies: 1798
--- Name: sys_activites_a_migrer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE sys_activites_a_migrer_id_seq OWNED BY sys_activites_a_migrer.id;
-
 
 --
 -- TOC entry 1800 (class 1259 OID 99879)
@@ -2523,14 +2467,6 @@ CREATE SEQUENCE sys_campagnes_a_migrer_id_seq
 
 ALTER TABLE public.sys_campagnes_a_migrer_id_seq OWNER TO devppeao;
 
---
--- TOC entry 2364 (class 0 OID 0)
--- Dependencies: 1800
--- Name: sys_campagnes_a_migrer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE sys_campagnes_a_migrer_id_seq OWNED BY sys_campagnes_a_migrer.id;
-
 
 --
 -- TOC entry 1802 (class 1259 OID 99885)
@@ -2547,15 +2483,6 @@ CREATE SEQUENCE sys_debarquements_a_migrer_id_seq
 
 
 ALTER TABLE public.sys_debarquements_a_migrer_id_seq OWNER TO devppeao;
-
---
--- TOC entry 2365 (class 0 OID 0)
--- Dependencies: 1802
--- Name: sys_debarquements_a_migrer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE sys_debarquements_a_migrer_id_seq OWNED BY sys_debarquements_a_migrer.id;
-
 
 --
 -- TOC entry 1781 (class 1259 OID 18868)
@@ -2588,14 +2515,6 @@ CREATE SEQUENCE sys_periodes_enquete_id_seq
 
 
 ALTER TABLE public.sys_periodes_enquete_id_seq OWNER TO devppeao;
-
---
--- TOC entry 2366 (class 0 OID 0)
--- Dependencies: 1804
--- Name: sys_periodes_enquete_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE sys_periodes_enquete_id_seq OWNED BY sys_periodes_enquete.id;
 
 
 --
