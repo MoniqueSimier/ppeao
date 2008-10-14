@@ -47,7 +47,9 @@ switch ($editAction) {
 	
 	
 	// on ajoute le champ éditable
-	$theField.=iconv('ISO-8859-15','UTF-8',makeField($cDetails,$editTable,$editColumn,$editValue,'edit='.$editRecord,''));
+	//$theField.=iconv('ISO-8859-15','UTF-8',makeField($cDetails,$editTable,$editColumn,$editValue,'edit='.$editRecord,''));
+	$theField.=makeField($cDetails,$editTable,$editColumn,$editValue,'edit='.$editRecord,'');
+	
 
 	// on ajoute les boutons "OK/ANNULER"
 	$theField.='<div id="edit_buttons_'.$editColumn.'_'.$editRecord.'" name="edit_buttons_'.$editColumn.'_'.$editRecord.'" class="small edit_buttons">';
@@ -60,6 +62,7 @@ switch ($editAction) {
 	
 	// on veut annuler les modifications faites au champ
 	case 'cancel':
+		//$theField=makeField($cDetails,$editTable,$editColumn,stripSlashes($editValue),'display='.$editRecord,'');
 		$theField=makeField($cDetails,$editTable,$editColumn,stripSlashes($editValue),'display='.$editRecord,'');
 	break;
 
@@ -67,7 +70,9 @@ switch ($editAction) {
 } // end switch $action
 
 
-echo(iconv('UTF-8','ISO-8859-15',$theField));
+header("Content-Type: text/html; charset=utf-8", true);
 //echo($theField);
+echo(iconv('ISO-8859-15','UTF-8',$theField));
+
 
 ?>

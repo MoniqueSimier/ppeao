@@ -53,7 +53,9 @@ if ($validityCheck["validity"]) {
 	
 	
 	// on encode les caractères spéciaux
-	$newValue=iconv("UTF-8", "ISO-8859-15",$newValue);
+//	$newValue=iconv("UTF-8", "ISO-8859-15",$newValue);
+	
+	//debug echo('XXXX'.$newValue.'XXXX');
 	// si la requête s'est bien passée, on retourne "valid"
 		
 	$saveSql=' UPDATE '.$tablesDefinitions[$editTable]["table"].'
@@ -115,14 +117,17 @@ $theXml='<?xml version="1.0"?>';
 // on indique dans un attribut de la réponse le statut de la valeur soumise
 $theXml.='<response valid="'.$valid.'">';
 // on insère le contenu de la réponse
-$theXml.='<responseContent value="'.$validityCheck["valeur"].'">';
+$theXml.='<responseContent>';
+
+//$theXml.='<responseContent value="'.$validityCheck["valeur"].'">';
 $theXml.=iconv('ISO-8859-15','UTF-8',$response);
 $theXml.='</responseContent>';
 
 $theXml.='</response>';
 
 // outputting the XML response
-header('Content-Type: text/xml');
+//header("Content-Type: text/xml;");
+header("Content-Type: text/xml; charset=utf-8", true);
 echo($theXml);
 
 ?>

@@ -452,7 +452,10 @@ echo('<pre>');
 						$theField.='<option value="" '.$selected.'>-</option>';
 						foreach ($fKeys as $fKey) {
 							if ($fKey[$theFKeys]==$value) {$selected='selected="selected"';} else {$selected='';}
-							$theField.='<option value='.$fKey[$theFKeys].' '.$selected.'>'.$fKey[$theFValues].'</option>';
+							// selon que l'on a passé la valeur directement ou depuis la base
+							$theValue=$fKey[$theFValues];
+							//if (true) {$theEncodedValue=iconv('ISO-8859-15','UTF-8',$fKey[$theFValues]);} else {$theEncodedValue=$fKey[$theFValues];}
+							$theField.='<option value='.$fKey[$theFKeys].' '.$selected.'>'.$theValue.'</option>';
 						}
 						$theField.='</select></div>';
 					break;
