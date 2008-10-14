@@ -3,13 +3,14 @@
 {\colortbl;\red255\green255\blue255;}
 {\info
 {\author Olivier ROUX}
-{\*\company otolithe}}\paperw11900\paperh16840\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+{\*\company otolithe}}\paperw11900\paperh16840\margl1440\margr1440\vieww12860\viewh11460\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\qc\pardirnatural
 
-\f0\b\fs30 \cf0 Proc\'e9dure de cr\'e9ation d\'92une base \'ab\'a0propre\'a0\'bb PPEAO
-\b0\fs24 \
+\f0\b\fs36 \cf0 Proc\'e9dure de cr\'e9ation d\'92une base \'ab\'a0propre\'a0\'bb PPEAO
+\b0 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
-\cf0 \
+
+\fs24 \cf0 \
 \pard\pardeftab720\ql\qnatural
 
 \f1 \cf0 \
@@ -34,11 +35,14 @@
 \f0 2008-10-14 2-structure.sql
 \f1 \
 
-\f0 2008-10-14 3-donn\'e9es r\'e9f\'e9rence et param\'e9trage.sql
+\f0 2008-10-14 3-disable triggers r\'e9f\'e9rence et param\'e9trage.sql\
+2008-10-14 4-donn\'e9es r\'e9f\'e9rence et param\'e9trage.sql\
+2008-10-14 5-enable triggers r\'e9f\'e9rence et param\'e9trage.sql\
+
 \f1 \
 
 \f0 \
-qui permettent de cr\'e9er respectivement la base, ses droits, sa structure et enfin de la peupler avec les donn\'e9es de r\'e9f\'e9rence et de param\'e9trage.
+qui permettent de cr\'e9er respectivement la base, ses droits, sa structure et enfin de d\'e9sactiver les triggers (pour \'e9viter les probl\'e8mes de cl\'e9s \'e9trang\'e8res lors du chargement), de peupler la base avec les donn\'e9es de r\'e9f\'e9rence et de param\'e9trage puis de r\'e9activer les triggers.
 \f1 \
 
 \f0 \
@@ -112,4 +116,43 @@ Note : les tables sont parfois \'e9normes et peuvent donc prendre tr\'e8s longte
 \f1 \
 
 \f0 \
-Une fois tous les scripts ex\'e9cut\'e9s et les contraintes/triggers r\'e9activ\'e9es, il est conseill\'e9 de r\'e9aliser un VACUUM sur l'ensemble des tables de la base.}
+Une fois tous les scripts ex\'e9cut\'e9s et les contraintes/triggers r\'e9activ\'e9es, il est conseill\'e9 de r\'e9aliser un VACUUM sur l'ensemble des tables de la base.\
+\
+\
+\pard\pardeftab720\qc
+
+\b\fs36 \cf0 R\'e9sum\'e9 de la proc\'e9dure\
+\pard\pardeftab720\ql\qnatural
+
+\b0\fs24 \cf0 CR\'c9ATION DE LA BASE\
+1) ex\'e9cuter 2008-10-14 1-cr\'e9ation base.sql
+\f1 \
+
+\f0 2) ex\'e9cuter 2008-10-14 1bis-droits base.sql
+\f1 \
+
+\f0 3) ex\'e9cuter 2008-10-14 2-structure.sql\
+\
+CHARGEMENT DES DONN\'c9ES DE R\'c9F\'c9RENCE ET PARAM\'c9TRAGE
+\f1 \
+
+\f0 4) ex\'e9cuter 2008-10-14 3-disable triggers r\'e9f\'e9rence et param\'e9trage.sql\
+5) ex\'e9cuter le script SQL de chargement des donn\'e9es de r\'e9f\'e9rence et param\'e9trage de votre choix (2008-10-14 4-donn\'e9es r\'e9f\'e9rence et param\'e9trage.sql pour un jeu de test).\
+6) ex\'e9cuter 2008-10-14 3-enable triggers r\'e9f\'e9rence et param\'e9trage.sql\
+\
+CHARGEMENT DES DONN\'c9ES DE PECHE EXP\'c9RIMENTALE ET ARTISANALE\
+7) ex\'e9cuter 2008-10-14 disable triggers.sql\
+8) ex\'e9cuter les scripts SQL de chargement des donn\'e9es de votre choix (dossier donn\'e9es/2008-10-14 VmPechartExp pour un jeu de test tr\'e8s complet)\
+
+\f1 9) 
+\f0 ex\'e9cuter 2008-10-14 enable triggers.sql\
+\
+MAINTENANCE POST CHARGEMENT\
+10) ex\'e9cuter un VACUUM sur toutes les tables.\
+
+\f1 \
+
+\f0 \
+\
+\
+}
