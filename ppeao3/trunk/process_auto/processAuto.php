@@ -9,7 +9,7 @@
 
 
 // Variable de test
-$pasdetraitement = false;
+$pasdetraitement = true;
 
 // Includes standard
 include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
