@@ -39,7 +39,10 @@ a:hover{
 	background-color	: #007860;
 	text-decoration 	: none;
 	}
-	
+
+a img {
+	border:none;
+}
 
 fieldset {
 	border 				: none;

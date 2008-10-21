@@ -281,4 +281,88 @@ if ($seqCount>0) {$ifSequence=TRUE;} else {$ifSequence=FALSE;}
 return $ifSequence;
 }
 
+//*********************************************************************
+// retourne la clé primaire d'une table
+function getTablePrimaryKey ($connection,$tableName) {
+// $connection : la connexion à la base postgres
+// $table : le nom de la table
+$sql='SELECT DISTINCT tc.constraint_name, tc.constraint_type
+    FROM information_schema.table_constraints tc
+   	WHERE tc.table_name = \''.$tableName.'\' AND tc.constraint_type =\'PRIMARY KEY\' 
+	ORDER BY tc.constraint_name';
+
+$result=pg_query($connection,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$constraints=pg_fetch_all($result);
+pg_free_result($result);
+
+
+$primaryKeyDetails=getConstraintDetails($connection,$tableName,$constraints[0]["constraint_name"]);
+
+$primaryKey=array("table"=>$primaryKeyDetails["table_name"],"column"=>$primaryKeyDetails["column_name"]);
+
+return $primaryKey;
+
+}
+
+//*********************************************************************
+// retourne la liste des références à une clé primaire
+function getPrimaryKeyReferences($connection,$tableName,$primaryKey) {
+// $connection : la connexion à la base
+// $tableName : le nom de la table dont fait partie la clé primaire
+// $primaryKey : le nom de la colonne de la clé primaire
+// $references : un tableau qui liste les tables qui utilisent la clé primaire comme clé étrangère
+
+if (empty($primaryKey)) {$primaryKeyArray=getTablePrimaryKey ($connection,$tableName); $primaryKey=$primaryKeyArray["column"];} 
+
+$sql='	SELECT DISTINCT tc.constraint_name, tc.constraint_type, tc.table_name, kcu.column_name, ccu.table_name AS references_table, ccu.column_name AS references_field
+		FROM information_schema.table_constraints tc 
+			LEFT JOIN information_schema.check_constraints cc ON tc.constraint_catalog=cc.constraint_catalog AND tc.constraint_schema=cc.constraint_schema AND tc.constraint_name=cc.constraint_name
+			LEFT JOIN information_schema.key_column_usage kcu ON tc.constraint_catalog = kcu.constraint_catalog AND tc.constraint_schema = kcu.constraint_schema AND tc.constraint_name = kcu.constraint_name 
+			LEFT JOIN information_schema.referential_constraints rc ON tc.constraint_catalog = rc.constraint_catalog AND tc.constraint_schema = rc.constraint_schema AND tc.constraint_name = rc.constraint_name 
+			LEFT JOIN information_schema.constraint_column_usage ccu ON rc.unique_constraint_catalog = ccu.constraint_catalog AND rc.unique_constraint_schema = ccu.constraint_schema AND rc.unique_constraint_name = ccu.constraint_name  
+		WHERE ccu.table_name = \''.$tableName.'\' AND ccu.column_name = \''.$primaryKey.'\''; 
+
+$result=pg_query($connection,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$references=pg_fetch_all($result);
+pg_free_result($result);
+
+return $references;
+
+}
+
+//*********************************************************************
+// compte le nombre d'enregistrements dans la base qui font référence à la valeur de la clé primaire spécifiée
+function countPrimaryKeyReferencedRows($connection, $tableName, $primaryKey, $primaryKeyRecord) {
+// $connection : la connexion à la base
+// $tableName : le nom de la table dont fait partie la clé primaire
+// $primaryKey : le nom de la colonne de la clé primaire
+// $primaryKeyRecord : la valeur de la clé primaire (i.e. l'identifiant de l'enregistrement dans la base)
+// impacted : un tableau qui indique, pour chaque table qui utilise $primaryKey comme clé étrangère, le nombre d'enregistrements
+// qui font référence à la valeur $primaryRecord de $primaryKey
+// (utilisé pour compter le nombre d'enregistrement impactés en cascade lors de la suppression d'un enregistrement servant de clé étrangère)
+
+if (empty($primaryKey)) {$primaryKeyArray=getTablePrimaryKey ($connection,$tableName); $primaryKey=$primaryKeyArray["column"];} 
+
+
+$references=getPrimaryKeyReferences($connection,$tableName,$primaryKey);
+
+foreach ($references as $reference) {
+
+$localPrimary=getTablePrimaryKey ($connection,$reference["table_name"]);
+
+$sql='SELECT '.$localPrimary["column"].'
+		FROM '.$reference["table_name"].'
+		WHERE '.$reference["column_name"].'=\''.$primaryKeyRecord.'\'';
+
+$result=pg_query($connection,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$temp=pg_fetch_all($result);
+pg_free_result($result);
+
+if (!empty($temp)) {
+$impacted[$reference["table_name"]]=$temp;
+}
+}
+return $impacted;
+}
+
 ?>

@@ -20,32 +20,40 @@ $zone=2; // zone edition (voir table admin_zones)
 
 <script src="/js/edition.js" type="text/javascript"  charset="iso-8859-15"></script>
 
-<!-- l'effet "tiroir" pour afficher/masquer le sélecteur -->
-<script type="text/javascript" charset="iso-8859-15">
-/* <![CDATA[ */
-	window.addEvent('domready', function(){
-				// note: the onComplete is there to set an automatic height to the wrapper div
-				var selectorSlide = new Fx.Slide('selector_content',{duration: 500, mode: 'vertical', onComplete: function(){if(this.wrapper.offsetHeight != 0) this.wrapper.setStyle('height', 'auto');}});
-				// when the result page loads, the selector is displayed, then it slides out and is hidden
-				//selectorSlide.slideOut.delay(500, selectorSlide);
-				selectorSlide.hide();
-				//since the selector hides away, display a "show" link
-				$('showHideSelect').innerHTML='[afficher la s&eacute;lection]';
-				// when the user clicks on the hide/show button, the slider's visibility is toggled
-				$('showHideSelect').addEvent('click', function(e){
-					e = new Event(e);
-					selectorSlide.toggle();
-					e.stop();
-					// if the selector is displayed, the link reads "hide",
-					//if it is hidden, the link reads "show"
-					if(selectorSlide.wrapper.offsetHeight==0) {$('showHideSelect').innerHTML='[masquer la s&eacute;lection]';} else {$('showHideSelect').innerHTML='[masquer la s&eacute;lection]';}
-				});
-			});	
+<?php
 
-		
-/* ]]> */
-</script>
+// on n'affiche le selecteur que si on ne spécifie pas autrement
+$displaySelector=$_GET["selector"];
 
+if ($displaySelector!='no') {
+echo('<!-- l\'effet "tiroir" pour afficher/masquer le sélecteur -->
+	<script type="text/javascript" charset="iso-8859-15">
+	/* <![CDATA[ */
+		window.addEvent(\'domready\', function(){
+					// note: the onComplete is there to set an automatic height to the wrapper div
+					var selectorSlide = new Fx.Slide(\'selector_content\',{duration: 500, mode: \'vertical\', onComplete: function(){if(this.wrapper.offsetHeight != 0) this.wrapper.setStyle(\'height\', \'auto\');}});
+					// when the result page loads, the selector is displayed, then it slides out and is hidden
+					//selectorSlide.slideOut.delay(500, selectorSlide);
+					selectorSlide.hide();
+					//since the selector hides away, display a "show" link
+					$(\'showHideSelect\').innerHTML=\'[afficher la s&eacute;lection]\';
+					// when the user clicks on the hide/show button, the slider\'s visibility is toggled
+					$(\'showHideSelect\').addEvent(\'click\', function(e){
+						e = new Event(e);
+						selectorSlide.toggle();
+						e.stop();
+						// if the selector is displayed, the link reads "hide",
+						//if it is hidden, the link reads "show"
+						if(selectorSlide.wrapper.offsetHeight==0) {$(\'showHideSelect\').innerHTML=\'[masquer la s&eacute;lection]\';} else {$(\'showHideSelect\').innerHTML=\'[masquer la s&eacute;lection]\';}
+					});
+				});	
+
+
+	/* ]]> */
+	</script>');
+
+}
+?>
 </head>
 
 <body>
@@ -68,15 +76,20 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 ?>
 
-<!-- le SELECTEUR -->
-<div id="selector_container">
-
 <?php
+// on n'affiche le selecteur que si on ne spécifie pas autrement
+if ($displaySelector!='no') {
+echo('<!-- le SELECTEUR -->
+<div id="selector_container">');
+
+
+
 	// insertion du sélecteur, en mode "page de selection"
 	createSelector("edition");
-?>
-</div> <!-- end div selector_container -->
 
+echo('</div> <!-- end div selector_container -->')
+;}
+?>
 
 <!-- l'ÉDITEUR -->
 <div id="editor_container">
@@ -102,20 +115,32 @@ if (isset($_GET[$editTable])) {
 	$whereClause=' AND '.$tablesDefinitions[$editTable]["id_col"].' IN (\''.$theTableValues.'\') ';
 	}
 	else {$whereClause=NULL;}
-	// si on a filtré les valeurs à afficher/éditer : on ajoute les valeurs du filtre à la clause WHERE
-	// note : on compare les valeurs en les passant en minuscules, afin de contourner la sensibilité à la casse
-	// des requêtes SQL
-		foreach ($cDetails as $key=>$value) {
-			if (isset($_GET['f_'.$key]) && !empty($_GET['f_'.$key])) {
-				// si la valeur passée est un nombre, on fait un =
-				if (is_numeric($_GET['f_'.$key]) && ($key["data_type"]=="real" || $key["data_type"]=="integer") ) {
-					$whereClause.=' AND '.$key.' = '.$_GET['f_'.$key].'';}
-				// si la valeur passée n'est pas nombre on fait un LIKE '%%'
-				else {
-					$whereClause.=' AND lower('.$key.') LIKE \'%'.strtolower($_GET['f_'.$key]).'%\'';}
+// si on a filtré les valeurs à afficher/éditer : on ajoute les valeurs du filtre à la clause WHERE
+// note : on compare les valeurs en les passant en minuscules, afin de contourner la sensibilité à la casse
+// des requêtes SQL
+	foreach ($cDetails as $key=>$value) {
+		if (isset($_GET['f_'.$key]) && !empty($_GET['f_'.$key])) {
+			
+			//debug 			echo('<pre>'.$key.'<br/>');print_r($cDetails[$key]["constraints"][$key]);echo('</pre>');
+			
+			// si la valeur passée est un nombre et que la colonne correspondante est numérique, on fait un =
+			if (is_numeric($_GET['f_'.$key]) && ($cDetails[$key]["data_type"]=="real" || $cDetails[$key]["data_type"]=="integer")) {
+				$whereClause.=' AND '.$key.' = '.$_GET['f_'.$key].'';}
+			// si la valeur passée n'est pas nombre
+			else {
+				// si la valeur passée correspond à une clé secondaire, on fait un = (match unique)
+				if ($cDetails[$key]["constraints"][$key]["constraint_type"]=='FOREIGN KEY') {
+					$whereClause.=' AND lower('.$key.') LIKE \''.strtolower($_GET['f_'.$key]).'\'';}
+				
+				// sinon on fait un LIKE en tenant compte de l'utilisation d'une éventuelle wildcard "%" en début de chaine
+				else {					
+					$whereClause.=' AND lower('.$key.') LIKE \''.strtolower($_GET['f_'.$key]).'%\'';
+				}
+			} // end else is_numeric
 
-			}// end if isset
-		} // en foreach $cDetails
+		}// end if isset
+		//debug 
+	} // en foreach $cDetails
 
 // si on a trié la table sur une clé
 // on construit la clause SQL de tri
@@ -201,7 +226,7 @@ if ($countTotal>$rowsPerPage) {
 
 ?>
 <h1>votre s&eacute;lection : <?php echo($countTotal.' '.$tablesDefinitions[$editTable]["label"].' sur '.$countAllTotal.' '.$paginationString);?><span class="showHide"><a id="add_new_record" href="#" onclick="modalDialogAddRecord(1,'<?php echo($editTable) ?>');">[ajouter un enregistrement]</a></span></h1>
-<p class="hint small">aide : pour trier la table, cliquer sur un nom de colonne, cliquer &agrave; nouveau pour inverser l'ordre de tri; pour filtrer la table, saisissez ou choisissez une valeur et appuyez sur ENTR&Eacute;E (le filtrage est cumulatif et de type "contient"); pour &eacute;diter une valeur, cliquer dessus.</p>
+<p class="hint small">aide : pour trier la table, cliquer sur un nom de colonne, cliquer &agrave; nouveau pour inverser l'ordre de tri; pour filtrer la table, saisissez ou choisissez une valeur et appuyez sur ENTR&Eacute;E (le filtrage est cumulatif et de type "commence par" : vous pouvez ajouter % au début de la valeur de filtre pour faire un "contient"); pour &eacute;diter une valeur, cliquer dessus.</p>
 <?php 
 // on affiche la table
 echo('<form id="the_table_form" name="the_table_form" action="/edition/edition_table.php">');
@@ -216,15 +241,31 @@ foreach ($theHeads as $oneHead) {
 	$sortUrl=replaceQueryParam ($_SERVER['FULL_URL'],"s_key",$oneHead);
 
 
-	// si l'on est sur la colonne de tri, on détermine l'ordre inverse de l'ordre courant et on définit une classe CSS particulière
+	// si l'on est sur la colonne de tri,
+	// on détermine l'ordre inverse de l'ordre courant et on définit une classe CSS et une icône particulière
 	if ($s_key==$oneHead) {
 		$c_sort_class='c_sorted';
-		if ($s_dir=='u' || $s_dir=='') {$newSortDir='d';} else {$newSortDir='u';}
+		switch ($s_dir) {
+			case 'u':
+				$newSortDir='d';
+				$sortIcon='<img src="/assets/sort_up.gif" alt="tri&eacute; en ordre croissant" />';
+			break;
+			case 'd':
+				$newSortDir='u';
+				$sortIcon='<img src="/assets/sort_down.gif" alt="tri&eacute; en ordre d&eacute;croissant" />';
+			break;
+			default:
+				$newSortDir='d';
+				$sortIcon='<img src="/assets/sort_up.gif" alt="tri&eacute; en ordre croissant" />';
+			break;
+		}
 	}
-	else {$newSortDir='u'; $c_sort_class='c_unsorted';} 
+	else {$newSortDir='u';
+		$c_sort_class='c_unsorted';
+		$sortIcon='';
+	} 
 	$sortUrl=replaceQueryParam ($sortUrl,"s_dir",$newSortDir);
-
-	echo('<td class="small"><a href="'.$sortUrl.'" id="'.$c_sort_id.'" name="'.$c_sort_id.'" class="'.$c_sort_class.'">'.$oneHead.'</a></td>');
+	echo('<td class="small"><a href="'.$sortUrl.'" id="'.$c_sort_id.'" name="'.$c_sort_id.'" class="'.$c_sort_class.'" title="cliquer pour trier sur cette colonne">'.$oneHead.' '.$sortIcon.'</a></td>');
 } // end foreach $theHeads
 echo('</tr>');
 
@@ -289,7 +330,7 @@ if ($countTotal!=0) {
 	} // end foreach $tableArray
 } // end if ($countTotal!=0)
 else {
-	echo('<tr><td colspan="'.count($theHeads).'">aucun r&eacute;sultat correspondant &agrave; ce filtre</td></tr>');
+	echo('<tr><td colspan="'.count($theHeads).'">aucun r&eacute;sultat correspondant &agrave; cette s&eacute;lection</td></tr>');
 }
 echo('</table>');
 echo('</form>');

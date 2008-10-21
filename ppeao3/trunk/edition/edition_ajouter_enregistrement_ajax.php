@@ -2,12 +2,12 @@
 
 // script appelé par la fonction javascript showNewLevel
 // 
-
+include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_generic.php';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
+
 
 
 global $tablesDefinitions;
@@ -24,7 +24,7 @@ $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["t
 // la liste des colonnes concernées
 $theHeads=array_keys($cDetails);
 
-$theForm='<h1>Ajouter un nouvel enregistrement dans la table "'.$tablesDefinitions[$editTable]["label"].'"</h1>';
+$theForm='<h1>Ajouter un nouvel enregistrement dans la table "'.iconv('ISO-8859-15','UTF-8',$tablesDefinitions[$editTable]["label"]).'"</h1>';
 
 // on insère le formulaire d'ajout d'un nouvel enregistrement...
 $theForm.='<form id="add_record_'.$level.'_form">';

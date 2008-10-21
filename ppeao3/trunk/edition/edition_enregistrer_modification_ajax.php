@@ -1,12 +1,11 @@
 <?php
-
+session_start();
 // script appelé par la fonction javascript showNewLevel
 // 
-
+include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 
 
@@ -40,13 +39,19 @@ $cDetail=$cDetails[$editColumn];
 
 // on "nettoie" la valeur saisie
 // si la valeur doit être un réel, on commence par convertir une éventuelle saisie au format décimal "," au lieu de "."
-
 if ($cDetail["data_type"]=='real') {
 	$newValue=str_replace(',','.',$newValue);
+}
+// si la valeur saisie doit être un nombre et qu'elle est vide, on la met à zéro (postgres n'accepte pas les REAL ou INTEGER NULL)
+if (($cDetail["data_type"]=='real' || $cDetail["data_type"]=='integer') && empty($newValue)) {
+	$newValue=0;
 }
 
 // on teste la validité de la valeur saisie
 $validityCheck=checkValidity($cDetails,$tablesDefinitions[$editTable]["table"],$editColumn,$newValue);
+
+//debug echo('<pre>');print_r($validityCheck);echo('</pre>');
+
 
 // si la valeur saisie est valide, on exécute la requête SQL
 if ($validityCheck["validity"]) {
@@ -64,8 +69,6 @@ if ($validityCheck["validity"]) {
 		pg_free_result($saveResult);
 		$valid='valid';
 		
-		
-
 		// on construit le SQL inverse pour une éventuelle annulation de la modification
 		$undoSql='UPDATE '.$tablesDefinitions[$editTable]["table"].'
 					SET '.$editColumn.'=\''.$oldValue.'\' WHERE '.$tablesDefinitions[$editTable]["id_col"].'=\''.$editRecord.'\'';

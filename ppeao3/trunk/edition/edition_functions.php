@@ -114,7 +114,7 @@ echo('<div id="selector_content">');
 			$theList.=implode($_GET[$parentTable],"','");
 			$theList.='\'';
 			
-			$whereClause=' AND '.$tablesDefinitions[$parentTable]["table"].'_id IN ('.$theList.') ';
+			$whereClause=' AND '.$tablesDefinitions[$parentTable]["id_col"].' IN ('.$theList.') ';
 			
 			} else {$whereClause=NULL;}
 		// le DIV contenant le SELECT
@@ -329,6 +329,7 @@ echo('<pre>');
 					case 'add' :
 					// si il existe une séquence sur la clé, on génère automatiquement la valeur et le champ n'est pas éditable
 					$ifSequence=getTableColumnSequence($connectPPEAO,$tablesDefinitions[$table]["table"],$column);
+					echo($ifSequence);
 					if ($ifSequence) {
 						$theClass='non_editable_field';
 						$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="valeur déterminée par une s&eacute;quence automatique">(auto)</div>';
@@ -448,8 +449,8 @@ echo('<pre>');
 							else {
 							$onAction='';}
 						$theField='<div class="filter"><select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" '.$onAction.'>';
-						// on ajoute une valeur "vide"
-						$theField.='<option value="" '.$selected.'>-</option>';
+						// on ajoute une valeur "vide" si on est en édition ou ajout (clé secondaire JAMAIS NULL)
+						if ($action=='filter') {$theField.='<option value="" '.$selected.'>-</option>';}
 						foreach ($fKeys as $fKey) {
 							if ($fKey[$theFKeys]==$value) {$selected='selected="selected"';} else {$selected='';}
 							// selon que l'on a passé la valeur directement ou depuis la base
@@ -493,15 +494,17 @@ echo('<pre>');
 			case 'edit' :
 				// pour l'édition, on doit prendre en compte la longueur du champ et si il est de type TEXT
 				// type text : on affiche une <textarea> sans limite de taille
-				if ($theDetails["data_type"]=='text') {$theType='textarea';$theMaxLength='';}
+				if ($theDetails["data_type"]=='text') {$theType='textarea';$theMaxLength='';} 
 				// autres types avec un character_maximum_length > valeur par défaut : on affiche une <textarea> avec limite de taille 
-				if ($theDetails["character_maximum_length"]>$defaultTextInputMaxLength) {
-					$theType='textarea';$theMaxLength=$theDetails["character_maximum_length"];
-				}
-				// autres types avec un character_maximum_length <= valeur par défaut : on affiche un <inpu type=text>
-				if ($theDetails["character_maximum_length"]<=$defaultTextInputMaxLength) {
-					$theType='input';$theMaxLength=$theDetails["character_maximum_length"];
-				}
+				else {
+					if ($theDetails["character_maximum_length"]>$defaultTextInputMaxLength) {
+						$theType='textarea';$theMaxLength=$theDetails["character_maximum_length"];
+					}
+					// autres types avec un character_maximum_length <= valeur par défaut : on affiche un <inpu type=text>
+					if ($theDetails["character_maximum_length"]<=$defaultTextInputMaxLength) {
+						$theType='input';$theMaxLength=$theDetails["character_maximum_length"];
+					}
+				} // end else $theDetails["data_type"]=='text'
 
 				// on affiche une <textarea>
 				if ($theType=='textarea') {

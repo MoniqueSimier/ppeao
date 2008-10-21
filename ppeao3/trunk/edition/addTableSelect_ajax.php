@@ -3,10 +3,11 @@
 // script appelé par la fonction javascript showNewLevel
 // 
 
+include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_generic.php';
+include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 
 
 global $selectorCascades;
