@@ -68,7 +68,7 @@ switch ($theType) {
 $theLogString=' : '.$theTypeString.' '.${$theSelectorType}[$theHierarchy][$targetTable]["label"];
 
 
-logWriteTo(2,'notice','acc&egrave;s &agrave; l\'&eacute;dition de la table de '.$theLogString,'','',0);
+logWriteTo(1,'notice','acc&egrave;s &agrave; l\'&eacute;dition de la table de '.$theLogString,'','',0);
 
 ?>
 	

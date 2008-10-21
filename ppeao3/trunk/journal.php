@@ -60,7 +60,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 <?php
 
 
-logWriteTo(4,'notice','acc&egrave;s au journal','','',0);
+//logWriteTo(4,'notice','acc&egrave;s au journal','','',0);
 echo(logDisplayFull('','','','','','paginate'));
 // on affiche la liste des journaux archivés
 echo(logArchivesList(""));

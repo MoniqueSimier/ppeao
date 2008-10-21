@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 // script appelé par la fonction javascript showNewLevel
 // 

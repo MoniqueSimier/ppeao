@@ -102,7 +102,7 @@ En utilisant <a href="">la page d&#x27;&eacute;dition des utilisateurs</a>, vous
 <?php } ?>
 
 <?php 
-logWriteTo(2,'notice','acc&egrave;s &agrave; l\'&eacute;dition des donn&eacute;es','','',0);
+logWriteTo(1,'notice','acc&egrave;s &agrave; l\'&eacute;dition des donn&eacute;es','','',0);
 
 ?>
 	

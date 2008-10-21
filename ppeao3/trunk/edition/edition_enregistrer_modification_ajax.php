@@ -42,10 +42,6 @@ $cDetail=$cDetails[$editColumn];
 if ($cDetail["data_type"]=='real') {
 	$newValue=str_replace(',','.',$newValue);
 }
-// si la valeur saisie doit être un nombre et qu'elle est vide, on la met à zéro (postgres n'accepte pas les REAL ou INTEGER NULL)
-if (($cDetail["data_type"]=='real' || $cDetail["data_type"]=='integer') && empty($newValue)) {
-	$newValue=0;
-}
 
 // on teste la validité de la valeur saisie
 $validityCheck=checkValidity($cDetails,$tablesDefinitions[$editTable]["table"],$editColumn,$newValue);
@@ -55,16 +51,13 @@ $validityCheck=checkValidity($cDetails,$tablesDefinitions[$editTable]["table"],$
 
 // si la valeur saisie est valide, on exécute la requête SQL
 if ($validityCheck["validity"]) {
-	
-	
-	// on encode les caractères spéciaux
-//	$newValue=iconv("UTF-8", "ISO-8859-15",$newValue);
-	
-	//debug echo('XXXX'.$newValue.'XXXX');
+
 	// si la requête s'est bien passée, on retourne "valid"
-		
-	$saveSql=' UPDATE '.$tablesDefinitions[$editTable]["table"].'
-				SET '.$editColumn.'=\''.$newValue.'\' WHERE '.$tablesDefinitions[$editTable]["id_col"].'=\''.$editRecord.'\'';
+	// note : en cas de valeur passée NULL, postgres n'accepte pas SET champ='NULL' si champ est de type INTEGER
+	// alors que l'on peut faire SET champ='200'... d'où le test qui suit
+	if ($newValue=='NULL' || empty($newValue)) {$newValueSet='NULL';} else {$newValueSet='\''.$newValue.'\'';}
+		$saveSql=' UPDATE '.$tablesDefinitions[$editTable]["table"].'
+				SET '.$editColumn.'='.$newValueSet.' WHERE '.$tablesDefinitions[$editTable]["id_col"].'=\''.$editRecord.'\'';
 	if ($saveResult=@pg_query($connectPPEAO,$saveSql)) {		
 		pg_free_result($saveResult);
 		$valid='valid';
@@ -80,7 +73,7 @@ if ($validityCheck["validity"]) {
 		$valid="invalid";
 		$errorMessage="Erreur dans l'enregistrement, consultez le journal";
 		// on inscrit la requête non effectuée dans le log
-		//logWriteTo(1,'error','erreur SQL : '.pg_last_error(),$saveSql,'',0);
+		logWriteTo(1,'error','erreur SQL : '.pg_last_error(),$saveSql,'',0);
 	} // end else $saveResult
 } // end if checkValidity
 

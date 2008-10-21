@@ -230,11 +230,11 @@ switch ($format) {
 	// we generate for a CSV file
 	case "csv":
 	$logTable='"date";"utilisateur";"module";"message";"action";"annulation";"script"
-	';
+';
 	//on parcourt le tableau du journal pour generer une ligne  par entree
-	foreach ($logArray as $logRow) {
-			$logTable.=''.$logRow["log_time"].';"'.$logRow["user_name"].'";"'.$logRow["module_name"].'";"'.$logRow["log_message"].'";"'.$logRow["log_action_do"].'";"'.$logRow["log_action_undo"].'";"'.$logRow["log_script_file"].'";"'.$logRow["log_message_type"].'"
-			';
+	foreach ($logArray["logRows"] as $logRow) {
+			$logTable.=$logRow["log_time"].';"'.$logRow["user_name"].'";"'.$logRow["module_name"].'";"'.$logRow["log_message"].'";"'.$logRow["log_action_do"].'";"'.$logRow["log_action_undo"].'";"'.$logRow["log_script_file"].'";"'.$logRow["log_message_type"].'"
+';
 		} // end foreach $logArray
 	;
 	break;
@@ -425,7 +425,7 @@ function logArchivesList($archivePath)
 		$archiveList.='<ul id="archives_list_ul">';
 			$archiveList.='<li>cliquez sur une des archives pour la t&eacute;l&eacute;charger</li>';
 			foreach ($logArchiveFiles as $file) {
-				$archiveList.='<li><a href="'.$archivePath.$file.'">'.$file.'</a></li>';
+				$archiveList.='<li><a href="'.$logArchivePath.$file.'">'.$file.'</a></li>';
 			}
 		$archiveList.='</ul>';
 		$archiveList.='</div>';		

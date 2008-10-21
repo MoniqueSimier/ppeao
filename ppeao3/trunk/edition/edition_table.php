@@ -348,20 +348,20 @@ echo paginate($_SERVER['PHP_SELF'].'?'.removeQueryStringParam($_SERVER['QUERY_ST
 
 $theType=$_GET["type"];
 $theHierarchy=$_GET["hierarchy"];
-$theTable=$_GET["table"];
+$theTable=$_GET["targetTable"];
 
 switch ($theType) {
-	case "reference" : $theTypeString=" de r&eacute;f&eacute;rence"; $theSelectorType="tableSelectors";
+	case "reference" : $theTypeString=" de r&eacute;f&eacute;rence";
 	break;
-	case "parametrage" : $theTypeString=" de param&eacute;trage"; $theSelectorType="tableSelectors";
+	case "parametrage" : $theTypeString=" de param&eacute;trage"; 
 	break;
 	default: $theTypeString="";
 	break;
 		}
-$theLogString=' : '.$theTypeString.' '.${$theSelectorType}[$theHierarchy][$theTable]["label"];
+$theLogString=$theTypeString.' '.$tablesDefinitions[$theTable]["label"];
 
 
-logWriteTo(2,'notice','acc&egrave;s &agrave; l\'&eacute;dition de la table de '.$theLogString,'','',0);
+logWriteTo(1,'notice','acc&egrave;s &agrave; l\'&eacute;dition de la table '.$theLogString,'','',0);
 
 ?>
 	

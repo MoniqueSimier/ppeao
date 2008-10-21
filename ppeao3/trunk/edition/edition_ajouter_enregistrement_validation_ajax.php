@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 // script appelé par la fonction javascript showNewLevel
 // 
@@ -6,6 +7,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_generic.php';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
+include $_SERVER["DOCUMENT_ROOT"].'/functions_PPEAO.php';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 //debug sleep (50);
@@ -66,7 +68,12 @@ if ($valid=='valid') {
 	//debug 	echo($addSql);
 	if($addResult=pg_query($connectPPEAO,$addSql)) {
 	// et on renvoie un message positif
-	$message='<!--[CDATA[Enregistrement ajout&eacute; dans la table '.$table.']]-->';}
+	$message='<!--[CDATA[Enregistrement ajout&eacute; dans la table '.$table.']]-->';
+	
+	// on inscrit l'ajout dans le journal
+	logWriteTo(1,'notice','ajout r&eacute;ussi d\'un enregistrement dans la table "'.$tablesDefinitions[$table]["table"].'"',$addSql,'',0);
+	}
+	
 	else {
 		$message= '<!--[CDATA[Une erreur est survenue lors de l\'enregistrement la table '.$table.' : '.pg_last_error().']]-->';
 		$valid='invalid';

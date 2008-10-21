@@ -450,7 +450,8 @@ echo('<pre>');
 							$onAction='';}
 						$theField='<div class="filter"><select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" '.$onAction.'>';
 						// on ajoute une valeur "vide" si on est en édition ou ajout (clé secondaire JAMAIS NULL)
-						if ($action=='filter') {$theField.='<option value="" '.$selected.'>-</option>';}
+						//if ($action=='filter') {$theField.='<option value="" '.$selected.'>-</option>';}
+						$theField.='<option value="NULL" '.$selected.'>-</option>';
 						foreach ($fKeys as $fKey) {
 							if ($fKey[$theFKeys]==$value) {$selected='selected="selected"';} else {$selected='';}
 							// selon que l'on a passé la valeur directement ou depuis la base

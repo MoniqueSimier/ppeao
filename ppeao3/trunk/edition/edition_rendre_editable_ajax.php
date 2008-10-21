@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 // script appelé par la fonction javascript showNewLevel
 // 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
