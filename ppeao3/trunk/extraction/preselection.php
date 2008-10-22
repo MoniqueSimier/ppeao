@@ -5,7 +5,7 @@
 $section="extraction";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
-$zone=0; // zone portage (voir table admin_zones)
+$zone=6; // zone portage (voir table admin_zones)
 ?>
 
 <?php 
