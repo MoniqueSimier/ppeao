@@ -50,7 +50,7 @@ $zone=0; // zone publique (voir table admin_zones)
 		<li class="contact"><a href="#" onClick="o='@';o='&#106;&#101;&#97;&#110;&#46;&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o='mailto:'+o;o+='ird.fr';this.href=o;"><script type="text/javascript"> <!-- o='@';o='&#106;&#101;&#97;&#110;&#46;&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o+='ird.fr';document.write(o);//--> </script>Jean-Marc ECOUTIN</a></li>
 	</ul>
 	</p>
-	<p ><a href="/ContactRT.php" >R&eacute;alisation techniques</a>
+	<p ><a href="/contactRT.php" >R&eacute;alisation techniques</a>
 	</p><br/>
 	<span class="logo1">IRD</span><span class="logo2">CRH</span><span class="logo3">
 	<UR 070 RAP/span><span class="logo4">PPEAO</span>
