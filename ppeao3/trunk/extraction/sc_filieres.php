@@ -1,11 +1,40 @@
+<?php 
+// Mis à jour par Yann Laurent 26/09/08, ajout gestion utilisateur + refonte design
+// definit a quelle section appartient la page
+$section="extraction";
+// code commun à toutes les pages (demarrage de session, doctype etc.)
+include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
+$zone=0; // zone portage (voir table admin_zones)
+?>
 
-<HTML>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
-<META NAME="author" CONTENT="Jérome Fauchier">
-</head>
-<body BGCOLOR="#CCCCFF">
+<?php 
+include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
+//Include for documentation
+include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
+?>
 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<?php 
+			// les balises head communes  toutes les pages
+			include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
+		?>
+		<script type="text/javascript" charset="iso-8859-15">
+		/* <![CDATA[ */	
+		function toggleTab(frameName){
+
+			if (document.getElementById(frameName).style.display == 'block') {
+				document.getElementById(frameName).style.display = 'none';
+			} else { 
+				document.getElementById(frameName).style.display = 'block';
+			}
+		}
+				/* ]]> */
+		</script>
+		<title>ppeao::extraction des donn&eacute;es</title>
+
+	</head> 
+	<body>
 <?php
 
 //if(! ini_set("max_execution_time", "320")) {echo "échec max_execution_time";}
@@ -14,19 +43,11 @@ $connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." 
 if (!$connection) { echo "Pas de connection"; exit;}
 
 
-
-
-
-
-
-
 $choix = $_POST['choix'];
 
+print("<div id=\"selection\">");
 
-print("<div align='center'>");
-print("<Font Color =\"#333366\">");
-print("<br><h3><b>Filière ".$choix."</b></h3>");
-print("</div></Font>");
+print("<h2>Filière ".$choix."</h2>");
 
 
 //pour faire apparaitre les données transmisent en post
@@ -47,11 +68,21 @@ print("</div></Font>");
 	}
 */
 //print_r($_POST);
-
-$requete_faite = $_POST['requete_faite'];
-$selection_faite = $_POST['selection_faite'];
-$colonnes_faites = $_POST['colonnes_faites'];
-
+if (isset($_POST['requete_faite'])) {
+	$requete_faite = $_POST['requete_faite'];
+} else {
+	$requete_faite ="";
+}
+if (isset($_POST['selection_faite'])) {
+	$selection_faite = $_POST['selection_faite'];
+} else {
+	$selection_faite ="";
+}
+if (isset($_POST['colonnes_faites'])) {
+	$colonnes_faites = $_POST['colonnes_faites'];
+} else {
+	$colonnes_faites ="";
+}
 
 
 
@@ -62,8 +93,6 @@ $colonnes_faites = $_POST['colonnes_faites'];
 if ($requete_faite != 1)		//si requete globale pas encore faite
 	{
 	$query_globale = "";
-
-
 
 	
 	$query_globale = " select * 
@@ -167,10 +196,6 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 	$result = pg_query($connection, $query_globale);
 
 	
-	
-	
-	
-	
 	///////////////////////////////////////
 	//ecriture des resultats dans un fichier texte
 	//////////////////////////////////////
@@ -253,10 +278,6 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 	fclose($fpm);
 	///////////////////////////////////////
 	
-	
-	
-	
-	
 	///////////////////////////////////////
 	print ("<br><div align='center'>La selection porte sur ".$j." coups de pêches");
 	print ("<br>Le fichier texte comporte ".($k-1)." lignes</div>");//car 1ere ligne est un intitulé
@@ -272,15 +293,15 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 	///tri des lignes à garder dans le fichier texte
 	///////////////////////////////////////////////////////////
 
-	print ("<div align='center'><Font Color =\"#333366\">");
-	if($choix!=" Peuplement ")print ("<br>Critères de selection<br>");
 	
-	print ("<form name=\"form\" method=\"post\" action=\"sc_filieres.php\">");
+	if($choix!=" Peuplement ")print ("<h2>Crit&egrave;res de selection</h2>");
+	
+	print ("<form id=\"formSel\" name=\"form\" method=\"post\" action=\"sc_filieres.php\">");
 	print ("<input type=hidden name=\"base\" value=\"".$bdd."\">");
 	print ("<input type=hidden name=\"choix\" value=\"".$choix."\">");
 	print ("<input type=hidden name=\"requete_faite\" value=\"".$requete_faite."\">");
-	if($choix!=" Peuplement ")print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1>");
-	else print("<br><table CELLSPACING=2 CELLPADDING=1>");
+	if($choix!=" Peuplement ")print ("<table class=\"list\">");
+	else print("<br><table class=\"list\">");
 	if (($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "Environnement"))
 		{
 		print ("<tr>");
@@ -354,7 +375,7 @@ left join exp_contenu on exp_trophique.exp_contenu_id=exp_contenu.id ";
 
 	if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     "))
 		{
-		print ("<br><br><table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
+		print ("<br><br><table class=\"list\"><tr>");
 		print ("<td ROWSPAN=5 align=center>Catégorie écologique</td>");
 		
 		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
@@ -607,7 +628,7 @@ else if(($requete_faite ==1)&&($selection_faite !=1))
 		
 		//print (($n-1)."</font> lignes :<br>");
 		
-		print ("<form name=\"form\" method=\"post\" action=\"sc_filieres.php\">");
+		print ("<form id=\"formSel\" name=\"form\" method=\"post\" action=\"sc_filieres.php\">");
 		print ("<input type=hidden name=\"base\" value=\"".$bdd."\">");
 		print ("<input type=hidden name=\"choix\" value=\"".$choix."\">");
 		print ("<input type=hidden name=\"requete_faite\" value=\"".$requete_faite."\">");
@@ -630,7 +651,7 @@ else if(($requete_faite ==1)&&($selection_faite !=1))
 		
 		
 		
-		print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1>");
+		print ("<table class=\"list\">");
 		print ("<tr>");
 		$nb =0;
 		$n = count($tab_espece);
@@ -676,8 +697,8 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	if($choix == " Peuplement "){
 		$selection_faite =1;
 		
-	print ("<div align=center>Sélection des champs optionnels<br><br><br>");
-	print ("<form name=\"form\" method=\"post\" action=\"sc_filieres.php\">");
+	print ("<div id=\"selection2\"><h3>S&eacute;lection des champs optionnels</h3><br/><br/>");
+	print ("<form id=\"formSel\" name=\"form\" method=\"post\" action=\"sc_filieres.php\">");
 	print ("<input type=hidden name=\"base\" value=\"".$bdd."\">");
 	print ("<input type=hidden name=\"choix\" value=\"".$choix."\">");
 	print ("<input type=hidden name=\"requete_faite\" value=\"".$requete_faite."\">");
@@ -736,16 +757,10 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	//--></script>
 	<?php
 	
-	print ("<table width=\"850\"><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr>");
+	print ("<table class=\"checkall\"><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr>");
 
-	
-	
-	
-	
-	
-	
-	
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
+
+	print ("<table class=\"list\">");
 	print ("<tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[110]\" value=\"105\"></td><td>cat_troph_lib</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[111]\" value=\"103\"></td><td>cat_ecol_lib</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[2]\" value=\"107\" ></td><td>famille</td>");
@@ -877,19 +892,17 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	fclose($fpm);
 	
 
-	
-	print ("<div align='center'>");
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	print ("<br><b>Séléction des champs optionnels</b>
-	<br><br>Vous pouvez cliquez sur le nom d'une table pour la développer
-	<br>Les valeurs classiques sont sélectionnées par défaut");
-	
+	print ("<br><h3>S&eacute;lection des champs optionnels</h3>
+	<br><br>Vous pouvez cliquez sur le nom d'une table pour visualiser tous ses champs et en s&eacute;lectionner certains.
+	<br>Les valeurs classiques sont s&eacute;lectionn&eacute;es par défaut.<br/><br/>");
+	echo "nom bd= ".pg_dbname($connection);
 	print ("<form name=\"form\" method=\"post\" action=\"sc_filieres.php\">");
-	print ("<input type=hidden name=\"base\" value=\"".$bdd."\">");
-	print ("<input type=hidden name=\"choix\" value=\"".$choix."\">");
-	print ("<input type=hidden name=\"requete_faite\" value=\"".$requete_faite."\">");
-	print ("<input type=hidden name=\"selection_faite\" value=\"".$selection_faite."\">");
-	print ("<input type=hidden name=\"colonnes_faites\" value=\"".$colonnes_faites."\">");
+	print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");
+	print ("<input type=\"hidden\" name=\"choix\" value=\"".$choix."\">");
+	print ("<input type=\"hidden\" name=\"requete_faite\" value=\"".$requete_faite."\">");
+	print ("<input type=\"hidden\" name=\"selection_faite\" value=\"".$selection_faite."\">");
+	print ("<input type=\"hidden\" name=\"colonnes_faites\" value=\"".$colonnes_faites."\">");
 	
 	
 	
@@ -902,73 +915,87 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 		form.elements[i].checked = booleen;
 		}
 	//--></script>
-		<?php
-		print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
+
+<table class="checkall"><tr><td><input type="Checkbox" onClick="if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };">Tout</td></tr></table>
 			
-	
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 ><tr VALIGN=top><td VALIGN=top align=center WIDTH=\"200\">");
-	?>
-<div onclick="document.getElementById('_pays').style.display = 'block';"><b>Pays</b>
+	<?php  $comptValue=1; // gère les value= nombre dans les input 
+			$comptNameValue=54; // gère les value= nombre dans les input 
+			// Ces variables sont la pour le test, on ne va pas les garder...
+			
+			?>
+<table id="listTableFil" >
+	<tr class="ligneLTF"><td class="col1LTF" >
+
+<div class="TableFiliere" onClick="toggleTab('_pays');"><b>Pays</b>
 </div> 
 <div id="_pays" style="display:none">
-<?php   print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
-	//pour le pays
-	print ("<tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
-	print ("<input type=hidden name=\"voir[54]\" value=\"1\">");//id dans systeme
-	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays_lib</td>");//nom pays
-	print ("<input type=hidden name=\"voir[53]\" value=\"2\">");
-	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('_pays').style.display = 'none';\">fermer</td>");
+<?php   
+	// On récupère les noms des colonnes que l'on veut afficher dans le dictionnaire
+	print ("<table class=\"sublistF\" >");
+	$querySQL = "select nom_court,table_col from ref_dico where table_nom = 'ref_pays'";
+	$resultSQL = pg_query($connection, $querySQL);
+	if (pg_num_rows($resultSQL) == 0) {
+		echo"erreur chargement donnees dictionnaire";
+	}else {
+		while ($compRowSQL = pg_fetch_row($resultSQL) ) {
+			print ("<tr ><td >x</td><td>".$compRowSQL[0]."</td>");
+			print ("<input type=\"hidden\" name=\"voir[".$comptNameValue."]\" value=\"".$comptValue."\">");
+			$comptValue ++;
+			$comptNameValue --;
+		}
+	}
 	print ("</tr></table>");
-?></div> <?php
-	print ("</td><td VALIGN=top align=center WIDTH=\"200\">");
+	pg_free_result($resultSQL);
 	
-	?>
-<div onclick="document.getElementById('vue_syst').style.display = 'block';"><b>Système</b>
+?></div> 
+	</td><td class="col2LTF" >
+	
+<div class="TableFiliere" onClick="toggleTab('vue_syst');"><b>Système</b>
 </div> 
 
 <div id="vue_syst" style="display:none">
 <?php 
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+	print ("<table class=\"sublistF\" >");
 	//print ("</tr><tr><td>Champs facultatifs du système</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst</td>");//id systeme
 	print ("<input type=hidden name=\"voir[52]\" value=\"3\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>syst_lib</td>");//nom syteme
 	print ("<input type=hidden name=\"voir[51]\" value=\"4\">");
 	if($choix!=" Peuplement ")print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[50]\" value=\"6\"></td><td>syst_surf</td>");
-	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_syst').style.display = 'none';\">fermer</td>");
+
 	print ("</tr></table>");
 	
-	?></div> <?php
-	print ("</td><td align=center WIDTH=\"200\">");
+	?></div> 
+	
+</td><td class="col3LTF">
 
-	?>
-	<div onclick="document.getElementById('vue_sect').style.display = 'block';"><b>Secteur</b>
+	<div class="TableFiliere" onClick="toggleTab('vue_sect');"><b>Secteur</b>
 </div> 
 
 <div id="vue_sect" style="display:none">
 <?php 
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"150\">");
+	print ("<table class=\"sublistF\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect</td>");//id dans systeme
 	print ("<input type=hidden name=\"voir[45]\" value=\"14\">");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>sect_lib </td>");//nom secteur
 	print ("<input type=hidden name=\"voir[44]\" value=\"15\">");
 	if($choix!=" Peuplement ")print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[43]\" value=\"16\"></td><td>sect_surf</td>");
-	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_sect').style.display = 'none';\">fermer</td>");
+
 	print ("</tr></table>");
-	?></div> <?php
-	print ("</td></tr></table>");
+	?></div> 
+	
+	</td></tr>
+	<tr class="ligneLTF"><td class="col1LTF">
 	
 	
-	//////////////////////////////////////tables campagnes et stations
-	
-	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top align=center><td VALIGN=top width=\"200\">");
-	?>
-	<div onclick="document.getElementById('vue_camp').style.display = 'block';"><b>Campagnes</b>
+<?php	//////////////////////////////////////tables campagnes et stations ?>
+
+<div class="TableFiliere" onClick="toggleTab('vue_camp');"><b>Campagnes</b>
 </div>
 
 <div id="vue_camp" style="display:none">
 <?php 
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
+	print ("<table class=\"sublistF\">");
 	//print ("</tr><tr><td>Champs facultatifs des campagnes</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>camp_deb</td>");//date debut
 	print ("<input type=hidden name=\"voir[48]\" value=\"10\">");
@@ -976,17 +1003,17 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	print ("<input type=hidden name=\"voir[47]\" value=\"11\">");//date debut
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>camp</td>");
 	print ("<input type=hidden name=\"voir[49]\" value=\"9\">");
-	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_camp').style.display = 'none';\">fermer</td>");
+
 	print ("</tr></table>");
 	
-	?></div> <?php
-	print ("</td><td width=\"200\">");
-	?>
-	<div onclick="document.getElementById('vue_station').style.display = 'block';"><b>Stations</b>
+	?></div> 
+	</td><td class="col2LTF" >
+	
+	<div class="TableFiliere" onClick="toggleTab('vue_station');"><b>Stations</b>
 </div>
 <div id="vue_station" style="display:none">
 <?php 
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
+	print ("<table class=\"sublistF\">");
 	//print ("</tr><tr><td>Champs facultatifs des stations</td>");
 	print ("<tr ALIGN=center><td WIDTH=30>x</td><td>station</td>");//id station
 	print ("<input type=hidden name=\"voir[42]\" value=\"18\">");
@@ -1007,24 +1034,19 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == "Environnement"))print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[59]\" value=\"37\" ></td><td>position_lib</td>");
 	if($choix!=" Peuplement ")print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[37]\" value=\"23\" ></td><td>station_memo</td>");
 	
-	
-	//print ("<input type=hidden name=\"voir[41]\" value=\"19\">");//nom station
-	//print ("<input type=hidden name=\"voir[42]\" value=\"18\">");//id station
-	
-	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_station').style.display = 'none';\">fermer</td>");
-	print ("</tr></table>");
-	?></div> <?php
-	print ("</td></tr></table>");
-	
-////////////////////////////////////////////tables coup de peche et fraction
-print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top align=center><td VALIGN=top width=\"200\">");
 	?>
-	<div onclick="document.getElementById('vue_coup').style.display = 'block';"><b>Coups de pêche</b>
+	</tr></table>
+	</div> 
+	</td><td class="col3LTF" ></td></tr><tr class="ligneLTF"><td class="col1LTF">
+	
+<?php ////////////////////////////////////////////tables coup de peche et fraction ?>
+
+	<div class="TableFiliere" onClick="toggleTab('vue_coup');"><b>Coups de pêche</b>
 </div>
 
 <div id="vue_coup" style="display:none">
 <?php 
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
+	print ("<table class=\"sublistF\" >");
 	//print ("</tr><tr><td>Champs facultatifs des coups de pêches</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>coup</td>");
 		print ("<input type=hidden name=\"voir[24]\" value=\"48\">");
@@ -1046,108 +1068,99 @@ print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top align=center><td VALIGN
 	
 	
 	if($choix!=" Peuplement ")print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[28]\" value=\"42\"></td><td>coup_memo</td>");
-	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_coup').style.display = 'none';\">fermer</td>");
 	print ("</tr></table>");
 
 
 if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement "))
 	{
 
-?></div> <?php
-	print ("</td><td width=\"200\">");
-	?>
-	<div onclick="document.getElementById('vue_fraction').style.display = 'block';"><b>Fractions</b>
-</div>
-
-<div id="vue_fraction" style="display:none">
-<?php 
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
-	//print ("</tr><tr><td>Champs facultatifs des fractions</td>");
-	if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement "))print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>id_fraction</td>");
-	print ("<input type=hidden name=\"voir[14]\" value=\"85\">");
-	if(($choix!=" Peuplement ")||($choix!="Environnement"))print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[10]\" value=\"91\" ></td><td>nt_est</td>");
-	if(($choix!=" Peuplement ")||($choix!="Environnement"))print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[11]\" value=\"88\" ></td><td>fraction_memo</td>");
-	if(($choix!="Environnement")||($choix!="     Biologie     ")||($choix!="    Trophique     "))
-	{print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pt</td>");
-print ("<input type=hidden name=\"voir[12]\" value=\"87\">");}
-	else if ($choix!="Environnement")print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[12]\" value=\"87\" ></td><td>pt</td>");
-	if($choix!="Environnement")
-	{print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>nt</td>");
-print ("<input type=hidden name=\"voir[13]\" value=\"86\">");}
-	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_fraction').style.display = 'none';\">fermer</td>");
-	print ("</tr></table>");
-	?></div> <?php
+	?></div> </td><td class="col2LTF" >
+		<div class="TableFiliere" onClick="toggleTab('vue_fraction')= 'block';"><b>Fractions</b>
+	</div>
 	
-}//fin du if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement "))
-	print ("</td></tr></table>");
-
-
-
-
-
-
-////////////////////////////////////////tables esp, famille, ordre sauf pour environnement
-if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement "))
-	{
-	print ("<br><table BORDER=1 CELLPADDING=2><tr VALIGN=top align=center><td VALIGN=top  width=\"200\">");
-	?>
-	<div onclick="document.getElementById('vue_espece').style.display = 'block';"><b>Espèce</b>
-</div>
-
-<div id="vue_espece" style="display:none">
-<?php 
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
-		//print ("</tr><tr><td COLSPAN=2>Champs facultatifs des espèces</td>");
-		print ("<tr ALIGN=center><td WIDTH=30>x</td><td>codesp</td>");
-		print ("<input type=hidden name=\"voir[9]\" value=\"92\">");
-				print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>espece</td>");
-				print ("<input type=hidden name=\"voir[8]\" value=\"93\">");
-		print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[3]\" value=\"99\" ></td><td>coefb</td>");
-		print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[4]\" value=\"98\" ></td><td>coefK</td>");
-		print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>cat_troph</td>");//variable ref_cat_trophique oblig
-		print ("<input type=hidden name=\"voir[5]\" value=\"97\">");
-		print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[110]\" value=\"105\"></td><td>cat_troph_lib</td>");
-		print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>cat_ecol</td>");
-		print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[111]\" value=\"103\"></td><td>cat_ecol_lib</td>");
-		print ("<input type=hidden name=\"voir[6]\" value=\"96\">");
-		print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_espece').style.display = 'none';\">fermer</td>");
+	<div id="vue_fraction" style="display:none">
+	<?php 
+		print ("<table class=\"sublistF\" >");
+		if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement "))print ("<tr ALIGN=center><td WIDTH=30>x</td><td>id_fraction</td>");
+		print ("<input type=hidden name=\"voir[14]\" value=\"85\">");
+		if(($choix!=" Peuplement ")||($choix!="Environnement"))print ("<tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[10]\" value=\"91\" ></td><td>nt_est</td>");
+		if(($choix!=" Peuplement ")||($choix!="Environnement"))print ("<tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[11]\" value=\"88\" ></td><td>fraction_memo</td>");
+		if(($choix!="Environnement")||($choix!="     Biologie     ")||($choix!="    Trophique     "))
+		{print ("<tr ALIGN=center><td WIDTH=30>x</td><td>pt</td>");
+	print ("<input type=hidden name=\"voir[12]\" value=\"87\">");}
+		else if ($choix!="Environnement")print ("<tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[12]\" value=\"87\" ></td><td>pt</td>");
+		if($choix!="Environnement")
+		{print ("<tr ALIGN=center><td WIDTH=30>x</td><td>nt</td>");
+	print ("<input type=hidden name=\"voir[13]\" value=\"86\">");}
 		print ("</tr></table>");
-	?></div> <?php
-	print ("</td><td width=\"200\">");
-	?>
-	<div onclick="document.getElementById('vue_famille').style.display = 'block';"><b>Famille et ordre</b>
-</div>
+		?></div> <?php
+	
+	}//fin du if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement ")) ?>
+	
+	
+	</td><td class="col3LTF" ></td></tr>
 
-<div id="vue_famille" style="display:none">
-<?php 
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
-		print ("<tr ALIGN=center>");
+<?php
+	//********* tables esp, famille, ordre sauf pour environnement
+	if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement ")){
+	
+		?>
+		<tr class="ligneLTF"><td class="col1LTF">
+		<div class="TableFiliere" onClick="toggleTab('vue_espece');"><b>Espèce</b>
+	</div>
+	
+	<div id="vue_espece" style="display:none">
+	<?php 
+		print ("<table class=\"sublistF\">");
+			//print ("</tr><tr><td COLSPAN=2>Champs facultatifs des espèces</td>");
+			print ("<tr ALIGN=center><td WIDTH=30>x</td><td>codesp</td>");
+			print ("<input type=hidden name=\"voir[9]\" value=\"92\">");
+			print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>espece</td>");
+			print ("<input type=hidden name=\"voir[8]\" value=\"93\">");
+			print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[3]\" value=\"99\" ></td><td>coefb</td>");
+			print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[4]\" value=\"98\" ></td><td>coefK</td>");
+			print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>cat_troph</td>");//variable ref_cat_trophique oblig
+			print ("<input type=hidden name=\"voir[5]\" value=\"97\">");
+			print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[110]\" value=\"105\"></td><td>cat_troph_lib</td>");
+			print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>cat_ecol</td>");
+			print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[111]\" value=\"103\"></td><td>cat_ecol_lib</td>");
+			print ("<input type=hidden name=\"voir[6]\" value=\"96\">");
+			print ("</tr></table>");
+		?></div> 
+		</td><td class="col2LTF">
 		
-		print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[0]\" value=\"109\" ></td><td>non_poisson</td>");//variable non_poisson
-		print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[2]\" value=\"107\" ></td><td>famille</td>");
-		
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
-		print ("<tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[60]\" value=\"111\" ></td><td>ordre</td>");
-		print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_famille').style.display = 'none';\">fermer</td>");
-		print ("</tr></table>");
-	?></div> <?php
-	print ("</td></tr></table>");
-	}
+		<div class="TableFiliere" onClick="toggleTab('vue_famille');"><b>Famille et ordre</b>
+	</div>
 	
+	<div id="vue_famille" style="display:none">
+	<?php 
+		print ("<table class=\"sublistF\">");
+			print ("<tr ALIGN=center>");
+			
+			print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[0]\" value=\"109\" ></td><td>non_poisson</td>");//variable non_poisson
+			print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[2]\" value=\"107\" ></td><td>famille</td>");
+			
+		print ("<table class=\"sublistF\">");
+			print ("<tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[60]\" value=\"111\" ></td><td>ordre</td>");
+
+			print ("</tr></table>");
+		?></div> <?php
+		print ("</td><td class=\"col3LTF\" ></td></tr><tr class=\"ligneLTF\"><td class=\"col1LTF\">");
+	} // end of if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement "))
 	
+
+	//********* tables engins, environnement, biologie
 	
-	
-	//////////////////////////////tables engins, environnement, biologie
-	print ("<br><table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr VALIGN=top align=center>");
 	if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == "    Trophique     ")||($choix == " Peuplement "))
 		{
+		
 	?>
-	<td VALIGN=top WIDTH="200"><div onclick="document.getElementById('vue_engin').style.display = 'block';"><b>Engin</b>
+	<div class="TableFiliere" onClick="toggleTab('vue_engin');"><b>Engin</b>
 </div>
 
 <div id="vue_engin" style="display:none">
 <?php 
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
+	print ("<table class=\"sublistF\">");
 	//print ("</tr><tr><td>Champs facultatifs des engins</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>engin_lib</td>");//libelle
 	print ("<input type=hidden name=\"voir[19]\" value=\"78\">");
@@ -1155,7 +1168,7 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[16]\" value=\"81\" ></td><td>engin_maille</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[17]\" value=\"80\" ></td><td>engin_chute</td>");
 	print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[18]\" value=\"79\" ></td><td>engin_long</td>");
-	print ("</tr><tr ALIGN=center><td colspan=2 onclick=\"document.getElementById('vue_engin').style.display = 'none';\">fermer</td>");
+
 	print ("</tr></table>");
 	?></div> <?php
 	print ("</td>");
@@ -1165,12 +1178,12 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 		{
 	?>
 	
-	<td WIDTH="200"><div onclick="document.getElementById('vue_envir').style.display = 'block';"><b>Environnement</b>
+	<td class="col2LTF"><div class="TableFiliere" onClick="toggleTab('vue_envir');"><b>Environnement</b>
 </div>
 
 <div id="vue_envir" style="display:none">
 <?php 
-	print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
+	print ("<table class=\"sublistF\">");
 		print ("<tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[61]\" value=\"55\" ></td><td WIDTH=170>transp</td>");
 		print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[76]\" value=\"70\" ></td><td>envir_memo</td>");
 		print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[62]\" value=\"56\" ></td><td WIDTH=170>sals</td>");
@@ -1193,7 +1206,6 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 		print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[100]\" value=\"74\" ></td><td>scour_lib</td>");
 		print ("</tr><tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[78]\" value=\"75\" ></td><td>fcour</td>");
 		print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[101]\" value=\"76\" ></td><td>fcour_lib</td>");
-		print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_envir').style.display = 'none';\">fermer</td>");
 		print ("</tr></table>");
 	?></div> <?php
 	print ("</td>");
@@ -1201,12 +1213,12 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 	if(($choix == "     Biologie     ")||($choix == "    Trophique     "))
 		{
 		?>
-		<td WIDTH="200"><div onclick="document.getElementById('vue_biol').style.display = 'block';"><b>Biologie</b>
+		<td class="col3LTF"><div class="TableFiliere" onClick="toggleTab('vue_biol');"><b>Biologie</b>
 </div>
 
 <div id="vue_biol" style="display:none">
 <?php 
-	print ("<br><table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH=\"200\">");
+	print ("<br><table class=\"sublistF\">");
 		print ("<tr ALIGN=center><td WIDTH=30>x</td><td>id_biologie</td>");
 		print ("<input type=hidden name=\"voir[120]\" value=\"112\">");
 		print ("<td WIDTH=30>x</td><td>long_lf</td>");//longueur
@@ -1234,8 +1246,6 @@ if(($choix == "    NT, PT    ")||($choix == "     Biologie     ")||($choix == " 
 		if($choix == "     Biologie     ")print ("<tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[86]\" value=\"120\" ></td><td>biologie_memo</td>");
 		print ("<td WIDTH=30><input type=\"Checkbox\" name=\"voir[87]\" value=\"121\" ></td><td>mesure_estim</td>");
 		if($choix == "    Trophique     ")print ("<tr ALIGN=center><td WIDTH=30><input type=\"Checkbox\" name=\"voir[86]\" value=\"120\" ></td><td>biologie_memo</td>");
-		
-		print ("</tr><tr ALIGN=center><td colspan=4 onclick=\"document.getElementById('vue_biol').style.display = 'none';\">fermer</td>");
 		print ("</tr></table>");
 	?></div> <?php
 	print ("</td>");
@@ -1373,18 +1383,21 @@ if($fp = fopen($filename, "rb"))
 	} else {echo "Impossible d'ouvrir $filename en lecture.";}
 
 //affichage du lien
-print ("<div align='center'><br><br><br>");
+print ("<div id=\"affFic\"><br><br><br>");
 
 print ("<br>La sélection représente ".($nombre_ligne -1)." lignes dans le fichier de sortie.
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 //print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/temp_selection_globale.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 //print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_globale.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
-if ($choix==" Peuplement ")print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/selection_peupl.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
-else if ($choix == "Environnement")print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/selection_envir.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
-else if ($choix == "    NT, PT    ")print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/selection_nt_pt.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
-else if ($choix == "     Biologie     ")print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/selection_biolo.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
-else if ($choix == "    Trophique     ")print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/selection_troph.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+// Ajout variable chemin
+$pathtar = "https://devppeao.mpl.ird.fr/extraction"; // Production
+$pathtar = $_SERVER["DOCUMENT_ROOT"]."/extraction";//test windows YL
+if ($choix==" Peuplement ")print ("<br><br><a href=\"".$pathtar."/selection_peupl.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+else if ($choix == "Environnement")print ("<br><br><a href=\"".$pathtar."/selection_envir.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+else if ($choix == "    NT, PT    ")print ("<br><br><a href=\"".$pathtar."/selection_nt_pt.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+else if ($choix == "     Biologie     ")print ("<br><br><a href=\"".$pathtar."/selection_biolo.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+else if ($choix == "    Trophique     ")print ("<br><br><a href=\"".$pathtar."/selection_troph.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 
 

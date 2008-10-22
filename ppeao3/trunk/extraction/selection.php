@@ -1,561 +1,250 @@
-<HTML>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
-<META NAME="author" CONTENT="Jérome Fauchier">
-
-<script type="text/javascript">
-
-function pop_it(the_form) {
-   my_form = eval(the_form);
-   window.open("blanc.html", "popup", "height=700,width=850,menubar=no,toolbar=no,location=no,status=no,scrollbars=yes,resizable=yes");
-   my_form.target = "popup";
-   my_form.submit();
-}
-
-
-</script>
-</head>
-<body BGCOLOR="#CCCCFF">
-
-
-<?php
-//connection à la BD
-//if(! ini_set("max_execution_time", "320")) {echo "échec max_execution_time";}
-include_once("../connect.inc");
-$connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
-if (!$connection) { echo "Pas de connection"; exit;}
-
-//$bdd = $_POST['base'];
-//print("travail sur la base : ".$bdd);
-
-if (isset($_POST['annee_deb']))$annee_deb = $_POST['annee_deb'];
-else $annee_deb ="";
-if (isset($_POST['annee_fin']))$annee_fin = $_POST['annee_fin'];
-else $annee_fin ="";
-if (isset($_POST['login']))$login = $_POST['login'];
-else $login ="";
-if (isset($_POST['passe']))$passe = $_POST['passe'];
-else $passe ="";
-if (isset($_POST['type']))$type = $_POST['type'];
-else $type ="";
-if (isset($_POST['type_donnees']))$type_donnees = $_POST['type_donnees'];
-else $type_donnees ="";
-
-
-
+<?php 
+// Mis à jour par Yann Laurent 26/09/08, ajout gestion utilisateur + refonte design
+// definit a quelle section appartient la page
+$section="extraction";
+// code commun à toutes les pages (demarrage de session, doctype etc.)
+include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
+$zone=0; // zone portage (voir table admin_zones)
 ?>
-<div align='center'><Font Color ="#333366">
-<table BORDER=1 CELLSPACING=2 CELLPADDING=1 WIDTH="600">
-<tr><td align='center'><h3><b><Font Color ="#333366">Base de Données PPEAO</font></b></h3>
 
-<?php
-if ($type == "scientifique")print ("<Font Color =\"#333366\">Consultation / Extraction de données de pêche scientifiques</Font>");
-else if ($type == "artisanale")print ("<Font Color =\"#333366\">Consultation / Extraction de données de pêche artisanales</Font>");
-else if ($type == "statistique")print ("<Font Color =\"#333366\">Consultation / Extraction de données statistiques</Font>");
-else print("</b></Font>");
+<?php 
+include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
+//Include for documentation
+include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 ?>
-</td></tr>
-</table>
-</div>
 
-<div align = center>
-<br>09/2008<br>version 2.3 JME             //******************* A ENLEVER en final
-</div>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<?php 
+			// les balises head communes  toutes les pages
+			include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
+		?>
+		<title>ppeao::extraction des donn&eacute;es</title>
 
-<?php
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//                       Donnees scientifiques:                                         //
-//////////////////////////////////////////////////////////////////////////////////////////
-if($type=="scientifique")
-	{
-
-///////////////////////////////////////
-//      choix du secteur d'etude     //
-///////////////////////////////////////
-
-
-
-//si le ou les secteurs ne sont pas encore choisis
-if (!isset($_POST['secteur']))
-	{
-	print ("<div align='center'><Font Color =\"#333366\">");
-	print ("<br><b>Sélection du secteur</b></font>");
-
-	print ("<br><br>");
-	print ("Pays : ");
-	$i=0;
-	$ligne_a_afficher="";
-	reset ($_POST['pays']);
-	while (list($key, $val) = each($_POST['pays']))
-		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
-		$i++;
-		}
-	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
-	print($ligne_a_afficher);
-	print ("<br>Système : ");
-	$i=0;
-	reset ($_POST['systeme']);
-	$ligne_a_afficher="";
-	while (list($key, $val) = each($_POST['systeme']))
-		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
-		$i++;
-		}
-	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
-	print($ligne_a_afficher);
-	print ("<br>Période : <Font Color =\"#663399\">".$annee_deb."</Font>-"."<Font Color =\"#663399\">".$annee_fin);
-	
-	
-	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	//if (!$connection) { echo "Pas de connection"; exit;}
-	
-	$query = "select distinct RS.nom, RP.nom, RSy.libelle 
-	from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, exp_station, exp_coup_peche 
-	
-	, ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation 
-	
-	where RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
-	
-	and exp_coup_peche.date_cp < ref_systeme_date_butoir.date_butoire 
-	and ref_systeme_date_butoir.type_echant = 1 
-	and ref_utilisateurs.login = '".$login."' 
-	and ref_utilisateurs.password = '".$passe."' 
-	and ref_systeme_date_butoir.systeme = RSy.libelle 
-	and ref_autorisation_exploitation.login=ref_utilisateurs.login 
-	and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
-	and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
-	
-	and RS.id=exp_station.ref_secteur_id and exp_station.id=exp_coup_peche.exp_station_id 
-	and exp_coup_peche.date_cp > '".$annee_deb."-01-01' and exp_coup_peche.date_cp < '".$annee_fin."-12-31' 
-	
-	
-	and (";
-	
-	reset ($_POST['systeme']);
-		while (list($key, $val) = each($_POST['systeme']))
-			{	
-			$query .= "(RSy.libelle ='".$val."') or";
-			}
-		$query = substr($query, 0, -2); 		//on enleve le dernier or
-		$query .= ") order by RP.nom, RSy.libelle ";
-	
-	//print ($query);
-	$result = pg_query($connection, $query);
-	
-	$ST=Array();
-	$i = 0;
-	while($row = pg_fetch_row($result))
-		{
-		$STX[$row[1]][$row[2]][$row[0]]="";//pays, syst, secteur =""
-		$pays[$row[1]]="";
-		}
-	
-	// Deconnexion de la base de donnees
-	//pg_close();
-	
-	
-	$stx = count($STX);
-	if($stx==0)print("<br><br></font>Aucun secteur ne correspond à votre demande");
-
-
+		<script type="text/javascript">
 		
-	 
-	//affichage des secteurs du systeme préalablement choisi
-	
-	print ("<form name=\"form\" method=\"post\" action=\"selection.php\">"); 
-									print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
-	$nb =0;
-	$n = count($ST);
-	$i=0;
-	//$colonne = ceil($n/5);	//affichage de 5 par colonne
-	$colonne =3;
-	
-	?>
-	<script language="JavaScript"><!--
-	function clicTous(form,booleen) 
-		{
-		for (i=0, n=form.elements.length; i<n; i++)
-		if (form.elements[i].name.indexOf('secteur') != -1)
-		form.elements[i].checked = booleen;
+		function pop_it(the_form) {
+		   my_form = eval(the_form);
+		   window.open("blanc.html", "popup", "height=700,width=850,menubar=no,toolbar=no,location=no,status=no,scrollbars=yes,resizable=yes");
+		   my_form.target = "popup";
+		   my_form.submit();
 		}
-	//--></script>
-	<?php
-	
-	if($stx!=0)print ("<table width=\"850\"><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr>");
-	print ("<table >");
-	
-	
-
-	
-	reset($STX);
-	$i=0;
-	while (list($key_stx, $val_stx) = each($STX))
-		{
-		while (list($key_stx2, $val_stx2) = each($val_stx))//pour tous les systemes
-			{
-			print ("<tr ><td align=left ><b>".$key_stx.", ".$key_stx2."</b></td></tr><tr><Td>");
-			$nb_ds_ligne=0;
-			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
-			while (list($key_stx3, $val_stx3) = each($val_stx2))//pour tous les secteurs
-				{
-				
-				//affichage de 4 secteurs par ligne
-				$nb_ds_ligne ++;
-				if ($nb_ds_ligne ==5)
-					{
-					print ("</tr><tr>");
-					$nb_ds_ligne =0;
-					}
-				print ("<td width=\"200\"><input type=\"Checkbox\" name=\"secteur[".$i."]\" value=\"".$key_stx3."\">".$key_stx3."</td>");
-				$i++;
-				}
-			print ("</tr></table></td></tr>");
-			}
 		
-		}
-	print ("</td></tr></table>");
+		
+		</script>
+	</head> 
+	<body>
+	<?php 
+	// le menu horizontal
+	include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 	
-	
-	$i=0;
-	reset ($_POST['pays']);
-	while (list($key, $val) = each($_POST['pays']))
-		{
-		print ("<Font Color =\"#663399\"><input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ");
-		$i++;
-		}
-	$i=0;
-	reset ($_POST['systeme']);
-	while (list($key, $val) = each($_POST['systeme']))
-		{
-		print ("<Font Color =\"#663399\"><input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
-		$i++;
-		}
-	print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-	print ("<input type=\"hidden\" name=\"login\" value=\"".$login."\">");
-	print ("<input type=\"hidden\" name=\"passe\" value=\"".$passe."\">");
-	print ("<br><table><tr ><td colspan=\"2\" align =\"middle\"><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
-	print ("</td></tr></form>");	
-	
-	/////////retour preselection
-
-	
-	print ("<tr><td>");
-	print ("<form name=\"retour\" method=\"post\" action=\"preselection.php\">");
-	print ("<input type=\"hidden\" name=\"login\" value=\"".$login."\">");
-	print ("<input type=\"hidden\" name=\"passe\" value=\"".$passe."\">");
-	print ("<input type=\"hidden\" name=\"type\" value=\"".$type."\">");
-						print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
-	print ("<input type=\"submit\" name=\"choix\" value=\"  Retour  \">");
-	print ("</form></td><td>");
-	print ("<form name=\"fortion2\" method=\"post\" action=\"accueil.html\">");
-	print ("<input type=\"submit\" name=\"\" value=\"      Fin     \" onClick= \"return confirm('Etes vous sûr ?')\"></form></td></tr></table>");
-	print ("</div>");
-
+	if (isset($_SESSION['s_ppeao_user_id'])){ // a implementer partout + deploiement de loginform_s.php et function_ppeao.php
+		$userID = $_SESSION['s_ppeao_user_id'];
+	} else {
+		$userID=null;
 	}
 	
-//sinon on choisi les campagnes
-else
-	{
-	//print ("<div align='center'><br>");
+	// on teste à quelle zone l'utilisateur a accès
+	if (userHasAccess($userID,$zone)) {
 	
-	print ("<div align='center'><Font Color =\"#333366\">");
-	if (!isset($_POST['campagne']))print ("<br><b>Sélection des campagnes de pêche</b></font>");
-	else if (!isset($_POST['engin'])) print ("<br><b>Sélection des engins de pêche</b></font>");
-	else  print ("<br><b>Choix de la filière d'extraction</b></font>");
-	print ("<br><br>");
-	
-	
-	print ("Pays : ");
-	$i=0;
-	$ligne_a_afficher="";
-	reset($_POST['pays']);
-	while (list($key, $val) = each($_POST['pays']))
-		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
-		$i++;
-		}
-	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
-	print($ligne_a_afficher);
-	print ("<br>Système : ");
-	$i=0;
-	reset ($_POST['systeme']);
-	$ligne_a_afficher="";
-	while (list($key, $val) = each($_POST['systeme']))
-		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
-		$i++;
-		}
-	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
-	print($ligne_a_afficher);
-	print ("<br>Période : <Font Color =\"#663399\">".$annee_deb."</Font>-"."<Font Color =\"#663399\">".$annee_fin);
-	
-print ("</div>");
-	
-	
-	
-	
-	
-	
-	
-	print ("<div align='center'></font>");
-	
-	
-	
-	
-	//si campagne non referencées
-	if (!isset($_POST['campagne']))
-		{
-		//print ("<div align='center'><Font Color =\"#333366\">");
-		//print ("<br>Sélection des campagnes de pêche");
-		
-		
-		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		//if (!$connection) { echo "Pas de connection"; exit;}
-		
-		$query2 = "select distinct EC.id, EC.numero_campagne, EC.date_debut, EC.date_fin, RP.nom, RSY.libelle from exp_campagne as EC, ref_systeme as RSy, ref_pays as RP, ref_secteur as RS 
-		
-		, ref_systeme_date_butoir, 
-		
-		ref_utilisateurs, ref_autorisation_exploitation 
-		where RSy.ref_pays_id = RP.id and EC.date_debut >= '".$annee_deb."-01-01' and EC.date_fin <= '".$annee_fin."-12-31' 
-		and EC.date_fin <= ref_systeme_date_butoir.date_butoire 
-		and ref_utilisateurs.login = '".$login."' 
-		and ref_utilisateurs.password = '".$passe."' 
-		and ref_systeme_date_butoir.systeme = RSy.libelle 
-		and ref_autorisation_exploitation.login=ref_utilisateurs.login 
-		and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
-		and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
-		and ref_systeme_date_butoir.type_echant = 1 
-		
-		
-		
-		and EC.ref_systeme_id = RSy.id 
-		and RS.ref_systeme_id= RSy.id 
-		and (";
-		reset ($_POST['systeme']);
-		while (list($key, $val) = each($_POST['systeme']))
-			{	
-			$query2 .= "(RSy.libelle ='".$val."') or";
-			}
-		$query2 = substr($query2, 0, -2); 		//on enleve le dernier or
-		$query2 .= ") and (";
-		
-		reset ($_POST['secteur']);
-		while (list($key, $val) = each($_POST['secteur']))
-			{	
-			$query2 .= "(RS.nom ='".$val."') or";
-			}
-		$query2 = substr($query2, 0, -2); 		//on enleve le dernier or
-		$query2 .= ") order by RP.nom, RSy.libelle, EC.date_debut ";
-		
-		
-		
-		
-		//print ($query2);
-		$result2 = pg_query($connection, $query2);
-		
-		$T=Array();
-		$i = 0;
-		
-			while($row = pg_fetch_row($result2))
-			{
-			$T[$row[4]][$row[5]][$row[1]][0] = $row[2];	//date debut
-			$T[$row[4]][$row[5]][$row[1]][1] = $row[3];	//date fin
-			$T[$row[4]][$row[5]][$row[1]][2] = $row[1];	//numero campagne
-			$T[$row[4]][$row[5]][$row[1]][3] = $row[0]; //id campagne
-			}
-		
-		/////////////////affichage campagnes peche
-		
-		
-		print ("<form name=\"form\" method=\"post\" action=\"selection.php\">"); 
-										print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
-		
-		$nb =0;
-		$n = count($T);
-		$i=0;
-		//$colonne = ceil($n/3);	//affichage de 3 par colonne
-		
-		?>
-	<script language="JavaScript"><!--
-	function clicTous(form,booleen) 
-		{
-		for (i=0, n=form.elements.length; i<n; i++)
-		if (form.elements[i].name.indexOf('campagne') != -1)
-		form.elements[i].checked = booleen;
-		}
-	//--></script>
-	<?php
-		print ("<table><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
-		
-		print ("<table>");
-		//print ("<table  CELLSPACING=2 CELLPADDING=1><tr>");
-		reset ($T);
-		
-		
-		while (list($key, $val) = each($T))//pour chaque pays
-			{
-			while (list($key2, $val2) = each($val))//pour chaque systeme
-				{
-				print ("<tr><td align = left colspan=3><b>".$key.", ".$key2."</b></td></tr><tr><td>");
-				$nb_ds_ligne=0;
-				print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
-				while (list($key3, $val3) = each($val2))//pour chaque campagne
-					{
-					$nb_ds_ligne ++;
-					if ($nb_ds_ligne ==4)
-						{
-						print ("</tr><tr>");
-						$nb_ds_ligne =1;
-						}
-					
-					print ("<td width=300 ><input type=\"Checkbox\" name=\"campagne[".$i."]\" value=\"".$val3[3]."\">campagne n°".$key3.": <Font Color =\"#663399\">".$val3[0]."</font> à <Font Color =\"#663399\">".$val3[1]."</font></td>");
-					$i++;
-					}
-				print ("</tr></table></td></tr>");
-				}
-			
-			
-			}
-		print ("</table>");
-		
-		
-		
-		
-		
-		
-		if ($i == 0)print("pas de campagne référencée dans la période");
-		print ("</tr></table>");
-		
-	
-		
-		
-		$i=0;
-		reset ($_POST['pays']);
-		while (list($key, $val) = each($_POST['pays']))
-			{
-			print ("<input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ");
-			$i++;
-			}
-		$i=0;
-		reset ($_POST['systeme']);
-		while (list($key, $val) = each($_POST['systeme']))
-			{
-			print ("<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
-			$i++;
-			}
-			
-		print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-		$sec=0;
-		reset($_POST['secteur']);
-		while (list($key, $val) = each($_POST['secteur']))
-			{
-			print ("<input type=\"hidden\" name=\"secteur[".$sec."]\" value=\"".$val."\">");
-			$sec ++;
-			}
-		print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-		print ("<br><br><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
-		print ("</td></tr></form>");	
-			
-		}//fin du if campagne non referencées
-	else
-		{
-		print ("<div align='center'>");
-		
-		
-		
-		///////selection du type d'engin
+	?>
+		<div id="main_container" class="home">
 
-		//si engin non referencé
-		if (!isset($_POST['engin']))
-			{
-			//choix engin de peche
+		<?php
+		//connection à la BD
+		//if(! ini_set("max_execution_time", "320")) {echo "échec max_execution_time";}
+		include_once("../connect.inc");
+		$connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
+		if (!$connection) { echo "Pas de connection"; exit;}
+		
+		//$bdd = $_POST['base'];
+		//print("travail sur la base : ".$bdd);
+		
+		if (isset($_POST['annee_deb']))$annee_deb = $_POST['annee_deb'];
+		else $annee_deb ="";
+		if (isset($_POST['annee_fin']))$annee_fin = $_POST['annee_fin'];
+		else $annee_fin ="";
+		if (isset($_POST['login']))$login = $_POST['login'];
+		else $login ="";
+		if (isset($_POST['passe']))$passe = $_POST['passe'];
+		else $passe ="";
+		if (isset($_POST['type']))$type = $_POST['type'];
+		else $type ="";
+		if (isset($_POST['type_donnees']))$type_donnees = $_POST['type_donnees'];
+		else $type_donnees ="";
+		?>
 	
-			print ("<div align='center'><Font Color =\"#333366\">");
+		<?php
+		if(isset($_POST['type']))
+			{
+			if ($type=="artisanale")$entete = "consultation / extraction de donn&eacute;es de p&ecirc;che artisanales";
+			else if ($type=="scientifique")$entete = "consultation / extraction de donn&eacute;es de p&ecirc;che scientifiques";
+			else if ($type=="statistique")$entete = "consultation / extraction de donn&eacute;es statistiques";
+			}
+			
+		?>
+		<h1><?php  print($entete); ?></h1>
+
+
+		<br/>
+		<div id="versionTemp">
+		Derni&egrave;re maj 10/2008 - version 2.4 JME modifi&eacute;e Yann Laurent  <?php //******************* A ENLEVER en final?>
+		</div>
+		<br/>		
+		<?php
+		$AfficheInfoDebug="y";
+
+		//////////////////////////////////////////////////////////////////////////////////////////
+		//                       Donnees scientifiques:                                         //
+		//////////////////////////////////////////////////////////////////////////////////////////
+		if($type=="scientifique"){
+		
+		///////////////////////////////////////
+		//      choix du secteur d'etude     //
+		///////////////////////////////////////
+		
+		//si le ou les secteurs ne sont pas encore choisis
+		if (!isset($_POST['secteur']))
+			{
+			if ($AfficheInfoDebug=="y") {
+				echo"Sel - 1<br/>";
+			}
+			print ("<div id=\"selection\">");
+			print ("<h2/>S&eacute;lection du secteur</h2>");
+		
+			print ("<br/>");
+			print ("<h3>Pays s&eacute;lection&eacute;s : </h3>");
+			$i=0;
+			$ligne_a_afficher="";
+			reset ($_POST['pays']);
+			while (list($key, $val) = each($_POST['pays']))
+				{
+				$ligne_a_afficher .= "<input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val.", ";
+				$i++;
+				}
+			$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
+			print($ligne_a_afficher);
+			print ("<br/><br/><h3>Syst&egrave;mes choisis : </h3>");
+			$i=0;
+			reset ($_POST['systeme']);
+			$ligne_a_afficher="";
+			while (list($key, $val) = each($_POST['systeme']))
+				{
+				$ligne_a_afficher .= "<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val.", ";
+				$i++;
+				}
+			$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
+			print($ligne_a_afficher);
+			print ("<br/><br/><h3>P&eacute;riode choisie : </h3>".$annee_deb." - ".$annee_fin."<br/><br/>");
 			
 			
 			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 			//if (!$connection) { echo "Pas de connection"; exit;}
 			
-			$query3 = "select distinct exp_engin.id, exp_engin.libelle 
-			from exp_campagne as EC, exp_coup_peche  left join exp_engin on exp_engin.id=exp_coup_peche.exp_engin_id 
-			where EC.id=exp_coup_peche.exp_campagne_id and (";
-			reset ($_POST['campagne']);
-			while (list($key_sys, $val_sys) = each($_POST['campagne']))
-				{	
-				$query3 .= "(EC.id =".$val_sys.") or";
-				}
-			$query3 = substr($query3, 0, -2); 		//on enleve le dernier or
-			$query3 .= ") order by exp_engin.libelle";
-			$result3 = pg_query($connection, $query3);
-			//print($query3);
+			// *** Query initiale
+			//$query = "select distinct RS.nom, RP.nom, RSy.libelle 
+			//from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, exp_station, exp_coup_peche 	
+			//, ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation 
+			//where RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
+			//and exp_coup_peche.date_cp < ref_systeme_date_butoir.date_butoire 
+			//and ref_systeme_date_butoir.type_echant = 1 
+			//and ref_utilisateurs.login = '".$login."' 
+			//and ref_utilisateurs.password = '".$passe."' 
+			//and ref_systeme_date_butoir.systeme = RSy.libelle 
+			//and ref_autorisation_exploitation.login=ref_utilisateurs.login 
+			//and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
+			//and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
+			//and RS.id=exp_station.ref_secteur_id and exp_station.id=exp_coup_peche.exp_station_id 
+			//and exp_coup_peche.date_cp > '".$annee_deb."-01-01' and exp_coup_peche.date_cp < '".$annee_fin."-12-31' 
 			
-			$E=Array();
+			// query modifiée Yann Laurent pour gestion date butoir
+			
+			$query = "select distinct RS.nom, RP.nom, RSy.libelle 
+			from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, exp_station, exp_coup_peche 	
+			where RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
+			and RS.id=exp_station.ref_secteur_id and exp_station.id=exp_coup_peche.exp_station_id 
+			and exp_coup_peche.date_cp > '".$annee_deb."-01-01' and exp_coup_peche.date_cp < '".$annee_fin."-12-31' 
+			and (";
+			
+			reset ($_POST['systeme']);
+				while (list($key, $val) = each($_POST['systeme']))
+					{	
+					$query .= "(RSy.libelle ='".$val."') or";
+					}
+				$query = substr($query, 0, -2); 		//on enleve le dernier or
+				$query .= ") order by RP.nom, RSy.libelle ";
+			
+			//TEST echo "<br/>".$query;
+			$result = pg_query($connection, $query);
+			
+			$ST=Array();
+			$STX = Array();
 			$i = 0;
-			while($row = pg_fetch_row($result3))
+			while($row = pg_fetch_row($result))
 				{
-				$E[$i][0] = $row[0];	//identifiant engin
-				$E[$i][1] = $row[1];	//libelle engin
-				$i++;
+				$STX[$row[1]][$row[2]][$row[0]]="";//pays, syst, secteur =""
+				$pays[$row[1]]="";
 				}
-			reset ($E);
 			
-			//affichage engin
-			print ("<form name=\"form\" method=\"post\" action=\"selection.php\">"); 
+			// Deconnexion de la base de donnees
+			//pg_close();
+			
+			
+			$stx = count($STX);
+			if($stx==0)print("<br/><br/>Aucun secteur ne correspond &agrave; votre demande");
+		
+			//affichage des secteurs du systeme préalablement choisi
+			
+			print ("<form id=\"formSel\" name=\"form\" method=\"post\" action=\"selection.php\">"); 
 											print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
+			$nb =0;
+			$n = count($ST);
+			$i=0;
+			//$colonne = ceil($n/5);	//affichage de 5 par colonne
+			$colonne =3;
 			
 			?>
 			<script language="JavaScript"><!--
 			function clicTous(form,booleen) 
 				{
 				for (i=0, n=form.elements.length; i<n; i++)
-				if (form.elements[i].name.indexOf('engin') != -1)
+				if (form.elements[i].name.indexOf('secteur') != -1)
 				form.elements[i].checked = booleen;
 				}
 			//--></script>
 			<?php
-			print ("<table><tr><td align=center><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
+			print ("<h2/>liste des secteurs disponibles</h2>");
+			if($stx!=0)print ("<table class=\"checkall\"><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr>");
+			print ("<table >");
 			
-			
-			
-			
-			$nb =0;
-			$n = count($E);
-			$colonne = ceil($n/5);	//affichage de 5 par colonne
-			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
+			reset($STX);
 			$i=0;
-			while (list($key_E, $val_E) = each($E))
+			while (list($key_stx, $val_stx) = each($STX))
 				{
-				//print ("<br>".$val[0]." , ".$val[1]);
-				$nb = $nb + 1;
-				//pb affichage base on affiche à partir de l'espace
-				$libelle = $val_E[1];
-				if ($nb <= $colonne)
+				while (list($key_stx2, $val_stx2) = each($val_stx))//pour tous les systemes
 					{
-					print ("<td><input type=\"Checkbox\" name=\"engin[".$i."]\" value=\"".$val_E[0]."\">".$libelle."</td>");
+					print ("<tr ><td align=left ><b>".$key_stx.", ".$key_stx2."</b></td></tr><tr><Td>");
+					$nb_ds_ligne=0;
+					print ("<table class=\"list\"><tr>");
+					while (list($key_stx3, $val_stx3) = each($val_stx2))//pour tous les secteurs
+						{
+						
+						//affichage de 4 secteurs par ligne
+						$nb_ds_ligne ++;
+						if ($nb_ds_ligne ==5)
+							{
+							print ("</tr><tr>");
+							$nb_ds_ligne =0;
+							}
+						print ("<td width=\"200\"><input type=\"Checkbox\" name=\"secteur[".$i."]\" value=\"".$key_stx3."\">".$key_stx3."</td>");
+						$i++;
+						}
+					print ("</tr></table></td></tr>");
 					}
-				else 	{
-					print ("</tr><tr><td><input type=\"Checkbox\" name=\"engin[".$i."]\" value=\"".$val_E[0]."\">".$libelle."</td>");
-					$nb =1;
-					}
-				$i++;
+				
 				}
-			if ($i == 0)print("pas de type d'engin référencé");
+			print ("</td></tr></table>");
 			
-			
-			
-			print ("</tr></table>");
-			//rajout des variables secteurs dans le formulaire
 			
 			$i=0;
 			reset ($_POST['pays']);
@@ -568,47 +257,396 @@ print ("</div>");
 			reset ($_POST['systeme']);
 			while (list($key, $val) = each($_POST['systeme']))
 				{
-				print ("<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
+				print ("<input type=\"hidden\" name=\"systeme[".$i."]\" value=\"".$val."\"> ");
 				$i++;
 				}
-				print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-			$sec=0;
-			reset($_POST['secteur']);
-			while (list($key, $val) = each($_POST['secteur']))
-				{
-				print ("<input type=\"hidden\" name=\"secteur[".$sec."]\" value=\"".$val."\">");
-				$sec ++;
-				}
-			$cam =0;
-			reset($_POST['campagne']);
-			while (list($key, $val) = each($_POST['campagne']))
-				{
-				print ("<input type=\"hidden\" name=\"campagne[".$cam."]\" value=\"".$val."\">");
-				$cam ++;
-				}
-			print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-			print ("<br><br><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
-			print ("</td></tr></form>");
-			}//fin du if engin n'existe pas
+			print ("<input type=\"hidden\" name=\"annee_deb\" value=\"".$annee_deb."\">");
+			print ("<input type=\"hidden\" name=\"annee_fin\" value=\"".$annee_fin."\">");
+			print ("<input type=\"hidden\" name=\"type\" value=\"".$type."\">");
+			print ("<br/><table><tr ><td colspan=\"2\" align =\"middle\"><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+			print ("</td></tr></form>");	
+			
+			/////////retour preselection
+		
+			
+			print ("<tr><td>");
+			print ("<form name=\"retour\" method=\"post\" action=\"preselection.php\">");
+			print ("<input type=\"hidden\" name=\"type\" value=\"".$type."\">");
+								print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
+			print ("<input type=\"submit\" name=\"choix\" value=\"  Retour  \">");
+			print ("</form></td><td>");
+			print ("<form name=\"fortion2\" method=\"post\" action=\"preselection.php\">");
+			print ("<input type=\"submit\" name=\"\" value=\"      Fin     \" onClick= \"return confirm('Etes vous sûr ?')\"></form></td></tr></table>");
+			print ("</div>");
+		
+			}
+			
+		//sinon on choisi les campagnes
 		else
 			{
-						
-			
-			///////////////////////////////////
-			//selection du type de traitement//
-			///////////////////////////////////
-			
-			print ("<div align='center'><Font Color =\"#333366\">");
-			print ("<br><br><br>");
-			
+			if ($AfficheInfoDebug=="y") {
+				echo"Sel - 2<br/>";
+			}
 
-			print ("<form name=\"form_tot\" method=\"post\" action=\"sc_filieres.php\">");
+			// Affichage de la selection
+			print ("<div id=\"selection\">");
+			if (!isset($_POST['campagne'])) {
+				print ("<h2>S&eacute;lection des campagnes de p&ecirc;che</h2>");
+			}else if (!isset($_POST['engin'])) {
+				print ("<h2>S&eacute;lection des engins de p&ecirc;che</h2>");
+			}else { 
+				print ("<h2>Choix de la fili&egrave;re d'extraction</h2>");
+			}
+			print ("<br/>");
+			print ("<h3>Pays s&eacute;lection&eacute;s : </h3>");
+			$i=0;
+			$ligne_a_afficher="";
+			reset($_POST['pays']);
+			while (list($key, $val) = each($_POST['pays']))
+				{
+				$ligne_a_afficher .= "<input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val.", ";
+				$i++;
+				}
+			$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
+			print($ligne_a_afficher);
+			print ("<br/><br/><h3>Syst&egrave;mes choisis : </h3>");
+			$i=0;
+			reset ($_POST['systeme']);
+			$ligne_a_afficher="";
+			while (list($key, $val) = each($_POST['systeme']))
+				{
+				$ligne_a_afficher .= "<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val.", ";
+				$i++;
+				}
+			$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
+			print($ligne_a_afficher);
+			print ("<br/><br/><h3>P&eacute;riode choisie : </h3>".$annee_deb."-".$annee_fin."<br/><br/>");
 			
-				print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
+			print ("</div>");
+		
+			//si campagne non referencées
+			if (!isset($_POST['campagne']))
+				{
+				//print ("<div align='center'><Font Color =\"#333366\">");
+				//print ("<br/>Sélection des campagnes de pêche");
+				
+				
+				//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+				//if (!$connection) { echo "Pas de connection"; exit;}
+				// Query Initiale
+				//$query2 = "select distinct EC.id, EC.numero_campagne, EC.date_debut, EC.date_fin, RP.nom, RSY.libelle from exp_campagne as EC, ref_systeme as RSy, ref_pays as RP, ref_secteur as RS 
+				
+				//, ref_systeme_date_butoir, 
+				
+				//ref_utilisateurs, ref_autorisation_exploitation 
+				//where RSy.ref_pays_id = RP.id and EC.date_debut >= '".$annee_deb."-01-01' and EC.date_fin <= '".$annee_fin."-12-31' 
+				//and EC.date_fin <= ref_systeme_date_butoir.date_butoire 
+				//and ref_utilisateurs.login = '".$login."' 
+				//and ref_utilisateurs.password = '".$passe."' 
+				//and ref_systeme_date_butoir.systeme = RSy.libelle 
+				//and ref_autorisation_exploitation.login=ref_utilisateurs.login 
+				//and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
+				//and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
+				//and ref_systeme_date_butoir.type_echant = 1 
+				
+				// query modifiee Yann Laurent 26/09/08
+				$query2 = "select distinct EC.id, EC.numero_campagne, EC.date_debut, EC.date_fin, RP.nom, RSY.libelle from exp_campagne as EC, ref_systeme as RSy, ref_pays as RP, ref_secteur as RS 
+				where RSy.ref_pays_id = RP.id and EC.date_debut >= '".$annee_deb."-01-01' and EC.date_fin <= '".$annee_fin."-12-31' 
+				
+				and EC.ref_systeme_id = RSy.id 
+				and RS.ref_systeme_id= RSy.id 
+				and (";
+				reset ($_POST['systeme']);
+				while (list($key, $val) = each($_POST['systeme']))
+					{	
+					$query2 .= "(RSy.libelle ='".$val."') or";
+					}
+				$query2 = substr($query2, 0, -2); 		//on enleve le dernier or
+				$query2 .= ") and (";
+				
+				reset ($_POST['secteur']);
+				while (list($key, $val) = each($_POST['secteur']))
+					{	
+					$query2 .= "(RS.nom ='".$val."') or";
+					}
+				$query2 = substr($query2, 0, -2); 		//on enleve le dernier or
+				$query2 .= ") order by RP.nom, RSy.libelle, EC.date_debut ";
+				
+				
+				
+				
+				//print ($query2);
+				$result2 = pg_query($connection, $query2);
+				
+				$T=Array();
+				$i = 0;
+				
+					while($row = pg_fetch_row($result2))
+					{
+					$T[$row[4]][$row[5]][$row[1]][0] = $row[2];	//date debut
+					$T[$row[4]][$row[5]][$row[1]][1] = $row[3];	//date fin
+					$T[$row[4]][$row[5]][$row[1]][2] = $row[1];	//numero campagne
+					$T[$row[4]][$row[5]][$row[1]][3] = $row[0]; //id campagne
+					}
+				
+				/////////////////affichage campagnes peche
+				
+				
+				print ("<form id=\"formSel\" name=\"form\" method=\"post\" action=\"selection.php\">"); 
+												print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
+				
+				$nb =0;
+				$n = count($T);
+				$i=0;
+				//$colonne = ceil($n/3);	//affichage de 3 par colonne
+				
+				?>
+			<script language="JavaScript"><!--
+			function clicTous(form,booleen) 
+				{
+				for (i=0, n=form.elements.length; i<n; i++)
+				if (form.elements[i].name.indexOf('campagne') != -1)
+				form.elements[i].checked = booleen;
+				}
+			//--></script>
+			<?php
 			
+				print ("<table class=\"checkall\"><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
+				
+				print ("<table class=\"list\">");
+				reset ($T);
+				while (list($key, $val) = each($T)) {//pour chaque pays
+					while (list($key2, $val2) = each($val)) {//pour chaque systeme
+						print ("<tr><td align = left colspan=3><b>".$key.", ".$key2."</b></td></tr><tr><td>");
+						$nb_ds_ligne=0;
+						print ("<table class=\"sublist\"><tr>");
+						while (list($key3, $val3) = each($val2)) {//pour chaque campagne
+							$nb_ds_ligne ++;
+							if ($nb_ds_ligne ==4) {
+								print ("</tr><tr>");
+								$nb_ds_ligne =1;
+							}
+							
+							print ("<td width=300 ><input type=\"Checkbox\" name=\"campagne[".$i."]\" value=\"".$val3[3]."\">campagne n&deg;".$key3.": ".$val3[0]." &agrave; ".$val3[1]."</td>");
+							$i++;
+						}
+						print ("</tr></table></td></tr>");
+					}	
+				}
+				print ("</table>");
+				if ($i == 0)print("pas de campagne r&eacute;f&eacute;renc&eacute;e dans la p&eacute;riode");
+				print ("</tr></table>");
+				$i=0;
+				reset ($_POST['pays']);
+				while (list($key, $val) = each($_POST['pays']))
+					{
+					print ("<input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ");
+					$i++;
+					}
+				$i=0;
+				reset ($_POST['systeme']);
+				while (list($key, $val) = each($_POST['systeme']))
+					{
+					print ("<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
+					$i++;
+					}
+					
+				print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
+				print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
+
+				$sec=0;
+				reset($_POST['secteur']);
+				while (list($key, $val) = each($_POST['secteur']))
+					{
+					print ("<input type=\"hidden\" name=\"secteur[".$sec."]\" value=\"".$val."\">");
+					$sec ++;
+					}
+				print ("<input type=hidden name=\"type\" value=\"".$type."\">");
+				print ("<br/><br/><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+				print ("</td></tr></form>");	
+					
+				}//fin du if campagne non referencées
+			else
+				{
+		
+				///////selection du type d'engin
+		
+				//si engin non referencé
+				if (!isset($_POST['engin']))
+					{
+					//choix engin de peche
+					//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
+					//if (!$connection) { echo "Pas de connection"; exit;}
+					
+					$query3 = "select distinct exp_engin.id, exp_engin.libelle 
+					from exp_campagne as EC, exp_coup_peche  left join exp_engin on exp_engin.id=exp_coup_peche.exp_engin_id 
+					where EC.id=exp_coup_peche.exp_campagne_id and (";
+					reset ($_POST['campagne']);
+					while (list($key_sys, $val_sys) = each($_POST['campagne']))
+						{	
+						$query3 .= "(EC.id =".$val_sys.") or";
+						}
+					$query3 = substr($query3, 0, -2); 		//on enleve le dernier or
+					$query3 .= ") order by exp_engin.libelle";
+					$result3 = pg_query($connection, $query3);
+					//print($query3);
+					
+					$E=Array();
+					$i = 0;
+					while($row = pg_fetch_row($result3))
+						{
+						$E[$i][0] = $row[0];	//identifiant engin
+						$E[$i][1] = $row[1];	//libelle engin
+						$i++;
+						}
+					reset ($E);
+					
+					//affichage engin
+					print ("<form id=\"formSel\" name=\"form\" method=\"post\" action=\"selection.php\">"); 
+									
+					?>
+					<script language="JavaScript"><!--
+					function clicTous(form,booleen) 
+						{
+						for (i=0, n=form.elements.length; i<n; i++)
+						if (form.elements[i].name.indexOf('engin') != -1)
+						form.elements[i].checked = booleen;
+						}
+					//--></script>
+					<?php
+					print ("<table class=\"checkall\"><tr><td align=center><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
+
+					$nb =0;
+					$n = count($E);
+					$colonne = ceil($n/5);	//affichage de 5 par colonne
+					print ("<table class=\"list\"><tr>");
+					$i=0;
+					while (list($key_E, $val_E) = each($E))
+						{
+						//print ("<br/>".$val[0]." , ".$val[1]);
+						$nb = $nb + 1;
+						//pb affichage base on affiche à partir de l'espace
+						$libelle = $val_E[1];
+						if ($nb <= $colonne)
+							{
+							print ("<td><input type=\"Checkbox\" name=\"engin[".$i."]\" value=\"".$val_E[0]."\">".$libelle."</td>");
+							}
+						else 	{
+							print ("</tr><tr><td><input type=\"Checkbox\" name=\"engin[".$i."]\" value=\"".$val_E[0]."\">".$libelle."</td>");
+							$nb =1;
+							}
+						$i++;
+						}
+					if ($i == 0)print("pas de type d'engin r&eacute;f&eacute;renc&eacute;");
+					
+					
+					
+					print ("</tr></table>");
+					//rajout des variables secteurs dans le formulaire
+					
+					$i=0;
+					reset ($_POST['pays']);
+					while (list($key, $val) = each($_POST['pays']))
+						{
+						print ("<input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ");
+						$i++;
+						}
+					$i=0;
+					reset ($_POST['systeme']);
+					while (list($key, $val) = each($_POST['systeme']))
+						{
+						print ("<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
+						$i++;
+						}
+					print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
+					print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
+					$sec=0;
+					reset($_POST['secteur']);
+					while (list($key, $val) = each($_POST['secteur']))
+						{
+						print ("<input type=\"hidden\" name=\"secteur[".$sec."]\" value=\"".$val."\">");
+						$sec ++;
+						}
+					$cam =0;
+					reset($_POST['campagne']);
+					while (list($key, $val) = each($_POST['campagne']))
+						{
+						print ("<input type=\"hidden\" name=\"campagne[".$cam."]\" value=\"".$val."\">");
+						$cam ++;
+						}
+					print ("<input type=hidden name=\"type\" value=\"".$type."\">");
+					print ("<br/><br/><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+					print ("</td></tr></form>");
+					}//fin du if engin n'existe pas
+				else
+					{
+								
+					
+					///////////////////////////////////
+					//selection du type de traitement//
+					///////////////////////////////////
+					print ("<br/>");
+					print ("<form id=\"formSel\" name=\"form_tot\" method=\"post\" action=\"sc_filieres.php\">");
+					$i=0;
+					reset ($_POST['pays']);
+					while (list($key, $val) = each($_POST['pays']))
+						{
+						print ("<input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ");
+						$i++;
+						}
+					$i=0;
+					reset ($_POST['systeme']);
+					while (list($key, $val) = each($_POST['systeme']))
+						{
+						print ("<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
+						$i++;
+						}
+					print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
+					print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
+					$sec=0;
+					reset($_POST['secteur']);
+					while (list($key, $val) = each($_POST['secteur']))
+						{
+						print ("<input type=\"hidden\" name=\"secteur[".$sec."]\" value=\"".$val."\">");
+						$sec ++;
+						}
+					$cam =0;
+					reset($_POST['campagne']);
+					while (list($key, $val) = each($_POST['campagne']))
+						{
+						print ("<input type=\"hidden\" name=\"campagne[".$cam."]\" value=\"".$val."\">");
+						$cam ++;
+						}
+						$eng =0;
+					reset($_POST['engin']);
+					while (list($key, $val) = each($_POST['engin']))
+						{
+						print ("<input type=\"hidden\" name=\"engin[".$eng."]\" value=\"".$val."\">");
+						$eng ++;
+						}
+					print ("<input type=hidden name=\"type\" value=\"".$type."\">");
+					
+					
+					
+					print ("<table class=\"list\"><tr>");
+					print ("<tr><td colspan=\"5\"><h2>Choix des composants</h2></td></tr>");
+					print ("<td><input type=\"submit\" name=\"choix\" value=\" Peuplement \" onclick=\"pop_it(form_tot);\" ></td>");
+					print ("<td><input type=\"submit\" name=\"choix\" value=\"Environnement\" onclick=\"pop_it(form_tot);\" ></td>");
+					print ("<td><input type=\"submit\" name=\"choix\" value=\"    NT, PT    \" onclick=\"pop_it(form_tot);\" ></td>");
+					print ("<td><input type=\"submit\" name=\"choix\" value=\"     Biologie     \" onclick=\"pop_it(form_tot);\" ></td>");
+					print ("<td><input type=\"submit\" name=\"choix\" value=\"    Trophique     \" onclick=\"pop_it(form_tot);\" ></td>");
+					print ("</tr></table>");
+					}
+					print ("</form>");
+					
+				}
+
+			// Deconnexion de la base de donnees
+			//pg_close();
+			
+			print ("<table><tr><td>");
+			print ("<form name=\"form2\" method=\"post\" action=\"selection.php\">");
+	
 			$i=0;
 			reset ($_POST['pays']);
 			while (list($key, $val) = each($_POST['pays']))
@@ -618,165 +656,104 @@ print ("</div>");
 				}
 			$i=0;
 			reset ($_POST['systeme']);
-			while (list($key, $val) = each($_POST['systeme']))
-				{
+			while (list($key, $val) = each($_POST['systeme'])){
 				print ("<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
 				$i++;
-				}
-			print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-			$sec=0;
-			reset($_POST['secteur']);
-			while (list($key, $val) = each($_POST['secteur']))
-				{
-				print ("<input type=\"hidden\" name=\"secteur[".$sec."]\" value=\"".$val."\">");
-				$sec ++;
-				}
-			$cam =0;
-			reset($_POST['campagne']);
-			while (list($key, $val) = each($_POST['campagne']))
-				{
-				print ("<input type=\"hidden\" name=\"campagne[".$cam."]\" value=\"".$val."\">");
-				$cam ++;
-				}
-				$eng =0;
-			reset($_POST['engin']);
-			while (list($key, $val) = each($_POST['engin']))
-				{
-				print ("<input type=\"hidden\" name=\"engin[".$eng."]\" value=\"".$val."\">");
-				$eng ++;
-				}
-			print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-			
-			
-			
-			print ("<table><tr>");
-			
-			print ("<td><input type=\"submit\" name=\"choix\" value=\" Peuplement \" onclick=\"pop_it(form_tot);\" ></td>");
-			print ("<td><input type=\"submit\" name=\"choix\" value=\"Environnement\" onclick=\"pop_it(form_tot);\" ></td>");
-			print ("<td><input type=\"submit\" name=\"choix\" value=\"    NT, PT    \" onclick=\"pop_it(form_tot);\" ></td>");
-			print ("<td><input type=\"submit\" name=\"choix\" value=\"     Biologie     \" onclick=\"pop_it(form_tot);\" ></td>");
-			print ("<td><input type=\"submit\" name=\"choix\" value=\"    Trophique     \" onclick=\"pop_it(form_tot);\" ></td>");
-			print ("</tr></table>");
 			}
-			print ("</form>");
+			print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
+			print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
+			print ("<input type=hidden name=\"type\" value=\"".$type."\">");
+			print ("<input type=\"submit\" name=\"choix\" value=\"  Retour  \">");
+			print ("</form></td><td>");
+			print ("<form name=\"fortion2\" method=\"post\" action=\"preselection.php\">");
+			print ("<input type=\"submit\" name=\"\" value=\"      Fin     \" onClick= \"return confirm('Etes vous sûr ?')\"></form></td></tr></table>");
 			
 			
+			
+			
+			print ("</div>");
+		
+			
+			}
+		
+		}//fin du if($type=="scientifique")
 		
 		
-		print("</div>");
-		}
-	
-	
-	
-	// Deconnexion de la base de donnees
-	//pg_close();
-	
-	print ("<table><tr><td>");
-	print ("<form name=\"form2\" method=\"post\" action=\"selection.php\">");
-			print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
-	
-	$i=0;
-	reset ($_POST['pays']);
-	while (list($key, $val) = each($_POST['pays']))
-		{
-		print ("<input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ");
-		$i++;
-		}
-	$i=0;
-	reset ($_POST['systeme']);
-	while (list($key, $val) = each($_POST['systeme']))
-		{
-		print ("<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
-		$i++;
-		}
-	print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-	print ("<input type=\"submit\" name=\"choix\" value=\"  Retour  \">");
-	print ("</form></td><td>");
-	print ("<form name=\"fortion2\" method=\"post\" action=\"accueil.html\">");
-	print ("<input type=\"submit\" name=\"\" value=\"      Fin     \" onClick= \"return confirm('Etes vous sûr ?')\"></form></td></tr></table>");
-	
-	
-	
-	
-	print ("</div>");
 
-	
-	}
-
-}//fin du if($type=="scientifique")
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-//filiere donnees peches artisanales:
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
+//***********************************************
+//												*				
+//filiere donnees peches artisanales:			*
+//												*
+//***********************************************
 if($type=="artisanale")
 {
-//print ("<br>".$type." , annee deb ".$annee_deb." anne fin : ".$annee_fin); 
+//print ("<br/>".$type." , annee deb ".$annee_deb." anne fin : ".$annee_fin); 
 //si le ou les secteurs ne sont pas encore choisis
 if (!isset($_POST['secteur']))
-	{
+	{			
+	if ($AfficheInfoDebug=="y") {
+				echo"Sel - 3<br/>";
+			}
 	//affichage des données sélectionnées auparavant
-	print ("<div align='center'><br><Font Color =\"#333366\"><b>Sélection du secteur</b></font><br><br>");
-	print ("Pays : ");
+	print ("<div id=\"selection\">");
+	print ("<h2/>S&eacute;lection du secteur</h2>");
+	print ("<br/><h3>Pays s&eacute;lection&eacute;s : </h3>");
 	$i=0;
 	$ligne_a_afficher="";
 	reset ($_POST['pays']);
 	while (list($key, $val) = each($_POST['pays']))
 		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
+		$ligne_a_afficher .= "<input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val.", ";
 		$i++;
 		}
 	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
 	print($ligne_a_afficher);
-	print ("<br>Système : ");
+	print ("<br/><br/><h3>Syst&egrave;mes choisis : </h3>");
 	$i=0;
 	reset ($_POST['systeme']);
 	$ligne_a_afficher="";
 	while (list($key, $val) = each($_POST['systeme']))
 		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
+		$ligne_a_afficher .= "<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val.", ";
 		$i++;
 		}
 	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
 	print($ligne_a_afficher);
-	print ("<br>Période : <Font Color =\"#663399\">".$annee_deb."</Font>-"."<Font Color =\"#663399\">".$annee_fin);
-	
+	print ("<br/><br/><h3>P&eacute;riode choisie : </h3> ".$annee_deb."-".$annee_fin."<br/><br/>");
 
 	print ("</div>");
 
 
-	print ("<div align='center'><Font Color =\"#333366\">");
 	
 	
 	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 	//if (!$connection) { echo "Pas de connection"; exit;}
+	// Query Initiale
+	//$query = "select distinct RS.nom, RP.nom, RSy.libelle 
+	//from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, art_agglomeration, art_debarquement 
 	
+	//, ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation 
+	
+	//where RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
+	//and RS.id=art_agglomeration.ref_secteur_id 
+	//and art_agglomeration.id=art_debarquement.art_agglomeration_id 
+	
+	//and art_debarquement.date_debarquement < ref_systeme_date_butoir.date_butoire 
+	//and ref_systeme_date_butoir.type_echant = 2 
+	//and ref_utilisateurs.login = '".$login."' 
+	//and ref_utilisateurs.password = '".$passe."' 
+	//and ref_systeme_date_butoir.systeme = RSy.libelle 
+	//and ref_autorisation_exploitation.login=ref_utilisateurs.login 
+	//and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
+	//and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
+	
+	
+	// query modifiee Yann Laurent 26/09/08
 	$query = "select distinct RS.nom, RP.nom, RSy.libelle 
 	from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, art_agglomeration, art_debarquement 
-	
-	, ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation 
-	
 	where RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
 	and RS.id=art_agglomeration.ref_secteur_id 
 	and art_agglomeration.id=art_debarquement.art_agglomeration_id 
-	
-	and art_debarquement.date_debarquement < ref_systeme_date_butoir.date_butoire 
-	and ref_systeme_date_butoir.type_echant = 2 
-	and ref_utilisateurs.login = '".$login."' 
-	and ref_utilisateurs.password = '".$passe."' 
-	and ref_systeme_date_butoir.systeme = RSy.libelle 
-	and ref_autorisation_exploitation.login=ref_utilisateurs.login 
-	and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
-	and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
-	
 	and art_debarquement.date_debarquement > '".$annee_deb."-01-01' 
 	and art_debarquement.date_debarquement < '".$annee_fin."-12-31' 
 	
@@ -791,10 +768,11 @@ if (!isset($_POST['secteur']))
 		$query = substr($query, 0, -2); 		//on enleve le dernier or
 		$query .= ") order by RP.nom, RSy.libelle, RS.nom ";
 	
-	//print ("<br>".$query);
+	//print ("<br/>".$query);
 	$result = pg_query($connection, $query);
 	
 	$ST=Array();
+	$STX=Array();
 	$i = 0;
 	while($row = pg_fetch_row($result))
 		{
@@ -804,13 +782,10 @@ if (!isset($_POST['secteur']))
 	// Deconnexion de la base de donnees
 	//pg_close();
 
-
-
-		
-	 
+ 
 	//affichage des secteurs du systeme préalablement choisi
 	
-	print ("<form name=\"form\" method=\"post\" action=\"selection.php\">"); 
+	print ("<form id=\"formSel\" name=\"form\" method=\"post\" action=\"selection.php\">"); 
 									print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
 
 	?>
@@ -823,7 +798,7 @@ if (!isset($_POST['secteur']))
 				}
 			//--></script>
 			<?php
-	print ("<table><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
+	print ("<table class=\"checkall\"><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 
 	print ("<table>");
 	reset($STX);
@@ -833,7 +808,7 @@ if (!isset($_POST['secteur']))
 		while (list($key_stx2, $val_stx2) = each($val_stx))//pour tous les systemes
 			{
 			print ("<tr><td width=\"200\"><b>".$key_stx.", ".$key_stx2."</b></td></tr><tr><td>");
-			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
+			print ("<table class=\"list\"><tr>");
 			$nb_ds_ligne =0;
 			while (list($key_stx3, $val_stx3) = each($val_stx2))//pour tous les secteurs
 				{
@@ -856,23 +831,21 @@ if (!isset($_POST['secteur']))
 	reset ($_POST['pays']);
 	while (list($key, $val) = each($_POST['pays']))
 		{
-		print ("<Font Color =\"#663399\"><input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ");
+		print ("<input type=\"hidden\" name=\"pays[".$i."]\" value=\"".$val."\"> ");
 		$i++;
 		}
 	$i=0;
 	reset ($_POST['systeme']);
 	while (list($key, $val) = each($_POST['systeme']))
 		{
-		print ("<Font Color =\"#663399\"><input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
+		print ("<input type=\"hidden\" name=\"systeme[".$i."]\" value=\"".$val."\"> ");
 		$i++;
 		}
-	print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
-	print ("<br><br><table><tr><td  align = center><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+	print ("<input type=\"hidden\" name=\"annee_deb\" value=\"".$annee_deb."\">");
+	print ("<input type=\"hidden\" name=\"annee_fin\" value=\"".$annee_fin."\">");
+	print ("<input type=\"hidden\" name=\"type\" value=\"".$type."\">");
+	print ("<input type=\"hidden\" name=\"type_donnees\" value=\"".$type_donnees."\">");
+	print ("<br/><br/><table><tr><td  align = center><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
 	print ("</td></tr></form>");	
 	
 	
@@ -885,11 +858,9 @@ if (!isset($_POST['secteur']))
 						print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
 	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
 	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
-	print ("<input type=\"hidden\" name=\"login\" value=\"".$login."\">");
-	print ("<input type=\"hidden\" name=\"passe\" value=\"".$passe."\">");
 	print ("<input type=\"submit\" name=\"choix\" value=\"  Retour  \">");
 	print ("</form></td><td>");
-	print ("<form name=\"fortion2\" method=\"post\" action=\"accueil.html\">");
+	print ("<form name=\"fortion2\" method=\"post\" action=\"preselection.php\">");
 	print ("<input type=\"submit\" name=\"\" value=\"      Fin     \" onClick= \"return confirm('Etes vous sûr ?')\"></form></td></tr></table>");
 	
 	
@@ -902,60 +873,51 @@ if (!isset($_POST['secteur']))
 //sinon on choisi les agglomerations
 else
 	{
-
-		//print ("<br><Font Color =\"#333366\"><b>Sélection des agglomérations :</b></font><br><br>");
-	print ("<div align='center'><Font Color =\"#333366\">");
-	if (!isset($_POST['agglo']))print ("<br><Font Color =\"#333366\"><b>Sélection des agglomérations</b></font>");
-	else if (!isset($_POST['periode'])) print ("<br><Font Color =\"#333366\"><b>Sélection des périodes d'enquêtes</b></font>");
-	else if (!isset($_POST['engin'])) print ("<br><Font Color =\"#333366\"><b>Sélection des engins de pêche</b></font>");
-	else print ("<br><Font Color =\"#333366\"><b>Choix de la filière d'extraction</b></font>");
-	print ("<br><br>");
+	if ($AfficheInfoDebug=="y") {
+				echo"Sel - 4<br/>";
+			}
+		//print ("<br/><Font Color =\"#333366\"><b>Sélection des agglomérations :</b></font><br/><br/>");
+	print ("<div id=\"selection\">");
+	if (!isset($_POST['agglo']))print ("<h2>S&eacute;lection des agglom&eacute;rations</h2>");
+	else if (!isset($_POST['periode'])) print ("<h2>S&eacute;lection des p&eacute;riodes d'enqu&ecirc;tes</h2>");
+	else if (!isset($_POST['engin'])) print ("<h2>S&eacute;lection des engins de p&ecirc;che</h2>");
+	else print ("<h2>Choix de la fili&egrave;re d'extraction</h2>");
 	
-	
-	
-	
-	
-	
-	
-	
-	print ("Pays : ");
+	print ("<br/><h3>Pays s&eacute;lection&eacute;s : </h3>");
 	$i=0;
 	$ligne_a_afficher="";
 	reset($_POST['pays']);
 	while (list($key, $val) = each($_POST['pays']))
 		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
+		$ligne_a_afficher .= "<input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val.", ";
 		$i++;
 		}
 	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
 	print($ligne_a_afficher);
-	print ("<br>Système : ");
+	print ("<br/><br/><h3>Syst&egrave;mes choisis : </h3>");
 	$i=0;
 	reset ($_POST['systeme']);
 	$ligne_a_afficher="";
 	while (list($key, $val) = each($_POST['systeme']))
 		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
+		$ligne_a_afficher .= "<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val.", ";
 		$i++;
 		}
 	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
 	print($ligne_a_afficher);
-	print ("<br>Période : <Font Color =\"#663399\">".$annee_deb."</Font>-"."<Font Color =\"#663399\">".$annee_fin);
-	print ("</Font><br>");
-	
+	print ("<br/><br/><h3>P&eacute;riode choisie : </h3>".$annee_deb."-".$annee_fin."<br/><br/>");
 	
 	print("</div>");
 	
 	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-	//si campagne non referencées
+	//si campagne non referenc&eacute;es
 	if (!isset($_POST['agglo']))
 		{
-		print ("<div align='center'><Font Color =\"#333366\">");
-		//print ("<br>Sélection des agglomérations :");
+		print ("<div id=\"selection\">");
+		//print ("<br/>Sélection des agglomérations :");
 		
 		
-		
-		
+
 		$query_1 = "select distinct AA.id, AA.nom, RSy.libelle, RS.nom from art_agglomeration as AA, art_debarquement as AD, ref_systeme as Rsy, ref_secteur as RS 
 		where AD.art_agglomeration_id=AA.id 
 		and RSY.id=RS.ref_systeme_id 
@@ -970,9 +932,7 @@ else
 		$query_1 = substr($query_1, 0, -2); 		//on enleve le dernier or
 		$query_1 .= ") order by RS.nom, AA.nom ";
 		
-		//print ("<br>".$query_1);
-		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
-		//if (!$connection) { echo "Pas de connection"; exit;}
+
 		$result_1 = pg_query($connection,$query_1);
 		
 		$A=Array();
@@ -998,7 +958,7 @@ else
 				}
 			//--></script>
 			<?php
-			print ("<table><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
+			print ("<table class=\"checkall\><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 		
 		
 		$nb =0;
@@ -1017,7 +977,7 @@ else
 				{
 				$nb_ds_ligne =0;
 				print ("<table><tr><td align=\"left\"><b>".$key.", ".$key2."</b></td></tr><tr><td>");
-				print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
+				print ("<table class=\"list\"><tr>");
 				while (list($key3, $val3) = each($val2))//pour chaque agglo
 					{
 					$nb_ds_ligne ++;
@@ -1036,7 +996,7 @@ else
 			}
 	
 
-		if ($i == 0)print("pas d'agglomération référencée dans la période");
+		if ($i == 0)print("pas d'agglom&eacute;ration r&eacute;f&eacute;renc&eacute;e dans la p&eacute;riode");
 			
 		print ("</tr></table>");
 		
@@ -1056,9 +1016,9 @@ else
 			$i++;
 			}
 		print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
+		print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
+		print ("<input type=hidden name=\"login\" value=\"".$login."\">");
+		print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
 
 		$sec=0;
 		reset($_POST['secteur']);
@@ -1069,7 +1029,7 @@ else
 			}
 		print ("<input type=hidden name=\"type\" value=\"".$type."\">");
 		print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
-		print ("<br><br><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+		print ("<br/><br/><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
 		print ("</td></tr></form>");	
 			
 		}//fin du if agglo non referencées
@@ -1078,17 +1038,10 @@ else
 		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 		//if (!$connection) { echo "Pas de connection"; exit;}
 		
-		
-		print ("<div align='center'>");
-		
-	
-		
-		
 		///////////////////////////////////////////////////////
 		//selection des periodes d enquetes par agglomeration//
 		///////////////////////////////////////////////////////
-		
-		
+
 		//si periode non referencée
 		if (!isset($_POST['periode']))
 			{
@@ -1096,36 +1049,48 @@ else
 			
 			//choix periode
 	
-			print ("<div align='center'><Font Color =\"#333366\">");
-			print ("<br><br>");
+			print ("<div id=\"selection\">");
+			print ("<br/><br/>");
 			
 			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 			//if (!$connection) { echo "Pas de connection"; exit;}
+			// query initiale
+			// $query_2 = "select distinct AAc.mois, AAc.annee 
+			// from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, 
+			// ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation, 
 			
+			// art_agglomeration as AA, art_activite as AAc 
+			// where AA.id=AAc.art_agglomeration_id 
+			
+			// and RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
+			// and RS.id=AA.ref_secteur_id 
+			
+			// and AAc.date_activite < ref_systeme_date_butoir.date_butoire 
+			// and ref_systeme_date_butoir.type_echant = 2 
+			// and ref_utilisateurs.login = '".$login."' 
+			// and ref_utilisateurs.password = '".$passe."' 
+			// and ref_systeme_date_butoir.systeme = RSy.libelle 
+			// and ref_autorisation_exploitation.login=ref_utilisateurs.login 
+			// and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
+			// and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
+			
+			// and AAc.date_activite > '".$annee_deb."-01-01' 
+			// and AAc.date_activite < '".$annee_fin."-12-31' 
+			
+		
+			// query modifiee Yann Laurent 12/10/08
 			$query_2 = "select distinct AAc.mois, AAc.annee 
 			from ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, 
-			ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation, 
-			
+						
 			art_agglomeration as AA, art_activite as AAc 
 			where AA.id=AAc.art_agglomeration_id 
 			
 			and RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
 			and RS.id=AA.ref_secteur_id 
 			
-			and AAc.date_activite < ref_systeme_date_butoir.date_butoire 
-			and ref_systeme_date_butoir.type_echant = 2 
-			and ref_utilisateurs.login = '".$login."' 
-			and ref_utilisateurs.password = '".$passe."' 
-			and ref_systeme_date_butoir.systeme = RSy.libelle 
-			and ref_autorisation_exploitation.login=ref_utilisateurs.login 
-			and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
-			and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
-			
+				
 			and AAc.date_activite > '".$annee_deb."-01-01' 
 			and AAc.date_activite < '".$annee_fin."-12-31' 
-			
-			
-			
 			
 			and (";
 			reset ($_POST['agglo']);
@@ -1136,8 +1101,8 @@ else
 			$query_2 = substr($query_2, 0, -2); 		//on enleve le dernier or
 			$query_2 .= ") order by AAc.annee, AAc.mois";
 			$result_2 = pg_query($connection, $query_2);
-			//print("<br>".$query_2);
-			//print("<br>".pg_num_rows($result_2));
+			//print("<br/>".$query_2);
+			//print("<br/>".pg_num_rows($result_2));
 			
 			$P=Array();
 			while($row = pg_fetch_row($result_2))
@@ -1148,28 +1113,43 @@ else
 				}
 			reset ($P);
 			
+			// Query initiale
+			// $query_2bis = "select distinct AD.mois, AD.annee 
+			// from art_agglomeration as AA, art_debarquement as AD 
+			
+			// , ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, 
+			// ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation 
+			
+			// where AA.id=AD.art_agglomeration_id 
+			// and RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
+			// and RS.id=AA.ref_secteur_id 
+			
+			// and AD.date_debarquement < ref_systeme_date_butoir.date_butoire 
+			// and ref_systeme_date_butoir.type_echant = 2 
+			// and ref_utilisateurs.login = '".$login."' 
+			// and ref_utilisateurs.password = '".$passe."' 
+			// and ref_systeme_date_butoir.systeme = RSy.libelle 
+			// and ref_autorisation_exploitation.login=ref_utilisateurs.login 
+			// and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
+			// and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
+			
+			// and AD.date_debarquement > '".$annee_deb."-01-01' 
+			// and AD.date_debarquement < '".$annee_fin."-12-31' 
+			
+			// query modifiee Yann Laurent 12/10/08
 			$query_2bis = "select distinct AD.mois, AD.annee 
 			from art_agglomeration as AA, art_debarquement as AD 
 			
-			, ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, 
-			ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation 
+			, ref_pays as RP, ref_secteur as RS, ref_systeme as RSy 
+	
 			
 			where AA.id=AD.art_agglomeration_id 
 			and RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
 			and RS.id=AA.ref_secteur_id 
 			
-			and AD.date_debarquement < ref_systeme_date_butoir.date_butoire 
-			and ref_systeme_date_butoir.type_echant = 2 
-			and ref_utilisateurs.login = '".$login."' 
-			and ref_utilisateurs.password = '".$passe."' 
-			and ref_systeme_date_butoir.systeme = RSy.libelle 
-			and ref_autorisation_exploitation.login=ref_utilisateurs.login 
-			and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
-			and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
 			
 			and AD.date_debarquement > '".$annee_deb."-01-01' 
-			and AD.date_debarquement < '".$annee_fin."-12-31' 
-			
+			and AD.date_debarquement < '".$annee_fin."-12-31'
 			
 			and (";
 			reset ($_POST['agglo']);
@@ -1180,8 +1160,8 @@ else
 			$query_2bis = substr($query_2bis, 0, -2); 		//on enleve le dernier or
 			$query_2bis .= ") order by AD.annee, AD.mois";
 			$result_2bis = pg_query($connection, $query_2bis);
-			//print("<br>".$query_2bis);
-			//print("<br>".pg_num_rows($result_2bis));
+			//print("<br/>".$query_2bis);
+			//print("<br/>".pg_num_rows($result_2bis));
 			
 			//on cumul les deux resultats
 			while($rowbis = pg_fetch_row($result_2bis))
@@ -1203,7 +1183,7 @@ else
 			
 			//$nb =0;
 			//$n = count($P);
-			//print ("<br>!!!!!!!!!nb:".$n);
+			//print ("<br/>!!!!!!!!!nb:".$n);
 			//$colonne = ceil($n/5);	//affichage de 5 par colonne
 			?>
 			<script language="JavaScript"><!--
@@ -1215,20 +1195,20 @@ else
 				}
 			//--></script>
 			<?php
-			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td><td align = right>Tout</td></tr></table>");
+			print ("<table class=\"checkall\><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td><td align = right>Tout</td></tr></table>");
 		
 			
 			
-			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
+			print ("<table class=\"list\"><tr>");
 			
 			$i=0;
 			while (list($key_P, $val_P) = each($P))
 				{
-				print ("<tr><td align='center' width=100>Année ".$key_P." :  </td>");
+				print ("<tr><td align='center' width=100>Ann&eacute;e ".$key_P." :  </td>");
 				while (list($key, $val) = each($val_P))
 					{
 					//print ("<td> n° ".$key." : </td><td><input type=\"Checkbox\" name=\"periode[".$i."]\" value=\"".$key."\" ></td>");
-					print ("<td> n° ".$key." : </td><td><input type=\"Checkbox\" name=\"periode[".$key_P."][".$i."]\" value=\"".$key."\" ></td>");
+					print ("<td> n&deg; ".$key." : </td><td><input type=\"Checkbox\" name=\"periode[".$key_P."][".$i."]\" value=\"".$key."\" ></td>");
 				
 					$i++;
 					}
@@ -1246,17 +1226,10 @@ else
 			<?php
 			print ("<td align = right>Tout</td><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td>");
 		
-		
-			
-				
-				
-				
-				
-				
 				print ("</tr>");
 				}
 			print ("</table>");
-			if ($i == 0)print("pas de période référencée");
+			if ($i == 0)print("pas de p&eacute;riode r&eacute;f&eacute;renc&eacute;e");
 			
 			
 			$i=0;
@@ -1275,8 +1248,6 @@ else
 				}
 			print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
 	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
 	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
 	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
 			$sec=0;
@@ -1294,7 +1265,7 @@ else
 				$cam ++;
 				}
 				
-			print ("<br><br><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+			print ("<br/><br/><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
 			print ("</td></tr></form>");
 			
 
@@ -1317,8 +1288,8 @@ else
 			{
 			//choix engin de peche
 	
-			print ("<div align='center'><Font Color =\"#333366\">");
-			print ("<br>");
+			print ("<div id=\"selection\">");
+			print ("<br/>");
 			
 			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 			//if (!$connection) { echo "Pas de connection"; exit;}
@@ -1339,8 +1310,8 @@ else
 			$query_3 = substr($query_3, 0, -2); 		//on enleve le dernier or
 			$query_3 .= ") order by AAc.art_grand_type_engin_id ";
 			$result_3 = pg_query($connection, $query_3);
-			//print("<br>".$query_3);
-			//print("<br>".pg_num_rows($result_3));
+			//print("<br/>".$query_3);
+			//print("<br/>".pg_num_rows($result_3));
 			
 			$E=Array();
 			while($row = pg_fetch_row($result_3))
@@ -1363,8 +1334,8 @@ else
 			$query_3bis = substr($query_3bis, 0, -2); 		//on enleve le dernier or
 			$query_3bis .= ") order by AD.art_grand_type_engin_id ";
 			$result_3bis = pg_query($connection, $query_3bis);
-			//print("<br>".$query_3bis);
-			//print("<br>".pg_num_rows($result_3bis));
+			//print("<br/>".$query_3bis);
+			//print("<br/>".pg_num_rows($result_3bis));
 			
 			//on cumul les deux resultats
 			while($rowbis = pg_fetch_row($result_3bis))
@@ -1390,9 +1361,9 @@ else
 				}
 			//--></script>
 			<?php
-			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td align='center'>Tout</td></tr></table>");
+			print ("<table class=\"checkall\><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td align='center'>Tout</td></tr></table>");
 			
-			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
+			print ("<table class=\"list\"><tr>");
 			
 			$i=0;
 			$nb =0;
@@ -1420,7 +1391,7 @@ else
 				$i++;
 				}
 			print ("</table>");
-			if ($i == 0)print("pas de type d'engin référencé");
+			if ($i == 0)print("pas de type d'engin r&eacute;f&eacute;renc&eacute;");
 			
 			
 			$i=0;
@@ -1438,11 +1409,9 @@ else
 				$i++;
 				}
 			print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
+			print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
+			print ("<input type=hidden name=\"type\" value=\"".$type."\">");
+			print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
 			$sec=0;
 			reset($_POST['secteur']);
 			while (list($key, $val) = each($_POST['secteur']))
@@ -1471,21 +1440,18 @@ else
 					}
 				}
 			
-			print ("<br><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+			print ("<br/><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
 			print ("</td></tr></form>");
 			}//fin du if engin n'existe pas
 		else
 			{
-			print ("<div align='center'>");
-	
-
 			
 			///////////////////////////////////
 			//selection du type de traitement//
 			///////////////////////////////////
 			
-			print ("<div align='center'><Font Color =\"#333366\">");
-			print ("<br><br><br>");
+			print ("<div id=\"selection\">");
+			print ("<br/><br/><br/>");
 			
 
 			print ("<form name=\"form_tot\" method=\"post\" action=\"art_filieres.php\">");
@@ -1507,11 +1473,9 @@ else
 				$i++;
 				}
 			print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
+			print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
+			print ("<input type=hidden name=\"type\" value=\"".$type."\">");
+			print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
 			$sec=0;
 			reset($_POST['secteur']);
 			while (list($key, $val) = each($_POST['secteur']))
@@ -1538,11 +1502,7 @@ else
 					$i++;
 					}
 				}	
-			
-			
-			
-			
-			
+
 				$eng =0;
 			reset($_POST['engin']);
 			while (list($key, $val) = each($_POST['engin']))
@@ -1550,13 +1510,9 @@ else
 				print ("<input type=\"hidden\" name=\"engin[".$eng."]\" value=\"".$val."\">");
 				$eng ++;
 				}
-			
-			
-			
-			
+
 			print ("<table><tr>");
-			
-			print ("<td><input type=\"submit\" name=\"choix\" value=\"   Activité    \" onclick=\"pop_it(form_tot);\" ></td>");
+			print ("<td><input type=\"submit\" name=\"choix\" value=\"   Activit&eacute;    \" onclick=\"pop_it(form_tot);\" ></td>");
 			print ("<td><input type=\"submit\" name=\"choix\" value=\" Captures \" onclick=\"pop_it(form_tot);\" ></td>");
 			print ("<td><input type=\"submit\" name=\"choix\" value=\"     Nt, Pt     \" onclick=\"pop_it(form_tot);\" ></td>");
 			print ("<td><input type=\"submit\" name=\"choix\" value=\"     Taille     \" onclick=\"pop_it(form_tot);\" ></td>");
@@ -1596,13 +1552,11 @@ else
 		}
 	print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
 	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
 	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
 	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
 	print ("<input type=\"submit\" name=\"choix\" value=\"  Retour  \">");
 	print ("</form></td><td>");
-	print ("<form name=\"fortion2\" method=\"post\" action=\"accueil.html\">");
+	print ("<form name=\"fortion2\" method=\"post\" action=\"preselection.php\">");
 	print ("<input type=\"submit\" name=\"\" value=\"      Fin     \" onClick= \"return confirm('Etes vous sûr ?')\"></form></td></tr></table>");
 	
 	
@@ -1620,43 +1574,46 @@ else
 /////////////////////////////////////////////////////////////////////////////////////////////////
 if($type=="statistique")
 {
-//print ("<br>".$type." , annee deb ".$annee_deb." anne fin : ".$annee_fin); 
+//print ("<br/>".$type." , annee deb ".$annee_deb." anne fin : ".$annee_fin); 
 //si le ou les secteurs ne sont pas encore choisis
 if (!isset($_POST['secteur']))
 	{
-	
+		if ($AfficheInfoDebug=="y") {
+				echo"Sel - 5<br/>";
+			}
 	
 	//affichage des données sélectionnées auparavant
-	print ("<div align='center'><br><Font Color =\"#333366\"><b>Sélection du secteur</b></font><br><br>");
-	print ("Pays : ");
+	print ("<div id=\"selection\">");
+	print ("<h2/>S&eacute;lection du secteur</h2>");
+	print ("<br/><h3>Pays s&eacute;lection&eacute;s : </h3>");
 	$i=0;
 	$ligne_a_afficher="";
 	reset ($_POST['pays']);
 	while (list($key, $val) = each($_POST['pays']))
 		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
+		$ligne_a_afficher .= "<input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val.", ";
 		$i++;
 		}
 	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
 	print($ligne_a_afficher);
-	print ("<br>Système : ");
+	print ("<br/><br/><h3>Syst&egrave;mes choisis : </h3>");
 	$i=0;
 	reset ($_POST['systeme']);
 	$ligne_a_afficher="";
 	while (list($key, $val) = each($_POST['systeme']))
 		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
+		$ligne_a_afficher .= "<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val.", ";
 		$i++;
 		}
 	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
 	print($ligne_a_afficher);
-	print ("<br>Période : <Font Color =\"#663399\">".$annee_deb."</Font>-"."<Font Color =\"#663399\">".$annee_fin);
+	print ("<br/><br/><h3>P&eacute;riode choisie: </h3>".$annee_deb."-".$annee_fin."<br/><br/>");
 	
-	//print ("<br>Pays : <Font Color =\"#663399\">".$pays."</Font> , Système : <Font Color =\"#663399\">".$systeme."</Font> , Année : <Font Color =\"#663399\">".$annee."</Font>");
+	//print ("<br/>Pays : <Font Color =\"#663399\">".$pays."</Font> , Syst&egrave;me : <Font Color =\"#663399\">".$systeme."</Font> , Ann&eacute;e : <Font Color =\"#663399\">".$annee."</Font>");
 	print ("</div>");
 	/////suite
 
-	print ("<div align='center'><Font Color =\"#333366\">");
+	print ("<div id=\"selection\">");
 	
 	//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 	//if (!$connection) { echo "Pas de connection"; exit;}
@@ -1682,6 +1639,7 @@ if (!isset($_POST['secteur']))
 	$result = pg_query($connection, $query);
 	
 	$ST=Array();
+	$STX=Array();
 	$i = 0;
 	while($row = pg_fetch_row($result))
 		{
@@ -1691,10 +1649,6 @@ if (!isset($_POST['secteur']))
 	// Deconnexion de la base de donnees
 	//pg_close();
 
-
-
-		
-	 
 	//affichage des secteurs du systeme préalablement choisi
 	
 	print ("<form name=\"form\" method=\"post\" action=\"selection.php\">"); 
@@ -1710,7 +1664,7 @@ if (!isset($_POST['secteur']))
 				}
 			//--></script>
 			<?php
-	print ("<table><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
+	print ("<table class=\"checkall\><tr><td align = right><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 
 	
 	
@@ -1719,7 +1673,7 @@ if (!isset($_POST['secteur']))
 	$i=0;
 	$colonne =3;
 		
-		print ("<table>");
+	print ("<table>");
 	reset($STX);
 	$i=0;
 	while (list($key_stx, $val_stx) = each($STX))
@@ -1727,7 +1681,7 @@ if (!isset($_POST['secteur']))
 		while (list($key_stx2, $val_stx2) = each($val_stx))//pour tous les systemes
 			{
 			print ("<tr><td width=\"200\"><b>".$key_stx.", ".$key_stx2."</b></td></tr><tr><td>");
-			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
+			print ("<table class=\"list\"><tr>");
 			$nb_ds_ligne =0;
 			while (list($key_stx3, $val_stx3) = each($val_stx2))//pour tous les secteurs
 				{
@@ -1751,43 +1705,35 @@ if (!isset($_POST['secteur']))
 	reset ($_POST['pays']);
 	while (list($key, $val) = each($_POST['pays']))
 		{
-		print ("<Font Color =\"#663399\"><input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ");
+		print ("<input type=\"hidden\" name=\"pays[".$i."]\" value=\"".$val."\"> ");
 		$i++;
 		}
 	$i=0;
 	reset ($_POST['systeme']);
 	while (list($key, $val) = each($_POST['systeme']))
 		{
-		print ("<Font Color =\"#663399\"><input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
+		print ("<input type=\"hidden\" name=\"systeme[".$i."]\" value=\"".$val."\"> ");
 		$i++;
 		}
-	print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
-	print ("<br><br><table><tr><td  align = center><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+	print ("<input type=\"hidden\" name=\"annee_deb\" value=\"".$annee_deb."\">");
+	print ("<input type=\"hidden\" name=\"annee_fin\" value=\"".$annee_fin."\">");
+	print ("<input type=\"hidden\" name=\"type\" value=\"".$type."\">");
+	print ("<input type=\"hidden\" name=\"type_donnees\" value=\"".$type_donnees."\">");
+	print ("<br/><br/><table><tr><td  align = center><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
 	print ("</td></tr></form>");
 	
-	
-	
 
-	
-	
 	
 	/////////retour preselection
 
 print ("<table><tr><td>");
 	print ("<form name=\"retour\" method=\"post\" action=\"preselection.php\">");
 						print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
-	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
-	print ("<input type=\"hidden\" name=\"login\" value=\"".$login."\">");
-	print ("<input type=\"hidden\" name=\"passe\" value=\"".$passe."\">");
+	print ("<input type=\"hidden\" name=\"type\" value=\"".$type."\">");
+	print ("<input type=\"hidden\" name=\"type_donnees\" value=\"".$type_donnees."\">");
 	print ("<input type=\"submit\" name=\"choix\" value=\"  Retour  \">");
 	print ("</form></td><td>");
-	print ("<form name=\"fortion2\" method=\"post\" action=\"accueil.html\">");
+	print ("<form name=\"fortion2\" method=\"post\" action=\"preselection.php\">");
 	print ("<input type=\"submit\" name=\"\" value=\"      Fin     \" onClick= \"return confirm('Etes vous sûr ?')\"></form></td></tr></table>");
 	
 	
@@ -1799,48 +1745,47 @@ print ("<table><tr><td>");
 //sinon on choisi les agglomerations
 else
 	{
-	print ("<div align='center'><Font Color =\"#333366\">");
-	if (!isset($_POST['agglo']))print ("<br><Font Color =\"#333366\"><b>Sélection des agglomérations</b></font>");
-	else if (!isset($_POST['periode'])) print ("<br><Font Color =\"#333366\"><b>Sélection des périodes d'enquêtes</b></font>");
-	else if (!isset($_POST['engin'])) print ("<br><Font Color =\"#333366\"><b>Sélection des engins de pêche</b></font>");
-	else if (!isset($_POST['espece'])) print ("<br><Font Color =\"#333366\"><b>Sélection des espèces</b></font>");
-	else print ("<br><Font Color =\"#333366\"><b>Séléction des tables résultats</b></font>");
-	print ("<br><br>");
-	print ("Pays : ");
+		if ($AfficheInfoDebug=="y") {
+				echo"Sel - 6<br/>";
+			}
+	print ("<div id=\"selection\">");
+	if (!isset($_POST['agglo']))print ("<h2>S&eacute;lection des agglom&eacute;rations</h2>");
+	else if (!isset($_POST['periode'])) print ("<h2>S&eacute;lection des p&eacute;riodes d'enqu&ecirc;tes</h2>");
+	else if (!isset($_POST['engin'])) print ("<h2>S&eacute;lection des engins de p&ecirc;che</h2>");
+	else if (!isset($_POST['espece'])) print ("<h2>S&eacute;lection des esp&egrave;ces</h2>");
+	else print ("<h2>S&eacute;l&eacute;ction des tables r&eacute;sultats</h2>");
+
+	print ("<br/><h3>Pays s&eacute;lection&eacute;s : </h3>");
 	$i=0;
 	$ligne_a_afficher="";
 	reset($_POST['pays']);
 	while (list($key, $val) = each($_POST['pays']))
 		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
+		$ligne_a_afficher .= "<input type=hidden name=\"pays[".$i."]\" value=\"".$val."\"> ".$val.", ";
 		$i++;
 		}
 	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
 	print($ligne_a_afficher);
-	print ("<br>Système : ");
+	print ("<br/><br/><h3>Syst&egrave;mes choisis : </h3>");
 	$i=0;
 	reset ($_POST['systeme']);
 	$ligne_a_afficher="";
 	while (list($key, $val) = each($_POST['systeme']))
 		{
-		$ligne_a_afficher .= "<Font Color =\"#663399\"><input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
+		$ligne_a_afficher .= "<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ".$val."</Font>, ";
 		$i++;
 		}
 	$ligne_a_afficher = substr($ligne_a_afficher, 0, -2);
 	print($ligne_a_afficher);
-	print ("<br>Période : <Font Color =\"#663399\">".$annee_deb."</Font>-"."<Font Color =\"#663399\">".$annee_fin);
-	print ("</Font><br>");
+	print ("<br/><br/><h3>P&eacute;riode choisie : </h3>".$annee_deb."-".$annee_fin."<br/><br/>");
+	print ("</Font><br/>");
 
 
 	//si campagne non referencées
 	if (!isset($_POST['agglo']))
 		{
-		print ("<div align='center'><Font Color =\"#333366\">");
-		print ("<br>");
-		
-		
-		
-		
+		print ("<div id=\"selection\">");
+		print ("<br/>");
 		$query_1 = "select distinct AA.id, AA.nom, RSy.libelle, RS.nom from art_agglomeration as AA, 
 		art_stat_totale, ref_systeme as Rsy, ref_secteur as RS 
 		where art_stat_totale.art_agglomeration_id=AA.id 
@@ -1856,7 +1801,7 @@ else
 		$query_1 = substr($query_1, 0, -2); 		//on enleve le dernier or
 		$query_1 .= ") order by RS.nom, RS.nom, AA.nom ";
 		
-		//print ("<br>".$query_1);
+		//print ("<br/>".$query_1);
 		//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 		//if (!$connection) { echo "Pas de connection"; exit;}
 		$result_1 = pg_query($connection,$query_1);
@@ -1884,7 +1829,7 @@ else
 				}
 			//--></script>
 			<?php
-			print ("<table><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
+			print ("<table class=\"checkall\><tr><td align = middle><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\">Tout</td></tr></table>");
 		
 		
 		$nb =0;
@@ -1902,7 +1847,7 @@ else
 				{
 				$nb_ds_ligne =0;
 				print ("<table><tr><td align=\"left\"><b>".$key.", ".$key2."</b></td></tr><tr><td>");
-				print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
+				print ("<table class=\"list\"><tr>");
 				while (list($key3, $val3) = each($val2))//pour chaque agglo
 					{
 					$nb_ds_ligne ++;
@@ -1918,7 +1863,7 @@ else
 				}
 			}
 		
-		if ($i == 0)print("pas d'agglomération référencée dans la période");
+		if ($i == 0)print("pas d'agglom&eacute;ration r&eacute;f&eacute;renc&eacute;e dans la p&eacute;riode");
 		
 		
 		print ("</tr></table>");
@@ -1937,14 +1882,11 @@ else
 		reset ($_POST['systeme']);
 		while (list($key, $val) = each($_POST['systeme']))
 			{
-			print ("<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
+			print ("<input type=\"hidden\" name=\"systeme[".$i."]\" value=\"".$val."\"> ");
 			$i++;
 			}
-		print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-
+		print ("<input type=\"hidden\" name=\"annee_deb\" value=\"".$annee_deb."\">");
+		print ("<input type=\"hidden\" name=\"annee_fin\" value=\"".$annee_fin."\">");
 		$sec=0;
 		reset($_POST['secteur']);
 		while (list($key, $val) = each($_POST['secteur']))
@@ -1952,16 +1894,14 @@ else
 			print ("<input type=\"hidden\" name=\"secteur[".$sec."]\" value=\"".$val."\">");
 			$sec ++;
 			}
-		print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-		print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
-		print ("<br><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+		print ("<input type=\"hidden\" name=\"type\" value=\"".$type."\">");
+		print ("<input type=\"hidden\" name=\"type_donnees\" value=\"".$type_donnees."\">");
+		print ("<br/><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
 		print ("</td></tr></form>");	
 			
 		}//fin du if agglo non referencées
 	else
 		{
-		print ("<div align='center'>");
-	
 		
 		///////////////////////////////////////////////////////
 		//selection des periodes d enquetes par agglomeration//
@@ -1972,33 +1912,54 @@ else
 			{
 			//choix periode
 	
-			print ("<div align='center'>");
+			print ("<div id=\"selection\">");
 			
 			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 			//if (!$connection) { echo "Pas de connection"; exit;}
 			
+			// Query initiale
 			
+			// $query_2 = "select distinct art_stat_totale.mois, art_stat_totale.annee 
+			// from art_agglomeration as AA, art_stat_totale, art_debarquement 
 			
+			// , ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, 
+			// ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation 
+			
+			// where AA.id=art_stat_totale.art_agglomeration_id 
+			
+			// and RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
+			// and RS.id=AA.ref_secteur_id 
+			
+			// and art_debarquement.date_debarquement < ref_systeme_date_butoir.date_butoire 
+			// and ref_systeme_date_butoir.type_echant = 3 
+			// and ref_utilisateurs.login = '".$login."' 
+			// and ref_utilisateurs.password = '".$passe."' 
+			// and ref_systeme_date_butoir.systeme = RSy.libelle 
+			// and ref_autorisation_exploitation.login=ref_utilisateurs.login 
+			// and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
+			// and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
+			
+			// and art_debarquement.date_debarquement > '".$annee_deb."-01-01' 
+			// and art_debarquement.date_debarquement < '".$annee_fin."-12-31' 
+			// and art_debarquement.mois=art_stat_totale.mois 
+			// and art_debarquement.annee=art_stat_totale.annee 
+			
+			// and art_stat_totale.annee>=".$annee_deb." and art_stat_totale.annee<=".$annee_fin." 
+			
+			// and AA.id=art_debarquement.art_agglomeration_id  
+			
+			// query modifiee Yann Laurent 12/10/08
 			$query_2 = "select distinct art_stat_totale.mois, art_stat_totale.annee 
 			from art_agglomeration as AA, art_stat_totale, art_debarquement 
 			
-			, ref_pays as RP, ref_secteur as RS, ref_systeme as RSy, 
-			ref_systeme_date_butoir, ref_utilisateurs, ref_autorisation_exploitation 
+			, ref_pays as RP, ref_secteur as RS, ref_systeme as RSy 
 			
 			where AA.id=art_stat_totale.art_agglomeration_id 
 			
 			and RSy.ref_pays_id = RP.id and RSy.id = RS.ref_systeme_id 
 			and RS.id=AA.ref_secteur_id 
 			
-			and art_debarquement.date_debarquement < ref_systeme_date_butoir.date_butoire 
-			and ref_systeme_date_butoir.type_echant = 3 
-			and ref_utilisateurs.login = '".$login."' 
-			and ref_utilisateurs.password = '".$passe."' 
-			and ref_systeme_date_butoir.systeme = RSy.libelle 
-			and ref_autorisation_exploitation.login=ref_utilisateurs.login 
-			and ref_autorisation_exploitation.pointeur=ref_systeme_date_butoir.id 
-			and ref_systeme_date_butoir.date_butoire != '1900-01-01' 
-			
+
 			and art_debarquement.date_debarquement > '".$annee_deb."-01-01' 
 			and art_debarquement.date_debarquement < '".$annee_fin."-12-31' 
 			and art_debarquement.mois=art_stat_totale.mois 
@@ -2007,9 +1968,6 @@ else
 			and art_stat_totale.annee>=".$annee_deb." and art_stat_totale.annee<=".$annee_fin." 
 			
 			and AA.id=art_debarquement.art_agglomeration_id  
-			
-			
-			
 			
 			and (";
 			reset ($_POST['agglo']);
@@ -2020,8 +1978,8 @@ else
 			$query_2 = substr($query_2, 0, -2); 		//on enleve le dernier or
 			$query_2 .= ") order by art_stat_totale.annee, art_stat_totale.mois";
 			$result_2 = pg_query($connection, $query_2);
-			//print("<br>".$query_2);
-			//print("<br>".pg_num_rows($result_2));
+			//print("<br/>".$query_2);
+			//print("<br/>".pg_num_rows($result_2));
 			
 			$P=Array();
 			while($row = pg_fetch_row($result_2))
@@ -2051,19 +2009,19 @@ else
 				}
 			//--></script>
 			<?php
-			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td><td align = right>Tout</td></tr></table>");
+			print ("<table class=\"checkall\"><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td><td align = right>Tout</td></tr></table>");
 		
 			
 			
-			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
+			print ("<table class=\"list\"><tr>");
 			
 			$i=0;
 			while (list($key_P, $val_P) = each($P))
 				{
-				print ("<tr><td align='center' width=100>Année ".$key_P." :  </td>");
+				print ("<tr><td align='center' width=100>Ann&eacute;e ".$key_P." :  </td>");
 				while (list($key, $val) = each($val_P))
 					{
-					print ("<td> n° ".$key." : </td><td><input type=\"Checkbox\" name=\"periode[".$key_P."][".$i."]\" value=\"".$key."\" ></td>");
+					print ("<td> &deg; ".$key." : </td><td><input type=\"Checkbox\" name=\"periode[".$key_P."][".$i."]\" value=\"".$key."\" ></td>");
 					$i++;
 					}
 				
@@ -2080,17 +2038,10 @@ else
 			<?php
 			print ("<td align = right>Tout</td><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous".$key_P."(this.form,true) } else { clicTous".$key_P."(this.form,false) };\"></td>");
 		
-		
-			
-				
-				
-				
-				
-				
 				print ("</tr>");
 				}
 			print ("</table>");
-			if ($i == 0)print("pas de période référencée");
+			if ($i == 0)print("pas de p&eacute;riode r&eacute;f&eacute;renc&eacute;e");
 			
 			$i=0;
 			reset ($_POST['pays']);
@@ -2103,15 +2054,13 @@ else
 			reset ($_POST['systeme']);
 			while (list($key, $val) = each($_POST['systeme']))
 				{
-				print ("<input type=hidden name=\"systeme[".$i."]\" value=\"".$val."\"> ");
+				print ("<input type=\"hidden\" name=\"systeme[".$i."]\" value=\"".$val."\"> ");
 				$i++;
 				}
-			print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
+			print ("<input type=\"hidden\" name=\"annee_deb\" value=\"".$annee_deb."\">");
+			print ("<input type=\"hidden\" name=\"annee_fin\" value=\"".$annee_fin."\">");
+			print ("<input type=\"hidden\" name=\"type\" value=\"".$type."\">");
+			print ("<input type=\"hidden\" name=\"type_donnees\" value=\"".$type_donnees."\">");
 			$sec=0;
 			reset($_POST['secteur']);
 			while (list($key, $val) = each($_POST['secteur']))
@@ -2127,34 +2076,22 @@ else
 				$cam ++;
 				}
 			
-			print ("<br><br><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+			print ("<br/><br/><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
 			print ("</td></tr></form>");
 
 			}
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		///////////////////////////////////////////////////////
 		//       selection du grand type d'engin             //
 		///////////////////////////////////////////////////////
-		
+
 		
 		else
 			{
-			$ligne_periode = "Identifiants periode (base de données): ";
+			$ligne_periode = "Identifiants periode (base de donn&eacute;es): ";
 			reset ($_POST['periode']);
-			
-				
-		
+
 		///////selection du type d'engin
 
 		//si engin non referencé
@@ -2162,8 +2099,8 @@ else
 			{
 			//choix engin de peche
 	
-			print ("<div align='center'><Font Color =\"#333366\">");
-			print ("<br>");
+			print ("<div id=\"selection\">");
+			print ("<br/>");
 			
 			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 			//if (!$connection) { echo "Pas de connection"; exit;}
@@ -2185,8 +2122,8 @@ else
 			$query_3 = substr($query_3, 0, -2); 		//on enleve le dernier or
 			$query_3 .= ") order by art_stat_gt.art_grand_type_engin_id ";
 			$result_3 = pg_query($connection, $query_3);
-			//print("<br>".$query_3);
-			//print("<br>".pg_num_rows($result_3));
+			//print("<br/>".$query_3);
+			//print("<br/>".pg_num_rows($result_3));
 			
 			$E=Array();
 			while($row = pg_fetch_row($result_3))
@@ -2212,9 +2149,9 @@ else
 				}
 			//--></script>
 			<?php
-			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td align='center'>Tout</td></tr></table>");
+			print ("<table class=\"checkall\"><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td align='center'>Tout</td></tr></table>");
 			
-			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
+			print ("<table class=\"list\"><tr>");
 			
 			$i=0;
 			$nb =0;
@@ -2240,7 +2177,7 @@ else
 				}
 			print ("</table>");
 			
-			if ($i == 0)print("pas de type d'engin référencé");
+			if ($i == 0)print("pas de type d'engin r&eacute;f&eacute;renc&eacute;");
 			
 			$i=0;
 			reset ($_POST['pays']);
@@ -2257,11 +2194,9 @@ else
 				$i++;
 				}
 			print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
+			print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
+			print ("<input type=hidden name=\"type\" value=\"".$type."\">");
+			print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
 			$sec=0;
 			reset($_POST['secteur']);
 			while (list($key, $val) = each($_POST['secteur']))
@@ -2290,7 +2225,7 @@ else
 					}
 				}
 			
-			print ("<br><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+			print ("<br/><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
 			print ("</td></tr></form>");
 			}//fin du if engin n'existe pas
 			
@@ -2306,7 +2241,7 @@ else
 			{
 			//choix especes
 	
-			print ("<div align='center'>");
+			print ("<div id=\"selection\">");
 			
 			//$connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 			//if (!$connection) { echo "Pas de connection"; exit;}
@@ -2359,8 +2294,8 @@ else
 			print ("<form name=\"form\" method=\"post\" action=\"selection.php\">"); 
 											print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
 			
-			print ("<table><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td align='center'>Tout</td></tr></table>");
-			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1><tr>");
+			print ("<table id=\"checkall\"><tr><td><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td align='center'>Tout</td></tr></table>");
+			print ("<table id=\"list\"><tr>");
 			
 			$i=0;
 			$nb =0;
@@ -2371,7 +2306,7 @@ else
 				{
 				if($key_Esp =="")
 					{
-					$key_Esp_affich = "non renseigné";
+					$key_Esp_affich = "non renseign&eacute;";
 					$val_Esp = " ";
 					}
 				else $key_Esp_affich = $key_Esp;
@@ -2389,7 +2324,7 @@ else
 				}
 			print ("</tr>");
 			print ("</table>");
-			if ($i == 0)print("pas de type d'espèces référencées");
+			if ($i == 0)print("pas de type d'esp&egrave;ces r&eacute;f&eacute;renc&eacute;es");
 			
 			$i=0;
 			reset ($_POST['pays']);
@@ -2406,11 +2341,9 @@ else
 				$i++;
 				}
 			print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
+			print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
+			print ("<input type=hidden name=\"type\" value=\"".$type."\">");
+			print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
 			$sec=0;
 			reset($_POST['secteur']);
 			while (list($key, $val) = each($_POST['secteur']))
@@ -2450,7 +2383,7 @@ else
 			
 			
 			
-			print ("<br><br><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
+			print ("<br/><br/><table><tr><td><input type=\"submit\" name=\"choix\" value=\"    Valider    \">");
 			print ("</td><tr></form>");
 			}//fin du if especes n'existe pas
 			
@@ -2458,20 +2391,13 @@ else
 			
 		else
 			{
-			print ("<div align='center'>");
-	
 	
 			///////////////////////////////////
 			//selection du type de traitement//
 			///////////////////////////////////
-			print ("<div align='center'><Font Color =\"#333366\">");
-			print ("<br>");
-			
-
+			print ("<div id=\"selection\">");
+			print ("<br/>");
 			print ("<form name=\"form_tot\" method=\"post\" action=\"stat_filieres.php\">");
-			
-				print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");	//à enlever car qu'1 base future
-			
 			$i=0;
 			reset ($_POST['pays']);
 			while (list($key, $val) = each($_POST['pays']))
@@ -2487,11 +2413,9 @@ else
 				$i++;
 				}
 			print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
-	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
-	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
-	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
+			print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
+			print ("<input type=hidden name=\"type\" value=\"".$type."\">");
+			print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
 			$sec=0;
 			reset($_POST['secteur']);
 			while (list($key, $val) = each($_POST['secteur']))
@@ -2547,24 +2471,24 @@ else
 			<?php
 			
 			
-				print ("<table><tr><td align='center' width=\"30\"><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td>Tout</td></tr></table>");
+				print ("<table class=\"checkall\><tr><td align='center' width=\"30\"><input type=\"Checkbox\" onClick=\"if (this.checked) { clicTous(this.form,true) } else { clicTous(this.form,false) };\"></td><td>Tout</td></tr></table>");
 			
 			//print ("Séléction des tables resultats souhaités :");
-			print ("<table BORDER=1 CELLSPACING=2 CELLPADDING=1>");
+			print ("<table class=\"list\"");
 			print ("<tr><td align='center' width=\"30\"></td><td><b>Table</b></td><td><b>Fonction</b></td></tr>");
-			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case1\" value=\"cap_tot\"></td><td>Cap_tot</td><td>Résultats globaux de la strate ST</td></tr>");
-			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case2\" value=\"cap_sp\"></td><td>Cap_sp</td><td>Résultats par espèces</td></tr>");
-			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case3\" value=\"dft_sp\"></td><td>DFT_sp</td><td>Structure en taille des espèces</td></tr>");
-			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case4\" value=\"cap_gt\"></td><td>Cap_GT</td><td>Résultats globaux par GT de la strate ST</td></tr>");
-			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case5\" value=\"cap_gt_sp\"></td><td>Cap_GT_sp</td><td>Résultats par espèces et par GT</td></tr>");
-			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case6\" value=\"dft_gt_sp\"></td><td>DFT_GT_sp</td><td>Structure en taille des espèces par GT</td></tr>");
+			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case1\" value=\"cap_tot\"></td><td>Cap_tot</td><td>R&eacute;sultats globaux de la strate ST</td></tr>");
+			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case2\" value=\"cap_sp\"></td><td>Cap_sp</td><td>R&eacute;sultats par esp&egrave;ces</td></tr>");
+			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case3\" value=\"dft_sp\"></td><td>DFT_sp</td><td>Structure en taille des esp&egrave;ces</td></tr>");
+			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case4\" value=\"cap_gt\"></td><td>Cap_GT</td><td>R&eacute;sultats globaux par GT de la strate ST</td></tr>");
+			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case5\" value=\"cap_gt_sp\"></td><td>Cap_GT_sp</td><td>R&eacute;sultats par esp&egrave;ces et par GT</td></tr>");
+			print ("<tr><td align='center' width=\"30\"><input type=\"Checkbox\" name=\"case6\" value=\"dft_gt_sp\"></td><td>DFT_GT_sp</td><td>Structure en taille des esp&egrave;ces par GT</td></tr>");
 			
 			
 		
 			print ("</table>");
 			
 			
-			print ("<br><table><tr><td><input type=\"submit\" name=\"go\" value=\"    Valider   \" onclick=\"pop_it(form_tot);\" >");
+			print ("<br/><table><tr><td><input type=\"submit\" name=\"go\" value=\"    Valider   \" onclick=\"pop_it(form_tot);\" >");
 			
 			}
 			print ("</td></tr></form>");
@@ -2599,13 +2523,11 @@ else
 		}
 	print ("<input type=hidden name=\"annee_deb\" value=\"".$annee_deb."\">");
 	print ("<input type=hidden name=\"annee_fin\" value=\"".$annee_fin."\">");
-	print ("<input type=hidden name=\"login\" value=\"".$login."\">");
-	print ("<input type=hidden name=\"passe\" value=\"".$passe."\">");
 	print ("<input type=hidden name=\"type\" value=\"".$type."\">");
 	print ("<input type=hidden name=\"type_donnees\" value=\"".$type_donnees."\">");
 	print ("<input type=\"submit\" name=\"choix\" value=\"  Retour  \">");
 	print ("</form></td><td>");
-	print ("<form name=\"fortion2\" method=\"post\" action=\"accueil.html\">");
+	print ("<form name=\"fortion2\" method=\"post\" action=\"preselection.php\">");
 	print ("<input type=\"submit\" name=\"\" value=\"      Fin     \" onClick= \"return confirm('Etes vous sûr ?')\"></form></td></tr></table>");
 	
 	
@@ -2623,5 +2545,22 @@ pg_close();
 
 </div>
 
+		</div>	<!-- end div id="main_container"-->
+
+
+<?php 
+// note : on termine la boucle testant si l'utilisateur a accès à la page demandée
+
+;} // end if (userHasAccess($_SESSION['user_id'],$zone))
+
+// si l'utilisateur n'a pas accès ou n'est pas connecté, on affiche un message l'invitant à contacter un administrateur pour obtenir l'accès
+else {userAccessDenied($zone);}
+
+?>
+	
+<?php 
+include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
+
+?>
 </body>
-</HTML>
+</html>
