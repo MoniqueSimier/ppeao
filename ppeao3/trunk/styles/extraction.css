@@ -1,14 +1,14 @@
 /*Yann Laurent
-Creation 21/09/2007
+Creation 21/09/2008
 Style pour le module d'extraction
 */
 
 
 #formSel{
-margin-left:5px;
-width:800px;
-background:#E4E4E4;
-border:1px dotted #666666;
+	margin-left:5px;
+
+	background:#E4E4E4;
+	border:1px dotted #666666;
 
 }
 .listType{
@@ -45,12 +45,57 @@ list-style:none;
 }
 .list td {
 }
+/* CSS for sc_filiere.php */
 .sublist{
 	background:#CCCCCC;
-	
 }
 .sublist td {
 	background:#FFF;
 	border:1px dotted #000000;
+	text-align:center;
 
+}
+.sublistF{
+	width:90%;
+	background:#CCCCCC;
+	text-align:center;
+}
+.sublistF td {
+	background:#FFF;
+	text-align:center;
+}
+.tdFermer{
+	cursor:pointer;
+
+}
+#listTableFil{
+	border:2px solid #FFFFFF;
+	width:780px;
+	padding:0px;	
+}
+.ligneLTF{
+	border:1px solid #FFFFFF;
+}
+
+.col1LTF{
+	width:260px;
+	background-color:#CCCCCC;
+	text-align:center;
+	vertical-align:top;
+}
+.col2LTF{
+	width:260px;
+	background-color:#FFFFFF;
+	text-align:center;
+	vertical-align:top;
+}
+.col3LTF{
+	width:260px;
+	background-color:#CCCCCC;
+	text-align:center;
+	vertical-align:top;
+}
+
+.TableFiliere{
+	cursor: pointer;
 }

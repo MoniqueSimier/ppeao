@@ -7,7 +7,10 @@
 @import url(pagination.css);
 /* styles pour le module d'extraction des tables'*/
 @import url(extraction.css);
-
+/* styles pour le module de documentation*/
+@import url(documentation.css);
+/* styles pour le module de documentation*/
+@import url(contact.css);
 /* *********************** */
 /* common styles */
 
@@ -110,7 +113,9 @@ font-size:10px;
 .hidden {
 display:none;
 }
-
+.gras{
+	font-weight:bold;
+}
 a.link_button {
 	padding: 1px;
 	border: 1px solid grey;

@@ -1,0 +1,42 @@
+/*************************/
+/* CSS pour contact      */
+/* Crée par Yann Laurent */
+/*************************/
+
+#main_contact{
+width:800px;
+}
+.contact h1 {
+color:#00FF33;
+}
+.contact{
+
+}
+.contactItalique{
+font-style:italic;
+
+}
+.contactRT{
+	font-size:75%;
+}
+.contact a{
+	color:#000099;
+	font-style:normal;
+}
+.contact li {
+list-style:none;
+font-weight:bold;
+
+}
+.logo1{
+	width:200px;
+}
+.logo2{
+	width:200px;
+}
+.logo3{
+	width:200px;
+}
+.logo4{
+	width:200px;
+}

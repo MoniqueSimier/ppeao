@@ -1,0 +1,32 @@
+/*Yann Laurent
+Creation 18/10/2008
+Style pour le module de documentation
+*/
+
+#listeDoc{
+	min-height:60px;
+	margin-left:5px;
+	width:800px;
+	background:#E4E4E4;
+	border:1px dotted #666666;
+
+
+}
+
+.listDoc{
+	list-style:none;
+}
+
+.selDoc{
+	padding-top:4px;
+	padding-bottom:4px;
+	
+}
+.doccol1{
+	width:50%;
+
+}
+.doccol2{
+	text-align:right;
+	width:50%;
+}
