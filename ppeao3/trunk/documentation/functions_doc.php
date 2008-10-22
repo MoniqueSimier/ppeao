@@ -136,6 +136,7 @@ if (! file_exists($docpath)) {
 		}
 		
 	}
+}
 }//end function
 
 
@@ -173,5 +174,5 @@ function displayDocumentation ($docTexte) {
 
 
 
-}
+
 ?>
