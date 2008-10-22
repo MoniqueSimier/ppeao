@@ -896,7 +896,7 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 	print ("<br><h3>S&eacute;lection des champs optionnels</h3>
 	<br><br>Vous pouvez cliquez sur le nom d'une table pour visualiser tous ses champs et en s&eacute;lectionner certains.
 	<br>Les valeurs classiques sont s&eacute;lectionn&eacute;es par défaut.<br/><br/>");
-	echo "nom bd= ".pg_dbname($connection);
+	//echo "nom bd= ".pg_dbname($connection);
 	print ("<form name=\"form\" method=\"post\" action=\"sc_filieres.php\">");
 	print ("<input type=\"hidden\" name=\"base\" value=\"".$bdd."\">");
 	print ("<input type=\"hidden\" name=\"choix\" value=\"".$choix."\">");
@@ -929,23 +929,32 @@ if (($requete_faite == 1)&&($selection_faite ==1)&&($colonnes_faites!=1))
 <div class="TableFiliere" onClick="toggleTab('_pays');"><b>Pays</b>
 </div> 
 <div id="_pays" style="display:none">
-<?php   
+<?php
+// Test integration table dico -    
 	// On récupère les noms des colonnes que l'on veut afficher dans le dictionnaire
-	print ("<table class=\"sublistF\" >");
-	$querySQL = "select nom_court,table_col from ref_dico where table_nom = 'ref_pays'";
-	$resultSQL = pg_query($connection, $querySQL);
-	if (pg_num_rows($resultSQL) == 0) {
-		echo"erreur chargement donnees dictionnaire";
-	}else {
-		while ($compRowSQL = pg_fetch_row($resultSQL) ) {
-			print ("<tr ><td >x</td><td>".$compRowSQL[0]."</td>");
-			print ("<input type=\"hidden\" name=\"voir[".$comptNameValue."]\" value=\"".$comptValue."\">");
-			$comptValue ++;
-			$comptNameValue --;
-		}
-	}
+	//print ("<table class=\"sublistF\" >");
+	//$querySQL = "select nom_court,table_col from ref_dico where table_nom = 'ref_pays'";
+	//$resultSQL = pg_query($connection, $querySQL);
+	//if (pg_num_rows($resultSQL) == 0) {
+	//	echo"erreur chargement donnees dictionnaire";
+	//}else {
+	//	while ($compRowSQL = pg_fetch_row($resultSQL) ) {
+	//		print ("<tr ><td >x</td><td>".$compRowSQL[0]."</td>");
+	//		print ("<input type=\"hidden\" name=\"voir[".$comptNameValue."]\" value=\"".$comptValue."\">");
+	//		$comptValue ++;
+	//		$comptNameValue --;
+	//	}
+	//}
+	//print ("</tr></table>");
+	//pg_free_result($resultSQL);
+	  print ("<table class=\"sublistF\">");
+	//pour le pays
+	print ("<tr ALIGN=center><td WIDTH=30>x</td><td>pays</td>");//id pays
+	print ("<input type=hidden name=\"voir[54]\" value=\"1\">");//id dans systeme
+	print ("</tr><tr ALIGN=center><td WIDTH=30>x</td><td>pays_lib</td>");//nom pays
+	print ("<input type=hidden name=\"voir[53]\" value=\"2\">");
 	print ("</tr></table>");
-	pg_free_result($resultSQL);
+	
 	
 ?></div> 
 	</td><td class="col2LTF" >

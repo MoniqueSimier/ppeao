@@ -69,7 +69,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 	?>
 		<div id="main_container" class="home">
 			<?php
-			$AfficheInfoDebug="y";
+			$AfficheInfoDebug="n";
 			include_once("../connect.inc");
 			$connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
 			if (!$connection) { echo "Pas de connection"; exit;}

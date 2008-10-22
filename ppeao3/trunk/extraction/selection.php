@@ -92,7 +92,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 		</div>
 		<br/>		
 		<?php
-		$AfficheInfoDebug="y";
+		$AfficheInfoDebug="n";
 
 		//////////////////////////////////////////////////////////////////////////////////////////
 		//                       Donnees scientifiques:                                         //
