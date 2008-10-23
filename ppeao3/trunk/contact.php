@@ -40,22 +40,40 @@ $zone=0; // zone publique (voir table admin_zones)
 	?>
 
 	<div id="main_container" class="home">
-	<div id="main_contact">
-	<h1 class="contact">Peuplement de poissons et la p&ecirc;che artisanale des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d'Afrique de l'Ouest</h1><br/>
-	<p class="contact">La base PPEAO archive des informations sur les poissons, leur &eacute;cologie et leur exploitation par la p&ecirc;che artisanale de nombreux &eacute;cosyst&egrave;mes aquatiques de l'Afrique de l'Ouest.</p><br/>
-	<p class="contactItalique">Elle a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par les membres de l'Unit de Recherche RAP (R&eacute;ponses adaptatives des populations et peuplements des poissons aux pressions de l'environnement) de l'IRD (Institut de Recherches pour le D&eacute;veloppement). </p><br/>
-	<p class="contact"><span class="gras">contact</span>
-	<ul class="contact">
-		<li class="contact"><a href="#" onClick="o='@';o=' 	&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='ird.fr';this.href=o;"><script type="text/javascript"> <!-- o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o+='ird.fr';document.write(o);//--> </script>Monique SIMIER</a></li>
-		<li class="contact"><a href="#" onClick="o='@';o='&#106;&#101;&#97;&#110;&#46;&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o='mailto:'+o;o+='ird.fr';this.href=o;"><script type="text/javascript"> <!-- o='@';o='&#106;&#101;&#97;&#110;&#46;&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o+='ird.fr';document.write(o);//--> </script>Jean-Marc ECOUTIN</a></li>
-	</ul>
-	</p>
-	<p ><a href="/contactRT.php" >R&eacute;alisation techniques</a>
-	</p><br/>
-	<span class="logo1">IRD</span><span class="logo2">CRH</span><span class="logo3">
-	<UR 070 RAP/span><span class="logo4">PPEAO</span>
-	
-	
+		<div id="main_contact">
+			<div id="ligne1">
+				<div id="imageTop"><img src="/assets/contact-ph1.jpg" alt=""/></div>
+				<div id="contactTitre"><h1 class="contact">Peuplement de poissons et la p&ecirc;che artisanale des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d'Afrique de l'Ouest</h1>
+				</div>
+			</div>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<div id="contentcontact">
+				<p class="contact">La base PPEAO archive des informations sur les poissons, leur &eacute;cologie et leur exploitation par la p&ecirc;che artisanale de nombreux &eacute;cosyst&egrave;mes aquatiques de l'Afrique de l'Ouest.</p><br/>
+				<p class="contactItalique">Elle a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par les membres de l'Unit de Recherche RAP (R&eacute;ponses adaptatives des populations et peuplements des poissons aux pressions de l'environnement) de l'IRD (Institut de Recherches pour le D&eacute;veloppement). </p><br/>
+				<div id="listcontact"><h2>contact</h2>
+				<ul class="contact">
+					<li class="contact"><a href="#" onClick="o='@';o=' 	&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='ird.fr';this.href=o;"><script type="text/javascript"> <!-- o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o+='ird.fr';document.write(o);//--> </script>Monique SIMIER</a></li>
+					<li class="contact"><a href="#" onClick="o='@';o='&#106;&#101;&#97;&#110;&#46;&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o='mailto:'+o;o+='ird.fr';this.href=o;"><script type="text/javascript"> <!-- o='@';o='&#106;&#101;&#97;&#110;&#46;&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o+='ird.fr';document.write(o);//--> </script>Jean-Marc ECOUTIN</a></li>
+				</ul>
+				</div>
+				<br/>
+				<p class="contact">Vous trouverez ici le lien vers les personnes/soci&eacute;t&eacute;s ayant particip&eacute; à la cr&eacute;ation de ce site : <br/><a href="/contactRT.php" >R&eacute;alisation techniques</a>
+				</p>
+				<br/>
+				<br/>
+				<div id="logo">
+					<div id="logo1"><img src="/assets/ird-logo.jpg" alt="IRD"/></div>
+					<div id="space1">&nbsp;</div>
+					<div id="logo2"><img src="/assets/crh-logo.jpg" alt="CRH"/></div>
+					<div id="space2">&nbsp;</div>
+					<div id="logo3"><img src="/assets/ur-070-logo.jpg" alt="UR-070"/></div>
+					<div id="space3">&nbsp;</div>
+					<div id="logo4"><img src="/assets/ppeao-logo.jpg" alt="PPEAO"/></div>
+				</div>
+			</div>
 		</div>
 	</div> <!-- end div id="main_container"-->
 	

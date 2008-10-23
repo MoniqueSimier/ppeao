@@ -41,19 +41,37 @@ $zone=0; // zone publique (voir table admin_zones)
 
 	<div id="main_container" class="home">
 	<div id="main_contact">
-	<h1 class="contact">Peuplement de poissons et la p&ecirc;che artisanale des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d'Afrique de l'Ouest</h1><br/>
-	<p class="contact">La base PPEAO a &eacute;t&eacute; r&eacute;alis&eacute;e techniquement par: </p>
-	<ul class="contact">
-		<li class="contact">SintiGroup</li>
-		<li class="contact">ASA</li>
-		<li class="contact">otolithe</li>
-		</ul>
-	<br/>
-	<p class="contact">R&eacute;f&eacute;rences</p>
-	<p  class="contact"><span class="logo">logo</span><span class="gras">&nbsp;SintiGroup</span><br/> .....</p><br/>
-	<p  class="contact"><span class="logo">logo</span><span class="gras">&nbsp;ASA - Advanced Solutions Accelerator</span><br/>199 rue de l'Oppidum 34170 CASTELNAU LE LEZ<br/>tel : +33 5 67 59 36 40 <br/>cell : +33 06 73 19 70 17<br/>info@advancedsolutionsaccelerator.com</p><br/>
-	<p  class="contact"><span class="logo">logo</span><span class="gras">&nbsp;otolithe</span><br/><a href="http://www.otolithe.com/" target="externe">www.otolithe.com</a><br/>tel : +33 4 67 85 75 88 <br/> cell : +33 6 75 77 12 31<br/><a href="#" onClick="o='@';o='&#111;&#108;&#105;&#118;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='otolithe.fr';this.href=o;"><script type="text/javascript"> <!-- o='@';o=''+o;o+='otolithe.fr';document.write(o);//--> </script>Olivier Roux</a></p>
-	
+		<div id="main_contact">
+			<div id="ligne1">
+				<div id="imageTop"><img src="/assets/contact-ph2.jpg" alt=""/></div>
+				<div id="contactTitre"><h1 class="contact">Peuplement de poissons et la p&ecirc;che artisanale des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d'Afrique de l'Ouest</h1>
+				</div>
+			</div>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<div id="contentcontact">
+				<p class="contact">La base PPEAO a &eacute;t&eacute; r&eacute;alis&eacute;e techniquement par: </p>
+				<ul class="contact">
+					<li class="contact">SintiGroup</li>
+					<li class="contact">ASA</li>
+					<li class="contact">otolithe</li>
+					</ul>
+				<br/>
+				<div id="referenceRT"><h2>R&eacute;f&eacute;rences</h2>
+				<br/>
+				<div id="logo2"><img src="/assets/sinti-logo.jpg" alt="SINTI"/></div>
+				<div id="sinti">&nbsp;SintiGroup</div>
+				<div class="adresse"> .....</div><br/>
+				<div id="logo3"><img src="/assets/asa-logo.jpg" alt="ASA"/></div>
+				<div id="asa">&nbsp;ASA - Advanced Solutions Accelerator</div>
+				<div class="adresse">199 rue de l'Oppidum 34170 CASTELNAU LE LEZ<br/>tel : +33 5 67 59 36 40 <br/>cell : +33 06 73 19 70 17<br/>Contact : info@advancedsolutionsaccelerator.com</div><br/
+				<div id="logo4"><img src="/assets/otolithe_logo.gif" alt="otolithe"/></div>
+				<div id="otolithe">&nbsp;otolithe</div>
+				<div class="adresse"><a href="http://www.otolithe.com/" target="externe">www.otolithe.com</a><br/>tel : +33 4 67 85 75 88 <br/> cell : +33 6 75 77 12 31<br/>Contact : <a href="#" onClick="o='@';o='&#111;&#108;&#105;&#118;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='otolithe.fr';this.href=o;"><script type="text/javascript"> <!-- o='@';o=''+o;o+='otolithe.fr';document.write(o);//--> </script>Olivier Roux</a></div><br/>
+				</div>
+			</div>
 		</div>
 	</div> <!-- end div id="main_container"-->
 	
