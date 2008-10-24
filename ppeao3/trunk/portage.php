@@ -1,7 +1,8 @@
 <?php 
 // Mis à jour par Olivier ROUX, 29-07-2008
 // definit a quelle section appartient la page
-$section="portage";
+$section="gerer";
+$subsection="portage";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 

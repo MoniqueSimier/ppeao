@@ -1,7 +1,7 @@
 <?php 
 // Mis à jour par Yann Laurent 26/09/08, ajout gestion utilisateur + refonte design
 // definit a quelle section appartient la page
-$section="extraction";
+$section="consulter";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 $zone=0; // zone portage (voir table admin_zones)

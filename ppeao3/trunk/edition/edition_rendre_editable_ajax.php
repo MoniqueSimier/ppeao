@@ -46,6 +46,8 @@ switch ($editAction) {
 	$theField.='<div id="edit_'.$editColumn.'_'.$editRecord.'" name="edit_'.$editColumn.'_'.$editRecord.'" class="edit_field_container small">';
 	
 	
+	//debug 	var_dump($editValue);
+	
 	// on ajoute le champ éditable
 	//$theField.=iconv('ISO-8859-15','UTF-8',makeField($cDetails,$editTable,$editColumn,$editValue,'edit='.$editRecord,''));
 	$theField.=makeField($cDetails,$editTable,$editColumn,$editValue,'edit='.$editRecord,'');

@@ -27,25 +27,30 @@ $zone=0; // zone publique (voir table admin_zones)
 <?php 
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
+?>
 
+<div id="main_container" class="home">
 
+<h1>Bienvenue &agrave; PPEAO.</h1>
+
+<?php
 //debug echo('+'.$_SESSION['s_ppeao_user_id'].'+');
 
 // on teste à quelle zone l'utilisateur a accès
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 ?>
 
-<div id="main_container" class="home">
-
-Bienvenue &agrave; PPEAO.
-
 <?php 
 
-echo(logDisplayShort('','','',"",5,""));
+//echo(logDisplayShort('','','',"",5,""));
 
 ?>
-	
-</div> <!-- end div id="main_container"-->
+<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed sagittis tempus mi. Etiam elit. In mauris ipsum, tincidunt id, suscipit in, volutpat quis, risus. Nam laoreet feugiat nisi. Donec dignissim risus fermentum urna. Suspendisse et eros sit amet nunc scelerisque egestas. Sed quis purus. Proin augue arcu, aliquam ut, molestie dictum, pulvinar varius, lectus. Fusce at dui imperdiet eros fringilla adipiscing. Duis placerat imperdiet massa. Vestibulum sit amet nibh. Cras est.</p>
+
+<p>Donec convallis imperdiet ante. Duis sapien pede, vestibulum in, elementum at, vestibulum ac, libero. Sed arcu. Suspendisse interdum neque ac lorem. Donec sodales velit in ante. Maecenas iaculis metus. Nulla facilisi. In hac habitasse platea dictumst. In fringilla. Quisque feugiat tempor augue. Donec tristique accumsan mauris. Nulla molestie fringilla nunc. Sed nulla dui, interdum eu, vestibulum ac, ultrices vestibulum, urna. Pellentesque sagittis. Integer est nunc, molestie in, pretium vitae, cursus id, elit. Maecenas turpis est, commodo non, pellentesque ac, adipiscing ac, felis.</p>
+
+
+
 
 
 <?php 
@@ -61,5 +66,6 @@ else {userAccessDenied($zone);}
 include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
 
 ?>
+</div> <!-- end div id="main_container"-->
 </body>
 </html>

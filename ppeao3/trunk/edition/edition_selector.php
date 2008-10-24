@@ -3,9 +3,35 @@
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page
-$section="edition";
+$section="gerer";
 $zone=2; // zone edition (voir table admin_zones)
+$targetTable=$_GET["targetTable"];
+include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
+include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
+
+$tableType=$tablesDefinitions[$targetTable]["type_table_description"];
+if (!empty($tablesDefinitions[$targetTable]["zone"])) {$zone=$tablesDefinitions[$targetTable]["zone"];}
+
+// on détermine à quelle subsection et à quelle zone appartient la table choisie
+
+switch ($tablesDefinitions[$targetTable]["type_table_nom"]) {
+	case 'admin':
+	$subsection='administration';
+	break;
+	case 'param':
+	$subsection='parametrage';
+	break;
+	case 'admin':
+	$subsection='administration';
+	break;
+	case 'ref':
+	$subsection='reference';
+	break;
+	case 'data':
+	$subsection='donnees';
+	break;
+}
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -16,7 +42,7 @@ $zone=2; // zone edition (voir table admin_zones)
 	// les balises head communes  toutes les pages
 	include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 ?>
-	<title>ppeao::&eacute;dition des donn&eacute;es::s&eacute;lection de la table &agrave; &eacute;diter</title>
+	<title>ppeao::g&eacute;rer::<?php echo($tablesDefinitions[$targetTable]["type_table_description"]); ?>::<?php echo($tablesDefinitions[$targetTable]["domaine_description"]); ?></title>
 
 <script src="/js/edition.js" type="text/javascript" charset="iso-8859-15"></script>
 
@@ -34,14 +60,6 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 
 <div id="main_container" class="home">
 
-<?php
-
-include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
-include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
-
-
-?>
-
 <div id="selector_container">
 
 <?php
@@ -53,22 +71,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 <?php
 
-$theType=$_GET["type"];
-$theHierarchy=$_GET["hierarchy"];
-$targetTable=$_GET["targetTable"];
-
-switch ($theType) {
-	case "reference" : $theTypeString=" de r&eacute;f&eacute;rence"; $theSelectorType="tableSelectors";
-	break;
-	case "parametrage" : $theTypeString=" de param&eacute;trage"; $theSelectorType="tableSelectors";
-	break;
-	default: $theTypeString="";
-	break;
-		}
-$theLogString=' : '.$theTypeString.' '.${$theSelectorType}[$theHierarchy][$targetTable]["label"];
-
-
-logWriteTo(1,'notice','acc&egrave;s &agrave; l\'&eacute;dition de la table de '.$theLogString,'','',0);
+logWriteTo(1,'notice','acc&egrave;s &agrave; la gestion des '.$tablesDefinitions[$targetTable]["type_table_description"].'&nbsp;: '.$tablesDefinitions[$targetTable]["domaine_description"],'','',0);
 
 ?>
 	

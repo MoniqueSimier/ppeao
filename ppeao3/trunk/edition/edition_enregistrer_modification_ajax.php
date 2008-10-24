@@ -55,6 +55,7 @@ if ($validityCheck["validity"]) {
 	// si la requête s'est bien passée, on retourne "valid"
 	// note : en cas de valeur passée NULL, postgres n'accepte pas SET champ='NULL' si champ est de type INTEGER
 	// alors que l'on peut faire SET champ='200'... d'où le test qui suit
+	
 	if ($newValue=='NULL' || empty($newValue)) {$newValueSet='NULL';} else {$newValueSet='\''.$newValue.'\'';}
 		$saveSql=' UPDATE '.$tablesDefinitions[$editTable]["table"].'
 				SET '.$editColumn.'='.$newValueSet.' WHERE '.$tablesDefinitions[$editTable]["id_col"].'=\''.$editRecord.'\'';

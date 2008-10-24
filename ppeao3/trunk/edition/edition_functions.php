@@ -38,41 +38,70 @@ function buildTableSelect($hierarchyLabel,$selected)
 }
 
 
+//***************************************************************************************************
+//construit une liste de lien permettant d'éditer les valeurs des tables d'un type donné
+function buildTableList($typeTableNom)
+// $typeTable : le type de table (admin_dictionary_type_tables)
+{
+	global $tablesDefinitions;
+	
+	$tableList='';
+	$previousDomain='';
+	foreach ($tablesDefinitions as $handle=>$table) {
+		if ($table["type_table_nom"]==$typeTableNom) {
+		//debug
+		if ($table["domaine_nom"]!=$previousDomain) {
+			$domain='</ul><h2>'.$table["domaine_description"].'</h2>';
+			$domain.='<ul>';
+			$previousDomain=$table["domaine_nom"];
+			} 
+		else {
+			$domain='';}
+		
+		if ($table["selector"]) {
+			$href='/edition/edition_selector.php?selector=yes&targetTable='.$handle;
+		} // end if $table["selector"]
+		else {
+			$href='/edition/edition_table.php?selector=no&editTable='.$handle;
+		} // end else $table["selector"]
+		
+		$list.=$domain.'<li><a href="'.$href.'">'.$table["label"].'</a></li>';
+		
+		} // end if  $table["type_table_nom"]==$typeTableNom
+	} // end foreach
+	if (!empty($list)) {
+		echo($list);
+	}
+	
+
+	
+}
+
+
 //******************************************************************************
 // takes a URL and builds a selector according to the URL parameters
 // used to rebuild the selector after a selection has been submitted, or when coming back to the selector page
 function createSelector($page) {
 	// $page: la page sur laquelle le sélecteur est affiché
-	// (par exemple, sur la page "editor.php" on affiche le lien pour afficher/masquer le sélecteur)
+	// (par exemple, sur la page "edition_table.php" on peut afficher le lien pour afficher/masquer le sélecteur)
 
-	global $tableSelectors;
-	global $tablesDefinitions;
-	global $selectorCascades;
-	
-	
-	$thisHierarchy=$_GET["hierarchy"];
+	global $tablesDefinitions;	
+		
+	// la table sélectionnée dans la liste de la page précédente
 	$targetTable=$_GET["targetTable"];
+	// la table réellement éditée
+	$editTable=$_GET["editTable"];
+	$thisTable=$tablesDefinitions[$targetTable];
 	$thisLevel=$_GET["level"];
 	$selectedParentValues=$_GET[$parentTable];
-	$tablesList=explode(",",$selectorCascades[$targetTable]);
 	$whereClause=NULL;
-	$theType=$_GET["type"];
-	$editTable=$_GET["editTable"];
+	
+	
 
 
 
 // le titre
-echo('<h1 class="selector"><a href="/edition.php">&eacute;dition des donn&eacute;es</a>');
-switch ($theType) {
-	case "reference" : $theTypeString=" de r&eacute;f&eacute;rence"; $theSelectorType="tableSelectors";
-	break;
-	case "parametrage" : $theTypeString=" de param&eacute;trage"; $theSelectorType="tableSelectors";
-	break;
-	default: $theTypeString="";
-	break;
-		}
-if ($page=='edition') {$theSelectedTable=$tablesDefinitions[$editTable]["label"];} else {$theSelectedTable=$tablesDefinitions[$targetTable]["label"];;}
-echo(' : table '.$theTypeString.' "'.$theSelectedTable.'" <span class="showHide"><a href="" id="showHideSelect"></a></span></h1>');
+echo('<h1 class="selector">g&eacute;rer les '.$thisTable["type_table_description"].'&nbsp;: '.$thisTable["domaine_description"].' <span class="showHide"><a href="" id="showHideSelect"></a></span></h1>');
 
 	
 // le sélecteur	
@@ -81,17 +110,18 @@ echo('<div id="selector_content">');
 	echo('<form id="selector_form">');
 	//debug	print_r($selectorCascades);
 	
-	if (array_key_exists($targetTable,$selectorCascades)) 	{
+	if ($thisTable["selector"]) 	{
 		// si oui, on récupere la liste des tables de la cascade passées dans l'URL
 			//debug		echo($targetTable." : cascade : ".$selectorCascades[$targetTable].'<br />');
 			// on crée le tableau avec la liste des tables de la cascade
-			$theTables=split(",",$selectorCascades[$targetTable]);
+			$theTables=split(",",$thisTable["selector_cascade"]);
+		
 			}
 		else {
 			// sinon, on utilise directement la table
 			//debug echo($targetTable." : pas de cascade");
 			// on crée le tableau avec seulement la table
-			$theTables=array($targetTable);
+			$theTables=array($editTable);
 			;}
 		//debug		print_r($theTables);
 	// end if (array_key_exists)
@@ -101,6 +131,8 @@ echo('<div id="selector_content">');
 	foreach ($theTables as $oneTable) {
 		$selectedValues=array();
 		$selectedValues=$_GET[$oneTable];
+		//debug 		echo('<pre>');print_r($selectedValues);echo('</pre>');
+		
 		$selectedParentValues=array();
 		if (isset($_GET[$parentTable])) {$selectedParentValues=$_GET[$parentTable];}
 		
@@ -109,12 +141,13 @@ echo('<div id="selector_content">');
 		// en fonction de celles sélectionnées dans les SELECT précédents
 		if ($level>1 && !empty($selectedParentValues)) {
 			// on récupère la liste des valeurs sélectionnées de la table du niveau précédent
-		
 			$theList='\'';
 			$theList.=implode($_GET[$parentTable],"','");
 			$theList.='\'';
 			
-			$whereClause=' AND '.$tablesDefinitions[$parentTable]["id_col"].' IN ('.$theList.') ';
+			$whereClause=' AND '.$tablesDefinitions[$parentTable]["table"].'_id IN ('.$theList.') ';
+			
+			//debug			echo($whereClause);
 			
 			} else {$whereClause=NULL;}
 		// le DIV contenant le SELECT
@@ -151,7 +184,7 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 	
 	//debug	print_r($selectedValues);
 	// le nom de la table
-	echo('<p>'.$tablesDefinitions[$theTable]["label"].'</p>');
+	echo('<p>'.htmlentities($tablesDefinitions[$theTable]["label"]).'</p>');
 	// le SELECT avec les valeurs de la table
 	//le SELECT accepte-t-il les sélections multiples
 	//debug 
@@ -485,7 +518,10 @@ echo('<pre>');
 				
 		switch ($action) {
 
-			case 'display' : if (empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.addSlashes($value).'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
+			case 'display' : 
+			// on encode d'éventuels sauts de ligne pour javascript
+			$valueJS=preg_replace("/\r?\n/", "\\n", addslashes($value));
+			if (empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$valueJS.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
 			break;
 
 			case 'filter': 	$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input></div>';
@@ -510,6 +546,7 @@ echo('<pre>');
 				// on affiche une <textarea>
 				if ($theType=='textarea') {
 
+										
 					// si on a une longueur maximale autorisée pour la <textarea>, on ajoute le javascript de controle
 					// (il est impossible de limiter le contenu d'une <textarea> en HTML)
 					if (!empty($theMaxLength)) {
@@ -517,16 +554,11 @@ echo('<pre>');
 						$theLengthLimitation='onKeyDown="fieldTextLimiter('.$args.')" onKeyUp="fieldTextLimiter('.$args.')"  onFocus="fieldTextLimiter('.$args.')" onBlur="fieldTextLimiter('.$args.')"';
 						$textRows=round($theMaxLength/$defaultTextInputMaxLength)+1;}
 					else {$theLengthLimitation='';$textRows=$defaultTextRows;}
-					
 					$theField='<textarea id="'.$theId.'" name="'.$theId.'" 
 					cols="'.$defaultTextInputMaxLength.'" rows="'.$textRows.'" '.$theLengthLimitation.'  '.$onAction.'  class="'.$theClass.'">'.stripSlashes($value).'</textarea>
 					<p id="'.$theId.'_counter" class="small"></p>';
 					
 					
-					//debug
-					
-					
-
 				} // end if textarea
 
 				// on affiche un <input>

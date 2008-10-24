@@ -3,8 +3,10 @@
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page
-$section="gestDoc";
-$zone=6; // zone edition (voir table admin_zones)
+$section="gerer";
+$subsection="documentation";
+
+$zone=6; // zone gestion de la documentation (voir table admin_zones)
 
 ?>
 

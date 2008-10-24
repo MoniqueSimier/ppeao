@@ -1,56 +1,10 @@
 <?php
 // ce fichier contient des options de configuration pour l'édition des tables
 
+
+//**************************************************************	
+// liste des tables utilisées par l'application 
 //**************************************************************
-// construction des sélecteurs de la page "edition.php" et "étiquettes" des domaines et tables
-//**************************************************************
-// utilisé pour construire les deux sélecteurs servant à sélectionner les domaines des tables de paramétrage
-// et donnant la liste des sous-domaines
-$scientifiqueHierarchie=Array("stations","peche","biologie");
-$artisanaleHierarchie=Array("agglomeration","unite","activite","debarquement","sortie");
-
-// la liste des domaines de premier niveau, avec leur nom complet et leur type
-$domainesListe=Array(
-	"geographie"=>array("label"=>"g&eacute;ographie","type"=>"reference"),
-	"especes"=>array("label"=>"esp&egrave;ces","type"=>"reference"),
-	"stations"=>array("label"=>"stations","type"=>"parametrage"),
-	"peche"=>array("label"=>"p&ecirc;che","type"=>"parametrage"),
-	"biologie"=>array("label"=>"biologie","type"=>"parametrage"),
-	"agglomeration"=>array("label"=>"agglom&eacute;rations","type"=>"parametrage"),
-	"unite"=>array("label"=>"unit&eacute;s de p&ecirc;che","type"=>"parametrage"),
-	"activite"=>array("label"=>"activit&eacute;s","type"=>"parametrage"),
-	"debarquement"=>array("label"=>"d&eacute;barquements","type"=>"parametrage"),
-	"sortie"=>array("label"=>"sorties de p&ecirc;che","type"=>"parametrage"),
-	);
-
-
-// liste des tables appartenant à chaque domaine et sous-domaine
-// utilisé pour construire les SELECT de la page edition.php
-$tableSelectors=Array(
-	"geographie"=>Array("pays","systeme","secteur"),
-	
-	"especes"=>Array("ecologique","trophique","originekb","ordre","famille","espece"),
-
-	"stations"=>Array("station","position","debris","sediment","vegetation"),
-	
-	"peche"=>Array("engins","qualite_coup","sens_courant","force_courant"),
-	
-	"biologie"=>Array("sexe","stade","contenu","remplissage"),
-	
-	"agglomeration"=>Array("type_agglomeration","agglomeration"),
-	
-	"unite"=>Array("csp","grand_type_engin","type_engin"),
-	
-	"activite"=>Array("type_activite"),
-	
-	"debarquement"=>Array("etat_ciel","vent"),
-	
-	"sortie"=>Array("type_sortie","milieu")
-	
-	);
-	
-	
-// liste des tables utilisées par l'application : 
 // "tablename"=>array("label","table")
 // tablename = nom de la table utilisé dans les URL
 // label = nom de la table pour affichage dans les pages HTML
@@ -63,37 +17,27 @@ $tableSelectors=Array(
 $tablesSql='SELECT * FROM admin_dictionary_tables adt
 			LEFT JOIN admin_dictionary_domains add ON adt.domain_id=add.domain_id 
 			LEFT JOIN admin_dictionary_type_tables adtt ON adtt.type_table_id=adt.type_table_id 
-			ORDER BY adt.handle';
+			ORDER BY adtt.type_table_nom, add.domaine_nom, adt.handle';
 $tablesResult=pg_query($connectPPEAO,$tablesSql) or die('erreur dans la requete : '.$tablesSql. pg_last_error());
 $tables=pg_fetch_all($tablesResult);
 $tablesDefinitions='';
 
 foreach ($tables as $table) {
-	$tablesDefinitions[$table["handle"]]=array("label"=>$table["label"],"table"=>$table["table_db"],"id_col"=>$table["id_col"],"noms_col"=>$table["noms_col"]);
+	// truc bizarre : une valeur TRUE/FALSE retournée de pgsql est stockée comme t/f... on compense...
+	if ($table["selector"]==t) {$table["selector"]=true;} else {$table["selector"]=false;}
+	
+	$tablesDefinitions[$table["handle"]]=
+	array("label"=>$table["label"],
+	"table"=>$table["table_db"],
+	"id_col"=>$table["id_col"],
+	"noms_col"=>$table["noms_col"],
+	"type_table_nom"=>$table["type_table_nom"],
+	"type_table_description"=>$table["type_table_description"],
+	"domaine_nom"=>$table["domaine_nom"],
+	"domaine_description"=>$table["domaine_description"],
+	"selector_cascade"=>$table["selector_cascade"],
+	"selector"=>$table["selector"],
+	"zone"=>$table["zone_id"]
+	);
 }
-
-
-//**************************************************************
-// construction des sélecteurs de la page "edition_selector.php"
-//**************************************************************
-
-// cette variable contient la liste des cascades pour la sélection des tables
-// par exemple, si l'on veut éditer la table "espece" il faudra d'abord sélectionner des valeurs dans
-// les tables ordre puis famille
-$selectorCascades=Array(	
-"pays"=>"pays,systeme,secteur",
-"systeme"=>"systeme,secteur",
-"secteur"=>"secteur",
-"station"=>"pays,systeme,secteur,station",
-"ordre"=>"ordre,famille,espece",
-"famille"=>"famille,espece",
-"espece"=>"espece",
-"ecologique"=>"ecologique,espece",
-"trophique"=>"trophique,espece",
-"originekb"=>"originekb,espece",
-"grand_type_engin"=>"grand_type_engin,type_engin",
-"type_engin"=>"type_engin",
-"type_agglomeration"=>"type_agglomeration,agglomeration",
-"agglomeration"=>"pays,systeme,secteur,agglomeration",
-"lieu_peche"=>"pays,systeme,secteur,lieu_peche")
 ?>

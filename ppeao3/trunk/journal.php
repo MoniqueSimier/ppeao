@@ -3,7 +3,9 @@
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page
-$section="journal";
+$section="gerer";
+$subsection="journal";
+
 $zone=4; // zone journal (voir table admin_zones)
 ?>
 

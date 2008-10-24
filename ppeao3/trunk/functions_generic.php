@@ -504,5 +504,11 @@ function paginate($url, $param, $total, $current, $adj=3)
 	return ($pagination);
 }
 
+//***************************************************************************************************
+// fonction transformant les balises <br /> d'une chaine en sauts de ligne (inverse de nl2br)
+function br2nl( $data ) {
+// $data : la chaine de caractères à traiter
+   return preg_replace( '!&lt;br /&gt;!iU', "\n", $data );
+}
 
 ?>

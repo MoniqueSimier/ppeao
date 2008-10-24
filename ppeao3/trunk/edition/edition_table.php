@@ -3,8 +3,35 @@
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page
-$section="edition";
-$zone=2; // zone edition (voir table admin_zones)
+$section="gerer";
+$zone=2; // zone edition, par défaut (voir table admin_zones)
+$editTable=$_GET["editTable"];
+include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
+include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
+
+
+$tableType=$tablesDefinitions[$editTable]["type_table_description"];
+if (!empty($tablesDefinitions[$editTable]["zone"])) {$zone=$tablesDefinitions[$editTable]["zone"];}
+
+// on détermine à quelle subsection et à quelle zone appartient la table choisie
+
+switch ($tablesDefinitions[$editTable]["type_table_nom"]) {
+	case 'admin':
+	$subsection='administration';
+	break;
+	case 'param':
+	$subsection='parametrage';
+	break;
+	case 'admin':
+	$subsection='administration';
+	break;
+	case 'ref':
+	$subsection='reference';
+	break;
+	case 'data':
+	$subsection='donnees';
+	break;
+} 
 
 ?>
 
@@ -16,7 +43,7 @@ $zone=2; // zone edition (voir table admin_zones)
 	// les balises head communes  toutes les pages
 	include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 ?>
-	<title>ppeao::&eacute;dition des donn&eacute;es::&eacute;dition de la table s&eacute;lectionn&eacute;e</title>
+	<title>ppeao::g&eacute;rer::<?php echo($tablesDefinitions[$editTable]["type_table_description"]); ?>::&quot;<?php echo($tablesDefinitions[$editTable]["label"]); ?>&quot;</title>
 
 <script src="/js/edition.js" type="text/javascript"  charset="iso-8859-15"></script>
 
@@ -59,6 +86,7 @@ echo('<!-- l\'effet "tiroir" pour afficher/masquer le sélecteur -->
 <body>
 
 <?php 
+
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
@@ -68,22 +96,12 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 
 <div id="main_container" class="home">
 
-<?php
-
-include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
-include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
-
-
-?>
 
 <?php
 // on n'affiche le selecteur que si on ne spécifie pas autrement
 if ($displaySelector!='no') {
 echo('<!-- le SELECTEUR -->
 <div id="selector_container">');
-
-
-
 	// insertion du sélecteur, en mode "page de selection"
 	createSelector("edition");
 
@@ -94,8 +112,6 @@ echo('</div> <!-- end div selector_container -->')
 <!-- l'ÉDITEUR -->
 <div id="editor_container">
 <?php
-
-$editTable=$_GET["editTable"];
 
 // on compile les informations sur les colonnes de la table $editTable
 $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["table"]);
@@ -346,22 +362,7 @@ echo paginate($_SERVER['PHP_SELF'].'?'.removeQueryStringParam($_SERVER['QUERY_ST
 
 <?php
 
-$theType=$_GET["type"];
-$theHierarchy=$_GET["hierarchy"];
-$theTable=$_GET["targetTable"];
-
-switch ($theType) {
-	case "reference" : $theTypeString=" de r&eacute;f&eacute;rence";
-	break;
-	case "parametrage" : $theTypeString=" de param&eacute;trage"; 
-	break;
-	default: $theTypeString="";
-	break;
-		}
-$theLogString=$theTypeString.' '.$tablesDefinitions[$theTable]["label"];
-
-
-logWriteTo(1,'notice','acc&egrave;s &agrave; l\'&eacute;dition de la table '.$theLogString,'','',0);
+logWriteTo(1,'notice','acc&egrave;s &agrave; la gestion des '.$tablesDefinitions[$editTable]["type_table_description"].'&nbsp;: '.$tablesDefinitions[$editTable]["domaine_description"],'','',0);
 
 ?>
 	

@@ -80,7 +80,7 @@ function showNewLevel(newLevel,theParentTable) {
 	// newLevel: the level of the new div to create (used in <div id="level_n">)
 	// theParentTable: la table à partir de laquelle on crée le nouveau select
 	level=parseInt(newLevel)-1; // les niveaux sont 1,2,3 etc alors que les tableaux sont indexés à partir de 0
-	//debug	alert(level);
+	//debug		alert(level);
 	var theLevel='level_'+level;
 	var theValues=$(theLevel);
 	var select=$(theParentTable);
@@ -118,10 +118,9 @@ function showNewLevel(newLevel,theParentTable) {
 		
 	// using GET to send the request
 	// on récupère les valeurs des paramètres de l'URL (fonction gup() définie dans basic.js)
-	var type=gup('type');
-	var hierarchy=gup('hierarchy');
 	var targetTable=gup('targetTable');
-	xhr.open("GET","addTableSelect_ajax.php?type="+type+"&hierarchy="+hierarchy+"&targetTable="+targetTable+"&level="+newLevel+theString,true);
+	var editTable=gup('editTable');
+	xhr.open("GET","addTableSelect_ajax.php?&parentTable="+theParentTable+"&editTable="+editTable+"&targetTable="+targetTable+"&level="+newLevel+theString,true);
 	xhr.send(null);
 
 	}// end xhr.onreadystatechange
@@ -151,7 +150,7 @@ function updateEditLink(level) {
 	var theLevel=$('select_'+level);
 	var theSelect=theLevel.firstChild;
 	var targetTable=gup('targetTable');
-	// on récupère ls valeurs des tables déjà sélectionnées
+	// on récupère les valeurs des tables déjà sélectionnées
 	var theSelection='';
 	for (var i = 1; i <= level; i++) {theSelection+='&'+$('select_'+i).toQueryString();}
 	//debug 	alert(theSelection);
@@ -162,12 +161,12 @@ function updateEditLink(level) {
 	// on met à jour le lien
 	// si aucune valeur n'est sélectionnée on insère un lien "éditer la table"
 	if (selectedValues=='') {
-		var theUrl= "/edition/edition_table.php?type="+gup('type')+"&hierarchy="+gup('hierarchy')+"&targetTable="+gup('targetTable')+"&editTable="+editTable+theSelection;
+		var theUrl= "/edition/edition_table.php?targetTable="+gup('targetTable')+"&editTable="+editTable+theSelection;
 		var theLinkText="&eacute;diter la table";
 		}
 	// si au moins une valeur est sélectionnée on insère un lien "éditer la sélection"
 	else {
-		var theUrl= "/edition/edition_table.php?type="+gup('type')+"&hierarchy="+gup('hierarchy')+"&targetTable="+gup('targetTable')+"&editTable="+editTable+theSelection;
+		var theUrl= "/edition/edition_table.php?targetTable="+gup('targetTable')+"&editTable="+editTable+theSelection;
 		var theLinkText="&eacute;diter la s&eacute;lection";
 		;}
 		
@@ -271,7 +270,7 @@ function makeEditable(table,column,value,record,action) {
 // record : l'identifiant unique dans la table de l'enregistrement concerné
 // action : l'action à faire (edit/save/cancel)
 	
-	//debug		alert(value);
+	//debug	alert(value);
 	
 // la cellule concernée
 var theCell=$("edit_cell_"+column+"_"+record);

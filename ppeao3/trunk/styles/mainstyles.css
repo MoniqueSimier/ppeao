@@ -33,13 +33,13 @@ padding:0;
 }
 
 a{
-	color				: #007860;
+	color				: #7C8781;
 	text-decoration		: none;
 }
 
 a:hover{
 	color				: #fff;
-	background-color	: #007860;
+	background-color	: #F7BA02;
 	text-decoration 	: none;
 	}
 
@@ -118,7 +118,7 @@ display:none;
 }
 a.link_button {
 	padding: 1px;
-	border: 1px solid grey;
+	border: 1px solid #7C8781;
 	text-align:center;
 }
 
@@ -128,9 +128,9 @@ a.link_button {
 
 #nav_container {
 	min-width: 800px;
-	min-height :	56px;
-	background : #E4E4E4;
-	margin: 0 0 8px 0;
+	min-height :	36px;
+	background : #C2C2C2;
+	margin: 0;
 }
 
 #nav_menu {
@@ -140,7 +140,7 @@ vertical-align: baseline;
 
 
 #nav_menu a {
-	color:#007860;
+	color:#7C8781;
 	text-decoration 	: none;
 }
 
@@ -157,19 +157,42 @@ vertical-align: baseline;
 .menu {
 	display:block;
 	float:left;
-	padding 	: 10px 15px 0 15px;
+	padding 	: 6px 12px 0 12px;
 	font-family : Georgia, 'Times New Roman', serif;
 	font-weight:bold;
 	font-style 	: bold;
 	font-size 	: 18px;
-	color 		: #007860;
-	min-height:46px;
+	color 		: #fff;
+	min-height	: 30px;
 }
 
 .menu:hover, .active {
-	color 		: #fff;
-	background : #4dd3d2;
+	color 		: #7C8781;
+	background : #F7BA02;
 	text-decoration 	: none;
+}
+
+
+/* ********************************* */
+/* the top secondary navigation bar */
+#nav_sousmenu {
+vertical-align: baseline;
+background:  #F7BA02;
+margin:0;
+padding: 6px 0 6px 0;
+}
+
+.sousmenu {
+padding: 0 6px;
+font-family : Georgia, 'Times New Roman', serif;
+color:#7C8781;
+}
+
+#nav_sousmenu a:hover, #nav_sousmenu a.active {
+	border-bottom: 6px solid white;
+	background:transparent;
+	color:white;
+	font-weight:normal;
 }
 
 
@@ -207,6 +230,11 @@ margin-top:18px;
 #main_container {
 min-height:500px;
 margin: 6px;
+width:800px;
+}
+
+#main_container.edition {
+width:100%;
 }
 
 
