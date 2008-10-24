@@ -890,14 +890,6 @@ ALTER TABLE ONLY art_agglomeration
     ADD CONSTRAINT art_agglomeration_pkey PRIMARY KEY (id);
 
 
---
--- TOC entry 2103 (class 2606 OID 18895)
--- Dependencies: 1681 1681
--- Name: art_artivite_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
---
-
-ALTER TABLE ONLY art_activite
-    ADD CONSTRAINT art_artivite_pkey PRIMARY KEY (id);
 
 
 --
@@ -1265,15 +1257,6 @@ ALTER TABLE ONLY exp_station
 ALTER TABLE ONLY exp_station
     ADD CONSTRAINT exp_sediment_id FOREIGN KEY (exp_sediment_id) REFERENCES exp_sediment(id);
 
-
---
--- TOC entry 2276 (class 2606 OID 19259)
--- Dependencies: 2194 1737 1764
--- Name: exp_stade_id; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
---
-
-ALTER TABLE ONLY exp_biologie
-    ADD CONSTRAINT exp_stade_id FOREIGN KEY (exp_stade_id) REFERENCES exp_stade(id);
 
 
 

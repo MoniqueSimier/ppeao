@@ -620,11 +620,7 @@ CREATE SEQUENCE admin_dictionary_domains_domain_id_seq
 
 ALTER TABLE public.admin_dictionary_domains_domain_id_seq OWNER TO devppeao;
 
---
--- Name: admin_dictionary_domains_domain_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
 
-ALTER SEQUENCE admin_dictionary_domains_domain_id_seq OWNED BY admin_dictionary_domains.domain_id;
 
 
 --
@@ -640,11 +636,6 @@ CREATE SEQUENCE admin_dictionary_type_tables_type_table_id_seq
 
 ALTER TABLE public.admin_dictionary_type_tables_type_table_id_seq OWNER TO devppeao;
 
---
--- Name: admin_dictionary_type_tables_type_table_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_dictionary_type_tables_type_table_id_seq OWNED BY admin_dictionary_type_tables.type_table_id;
 
 
 --
@@ -660,12 +651,6 @@ CREATE SEQUENCE admin_log_modules_module_id_seq
 
 ALTER TABLE public.admin_log_modules_module_id_seq OWNER TO devppeao;
 
---
--- Name: admin_log_modules_module_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_log_modules_module_id_seq OWNED BY admin_log_modules.module_id;
-
 
 --
 -- Name: admin_tables_dictionary_dico_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
@@ -679,12 +664,6 @@ CREATE SEQUENCE admin_tables_dictionary_dico_id_seq
 
 
 ALTER TABLE public.admin_tables_dictionary_dico_id_seq OWNER TO devppeao;
-
---
--- Name: admin_tables_dictionary_dico_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_tables_dictionary_dico_id_seq OWNED BY admin_dictionary_tables.dico_id;
 
 
 --
@@ -700,12 +679,6 @@ CREATE SEQUENCE admin_tables_dictionary_domain_id_seq
 
 
 ALTER TABLE public.admin_tables_dictionary_domain_id_seq OWNER TO devppeao;
-
---
--- Name: admin_tables_dictionary_domain_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_tables_dictionary_domain_id_seq OWNED BY admin_dictionary_tables.domain_id;
 
 
 --
@@ -723,13 +696,6 @@ CREATE SEQUENCE admin_tables_dictionary_type_table_id_seq
 ALTER TABLE public.admin_tables_dictionary_type_table_id_seq OWNER TO devppeao;
 
 --
--- Name: admin_tables_dictionary_type_table_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_tables_dictionary_type_table_id_seq OWNED BY admin_dictionary_tables.type_table_id;
-
-
---
 -- Name: admin_users_groups_group_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
 --
 
@@ -741,13 +707,6 @@ CREATE SEQUENCE admin_users_groups_group_id_seq
 
 
 ALTER TABLE public.admin_users_groups_group_id_seq OWNER TO devppeao;
-
---
--- Name: admin_users_groups_group_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_users_groups_group_id_seq OWNED BY admin_usergroups.group_id;
-
 
 --
 -- Name: admin_users_user_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
@@ -763,14 +722,7 @@ CREATE SEQUENCE admin_users_user_id_seq
 
 ALTER TABLE public.admin_users_user_id_seq OWNER TO devppeao;
 
---
--- Name: admin_users_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
 
-ALTER SEQUENCE admin_users_user_id_seq OWNED BY admin_users.user_id;
-
-
---
 -- Name: admin_zones_zone_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
 --
 
@@ -784,7 +736,3 @@ CREATE SEQUENCE admin_zones_zone_id_seq
 ALTER TABLE public.admin_zones_zone_id_seq OWNER TO devppeao;
 
 --
--- Name: admin_zones_zone_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_zones_zone_id_seq OWNED BY admin_zones.zone_id;
