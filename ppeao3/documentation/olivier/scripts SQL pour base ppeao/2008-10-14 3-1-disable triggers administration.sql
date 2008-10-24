@@ -1,0 +1,10 @@
+ALTER TABLE admin_dictionary_domains DISABLE TRIGGER ALL;
+ALTER TABLE admin_dictionary_tables DISABLE TRIGGER ALL;
+ALTER TABLE admin_dictionary_type_tables DISABLE TRIGGER ALL;
+ALTER TABLE admin_j_group_zone DISABLE TRIGGER ALL;
+ALTER TABLE admin_j_user_group DISABLE TRIGGER ALL;
+ALTER TABLE admin_j_user_zone DISABLE TRIGGER ALL;
+ALTER TABLE admin_log_modules DISABLE TRIGGER ALL;
+ALTER TABLE admin_usergroups DISABLE TRIGGER ALL;
+ALTER TABLE admin_users DISABLE TRIGGER ALL;
+ALTER TABLE admin_zones DISABLE TRIGGER ALL;
