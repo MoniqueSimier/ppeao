@@ -55,7 +55,7 @@ CloseFileReverseSQL ($ficRevSQL,$pasdefichier);
 // Connexion à la BD pour maj des logs
 
 if (!$connectPPEAO) { 
-	echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Erreur de connection à la base de donn&eacute;es pour maj des logs</div>" ;; exit;
+	echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Erreur de connexion à la base de donn&eacute;es pour maj des logs</div>" ;; exit;
 	}
 logWriteTo(7,"notice","**- Debut lancement sauvegarde portage automatique.","","","0");
 

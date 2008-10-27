@@ -113,7 +113,7 @@ from pg_class as c, pg_attribute as a
 where relname = '".$tableName."' and c.oid = a.attrelid and a.attnum > 0;";
 // Lance la requete dans la base de reference (base source)
 if (!$connectionBD) {
- 	logWriteTo(7,"error","Erreur connection ".$nomBD." dans la fonction getSQL de comparaison.php","","","0");
+ 	logWriteTo(7,"error","Erreur connexion ".$nomBD." dans la fonction getSQL de comparaison.php","","","0");
  }
 $getAttrBD = pg_query($connectionBD,$ListAttr) or die('erreur dans la requete : '.pg_last_error());
 if (pg_num_rows($getAttrBD) == 0) {
