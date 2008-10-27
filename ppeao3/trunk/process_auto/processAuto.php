@@ -81,6 +81,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				$nb_deja_recTest = $row[0];
 				if ($nb_deja_recTest == 0){
 					$continueTrait = false;
+					$messageinfo = "art_debarquement est vide. Pas de recomposition possible";
 				}
 				pg_free_result($resultTest);
 				
@@ -92,6 +93,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					$nb_deja_recTest = $row[0];
 					if ($nb_deja_recTest == 0){
 						$continueTrait = false;
+						$messageinfo = "art_activite est vide. Pas de recomposition possible";
 					}
 					pg_free_result($resultTest);
 				}
@@ -112,7 +114,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			break;
 			
 		case "stat":
-			include $_SERVER["DOCUMENT_ROOT"].'/statistiques/statistiques.php';	
+			//include $_SERVER["DOCUMENT_ROOT"].'/statistiques/statistiques.php';	
 			$messageinfo = " Traitement non effectue";
 			$traitRecompOk = true;
 			break;
