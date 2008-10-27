@@ -15,7 +15,8 @@
 
 // Mettre les noms des fichiers dans un fichier texte
 session_start();
-$_SESSION['s_status_process_auto'] = 'ok';
+
+
 // Variable de test (en fonctionnement production, les deux variables sont false)
 $pasdetraitement = true;
 $pasdefichier = false; // Variable de test pour linux. Meme valeur que dans comparaison.php
@@ -26,7 +27,20 @@ include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
+// Variables
+$nomFenetre="purge";
+$ErreurProcess = false ; // Flag pour le succes du traitement
+$CRexecution = ""; // compte rendu de traitement
+// ***** Test si arret processus lié à l'exécution du traitement précédent 	
+// Si le traitement précédent a échoué, arrêt du traitement
 
+if (isset($_SESSION['s_status_process_auto'])) {
+	if ($_SESSION['s_status_process_auto'] == 'ko') {
+		logWriteTo(7,"error","**- ARRET du traitement de nettoyage des donn&eacute;es car le processus precedent est en erreur.","","","0");
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> ARRET du traitement car le processus precedent est en erreur</div>" ;
+		exit;
+	}
+}
 if (isset($_GET['exec'])) {
 	if ($_GET['exec'] == "false") {
 		$pasdetraitement =  true;
@@ -36,10 +50,7 @@ if (isset($_GET['exec'])) {
 		$Labelpasdetraitement ="oui";
 	}
 } 
-// Variables
-$nomFenetre="purge";
-$ErreurProcess = false ; // Flag pour le succes du traitement
-$CRexecution = ""; // compte rendu de traitement
+
 if (isset($_GET['table'])) {
 	$tableEnCours = $_GET['table'];
 } else {
@@ -60,7 +71,7 @@ $ArretTimeOut = false;
 // Connexion à la BD pour maj des logs
 
 if (!$connectPPEAO) { 
-	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connection à la base de donn&eacute;es pour maj des logs</div>" ; 
+	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion à la base de donn&eacute;es pour maj des logs</div>" ; 
 	exit;
 	}
 logWriteTo(7,"notice","**- Debut lancement sauvegarde portage automatique.","","","0");
@@ -74,7 +85,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	
 	$connectBDPECHE =pg_connect ("host=".$host." dbname=".$bd_peche." user=".$user." password=".$passwd);
 	if (!$connectBDPECHE) { 
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connection a la base de donn&eacute;es ".$bd_peche."</div>" ; exit;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es ".$bd_peche."</div>" ; exit;
 		}
 
 
