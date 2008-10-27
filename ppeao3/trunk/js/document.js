@@ -28,10 +28,9 @@ window.addEvent('domready', function() {
 });
 	
 /**
-* Fonction qui affiche la fenetre de dialogue modale pour ajouter un nouvel enregistrement
-* table : la table à laquelle on veut ajouter un enregistrement
+* Fonction qui affiche la fenetre de dialogue modale pour ajouter un nouveau document
 */
-function modalDialogAddRecord(theLevel,theTable) {
+function modalDialogManagedoc(theLevel,theDocument,theAction) {
 		
 	// on crée le nouvel élément
 	
@@ -113,7 +112,7 @@ function modalDialogAddRecord(theLevel,theTable) {
 	} // end xhr.onreadystatechange
 
 	// using GET to send the request
-	xhr.open("GET","/edition/edition_ajouter_enregistrement_ajax.php?&editTable="+theTable+"&level="+theLevel,true);
+	xhr.open("GET","/documentation/gerer_doc.php?rep="+theDocument+"&action="+theAction,true);
 	xhr.send(null);
 }
 

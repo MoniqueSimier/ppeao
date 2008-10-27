@@ -30,14 +30,22 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 
+// On identifie si le traitement est exécutable ou non
+if (isset($_GET['exec'])) {
+	if ($_GET['exec'] == "false") {
+		$pasdetraitement =  true;
+		$Labelpasdetraitement ="non";
+	} else {
+		$pasdetraitement =  false;
+		$Labelpasdetraitement ="oui";
+	}
+} 
 
 // Recuperation des parametres (nom repertoire, nom fichiers etc..) depuis le fichier de parametres
-$dirLog = GetParam("repLogAuto",$PathFicConf);
+$dirLog = GetParam("backupNomBD",$PathFicConf);
 $dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
-$pathBackup = GetParam("repBackupFicRep",$PathFicConf);
-$pathBackup = $_SERVER["DOCUMENT_ROOT"]."/".$pathBackup;
-$backupName = GetParam("repBackupFicNom",$PathFicConf);
-$pathBin = GetParam("repPGDump",$PathFicConf); // pour windows
+$BDsource = "devppeao";// Pour test a virer apres
+$BDBackup = GetParam("backupNomBD",$PathFicConf);
 
 // On remet à zéro le fichier reverse SQL. On le fait ici même si on n'utilise pas le fichier ici
 // car il sera plus difficile d'identifier dans comparaison.php le premier appel de ce programme
@@ -49,72 +57,60 @@ CloseFileReverseSQL ($ficRevSQL,$pasdefichier);
 if (!$connectPPEAO) { 
 	echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Erreur de connection à la base de donn&eacute;es pour maj des logs</div>" ;; exit;
 	}
-logWriteTo(4,"notice","**- Debut lancement sauvegarde portage automatique.","","","0");
+logWriteTo(7,"notice","**- Debut lancement sauvegarde portage automatique.","","","0");
 
 // Paramètres  de sauvegarde
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
 
-	$continueDump = true;
+	$continueDump = false;
 	
-	// Avant exécution du dump, on teste si un fichier de sauvegarde existe déjà. Si oui, on l'archive
+	// Avant exécution, on teste si une BD existe déjà avec le même nom
+	// si existe : erreur (cela veut dire que la purge lors du traitement précédent ne s'est pas correctement faite
 	// *********************************************
-	//$source = $pathBackup."\\".$backupName;
-	$cible = $pathBackup."/".date('y\-m\-d\-His')."-".$backupName;
-	$source = $pathBackup."/".$backupName;
-	if (file_exists($source)) {
-		// copie du fichier deja existant en le renomant.
-		if (! rename($source,$cible) ){
-			$messageGen = "- Erreur archivage de ".$source." dans ".$cible;
-			logWriteTo(4,"error","Erreur archivage de ".$source." en ".$cible,"","","0");
-		} else {
-			$messageGen = "- Archivage fichier existant dans ".$cible;
-			logWriteTo(4,"notice","Archivage fichier existant dans ".$cible,"","","0");
-		}
+	$lev=error_reporting (8); //Pour eviter les avertissements si la base n'existe pas.
+	$connectTest = pg_connect ("host=".$host." dbname=".$BDBackup." user=".$user." password=".$passwd);
+	if ($connectTest) { 
+		$messageGen="La base de sauvegarde existe deja !";
 	} else {
-		logWriteTo(4,"notice","Pas de copie de fichier existant","","","1"); 
-		// test de l'existence du répertoire de sauvegarde. Si n'existe pas, le créer.
-		if (! file_exists($pathBackup)) {
-			if (! mkdir($pathBackup)) {
-				$continueDump = false;
-				$messageGen = "- Erreur de cr&eacute;ation du r&eacute;pertoire de sauvegarde ".$pathBackup;
-				logWriteTo(4,"error","Erreur de creation du repertoire d'archive dans sauvegarde.php ".$pathBackup,"","","0");
-			}
-		}		
+		$continueDump = true;
 	}
-
-	
-	// Si le répertoire de dump existe ou a été correctement créé alors on peut continuer !
+	error_reporting ($lev); // retour au avertissements par defaut
+	// Si la base n'existe pas, alors on peut continuer
 	if ($continueDump) {
-		//logWriteTo(4,"notice","Execution de la commande pg_dump.",$pathBin."\\pg_dump -U ".$user." -c -d -f ".$pathBackup."\\".$backupName." ".$bdd,"","0");
-		logWriteTo(4,"notice","Execution de la commande pg_dump.",$pathBin."pg_dump -U ".$user."  -d -Fc ".$pathBackup."/".$backupName." ".$bdd,"","0");
-		// La commande pour lancer la création du sql est la commande postgre pg_dump, qui ne peut être exécutée qu'en ligne de commande.
-		// La saisie du mot de passe pour l'instant est obligatoire.
-		// *********************************************
-		//$command = $pathBin."\\pg_dump -U ".$user." -c -d -f ".$pathBackup."\\".$backupName." ".$bdd;
-		$command =  $pathBin."pg_dump -U ".$user." -c -d -f ".$pathBackup."/".$backupName." ".$bdd;
-		exec($command);
+
+		logWriteTo(7,"notice","Sauvegarde de la base de donnee","","","0");
 
 		
-		// On teste l'existence du fichier dans le répertoire seul indicateur de la réussite de la sauvegarde
-		//if (file_exists($pathBackup."\\".$backupName)) {
-		if (file_exists($pathBackup."/".$backupName)) {
-			echo "<div id=\"sauvegarde_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde ex&eacute;cut&eacute;e avec succ&egrave;s dans ".$pathBackup."/".$backupName." ".$messageGen."</div>" ;
-			logWriteTo(4,"notice","**- Fin Sauvegarde : executee avec succes dans ".$pathBackup."/".$backupName." ".$messageGen,"","","0");
+		$createBDSQL = "create database ".$BDBackup." with template ".$BDsource;
+		$createBDResult = pg_query($connectPPEAO,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
+		if (!$createBDResult) {
+			// erreur
+			// On met globalement le process en erreur
+			if (isset($_SESSION['s_status_process_auto'])) { $_SESSION['s_status_process_auto'] = "ko"; }
+			// message d'erreur
+			logWriteTo(7,"error","**- Fin Sauvegarde : en erreur : erreur dans la creation de la base de sauvegarde ".$BDBackup,"","","0");			
+			echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde en erreur : erreur dans la creation de la base de sauvegarde ".$BDBackup."</div><div id=\"comparaison_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+
 		} else {
-			if (isset($_SESSION['s_status_process_auto'])) { $_SESSION['s_status_process_auto'] = "ko"; }
-			echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde en erreur : pas de fichier de sauvegarde cr&eacute;&eacute; ".$messageGen."</div>" ;
-			logWriteTo(4,"error","**- Fin Sauvegarde : en erreur : pas de fichier de sauvegarde cree ".$messageGen,"","","0");
+			// Sauvegarde OK ==> message
+			logWriteTo(7,"notice","**- Fin Sauvegarde : base copiee dans ".$BDBackup,"","","0");
+			echo "<div id=\"sauvegarde_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde ex&eacute;cut&eacute;e avec succ&egrave;s : base copiee dans ".$BDBackup."</div><div id=\"comparaison_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+			
 		}
+
 	} else {
+			// La base de sauvegarde existe déjà ==> erreur
 			if (isset($_SESSION['s_status_process_auto'])) { $_SESSION['s_status_process_auto'] = "ko"; }
-			echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde en erreur : pas de fichier de sauvegarde cr&eacute;&eacute; ".$messageGen."</div>" ;
-			logWriteTo(4,"error","**- Fin Sauvegarde : en erreur : pas de fichier de sauvegarde cree ".$messageGen,"","","0");
+			logWriteTo(7,"error","**- Fin Sauvegarde : en erreur : ".$messageGen,"","","0");			
+				echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde en erreur </div><div id=\"comparaison_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+				//echo"<div class=\"marginCR\">Compte Rendu&nbsp;<a id=\"v_slidein1\" href=\"#\"> Afficher </a>|<a id=\"v_slideout1\" href=\"#\"> Fermer </a>| <strong>status</strong>: <span id=\"vertical_status1\">open</span></div>";
+				echo"<div id=\"vertical_slide1\">".$messageGen."</div>";
+
 	}
 
-
 } else {
-	echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">En Test Etape de sauvegarde non ex&eacute;cut&eacute;e (var pasdetraitement = true)</div>" ;
-	logWriteTo(4,"error","**- En Test Etape de sauvegarde non executee (var pasdetraitement = true)","","","0");
+	echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Etape de sauvegarde non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"sauvegarde_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+	logWriteTo(7,"error","**- En Test Etape de sauvegarde non executee par choix de l'utilisateur","","","0");
 }
 
 

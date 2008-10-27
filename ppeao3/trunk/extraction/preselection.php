@@ -121,9 +121,20 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 				echo"</form>";
 				$doc = "";
 				$doc = getDocumentation("peche_scientifique","variable","y","Peche Scientifique");
-				$doc .="<br/>".getDocumentation("peche_artisanale","variable","y","Peche Artisanale");
-				$doc .="<br/>".getDocumentation("statistique","variable","y","Statistiques");
-				displayDocumentation($doc);
+				if ( $doc =="") {
+					$doc =getDocumentation("peche_artisanale","variable","y","Peche Artisanale");
+				} else {
+					$doc .="<br/>".getDocumentation("peche_artisanale","variable","y","Peche Artisanale");
+				}
+				if ( $doc =="") {
+					$doc = getDocumentation("statistique","variable","y","Statistiques");
+				} else {
+					$doc .="<br/>".getDocumentation("statistique","variable","y","Statistiques");
+				}
+				
+				if ( ! $doc =="") {
+					displayDocumentation($doc);
+				}
 
 				include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
 				exit;

@@ -31,7 +31,7 @@
 session_start();
 
 // Variable de test (en fonctionnement production, les trois variables sont false)
-$pasdetraitement = false;
+$pasdetraitement = true;
 $pasdefichier = false; // Variable de test pour linux. 
 $pasderevSQL = false; // Ne pas generer le fichier reverseSQL
 
@@ -47,6 +47,18 @@ include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 
 
 // ***** Recuperation des parameters en entree 
+
+// On identifie si le traitement est exécutable ou non
+if (isset($_GET['exec'])) {
+	if ($_GET['exec'] == "false") {
+		$pasdetraitement =  true;
+		$Labelpasdetraitement ="non"; 
+	} else {
+		$pasdetraitement =  false;
+		$Labelpasdetraitement ="oui";
+	}
+}
+
 // On récupère le type d'action. Le même programme gère la comparaison et la mise à jour de données
 if (isset($_GET['action'])) {
 	$typeAction = $_GET['action'];
@@ -56,17 +68,19 @@ if (isset($_GET['action'])) {
 			$BDSource = "connectPPEAO";
 			$BDCible = "connectBDPECHE";
 			$nomFenetre = "comparaison";
-			$nomAction = "comparaison du referentiel / parametrage";
+			$nomAction = "comparaison du referentiel / parametrage peche scientifique";
 			$nomFicSQL = "ref_param_ppeao";
-			 break;
+			$numFen = 2;
+			break;
 		case "compinv":
 			// Comparaison du parametrage de BDPECHE
 			$BDSource = "connectBDPECHE";
 			$BDCible = "connectPPEAO";
 			$nomFenetre = "comparaisonInv";
-			$nomAction = "comparaison du parametrage BDPECHE";
+			$nomAction = "comparaison du parametrage peche artisanale";
 			$nomFicSQL = "param_bdpeche";
-			 break;
+			$numFen = 3;
+			break;
 		case "majsc":
 			// Données scientifiques à mettre à jour
 			$BDSource = "connectBDPECHE";
@@ -74,7 +88,8 @@ if (isset($_GET['action'])) {
 			$nomFenetre = "copieScientifique";
 			$nomAction = "mise a jour donnees scientifiques";
 			$nomFicSQL = "majdatascient";
-			 break;
+			$numFen = 4;
+			break;
 		case "majrec":
 			// Données recomposées à mettre à jour
 			$BDSource = "connectBDPECHE";
@@ -82,7 +97,8 @@ if (isset($_GET['action'])) {
 			$nomFenetre = "copieRecomp";
 			$nomAction = "mise a jour donnees recomponsees";
 			$nomFicSQL = "majdatarecomp";
-			 break;
+			$numFen = 7;
+			break;
 	}
 
 } else { 
@@ -124,6 +140,7 @@ if (isset($_GET['numproc'])) {
 	$numProcess = $_GET['numproc'];
 }
 if (isset($_GET['log'])) {
+
 	if ($_GET['log'] == "false") {
 		$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. Attention, cela prend de la ressource !
 	} else {
@@ -153,7 +170,7 @@ $ourtime = ceil(0.9*$max_time);
 
 if (isset($_SESSION['s_status_process_auto'])) {
 	if ($_SESSION['s_status_process_auto'] == 'ko') {
-		logWriteTo(4,"error","**- ARRET du traitement ".$nomAction." car le processus precedent est en erreur.","","","0");
+		logWriteTo(7,"error","**- ARRET du traitement ".$nomAction." car le processus precedent est en erreur.","","","0");
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> ARRET du traitement car le processus precedent est en erreur</div>" ;
 		exit;
 	}
@@ -194,6 +211,7 @@ $SeuilLignesFichier = 5000; // constante contenant le nombre max de lignes par f
 
 // On récupère les valeurs des paramètres pour les fichiers log
 $dirLog = GetParam("repLogAuto",$PathFicConf);
+$nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
 $dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
 $fileLogComp = GetParam("nomFicLogSupp",$PathFicConf);
 
@@ -225,7 +243,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		if (! file_exists($dirLog)) {
 			if (! mkdir($dirLog) ) {
 				$messageGen = " erreur de cr&eacute;ation du r&eacute;pertoire de log";
-				logWriteTo(4,"error","Erreur de creation du repertoire de log dans comparaison.php","","","0");
+				logWriteTo(7,"error","Erreur de creation du repertoire de log dans comparaison.php","","","0");
 				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 				exit;
 			}
@@ -234,10 +252,11 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	//	Resultat de la comparaison
 		if ($EcrireLogComp ) {
 			$nomFicLogComp = $dirLog."/".date('y\-m\-d')."-".$fileLogComp;
+			$nomLogLien = $nomLogLien."/".date('y\-m\-d')."-".$fileLogComp;
 			$logComp = fopen($nomFicLogComp , "a+");
 			if (! $logComp ) {
 				$messageGen = " erreur de cr&eacute;ation du fichier de log";
-				logWriteTo(4,"error","Erreur de creation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php","","","0");
+				logWriteTo(7,"error","Erreur de creation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php","","","0");
 				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 				exit;		
 			}
@@ -247,7 +266,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		$SQLComp = fopen($dirLog."/".date('y\-m\-d')."-".$nomFicSQL."-".$numfic.".sql", "a+");
 		if (! $SQLComp ) {
 			$messageGen = " erreur de cr&eacute;ation du fichier SQL contenant les scripts";
-			logWriteTo(4,"error","Erreur de creation du fichier de SQL dans comparaison.php","","","0");
+			logWriteTo(7,"error","Erreur de creation du fichier de SQL dans comparaison.php","","","0");
 			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 			exit;		
 		}	
@@ -307,8 +326,8 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	
 	// Initialisation des logs
 	if ($tableEnCours == "") {
-		logWriteTo(4,"notice","**- Debut lancement ".$nomAction." (portage automatique)","","","0");
-		logWriteTo(4,"notice","**- source : ".$nomBDSource." cible : ".$nomBDCible,"","","0");
+		logWriteTo(7,"notice","**- Debut lancement ".$nomAction." (portage automatique)","","","0");
+		logWriteTo(7,"notice","**- source : ".$nomBDSource." cible : ".$nomBDCible,"","","0");
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
 			WriteCompLog ($logComp, "*- DEBUT lancement ".$nomAction." (portage automatique)",$pasdefichier);
@@ -316,7 +335,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
 		}
 	} else {
-		logWriteTo(4,"notice","**- Relance traitement pour la table ".$tableEnCours." a partir de l'enreg ID = ".$IDEnCours." (gestion TIEMOUT AJAX)","","","0");
+		logWriteTo(7,"notice","**- Relance traitement pour la table ".$tableEnCours." a partir de l'enreg ID = ".$IDEnCours." (gestion TIEMOUT AJAX)","","","0");
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "Relance traitement pour la table ".$tableEnCours." a partir de l'enreg ID = ".$IDEnCours." (gestion TIEMOUT AJAX)",$pasdefichier);
 		}
@@ -328,7 +347,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 
 	$tables = explode(",",$listTable);
 	$nbTables = count($tables) - 1;
-	logWriteTo(4,"notice"," Nb tables = ".$nbTables ,"","","1");
+	logWriteTo(7,"notice"," Nb tables = ".$nbTables ,"","","1");
 	// Début du traitement de comparaison par table.
 	// *********************************************
 	$start_while=timer(); // début du chronométrage du for
@@ -380,7 +399,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		// Reinitialisation variable pour creation SQL
 		$where="";
 		$alias="";
-    	logWriteTo(4,"notice","*-- Comparaison de la table ".$tables[$cpt],"","","0");
+    	logWriteTo(7,"notice","*-- Comparaison de la table ".$tables[$cpt],"","","0");
 		$ListeTableIDPasNum = GetParam("listeTableIDPasNum",$PathFicConf);
 		// Gestion TIMEOUT
 		$tableEnLecture = $tables[$cpt];
@@ -396,7 +415,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$testCibleReadSql = " select * from ".$tables[$cpt] ;
 			$testCibleReadResult = pg_query(${$BDCible},$testCibleReadSql) or die('erreur dans la requete : '.pg_last_error());
 			if (pg_num_rows($testCibleReadResult) == 0) {
-				logWriteTo(4,"notice","table ".$tables[$cpt]." dans ".$nomBDCible." vide","","","0");
+				logWriteTo(7,"notice","table ".$tables[$cpt]." dans ".$nomBDCible." vide","","","0");
 				$dumpTable = true;
 			}
 			// ==> faire un dump de la table source
@@ -419,7 +438,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			}
 			// Lecture de la table $tables[$cpt] dans la base source (BD_PPEAO dans le cas de la comparaison, 
 			// BD_PECHE dans le cas de la mise à jour)
-			//logWriteTo(4,"notice",$cpt." lecture table ".$nomBDSource." ".$tables[$cpt]," select * from ".$tables[$cpt].$condWhere. " order by id ASC","","1");
+			//logWriteTo(7,"notice",$cpt." lecture table ".$nomBDSource." ".$tables[$cpt]," select * from ".$tables[$cpt].$condWhere. " order by id ASC","","1");
 			//echo "Traitement de la table ".$cpt." sur ".$NbrTableAlire;		
 			
 			// Compteur 
@@ -433,13 +452,13 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$compReadResult = pg_query(${$BDSource},$compReadSql) or die('erreur dans la requete : '.pg_last_error());
 			if (pg_num_rows($compReadResult) == 0) {
 			// La table dans BD_PPEAO est vide
-				//logWriteTo(4,"notice","Table de reference ".$tables[$cpt]." dans ".$nomBDSource." vide","","","0");
+				//logWriteTo(7,"notice","Table de reference ".$tables[$cpt]." dans ".$nomBDSource." vide","","","0");
 				if ($EcrireLogComp ) { WriteCompLog ($logComp,"Table de reference ".$tables[$cpt]." dans ".$nomBDSource." vide",$pasdefichier);}
 				$tableSourceVide = true;
 
 			} else {
 				// La table dans la base source (de référence) n'est pas vide
-				//logWriteTo(4,"notice",$cpt." ".$tables[$cpt]." nombre lignes = ".pg_num_rows($compReadResult)." dans ".$nomBDSource," ","","1");
+				//logWriteTo(7,"notice",$cpt." ".$tables[$cpt]." nombre lignes = ".pg_num_rows($compReadResult)." dans ".$nomBDSource," ","","1");
 				
 				// On va balayer tous les enreg (ligne) de la table controlée
 				while ($compRow = pg_fetch_row($compReadResult) ) {
@@ -461,7 +480,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 						$SQLComp = fopen($dirLog."/".date('y\-m\-d').$typeAction."-".$numfic.".sql", "a+");
 						if (! $SQLComp ) {
 							$messageGen = " erreur de cr&eacute;ation du fichier SQL contenant les scripts";
-							logWriteTo(4,"error","Erreur de creation du fichier de SQL dans comparaison.php","","","0");
+							logWriteTo(7,"error","Erreur de creation du fichier de SQL dans comparaison.php","","","0");
 							echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 							exit;		
 						}	
@@ -501,7 +520,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 						}
 
 						// comparaison avec l'enreg dans l'autre DB
-						//logWriteTo(4,"notice",$cpt." lecture table ".$nomBDCible." ".$tables[$cpt]," select * from ".$tables[$cpt].$where,"","1");
+						//logWriteTo(7,"notice",$cpt." lecture table ".$nomBDCible." ".$tables[$cpt]," select * from ".$tables[$cpt].$where,"","1");
 						$compCibleReadSql = " select * from ".$tables[$cpt].$where ; //
 						$compCibleReadResult = pg_query(${$BDCible},$compCibleReadSql) or die('erreur dans la requete : '.pg_last_error());
 						$compCibleRow = pg_fetch_row($compCibleReadResult); // une seule ligne en retour, pas besoin de faire une boucle
@@ -509,7 +528,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 						if (pg_num_rows($compCibleReadResult) == 0) {
 							// L'enregistrement n'existe pas dans la base cible
 							$cptChampVide++ ;
-							//logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
+							//logWriteTo(7,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
 							if ($EcrireLogComp ) { WriteCompLog ($logComp," MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
 							$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
 							
@@ -522,7 +541,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 									if (!$pasderevSQL ) {
 										WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
 									}
-									//logWriteTo(4,"notice"," Pour ".$tables[$cpt]." ajout de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
+									//logWriteTo(7,"notice"," Pour ".$tables[$cpt]." ajout de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
 								if ($EcrireLogComp ) {WriteCompLog ($logComp," AJOUT script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}
 								} else {
 									// traitement d'erreur ? On arrête ou seulement avertissement ?
@@ -553,10 +572,10 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 								}
 								 else {
 									// différent
-									//logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg different ","","","1");
+									//logWriteTo(7,"notice","id = ".$compRow[$RangId]." enreg different ","","","1");
 									$cptChampDiff++ ;
 									$enregDiff = true;
-									//logWriteTo(4,"notice"," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")","","","1");
+									//logWriteTo(7,"notice"," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")","","","1");
 									if ($EcrireLogComp ) {WriteCompLog ($logComp," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")",$pasdefichier);}
 									break;
 								}
@@ -578,7 +597,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 										if (!$pasderevSQL ) {
 											WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
 										}
-										//logWriteTo(4,"notice"," ==> maj de l'enreg id = ".$compRow[$RangId],$scriptSQL,$scriptDeleteSQL,"0");
+										//logWriteTo(7,"notice"," ==> maj de l'enreg id = ".$compRow[$RangId],$scriptSQL,$scriptDeleteSQL,"0");
 										if ($EcrireLogComp ) {WriteCompLog ($logComp," MAJ script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}										
 									} else {
 										// traitement d'erreur ? On arrête ou seulement avertissement ?
@@ -595,7 +614,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 							} else {
 								// identique
 
-								//logWriteTo(4,"notice","id = ".$compRow[0]." enreg identique ","","","1");
+								//logWriteTo(7,"notice","id = ".$compRow[0]." enreg identique ","","","1");
 							}
 						} // end if (pg_num_rows($compPecheReadResult) == 0)
 					pg_free_result($compCibleReadResult);
@@ -603,7 +622,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					} else { // fin du if (! $dumpTable)
 						// On fait un dump bourrin de la table
 						$tableVide = true;
-						//logWriteTo(4,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
+						//logWriteTo(7,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
 						if ($EcrireLogComp ) { WriteCompLog ($logComp," TOUT MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
 						$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
 						if ($typeAction == "majsc" || $typeAction == "majrec") {
@@ -614,7 +633,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 								if (!$pasderevSQL ) {
 									WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
 								}
-								//logWriteTo(4,"notice"," Pour ".$tables[$cpt]." ajout dans cadre dump de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
+								//logWriteTo(7,"notice"," Pour ".$tables[$cpt]." ajout dans cadre dump de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
 								if ($EcrireLogComp ) {WriteCompLog ($logComp," AJOUT TOUT script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}
 								
 								
@@ -777,8 +796,8 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		
 	
 } else {
-	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">En Test Etape de ".$nomAction." non ex&eacute;cut&eacute;e (var pasdetraitement = true)</div>" ;
-	logWriteTo(4,"error","**- En Test Etape de ".$nomAction." non executee (var pasdetraitement = true)","","","0");
+	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">En Test Etape de ".$nomAction." non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+	logWriteTo(7,"error","**- En Test Etape de ".$nomAction." non executee par choix de l'utilisateur","","","0");
 } // end if (! $pasdetraitement )
 
 

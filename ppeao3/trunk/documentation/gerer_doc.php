@@ -3,7 +3,8 @@
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page
-$section="gestDoc";
+$section="gerer";
+$subsection="documentation";
 $zone=6; // zone edition (voir table admin_zones)
 
 ?>
@@ -86,16 +87,22 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 				}
 				echo "</ul>";
 			}
+			break;
 		case "create" : 
-			echo "veuillez s&eacute;lectionner le fichier à importer.&nbsp;<a id=\"Action\" class=\"link_button\" href=\"\">".$labelBrowse."</a>"	;
-	
+			echo "veuillez s&eacute;lectionner le fichier à importer.&nbsp;
+			
+			<form id=\"gestdoc\" method=\"POST\" action=\"/documentation/upload.php\" enctype=\"multipart/form-data\">
+				 <input type=\"hidden\" name=\"max_file_size\" value=\"100000\">
+				 <input type=\"hidden\" name=\"repName\" value=\"".$repDoc."\">
+				 Fichier : <input type=\"file\" name=\"avatar\">
+				 <input type=\"submit\" name=\"envoyer\" value=\"".$labelBrowse."\">
+			</form>";
+			break;
+
 		
 	} 
 	echo "</div>";
-	echo "<form id=\"gestdoc\" action=\"\">";
-	
-	echo "</form>";
-	
+
 	
 ?>
 <br/>

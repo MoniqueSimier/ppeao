@@ -24,7 +24,7 @@ function WriteCompLog ($fichierlog,$message,$PasAutorisation) {
 //*********************************************************************
 	if (! $PasAutorisation) {
 		if (! fwrite($fichierlog,date('y\-m\-d\-His')."- ".$message."\r\n") ) {
-			logWriteTo(4,"error","Erreur d'ajout dans le fichier de compte rendu (comparaison.php)","","","0");
+			logWriteTo(7,"error","Erreur d'ajout dans le fichier de compte rendu (comparaison.php)","","","0");
 		}
 	}
 }
@@ -44,7 +44,7 @@ function WriteCompSQL ($fichierSQL,$script,$PasAutorisation) {
 //*********************************************************************
 	if (! $PasAutorisation) {
 		if (! fwrite($fichierSQL,$script."\r\n") ) {
-			logWriteTo(4,"error","Erreur d'ajout de script dans le fichier de script (comparaison.php)","","","0");
+			logWriteTo(7,"error","Erreur d'ajout de script dans le fichier de script (comparaison.php)","","","0");
 		}
 	}
 }
@@ -113,11 +113,11 @@ from pg_class as c, pg_attribute as a
 where relname = '".$tableName."' and c.oid = a.attrelid and a.attnum > 0;";
 // Lance la requete dans la base de reference (base source)
 if (!$connectionBD) {
- 	logWriteTo(4,"error","Erreur connection ".$nomBD." dans la fonction getSQL de comparaison.php","","","0");
+ 	logWriteTo(7,"error","Erreur connection ".$nomBD." dans la fonction getSQL de comparaison.php","","","0");
  }
 $getAttrBD = pg_query($connectionBD,$ListAttr) or die('erreur dans la requete : '.pg_last_error());
 if (pg_num_rows($getAttrBD) == 0) {
- 	logWriteTo(4,"error","Erreur dans la lecture definition de la table ".$tableName." dans la BD ".$nomBD." (function // GetSQL portage automatique)","","","0");
+ 	logWriteTo(7,"error","Erreur dans la lecture definition de la table ".$tableName." dans la BD ".$nomBD." (function // GetSQL portage automatique)","","","0");
 } else {
 	while ($getAttrBDRow = pg_fetch_row($getAttrBD)) {
 		// On n'ajoute pas le champs ID
@@ -128,7 +128,7 @@ if (pg_num_rows($getAttrBD) == 0) {
 		// Liste des colonnes
 		// numChamp stocke le numéro d'ordre du champs
 		$numChamp = $getAttrBDRow[2] - 1;
-		//logWriteTo(4,"notice","","numchamp = ".$numChamp." ".$getAttrBDRow[3]." valeur = ".$value[$numChamp],"","1");
+		//logWriteTo(7,"notice","","numchamp = ".$numChamp." ".$getAttrBDRow[3]." valeur = ".$value[$numChamp],"","1");
 		if ($LocListAttrIn1 == "" ) {
  			$LocListAttrIn1 = $getAttrBDRow[1];
 		} else {
@@ -148,7 +148,7 @@ if (pg_num_rows($getAttrBD) == 0) {
 		}
 	}
 	
-	//logWriteTo(4,"notice",$SQLAction." pour ".$tableName." LocListAttr = ".$LocListAttrUp,"","","1");
+	//logWriteTo(7,"notice",$SQLAction." pour ".$tableName." LocListAttr = ".$LocListAttrUp,"","","1");
 } 
 // Etape 2 - on construit l'instruction SQL complète.
 switch ($SQLAction) {
@@ -191,7 +191,7 @@ $compINSResult = pg_query($connectionBD,$scriptSQLToRun);
 error_reporting ($lev); //DEFAULT!!
 if (strlen ($r=pg_last_error ($connectionBD))) {
 	$runQueryOK = false;
-	logWriteTo(4,"error","erreur execution : '".$scriptSQLToRun."'" ,"message = ".$r,"","0");
+	logWriteTo(7,"error","erreur execution : '".$scriptSQLToRun."'" ,"message = ".$r,"","0");
 
 
 }

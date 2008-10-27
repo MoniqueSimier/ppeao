@@ -6,15 +6,15 @@
 			$_SESSION['s_status_process_auto'] = 'ko';
 		}	
 		// On met à jour la table des logs avec les données
-		logWriteTo(4,"notice","**- Compte rendu traitement ".$nomAction,"","","0");
-		logWriteTo(4,"notice","*-- Nombre total de tables lues = ".$_SESSION['s_cpt_table_total'],$_SESSION['s_cpt_table_total'],"","0");
-		logWriteTo(4,"notice","*-- Nombre de tables identiques = ".$_SESSION['s_cpt_table_egal'],$_SESSION['s_cpt_table_egal'],"","0");		
-		logWriteTo(4,"notice","*-- Nombre de tables avec uniquement des donnees differences = ".$_SESSION['s_cpt_table_diff'],$_SESSION['s_cpt_champ_diff'],"","0");
-		logWriteTo(4,"notice","*-- Nombre de tables avec uniquement des donnees manquantes = ".$_SESSION['s_cpt_table_manquant'],$_SESSION['s_cpt_table_manquant'],"","0");
-				logWriteTo(4,"notice","*-- Nombre de tables avec des donnees manquantes et differentes = ".$_SESSION['s_cpt_table_diff_manquant'],$_SESSION['s_cpt_table_diff_manquant'],"","0");
-		logWriteTo(4,"notice","*-- Nombre de tables vides = ".$_SESSION['s_cpt_table_vide'],$_SESSION['s_cpt_table_vide'],"","0");
-		logWriteTo(4,"notice","*-- Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide'],$_SESSION['s_cpt_table_source_vide'],"","0");
-		logWriteTo(4,"notice","*-- Nombre d'erreur lors de la maj = ".$_SESSION['s_cpt_erreurs_sql'],$_SESSION['s_cpt_erreurs_sql'],"","0");
+		logWriteTo(7,"notice","**- Compte rendu traitement ".$nomAction,"","","0");
+		logWriteTo(7,"notice","*-- Nombre total de tables lues = ".$_SESSION['s_cpt_table_total'],$_SESSION['s_cpt_table_total'],"","0");
+		logWriteTo(7,"notice","*-- Nombre de tables identiques = ".$_SESSION['s_cpt_table_egal'],$_SESSION['s_cpt_table_egal'],"","0");		
+		logWriteTo(7,"notice","*-- Nombre de tables avec uniquement des donnees differences = ".$_SESSION['s_cpt_table_diff'],$_SESSION['s_cpt_champ_diff'],"","0");
+		logWriteTo(7,"notice","*-- Nombre de tables avec uniquement des donnees manquantes = ".$_SESSION['s_cpt_table_manquant'],$_SESSION['s_cpt_table_manquant'],"","0");
+				logWriteTo(7,"notice","*-- Nombre de tables avec des donnees manquantes et differentes = ".$_SESSION['s_cpt_table_diff_manquant'],$_SESSION['s_cpt_table_diff_manquant'],"","0");
+		logWriteTo(7,"notice","*-- Nombre de tables vides = ".$_SESSION['s_cpt_table_vide'],$_SESSION['s_cpt_table_vide'],"","0");
+		logWriteTo(7,"notice","*-- Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide'],$_SESSION['s_cpt_table_source_vide'],"","0");
+		logWriteTo(7,"notice","*-- Nombre d'erreur lors de la maj = ".$_SESSION['s_cpt_erreurs_sql'],$_SESSION['s_cpt_erreurs_sql'],"","0");
 	
 		if ($EcrireLogComp ) {
 			// Si on a choisi de générer le log complémentaire, alors
@@ -37,10 +37,10 @@
 				if ($EcrireLogComp ) {
 					WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
 					WriteCompLog ($logComp,"* ATTENTION, des mises a jour sont requises pour les tables ou des enregitrements manquent ou sont differents",$pasdefichier);
-					WriteCompLog ($logComp,"* Scripts SQL pour ces mises a jours presents dans ".$dirLog."/Comparaison.sql",$pasdefichier);
+					WriteCompLog ($logComp,"* Scripts SQL pour ces mises a jours presents dans ".date('y\-m\-d')."-".$nomFicSQL."-xxx.sql",$pasdefichier);
 				}
-				logWriteTo(4,"error","*** Enregistrements differents ou manquants : arret du traitement ==> lancer les mises a jour des enregistrements.","","","0");
-				logWriteTo(4,"error","*** Scripts SQL pour ces mises a jours presents dans ".$dirLog."/Comparaison.sql","","","0");
+				logWriteTo(7,"error","*** Enregistrements differents ou manquants : arret du traitement ==> lancer les mises a jour des enregistrements.","","","0");
+				logWriteTo(7,"error","*** Scripts SQL pour ces mises a jours presents dans ".date('y\-m\-d')."-".$nomFicSQL."-xxx.sql","","","0");
 			} else {
 			// L'avertissement est différent pour la mise à jour
 				if ($EcrireLogComp ) {
@@ -48,7 +48,7 @@
 					WriteCompLog ($logComp,"* ATTENTION, il y a eu des erreurs sur des ajouts / mises a jour de table.",$pasdefichier);
 					WriteCompLog ($logComp,"* Merci de controler avec l'admin BD les integrites des donnees a copier.",$pasdefichier);
 				}
-				logWriteTo(4,"error","*** Erreurs dans l'ajout / mise a jour des donnees : arret du traitement ==> contacter l'admin BD pour un controle des enregistrements de la base a mettre a jour","","","0");
+				logWriteTo(7,"error","*** Erreurs dans l'ajout / mise a jour des donnees : arret du traitement ==> contacter l'admin BD pour un controle des enregistrements de la base a mettre a jour","","","0");
 			}
 				
 		}
@@ -56,45 +56,57 @@
 			WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
 			WriteCompLog ($logComp,"*- FIN TRAITEMENT ".$nomAction,$pasdefichier);
 			WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
-			logWriteTo(4,"notice","*-- Log plus complet disponible dans ".$nomFicLogComp,"","","0");
+			logWriteTo(7,"notice","*-- Log plus complet disponible dans <a href=\"".$nomLogLien."\" target=\"log\">".$nomFicLogComp."</a>","","","0");
 		}
 		// Fin de traitement dans le log
-		logWriteTo(4,"notice","**- Fin traitement de ".$nomAction,$cptTableVide,"","","0");
+		logWriteTo(7,"notice","**- Fin traitement de ".$nomAction,$cptTableVide,"","","0");
 	
 	
 		// ***********************************************
 		// On gére l'affichage a l'ecran d'un compte rendu
+		// Notez que l'ajout du <div id=\"".$nomFenetre."_chk\">Exec= xxxx</div> permet d'avoir un compte rendu plus net (lié au css qui contient un display block pour le div id = nomfenete_txt
 		if ($typeAction == "comp" || $typeAction == "compinv") {
 			if (!$_SESSION['s_erreur_process']) {
 					// Pas de différences
-				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s et toutes les tables sont identiques .<br/>".$CRexecution." ".$messageGen;
+				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." exec. avec succ&egrave;s = toutes tables identiques.";
 				if ($EcrireLogComp ) {
-				echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : ".$nomFicLogComp;
+					echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : <a href=\"".$nomLogLien."\" target=\"log\">".$nomLogLien."</a>";
 				}
-				echo"</div>" ;	
+				echo"</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+				//echo"<div class=\"marginCR\">Compte Rendu&nbsp;<a id=\"v_slidein".$numFen."\" href=\"#\"> Afficher </a>|<a id=\"v_slideout".$numFen."\" href=\"#\"> Fermer </a>| <strong>status</strong>: <span id=\"vertical_status".$numFen."\">open</span>				</div>";
+				echo"<div id=\"vertical_slide".$numFen."\">".$CRexecution." ".$messageGen."</div>";
+				
+				
+				
 			} else {
 				// Différences
-				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s mais des tables sont diff&eacute;rentes et/ou vides. <br/>Des mises &agrave; jour sont n&eacute;cessaires avant de relancer le traitement. (pour info = les scripts SQL pour ces mises a jours pr&eacute;sents dans ".$dirLog."/Comparaison.sql) <br/>".$CRexecution." ".$messageGen;
+				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s mais des tables sont diff&eacute;rentes et/ou vides. <br/>Des mises &agrave; jour sont n&eacute;cessaires avant de relancer le traitement. (pour info = les scripts SQL pour ces mises a jours pr&eacute;sents dans ".date('y\-m\-d')."-".$nomFicSQL."-xxx.sql)";
 				if ($EcrireLogComp ) {
-				echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : ".$nomFicLogComp;
+				echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : <a href=\"".$nomLogLien."\" target=\"log\">".$nomLogLien."</a>";
 				}
-				echo"</div>" ;
+				echo"</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+				//echo"<div class=\"marginCR\">Compte Rendu&nbsp;<a id=\"v_slidein".$numFen."\" href=\"#\"> Afficher </a>|<a id=\"v_slideout".$numFen."\" href=\"#\"> Fermer </a>| <strong>status</strong>: <span id=\"vertical_status".$numFen."\">open</span>				</div>";
+				echo"<div id=\"vertical_slide".$numFen."\">".$CRexecution." ".$messageGen."</div>";
 			}
 		} else {
 			if ( $_SESSION['s_erreur_process']) {
 			// Erreur dans la mise à jour
-				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." Erreur dans l'ajout ou la modification des donn&eacute;es. <br/>".$CRexecution." ".$messageGen;
+				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." Erreur dans l'ajout ou la modification des donn&eacute;es.";
 				if ($EcrireLogComp ) {
-					echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : ".$nomFicLogComp;
+					echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : <a href=\"".$nomLogLien."\" target=\"log\">".$nomLogLien."</a>";
 				}
-				echo"</div>" ;			
+				echo"</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+				//echo"<div class=\"marginCR\">Compte Rendu&nbsp;<a id=\"v_slidein".$numFen."\" href=\"#\"> Afficher </a>|<a id=\"v_slideout".$numFen."\" href=\"#\"> Fermer </a>| <strong>status</strong>: <span id=\"vertical_status".$numFen."\">open</span>				</div>";
+				echo"<div id=\"vertical_slide".$numFen."\">".$CRexecution." ".$messageGen."</div>";			
 			} else {
 			// Aucune erreur dans la mise à jour
-				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." Le contenu des tables a &eacute;t&eacute; ajout&eacute; ou modifi&eacute; avec succ&egrave;s.<br/> ".$CRexecution." ".$messageGen;
+				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." Le contenu des tables a &eacute;t&eacute; ajout&eacute; ou modifi&eacute; avec succ&egrave;s.";
 				if ($EcrireLogComp ) {
-					echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : ".$nomFicLogComp;
+					echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : <a href=\"".$nomLogLien."\" target=\"log\">".$nomLogLien."</a>";
 				}
-				echo"</div>" ;
+				echo"</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+				//echo"<div class=\"marginCR\">Compte Rendu&nbsp;<a id=\"v_slidein".$numFen."\" href=\"#\"> Afficher </a>|<a id=\"v_slideout".$numFen."\" href=\"#\"> Fermer </a>| <strong>status</strong>: <span id=\"vertical_status".$numFen."\">open</span>				</div>";
+				echo"<div id=\"vertical_slide".$numFen."\">".$CRexecution." ".$messageGen."</div>";
 			} // end of statement else of  if ( $ErreurProcess)
 		} // end of statement else of  if ($typeAction = "comp")
 		
@@ -118,9 +130,9 @@
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp,"Interruption gestion timeout pour la table ".$tableEnLecture." et Id = ".$IDEnLecture,$pasdefichier);
 		}
-		logWriteTo(4,"notice","Interruption gestion timeout pour la table ".$tableEnLecture." et Id = ".$IDEnLecture,"","","0");
+		logWriteTo(7,"notice","Interruption gestion timeout pour la table ".$tableEnLecture." et Id = ".$IDEnLecture,"","","0");
 		// test
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Traitement de la table ".$tableEnLecture." (".$_SESSION['s_cpt_table_total']." sur ".$NbrTableAlire." ) / enregistrement ".$cptChampTotal." sur ".$totalLignes." <br/>".$nomAction." en cours (relance pour eviter Timeout : execution en ".$delai." time maxi = ".$max_time.") </div>";
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Table ".$tableEnLecture." (".$_SESSION['s_cpt_table_total']." sur ".$NbrTableAlire." ) / enreg. ".$cptChampTotal." sur ".$totalLignes." <br/>".$nomAction." en cours (execution en ".$delai." time maxi = ".$max_time.") </div>";
 		echo "<form id=\"formtest\"> 
 		<input id=\"nomtable\" 	type=\"hidden\" value=\"".$tableEnLecture."\"/>
 		<input id=\"numID\" 	type=\"hidden\" value=\"".$IDEnLecture."\"/>

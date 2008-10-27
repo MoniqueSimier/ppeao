@@ -6,6 +6,13 @@ $gerer="";
 $consulter="";
 $contacter="";
 $sinformer="";
+$portage="";
+$donnees="";
+$reference="";
+$parametrage="";
+$administration="";
+$journal="";
+$documentation="";
 // adds " active" to the style of each menu entry to highlight the current one in the navigation menu
 switch ($section) {
 	case "home" : $home=" active";

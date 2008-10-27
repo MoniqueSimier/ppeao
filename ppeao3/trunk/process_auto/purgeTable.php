@@ -17,7 +17,7 @@
 session_start();
 $_SESSION['s_status_process_auto'] = 'ok';
 // Variable de test (en fonctionnement production, les deux variables sont false)
-$pasdetraitement = false;
+$pasdetraitement = true;
 $pasdefichier = false; // Variable de test pour linux. Meme valeur que dans comparaison.php
 
 // Include standard
@@ -27,7 +27,15 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 
-
+if (isset($_GET['exec'])) {
+	if ($_GET['exec'] == "false") {
+		$pasdetraitement =  true;
+		$Labelpasdetraitement ="non";
+	} else {
+		$pasdetraitement =  false;
+		$Labelpasdetraitement ="oui";
+	}
+} 
 // Variables
 $nomFenetre="purge";
 $ErreurProcess = false ; // Flag pour le succes du traitement
@@ -55,7 +63,7 @@ if (!$connectPPEAO) {
 	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connection à la base de donn&eacute;es pour maj des logs</div>" ; 
 	exit;
 	}
-logWriteTo(4,"notice","**- Debut lancement sauvegarde portage automatique.","","","0");
+logWriteTo(7,"notice","**- Debut lancement sauvegarde portage automatique.","","","0");
 
 // Paramètres  de sauvegarde
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
@@ -70,34 +78,28 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		}
 
 
-	// Etape 1 de la purge : suppression des fichier de sauvegarde
+	// Etape 1 de la purge : suppression de la base de sauvegarde
 	// **********************************************************
-	$pathBackup = GetParam("repBackupFicRep",$PathFicConf);
-	$pathBackup = $_SERVER["DOCUMENT_ROOT"]."/".$pathBackup;
-	$backupName = GetParam("repBackupFicNom",$PathFicConf);
-	$FicASupp =  $pathBackup."/".$backupName;
-	
-	if (file_exists($FicASupp)) {
-		if (unlink ($FicASupp) ) {
-			$CRexecution = $CRexecution." Suppression du fichier ".$FicASupp." - ";
-		} else {
-			$ErreurProcess = true;
-			$CRexecution = $CRexecution." Erreur suppression fichier ".$FicASupp." - ";
-		};
+	$BDBackup = GetParam("backupNomBD",$PathFicConf);
+	$createBDSQL = "drop database ".$BDBackup;
+	$createBDResult = pg_query($connectPPEAO,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
+	if ($createBDResult) {
+		$CRexecution = "Base de sauvegarde ".$BDBackup." supprim&eacute;e.<br/>";
+		logWriteTo(7,"notice","Base de sauvegarde ".$BDBackup." supprimee.","","","0");
 	} else {
-		$CRexecution = $CRexecution." Pas de fichier de sauvegarde a supprimer - ";
+		$CRexecution = "Erreur suppression ".$BDBackup.".<br/>";
+		logWriteTo(7,"error","erreur suppression de la base de donnee de sauvegarde ".$BDBackup,"","","0");
 	}
-	
 
 
 	// Etape 2 de la purge : nettoyage des fichiers de paramétrage et de référence dans la base bdpeche
 	// **********************************************************
-	$ListeTableAVider = GetParam("listeTableAViderParam",$PathFicConf); 
+	//$ListeTableAVider = GetParam("listeTableAViderParam",$PathFicConf); 
 	$ListeTableAVider = ""; // TEST
 	
 	$tables = explode(",",$ListeTableAVider);
 	$nbTables = count($tables) - 1;
-	logWriteTo(4,"notice"," Nb tables = ".$nbTables ,"","","1");
+	logWriteTo(7,"notice"," Nb tables = ".$nbTables ,"","","1");
 	// Début du traitement de suppression par table.
 	// *********************************************
 	$start_while=timer(); // début du chronométrage du for
@@ -130,9 +132,11 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	
 	if (!$ArretTimeOut) {
 		if ($ErreurProcess) {
-			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur dans le nettoyage des donn&eacute;es. <br/>".$CRexecution;
+			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur dans le nettoyage des donn&eacute;es. </div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>";
+			echo"<div id=\"vertical_slide8\">".$CRexecution."</div>";
 		} else {			
-			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Nettoyage ex&eacute;cut&eacute;e avec succ&egrave;s .<br/>".$CRexecution; 
+			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Nettoyage ex&eacute;cut&eacute;e avec succ&egrave;s.</div><div id=\"purge_chk\">Exec= ".$Labelpasdetraitement."</div>";
+			echo"<div id=\"vertical_slide8\">".$CRexecution."</div>"; 
 		}
 	
 	} else { // End for statement ($ArretTimeOut)
@@ -140,7 +144,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp,"Interruption gestion timeout pour la table ".$tableEnLecture." et Id = ".$IDEnLecture,$pasdefichier);
 		}
-		logWriteTo(4,"notice","Interruption gestion timeout pour la table ".$tableEnLecture." et Id = ".$IDEnLecture,"","","0");
+		logWriteTo(7,"notice","Interruption gestion timeout pour la table ".$tableEnLecture." et Id = ".$IDEnLecture,"","","0");
 		// test
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Nettoyage de la table ".$_SESSION['s_cpt_table_total']." sur ".$nbTables." <br/>(relance pour eviter Timeout : execution en ".$delai." time maxi = ".$max_time.") </div>";
 		echo "<form id=\"formtest\"> 
@@ -149,8 +153,8 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	}
 	
 } else {
-	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">En Test Etape de sauvegarde non ex&eacute;cut&eacute;e (var pasdetraitement = true)</div>" ;
-	logWriteTo(4,"error","**- En Test Etape de sauvegarde non executee (var pasdetraitement = true)","","","0");
+	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Etape de purge non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>";
+	logWriteTo(7,"error","**- Etape de purge non executee par choix de l'utilisateur","","","0");
 }
 
 exit;

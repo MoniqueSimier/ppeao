@@ -9,15 +9,15 @@ $manuel="";
 $manuel_recomp="";
 $manuel_agglo="";
 switch ($subsection) {
-	case "home" : $home=" active";
+	case "home" : $home=" activenv";
 	break;
-	case "auto" : $auto=" active";
+	case "auto" : $auto=" activenv";
 	break;
-	case "manuel_recomp" : $manuel_recomp=" active"; $manuel=" active";
+	case "manuel_recomp" : $manuel_recomp=" active"; $manuel=" activenv";
 	break;
-	case "manuel_agglo" : $manuel_agglo=" active"; $manuel=" active";
+	case "manuel_agglo" : $manuel_agglo=" active"; $manuel=" activenv";
 	break;
-	case "manuel" : $manuel=" active";
+	case "manuel" : $manuel=" activenv";
 	break;
 }
 

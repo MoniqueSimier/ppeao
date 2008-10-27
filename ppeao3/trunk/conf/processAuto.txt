@@ -1,11 +1,8 @@
 ; Configuration ProcessAuto
 ; Configuration Sauvegarde base
-; Repertoire de sauvegarde du fichier dump
-repBackupFicRep=rep_dump;
-; Nom du fichier dump
-repBackupFicNom=sauvegarde.sql;
-; Repertoire contenant le pg_dump
-repPGDump=C:/"Program Files"/PostgreSQL/8.3/bin/;
+; Nom de la BD de sauvegarde
+backupNomBD=ppeaobackup;
+
 
 ; Comparaison / Maj des donnees
 ; Repertoire des fichiers log
