@@ -99,7 +99,6 @@ if (! file_exists($docpath)) {
 					<a id=\"v_slidein\" href=\"#\"> Afficher </a>
 					|
 					<a id=\"v_slideout\" href=\"#\"> Fermer </a>
-					| <strong>status</strong>: <span id=\"vertical_status\">open</span>
 					</div>";
 				if ($affTitre =="y" && !$titreTexte =="" ){
 					echo"<div id=\"vertical_slide\"><h4>".$titreTexte."</h4>".$listDoc."</div>";
@@ -161,7 +160,6 @@ function displayDocumentation ($docTexte) {
 		<a id=\"v_slidein\" href=\"#\"> Afficher </a>
 		|
 		<a id=\"v_slideout\" href=\"#\"> Fermer </a>
-		| <strong>status</strong>: <span id=\"vertical_status\">open</span>
 	</div>
 	<div id=\"vertical_slide\">".$docTexte."</div>";
 	}

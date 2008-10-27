@@ -21,32 +21,23 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 		?>
 		<script type="text/javascript" charset="iso-8859-15">
 		/* <![CDATA[ */		
-		
 		window.addEvent('domready', function() {
-			var status = {
-				'true': 'Ouvert',
-				'false': 'Ferm&eacute;'
-			};
-			//-vertical
-			var myVerticalSlide = new Fx.Slide('vertical_slide');
-			myVerticalSlide.hide();
-			$('vertical_status').set('html', status[myVerticalSlide.open]);
+			var mySlide = new Fx.Slide('vertical_slide');
+			mySlide.hide();
 			$('v_slidein').addEvent('click', function(e){
+				e = new Event(e);
+				mySlide.slideIn();
 				e.stop();
-				myVerticalSlide.slideIn();
 			});
+			 
 			$('v_slideout').addEvent('click', function(e){
+				e = new Event(e);
+				mySlide.slideOut();
 				e.stop();
-				myVerticalSlide.slideOut();
 			});
-			
-			// When Vertical Slide ends its transition, we check for its status
-			// note that complete will not affect 'hide' and 'show' methods
-			myVerticalSlide.addEvent('complete', function() {
-				$('vertical_status').set('html', status[myVerticalSlide.open]);
-			});
-		});
 		
+		});
+	
 		/* ]]> */
 		</script>
 		<title>ppeao::extraction des donn&eacute;es</title>
