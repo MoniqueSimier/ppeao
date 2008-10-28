@@ -76,9 +76,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				// On contrôle art_debarquement
 				$connectionTest =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 				$queryTest = "select count(id) FROM art_debarquement";
-				$resultTest = pg_query(connectionTest, $queryTest);
+				$resultTest = pg_query($connectionTest, $queryTest);
 				$rowTest= pg_fetch_row($resultTest);
-				$nb_deja_recTest = $row[0];
+				$nb_deja_recTest = $rowTest[0];
 				if ($nb_deja_recTest == 0){
 					$continueTrait = false;
 					$messageinfo = "art_debarquement est vide. Pas de recomposition possible";
@@ -88,9 +88,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				if ($continueTrait) {
 					// On contrôle maintenant art_activite
 					$queryTest = "select count(id) FROM art_activite";
-					$resultTest = pg_query(connectionTest, $queryTest);
+					$resultTest = pg_query($connectionTest, $queryTest);
 					$rowTest= pg_fetch_row($resultTest);
-					$nb_deja_recTest = $row[0];
+					$nb_deja_recTest = $rowTest[0];
 					if ($nb_deja_recTest == 0){
 						$continueTrait = false;
 						$messageinfo = "art_activite est vide. Pas de recomposition possible";
