@@ -32,7 +32,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 ?>
 
 <div id="main_container" class="edition">
-<h1>g&eacute;rer les tables de donn&eacute;es</h1>
+<h1>G&eacute;rer les tables de donn&eacute;es</h1>
 <!-- édition des tables de référence -->
 <?php
 

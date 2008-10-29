@@ -57,7 +57,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 
 <div id="main_container" class="home">
 
-<h1>journal des activit&eacute;s</h1>
+<h1>Journal des activit&eacute;s</h1>
 
 <?php
 
