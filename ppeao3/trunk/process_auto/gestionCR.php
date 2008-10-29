@@ -110,37 +110,25 @@
 			} // end of statement else of  if ( $ErreurProcess)
 		} // end of statement else of  if ($typeAction = "comp")
 		
-		// ************************************
-		// Fin du traitement, on reinitialise les compteurs pour la prochaine utilisation de ce programme
-		$_SESSION['s_cpt_champ_total'] = 0 ;
-		$_SESSION['s_cpt_champ_diff'] = 0 ;
-		$_SESSION['s_cpt_champ_egal'] = 0 ;
-		$_SESSION['s_cpt_champ_vide'] = 0 ;
-		$_SESSION['s_cpt_table_total'] = 0 ;
-		$_SESSION['s_cpt_table_diff'] = 0 ;
-		$_SESSION['s_cpt_table_egal'] = 0 ;
-		$_SESSION['s_cpt_table_vide'] = 0 ;
-		$_SESSION['s_cpt_table_manquant'] = 0 ; 
-		$_SESSION['s_num_encours_fichier_SQL'] = 1;
-		$_SESSION['s_cpt_erreurs_sql']= 0;
-		
+	
 		//Gestion du compte_rendu envoyé par mail
 		if (isset ($_GET['adresse'])) {
 			$to = $_GET['adresse'];
 			// Subject
-			$subject = "Base de données ".pg_dbname($connectPPEAO);
+			$subject = $typeAction." pour la base de donnees ".pg_dbname($connectPPEAO);
 			// Message
-			$msg = 'Fin du taitement de recomposition des données';
+			$msg = "Vous trouverez ci-dessous le compte-rendu pour le traitement ".$nomAction."\r\n \r\n";
 			
-			$msg ="******************************************\r\n";
-			$msg .="* Compte rendu traitement \r\n";
+			$msg .="******************************************\r\n";
+			$msg .="* Compte rendu traitement ".$nomAction." \r\n";
+			$msg .="*- source : ".$nomBDSource." cible : ".$nomBDCible." \r\n";
 			$msg .="******************************************\r\n";
 			$msg .="* Nombre total de tables lues = ".$_SESSION['s_cpt_table_total']."\r\n";
 			$msg .="* Nombre de tables identiques = ".$_SESSION['s_cpt_table_egal']."\r\n";
 			$msg .="* Nombre de tables avec uniquement des donnees differentes = ".$_SESSION['s_cpt_table_diff']."\r\n";
 			$msg .="* Nombre de tables avec uniquement des donnees manquantes = ".$_SESSION['s_cpt_table_manquant']."\r\n";
 			$msg .="* Nombre de tables avec des donnees manquantes et differentes = ".$_SESSION['s_cpt_table_diff_manquant']."\r\n";
-			$msg .="* Nombre de tables vides = ".$_SESSION['s_cpt_table_vide']."/n"; 
+			$msg .="* Nombre de tables vides = ".$_SESSION['s_cpt_table_vide']."\r\n"; 
 			$msg .="* Pour info Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide']."\r\n";
 			// Affichage d'avertissement si erreur dans le traitement
 			if ($_SESSION['s_erreur_process']) {
@@ -158,7 +146,7 @@
 				}
 			}
 			$msg .="*---------------------------------------------\r\n";
-			$msg .="*- FIN TRAITEMENT /n";
+			$msg .="*- FIN TRAITEMENT ".$typeAction." \r\n";
 			$msg .="*---------------------------------------------\r\n";
 			// Headers
 			$headers = 'From: base_PPEAO'."\r\n";
@@ -166,6 +154,21 @@
 			// Function mail()
 			mail($to, $subject, $msg, $headers);
 		}
+		// ************************************
+		// Fin du traitement, on reinitialise les compteurs pour la prochaine utilisation de ce programme
+		$_SESSION['s_cpt_champ_total'] = 0 ;
+		$_SESSION['s_cpt_champ_diff'] = 0 ;
+		$_SESSION['s_cpt_champ_egal'] = 0 ;
+		$_SESSION['s_cpt_champ_vide'] = 0 ;
+		$_SESSION['s_cpt_table_total'] = 0 ;
+		$_SESSION['s_cpt_table_diff'] = 0 ;
+		$_SESSION['s_cpt_table_egal'] = 0 ;
+		$_SESSION['s_cpt_table_vide'] = 0 ;
+		$_SESSION['s_cpt_table_manquant'] = 0 ; 
+		$_SESSION['s_num_encours_fichier_SQL'] = 1;
+		$_SESSION['s_cpt_erreurs_sql']= 0;
+		
+		
 		
 	} else { // End for statement ($ArretTimeOut)
 	// Le traitement est relancé pour cause de timeout, on met a jour le(s) log(s)
