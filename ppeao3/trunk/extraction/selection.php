@@ -37,7 +37,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 	<?php 
 	// le menu horizontal
 	include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
-	
+	?>
+	<div id="main_container" class="home">	
+	<?php
 	if (isset($_SESSION['s_ppeao_user_id'])){ // a implementer partout + deploiement de loginform_s.php et function_ppeao.php
 		$userID = $_SESSION['s_ppeao_user_id'];
 	} else {
@@ -48,7 +50,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 	if (userHasAccess($userID,$zone)) {
 	
 	?>
-		<div id="main_container" class="home">
+
 
 		<?php
 		//connection à la BD
@@ -77,9 +79,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 		<?php
 		if(isset($_POST['type']))
 			{
-			if ($type=="artisanale")$entete = "consultation / extraction de donn&eacute;es de p&ecirc;che artisanales";
-			else if ($type=="scientifique")$entete = "consultation / extraction de donn&eacute;es de p&ecirc;che scientifiques";
-			else if ($type=="statistique")$entete = "consultation / extraction de donn&eacute;es statistiques";
+			if ($type=="artisanale")$entete = "Consultation / extraction de donn&eacute;es de p&ecirc;che artisanales";
+			else if ($type=="scientifique")$entete = "Consultation / extraction de donn&eacute;es de p&ecirc;che scientifiques";
+			else if ($type=="statistique")$entete = "Consultation / extraction de donn&eacute;es statistiques";
 			}
 			
 		?>
@@ -2545,7 +2547,7 @@ pg_close();
 
 </div>
 
-		</div>	<!-- end div id="main_container"-->
+		
 
 
 <?php 
@@ -2562,5 +2564,6 @@ else {userAccessDenied($zone);}
 include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
 
 ?>
+</div>	<!-- end div id="main_container"-->
 </body>
 </html>

@@ -76,6 +76,7 @@ if ( $fieldType == "integer" or $fieldType == "real") {
 	if ($value == null) {
 		$formattedValue = "NULL";
 	} else {
+		$value = str_replace("'","''",$value);
 		$formattedValue = "'".$value."'";
 	}
 }	

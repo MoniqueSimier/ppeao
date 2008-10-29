@@ -285,6 +285,8 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		case "compinv":
 			// Comparaison
 			$listTable = GetParam("listeTableCompInv",$PathFicConf);
+			$AjoutTable = GetParam("listeTableComp",$PathFicConf);
+			$listTable = $listTable.",".$AjoutTable;
 			//$listTable="ref_espece"; //TEST
 			 break;
 		case "majsc":
@@ -296,8 +298,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		case "majrec":
 		// Données recomposées à mettre à jour
 			$listTable = GetParam("listeTableMajrec",$PathFicConf);
-//"art_debarquement_rec,art_fraction_rec,art_stat_gt,art_stat_gt_sp,art_stat_sp,art_stat_totale,art_taille_gt_sp,art_taille_sp,art_activite,art_debarquement,art_engin_activite,art_engin_peche,art_fraction,art_lieu_de_peche,art_poisson_mesure,art_unite_peche"
-			//$listTable="art_debarquement"; //TEST
+			//$listTable="art_unite_peche,art_lieu_de_peche,art_debarquement"; //TEST
 			 break;
 	}
 	$NbrTableAlire = substr_count($listTable,",");
@@ -364,6 +365,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		$tableSourceVide = false;
 		$dumpTable = false;
 		if ($tableEnCours == "") {
+			$ErreurProcess=false;
 			$cptTableTotal++;
 			$_SESSION['s_cpt_champ_total'] 	= 0;
 			$_SESSION['s_cpt_champ_diff']	= 0;

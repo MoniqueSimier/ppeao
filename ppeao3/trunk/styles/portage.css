@@ -5,7 +5,7 @@
 	padding-left:2px;
 	width: 15%;
 	font-size:75%;
-	min-height:740px;
+	min-height:810px;
 
 	text-align:left;
 	vertical-align:text-top;
@@ -24,7 +24,9 @@
 	min-height:740px;
 	background-color:#FFFFFF;
 }
-
+.portageInfo{
+font-size:80%;
+}
 .navbarlink {
 	font-weight:normal;
 	padding: 0px;
@@ -49,7 +51,8 @@
 	margin-left:10px;
 }
 .sublistmenuitem{
-list-style-type:none;
+	list-style-type:none;
+	color				: #7C8781;
 }
 
 #version{

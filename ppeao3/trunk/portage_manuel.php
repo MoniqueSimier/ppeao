@@ -1,7 +1,8 @@
 <?php 
 // Mis à jour par Olivier ROUX, 29-07-2008
 // definit a quelle section appartient la page
-$section="portage";
+$section="gerer";
+$subsection="portage";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 
@@ -22,42 +23,43 @@ $zone=3; // zone portage (voir table admin_zones)
 <?php 
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
-
-	if (isset($_SESSION['s_ppeao_user_id'])){ 
-		$userID = $_SESSION['s_ppeao_user_id'];
-	} else {
-		$userID=null;
-	}
-	
-	// on teste à quelle zone l'utilisateur a accès
-	if (userHasAccess($userID,$zone)) {{
 ?>
 <div id="main_container" class="home">
+	<?php
+		if (isset($_SESSION['s_ppeao_user_id'])){ 
+			$userID = $_SESSION['s_ppeao_user_id'];
+		} else {
+			$userID=null;
+		}
+		
+		// on teste à quelle zone l'utilisateur a accès
+		if (userHasAccess($userID,$zone)) {
+	?>
+
 		<div id="BDDetail">
 		<?php  $subsection="manuel"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
 		<?php  include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 		</div>
 		<div id="subContent">
-		<h1>Base de donn&eacute;es PPEAO</h1>
+		<h1>Recomposition des donn&eacute;es et calcul des statistiques</h1>
 		<br/>
-		<p>Peuplements de poissons et P&ecirc;che artisanale des Ecosyst&egrave;mes estuariens,</p>
-		<p>lagunaires ou continentaux d’Afrique de l’Ouest</p>
 		<br/>
 		<p>Cette section reprend les traitements manuel d&eacute;velopp&eacute;s dans le lot 2 PPEAO r&eacute;alis&eacute;s en 2007.</p>
+		<ul class="list">
+			<li class="listitem"><a href="/recomposition/rec_choix_base.php" ><b>Recomposition donn&eacute;es</b></a></li>
+			<li class="listitem"><a href="/statistiques/stat_choix_base.php" ><b>Stats p&ecirc;che par aggl</b></a></a>
+		</ul>
 		</div>	
 	
-</div>		<!-- end div id="main_container"-->
-
-
 <?php 
-// note : on termine la boucle testant si l'utilisateur a accs ˆ la page demandŽe
+// note : on termine la boucle testant si l'utilisateur a acces a la page demandae
 
 ;} // end if (userHasAccess($_SESSION['user_id'],$zone))
 
-// si l'utilisateur n'a pas accs ou n'est pas connectŽ, on affiche un message l'invitant ˆ contacter un administrateur pour obtenir l'accs
+// si l'utilisateur n'a pas acces ou n'est pas connecte, on affiche un message l'invitant a contacter un administrateur pour obtenir l'acces
 else {userAccessDenied($zone);}
 
 ?>
-
+	</div>		<!-- end div id="main_container"-->
  </body>
 </html>

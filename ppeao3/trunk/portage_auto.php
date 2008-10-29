@@ -29,43 +29,47 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 <?php 
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
-
-	if (isset($_SESSION['s_ppeao_user_id'])){ 
-		$userID = $_SESSION['s_ppeao_user_id'];
-	} else {
-		$userID=null;
-	}
-	
-	// on teste à quelle zone l'utilisateur a accès
-	if (userHasAccess($userID,$zone)) {
-	$_SESSION['s_cpt_champ_total'] = 0;	// Lecture d'une table, nombre d'enregistrements lus total
-	$_SESSION['s_cpt_champ_diff'] = 0;	// Lecture d'une table, nombre d'enregistrements différents
-	$_SESSION['s_cpt_champ_vide'] = 0;	// Lecture d'une table, nombre d'enregistrements vide
-	$_SESSION['s_cpt_table_total'] = 0;	// Nombre global de tables lues
-	$_SESSION['s_cpt_table_diff'] = 0;	// Nombre global de tables différentes entre reference et cible
-	$_SESSION['s_cpt_table_egal'] = 0;	// Nombre global de tables identiques entre reference et cible
-	$_SESSION['s_cpt_table_vide'] = 0;	// Nombre global de tables vides dans cible 
-	$_SESSION['s_cpt_table_source_vide'] = 0;	// Nombre global de tables vides dans source 
-	$_SESSION['s_cpt_table_manquant'] = 0;	// Nombre global de tables avec des enreg manquants dans cible 
-	$_SESSION['s_num_encours_fichier_SQL'] = 1; // Numero du fichier SQL en cours
-	$_SESSION['s_cpt_lignes_fic_sql'] = 0;		// Nombre de lignes dans le fichier SQL en cours
-	$_SESSION['s_cpt_table_diff_manquant'] = 0;
-	$_SESSION['s_erreur_process'] = false;
-	$_SESSION['s_cpt_erreurs_sql'] = 0;
-	$_SESSION['s_CR_processAuto'] = "";
-
 ?>
-		<div id="main_container" class="home">
+	<div id="main_container" class="home">
+		<?php
+			if (isset($_SESSION['s_ppeao_user_id'])){ 
+				$userID = $_SESSION['s_ppeao_user_id'];
+			} else {
+				$userID=null;
+			}
+			
+			// on teste à quelle zone l'utilisateur a accès
+			if (userHasAccess($userID,$zone)) {
+			$_SESSION['s_cpt_champ_total'] = 0;	// Lecture d'une table, nombre d'enregistrements lus total
+			$_SESSION['s_cpt_champ_diff'] = 0;	// Lecture d'une table, nombre d'enregistrements différents
+			$_SESSION['s_cpt_champ_vide'] = 0;	// Lecture d'une table, nombre d'enregistrements vide
+			$_SESSION['s_cpt_table_total'] = 0;	// Nombre global de tables lues
+			$_SESSION['s_cpt_table_diff'] = 0;	// Nombre global de tables différentes entre reference et cible
+			$_SESSION['s_cpt_table_egal'] = 0;	// Nombre global de tables identiques entre reference et cible
+			$_SESSION['s_cpt_table_vide'] = 0;	// Nombre global de tables vides dans cible 
+			$_SESSION['s_cpt_table_source_vide'] = 0;	// Nombre global de tables vides dans source 
+			$_SESSION['s_cpt_table_manquant'] = 0;	// Nombre global de tables avec des enreg manquants dans cible 
+			$_SESSION['s_num_encours_fichier_SQL'] = 1; // Numero du fichier SQL en cours
+			$_SESSION['s_cpt_lignes_fic_sql'] = 0;		// Nombre de lignes dans le fichier SQL en cours
+			$_SESSION['s_cpt_table_diff_manquant'] = 0;
+			$_SESSION['s_erreur_process'] = false;
+			$_SESSION['s_cpt_erreurs_sql'] = 0;
+			$_SESSION['s_CR_processAuto'] = "";
+		
+		?>
+
 			<div id="BDDetail">
 				<?php  $subsection="auto"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
 				<?php  include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 			</div>
 			<div id="subContent">
-				<h1>Base de donn&eacute;es PPEAO</h1>
-				<p>Peuplements de poissons et P&ecirc;che artisanale des Ecosyst&egrave;mes estuariens,
-				lagunaires ou continentaux d'Afrique de l'Ouest</p>
+				<h1>Import / recalcul de données automatique dit &quot;Portage Automatique&quot;</h1>
 				<br/>
 				<p>Ce processus permet un portage automatique des bases issues des bases access dans la base principale PPEAO.</p>
+				<p class="portageInfo">Les diff&eacute;rents traitements sont d&eacute;taill&eacute;s ci-dessous. Vous pouvez choisir de lancer tout ou partie des traitements.<br/>
+				Une erreur sur un traitement entra&icirc;ne l'arr&ecirc;t de l'ensemble du processus.<br/>
+				Une base de sauvegarde est cr&eacute;&eacute;e en d&eacute;but de traitement. Elle peut &ecirc;tre utilis&eacute;e pour restaurer la base de r&eacute;f&eacute;rence en cas de probl&egrave;mes. <br/>
+				Un fichier de log compl&eacute;mentaire permet d'avoir l'ensemble des avertissements ou informations sur le traitement. </p>
 				<br/>
 				<?php // get the help/documentation for this page 
 				getDocumentation("portage_auto","icone","n","");
@@ -83,11 +87,12 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				?>
 				<div id="runProcess">
 				<form id="formProcessAuto">
-					Vous pouvez saisir une adresse mail pour recevoir le compte-rendu de traitement de recomposition automatique.<br/>
+					Vous pouvez saisir une adresse mail pour recevoir le compte-rendu de traitement de recomposition automatique.
 					<input type="text" name="adresse" id="adresse"/>
 					<br/>
-					<input type="checkbox" name="logsupp" id="logsupp" checked="checked"/>G&eacute;n&eacute;rer un fichier de log sp&eacute;cial (attention, peut ralentir le processus)<br/><br/>
+
 					<input id="startProcess" type="button" value="Lancer le traitement" onClick="runProcess()"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
 					<?php  // Input pour recomposition automatique ?>
 					<input type="hidden" id="BDName" value="<?php  echo "$bdd"; ?>">
 					<input type="hidden" id="NBEnr" value="<?php   echo "$nb_enr";?>" >
@@ -173,7 +178,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 					<input id="valStatusProc" value="ok" type="hidden"/>
 				</form>
 			</div>
-		</div>	<!-- end div id="main_container"-->
+
 
 
 <?php 
@@ -189,5 +194,6 @@ else {userAccessDenied($zone);}
 include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
 
 ?>	
+	</div>	<!-- end div id="main_container"-->
 	</body>
 </html>

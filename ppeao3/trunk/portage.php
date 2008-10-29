@@ -24,28 +24,33 @@ $zone=3; // zone portage (voir table admin_zones)
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
+?>
+<div id="main_container" class="home">
+<?php 
 // on teste à quelle zone l'utilisateur a accès
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 ?>
 
-<div id="main_container" class="home">
+
 		<div id="BDDetail">
 		<?php  $subsection="home"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
 		<?php  include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 		</div>
 		<div id="subContent">
-		<h1>Base de donn&eacute;es PPEAO</h1>
+		<h1>Import / recalcul de donn&eacute;es : lancement en manuel ou en automatique</h1>
 		<br/>
 		<p>Cette section vous permet de lancer les traitements sp&eacute;cifiques sur les bases de donn&eacute;es import&eacute;es.</p>
-		<br/>
-		<p>Le traitement peut &ecirc;tre soit manuel (traitement pas &agrave; pas sans sauvegarde) soit automatique (inclus les sauvegardes).</p>
+		<p>Le portage automatique va permettre de lancer l'import de donn&eacute;es depuis la base r&eacute;ceptacle des donn&eacute;es de terrain dans la base de r&eacute;f&eacute;rence PPEAO.</p>
+		<p>Ce portage automatique va effetuer un certain nombre de contr&ocirc;le pour assurer la qualit&eacute; des donn&eacute;es import&eacute;es et lancera automatiquement les programmes de recalcul.</p>
+		<p>Ces programmes peuvent &ecirc;tre aussi lanc&eacute;s &agrave; la demande depuis le portage manuel.  </p>
+		<p>&nbsp;</p>
 		<ul class="list">
 			<li class="listitem"><a href="/portage_auto.php" ><b>Portage automatique</b></a></li>
 			<li class="listitem"><a href="/portage_manuel.php" ><b>Portage manuel</b></a>
 		</ul>
 		</div>	
 	
-</div> <!-- end div id="main_container"-->
+
 
 
 <?php 
@@ -62,6 +67,6 @@ else {userAccessDenied($zone);}
 include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
 
 ?>
-
- </body>
+</div> <!-- end div id="main_container"-->
+</body>
 </html>

@@ -1,7 +1,8 @@
 <?php
 // Mis à jour par Olivier ROUX, 29-07-2008
 // definit a quelle section appartient la page
-$section="portage";
+$section="gerer";
+$subsection="portage";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 $zone=3; // zone portage (voir table admin_zones)
@@ -22,10 +23,13 @@ $zone=3; // zone portage (voir table admin_zones)
 		 <?php
 		// le menu horizontal
 		include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
+		?>
+		<div id="main_container" class="home">		
+		<?php
 			// on teste à quelle zone l'utilisateur a accès
 			if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 		?>
-		<div id="main_container" class="home">
+
 			<div id="BDDetail">
 			<?php $subsection="manuel_agglo"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
 			<?php include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
@@ -55,7 +59,7 @@ $zone=3; // zone portage (voir table admin_zones)
 	
 				</div>
 			</div>	
-		</div>			<!-- end div id="main_container"-->
+
 
 
 <?php
@@ -67,5 +71,10 @@ $zone=3; // zone portage (voir table admin_zones)
 else {userAccessDenied($zone);}
 
 ?>
+<?php 
+include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
+
+?>
+		</div>			<!-- end div id="main_container"-->
 	</body>
 </html>

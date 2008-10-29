@@ -129,19 +129,19 @@ function stateChanged1()
 
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "comparaison" ;
-				nomURL = "action=comp&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+compExec;
+				nomURL = "action=comp&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+compExec+"&adresse="+adresse;
 				texte = "Comparaison du referentiel / parametrage de reference en cours...";
 			  break;    
 			case 2:
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "comparaisonInv" ;
-				nomURL = "action=compinv&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+compInvExec;
+				nomURL = "action=compinv&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+compInvExec+"&adresse="+adresse;
 				texte = "Comparaison du parametrage de BDPECHE en cours...";
 			  break;
 			case 3:
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "copieScientifique" ;
-				nomURL = "action=majsc&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+majscExec;
+				nomURL = "action=majsc&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+majscExec+"&adresse="+adresse;
 				texte = "Copie des donn&eacute;es scientifiques en cours...";
 			  break;
 			case 4:
@@ -159,7 +159,7 @@ function stateChanged1()
 			case 6:
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "copieRecomp" ;
-				nomURL = "action=majrec&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+majrecExec;
+				nomURL = "action=majrec&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+majrecExec+"&adresse="+adresse;
 				texte = "Copie des donn&eacute;es recompos&eacute;es en cours...";
 			  break;
 			case 7:
