@@ -226,6 +226,8 @@ $tableSql='	SELECT * FROM '.$tablesDefinitions[$editTable]["table"].'
 $tableResult=pg_query($connectPPEAO,$tableSql) or die('erreur dans la requete : '.$tableSql. pg_last_error());
 $tableArray=pg_fetch_all($tableResult);
 
+//debug echo('<pre>');print_r($tableArray);echo('</pre>');
+
 // libération du résultat
 pg_free_result($tableResult);}
 
@@ -241,7 +243,7 @@ if ($countTotal>$rowsPerPage) {
 	}
 
 ?>
-<h1>votre s&eacute;lection : <?php echo($countTotal.' '.$tablesDefinitions[$editTable]["label"].' sur '.$countAllTotal.' '.$paginationString);?><span class="showHide"><a id="add_new_record" href="#" onclick="modalDialogAddRecord(1,'<?php echo($editTable) ?>');">[ajouter un enregistrement]</a></span></h1>
+<h1>votre s&eacute;lection : <?php echo($countTotal.' "'.$tablesDefinitions[$editTable]["label"].'" sur '.$countAllTotal.' '.$paginationString);?><span class="showHide"><a id="add_new_record" href="#" onclick="modalDialogAddRecord(1,'<?php echo($editTable) ?>');">[ajouter un enregistrement]</a></span></h1>
 <p class="hint small">aide : pour trier la table, cliquer sur un nom de colonne, cliquer &agrave; nouveau pour inverser l'ordre de tri; pour filtrer la table, saisissez ou choisissez une valeur et appuyez sur ENTR&Eacute;E (le filtrage est cumulatif et de type "commence par" : vous pouvez ajouter % au début de la valeur de filtre pour faire un "contient"); pour &eacute;diter une valeur, cliquer dessus.</p>
 <?php 
 // on affiche la table
@@ -316,7 +318,7 @@ echo('</tr>'); // fin de la ligne de filtre
 // on affiche les résultats si il y en a
 if ($countTotal!=0) {
 	$i=0;
-	/*debug
+	/*debug 
 	echo('<pre>');
 	print_r($tableArray);
 	echo('</pre>');*/
@@ -324,19 +326,20 @@ if ($countTotal!=0) {
 	foreach ($tableArray as $theRow) {
 		// affiche la ligne avec un style différent si c'est un rang pair ou impair 
 		if ( $i&1 ) {$rowStyle='edit_row_odd';} else {$rowStyle='edit_row_even';}
-		echo('<tr id="row_'.$theRow["id"].'" class="'.$rowStyle.'">');
+		$id=$tablesDefinitions[$editTable]["id_col"];
+		echo('<tr id="row_'.$theRow[$id].'" class="'.$rowStyle.'">');
 			// la colonne d'outils
 			echo('<td class="small tools"><div class="tools"><a href="" class="small link_button">supprimer</a></div></td>');
 			
 		
 			foreach ($theRow as $key=>$value) {
 								
-				echo('<td id="edit_cell_'.$key.'_'.$theRow["id"].'" name="edit_cell_'.$key.'_'.$theRow["id"].'" class="small">');
+				echo('<td id="edit_cell_'.$key.'_'.$theRow[$id].'" name="edit_cell_'.$key.'_'.$theRow[$id].'" class="small">');
 				// on doit d'abord rendre la valeur "safe"
 				// on encode la chaine pour la passer au javascript
 				//$value=htmlentities($value, ENT_QUOTES,  'ISO-8859-15', FALSE );
 
-				echo(makeField($cDetails,$editTable,$key,$value,'display='.$theRow["id"],$theUrl));
+				echo(makeField($cDetails,$editTable,$key,$value,'display='.$theRow[$id],$theUrl));
 				
 				//echo($theColumn);
 				echo('</td>');

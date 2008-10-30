@@ -519,52 +519,81 @@ echo('<pre>');
 		switch ($action) {
 
 			case 'display' : 
-			// on encode d'éventuels sauts de ligne pour javascript
-			$valueJS=preg_replace("/\r?\n/", "\\n", addslashes($value));
-			if (empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$valueJS.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
-			break;
+				// il faut tenir compte de deux cas particuliers : les BOOLEAN et les DATE
+				switch ($theDetails["data_type"]) {
+				// les booleens
+				case 'boolean':
+				if (empty($value)) {$value='f';};
+				if ($value=='t' || $value=='oui') {$value='oui';} else {$value='non';};
+				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$value.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
+				break;
+				// le cas générique : on ne fait rien à la valeur
+				default:
+				// on encode d'éventuels sauts de ligne pour javascript
+				$valueJS=preg_replace("/\r?\n/", "\\n", addslashes($value));
+				if (empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$valueJS.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
+				break;
+				} // end switch $theDetails["data type"]
+			
+			break; // end case 'display'
 
 			case 'filter': 	$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input></div>';
 			break;
 			
 			case 'add':
 			case 'edit' :
-				// pour l'édition, on doit prendre en compte la longueur du champ et si il est de type TEXT
-				// type text : on affiche une <textarea> sans limite de taille
-				if ($theDetails["data_type"]=='text') {$theType='textarea';$theMaxLength='';} 
-				// autres types avec un character_maximum_length > valeur par défaut : on affiche une <textarea> avec limite de taille 
-				else {
-					if ($theDetails["character_maximum_length"]>$defaultTextInputMaxLength) {
-						$theType='textarea';$theMaxLength=$theDetails["character_maximum_length"];
-					}
-					// autres types avec un character_maximum_length <= valeur par défaut : on affiche un <inpu type=text>
-					if ($theDetails["character_maximum_length"]<=$defaultTextInputMaxLength) {
+				
+				// il faut tenir compte de deux cas particuliers : les BOOLEAN et les DATE
+				switch ($theDetails["data_type"]) {
+				// les booleens
+				case 'boolean':
+					$theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
+					if ($value=='oui' || $value=='t') {$ouiSelected='selected="selected"'; $nonSelected='';} else {$nonSelected='selected="selected"'; $ouiSelected='';}
+					$theField.='<option value="t" '.$ouiSelected.'>oui</option>';
+					$theField.='<option value="f" '.$nonSelected.'>non</option>';
+					$theField.='</select>';
+				break;
+				
+				// les dates
+				case 'date':
+					$theField='<input title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="10" maxlength="10"  '.$onAction.'></input>';
+				break;
+				
+				default:				
+					// pour l'édition, on doit prendre en compte la longueur du champ et si il est de type TEXT
+					// type text : on affiche une <textarea> sans limite de taille
+						if ($theDetails["data_type"]=='text') {$theType='textarea';$theMaxLength='';} 
+						// autres types avec un character_maximum_length > valeur par défaut : on affiche une <textarea> avec limite de taille 
+						else {
+							if ($theDetails["character_maximum_length"]>$defaultTextInputMaxLength) {
+							$theType='textarea';$theMaxLength=$theDetails["character_maximum_length"];
+							}
+						// autres types avec un character_maximum_length <= valeur par défaut : on affiche un <inpu type=text>
+							if ($theDetails["character_maximum_length"]<=$defaultTextInputMaxLength) {
 						$theType='input';$theMaxLength=$theDetails["character_maximum_length"];
-					}
-				} // end else $theDetails["data_type"]=='text'
+							}
+						} // end else $theDetails["data_type"]=='text'
 
-				// on affiche une <textarea>
-				if ($theType=='textarea') {
+						// on affiche une <textarea>
+							if ($theType=='textarea') {
 
-										
-					// si on a une longueur maximale autorisée pour la <textarea>, on ajoute le javascript de controle
-					// (il est impossible de limiter le contenu d'une <textarea> en HTML)
-					if (!empty($theMaxLength)) {
-						$args='$(\''.$theId.'\'),$(\''.$theId.'_counter\'),'.$theMaxLength.'';
-						$theLengthLimitation='onKeyDown="fieldTextLimiter('.$args.')" onKeyUp="fieldTextLimiter('.$args.')"  onFocus="fieldTextLimiter('.$args.')" onBlur="fieldTextLimiter('.$args.')"';
-						$textRows=round($theMaxLength/$defaultTextInputMaxLength)+1;}
-					else {$theLengthLimitation='';$textRows=$defaultTextRows;}
-					$theField='<textarea id="'.$theId.'" name="'.$theId.'" 
-					cols="'.$defaultTextInputMaxLength.'" rows="'.$textRows.'" '.$theLengthLimitation.'  '.$onAction.'  class="'.$theClass.'">'.stripSlashes($value).'</textarea>
-					<p id="'.$theId.'_counter" class="small"></p>';
-					
-					
-				} // end if textarea
+								// si on a une longueur maximale autorisée pour la <textarea>, on ajoute le javascript de controle
+									// (il est impossible de limiter le contenu d'une <textarea> en HTML)
+										if (!empty($theMaxLength)) {
+											$args='$(\''.$theId.'\'),$(\''.$theId.'_counter\'),'.$theMaxLength.'';
+											$theLengthLimitation='onKeyDown="fieldTextLimiter('.$args.')" onKeyUp="fieldTextLimiter('.$args.')"  onFocus="fieldTextLimiter('.$args.')" onBlur="fieldTextLimiter('.$args.')"';
+											$textRows=round($theMaxLength/$defaultTextInputMaxLength)+1;}
+											else {$theLengthLimitation='';$textRows=$defaultTextRows;}
+											$theField='<textarea id="'.$theId.'" name="'.$theId.'" 
+					cols="'.$defaultTextInputMaxLength.'" rows="'.$textRows.'" '.$theLengthLimitation.'  '.$onAction.'  class="'.$theClass.'">'.stripSlashes($value).'</textarea><p id="'.$theId.'_counter" class="small"></p>';
+							} // end if textarea
 
-				// on affiche un <input>
-				if ($theType=='input') {
-					$theField='<input title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
-				} // end if input
+							// on affiche un <input>
+							if ($theType=='input') {
+							$theField='<input title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
+							} // end if input
+				break; // end default:
+				} //end switch 'data_type'
 			break;
 			
 		} // end switch $action
@@ -638,6 +667,18 @@ else {
 		case 'real': 
 			if (!is_numeric($value)) {$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur doit &ecirc;tre un nombre',"valeur"=>$value);}
 		break;
+		
+		// booleen
+		case 'boolean':
+			if ($value!='t' && $value!='f') {$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur doit &ecirc;tre oui ou non',"valeur"=>$value);}
+		break;
+		
+		//date (format AAAA-mm-jj)
+		case 'date':
+			$theDate=explode("-",$value);
+			if (!checkdate($theDate[1],$theDate[2],$theDate[0])) {$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur doit &ecirc;tre une date au format aaaa-mm-jj',"valeur"=>$value);}
+		break;
+		
 
 		//note : on ne teste pas la longueur des chaines pour les champs text et character varying,
 		//puisque cette contrainte est appliquée à la saisie

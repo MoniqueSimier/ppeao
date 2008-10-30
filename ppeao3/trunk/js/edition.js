@@ -270,7 +270,7 @@ function makeEditable(table,column,value,record,action) {
 // record : l'identifiant unique dans la table de l'enregistrement concerné
 // action : l'action à faire (edit/save/cancel)
 	
-	//debug	alert(value);
+	//debug	alert(record);
 	
 // la cellule concernée
 var theCell=$("edit_cell_"+column+"_"+record);

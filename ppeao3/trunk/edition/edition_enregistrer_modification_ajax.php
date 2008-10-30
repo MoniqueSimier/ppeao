@@ -42,6 +42,10 @@ $cDetail=$cDetails[$editColumn];
 if ($cDetail["data_type"]=='real') {
 	$newValue=str_replace(',','.',$newValue);
 }
+// si la valeur doit être un booleen, on commence par convertir la saisie en true/false
+if ($cDetail["data_type"]=='boolean') {
+	if ($newValue=='oui' || $newValue=='t') {$newValue="t";} else {$newValue="f";}
+}
 
 // on teste la validité de la valeur saisie
 $validityCheck=checkValidity($cDetails,$tablesDefinitions[$editTable]["table"],$editColumn,$newValue);
