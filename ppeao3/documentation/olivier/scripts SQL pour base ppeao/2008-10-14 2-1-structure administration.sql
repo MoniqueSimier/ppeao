@@ -2,21 +2,12 @@
 -- PostgreSQL database dump
 --
 
--- Started on 2008-10-13 15:34:31 CEST
+-- Started on 2008-11-06 15:34:31 CEST
 
 SET client_encoding = 'LATIN9';
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-SET escape_string_warning = off;
-
-
-
-
 SET search_path = public, pg_catalog;
-
-SET default_tablespace = '';
-
-SET default_with_oids = false;
 
 --
 -- Name: admin_dictionary_domains; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
@@ -29,7 +20,6 @@ CREATE TABLE admin_dictionary_domains (
 );
 
 
-ALTER TABLE public.admin_dictionary_domains OWNER TO devppeao;
 
 --
 -- Name: TABLE admin_dictionary_domains; Type: COMMENT; Schema: public; Owner: devppeao
@@ -60,6 +50,39 @@ COMMENT ON COLUMN admin_dictionary_domains.domain_id IS 'identifiant unique';
 
 
 --
+-- Name: admin_dictionary_domains_domain_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE admin_dictionary_domains_domain_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+--
+-- Name: domain_id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_dictionary_domains ALTER COLUMN domain_id SET DEFAULT nextval('admin_dictionary_domains_domain_id_seq'::regclass);
+
+
+--
+-- Name: admin_dictionary_domains_domain_id_key; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_dictionary_domains
+    ADD CONSTRAINT admin_dictionary_domains_domain_id_key UNIQUE (domain_id);
+
+
+--
+-- Name: admin_dictionary_domains_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_dictionary_domains
+    ADD CONSTRAINT admin_dictionary_domains_pkey PRIMARY KEY (domain_id);
+
+
+--
 -- Name: admin_dictionary_tables; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
 --
 
@@ -78,7 +101,6 @@ CREATE TABLE admin_dictionary_tables (
 );
 
 
-ALTER TABLE public.admin_dictionary_tables OWNER TO devppeao;
 
 --
 -- Name: TABLE admin_dictionary_tables; Type: COMMENT; Schema: public; Owner: devppeao
@@ -165,6 +187,112 @@ COMMENT ON COLUMN admin_dictionary_tables.zone_id IS 'identifiant de la zone d''
 
 
 --
+-- Name: admin_tables_dictionary_dico_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE admin_tables_dictionary_dico_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+
+--
+-- Name: admin_tables_dictionary_domain_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE admin_tables_dictionary_domain_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+
+--
+-- Name: admin_tables_dictionary_type_table_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE admin_tables_dictionary_type_table_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+
+--
+-- Name: dico_id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_dictionary_tables ALTER COLUMN dico_id SET DEFAULT nextval('admin_tables_dictionary_dico_id_seq'::regclass);
+
+
+--
+-- Name: type_table_id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_dictionary_tables ALTER COLUMN type_table_id SET DEFAULT nextval('admin_tables_dictionary_type_table_id_seq'::regclass);
+
+
+--
+-- Name: domain_id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_dictionary_tables ALTER COLUMN domain_id SET DEFAULT nextval('admin_tables_dictionary_domain_id_seq'::regclass);
+
+
+--
+-- Name: admin_dictionary_tables_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_dictionary_tables
+    ADD CONSTRAINT admin_dictionary_tables_pkey PRIMARY KEY (dico_id);
+
+
+--
+-- Name: admin_tables_dictionary_handle_key; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_dictionary_tables
+    ADD CONSTRAINT admin_tables_dictionary_handle_key UNIQUE (handle);
+
+
+--
+-- Name: admin_tables_dictionary_table_key; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_dictionary_tables
+    ADD CONSTRAINT admin_tables_dictionary_table_key UNIQUE (table_db);
+
+
+--
+-- Name: admin_dictionary_tables_domain_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_dictionary_tables
+    ADD CONSTRAINT admin_dictionary_tables_domain_id_fkey FOREIGN KEY (domain_id) REFERENCES admin_dictionary_domains(domain_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: admin_dictionary_tables_type_table_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_dictionary_tables
+    ADD CONSTRAINT admin_dictionary_tables_type_table_id_fkey FOREIGN KEY (type_table_id) REFERENCES admin_dictionary_type_tables(type_table_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: admin_dictionary_tables_zone_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_dictionary_tables
+    ADD CONSTRAINT admin_dictionary_tables_zone_id_fkey FOREIGN KEY (zone_id) REFERENCES admin_zones(zone_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+--
 -- Name: admin_dictionary_type_tables; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
 --
 
@@ -175,7 +303,6 @@ CREATE TABLE admin_dictionary_type_tables (
 );
 
 
-ALTER TABLE public.admin_dictionary_type_tables OWNER TO devppeao;
 
 --
 -- Name: TABLE admin_dictionary_type_tables; Type: COMMENT; Schema: public; Owner: devppeao
@@ -206,6 +333,48 @@ COMMENT ON COLUMN admin_dictionary_type_tables.type_table_description IS 'descri
 
 
 --
+-- Name: admin_dictionary_type_tables_type_table_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE admin_dictionary_type_tables_type_table_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+
+--
+-- Name: type_table_id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_dictionary_type_tables ALTER COLUMN type_table_id SET DEFAULT nextval('admin_dictionary_type_tables_type_table_id_seq'::regclass);
+
+
+--
+-- Name: admin_dictionary_type_tables_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_dictionary_type_tables
+    ADD CONSTRAINT admin_dictionary_type_tables_pkey PRIMARY KEY (type_table_id);
+
+
+--
+-- Name: admin_dictionary_type_tables_type_table_id_key; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_dictionary_type_tables
+    ADD CONSTRAINT admin_dictionary_type_tables_type_table_id_key UNIQUE (type_table_id);
+
+
+--
+-- Name: admin_dictionary_type_tables_type_table_nom_key; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_dictionary_type_tables
+    ADD CONSTRAINT admin_dictionary_type_tables_type_table_nom_key UNIQUE (type_table_nom);
+
+--
 -- Name: admin_j_group_zone; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
 --
 
@@ -215,7 +384,6 @@ CREATE TABLE admin_j_group_zone (
 );
 
 
-ALTER TABLE public.admin_j_group_zone OWNER TO devppeao;
 
 --
 -- Name: TABLE admin_j_group_zone; Type: COMMENT; Schema: public; Owner: devppeao
@@ -239,6 +407,29 @@ COMMENT ON COLUMN admin_j_group_zone.zone_id IS 'l''id de la zone à laquelle le 
 
 
 --
+-- Name: admin_j_group_zone_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_j_group_zone
+    ADD CONSTRAINT admin_j_group_zone_pkey PRIMARY KEY (group_id, zone_id);
+
+
+--
+-- Name: admin_j_group_zone_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_j_group_zone
+    ADD CONSTRAINT admin_j_group_zone_group_id_fkey FOREIGN KEY (group_id) REFERENCES admin_usergroups(group_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: admin_j_group_zone_zone_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_j_group_zone
+    ADD CONSTRAINT admin_j_group_zone_zone_id_fkey FOREIGN KEY (zone_id) REFERENCES admin_zones(zone_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+--
 -- Name: admin_j_user_group; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
 --
 
@@ -248,7 +439,6 @@ CREATE TABLE admin_j_user_group (
 );
 
 
-ALTER TABLE public.admin_j_user_group OWNER TO devppeao;
 
 --
 -- Name: TABLE admin_j_user_group; Type: COMMENT; Schema: public; Owner: devppeao
@@ -272,6 +462,30 @@ COMMENT ON COLUMN admin_j_user_group.group_id IS 'id du groupe auquel l''utilisa
 
 
 --
+-- Name: j_user_group_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_j_user_group
+    ADD CONSTRAINT j_user_group_pkey PRIMARY KEY (user_id, group_id);
+
+
+--
+-- Name: admin_j_user_group_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_j_user_group
+    ADD CONSTRAINT admin_j_user_group_group_id_fkey FOREIGN KEY (group_id) REFERENCES admin_usergroups(group_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: admin_j_user_group_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_j_user_group
+    ADD CONSTRAINT admin_j_user_group_user_id_fkey FOREIGN KEY (user_id) REFERENCES admin_users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: admin_j_user_zone; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
 --
 
@@ -281,7 +495,6 @@ CREATE TABLE admin_j_user_zone (
 );
 
 
-ALTER TABLE public.admin_j_user_zone OWNER TO devppeao;
 
 --
 -- Name: TABLE admin_j_user_zone; Type: COMMENT; Schema: public; Owner: devppeao
@@ -305,6 +518,29 @@ COMMENT ON COLUMN admin_j_user_zone.zone_id IS 'ID de la zone à laquelle il a ac
 
 
 --
+-- Name: admin_j_user_zone_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_j_user_zone
+    ADD CONSTRAINT admin_j_user_zone_pkey PRIMARY KEY (user_id, zone_id);
+
+
+--
+-- Name: admin_j_user_zone_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_j_user_zone
+    ADD CONSTRAINT admin_j_user_zone_user_id_fkey FOREIGN KEY (user_id) REFERENCES admin_users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: admin_j_user_zone_zone_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_j_user_zone
+    ADD CONSTRAINT admin_j_user_zone_zone_id_fkey FOREIGN KEY (zone_id) REFERENCES admin_zones(zone_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+--
 -- Name: admin_log; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
 --
 
@@ -320,7 +556,6 @@ CREATE TABLE admin_log (
 );
 
 
-ALTER TABLE public.admin_log OWNER TO devppeao;
 
 --
 -- Name: TABLE admin_log; Type: COMMENT; Schema: public; Owner: devppeao
@@ -386,7 +621,31 @@ COMMENT ON COLUMN admin_log.log_message_type IS 'le type de message (table admin
 
 
 --
--- Name: admin_log_message_types; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+-- Name: admin_log_log_message_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_log
+    ADD CONSTRAINT admin_log_log_message_type_fkey FOREIGN KEY (log_message_type) REFERENCES admin_log_message_types(message_type) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: admin_log_log_module_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_log
+    ADD CONSTRAINT admin_log_log_module_id_fkey FOREIGN KEY (log_module_id) REFERENCES admin_log_modules(module_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: admin_log_log_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_log
+    ADD CONSTRAINT admin_log_log_user_id_fkey FOREIGN KEY (log_user_id) REFERENCES admin_users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: admin_log_message_types; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE admin_log_message_types (
@@ -394,17 +653,23 @@ CREATE TABLE admin_log_message_types (
 );
 
 
-ALTER TABLE public.admin_log_message_types OWNER TO devppeao;
-
 --
--- Name: TABLE admin_log_message_types; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: TABLE admin_log_message_types; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON TABLE admin_log_message_types IS 'contient la liste des types de messages du journal';
 
 
 --
--- Name: admin_log_modules; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+-- Name: admin_log_message_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_log_message_types
+    ADD CONSTRAINT admin_log_message_types_pkey PRIMARY KEY (message_type);
+
+
+--
+-- Name: admin_log_modules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE admin_log_modules (
@@ -413,31 +678,54 @@ CREATE TABLE admin_log_modules (
 );
 
 
-ALTER TABLE public.admin_log_modules OWNER TO devppeao;
-
 --
--- Name: TABLE admin_log_modules; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: TABLE admin_log_modules; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON TABLE admin_log_modules IS 'liste des modules de l''application PPEAO, utilisés pour identifier la source des entrées du journal';
 
 
 --
--- Name: COLUMN admin_log_modules.module_id; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_log_modules.module_id; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_log_modules.module_id IS 'id unique du module';
 
 
 --
--- Name: COLUMN admin_log_modules.module_name; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_log_modules.module_name; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_log_modules.module_name IS 'le nom du module';
 
 
 --
--- Name: admin_usergroups; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+-- Name: admin_log_modules_module_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE admin_log_modules_module_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: module_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE admin_log_modules ALTER COLUMN module_id SET DEFAULT nextval('admin_log_modules_module_id_seq'::regclass);
+
+
+--
+-- Name: admin_log_modules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_log_modules
+    ADD CONSTRAINT admin_log_modules_pkey PRIMARY KEY (module_id);
+
+-
+-- Name: admin_usergroups; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE admin_usergroups (
@@ -448,45 +736,78 @@ CREATE TABLE admin_usergroups (
 );
 
 
-ALTER TABLE public.admin_usergroups OWNER TO devppeao;
-
 --
--- Name: TABLE admin_usergroups; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: TABLE admin_usergroups; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON TABLE admin_usergroups IS 'table contenant les groupes d''utilisateurs';
 
 
 --
--- Name: COLUMN admin_usergroups.group_id; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_usergroups.group_id; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_usergroups.group_id IS 'identifiant unique du groupe';
 
 
 --
--- Name: COLUMN admin_usergroups.group_name; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_usergroups.group_name; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_usergroups.group_name IS 'le nom du groupe';
 
 
 --
--- Name: COLUMN admin_usergroups.group_description; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_usergroups.group_description; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_usergroups.group_description IS 'description du groupe';
 
 
 --
--- Name: COLUMN admin_usergroups.group_active; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_usergroups.group_active; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_usergroups.group_active IS 'le groupe est-il actif ou désactivé?';
 
 
 --
--- Name: admin_users; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+-- Name: admin_users_groups_group_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE admin_users_groups_group_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+
+--
+-- Name: group_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE admin_usergroups ALTER COLUMN group_id SET DEFAULT nextval('admin_users_groups_group_id_seq'::regclass);
+
+
+--
+-- Name: admin_users_groups_group_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_usergroups
+    ADD CONSTRAINT admin_users_groups_group_id_key UNIQUE (group_id);
+
+
+--
+-- Name: admin_users_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_usergroups
+    ADD CONSTRAINT admin_users_groups_pkey PRIMARY KEY (group_id, group_name);
+
+
+--
+-- Name: admin_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE admin_users (
@@ -501,215 +822,71 @@ CREATE TABLE admin_users (
 );
 
 
-ALTER TABLE public.admin_users OWNER TO devppeao;
-
 --
--- Name: TABLE admin_users; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: TABLE admin_users; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON TABLE admin_users IS 'cette table contient les utilisateurs enregistrés';
 
 
 --
--- Name: COLUMN admin_users.user_id; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_users.user_id; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_users.user_id IS 'id unique de l''utilisateur';
 
 
 --
--- Name: COLUMN admin_users.user_name; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_users.user_name; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_users.user_name IS 'nom court d''utilisateur ("login")';
 
 
 --
--- Name: COLUMN admin_users.user_longname; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_users.user_longname; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_users.user_longname IS 'nom complet de l''utilisateur ("paul hair")';
 
 
 --
--- Name: COLUMN admin_users.user_creation_date; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_users.user_creation_date; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_users.user_creation_date IS 'timestamp de la création de l''utilisateur';
 
 
 --
--- Name: COLUMN admin_users.user_active; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_users.user_active; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_users.user_active IS 'true si l''utilisateur est activé, false si il est désactivé';
 
 
 --
--- Name: COLUMN admin_users.user_comment; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_users.user_comment; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_users.user_comment IS 'commentaire sur l''utilisateur';
 
 
 --
--- Name: COLUMN admin_users.user_email; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_users.user_email; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_users.user_email IS 'adresse email de l''utilisateur';
 
 
 --
--- Name: COLUMN admin_users.user_password; Type: COMMENT; Schema: public; Owner: devppeao
+-- Name: COLUMN admin_users.user_password; Type: COMMENT; Schema: public; Owner: -
 --
 
 COMMENT ON COLUMN admin_users.user_password IS 'le mot de passe de l''utilisateur, encrypté';
 
 
 --
--- Name: admin_zones; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
---
-
-CREATE TABLE admin_zones (
-    zone_id integer NOT NULL,
-    zone_name character varying(255) NOT NULL,
-    zone_description character varying(255)
-);
-
-
-ALTER TABLE public.admin_zones OWNER TO devppeao;
-
---
--- Name: TABLE admin_zones; Type: COMMENT; Schema: public; Owner: devppeao
---
-
-COMMENT ON TABLE admin_zones IS 'liste des "zones" du site, pour contôler l''accès à certaines pages';
-
-
---
--- Name: COLUMN admin_zones.zone_id; Type: COMMENT; Schema: public; Owner: devppeao
---
-
-COMMENT ON COLUMN admin_zones.zone_id IS 'l''ID unique de la zone';
-
-
---
--- Name: COLUMN admin_zones.zone_name; Type: COMMENT; Schema: public; Owner: devppeao
---
-
-COMMENT ON COLUMN admin_zones.zone_name IS 'le nom unique de la zone';
-
-
---
--- Name: COLUMN admin_zones.zone_description; Type: COMMENT; Schema: public; Owner: devppeao
---
-
-COMMENT ON COLUMN admin_zones.zone_description IS 'description de la zone';
-
-
---
--- Name: admin_dictionary_domains_domain_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
-
-CREATE SEQUENCE admin_dictionary_domains_domain_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.admin_dictionary_domains_domain_id_seq OWNER TO devppeao;
-
-
-
-
---
--- Name: admin_dictionary_type_tables_type_table_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
-
-CREATE SEQUENCE admin_dictionary_type_tables_type_table_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.admin_dictionary_type_tables_type_table_id_seq OWNER TO devppeao;
-
-
-
---
--- Name: admin_log_modules_module_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
-
-CREATE SEQUENCE admin_log_modules_module_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.admin_log_modules_module_id_seq OWNER TO devppeao;
-
-
---
--- Name: admin_tables_dictionary_dico_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
-
-CREATE SEQUENCE admin_tables_dictionary_dico_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.admin_tables_dictionary_dico_id_seq OWNER TO devppeao;
-
-
---
--- Name: admin_tables_dictionary_domain_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
-
-CREATE SEQUENCE admin_tables_dictionary_domain_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.admin_tables_dictionary_domain_id_seq OWNER TO devppeao;
-
-
---
--- Name: admin_tables_dictionary_type_table_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
-
-CREATE SEQUENCE admin_tables_dictionary_type_table_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.admin_tables_dictionary_type_table_id_seq OWNER TO devppeao;
-
---
--- Name: admin_users_groups_group_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
-
-CREATE SEQUENCE admin_users_groups_group_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.admin_users_groups_group_id_seq OWNER TO devppeao;
-
---
--- Name: admin_users_user_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+-- Name: admin_users_user_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE admin_users_user_id_seq
@@ -720,10 +897,33 @@ CREATE SEQUENCE admin_users_user_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.admin_users_user_id_seq OWNER TO devppeao;
+
+--
+-- Name: user_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE admin_users ALTER COLUMN user_id SET DEFAULT nextval('admin_users_user_id_seq'::regclass);
 
 
--- Name: admin_zones_zone_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+-- Name: admin_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_users
+    ADD CONSTRAINT admin_users_pkey PRIMARY KEY (user_id);
+
+
+--
+-- Name: admin_users_user_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_users
+    ADD CONSTRAINT admin_users_user_name_key UNIQUE (user_name);
+
+
+
+--
+-- Name: admin_zones_zone_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE admin_zones_zone_id_seq
@@ -733,6 +933,25 @@ CREATE SEQUENCE admin_zones_zone_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.admin_zones_zone_id_seq OWNER TO devppeao;
+--
+-- Name: zone_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE admin_zones ALTER COLUMN zone_id SET DEFAULT nextval('admin_zones_zone_id_seq'::regclass);
+
 
 --
+-- Name: admin_zones_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_zones
+    ADD CONSTRAINT admin_zones_pkey PRIMARY KEY (zone_id);
+
+
+--
+-- Name: admin_zones_zone_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_zones
+    ADD CONSTRAINT admin_zones_zone_name_key UNIQUE (zone_name);
+
