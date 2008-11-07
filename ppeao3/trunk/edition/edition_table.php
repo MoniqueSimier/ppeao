@@ -329,7 +329,7 @@ if ($countTotal!=0) {
 		$id=$tablesDefinitions[$editTable]["id_col"];
 		echo('<tr id="row_'.$theRow[$id].'" class="'.$rowStyle.'">');
 			// la colonne d'outils
-			echo('<td class="small tools"><div class="tools"><a href="" class="small link_button">supprimer</a></div></td>');
+			echo('<td class="small tools"><div class="tools"><a href="#" class="small link_button" onclick="javascript:modalDialogDeleteRecord(1,\''.$tablesDefinitions[$editTable]["table"].'\',\''.$theRow[$id].'\')">supprimer</a></div></td>');
 			
 		
 			foreach ($theRow as $key=>$value) {

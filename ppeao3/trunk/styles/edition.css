@@ -167,6 +167,7 @@ padding:6px;
 
 .overlay_window {
 	width:500px;
+	min-height:250px;
 	margin: 100px auto;
 	background-color: #fff;
 	border:1px solid #000;
@@ -181,10 +182,15 @@ padding:6px;
 }
 
 .overlay_buttons {
- text-align:right;
+	text-align:right;
+	min-height:50px;
 }
 
 .overlay_buttons .link_button {
 	margin-left: 12px;
+}
+
+.overlay_content {
+	min-height:190px;
 }
 

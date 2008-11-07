@@ -438,7 +438,7 @@ function modalDialogAddRecord(theLevel,theTable) {
 	}
 	); 
 	
-	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\')" class="small link_button">fermer</a>';
+	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\')" class="small link_button">annuler</a>';
 	
 	
 	theOverlay.injectInside($E('body'));
@@ -599,7 +599,8 @@ xhr.onreadystatechange = function(){
 			// maintenant, on change le comportement du bouton "fermer"
 			var theCloseButton=$('overlay_'+theLevel+'_close');
 			var over='overlay_'+theLevel;
-			theCloseButton.setProperty("onclick","javascript:modalDialogClose(\'"+over+"\',\'refresh\')")
+			theCloseButton.setProperty("onclick","javascript:modalDialogClose(\'"+over+"\',\'refresh\')");
+			theCloseButton.innerHTML='fermer';
 			} // end else isValid
 		} // end if xhr.readyState == 4 && xhr.status == 200
 	
@@ -608,6 +609,144 @@ xhr.onreadystatechange = function(){
 
 // using GET to send the request
 xhr.open("GET","/edition/edition_ajouter_enregistrement_validation_ajax.php?&table="+theTable+"&level="+theLevel+theUrl,true);
+xhr.send(null);
+
+}
+
+
+/**
+* Fonction qui affiche la fenetre de dialogue modale pour supprimer un enregistrement
+* theTable : la table dont on veut supprimer un enregistrement
+* theRecord : l'identifiant unique de l'enregistrement à supprimer
+* theLevel  : le niveau de l'overlay (utilie si on veut afficher plusieurs overlays les uns devant les autres)
+*/
+function modalDialogDeleteRecord(theLevel,theTable, theRecord) {
+		
+	// on crée le nouvel élément
+	
+	var theOverlay=new Element ('div', {
+		'id': "overlay_"+theLevel,
+		'class': "overlay",
+		'style': "z-index:"+theLevel*1000,
+	}
+	);
+	
+	var theOverlayWindow= new  Element ('div', {
+		'id': "overlay_"+theLevel+"_window",
+		'class': "overlay_window",
+	}
+	);
+	
+	var theOverlayContent= new  Element ('div', {
+		'id': "overlay_"+theLevel+"_content",
+		'class': "overlay_content",
+	}
+	);
+	theOverlayContent.innerHTML='<div align="center"><h1>supprimer l&#x27;enregistrement &quot;'+theRecord+'&quot;</h1><h2>recherche des enregistrements utilisant l&#x27;enregistrement &agrave; supprimer comme cl&eacute; &eacute;trang&egrave;re</h2></div>';
+		
+	var theOverlayButtons= new  Element ('div', {
+		'id': "overlay_"+theLevel+"_buttons",
+		'class': "overlay_buttons",
+	}
+	);
+	
+	var theOverlayLoaderDiv =new  Element ('div', {
+		'id': "overlay_"+theLevel+"_loader",
+		'class': "overlay_loader",
+	}
+	); 
+	
+	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\')" class="small link_button">annuler</a>';
+	
+	
+	theOverlay.injectInside($E('body'));
+	theOverlayWindow.injectInside(theOverlay);
+	theOverlayLoaderDiv.injectInside(theOverlayWindow);
+	theOverlayContent.injectInside(theOverlayWindow);
+	theOverlayButtons.injectInside(theOverlayWindow);
+	
+	
+	// on initialise l'objet AJAX	
+	var xhr = getXhr();
+	// what to do when the response is received
+	xhr.onreadystatechange = function(){
+			// en attendant la réponse, on remplace les boutons d'enregistrement/annulation par un loader
+		var theLoader='<div align="center" id="the_loader_'+theLevel+'"><img src="/assets/ajax-loader.gif" alt="chargement en cours..." title="chargement en cours..." valign="center"/></div>';
+		if(xhr.readyState < 4) { theOverlayLoaderDiv.innerHTML = theLoader;}
+		// only do something if the whole response has been received and the server says OK
+		if(xhr.readyState == 4 && xhr.status == 200){
+			var theResponseText = xhr.responseText;
+			
+			// on affiche le message de confirmation de la suppression de l' enregistrement
+			theOverlayLoaderDiv.innerHTML='';
+			theOverlayContent.innerHTML=theResponseText;
+			
+			// on affiche le bouton "enregistrer"			
+			var theDeleteButton=new Element('a', {
+			    'class': 'small link_button',
+			    'href': '#',
+				'id': "overlay_"+theLevel+"_delete",
+				'onclick': 'sendRecordToDelete('+theLevel+',\''+theTable+'\',\''+theRecord+'\')',
+			});
+			theDeleteButton.innerHTML="supprimer";
+			theDeleteButton.injectBefore("overlay_"+theLevel+"_close");
+			
+			// on met à jour la hauteur de l'overlay au cas où le dialogue soit plus haut que l'écran
+			// si on ne fait pas ça, l'overlay ne couvre qu'une partie de la page
+			window.addEvent('domready', function(){
+			// il faudrait trouver comment declarer correctement la hauteur de l'overlay
+			//	var theHeight=$E('body').height;
+			//	alert(theHeight);
+				$('overlay'+"_"+theLevel).setStyle('height','100%');
+				});
+			
+			}  
+	} // end xhr.onreadystatechange
+
+	// using GET to send the request
+	xhr.open("GET","/edition/edition_supprimer_enregistrement_ajax.php?&table="+theTable+"&level="+theLevel+"&record="+theRecord,true);
+	xhr.send(null);
+}
+
+
+/**
+* Fonction pour supprimer l'enregistrement choisi
+*/
+function sendRecordToDelete(theLevel,theTable,theRecord) {
+
+var theDeleteButton=$('overlay_'+theLevel+'_delete');
+var theLoader=$("overlay_"+theLevel+"_loader");
+var theOverlayContent=$("overlay_"+theLevel+"_content");
+// on initialise l'objet AJAX	
+var xhr = getXhr();
+// what to do when the response is received
+xhr.onreadystatechange = function(){
+		
+	if(xhr.readyState < 4) {
+		theDeleteButton.setStyle("visibility","hidden");
+		// en attendant la réponse, on remplace les boutons d'enregistrement/annulation par un loader
+		theLoader.innerHTML='<h1>supprimer l&#x27;enregistrement &quot;'+theRecord+'&quot;</h1><h2>suppression de l&#x27;enregistrement en cours</h2><img src="/assets/ajax-loader.gif" alt="suppression en cours..." title="suppression en cours..." valign="center"/>';
+		theOverlayContent.innerHTML='';
+	}
+	// only do something if the whole response has been received and the server says OK
+	if(xhr.readyState == 4 && xhr.status == 200){
+		theLoader.innerHTML='';
+		var theResponseText = xhr.responseText;
+		// on affiche le résultat de la suppression
+		theOverlayContent.innerHTML=theResponseText;
+				
+			// maintenant, on change le comportement du bouton "fermer" : on raffraichit l'affichage
+			var theCloseButton=$('overlay_'+theLevel+'_close');
+			var over='overlay_'+theLevel;
+			theCloseButton.setProperty("onclick","javascript:modalDialogClose(\'"+over+"\',\'refresh\')");
+			theCloseButton.innerHTML='fermer';
+		} // end if xhr.readyState == 4 && xhr.status == 200
+	
+} // end xhr.onreadystatechange
+
+
+// using GET to send the request
+xhr.open("GET","/edition/edition_supprimer_enregistrement_validation_ajax.php?&table="+theTable+"&record="+theRecord,true);
 xhr.send(null);
 
 }
