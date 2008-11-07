@@ -717,6 +717,7 @@ function sendRecordToDelete(theLevel,theTable,theRecord) {
 var theDeleteButton=$('overlay_'+theLevel+'_delete');
 var theLoader=$("overlay_"+theLevel+"_loader");
 var theOverlayContent=$("overlay_"+theLevel+"_content");
+var theCloseButton=$('overlay_'+theLevel+'_close');
 // on initialise l'objet AJAX	
 var xhr = getXhr();
 // what to do when the response is received
@@ -724,6 +725,7 @@ xhr.onreadystatechange = function(){
 		
 	if(xhr.readyState < 4) {
 		theDeleteButton.setStyle("visibility","hidden");
+		theCloseButton.setStyle("visibility","hidden");
 		// en attendant la réponse, on remplace les boutons d'enregistrement/annulation par un loader
 		theLoader.innerHTML='<h1>supprimer l&#x27;enregistrement &quot;'+theRecord+'&quot;</h1><h2>suppression de l&#x27;enregistrement en cours</h2><img src="/assets/ajax-loader.gif" alt="suppression en cours..." title="suppression en cours..." valign="center"/>';
 		theOverlayContent.innerHTML='';
@@ -736,8 +738,8 @@ xhr.onreadystatechange = function(){
 		theOverlayContent.innerHTML=theResponseText;
 				
 			// maintenant, on change le comportement du bouton "fermer" : on raffraichit l'affichage
-			var theCloseButton=$('overlay_'+theLevel+'_close');
 			var over='overlay_'+theLevel;
+			setStyle("visibility","visible")
 			theCloseButton.setProperty("onclick","javascript:modalDialogClose(\'"+over+"\',\'refresh\')");
 			theCloseButton.innerHTML='fermer';
 		} // end if xhr.readyState == 4 && xhr.status == 200
