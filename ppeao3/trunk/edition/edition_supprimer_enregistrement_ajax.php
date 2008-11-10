@@ -13,6 +13,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 global $tablesDefinitions;
 
+
+
 //debug sleep(10);
 
 // la table concernée
@@ -21,12 +23,20 @@ $table=$_GET["table"];
 $record=$_GET["record"];
 $level=$_GET["level"];
 
-
+// on récupère le label de l'enregistrement concerné
+$primaryKey=getTablePrimaryKey($connectPPEAO,$table);
+$key=$primaryKey["column"];
+$labelColumn=getDictionaryTableEntry($connectPPEAO,'noms_col',$table);
+$labelSql='SELECT '.$labelColumn.' FROM '.$table.' WHERE '.$key.'=\''.$record.'\'';
+$labelResult=pg_query($connectPPEAO,$labelSql);
+$labelArray=pg_fetch_all($labelResult);
+$label=$labelArray[0][$labelColumn];
+pg_free_result($labelResult);
 
 // on détermine les enregistrements affectés par la suppression de l'enregistrement (on se limite au premier niveau de cascade)
 $affectedTables=countPrimaryKeyReferencedRows($connectPPEAO, $table, '', $record);
 
-$theMessage.='<div align="center"><h1>supprimer l&#x27;enregistrement &quot;'.$record.'&quot;</h1></div>';
+$theMessage.='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregistrement &quot;'.$label.'&quot; ('.$key.'=&quot;'.$record.'&quot;)</h1></div>';
 
 // si on ne trouve aucun enregistrement affecté
 if (empty($affectedTables)) {

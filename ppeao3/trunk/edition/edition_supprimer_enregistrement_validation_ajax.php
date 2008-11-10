@@ -19,15 +19,29 @@ global $tablesDefinitions;
 
 // la table concernée
 $table=$_GET["table"];
+// l'enregistrement concerné
 $record=$_GET["record"];
+$level=$_GET["level"];
+
+// on récupère le label de l'enregistrement concerné
 $primaryKey=getTablePrimaryKey($connectPPEAO,$table);
 $key=$primaryKey["column"];
+$labelColumn=getDictionaryTableEntry($connectPPEAO,'noms_col',$table);
+$labelSql='SELECT '.$labelColumn.' FROM '.$table.' WHERE '.$key.'=\''.$record.'\'';
+$labelResult=pg_query($connectPPEAO,$labelSql);
+$labelArray=pg_fetch_all($labelResult);
+$label=$labelArray[0][$labelColumn];
+pg_free_result($labelResult);
 
-$theMessage='<h1 align="center">supprimer l&#x27;enregistrement &quot;'.$record.'&quot;</h1>';
+$theMessage.='<div align="center"><h1>supprimer l&#x27;enregistrement &quot;'.$label.'&quot; ('.$key.'="'.$record.'")</h1></div>';
 
 	// on prépare le calcul du nombre total d'enregistrements supprimés
 	// d'abord on calcule le nombre total d'enregistrements dans les tables utilisateur
-	$beforeSql='select sum(n_live_tup) from pg_catalog.pg_stat_user_tables';
+	// on fait un VACUUM ANALYZE de la base pour être sûr que le compte est correct
+	$vacuumSql='VACUUM ANALYZE';
+	$vacuumResult=pg_query($connectPPEAO,$vacuumSql);
+	pg_free_result($vacuumResult);
+	$beforeSql='select sum(n_live_tup) from pg_catalog.pg_stat_user_tables where relname NOT LIKE \'admin%\'';
 	$beforeResult=pg_query($connectPPEAO,$beforeSql);
 	$beforeArray=pg_fetch_all($beforeResult);
 	$before=$beforeArray[0]["sum"];
@@ -37,27 +51,27 @@ $theMessage='<h1 align="center">supprimer l&#x27;enregistrement &quot;'.$record.
 	// si la suppression a bien eu lieu
 	if($deleteResult=pg_query($connectPPEAO,$deleteSql)) {
 	// on renvoie un message positif
-	$theMessage.='<p>enregistrement "'.$record.'" supprim&eacute; de la table "'.$table.'.</p>';
+	$theMessage.='<p>enregistrement &quot;'.$label.'&quot; ('.$key.'=&quot;'.$record.'&quot;) supprim&eacute; de la table "'.$table.'".</p>';
 	// et on fait un VACUUM ANALYZE de la base
 	$vacuumSql='VACUUM ANALYZE';
 	$vacuumResult=pg_query($connectPPEAO,$vacuumSql);
 	pg_free_result($vacuumResult);
 	
 	// maintenant on recalcule le nombre total d'enregistrements dans les tables utilisateur
-	$afterSql='select sum(n_live_tup) from pg_catalog.pg_stat_user_tables';
+	$afterSql='select sum(n_live_tup) from pg_catalog.pg_stat_user_tables where relname NOT LIKE \'admin%\'';
 	$afterResult=pg_query($connectPPEAO,$afterSql);
 	$afterArray=pg_fetch_all($afterResult);
 	$after=$afterArray[0]["sum"];
 	pg_free_result($afterResult);
 	
 	// on a donc supprimé $before-$after enregistrements
-	$deletedRows=$before-$after;
+	$deletedRows=$before-$after-1;
 	
 	// on le signale
-	$theMessage.='<p>'.$deletedRows.' enregistrement(s) supprim&eacute;(s) au total.</p>';
+	$theMessage.='<p>'.$deletedRows.' enregistrement(s) d&eacute;pendant(s) supprim&eacute;(s) au total.</p>';
 	
 	// on inscrit la suppression dans le journal
-	logWriteTo(1,'notice','enregistrement "'.$record.'" supprim&eacute; de la table "'.$table.'"',$deleteSql,'',0);
+	logWriteTo(1,'notice','enregistrement &quot;'.$label.'&quot; ('.$key.'=&quot;'.$record.'&quot;) supprim&eacute; de la table "'.$table.'" et '.$deletedRows.' enregistrement(s) d&eacute;pendant(s) supprim&eacute;(s) au total.',$deleteSql,'',0);
 	}
 	
 	else {

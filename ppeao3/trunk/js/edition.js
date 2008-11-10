@@ -681,7 +681,7 @@ function modalDialogDeleteRecord(theLevel,theTable, theRecord) {
 			theOverlayLoaderDiv.innerHTML='';
 			theOverlayContent.innerHTML=theResponseText;
 			
-			// on affiche le bouton "enregistrer"			
+			// on affiche le bouton "supprimer"			
 			var theDeleteButton=new Element('a', {
 			    'class': 'small link_button',
 			    'href': '#',
@@ -718,6 +718,7 @@ var theDeleteButton=$('overlay_'+theLevel+'_delete');
 var theLoader=$("overlay_"+theLevel+"_loader");
 var theOverlayContent=$("overlay_"+theLevel+"_content");
 var theCloseButton=$('overlay_'+theLevel+'_close');
+var theTitle=$('delete_title').innerHTML;
 // on initialise l'objet AJAX	
 var xhr = getXhr();
 // what to do when the response is received
@@ -727,7 +728,7 @@ xhr.onreadystatechange = function(){
 		theDeleteButton.setStyle("visibility","hidden");
 		theCloseButton.setStyle("visibility","hidden");
 		// en attendant la réponse, on remplace les boutons d'enregistrement/annulation par un loader
-		theLoader.innerHTML='<h1>supprimer l&#x27;enregistrement &quot;'+theRecord+'&quot;</h1><h2>suppression de l&#x27;enregistrement en cours</h2><img src="/assets/ajax-loader.gif" alt="suppression en cours..." title="suppression en cours..." valign="center"/>';
+		theLoader.innerHTML='<h1>'+theTitle+'</h1><h2>suppression de l&#x27;enregistrement en cours</h2><img src="/assets/ajax-loader.gif" alt="suppression en cours..." title="suppression en cours..." valign="center"/>';
 		theOverlayContent.innerHTML='';
 	}
 	// only do something if the whole response has been received and the server says OK
@@ -739,9 +740,9 @@ xhr.onreadystatechange = function(){
 				
 			// maintenant, on change le comportement du bouton "fermer" : on raffraichit l'affichage
 			var over='overlay_'+theLevel;
-			setStyle("visibility","visible")
-			theCloseButton.setProperty("onclick","javascript:modalDialogClose(\'"+over+"\',\'refresh\')");
+			theCloseButton.setStyle("visibility","visible");
 			theCloseButton.innerHTML='fermer';
+			theCloseButton.setProperty("onclick","javascript:modalDialogClose(\'"+over+"\',\'refresh\')");
 		} // end if xhr.readyState == 4 && xhr.status == 200
 	
 } // end xhr.onreadystatechange

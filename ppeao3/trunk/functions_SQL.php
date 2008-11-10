@@ -364,5 +364,22 @@ $impacted[$reference["table_name"]]=$temp;
 }
 return $impacted;
 }
+//*********************************************************************
+// retourne la valeur d'une colonne pour une table données dans la table admin_dictionary_tables
+function getDictionaryTableEntry($connection,$column,$table) {
+// $connection : la connexion à la base
+//$column : la colonne dont on veut la valeur
+// $table : la table dont on veut la valeur (nom de la table dans la base)
 
+$sql='SELECT '.$column.' FROM admin_dictionary_tables WHERE table_db=\''.$table.'\'';
+$result=pg_query($connection,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$temp=pg_fetch_all($result);
+pg_free_result($result);
+
+$return=$temp[0][$column];
+
+return $return;
+
+
+}
 ?>
