@@ -544,7 +544,7 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 					
 				} else {
 					// Enregistrement existant déjà qu'on doit ignorer.
-					echo "Pas maj table ".$tableMajID[$cptID]." pour id = ".$idNomTable."<br/>";
+					//echo "Pas maj table ".$tableMajID[$cptID]." pour id = ".$idNomTable."<br/>";
 				}
 				if ($debugAff==true) {
 					$debugTimer = number_format(timer()-$start_while,4);
