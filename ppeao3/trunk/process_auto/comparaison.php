@@ -16,8 +16,8 @@
 // comp : contient le type d'action 
 // comp = 'comp' : on lance une comparaison sans maj (de la base de reference vers la base BDPECHE)
 // comp = 'compinv' : on lance une comparaison sans maj (du parametrage de BDPECHE par rapport a la reference)
-// comp = 'majsc'  : on lance une comparaison avec maj (donnees scientifiques)
-// comp = 'majrec'  : on lance une comparaison avec maj (donnees recomposees)
+// comp = 'majsc'  : on lance une comparaison avec maj (donnees scientifiques) ==> majDonneesPeche.php
+// comp = 'majrec'  : on lance une comparaison avec maj (donnees recomposees) ==> majDonneesPeche.php
 
 // Paramètres en sortie
 // La liste des différences par table est affichée à l'écran et est stockée dans un fichier
@@ -29,12 +29,15 @@
 
 // Mettre les noms des fichiers dans un fichier texte
 session_start();
-
-// Variable de test (en fonctionnement production, les trois variables sont false)
+// Variable qui permet d'identifier si le traitement est lancé
 $pasdetraitement = true;
+// Variable de test (en fonctionnement production, les deux variables sont false)
 $pasdefichier = false; // Variable de test pour linux. 
 $pasderevSQL = false; // Ne pas generer le fichier reverseSQL
 
+$cptAjoutMaj = 0; // pour compatibilite
+
+$debugAff = false; // variable globale pour lancer le programme en mode debug
 // Variables de traitement
 $ErreurProcess = false; // Flag si erreur process
 
@@ -106,8 +109,15 @@ if (isset($_GET['action'])) {
 	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Il manque le parametre action. Contactez votre admin PPEAO</div>" ;
 	exit;
 }
+$ExecSQL = "n";
+// On identifie si le traitement est train de traiter les fichiers SQL
+if (isset($_GET['traitsql'])) {
+	$ExecSQL = $_GET['traitsql'];
+}
+
 $nomBDSource = ""; 
 $nomBDCible = ""; 
+$allScriptSQL = "";
 // Pour la gestion des timeout liés à l'utilisation d'AJAX.
 // Parfois le temps de traitement d'une table est trop long.
 // On doit interrompre le traitement, envoyer un message au javascript pour lui
@@ -158,9 +168,7 @@ $dumpTable = false;
 // temps maximal d'exécution du script autorisé par le serveur
 $max_time = ini_get('max_execution_time');
 // 30 secondes par défaut:
-if ($max_time == '') $max_time = 60;
-// pour test
-$max_time = 30;
+if ($max_time == '') $max_time = 30;
 // on prend 10% du temps maximal comme marge de sécurité
 $ourtime = ceil(0.9*$max_time);
 // fin test
@@ -233,7 +241,7 @@ if ($tableEnCours == "") {
 
 // ***** Debut du traitement
 
-if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
+if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisateur ou debug)
 
 // Traitements préliminaires : 
 // *********************************************
@@ -292,13 +300,13 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		case "majsc":
 			// Données scientifiques à mettre à jour
 			$listTable = GetParam("listeTableMajsc",$PathFicConf);
-			//$listTable="exp_environnement,exp_campagne,exp_coup_peche"; //TEST
+			//$listTable="exp_environnement,exp_campagne,exp_coup_peche,exp_fraction"; //TEST
 			//$listTable="exp_campagne"; //TEST
 			 break;
 		case "majrec":
 		// Données recomposées à mettre à jour
 			$listTable = GetParam("listeTableMajrec",$PathFicConf);
-			//$listTable="art_unite_peche,art_lieu_de_peche,art_debarquement"; //TEST
+			//$listTable="art_unite_peche,art_lieu_de_peche,art_debarquement,art_debarquement_rec,art_fraction_rec"; //TEST
 			 break;
 	}
 	$NbrTableAlire = substr_count($listTable,",");
@@ -351,6 +359,36 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	logWriteTo(7,"notice"," Nb tables = ".$nbTables ,"","","1");
 	// Début du traitement de comparaison par table.
 	// *********************************************
+	$ListeTableIDPasNum = GetParam("listeTableIDPasNum",$PathFicConf);
+	
+	$genereCR = false;
+	// *************************************************
+	// Traitement des mise a jour de peche exp et peche art
+	// *************************************************
+	if (($typeAction == "majsc" || $typeAction =="majrec") ) {
+		// Pour un gestion fine du timer
+		$finmajDP = false;
+		if ($ExecSQL=="n") {
+			// Creation des scripts de mises à jour des données
+			include $_SERVER["DOCUMENT_ROOT"].'/process_auto/majDonneesPeche.php';
+		} 
+		// On refait le test sur $execSQL (pas de else), ce qui permet a la fin de majDonnees.php de modifier execSQL a la fin du traitement
+		if ($ExecSQL=="y") {
+			// execution des scripts SQL
+			include $_SERVER["DOCUMENT_ROOT"].'/process_auto/SQLDonneesPeche.php';
+		}
+		//echo "fin traitements maj donnees <br/>";
+		if ($EcrireLogComp ) { WriteCompLog ($logComp,"debug -> fin traitements maj donnees ",$pasdefichier);}
+		$genereCR = true;
+	}
+	// *************************************************
+	// Traitement de comparaison
+	// *************************************************
+	if (!$ArretTimeOut && !($typeAction == "majsc" || $typeAction =="majrec") && !$genereCR) {
+	
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp,"debug-> entree dans la boucle comparaison",$pasdefichier);
+	}
 	$start_while=timer(); // début du chronométrage du for
 	for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
 		// controle de la table en cours si besoin (gestion TIMEOUT)
@@ -371,7 +409,8 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$_SESSION['s_cpt_champ_diff']	= 0;
 			$_SESSION['s_cpt_champ_vide']	= 0;
 			$_SESSION['s_en_erreur'] 		= false;
-			$_SESSION['s_cpt_erreurs_sql'] 	= 0;	
+			$_SESSION['s_cpt_erreurs_sql'] 	= 0;
+			$_SESSION['s_AllScriptSQL'] 	= "";	
 		} else {
 			// on reinitialise les valeurs avec les variables de session mise à jour lors du traitement précédent
 			$CRexecution 	= $_SESSION['s_CR_processAuto'];
@@ -383,26 +422,27 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$cptTableEq		= $_SESSION['s_cpt_table_egal'];
 			$cptTableVide	= $_SESSION['s_cpt_table_vide'];
 			$cptTableLignesVides = $_SESSION['s_cpt_table_manquant']; 
-			$cptSQLErreur	= $_SESSION['s_cpt_erreurs_sql'] ; 
+			//$cptSQLErreur	= $_SESSION['s_cpt_erreurs_sql'] ; 
 			$ErreurProcess 	= $_SESSION['s_erreur_process'];
+			$allScriptSQL	= $_SESSION['s_AllScriptSQL'];
 			// On reinitialise pour eviter de compter deux fois les memes donnees
-			$_SESSION['s_CR_processAuto'] = "";
-			$_SESSION['s_cpt_champ_total'] = 0;
-			$_SESSION['s_cpt_champ_diff'] = 0;
-			$_SESSION['s_cpt_champ_vide'] = 0;	
-			$_SESSION['s_cpt_table_diff'] = 0;
+			$_SESSION['s_CR_processAuto'] 	= "";
+			$_SESSION['s_cpt_champ_total'] 	= 0;
+			$_SESSION['s_cpt_champ_diff'] 	= 0;
+			$_SESSION['s_cpt_champ_vide'] 	= 0;	
+			$_SESSION['s_cpt_table_diff'] 	= 0;
 			$_SESSION['s_cpt_table_diff_manquant'] = 0;
-			$_SESSION['s_cpt_table_egal'] = 0;
-			$_SESSION['s_cpt_table_vide'] = 0;
+			$_SESSION['s_cpt_table_egal'] 	= 0;
+			$_SESSION['s_cpt_table_vide'] 	= 0;
 			$_SESSION['s_cpt_table_manquant'] = 0; 
-			$_SESSION['s_cpt_erreurs_sql'] = 0; 
+			$_SESSION['s_cpt_erreurs_sql'] 	= 0; 
 		
 		}
 		// Reinitialisation variable pour creation SQL
 		$where="";
 		$alias="";
     	logWriteTo(7,"notice","*-- Comparaison de la table ".$tables[$cpt],"","","0");
-		$ListeTableIDPasNum = GetParam("listeTableIDPasNum",$PathFicConf);
+		
 		// Gestion TIMEOUT
 		$tableEnLecture = $tables[$cpt];
 
@@ -440,8 +480,6 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			}
 			// Lecture de la table $tables[$cpt] dans la base source (BD_PPEAO dans le cas de la comparaison, 
 			// BD_PECHE dans le cas de la mise à jour)
-			//logWriteTo(7,"notice",$cpt." lecture table ".$nomBDSource." ".$tables[$cpt]," select * from ".$tables[$cpt].$condWhere. " order by id ASC","","1");
-			//echo "Traitement de la table ".$cpt." sur ".$NbrTableAlire;		
 			
 			// Compteur 
 			$compReadSqlC = " select count(id) from ".$tables[$cpt];
@@ -532,33 +570,11 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 							$cptChampVide++ ;
 							//logWriteTo(7,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
 							if ($EcrireLogComp ) { WriteCompLog ($logComp," MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
-							$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
-							
-							//echo "typeAction= ".$typeAction." ".$scriptSQL."<br/>";
-							if ($typeAction == "majsc" || $typeAction == "majrec") {
-							// Création de l'enreg dans la base cible
-								$RunQErreur = runQuery($scriptSQL,${$BDCible});
-								if ( $RunQErreur){
-									$scriptDeleteSQL = GetSQL('delete',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
-									if (!$pasderevSQL ) {
-										WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
-									}
-									//logWriteTo(7,"notice"," Pour ".$tables[$cpt]." ajout de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
-								if ($EcrireLogComp ) {WriteCompLog ($logComp," AJOUT script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}
-								} else {
-									// traitement d'erreur ? On arrête ou seulement avertissement ?
-									$cptSQLErreur ++;
-									$ErreurProcess = true;
-									if ($EcrireLogComp ) { WriteCompLog ($logComp," Erreur sur le script ".$scriptSQL." consulter les logs pour l'erreur complete.",$pasdefichier);}
-								}
-								//WriteCompSQL ($SQLComp,$scriptSQL.";"); // Pour test
-							} else {
 							// On génère un fichier de mise à jour utilisable
 								WriteCompSQL ($SQLComp,$scriptSQL.";",$pasdefichier);
 								$_SESSION['s_cpt_lignes_fic_sql'] ++;
 								$ErreurProcess = true;
-							}
-							
+						
 						} else {
 						// On balaye tous les champs à comparer en ignorant les clés primaires id.
 							$enregDiff = false;
@@ -567,56 +583,27 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 							//echo "nb champs =".pg_num_fields($compCibleReadResult);
 							for ($cpt1 = 1; $cpt1 < pg_num_fields($compCibleReadResult); $cpt1++) {
 								// Comparaison
-								//echo "cible = ".$compCibleRow[$cpt1]." source =".$compRow[$cpt1]. "<br/>";
 								if ($compCibleRow[$cpt1] == $compRow[$cpt1]) {
 									// En fait, on s'en fout maintenant...
-									
+								
 								}
 								 else {
 									// différent
-									//logWriteTo(7,"notice","id = ".$compRow[$RangId]." enreg different ","","","1");
 									$cptChampDiff++ ;
 									$enregDiff = true;
-									//logWriteTo(7,"notice"," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")","","","1");
 									if ($EcrireLogComp ) {WriteCompLog ($logComp," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")",$pasdefichier);}
 									break;
 								}
 							} // end for ($cpt1 = 0; $cpt1 <= $nbChamp; $cpt1++)
 							
 							if 	($enregDiff) {
-								// On lance ici la mise à jour globale de l'enregistrement	
-								// Attention, il faudra etre plus malin, si donnees existent deja, faire une demande a l'utilisateur.
-								
-								
-								
-								$scriptSQL = GetSQL('update',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
-								
-								if ($typeAction == "majsc" || $typeAction == "majrec") {
-								// Maj de l'enreg dans la base cible
-									$RunQErreur = runQuery($scriptSQL,${$BDCible});
-									if ( $RunQErreur){
-										$scriptDeleteSQL = GetSQL('update',  $tables[$cpt], $where, $compCibleRow,${$BDSource},$nomBDSource);
-										if (!$pasderevSQL ) {
-											WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
-										}
-										//logWriteTo(7,"notice"," ==> maj de l'enreg id = ".$compRow[$RangId],$scriptSQL,$scriptDeleteSQL,"0");
-										if ($EcrireLogComp ) {WriteCompLog ($logComp," MAJ script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}										
-									} else {
-										// traitement d'erreur ? On arrête ou seulement avertissement ?
-										$cptSQLErreur ++;
-										$ErreurProcess = true;
-										if ($EcrireLogComp ) { WriteCompLog ($logComp," Erreur sur le script ".$scriptSQL." consulter les logs pour l'erreur complete.",$pasdefichier);}
-									}
-								} else {
 								// On génère un fichier de mise à jour utilisable
 									WriteCompSQL ($SQLComp,$scriptSQL.";",$pasdefichier);
 									$_SESSION['s_cpt_lignes_fic_sql'] ++;
 									$ErreurProcess = true;
-								}
 							} else {
 								// identique
 
-								//logWriteTo(7,"notice","id = ".$compRow[0]." enreg identique ","","","1");
 							}
 						} // end if (pg_num_rows($compPecheReadResult) == 0)
 					pg_free_result($compCibleReadResult);
@@ -624,28 +611,17 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					} else { // fin du if (! $dumpTable)
 						// On fait un dump bourrin de la table
 						$tableVide = true;
-						//logWriteTo(7,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
+
 						if ($EcrireLogComp ) { WriteCompLog ($logComp," TOUT MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
-						$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
+						//$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf);
 						if ($typeAction == "majsc" || $typeAction == "majrec") {
 						// Création de l'enreg dans BD_PPPEAO
-							$RunQErreur = runQuery($scriptSQL,${$BDCible});
-							if ( $RunQErreur){
-								$scriptDeleteSQL = GetSQL('delete',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource);
-								if (!$pasderevSQL ) {
-									WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
-								}
-								//logWriteTo(7,"notice"," Pour ".$tables[$cpt]." ajout dans cadre dump de l'enreg manquant id = ".$compRow[$RangId]." .",$scriptSQL,$scriptDeleteSQL,"0");
-								if ($EcrireLogComp ) {WriteCompLog ($logComp," AJOUT TOUT script =  ".$scriptSQL. " (undo script = ".$scriptDeleteSQL.")",$pasdefichier);}
-								
-								
-							} else {
-								// traitement d'erreur ? On arrête ou seulement avertissement ?
-								$cptSQLErreur ++;
-								$ErreurProcess = true;
-								if ($EcrireLogComp ) { WriteCompLog ($logComp," Erreur sur le script ".$scriptSQL." consulter les logs pour l'erreur complete.",$pasdefichier);}
+							$allScriptSQL = stockQuery($scriptSQL,$allScriptSQL);
+							//$scriptDeleteSQL = GetSQL('delete',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf);
+							if (!$pasderevSQL ) {
+								WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
 							}
-							//WriteCompSQL ($SQLComp,$scriptSQL.";"); // Pour test
+
 						} else {
 						// On génère un fichier de mise à jour utilisable
 							WriteCompSQL ($SQLComp,$scriptSQL.";",$pasdefichier);
@@ -667,10 +643,10 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			pg_free_result($compReadResult);
 		} // end if ($continueControle) 
 
-		// On fait le bilan sur la table.
-		// sortie ecran et sortie fichier
+
 
 		if (!$ArretTimeOut) {
+
 			// On aura deux comptes-rendus selon si c'est une comparaison ou une mise à jour
 			// Dans le cas de la comparaison, on indique les différents cas trouvés.
 			// Dans le cas de la maj, on n'indique juste le type de maj
@@ -686,8 +662,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					WriteCompLog ($logComp," Cette table source est vide.",$pasdefichier);
 				}
 			} else {
-				
-					
+
 				// Cas d'une table ou il manque des données
 				if ($cptChampVide > 0) {
 					if ($cptChampDiff == 0) {
@@ -701,9 +676,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 							WriteCompLog ($logComp,"   - donnees manquantes = ".$cptChampVide.". ",$pasdefichier);
 						}
 					} else {
-						$CRexecution = $CRexecution." ".$cptChampVide." donn&eacute;es ajout&eacute;es |";
+						$CRexecution = $CRexecution." ".$cptChampVide." donn&eacute;es traitees |";
 						if ($EcrireLogComp ) {
-							WriteCompLog ($logComp,"   - donnees ajoutees = ".$cptChampVide.". ",$pasdefichier);
+							WriteCompLog ($logComp,"   - donnees traitees = ".$cptChampVide.". ",$pasdefichier);
 						}
 					}
 				}	
@@ -735,7 +710,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					} else {
 						if ($cptChampVide == 0) {
 							$cptTableEq ++;
-							$CRexecution = $CRexecution." identique -";
+							$CRexecution = $CRexecution." identique -<br/>";
 							if ($EcrireLogComp ) {			
 								WriteCompLog ($logComp,"   -->  identique",$pasdefichier);
 							}
@@ -754,11 +729,16 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					}
 				}
 			} 
-			$CRexecution = $CRexecution." -* <br/>" ;
+			//$CRexecution = $CRexecution." (maj/ajout total=".$cptAjoutMaj.") -* <br/>" ;
 		} // End for statement if ((!$ArretTimeOut)
 		
 		} // End for statement if ((!$tableEnCours == "" && tableEnCours == $tables[$cpt]) || $tableEnCours == "")
 	} // End for statement for ($cpt = 0; $cpt <= $nbTables; $cpt++)
+	} // End if (!$ArretTimeOut)
+
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp,"debug-> fin traitement comparaison",$pasdefichier);
+	}
 
 
 	// Fin de traitement : affichage des résultats.
@@ -780,7 +760,8 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	if (!$_SESSION['s_erreur_process']){
 		$_SESSION['s_erreur_process'] = $ErreurProcess;
 	}
-
+	$_SESSION['s_AllScriptSQL'] = $allScriptSQL;
+	$_SESSION['s_cpt_maj'] = $cptAjoutMaj;
 	// Include qui gère à la fois les compte-rendus à l'écran et la mise à jour des logs avec les ditCR.
 	include $_SERVER["DOCUMENT_ROOT"].'/process_auto/gestionCR.php';
 
@@ -798,7 +779,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		
 	
 } else {
-	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">En Test Etape de ".$nomAction." non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Etape de ".$nomAction." non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 	logWriteTo(7,"error","**- En Test Etape de ".$nomAction." non executee par choix de l'utilisateur","","","0");
 } // end if (! $pasdetraitement )
 

@@ -112,7 +112,7 @@
 		
 	
 		//Gestion du compte_rendu envoyé par mail
-		if (isset ($_GET['adresse'])) {
+		if (isset ($_GET['adresse']) && !$_GET['adresse']=="") {
 			$to = $_GET['adresse'];
 			// Subject
 			$subject = $typeAction." pour la base de donnees ".pg_dbname($connectPPEAO);
@@ -182,6 +182,7 @@
 		<input id=\"nomtable\" 	type=\"hidden\" value=\"".$tableEnLecture."\"/>
 		<input id=\"numID\" 	type=\"hidden\" value=\"".$IDEnLecture."\"/>
 		<input id=\"numproc\" 	type=\"hidden\" value=\"".$numProcess."\"/>
+		<input id=\"execsql\" 	type=\"hidden\" value=\"".$ExecSQL."\"/>
 		</form>";
 	}
 

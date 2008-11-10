@@ -102,6 +102,10 @@ global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases :
 
 
 $limit="";
+$rowsPerPage=0;
+$countPages=0;
+$startRow=0;
+$currentPage=0;
 // on prepare un tableau contenant les elements a utiliser comme filtre
 $filter=array();
 	// on verifie que $date contient bien une date
@@ -368,6 +372,7 @@ function logArchive($archivePath)
 
 	// si $archivePath est vide, on utilise le chemin par defaut défini dans /variables.inc ($logArchivePath)
 	global $logArchivePath; 
+	$error="";
 	if (empty($archivePath)) {$archivePath=$logArchivePath;}
 	// le nom de l'archive qui sera creee
 	$theArchiveName="journal_archive_".date("Y-m-d_G-i-s");
@@ -440,12 +445,13 @@ return $archiveList;
 //efface le journal
 function logDelete($archivePath)
 // cette fonction archive le journal puis vide la table de journal
-// $clearMessage : le message retourné une fois l'effacement terminé
+// $errorMessage : le message retourné une fois l'effacement terminé
 
 {
 	global $connectPPEAO;
 	// si $archivePath est vide, on utilise le chemin par defaut défini dans /variables.inc ($logArchivePath)
 	global $logArchivePath; 
+	$errorMessage="";
 	if (empty($archivePath)) {$archivePath=$logArchivePath;}
 	
 	
@@ -484,7 +490,7 @@ else {
 logWriteTo(4,"error",$errorMessage,"","",0);
 }
 
-return $clearMessage;
+return $errorMessage;
 }
 
 //***************************************************************************************************

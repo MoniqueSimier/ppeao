@@ -55,6 +55,10 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 			$_SESSION['s_erreur_process'] = false;
 			$_SESSION['s_cpt_erreurs_sql'] = 0;
 			$_SESSION['s_CR_processAuto'] = "";
+			$_SESSION['s_AllScriptSQL'] = "";
+			$_SESSION['s_max_envir_Id_Source'] = 0;
+			$_SESSION['s_cpt_maj'] 	= 0; 
+
 		
 		?>
 

@@ -86,7 +86,7 @@ return $formattedValue;
 
 //*********************************************************************
 // GetSQL : génère le code SQL pour mettre à jour la table
-function GetSQL($SQLAction, $tableName, $whereStatement,$value,$connectionBD,$nomBD ) {
+function GetSQL($SQLAction, $tableName, $whereStatement,$value,$connectionBD,$nomBD,$typeProcess,$PathFichierConf,$newID,$majID,$ListeTableIDPasNum,$debugBool,$start_time) {
 // Cette fonction permet de générer le code SQL en fonction de la table en entrée et du type d'action à mener.
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -94,19 +94,32 @@ function GetSQL($SQLAction, $tableName, $whereStatement,$value,$connectionBD,$no
 // $tableName : nom de la table qui subit l'action
 // $whereStatement : quelle est la condition where à ajouter à l'action d'update ?
 // $value : valeurs à maj (c'est un tableau issu d'un pg_fetch_row
+// $connectionBD : connexion BD sur laquelle exécuter la requete pour le dico
+// $nomBD : nom de la BD pour les logs
+// $typeProcess : nom du processus qui appelle cette fonction pour decider si l'ID doit etre mis à jour
+// $PathFichierConf : nom du fichier de conf
 //*********************************************************************
 // En sortie : 
 // La fonction renvoie le code SQL prêt à être exécuté.
 //*********************************************************************
 
+// La liste des tables pour lesquelles l'ID peut etre modifie
+$locTableMajID = GetParam("listeTableMajsc",$PathFichierConf);
+$locTableMajID = $locTableMajID.",".GetParam("listeTableMajrec",$PathFichierConf);
 
 $LocScriptSQL = "";
 // Deux listes de noms de champs Up pour les updates, In pour les insert.
 $LocListAttrUp = "";
 $LocListAttrIn1 = "";
 $LocListAttrIn2 = "";
+$locNouvelID = 0;
+
 $numChamp = 0;
 // Etape 1 - on récupère tous les champs de la table à ajouter ou à mettre à jour
+if ($debugBool) {
+	$debugTimer = number_format(timer()-$start_time,4);
+	echo "getSQL avant requete attr :".$debugTimer."<br/>";
+}
 $ListAttr="
 select c.relname,a.attname,a.attnum,
 pg_catalog.format_type(a.atttypid, a.atttypmod) as type
@@ -120,37 +133,118 @@ $getAttrBD = pg_query($connectionBD,$ListAttr) or die('erreur dans la requete : 
 if (pg_num_rows($getAttrBD) == 0) {
  	logWriteTo(7,"error","Erreur dans la lecture definition de la table ".$tableName." dans la BD ".$nomBD." (function // GetSQL portage automatique)","","","0");
 } else {
+	if ($debugBool) {
+		$debugTimer = number_format(timer()-$start_time,4);
+		echo "getSQL debut trt attr :".$debugTimer."<br/>";
+	}
+	// On recupere si necessaire l'ID
 	while ($getAttrBDRow = pg_fetch_row($getAttrBD)) {
-		// On n'ajoute pas le champs ID
+		// On n'ajoute pas le champs ID pour l'update
 		if ($getAttrBDRow[1] =="id" && $SQLAction == "update") {
 			continue;
 		}
-		// construit la liste des champs pour l'insert
-		// Liste des colonnes
 		// numChamp stocke le numéro d'ordre du champs
 		$numChamp = $getAttrBDRow[2] - 1;
-		//logWriteTo(7,"notice","","numchamp = ".$numChamp." ".$getAttrBDRow[3]." valeur = ".$value[$numChamp],"","1");
-		if ($LocListAttrIn1 == "" ) {
- 			$LocListAttrIn1 = $getAttrBDRow[1];
+
+		// construit la liste des champs pour l'insert
+		// Liste des colonnes
+		$IDdanschp = strpos($getAttrBDRow[1],"_id");
+		//echo $tableName." strpos = ".$IDdanschp."<br/>";
+		//if (strpos($getAttrBDRow[1],"_id") > 0) {
+		//	echo $tableName." strpos = ".$IDdanschp." ".$getAttrBDRow[1]."<br/>";
+		//}
+		//if ($tableName == "exp_coup_peche"){
+		//echo $getAttrBDRow[1]." <br/>";
+		//}
+		if (($typeProcess == "majsc" || $typeProcess == "majrec") 
+			&& ( strpos($getAttrBDRow[1],"_id") > 0 ) ){
+			//echo "col = ".$getAttrBDRow[1]."<br/>";
+			// On a fait un premier filtre sur tous les champs qui contiennent id 
+			// MAIS qui ne sont pas l'ID de la table en cours
+			// On controle ensuite que le champs n'est pas une reference a une table dont il faut changer l'ID
+			$tableAControler = str_replace("_id","",$getAttrBDRow[1]);
+			//
+			$testID = strpos($locTableMajID ,$tableAControler);
+			//echo $SQLAction." nomtable = ".$tableAControler." testID = ".$testID."<br/>";
+			if ($testID === false) {
+				// On garde la valeur du champ
+				$valChamp = $value[$numChamp];
+			} else {
+				// il faut recuperer le nouvel ID
+				//echo "faut recuperer l'ID<br/>";
+				if (! $value[$numChamp] == null) {
+				
+					//echo "controle table = ".$tableAControler." value = ".$value[$numChamp]."<br/>";
+					// Attention, on peut avoir des ID en char....
+					$testTtypeVarID = strpos($ListeTableIDPasNum ,$tableAControler);
+					if ($testTtypeVarID === false) {
+						// L'ID est bien un numérique
+					$recIDSQL = " select idcible from temp_recomp_id where nomtable = '".$tableAControler."' and Idsource = ".$value[$numChamp] ;	
+					} else {
+						// L'ID est une chaine
+						$recIDSQL = " select idcibleChar from temp_recomp_id where nomtable = '".$tableAControler."' and IdsourceChar = '".$value[$numChamp]."'" ;
+					}
+					$recIDSQLResult = pg_query($connectionBD,$recIDSQL) or die('erreur dans la requete : '.pg_last_error());
+					if (pg_num_rows($recIDSQLResult) == 0) {
+						// on garde le meme ID
+						$locNouvelID = $value[$numChamp];
+						echo $tableAControler."erreur lecture nouvel ID / on garde l'ancien ID = ".$value[$numChamp]."<br/>";
+					} else {
+						$recIDRow = pg_fetch_row($recIDSQLResult);
+						$valChamp = $recIDRow[0];
+						//echo "Ancienne valeur de l'ID pour ".$getAttrBDRow[1]." = ".$value[$numChamp]." nouvelle valeur = ".$recIDRow[0]."<br/>";
+					}
+					pg_free_result($recIDSQLResult);
+				} else {
+					$valChamp = $value[$numChamp]; // sera toujours NULL !
+				}
+			}
 		} else {
- 			$LocListAttrIn1.=",".$getAttrBDRow[1] ; 
+			$valChamp = $value[$numChamp];
 		}
-		// Liste des valeurs
-		if ($LocListAttrIn2 == "" ) {
- 			$LocListAttrIn2 = formatSQL($value[$numChamp],$getAttrBDRow[3]);
-		} else {
- 			$LocListAttrIn2.=",".formatSQL($value[$numChamp],$getAttrBDRow[3]) ; 
-		}	
+		// On recupere si necessaire l'ID
+		if ($majID == "y" && $getAttrBDRow[1] =="id") {
+			if ($newID == null) {
+				// on garde le meme ID
+				$locNouvelID = $value[$numChamp];
+			} else {
+
+				$valChamp = $newID;
+
+			}
+
+		}
+		if ($SQLAction=="insert") {
+			if ($LocListAttrIn1 == "" ) {
+				$LocListAttrIn1 = $getAttrBDRow[1];
+			} else {
+				$LocListAttrIn1.=",".$getAttrBDRow[1] ; 
+			}
+			// Liste des valeurs
+			if ($LocListAttrIn2 == "" ) {
+				$LocListAttrIn2 = formatSQL($valChamp,$getAttrBDRow[3]);
+			} else {
+				$LocListAttrIn2.=",".formatSQL($valChamp,$getAttrBDRow[3]) ; 
+			}
+		}
 		// construit la liste des champs pour l'update
-		if ($LocListAttrUp == "" ) {
- 			$LocListAttrUp = $getAttrBDRow[1]."=".formatSQL($value[$numChamp],$getAttrBDRow[3]) ;
-		} else {
- 			$LocListAttrUp.=",".$getAttrBDRow[1]."=".formatSQL($value[$numChamp],$getAttrBDRow[3]) ; 
+		if ($SQLAction=="update") {
+			if ($LocListAttrUp == "" ) {
+				$LocListAttrUp = $getAttrBDRow[1]."=".formatSQL($valChamp,$getAttrBDRow[3]) ;
+			} else {
+				$LocListAttrUp.=",".$getAttrBDRow[1]."=".formatSQL($valChamp,$getAttrBDRow[3]) ; 
+			}	
 		}
 	}
-	
 	//logWriteTo(7,"notice",$SQLAction." pour ".$tableName." LocListAttr = ".$LocListAttrUp,"","","1");
+	if ($debugBool) {
+		$debugTimer = number_format(timer()-$start_time,4);
+		echo "getSQL fin trt attr :".$debugTimer."<br/>";
+	}
+
+
 } 
+//	echo $LocListAttrIn2."<br/>";
 // Etape 2 - on construit l'instruction SQL complète.
 switch ($SQLAction) {
 	case "update":
@@ -200,6 +294,28 @@ if (strlen ($r=pg_last_error ($connectionBD))) {
 return $runQueryOK;
 
 }
+
+//*********************************************************************
+// runQuery : exécute une requete SQL en captant les erreurs
+function stockQuery($scriptSQLToRun,$ScriptComplet) {
+// Cette fonction permet d'exécuter un script SQL en récupérant les erreurs dans le log.
+// On utilise le double ; comme séparateur pour eviter lors de l'execution pas a pas du SQL
+// par un explode les cas ou un ; est present dans le champ memo
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $scriptSQLToRun : le script à exécuter.
+// $ScriptComplet : le script contenant l'ensemble des requetes
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie la variable contenant l'ensemble des requetes a executer
+//*********************************************************************
+
+$locScript =$ScriptComplet.$scriptSQLToRun.";;";
+
+return $locScript;
+}
+
+
 
 /**
  * Print out debug info (including arrays)

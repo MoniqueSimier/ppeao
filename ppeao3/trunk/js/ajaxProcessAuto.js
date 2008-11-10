@@ -116,7 +116,7 @@ function stateChanged1()
 		if (document.getElementById("nomtable")) {
 			// One of the processes needs to be restarted with some parameters because of server TIMEOUT
 			numProcess = parseInt(document.getElementById("numproc").value);
-			URLSupp = "&table="+document.getElementById("nomtable").value+"&numenreg="+document.getElementById("numID").value;
+			URLSupp = "&table="+document.getElementById("nomtable").value+"&numenreg="+document.getElementById("numID").value+"&traitsql="+document.getElementById("execsql").value;
 			relancetrt = true;
 		} else {
 			relancetrt = false;
