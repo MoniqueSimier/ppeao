@@ -221,7 +221,7 @@ function formToUrl(theFormId,theClass) {
 		
 		//si on a affaire à un select
 		if (theParams[i].nodeName=='SELECT') {
-			if (theParams[i].selectedIndex!=0) {theUrl+='&'+theParams[i].name+'='+theParams[i].value;}
+			if (theParams[i].selectedIndex!=-1) {theUrl+='&'+theParams[i].name+'='+theParams[i].value;}
 		}
 		}
 		

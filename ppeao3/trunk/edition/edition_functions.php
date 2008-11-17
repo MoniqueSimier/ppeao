@@ -287,7 +287,7 @@ global $tablesDefinitions;
 $defaultTextInputLength=15;
 $defaultTextInputMaxLength=30;
 // nombre de rows par défaut des <textarea>
-$defaultTextRows=5;
+$defaultTextRows=3;
 
 
 
@@ -315,26 +315,36 @@ switch ($action) {
 $theField='';
 
 $theDetails=$cDetails[$column];
-/*debug	
-echo('<pre>');
-	print_r($theDetails);
-	echo('</pre>');*/
-	// on teste si la colonne concernée a une contrainte de type clé primaire, clé étrangère ou énumération
-	$keyConstraint=FALSE;
-	if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
-		$constraintsToCheck=array('PRIMARY KEY','ENUM','FOREIGN KEY');
-		// on teste le type de contrainte
-		
-		foreach($theDetails["constraints"] as $theConstraint) {
-			if (in_array($theConstraint["constraint_type"],$constraintsToCheck)){
-				$constraint=$theConstraint["constraint_type"];
-				$keyConstraint=TRUE;
-			}
-		} // end foreach
-		
-		
-	} // end if (isset($theDetails["constraints"]) 
+
+// avant de démarrer, on "bricole" les infos sur la colonne pour traiter certains cas particuliers
+// cas d'une colonne stockant un mot de passe
+if ($theDetails["column_name"]=="user_password") {
+	$theDetails["data_type"]="password";
+}
+
+// on teste si la colonne concernée a une contrainte de type clé primaire, clé étrangère ou énumération (ou plusieurs...)
+$keyConstraint=FALSE;
+if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
+	$constraintsToCheck=array('PRIMARY KEY','ENUM','FOREIGN KEY');
+	// on teste le type de contraintes
+	foreach($theDetails["constraints"] as $oneConstraint) {
+		if (in_array($oneConstraint["constraint_type"],$constraintsToCheck)){
+			$theConstraints[$oneConstraint["constraint_type"]]=$oneConstraint;
+			$keyConstraint=TRUE;
+		}
+	} // end foreach		
+	// si l'on a plusieurs contraintes de type primary, foreign ou enum (cas d'une colonne primary ET foreign)
+	if (isset($theConstraints) && !empty($theConstraints)) {
+		// on prioritise la clé étrangère, pour le cas des tables de jointure
+		if (isset($theConstraints["FOREIGN KEY"])) {$theConstraint=$theConstraints["FOREIGN KEY"]; $constraint=$theConstraint["constraint_type"];} else {if (isset($theConstraints["PRIMARY KEY"])) {$theConstraint=$theConstraints["PRIMARY KEY"];$constraint=$theConstraint["constraint_type"];} else {$theConstraint=current($theConstraints);$constraint=$theConstraint["constraint_type"];}}
+	}
+	
+	
+} // end if (isset($theDetails["constraints"]) 
+	
 	if ($keyConstraint) {
+		
+		
 		switch ($constraint) {
 		
 			// cas d'une clé primaire
@@ -362,7 +372,6 @@ echo('<pre>');
 					case 'add' :
 					// si il existe une séquence sur la clé, on génère automatiquement la valeur et le champ n'est pas éditable
 					$ifSequence=getTableColumnSequence($connectPPEAO,$tablesDefinitions[$table]["table"],$column);
-					echo($ifSequence);
 					if ($ifSequence) {
 						$theClass='non_editable_field';
 						$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="valeur déterminée par une s&eacute;quence automatique">(auto)</div>';
@@ -428,6 +437,7 @@ echo('<pre>');
 			
 			// cas d'une clé étrangère : on construit un <SELECT> avec les valeurs de la table/colonne référencée
 			case 'FOREIGN KEY':
+	
 				
 				switch ($action) {
 					
@@ -503,9 +513,7 @@ echo('<pre>');
 	}
 	// si la colonne n'a pas de contrainte
 	else {
-		//debug		echo('**pas de contrainte sur '.$theDetails["column_name"].' ('.$value.')->'.$action.'<br>');
 		// si c'est pour le filtre
-		
 		if ($action=='filter') {
 			if (!empty($theDetails["character_maximum_length"])) {
 				$maxLength=$theDetails["character_maximum_length"];
@@ -519,14 +527,27 @@ echo('<pre>');
 		switch ($action) {
 
 			case 'display' : 
+								
 				// il faut tenir compte de deux cas particuliers : les BOOLEAN et les DATE
 				switch ($theDetails["data_type"]) {
 				// les booleens
 				case 'boolean':
 				if (empty($value)) {$value='f';};
-				if ($value=='t' || $value=='oui') {$value='oui';} else {$value='non';};
+				if ($value=='t' || $value=='oui' || $value=="true") {$value='oui';} else {$value='non';};
 				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$value.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
 				break;
+				
+				// cas d'un mot de passe (data_type défini "à la main", n'existe pas sous postgresql)
+				case 'password' :
+				// si on n'a pas défini de mot de passe, on propose d'en créer un
+				if (empty($value)) {$value="";}				
+				// sinon, on propose d'en créer un nouveau
+				else {$value="changer le mot de passe";};
+				// dans tous les cas, on crée un nouveau mot de passe, donc on passe une valeur vide au javascript
+				$valueJS="";
+				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour d&eacute;finir un nouveau mot de passe" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$valueJS.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
+				break;
+				
 				// le cas générique : on ne fait rien à la valeur
 				default:
 				// on encode d'éventuels sauts de ligne pour javascript
@@ -548,7 +569,7 @@ echo('<pre>');
 				// les booleens
 				case 'boolean':
 					$theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
-					if ($value=='oui' || $value=='t') {$ouiSelected='selected="selected"'; $nonSelected='';} else {$nonSelected='selected="selected"'; $ouiSelected='';}
+					if ($value=='oui' || $value=='t' || $value=='true' || empty($value)) {$ouiSelected='selected="selected"'; $nonSelected='';} else {$nonSelected='selected="selected"'; $ouiSelected='';}
 					$theField.='<option value="t" '.$ouiSelected.'>oui</option>';
 					$theField.='<option value="f" '.$nonSelected.'>non</option>';
 					$theField.='</select>';
@@ -582,7 +603,9 @@ echo('<pre>');
 										if (!empty($theMaxLength)) {
 											$args='$(\''.$theId.'\'),$(\''.$theId.'_counter\'),'.$theMaxLength.'';
 											$theLengthLimitation='onKeyDown="fieldTextLimiter('.$args.')" onKeyUp="fieldTextLimiter('.$args.')"  onFocus="fieldTextLimiter('.$args.')" onBlur="fieldTextLimiter('.$args.')"';
-											$textRows=round($theMaxLength/$defaultTextInputMaxLength)+1;}
+											//$textRows=round($theMaxLength/$defaultTextInputMaxLength)+1;
+											$textRows=$defaultTextRows;
+											}
 											else {$theLengthLimitation='';$textRows=$defaultTextRows;}
 											$theField='<textarea id="'.$theId.'" name="'.$theId.'" 
 					cols="'.$defaultTextInputMaxLength.'" rows="'.$textRows.'" '.$theLengthLimitation.'  '.$onAction.'  class="'.$theClass.'">'.stripSlashes($value).'</textarea><p id="'.$theId.'_counter" class="small"></p>';

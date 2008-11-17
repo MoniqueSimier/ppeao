@@ -349,6 +349,7 @@ $references=getPrimaryKeyReferences($connection,$tableName,$primaryKey);
 foreach ($references as $reference) {
 
 $localPrimary=getTablePrimaryKey ($connection,$reference["table_name"]);
+if (empty($localPrimary["column"])) {$localPrimary["column"]="*";}
 
 $sql='SELECT '.$localPrimary["column"].'
 		FROM '.$reference["table_name"].'

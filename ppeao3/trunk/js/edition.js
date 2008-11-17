@@ -460,6 +460,8 @@ function modalDialogAddRecord(theLevel,theTable) {
 			var theResponseText = xhr.responseText;
 			
 			// on affiche les champs de saisie pour le nouvel enregistrement
+			//debug			alert(theResponseText);
+			
 			theOverlayContent.innerHTML=theResponseText;
 			
 			// on affiche le bouton "enregistrer"			
@@ -508,6 +510,8 @@ function modalDialogClose(theDialogOverlay,refresh) {
 function sendRecordToSave(theFormId,theFormFieldClass,theLevel,theTable) {
  var theUrl=formToUrl(theFormId,theFormFieldClass);
 
+//debug alert(theUrl);
+
 var theSaveButton=$('overlay_'+theLevel+'_save');
 var theLoader=$("overlay_"+theLevel+"_loader");
 // on initialise l'objet AJAX	
@@ -525,7 +529,6 @@ xhr.onreadystatechange = function(){
 		theLoader.innerHTML='';
 		var theResponseNode = xhr.responseXML.documentElement;
 		var theNodes=theResponseNode.childNodes;
-		//debug alert(theNodes.length);
 		// la validité des valeurs saisies
 		var isValid=theResponseNode.attributes.getNamedItem("validity").value;
 		//debug alert(theResponseNode.attributes.getNamedItem("validity").value);

@@ -34,8 +34,20 @@ $newValue=$_GET["newValue"];
 // on compile les informations sur les colonnes de la table $editTable
 $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["table"]);
 $cDetail=$cDetails[$editColumn];
-//debug $valid='invalid';
-
+// avant de démarrer, on "bricole" les infos sur la colonne pour traiter certains cas particuliers
+// cas d'une colonne stockant un mot de passe
+if ($cDetail["column_name"]=="user_password") {
+	$cDetail["data_type"]="password";
+	// on utilise les deux premiers caractères du username comme "salt"
+	$userSql='SELECT user_name FROM admin_users WHERE user_id='.$editRecord;
+	$userResult=pg_query($connectPPEAO,$userSql) or die('erreur dans la requete : '.$userSql. pg_last_error());
+	$userArray=pg_fetch_row($userResult);
+	$username=$userArray[0];
+	pg_free_result($userResult);
+	$salt=substr($username,0,2);
+	//on encrypte le mot de passe soumis avant de le stocker
+	$newValue=crypt($newValue,$salt);
+}
 
 // on "nettoie" la valeur saisie
 // si la valeur doit être un réel, on commence par convertir une éventuelle saisie au format décimal "," au lieu de "."
@@ -46,6 +58,8 @@ if ($cDetail["data_type"]=='real') {
 if ($cDetail["data_type"]=='boolean') {
 	if ($newValue=='oui' || $newValue=='t') {$newValue="t";} else {$newValue="f";}
 }
+
+
 
 // on teste la validité de la valeur saisie
 $validityCheck=checkValidity($cDetails,$tablesDefinitions[$editTable]["table"],$editColumn,$newValue);

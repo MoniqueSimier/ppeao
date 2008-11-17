@@ -54,7 +54,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 // on affiche la liste des tables
 echo('<div id="tables_liste">');	
 
-	buildTableList("ref");
+	buildTableList("param");
 
 
 echo('</div>');

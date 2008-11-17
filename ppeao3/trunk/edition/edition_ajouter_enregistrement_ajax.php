@@ -13,7 +13,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 global $tablesDefinitions;
 
-//debug sleep(1);
 
 // la table concernée
 $editTable=$_GET["editTable"];
@@ -24,6 +23,7 @@ $level=$_GET["level"];
 $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["table"]);
 // la liste des colonnes concernées
 $theHeads=array_keys($cDetails);
+
 
 $theForm='<h1>Ajouter un nouvel enregistrement dans la table "'.iconv('ISO-8859-15','UTF-8',$tablesDefinitions[$editTable]["label"]).'"</h1>';
 

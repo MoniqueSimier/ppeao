@@ -10,11 +10,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_PPEAO.php';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
-//debug sleep (50);
 
 global $tablesDefinitions;
 
-//debug sleep(1);
 
 // la table concernée
 $table=$_GET["table"];
@@ -58,14 +56,12 @@ foreach ($theColumns as $oneColumn) {
 
 } // end foreach $theColumns
 
-//debugecho('<pre>');print_r($validityCheck);echo('</pre>');
 
 // si toutes les valeurs sont valides, on fait l'INSERT sur la base...
 if ($valid=='valid') {
 	$addSql='	INSERT INTO '.$tablesDefinitions[$table]["table"].'
 				('.arrayToList($theInsertKeys,',','').')
 				VALUES ('.arrayToList($newValues,',','').')';
-	//debug 	echo($addSql);
 	if($addResult=pg_query($connectPPEAO,$addSql)) {
 	// et on renvoie un message positif
 	$message='<!--[CDATA[Enregistrement ajout&eacute; dans la table '.$table.']]-->';
