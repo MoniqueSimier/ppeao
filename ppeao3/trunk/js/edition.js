@@ -369,6 +369,8 @@ xhr.onreadystatechange = function(){
 	}  
 } // end xhr.onreadystatechange
 
+//debug alert("/edition/edition_enregistrer_modification_ajax.php?&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&newValue="+newValue+"&oldValue="+oldValue);
+
 // using GET to send the request
 xhr.open("GET","/edition/edition_enregistrer_modification_ajax.php?&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&newValue="+newValue+"&oldValue="+oldValue,true);
 xhr.send(null);	
@@ -623,7 +625,7 @@ xhr.send(null);
 * theRecord : l'identifiant unique de l'enregistrement à supprimer
 * theLevel  : le niveau de l'overlay (utilie si on veut afficher plusieurs overlays les uns devant les autres)
 */
-function modalDialogDeleteRecord(theLevel,theTable, theRecord) {
+function modalDialogDeleteRecord(theLevel,theTable,theRecord) {
 		
 	// on crée le nouvel élément
 	
@@ -706,7 +708,7 @@ function modalDialogDeleteRecord(theLevel,theTable, theRecord) {
 			}  
 	} // end xhr.onreadystatechange
 
-	// using GET to send the request
+	// using GET to send the request	
 	xhr.open("GET","/edition/edition_supprimer_enregistrement_ajax.php?&table="+theTable+"&level="+theLevel+"&record="+theRecord,true);
 	xhr.send(null);
 }
