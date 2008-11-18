@@ -34,7 +34,7 @@ $label=$labelArray[0][$labelColumn];
 pg_free_result($labelResult);
 
 // on détermine les enregistrements affectés par la suppression de l'enregistrement (on se limite au premier niveau de cascade)
-$affectedTables=countPrimaryKeyReferencedRows($connectPPEAO, $table, '', $record);
+$affectedTables=countPrimaryKeyReferencedRows($connectPPEAO, $table,$key, $record);
 
 $theMessage.='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregistrement &quot;'.$label.'&quot; ('.$key.'=&quot;'.$record.'&quot;)</h1></div>';
 

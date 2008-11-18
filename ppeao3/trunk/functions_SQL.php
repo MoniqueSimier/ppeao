@@ -346,6 +346,7 @@ if (empty($primaryKey)) {$primaryKeyArray=getTablePrimaryKey ($connection,$table
 
 $references=getPrimaryKeyReferences($connection,$tableName,$primaryKey);
 
+if (!empty($references)) {
 foreach ($references as $reference) {
 
 $localPrimary=getTablePrimaryKey ($connection,$reference["table_name"]);
@@ -363,6 +364,9 @@ if (!empty($temp)) {
 $impacted[$reference["table_name"]]=$temp;
 }
 }
+} // end if !empty($references)
+else {$impacted=array();}
+
 return $impacted;
 }
 //*********************************************************************
