@@ -62,9 +62,11 @@ if (! file_exists($docpath)) {
 } else {
 	$handle = opendir($docpath); 
 	while (($file = readdir())!=false) { 
-		clearstatcache(); 
+		 
+		//echo $file." - ".is_dir($docpath."/".$file)." - ".is_file($docpath."/".$file)." <br/>";
+		clearstatcache();
 		$ext=substr($file,strpos($file,"."),4);
-		if($file!=".." && $file!="." ){
+		if($file!=".." && $file!="." && !is_dir($docpath."/".$file) ){
 			$ad=htmlspecialchars($file); //source
 			$ad=str_replace("'",'%92',$ad);
 			$ad=str_replace('é','%E9',$ad);
@@ -142,7 +144,7 @@ if (! file_exists($docpath)) {
 
 //*********************************************************************
 // displayDocumentation : permet d'afficher un doc dans un div deroulant
-function displayDocumentation ($docTexte) {
+function displayDocumentation ($docTexte,$titreDiv) {
 // Cette fonction permet d'afficher un texte contenant les liens a une doc
 // dans un div avec un effet FX Slide (mootools)
 //*********************************************************************
@@ -152,11 +154,17 @@ function displayDocumentation ($docTexte) {
 // En sortie : 
 // - Renvoie les div.
 //*********************************************************************
+	if ($titreDiv =="") {
+		$TempTitreDiv="Une documentation compl&eacute;mentaire est disponible";
+	} else {
+		$TempTitreDiv=$titreDiv;
 
+	}
+	
 	if ($docTexte == "") {
 		echo "Pas de documentation compl&eacute;mentaire disponible";
 	} else {
-		echo "<div class=\"marginbottom\">Une documentation compl&eacute;mentaire est disponible&nbsp;&nbsp;
+		echo "<div class=\"marginbottom\">".$TempTitreDiv."&nbsp;&nbsp;
 		<a id=\"v_slidein\" href=\"#\"> Afficher </a>
 		|
 		<a id=\"v_slideout\" href=\"#\"> Fermer </a>

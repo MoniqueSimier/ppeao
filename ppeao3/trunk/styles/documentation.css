@@ -9,10 +9,23 @@ Style pour le module de documentation
 	width:800px;
 	background:#E4E4E4;
 	border:1px dotted #666666;
-
-
 }
 
+#listeDocATraiter{
+	min-height:60px;
+	margin-left:5px;
+	width:98%;
+	background:#FFFFFF;
+	border:1px dotted #666666;
+}
+
+
+#paysDoc{
+	margin-left:50px;
+}
+#systDoc{
+	margin-left:50px;
+}
 .listDoc{
 	list-style:none;
 }
@@ -22,11 +35,30 @@ Style pour le module de documentation
 	padding-bottom:4px;
 	
 }
+.sublistDoc{
+	list-style:none;
+}
+
+.subselDoc{
+	padding-top:5px;
+	padding-bottom:5px;
+	
+}
 .doccol1{
 	width:50%;
 
 }
 .doccol2{
+	text-align:right;
+	width:50%;
+}
+.doccol3{
+	color:#666666;
+	width:50%;
+
+}
+.doccol4{
+	color:#990000;
 	text-align:right;
 	width:50%;
 }
