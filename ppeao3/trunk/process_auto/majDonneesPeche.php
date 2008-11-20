@@ -32,17 +32,20 @@ $tempExist = "";
 $tempSupp = "";
 $tempID = 0;
 $tempNewID = 0;
+$tempNumPeche = 1;
 $condWhere = "";
 $cptAllID=0;
 $cptTableEq = 0;
 $cptTableTotal = 0;
 $start_while=timer(); // début du chronométrage du for
+$UniqExecSQL = false ; // Debug pour n'executer que les SQL
 //****************************************************
 // Pre traitement
 // Creation des tables dans la BD pour
 // maj des ID
 //
 //*****************************************
+if (!$UniqExecSQL) {
 if ($tableEnCours == "") {
 	echo "<b>Etape 1</b> : creation des tables temporaires <br/>";
 	$CRexecution = "** Creation des tables temporaires <br/>";
@@ -139,7 +142,8 @@ if ($tableEnCours == "") {
 		exist character varying(1),
 		supp character varying(1),
 		id integer,
-		newid integer
+		newid integer,
+		numPeche integer
 	 );
 	ALTER TABLE public.temp_exist_peche OWNER TO devppeao;
 	COMMENT ON TABLE temp_exist_peche IS 'Table temporaire pour identifier les peches exp et art deja existantes';
@@ -151,6 +155,9 @@ if ($tableEnCours == "") {
 	COMMENT ON COLUMN temp_exist_peche.supp IS 'a supprimer ?';
 	COMMENT ON COLUMN temp_exist_peche.id IS 'id de exp_campagne ou art_debarquement (en cours )';
 	COMMENT ON COLUMN temp_exist_peche.newid IS 'nouvel id de exp_campagne ou art_debarquement';
+	COMMENT ON COLUMN temp_exist_peche.numPeche IS 'numero de la campagne ou de la peche art';
+	CREATE INDEX \"id_type\" ON temp_exist_peche USING btree (type, id);
+	CREATE INDEX \"type_cle1_cle2_cle3\" ON temp_exist_peche USING btree (type,cle1,cle2,cle3);
 	 ";
 	$createTableResult = pg_query(${$BDSource},$createTableSql);
 	if ($createTableResult == false ) {
@@ -163,7 +170,8 @@ if ($tableEnCours == "") {
 			exist character varying(1),
 			supp character varying(1),
 			id integer,
-			newid integer
+			newid integer,
+			numPeche integer
 		 );
 		ALTER TABLE public.temp_exist_peche OWNER TO devppeao;
 		COMMENT ON TABLE temp_exist_peche IS 'Table temporaire pour identifier les peches exp et art deja existantes';
@@ -175,6 +183,9 @@ if ($tableEnCours == "") {
 		COMMENT ON COLUMN temp_exist_peche.supp IS 'mois  si peche art';
 		COMMENT ON COLUMN temp_exist_peche.id IS 'id de exp_campagne ou art_debarquement (en cours )';
 		COMMENT ON COLUMN temp_exist_peche.newid IS 'nouvel id de exp_campagne ou art_debarquement';
+		COMMENT ON COLUMN temp_exist_peche.numPeche IS 'numero de la campagne ou de la peche art';
+		CREATE INDEX \"id_type\" ON temp_exist_peche USING btree (type, id);
+		CREATE INDEX \"type_cle1_cle2_cle3\" ON temp_exist_peche USING btree (type,cle1,cle2,cle3);
 		 ";
 		$createTableResult = pg_query(${$BDSource},$createTableSql) or die('erreur dans la requete : '.pg_last_error());
 	}
@@ -245,10 +256,38 @@ if ($tableEnCours == "") {
 				case "majsc":
 					$condwhere = "numero_campagne =".$compRow[0]." and ref_systeme_id=".$compRow[1];
 					$tempCle3 = 0;
+					$tempNumPeche = $compRow[0];
 					break;
 				case "majrec" :
 					$condwhere = "art_agglomeration_id =".$compRow[0]." and annee=".$compRow[1]." and mois=".$compRow[2];
 					$tempCle3 = $compRow[2];
+					// Calcul de la peche art en cours
+					// soit on a deja cree dans temp_exist_peche une peche art avec les memes caractéristiques
+					// soit on incremente
+					$testSQL = "select numPeche from temp_exist_peche where type = 'art' and cle1=".$compRow[0]." and cle2=".$compRow[1]." and cle3=".$compRow[2];
+					$testSQLResult = pg_query(${$BDSource},$testSQL) or die('erreur dans la requete : '.pg_last_error());
+					if (pg_num_rows($testSQLResult) == 0) {
+					// On n'a pas cree encore cette peche art
+						$test2SQL = "select max(numPeche) from temp_exist_peche where type = 'art' ";
+						$test2SQLResult = pg_query(${$BDSource},$test2SQL) or die('erreur dans la requete : '.pg_last_error());
+						if (pg_num_rows($test2SQLResult) == 0) {
+							// C'est la premiere peche artisanale
+							$tempNumPeche =1;
+						} else {
+							// On recupere le numero de la campagne
+							$test2SQLRow = pg_fetch_row($test2SQLResult);
+							if ($test2SQLRow[0] == null) {
+								$tempNumPeche = 1;
+							} else {
+								$tempNumPeche = $test2SQLRow[0] + 1 ;
+							}
+						}
+					} else {
+						// On recupere le numero de la campagne
+						$testSQLRow = pg_fetch_row($testSQLResult);
+						$tempNumPeche = $testSQLRow[0];
+					}
+					// Fin de la recuperation / affectation du num de peche art
 					break;
 			}
 			$tempCle1 = $compRow[0];
@@ -275,9 +314,12 @@ if ($tableEnCours == "") {
 				$tempNewID = $compRow[3];
 				$tempSupp = "n";
 			}
+	
 			$cptTableTotal ++;
 			// La creation du script SQL avec toutes les info recuperees.
-			$insertSQL = "insert into temp_exist_peche values ('".$tempType."', ".$tempCle1.", ".$tempCle2.", ".$tempCle3.", '".$tempExist."', '".$tempSupp."', ".$tempID.",".$tempNewID.")";
+			//echo "numpeche = ".$tempNumPeche."<br/>";
+			$insertSQL = "insert into temp_exist_peche values ('".$tempType."', ".$tempCle1.", ".$tempCle2.", ".$tempCle3.", '".$tempExist."', '".$tempSupp."',".$tempID.",".$tempNewID.",".$tempNumPeche.")";
+			//echo $insertSQL."<br/>";
 			$insertSQLResult = pg_query(${$BDSource},$insertSQL) or die('erreur dans la requete : '.pg_last_error());
 			pg_free_result($insertSQLResult);
 	
@@ -285,12 +327,14 @@ if ($tableEnCours == "") {
 		} // end while ($compRow = pg_fetch_row($compReadResult) ) {
 	} //end else if (pg_num_rows($compReadResult)
 } // end if ($tableEnCours == "")
-
+} // end if (!$UniqExecSQL)
 //****************************************************
 // Traitement
 // Etape 2 : générer les correspondances d'ID pour toutes les tables à importer
 // On ne se pose pas la question de savoir si la table existe ou non.. On le testera apres
 //****************************************************
+
+if (!$UniqExecSQL) {
 if (!$cptTableEq ==0) {
 	$CRexecution = "** Nombre de peche ".$tempType." deja existantes = ".$cptTableEq." / ".$cptTableTotal." lues <br/>";
 } else {
@@ -299,7 +343,7 @@ if (!$cptTableEq ==0) {
 $cptTableEq = 0;
 $cptTableTotal = 0;
 echo "<b>Etape 2</b> : creation des SQL <br/>";
-
+$CRexecution .="Creation des SQL <br/>";
 // On récupère toutes les tables à mettre à jour
 
 set_time_limit(ini_get('max_execution_time')); // on remet le timer normal
@@ -318,6 +362,8 @@ switch($typeAction){
 //$listTableMajID ="exp_campagne,exp_environnement,exp_coup_peche,exp_fraction"; // test
 //$listTableMajID ="exp_environnement,exp_coup_peche,exp_fraction,exp_biologie,exp_trophique";
 //$listTableMajID ="art_unite_peche,art_lieu_de_peche,art_debarquement,art_debarquement_rec,art_fraction_rec";
+//$listTableMajID ="art_unite_peche";
+//$listTableMajID ="art_unite_peche,art_lieu_de_peche,art_debarquement,art_fraction";
 //echo "liste table = ".$listTableMajID." <br/>";
 $NbrTableAlire = substr_count($listTableMajID,",");
 if ($NbrTableAlire == 0) {
@@ -360,6 +406,8 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 			$_SESSION['s_en_erreur'] 		= false;
 			$_SESSION['s_cpt_erreurs_sql'] 	= 0;
 			$_SESSION['s_cpt_maj'] 	= 0; 
+			$_SESSION['s_cpt_maj'] 	= 0;
+			$_SESSION['s_max_envir_Id_Source'] = 0;
 		} else {
 			// on reinitialise les valeurs avec les variables de session mise à jour lors du traitement précédent
 			$CRexecution 	= $_SESSION['s_CR_processAuto'];
@@ -370,7 +418,6 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 			$_SESSION['s_CR_processAuto'] 	= "";
 			$_SESSION['s_cpt_champ_total'] 	= 0;
 			$_SESSION['s_cpt_erreurs_sql'] 	= 0; 
-			$_SESSION['s_cpt_maj'] 	= 0; 
 		}
 
 		// Gestion des problemes d'ID non numerique
@@ -483,13 +530,17 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 						echo "apres test appartenance :".$debugTimer."<br/>";
 					}
 					// Cas particulier des tables de références
-					// On a déjà réévaluer le nouvel ID....
-					if 	($tableMajID[$cptID] =="exp_campagne" || $tableMajID[$cptID] == "art_debarquement")
-					{
-						$tempNewID = $scriptSQLRow[2];
-					} else { 
-						$tempNewID = $maxenvirIdSource;
+					// On a déjà réévalué le nouvel ID....
+					$tempNewID = $maxenvirIdSource;
+					switch ($tableMajID[$cptID]) {
+						case "exp_campagne" : 
+							$tempNewID = $scriptSQLRow[2];
+							break;
+						case "art_debarquement" : 
+							$tempNewID = $scriptSQLRow[2];
+							break;
 					}
+
 					// Evaluation du type de SQL a executer
 					// Et stockage de la requete.
 					if (pg_num_rows($sourceSqlResult) == 0) {
@@ -561,9 +612,9 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 			
 			// On gère le compte-rendu
 			if (!$ArretTimeOut) {
-				$CRexecution = $CRexecution." *-".$tableMajID[$cptID]." : ".$cptChampTotal." lus";
+				$CRexecution = $CRexecution." *-".$tableMajID[$cptID]." : ".$cptChampTotal." traites";
 				if ($EcrireLogComp ) {
-					WriteCompLog ($logComp,"FIN ".$nomAction." pour ".$tableMajID[$cptID]." : lus = ".$cptAjoutMaj,$pasdefichier);
+					WriteCompLog ($logComp,"FIN ".$nomAction." pour ".$tableMajID[$cptID]." : traites = ".$cptAjoutMaj,$pasdefichier);
 				}
 			
 				$CRexecution = $CRexecution." (a maj/a ajouter total=".$cptAjoutMaj.") -* <br/>" ;
@@ -575,6 +626,12 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 	
 	
 } // end for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++)
+} else { // end if (!$UniqExecSQL)
+	$CRexecution = $CRexecution."Pas de creation SQL. Uniquement execution SQL <br/>";
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp,"Pas de creation SQL. Uniquement execution SQL",$pasdefichier);
+	}
+}
 if ($ArretTimeOut){
 	$_SESSION['s_max_envir_Id_Source'] = $maxenvirIdSource;
 } else {

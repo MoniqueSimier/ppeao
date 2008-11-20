@@ -58,6 +58,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 			$_SESSION['s_AllScriptSQL'] = "";
 			$_SESSION['s_max_envir_Id_Source'] = 0;
 			$_SESSION['s_cpt_maj'] 	= 0; 
+			$_SESSION['s_max_Id_Source'] = 0;
 
 		
 		?>

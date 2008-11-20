@@ -21,14 +21,19 @@
 			// gestion fin de traitement 
 			WriteCompLog ($logComp,"******************************************",$pasdefichier);
 			WriteCompLog ($logComp,"* Compte rendu traitement ".$nomAction,$pasdefichier);
-			WriteCompLog ($logComp,"******************************************",$pasdefichier);
-			WriteCompLog ($logComp,"* Nombre total de tables lues = ".$_SESSION['s_cpt_table_total'],$pasdefichier);
-			WriteCompLog ($logComp,"* Nombre de tables identiques = ".$_SESSION['s_cpt_table_egal'],$pasdefichier);
-			WriteCompLog ($logComp,"* Nombre de tables avec uniquement des donnees differentes = ".$_SESSION['s_cpt_table_diff'],$pasdefichier);
-			WriteCompLog ($logComp,"* Nombre de tables avec uniquement des donnees manquantes = ".$_SESSION['s_cpt_table_manquant'],$pasdefichier);
-			WriteCompLog ($logComp,"* Nombre de tables avec des donnees manquantes et differentes = ".$_SESSION['s_cpt_table_diff_manquant'],$pasdefichier);
-			WriteCompLog ($logComp,"* Nombre de tables vides = ".$_SESSION['s_cpt_table_vide'],$pasdefichier); 
-			WriteCompLog ($logComp,"* Pour info Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide'],$pasdefichier); 
+			WriteCompLog ($logComp,"******************************************",$pasdefichier);	
+			WriteCompLog ($logComp,"* Nombre total de tables lues = ".$_SESSION['s_cpt_table_total'],$pasdefichier);						
+			if ($typeAction == "comp" || $typeAction == "compinv") {
+				WriteCompLog ($logComp,"* Nombre de tables identiques = ".$_SESSION['s_cpt_table_egal'],$pasdefichier);
+				WriteCompLog ($logComp,"* Nombre de tables avec uniquement des donnees differentes = ".$_SESSION['s_cpt_table_diff'],$pasdefichier);
+				WriteCompLog ($logComp,"* Nombre de tables avec uniquement des donnees manquantes = ".$_SESSION['s_cpt_table_manquant'],$pasdefichier);
+				WriteCompLog ($logComp,"* Nombre de tables avec des donnees manquantes et differentes = ".$_SESSION['s_cpt_table_diff_manquant'],$pasdefichier);
+				WriteCompLog ($logComp,"* Nombre de tables vides = ".$_SESSION['s_cpt_table_vide'],$pasdefichier); 
+				WriteCompLog ($logComp,"* Pour info Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide'],$pasdefichier); 
+			} else {
+				$FicCRexecution = str_replace ("<br/>","\r\n".date('y\-m\-d\-His')."- ",$CRexecution);
+				WriteCompLog ($logComp,$FicCRexecution,$pasdefichier);
+			}
 		}
 		// Affichage d'avertissement si erreur dans le traitement
 		if ($_SESSION['s_erreur_process']) {
@@ -80,7 +85,7 @@
 				
 			} else {
 				// Différences
-				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s mais des tables sont diff&eacute;rentes et/ou vides. <br/>Des mises &agrave; jour sont n&eacute;cessaires avant de relancer le traitement. (pour info = les scripts SQL pour ces mises a jours pr&eacute;sents dans ".date('y\-m\-d')."-".$nomFicSQL."-xxx.sql)";
+				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s <br/>mais des tables sont diff&eacute;rentes et/ou vides. Des mises &agrave; jour sont n&eacute;cessaires <br/>avant de relancer le traitement.<br/> (pour info = les scripts SQL pour ces mises a jours pr&eacute;sents dans ".date('y\-m\-d')."-".$nomFicSQL."-xxx.sql)";
 				if ($EcrireLogComp ) {
 				echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : <a href=\"".$nomLogLien."\" target=\"log\">".$nomLogLien."</a>";
 				}

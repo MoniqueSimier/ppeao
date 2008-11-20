@@ -45,7 +45,7 @@ function WriteCompSQL ($fichierSQL,$script,$PasAutorisation) {
 	if (! $PasAutorisation) {
 		if (! fwrite($fichierSQL,$script."\r\n") ) {
 			logWriteTo(7,"error","Erreur d'ajout de script dans le fichier de script (comparaison.php)","","","0");
-		}
+		} 
 	}
 }
 
@@ -279,21 +279,57 @@ $runQueryOK = true;
 
 $lev=error_reporting (8); //NO WARNING!!
 $compINSResult = pg_query($connectionBD,$scriptSQLToRun);
-
-
-
-
 error_reporting ($lev); //DEFAULT!!
 if (strlen ($r=pg_last_error ($connectionBD))) {
 	$runQueryOK = false;
 	logWriteTo(7,"error","erreur execution : '".$scriptSQLToRun."'" ,"message = ".$r,"","0");
-
-
 }
 
 return $runQueryOK;
 
 }
+
+//*********************************************************************
+// ExecQueryDG : exécute une requete SQL en captant les erreurs
+function ExecQueryDG($LocScriptSQL,$LocconnectionBD,$LocdebugAff,$Locstart_while,$LocEcrireLogComp,$Locpasdefichier,$LocnomTable) {
+// Cette fonction permet d'exécuter un script SQL avec la possibilite de debugger.
+// 
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $LocScriptSQL : le script à exécuter.
+// $LocconnectionBD : la connection de BD sur laquelle lancer le script
+// $LocdebugAff : flag du debug
+// $Locstart_while : temps de depart du timer
+// $LocEcrireLogComp : est-ce qu'on ecrit dans le fichier log comp
+// $Locpasdefichier : param supp de debug
+// $LocnomTable : nom de la table en cours
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie si la requete a ete correctement exécutée.
+//*********************************************************************
+	$ErreurQuery = false;
+	if ($LocdebugAff==true) {
+		$LocdebugTimer = number_format(timer()-$Locstart_while,4);
+		echo "Appartenance avant requete ".$LocnomTable." :".$LocdebugTimer."<br/>";
+	}
+
+	$LocscriptSQLResult = pg_query($LocconnectionBD,$LocScriptSQL);
+	$LocErreurSQL = pg_last_error($LocconnectionBD);
+	if (!$LocscriptSQLResult) {
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp,"Erreur execution requete ".$LocScriptSQL." (erreur =".$LocErreurSQL.")",$Locpasdefichier);
+		}
+		logWriteTo(7,"error","erreur execution : '".$LocScriptSQL."'" ,"message = ".$LocErreurSQL,"","0");
+		$ErreurQuery = true;
+	}
+	if ($LocdebugAff==true) {
+		$LocdebugTimer = number_format(timer()-$Locstart_while,4);
+		echo "Appartenance apres requete ".$LocnomTable." :".$LocdebugTimer."<br/>";
+	}
+	return $ErreurQuery;
+}
+
+
 
 //*********************************************************************
 // runQuery : exécute une requete SQL en captant les erreurs
@@ -392,4 +428,8 @@ if ( file_exists($nomFichier)) {
 }
 return $ParamValue;
 }
+
+
+
+
 ?>

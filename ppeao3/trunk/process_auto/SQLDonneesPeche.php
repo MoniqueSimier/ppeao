@@ -26,7 +26,7 @@ $nomAction = "Exec. SQL pour ".$nomAction;
 
 
 echo "<b>Etape 3</b> : execution des SQL <br/>";
-
+$CRexecution .="Execution des SQL <br/>";
 // On récupère toutes les tables à mettre à jour
 if (!$finmajDP) { // on ne lance pas le timer si on sort directement de majDonneesPeches.sql
 	$start_while=timer(); // début du chronométrage du for
@@ -45,7 +45,8 @@ switch($typeAction){
 //$listTableMajID ="exp_campagne";
 //$listTableMajID ="exp_campagne,exp_environnement,exp_coup_peche,exp_fraction"; // test
 //$listTableMajID ="exp_environnement,exp_coup_peche,exp_fraction,exp_biologie,exp_trophique";
-//$listTableMajID ="art_unite_peche,art_lieu_de_peche,art_debarquement,art_debarquement_rec,art_fraction_rec";
+//$listTableMajID ="art_unite_peche,art_lieu_de_peche,art_debarquement,art_fraction";
+//$listTableMajID ="art_unite_peche";
 $NbrTableAlire = substr_count($listTableMajID,",");
 if ($NbrTableAlire == 0) {
 	$NbrTableAlire = 1;
@@ -111,7 +112,7 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 
 		// Gestion TIMEOUT : on reprend la ou on s'etait arrete
 		// Comme on trie par ID, on ne va pas en perdre en route
-			$testTtypeIDChar = strpos($ListeTableIDPasNum ,$tableMajID[$cptID]);
+		$testTtypeIDChar = strpos($ListeTableIDPasNum ,$tableMajID[$cptID]);
 		if ($tableEnCours == "") {
 			$condWhere = " where nomtable='".$tableMajID[$cptID]."'";
 		} else {
@@ -155,8 +156,14 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 					echo "timeout table en lecture = ".$tableEnLecture." id en lecture = ".$IDEnLecture."<br/>";
 					break;
 				}
-
-				$IDEnLecture = $envRow[1];		
+				if ($testTtypeIDChar === false) {
+					// L'ID est bien un numérique
+					$IDEnLecture = $envRow[1];
+				} else {
+					// L'ID est une chaine
+					$IDEnLecture = $envRow[2];
+				}	
+						
 				// Compteur 
 				$cptChampTotal++;
 	
@@ -169,11 +176,13 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 				$insertSQL = $envRow[7];
 				// Execution du SQL
 				$insertSQLResult = pg_query(${$BDCible},$insertSQL) ;
+				$errorSQL = pg_last_error(${$BDCible});
 				if ($insertSQLResult) {
 					$cptAjoutMaj ++;
 					
 				} else {
-					if ($EcrireLogComp ) { WriteCompLog ($logComp,"Erreur execution pour table = ".$envRow[0]."  script = ".$envRow[7],$pasdefichier);}
+					if ($EcrireLogComp ) { 
+					WriteCompLog ($logComp,"Erreur execution pour table = ".$envRow[0]."  script = ".$envRow[7]. " erreur complete = ".$errorSQL,$pasdefichier);}
 	
 					$cptSQLErreur ++;
 					$ErreurProcess = true;

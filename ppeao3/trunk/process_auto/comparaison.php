@@ -360,8 +360,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	// Début du traitement de comparaison par table.
 	// *********************************************
 	$ListeTableIDPasNum = GetParam("listeTableIDPasNum",$PathFicConf);
-	
-	$genereCR = false;
+
 	// *************************************************
 	// Traitement des mise a jour de peche exp et peche art
 	// *************************************************
@@ -377,18 +376,13 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			// execution des scripts SQL
 			include $_SERVER["DOCUMENT_ROOT"].'/process_auto/SQLDonneesPeche.php';
 		}
-		//echo "fin traitements maj donnees <br/>";
-		if ($EcrireLogComp ) { WriteCompLog ($logComp,"debug -> fin traitements maj donnees ",$pasdefichier);}
-		$genereCR = true;
+
 	}
 	// *************************************************
 	// Traitement de comparaison
 	// *************************************************
-	if (!$ArretTimeOut && !($typeAction == "majsc" || $typeAction =="majrec") && !$genereCR) {
+	if (!$ArretTimeOut && !($typeAction == "majsc" || $typeAction =="majrec")) {
 	
-	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp,"debug-> entree dans la boucle comparaison",$pasdefichier);
-	}
 	$start_while=timer(); // début du chronométrage du for
 	for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
 		// controle de la table en cours si besoin (gestion TIMEOUT)
@@ -403,8 +397,8 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		$tableSourceVide = false;
 		$dumpTable = false;
 		if ($tableEnCours == "") {
-			$ErreurProcess=false;
 			$cptTableTotal++;
+			$ErreurProcess = false;
 			$_SESSION['s_cpt_champ_total'] 	= 0;
 			$_SESSION['s_cpt_champ_diff']	= 0;
 			$_SESSION['s_cpt_champ_vide']	= 0;
@@ -569,11 +563,13 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 							// L'enregistrement n'existe pas dans la base cible
 							$cptChampVide++ ;
 							//logWriteTo(7,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
+							$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,0,"n","","",$start_while);
+							
 							if ($EcrireLogComp ) { WriteCompLog ($logComp," MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
 							// On génère un fichier de mise à jour utilisable
-								WriteCompSQL ($SQLComp,$scriptSQL.";",$pasdefichier);
-								$_SESSION['s_cpt_lignes_fic_sql'] ++;
-								$ErreurProcess = true;
+							WriteCompSQL ($SQLComp,$scriptSQL.";",$pasdefichier);
+							$_SESSION['s_cpt_lignes_fic_sql'] ++;
+							$ErreurProcess = true;
 						
 						} else {
 						// On balaye tous les champs à comparer en ignorant les clés primaires id.
@@ -591,6 +587,8 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 									// différent
 									$cptChampDiff++ ;
 									$enregDiff = true;
+									$scriptSQL = GetSQL('update',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,0,"n","","",$start_while);
+									
 									if ($EcrireLogComp ) {WriteCompLog ($logComp," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")",$pasdefichier);}
 									break;
 								}
@@ -611,23 +609,15 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 					} else { // fin du if (! $dumpTable)
 						// On fait un dump bourrin de la table
 						$tableVide = true;
-
 						if ($EcrireLogComp ) { WriteCompLog ($logComp," TOUT MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
-						//$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf);
-						if ($typeAction == "majsc" || $typeAction == "majrec") {
-						// Création de l'enreg dans BD_PPPEAO
-							$allScriptSQL = stockQuery($scriptSQL,$allScriptSQL);
-							//$scriptDeleteSQL = GetSQL('delete',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf);
-							if (!$pasderevSQL ) {
-								WriteFileReverseSQL($ficRevSQL,$scriptDeleteSQL,$pasdefichier);
-							}
+						
+						$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,0,"n","","",$start_while);
 
-						} else {
 						// On génère un fichier de mise à jour utilisable
 							WriteCompSQL ($SQLComp,$scriptSQL.";",$pasdefichier);
 							$_SESSION['s_cpt_lignes_fic_sql'] ++;
 							$ErreurProcess = true;
-						}					
+
 					}
 				} // end while ($compRow = pg_fetch_row($compReadResult))
 				// Controle si sortie par timeout ou 
@@ -642,7 +632,6 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			// Libère le requete sur BD_PECHE
 			pg_free_result($compReadResult);
 		} // end if ($continueControle) 
-
 
 
 		if (!$ArretTimeOut) {
@@ -710,7 +699,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 					} else {
 						if ($cptChampVide == 0) {
 							$cptTableEq ++;
-							$CRexecution = $CRexecution." identique -<br/>";
+							$CRexecution = $CRexecution." identique -";
 							if ($EcrireLogComp ) {			
 								WriteCompLog ($logComp,"   -->  identique",$pasdefichier);
 							}
@@ -719,6 +708,10 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 				} // End for statement if ($cptChampDiff > 0)
 				
 				if ($ErreurProcess) {
+					// On garde en memoire l'erreur pour cette table pour le refleter sur le traitement global
+					if (!$_SESSION['s_erreur_process']){
+						$_SESSION['s_erreur_process'] = $ErreurProcess;
+					}
 					if ($typeAction == "comp" || $typeAction == "compinv"){
 					
 					} else {
@@ -729,17 +722,12 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 					}
 				}
 			} 
-			//$CRexecution = $CRexecution." (maj/ajout total=".$cptAjoutMaj.") -* <br/>" ;
+			$CRexecution = $CRexecution." <br/>" ;
 		} // End for statement if ((!$ArretTimeOut)
 		
 		} // End for statement if ((!$tableEnCours == "" && tableEnCours == $tables[$cpt]) || $tableEnCours == "")
 	} // End for statement for ($cpt = 0; $cpt <= $nbTables; $cpt++)
 	} // End if (!$ArretTimeOut)
-
-	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp,"debug-> fin traitement comparaison",$pasdefichier);
-	}
-
 
 	// Fin de traitement : affichage des résultats.
 	// *********************************************
