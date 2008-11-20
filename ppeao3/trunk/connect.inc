@@ -15,8 +15,7 @@ $connectPPEAO = pg_connect("host=vmppeao.mpl.ird.fr port=5432 dbname=devppeao us
 //**** Compatibilite lot 2 *** A mettre a jour avec nouvelle valeur connexion $connectPPEAO
 $user="devppeao";                   // Le nom d'utilisateur 	
 $passwd="2devppe!!";                // Le mot de passe 			
-$host= "vmppeao.mpl.ird.fr";  				// L'hôte  
-//$db_default="BD_Peche";
-$db_default="devppeao";
+$host= "vmppeao.mpl.ird.fr";  		// L'hôte  
+$db_default="BD_Peche";
 
 ?>
