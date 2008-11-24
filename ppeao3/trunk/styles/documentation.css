@@ -22,14 +22,22 @@ Style pour le module de documentation
 
 #paysDoc{
 	margin-left:50px;
+	border:1px dotted #666666;
+	background-color:#F3EFEF;
 }
 #systDoc{
 	margin-left:50px;
+	border:1px dotted #666666;
+	background-color:#F3EFEF;
 }
 .listDoc{
 	list-style:none;
 }
-
+#titreAction{
+	color:#FFFFFF;
+	background-color:#F7BA02;
+	font-weight:bold;
+}
 .selDoc{
 	padding-top:4px;
 	padding-bottom:4px;
@@ -37,9 +45,11 @@ Style pour le module de documentation
 }
 .sublistDoc{
 	list-style:none;
+	border:1px dotted #666666;
 }
 
 .subselDoc{
+	list-style:none;
 	padding-top:5px;
 	padding-bottom:5px;
 	

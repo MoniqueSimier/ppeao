@@ -39,9 +39,9 @@ if (isset($_GET['do'])) {
 }
 switch ($action) {
 	case "modify" : 
-		$actionLabel = "modifier"; break;
+		$actionLabel = "Modifier"; break;
 	case "create" : 
-		$actionLabel = "cr&eacute;er"; break;
+		$actionLabel = "Cr&eacute;er"; break;
 }
 $nomRep = str_replace("\\" ," ", $repDoc); // A revoir
 $nomRep = str_replace("/" ," ", $nomRep); // A revoir
@@ -52,7 +52,7 @@ if ( $RawListDoc =="") {
 } else {
 	$checkRepOK = true;
 }
-$ContentDiv .= "<h2 >".$actionLabel." de la documentation pour ".$nomRep."</h2><br/>";
+$ContentDiv .= "<span id=\"titreAction\">".$actionLabel." de la documentation pour ".$nomRep."</span><br/>";
 $ContentDiv .= "<div id=\"listeDocATraiter\">";
 switch ($action){
 	case "modify" :
@@ -84,11 +84,12 @@ switch ($action){
 		
 		<form id=\"gestdoc\" method=\"POST\" action=\"/gestion_doc.php\" enctype=\"multipart/form-data\">
 			<input type=\"hidden\" name=\"upload\" value=\"yes\">	
-			 <input type=\"hidden\" name=\"max_file_size\" value=\"100000\">
+			<input type=hidden name=\"type\" value=\"".$type."\">
+			 <input type=\"hidden\" name=\"max_file_size\" value=\"1000000\">
 			 <input type=\"hidden\" name=\"repName\" value=\"".$repDoc."\">
 			 Fichier : <input type=\"file\" name=\"avatar\">
 			 <input type=\"submit\" name=\"envoyer\" value=\"".$labelBrowse."\">
-		</form>";
+		</form><br/><span class=\"hint_label\">Note : </span><span class=\"hint_text\">Le fichier ne doit pas d&eacute;passer le Mo.<br/>Les types de fichiers autorisés sont : .png, .gif, .jpg, .jpeg, .doc, .pdf,.ppt.</span>";
 		break;
 
 } 

@@ -81,7 +81,17 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 // On effectue les actions avant le chargement des documents, ainsi
 // automatiquement, tous changement est pris en compte.
 	$ContentDiv = "";
+	$DocDiv= "";
+	if (isset($_GET['type']) || isset($_POST['type'])){
+		if (isset($_GET['type'])) {
+			$type = $_GET['type']; 
+		} else {
+			$type = $_POST['type'];
+		}
+	} else {
+		$type =  "";
 	
+	}
 	if (isset($_GET['action'])) {
 		// Gestion des actions
 		include $_SERVER["DOCUMENT_ROOT"].'/documentation/gerer_doc.php';
@@ -138,17 +148,21 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 	echo "<h2>Vous pouvez choisir de consulter les documentations pour les pays en choisissant l'un des types de donn&ecirc;es &agrave; g&ecirc;rer</h2>";
 	echo "<ul class=\"listDoc\"><li class=\"selDoc\"><span class=\"doccol1\" ><input type=\"checkbox\" name=\"type\" value=\"scientifique\"/>Donn&eacute;es de p&ecirc;che scientifique&nbsp;</span><span class=\"doccol2\" ><a id=\"ActionPS\" class=\"link_button\" href=\"/gestion_doc.php?rep=peche_scientifique&amp;action=".$ActionPS."\">".$boutonPS."</a>".$boutonSupplPS."</span>";
 	echo "</li>";	
-	if (isset($_GET['type']) ) {
+	if ($type == "scientifique") {
 		include $_SERVER["DOCUMENT_ROOT"].'/documentation/get_payssys_doc.php';
 	}
-
-
-	echo"<li class=\"selDoc\"><span class=\"doccol1\" ><input type=\"checkbox\" name=\"type_donnees\" value=\"artisanale\"/>Donn&eacute;es de p&ecirc;che artisanale&nbsp;</span><span class=\"doccol2\" ><a id=\"ActionPA\" class=\"link_button\" href=\"/gestion_doc.php?rep=peche_artisanale&amp;action=".$ActionPA."\">".$boutonPA."</a>".$boutonSupplPA."</span></li>";
-	echo"<li class=\"selDoc\"><span class=\"doccol1\" ><input type=\"checkbox\" name=\"type_donnees\" value=\"statistique\"/>Donn&eacute;es de statistiques de p&ecirc;che&nbsp;</span><span class=\"doccol2\" ><a id=\"ActionSTAT\" class=\"link_button\" href=\"/gestion_doc.php?rep=statistique&amp;action=".$ActionSTAT."\">".$boutonSTAT."</a>".$boutonSupplSTAT."</span></li></ul>";
+	echo"<li class=\"selDoc\"><span class=\"doccol1\" ><input type=\"checkbox\" name=\"type\" value=\"artisanale\"/>Donn&eacute;es de p&ecirc;che artisanale&nbsp;</span><span class=\"doccol2\" ><a id=\"ActionPA\" class=\"link_button\" href=\"/gestion_doc.php?rep=peche_artisanale&amp;action=".$ActionPA."\">".$boutonPA."</a>".$boutonSupplPA."</span></li>";
+	if ($type == "artisanale") {
+		include $_SERVER["DOCUMENT_ROOT"].'/documentation/get_payssys_doc.php';
+	}
+	echo"<li class=\"selDoc\"><span class=\"doccol1\" ><input type=\"checkbox\" name=\"type\" value=\"statistique\"/>Donn&eacute;es de statistiques de p&ecirc;che&nbsp;</span><span class=\"doccol2\" ><a id=\"ActionSTAT\" class=\"link_button\" href=\"/gestion_doc.php?rep=statistique&amp;action=".$ActionSTAT."\">".$boutonSTAT."</a>".$boutonSupplSTAT."</span></li></ul>";
+	if ($type =="statistique") {
+		include $_SERVER["DOCUMENT_ROOT"].'/documentation/get_payssys_doc.php';
+	}
 echo "<input type=\"submit\" name=\"choix\" value=\"Valider\">";
 	echo"</form>";
 
-	if (!isset($_GET['type'])) {
+	if ($type =="") {
 		// Documentation disponible pour les différents types de peche
 		$doc = "";
 		$doc = getDocumentation("peche_scientifique","variable","y","Peche Scientifique");

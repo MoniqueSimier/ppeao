@@ -15,20 +15,17 @@ if (isset($_POST['max_file_size'])) {
 }
 $fichier = basename($_FILES['avatar']['name']);
 $taille = filesize($_FILES['avatar']['tmp_name']);
-$extensions = array('.png', '.gif', '.jpg', '.jpeg');
+$extensions = array('.png', '.gif', '.jpg', '.jpeg', '.doc', '.pdf','.ppt');
 $extension = strrchr($_FILES['avatar']['name'], '.');
-
 //Début des vérifications de sécurité...
 if ( !is_uploaded_file ($_FILES['avatar']['tmp_name']) ) {
-	$erreur = "Le fichier n'a pas ete telecharge";
+	$erreur = "Le fichier n'a pas pu &ecirc;tre t&eacute;l&eacute;charg&eacute; (contrôlez la taille)";
 }
-if(!in_array($extension, $extensions)) //Si l'extension n'est pas dans le tableau
-{
-     $erreur = 'Vous devez uploader un fichier de type png, gif, jpg, jpeg, txt ou doc...';
+if(!in_array($extension, $extensions)){ //Si l'extension n'est pas dans le tableau
+	$erreur = "Les types de fichiers autorisés sont : .png, .gif, .jpg, .jpeg, .doc, .pdf,.ppt.";
 }
-if($taille>$taille_maxi)
-{
-     $erreur = 'Le fichier est trop gros...';
+if($taille>$taille_maxi){
+    $erreur = 'Le fichier est trop gros...';
 }
 if(!isset($erreur)) //S'il n'y a pas d'erreur, on upload
 {
