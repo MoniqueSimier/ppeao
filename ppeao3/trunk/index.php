@@ -31,7 +31,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 <div id="main_container" class="home">
 
-<h1>Bienvenue &agrave; PPEAO.</h1>
+<h1>Bienvenue &agrave; PPEAO</h1>
+<h2>Système d'informations sur les Peuplements de poissons et la P&ecirc;che artisanale des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d&rsquo;Afrique de l&rsquo;Ouest</h2>
 
 <?php
 //debug echo('+'.$_SESSION['s_ppeao_user_id'].'+');
@@ -45,9 +46,12 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 //echo(logDisplayShort('','','',"",5,""));
 
 ?>
-<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed sagittis tempus mi. Etiam elit. In mauris ipsum, tincidunt id, suscipit in, volutpat quis, risus. Nam laoreet feugiat nisi. Donec dignissim risus fermentum urna. Suspendisse et eros sit amet nunc scelerisque egestas. Sed quis purus. Proin augue arcu, aliquam ut, molestie dictum, pulvinar varius, lectus. Fusce at dui imperdiet eros fringilla adipiscing. Duis placerat imperdiet massa. Vestibulum sit amet nibh. Cras est.</p>
+<div id="home_thumbs"><img src="/assets/home/1.jpg" width="120" height="70" alt="1"><img src="/assets/home/2.jpg" width="120" height="70" alt="2"><img src="/assets/home/3.jpg" width="120" height="70" alt="3"><img src="/assets/home/4.jpg" width="120" height="70" alt="4"><img src="/assets/home/5.jpg" width="120" height="70" alt="5"><img src="/assets/home/6.jpg" width="120" height="70" alt="6"></div>
+<p class="texte">Durant les 30 derni&egrave;res ann&eacute;es, de nombreux travaux ont &eacute;t&eacute; men&eacute;s &agrave; l&rsquo;IRD sur l&rsquo;environnement, les peuplements de poissons et les activit&eacute;s de p&ecirc;che, dans diff&eacute;rents &eacute;cosyst&egrave;mes estuariens, lagunaires et lacustres ouest-africains. Depuis sa cr&eacute;ation en 2001, l&#x27;Unit&eacute; de Recherches RAP (R&eacute;ponses Adaptatives des populations et peuplements de Poissons aux pressions de l&rsquo;environnement) de l&rsquo;IRD a eu pour priorit&eacute; de regrouper et d&rsquo;harmoniser les informations r&eacute;colt&eacute;es lors de ces diverses &eacute;tudes. Vous trouverez plus d&#x27;informations sur PPEAO dans la rubrique &quot;<a href="/apropos.php" title="s&#x27;informer'">s&#x27;informer</a>&quot;.</p>
 
-<p>Donec convallis imperdiet ante. Duis sapien pede, vestibulum in, elementum at, vestibulum ac, libero. Sed arcu. Suspendisse interdum neque ac lorem. Donec sodales velit in ante. Maecenas iaculis metus. Nulla facilisi. In hac habitasse platea dictumst. In fringilla. Quisque feugiat tempor augue. Donec tristique accumsan mauris. Nulla molestie fringilla nunc. Sed nulla dui, interdum eu, vestibulum ac, ultrices vestibulum, urna. Pellentesque sagittis. Integer est nunc, molestie in, pretium vitae, cursus id, elit. Maecenas turpis est, commodo non, pellentesque ac, adipiscing ac, felis.</p>
+<p class="texte">Ce site permet aux visiteurs de <a href="/extraction/preselection.php" title="consulter">consulter l&#x27;ensemble des donn&eacute;es</a> (historiques et actuelles) compil&eacute;es par le projet PPEAO.</p>
+<p class="texte">Il permet &eacute;galement aux chercheurs responsables du projet de <a href="/gerer.php" title="g&eacute;rer">g&eacute;rer et importer des donn&eacute;es</a>.</p>
+
 
 
 

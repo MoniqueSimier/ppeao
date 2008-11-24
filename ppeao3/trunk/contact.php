@@ -43,7 +43,7 @@ $zone=0; // zone publique (voir table admin_zones)
 		<div id="main_contact">
 			<div id="ligne1">
 				<div id="imageTop"><img src="/assets/contact-ph1.jpg" alt=""/></div>
-				<div id="contactTitre"><h1 class="contact">Peuplement de poissons et la p&ecirc;che artisanale des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d'Afrique de l'Ouest</h1>
+				<div id="contactTitre"><h1 class="contact">Système d'informations sur les Peuplements de poissons et la P&ecirc;che artisanale des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d&rsquo;Afrique de l&rsquo;Ouest</h1>
 				</div>
 			</div>
 			<br/>
@@ -52,7 +52,7 @@ $zone=0; // zone publique (voir table admin_zones)
 			<br/>
 			<div id="contentcontact">
 				<p class="contact">La base PPEAO archive des informations sur les poissons, leur &eacute;cologie et leur exploitation par la p&ecirc;che artisanale de nombreux &eacute;cosyst&egrave;mes aquatiques de l'Afrique de l'Ouest.</p><br/>
-				<p class="contactItalique">Elle a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par les membres de l'Unit de Recherche RAP (R&eacute;ponses adaptatives des populations et peuplements des poissons aux pressions de l'environnement) de l'IRD (Institut de Recherches pour le D&eacute;veloppement). </p><br/>
+				<p class="contactItalique">Elle a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par les membres de l'Unit&eacute; de Recherche RAP (R&eacute;ponses adaptatives des populations et peuplements des poissons aux pressions de l'environnement) de l'IRD (Institut de Recherches pour le D&eacute;veloppement). </p><br/>
 				<div id="listcontact"><h2>contact</h2>
 				<ul class="contact">
 					<li class="contact"><a href="#" onClick="o='@';o=' 	&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='ird.fr';this.href=o;"><script type="text/javascript"> <!-- o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o+='ird.fr';document.write(o);//--> </script>Monique SIMIER</a></li>
@@ -60,7 +60,7 @@ $zone=0; // zone publique (voir table admin_zones)
 				</ul>
 				</div>
 				<br/>
-				<p class="contact">Vous trouverez ici le lien vers les personnes/soci&eacute;t&eacute;s ayant particip&eacute; à la cr&eacute;ation de ce site : <br/><a href="/contactRT.php" >R&eacute;alisation techniques</a>
+				<p class="contact">L'application PPEAO a été développée par <a href="/contactRT.php" >plusieurs partenaires techniques</a>.
 				</p>
 				<br/>
 				<br/>

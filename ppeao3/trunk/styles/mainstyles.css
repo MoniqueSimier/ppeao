@@ -122,6 +122,11 @@ a.link_button {
 	text-align:center;
 }
 
+.texte {
+	margin-top:6px;
+	text-align:justify;
+}
+
 /* *********************** */
 /* the top navigation bar */
 
@@ -325,6 +330,12 @@ font-size: 9px;
 }
 
 
+/* *********************** */
+/* the home page        */
+
+#home_thumbs img {
+	margin:3px 6px;
+}
 
 /* if the browser is NOT Internet Explorer, we pass a pixel font size*/
 <!--[if !IE]>-->

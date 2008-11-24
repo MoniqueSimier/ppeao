@@ -42,7 +42,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 ?>
 <h2><a href="/portage.php" title="portage">portage d'une base</a></h2>
-<p>ici, description rapide du processus de portage</p>
+<p>vous permet de transf&eacute;rer les donn&eacute;es depuis une base temporaire vers la base principale PPEAO.</p>
 <h2><a href="/edition_donnees.php" title="gestion des donn&eacute;es">gestion des donn&eacute;es</a></h2>
 <p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables de donn&eacute;es.</p>
 <h2><a href="/edition_reference.php" title="gestion des tables de r&eacute;f&eacute;rence">gestion des tables de référence</a></h2>
