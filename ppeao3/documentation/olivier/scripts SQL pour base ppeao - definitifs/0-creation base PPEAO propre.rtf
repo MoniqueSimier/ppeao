@@ -26,22 +26,20 @@
 \f1 \
 
 \f0 \
-2008-10-14 1-1-cr\'e9ation base.sql\
-2008-10-14 1-2-droits base.sql\
-2008-10-14 2-1-structure administration.sql\
-2008-10-14 2-2-structure reference et parametrage.sql\
-2008-10-14 2-3-structure donnees.sql\
-2008-10-14 3-1-disable triggers administration.sql\
-2008-10-14 3-2-donn\'e9es administration.sql\
-2008-10-14 3-3-enable triggers administration.sql\
-2008-10-14 4-1-disable triggers r\'e9f\'e9rence et param\'e9trage.sql\
-2008-10-14 4-2-donn\'e9es r\'e9f\'e9rence et param\'e9trage.sql\
-2008-10-14 4-3-enable triggers r\'e9f\'e9rence et param\'e9trage.sql\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
-\cf0 2008-11-10 creation des index.sql\
-\pard\pardeftab720\ql\qnatural
+1-1-creation base.sql\
+1-2-droits base.sql\
+2-1-structure administration.sql\
+2-2-structure reference et parametrage.sql\
+2-3-structure donnees.sql\
+3-1-disable triggers administration.sql\
+3-2-donnees administration.sql\
+3-3-enable triggers administration.sql\
+4-1-disable triggers reference et parametrage.sql\
+4-2-donnees reference et parametrage.sql\
+4-3-enable triggers reference et parametrage.sql\
+5-creation des index sur les cles etrangeres.sql\
 
-\f1 \cf0 \
+\f1 \
 
 \f0 \
 qui permettent de cr\'e9er respectivement la base, ses droits, la structure (respectivement pour les tables d\'92administration, de r\'e9f\'e9rence & param\'e9trage et de donn\'e9es) et enfin de d\'e9sactiver les triggers (pour \'e9viter les probl\'e8mes de cl\'e9s \'e9trang\'e8res lors du chargement), de peupler la base avec les donn\'e9es d\'92administration, de r\'e9f\'e9rence et de param\'e9trage puis de r\'e9activer les triggers et enfin d\'92ajouter des index sur les cl\'e9s \'e9trang\'e8res des tables de r\'e9f\'e9rence, param\'e9trage et donn\'e9es (\'e0 faire une fois les donn\'e9es charg\'e9es, pour des raisons de performance).
@@ -52,61 +50,36 @@ Le dossier "donn\'e9es" contient les scripts :
 \f1 \
 
 \f0 \
-2008-10-14 disable triggers.sql
-\f1 \
-
-\f0 2008-10-14 enable triggers.sql
-\f1 \
-
-\f0 \
-Qui permettent respectivement de d\'e9sactiver et d'activer les triggers/contraintes sur les tables de donn\'e9es exp et art (afin d\'92\'e9viter des erreurs de cl\'e9s \'e9trang\'e8res lors du chargement). Avant de charger les donn\'e9es exp et art, ex\'e9cuter le premier script, puis ex\'e9cuter le second une fois le chargement termin\'e9.
+1-1-suppression des index sur les cles etrangeres.sql\
+1-disable triggers.sql\
+3-1-creation des index sur les cles etrangeres.sql\
+3-enable triggers.sql
 \f1 \
 
 \f0 \
-Le dossier "2008-10-14 VmPechartExp" contient les scripts pour charger les donn\'e9es des tables exp et art (s\'e9par\'e9es pour des raisons de taille) :
+Qui permettent de supprimer/cr\'e9er les index sur les cl\'e9s \'e9trang\'e8res et de d\'e9sactiver/d'activer les triggers/contraintes sur les tables de donn\'e9es exp et art (afin d\'92\'e9viter des erreurs de cl\'e9s \'e9trang\'e8res lors du chargement). Avant de charger les donn\'e9es exp et art, ex\'e9cuter les deux premiers scripts, puis ex\'e9cuter les deux derniers une fois le chargement termin\'e9.
 \f1 \
 
 \f0 \
-2008-10-14 art_activite-BD_Peche_lot1.sql
+Le dossier  \'ab\'a02-charger donnees\'a0\'bb contient un jeu de donn\'e9es de test, "2008-10-14 VmPechartExp" qui contient les scripts pour charger les donn\'e9es des tables exp et art (s\'e9par\'e9es pour des raisons de taille) :
 \f1 \
 
-\f0 2008-10-14 art_debarquement-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 art_engin_activite-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 art_engin_peche-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 art_fraction-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 art_lieu_de_peche-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 art_poisson_mesure-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 art_unite_peche-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 exp_biologie-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 exp_campagne-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 exp_coup_peche-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 exp_environnement-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 exp_fraction-BD_Peche_lot1.sql
-\f1 \
-
-\f0 2008-10-14 exp_trophique-BD_Peche_lot1.sql
+\f0 \
+art_activite.sql\
+art_debarquement.sql\
+art_engin_activite.sql\
+art_engin_peche.sql\
+art_fraction.sql\
+art_lieu_de_peche.sql\
+art_poisson_mesure.sql\
+art_unite_peche.sql\
+exp_biologie.sql\
+exp_campagne.sql\
+exp_coup_peche.sql\
+exp_environnement.sql\
+exp_fraction.sql\
+exp_trophique.sql\
+z-mise_a_jour_sequences.sql
 \f1 \
 
 \f0 \
@@ -114,7 +87,8 @@ Note : les tables sont parfois \'e9normes et peuvent donc prendre tr\'e8s longte
 \i minutes
 \i0 . Il est 
 \i impossible
-\i0  de charger ces tables via PHPPGADMIN ou PGADMIN3.
+\i0  de charger ces tables via PHPPGADMIN ou PGADMIN3.\
+Le script \'ab\'a0z-mise_a_jour_sequences.sql\'a0\'bb permet de mettre \'e0 jour les s\'e9quences de num\'e9rotation automatique une fois le chargement en batch termin\'e9.
 \f1 \
 
 \f0 \
@@ -127,42 +101,41 @@ Une fois tous les scripts ex\'e9cut\'e9s et les contraintes/triggers r\'e9activ\
 \pard\pardeftab720\ql\qnatural
 
 \b0\fs24 \cf0 CR\'c9ATION DE LA BASE\
-1) ex\'e9cuter 2008-10-14 1-cr\'e9ation base.sql
-\f1 \
-
-\f0 2) ex\'e9cuter 2008-10-14 1bis-droits base.sql
-\f1 \
-
-\f0 3) 2008-10-14 2-1-structure administration.sql\
-4) 2008-10-14 2-2-structure reference et parametrage.sql\
-5) 2008-10-14 2-3-structure donnees.sql\
-\
+1-1-creation base.sql\
+1-2-droits base.sql\
+2-1-structure administration.sql\
+2-2-structure reference et parametrage.sql\
+2-3-structure donnees.sql\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 5-creation des index sur les cles etrangeres.sql\
+\pard\pardeftab720\ql\qnatural
+\cf0 \
 CHARGEMENT DES DONN\'c9ES D\'92ADMINISTRATION
 \f1 \
 
-\f0 1) ex\'e9cuter 2008-10-14 3-1-disable triggers administration.sql\
-2) ex\'e9cuter le script SQL de chargement des donn\'e9es d\'92administration 2008-10-14 3-2-donn\'e9es administration.sql.\
-3) ex\'e9cuter 2008-10-14 3-3-enable triggers administration.sql\
+\f0 3-1-disable triggers administration.sql\
+3-2-donnees administration.sql\
+3-3-enable triggers administration.sql\
 \
 CHARGEMENT DES DONN\'c9ES DE R\'c9F\'c9RENCE ET PARAM\'c9TRAGE
 \f1 \
 
-\f0 4) ex\'e9cuter 2008-10-14 4-1-disable triggers r\'e9f\'e9rence et param\'e9trage.sql\
-5) ex\'e9cuter le script SQL de chargement des donn\'e9es de r\'e9f\'e9rence et param\'e9trage de votre choix (2008-10-14 4-2-donn\'e9es r\'e9f\'e9rence et param\'e9trage.sql).\
-6) ex\'e9cuter 2008-10-14 4-3-enable triggers r\'e9f\'e9rence et param\'e9trage.sql\
+\f0 4-1-disable triggers reference et parametrage.sql\
+4-2-donnees reference et parametrage.sql\
+4-3-enable triggers reference et parametrage.sql\
 \
 CHARGEMENT DES DONN\'c9ES DE PECHE EXP\'c9RIMENTALE ET ARTISANALE\
-7) ex\'e9cuter 2008-10-14 disable triggers.sql\
-8) ex\'e9cuter les scripts SQL de chargement des donn\'e9es de votre choix (dossier donn\'e9es/2008-10-14 VmPechartExp pour un jeu de test tr\'e8s complet)\
+1-1-suppression des index sur les cles etrangeres.sql\
+1-disable triggers.sql\
+8) ex\'e9cuter les scripts SQL de chargement des donn\'e9es de votre choix (dossier 2-charger donnees/2008-10-14 VmPechartExp pour un jeu de test tr\'e8s complet)\
 
-\f1 9) 
-\f0 ex\'e9cuter 2008-10-14 enable triggers.sql\
+\f1 3-1-creation des index sur les cles etrangeres.sql\
+3-enable triggers.sql
+\f0 \
 \
-AJOUT DES INDEX SUR LES CL\'c9S \'c9TRANG\'c8RES\
-10) ex\'e9cuter le script 2008-11-10 creation des index.sql\
 \
 MAINTENANCE POST CHARGEMENT\
-10) ex\'e9cuter un VACUUM sur toutes les tables.\
+ex\'e9cuter un VACUUM sur l\'92ensemble de la base.\
 
 \f1 \
 
