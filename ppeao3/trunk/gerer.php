@@ -48,9 +48,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 <h2><a href="/edition_reference.php" title="gestion des tables de r&eacute;f&eacute;rence">gestion des tables de référence</a></h2>
 <p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables de r&eacute;f&eacute;rence.</p>
 <h2><a href="/edition_param.php" title="gestion des tables de param&eacute;trage">gestion des tables de param&eacute;trage</a></h2>
-<p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables de param&eacute;trage.</p>
-<h2><a href="/edition_param.php" title="gestion des tables de param&eacute;trage">gestion des tables de param&eacute;trage</a></h2>
-<p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables de param&eacute;trage.</p>
+<p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables tables de param&eacute;trage.</p>
 <h2><a href="/edition_admin.php" title="gestion des tables d&#x27;administration">gestion des tables d&#x27;administration</a></h2>
 <p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables tables d&#x27;administration.</p>
 <h2><a href="/gestion_doc.php" title="gestion de la documentation">gestion des de la documentation</a></h2>
