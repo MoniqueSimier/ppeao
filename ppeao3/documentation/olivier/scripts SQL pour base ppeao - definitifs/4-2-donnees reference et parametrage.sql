@@ -255,6 +255,7 @@ INSERT INTO art_agglomeration (id, art_type_agglomeration_id, ref_secteur_id, no
 INSERT INTO art_agglomeration (id, art_type_agglomeration_id, ref_secteur_id, nom, longitude, latitude, memo) VALUES (251, 2, 15, 'Kerouane daga', NULL, NULL, NULL);
 INSERT INTO art_agglomeration (id, art_type_agglomeration_id, ref_secteur_id, nom, longitude, latitude, memo) VALUES (252, 2, 15, 'Noumoke daga', '13:03:36', '010:18:75', NULL);
 
+SELECT pg_catalog.setval('art_agglomeration_id_seq', 208267, true);
 
 ALTER TABLE art_agglomeration ENABLE TRIGGER ALL;
 
@@ -270,6 +271,8 @@ INSERT INTO art_categorie_socio_professionnelle (id, libelle) VALUES (0, 'Inconn
 INSERT INTO art_categorie_socio_professionnelle (id, libelle) VALUES (1, 'Professionnels');
 INSERT INTO art_categorie_socio_professionnelle (id, libelle) VALUES (2, 'Saisonniers');
 INSERT INTO art_categorie_socio_professionnelle (id, libelle) VALUES (3, 'Occasionnels');
+
+SELECT pg_catalog.setval('art_categorie_socio_professionnelle_id_seq', 3, true);
 
 
 ALTER TABLE art_categorie_socio_professionnelle ENABLE TRIGGER ALL;
@@ -287,6 +290,7 @@ INSERT INTO art_etat_ciel (id, libelle) VALUES (2, 'Ciel legerement nuageux, que
 INSERT INTO art_etat_ciel (id, libelle) VALUES (3, 'Ciel nuageux');
 INSERT INTO art_etat_ciel (id, libelle) VALUES (4, 'Pluie');
 
+SELECT pg_catalog.setval('art_etat_ciel_id_seq', 4, true);
 
 ALTER TABLE art_etat_ciel ENABLE TRIGGER ALL;
 
@@ -429,6 +433,7 @@ INSERT INTO art_type_agglomeration (id, libelle) VALUES (2, 'Campement permanent
 INSERT INTO art_type_agglomeration (id, libelle) VALUES (3, 'Campement temporaire');
 INSERT INTO art_type_agglomeration (id, libelle) VALUES (4, 'Ville');
 
+SELECT pg_catalog.setval('art_type_agglomeration_id_seq',4,true);
 
 ALTER TABLE art_type_agglomeration ENABLE TRIGGER ALL;
 
@@ -688,6 +693,8 @@ INSERT INTO art_type_sortie (id, libelle) VALUES (1, 'Sortie effectuee a pied');
 INSERT INTO art_type_sortie (id, libelle) VALUES (2, 'Sortie effectuee dans une embarcation non motorisee');
 INSERT INTO art_type_sortie (id, libelle) VALUES (3, 'Sortie effectuee dans une embarcation motorisee');
 
+SELECT pg_catalog.setval('art_type_sortie_id_seq',3,true);
+
 
 ALTER TABLE art_type_sortie ENABLE TRIGGER ALL;
 
@@ -703,6 +710,8 @@ INSERT INTO art_vent (id, libelle) VALUES (1, 'Absence de vent');
 INSERT INTO art_vent (id, libelle) VALUES (2, 'Vent léger');
 INSERT INTO art_vent (id, libelle) VALUES (3, 'Vent fort');
 INSERT INTO art_vent (id, libelle) VALUES (4, 'Vent très fort');
+
+SELECT pg_catalog.setval('art_vent_id_seq',4,true);
 
 
 ALTER TABLE art_vent ENABLE TRIGGER ALL;
@@ -730,6 +739,8 @@ INSERT INTO exp_contenu (id, libelle) VALUES (13, '13- bivalve');
 INSERT INTO exp_contenu (id, libelle) VALUES (14, '14 - gastéropode');
 INSERT INTO exp_contenu (id, libelle) VALUES (15, '15- céphalopode');
 INSERT INTO exp_contenu (id, libelle) VALUES (16, '16- bouillie');
+
+SELECT pg_catalog.setval('exp_contenu_id_seq',16,true);
 
 
 ALTER TABLE exp_contenu ENABLE TRIGGER ALL;
@@ -791,6 +802,7 @@ INSERT INTO exp_force_courant (id, libelle) VALUES (1, '1- courant léger');
 INSERT INTO exp_force_courant (id, libelle) VALUES (2, '2- notable');
 INSERT INTO exp_force_courant (id, libelle) VALUES (3, '3- fort');
 
+SELECT pg_catalog.setval('exp_force_courant_id_seq',3,true);
 
 ALTER TABLE exp_force_courant ENABLE TRIGGER ALL;
 
@@ -809,6 +821,7 @@ INSERT INTO exp_position (id, libelle) VALUES (5, '5- AV (vers aval)');
 INSERT INTO exp_position (id, libelle) VALUES (6, '6- RV (perpendiculai');
 INSERT INTO exp_position (id, libelle) VALUES (7, '7- AM (vers amont)');
 
+SELECT pg_catalog.setval('exp_position_id_seq',7,true);
 
 ALTER TABLE exp_position ENABLE TRIGGER ALL;
 
@@ -824,6 +837,8 @@ INSERT INTO exp_qualite (id, libelle) VALUES (2, '2- coup perdu');
 INSERT INTO exp_qualite (id, libelle) VALUES (3, '3- coup imparfait mais récupéré');
 INSERT INTO exp_qualite (id, libelle) VALUES (4, '4- coup dont les résultats ont paru douteux lors du dépouillement');
 INSERT INTO exp_qualite (id, libelle) VALUES (5, '5- coup rejoué');
+
+SELECT pg_catalog.setval('exp_qualite_id_seq',5,true);
 
 
 ALTER TABLE exp_qualite ENABLE TRIGGER ALL;
@@ -879,6 +894,7 @@ INSERT INTO exp_sens_courant (id, libelle) VALUES (3, '3- étale de haute mer');
 INSERT INTO exp_sens_courant (id, libelle) VALUES (4, '4- étale de basse mer');
 INSERT INTO exp_sens_courant (id, libelle) VALUES (5, '5- étale');
 
+SELECT pg_catalog.setval('exp_sens_courant_id_seq',5,true);
 
 ALTER TABLE exp_sens_courant ENABLE TRIGGER ALL;
 
@@ -914,6 +930,7 @@ INSERT INTO exp_stade (id, libelle) VALUES (7, '7- (6-2) post-ponte et retour au
 INSERT INTO exp_stade (id, libelle) VALUES (8, '8- (6-3) post-ponte et retour au stade 3');
 INSERT INTO exp_stade (id, libelle) VALUES (9, '9- (6-4) post-ponte et retour au stade 4');
 
+SELECT pg_catalog.setval('exp_stade_id_seq',9,true);
 
 ALTER TABLE exp_stade ENABLE TRIGGER ALL;
 
@@ -1967,6 +1984,7 @@ INSERT INTO ref_famille (id, libelle, ref_ordre_id, non_poisson) VALUES (19, 'Ch
 INSERT INTO ref_famille (id, libelle, ref_ordre_id, non_poisson) VALUES (47, 'Hepsetidae', 9, 0);
 INSERT INTO ref_famille (id, libelle, ref_ordre_id, non_poisson) VALUES (9, 'Ariidae', 29, 0);
 
+SELECT pg_catalog.setval('ref_famille_id_seq',112,true);
 
 ALTER TABLE ref_famille ENABLE TRIGGER ALL;
 
@@ -2016,6 +2034,8 @@ INSERT INTO ref_ordre (id, libelle) VALUES (37, 'Arcoida');
 INSERT INTO ref_ordre (id, libelle) VALUES (38, 'Atheriniformes');
 INSERT INTO ref_ordre (id, libelle) VALUES (39, 'Inconnu non poisson');
 
+SELECT pg_catalog.setval('ref_ordre_id_seq',39,true);
+
 
 ALTER TABLE ref_ordre ENABLE TRIGGER ALL;
 
@@ -2040,6 +2060,7 @@ INSERT INTO ref_origine_kb (id, libelle) VALUES (10, 'Toutes donnees MEL');
 INSERT INTO ref_origine_kb (id, libelle) VALUES (11, 'Peuplements Lacs Maliens');
 INSERT INTO ref_origine_kb (id, libelle) VALUES (12, 'Moyenne b=3');
 
+SELECT pg_catalog.setval('ref_origine_kb_id_seq',12,true);
 
 ALTER TABLE ref_origine_kb ENABLE TRIGGER ALL;
 
@@ -2129,6 +2150,7 @@ INSERT INTO ref_secteur (id, id_dans_systeme, nom, superficie, ref_systeme_id) V
 INSERT INTO ref_secteur (id, id_dans_systeme, nom, superficie, ref_systeme_id) VALUES (52, 1, 'Bijagos', 0, 15);
 INSERT INTO ref_secteur (id, id_dans_systeme, nom, superficie, ref_systeme_id) VALUES (53, 1, 'Rio Buba', 0, 16);
 
+SELECT pg_catalog.setval('ref_secteur_id_seq',53,true);
 
 ALTER TABLE ref_secteur ENABLE TRIGGER ALL;
 
@@ -2157,6 +2179,7 @@ INSERT INTO ref_systeme (id, libelle, ref_pays_id, superficie) VALUES (15, 'Arch
 INSERT INTO ref_systeme (id, libelle, ref_pays_id, superficie) VALUES (16, 'Rio Buba', 'PU', 0);
 INSERT INTO ref_systeme (id, libelle, ref_pays_id, superficie) VALUES (17, 'Bolong Bamboung', 'SG', 0.68000001);
 
+SELECT pg_catalog.setval('ref_systeme_id_seq',17,true);
 
 ALTER TABLE ref_systeme ENABLE TRIGGER ALL;
 
