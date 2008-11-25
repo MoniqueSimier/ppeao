@@ -255,7 +255,7 @@ INSERT INTO art_agglomeration (id, art_type_agglomeration_id, ref_secteur_id, no
 INSERT INTO art_agglomeration (id, art_type_agglomeration_id, ref_secteur_id, nom, longitude, latitude, memo) VALUES (251, 2, 15, 'Kerouane daga', NULL, NULL, NULL);
 INSERT INTO art_agglomeration (id, art_type_agglomeration_id, ref_secteur_id, nom, longitude, latitude, memo) VALUES (252, 2, 15, 'Noumoke daga', '13:03:36', '010:18:75', NULL);
 
-SELECT pg_catalog.setval('art_agglomeration_id_seq', 208267, true);
+SELECT pg_catalog.setval('art_agglomeration_id_seq', 252, true);
 
 ALTER TABLE art_agglomeration ENABLE TRIGGER ALL;
 
