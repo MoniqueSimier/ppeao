@@ -1,23 +1,35 @@
-<?php
+<?php 
+// script de configuration de la connexion aux bases de données
+// les variables qui suivent sont celles qui peuvent être modifiées en fonction des paramètres de connexion
 
-//effectue la connexion avec la base postgres
-// LOCAL
-//$connectPPEAO = pg_connect("port=5432 dbname=devppeao user=devppeao password=2devppe!!") or die('Connexion impossible a BD_PPEAO : ' . pg_last_error());
+// serveur sur lequel sont situées les bases de données (hostname)
+$hostname='vmppeao-l3.mpl.ird.fr';
+// port de connexion au serveur de bases de données
+$port='5432';
+// nom de la base de données principale PPEAO
+$base_principale='ppeao_test';
+// nom de l'utilisateur pour la connexion à la base principale
+$username='devppeao';
+// mot de passe de l'utilisateur pour la connexion à la base principale
+$password='2devppe!!';
+// nom de la base de données depuis laquelle se fait le portage
+$base_portage='BD_Peche';
 
 
-// REMOTE OTOLITHE.COM
-//$connectPPEAO = pg_connect("port=5432 dbname=otoli2_ppeao user=otoli2 password=ZeldaTactics7")or die('Connexion impossible : ' . pg_last_error());
+// ********* NE RIEN MODIFIER CI-DESSOUS *****************
 
-// REMOTE IRD
-$connectPPEAO = pg_connect("host=vmppeao-l3.mpl.ird.fr port=5432 dbname=ppeao_test user=devppeao password=2devppe!!")or die('Connexion impossible : ' . pg_last_error());
 
-//**** Compatibilite lot 2 *** A mettre a jour avec nouvelle valeur connexion $connectPPEAO
-$user="devppeao";                   // Le nom d'utilisateur 	
-$passwd="2devppe!!";                // Le mot de passe 			
-$host= "vmppeao-l3.mpl.ird.fr";  	 // L'hôte  
+//**** effectue la connexion à la base PPEAO principale ****
+$connectPPEAO = pg_connect("host=$hostname port=$port dbname=$base_principale user=$username password=$password") or die('Connexion impossible a la base : ' . pg_last_error());
+
+
+//**** Compatibilite lot 2 *** 
+$user=$username;		// Le nom d'utilisateur
+$passwd=$password;		// Le mot de passe
+$host= $hostname;  		 // L'hôte  
 // base utilisée par les extractions
-$db_default="ppeao_test";
+$db_default=$base_principale;
 // base utilisée par le portage
-$bdd="BD_Peche";
+$bdd=$base_portage;
 
 ?>
