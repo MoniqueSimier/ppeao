@@ -1,3 +1,3 @@
-CREATE DATABASE ppeao_template
+CREATE DATABASE bdppeao
   WITH OWNER = devppeao
        ENCODING = 'LATIN9';
