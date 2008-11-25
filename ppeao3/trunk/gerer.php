@@ -43,6 +43,8 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 ?>
 <h2><a href="/portage.php" title="portage">portage d'une base</a></h2>
 <p>vous permet de transf&eacute;rer les donn&eacute;es depuis une base temporaire vers la base principale PPEAO.</p>
+<h2><a href="/edition_maintenance.php" title="maintenance">maintenance de la base</a></h2>
+<p>vous permet d&#x27;effectuer des op&eacute;rations de maintenance sur la base principale PPEAO (mise-&agrave;-jour des s&eacute;quences, VACUUM...).</p>
 <h2><a href="/edition_donnees.php" title="gestion des donn&eacute;es">gestion des donn&eacute;es</a></h2>
 <p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables de donn&eacute;es.</p>
 <h2><a href="/edition_reference.php" title="gestion des tables de r&eacute;f&eacute;rence">gestion des tables de référence</a></h2>
@@ -51,7 +53,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 <p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables de param&eacute;trage.</p>
 <h2><a href="/edition_admin.php" title="gestion des tables d&#x27;administration">gestion des tables d&#x27;administration</a></h2>
 <p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables d&#x27;administration.</p>
-<h2><a href="/gestion_doc.php" title="gestion de la documentation">gestion des de la documentation</a></h2>
+<h2><a href="/gestion_doc.php" title="gestion de la documentation">gestion de la documentation</a></h2>
 <p>vous permet de g&eacute;rer la documentation sur le projet PPEAO et les donn&eacute;es.</p>
 <h2><a href="/journal.php" title="journal des op&eacute;rations">journal des op&eacute;rations</a></h2>
 <p>vous permet de consulter le journal enregistrant l&#x27;ensemble des op&eacute;rations r&eacute;alis&eacute;es sur le site&nbsp;: connexions, interventions sur les donn&eacute;es, messages d&#x27;erreur...</p>

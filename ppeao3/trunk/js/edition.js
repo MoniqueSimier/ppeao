@@ -758,3 +758,33 @@ xhr.open("GET","/edition/edition_supprimer_enregistrement_validation_ajax.php?&t
 xhr.send(null);
 
 }
+
+
+
+
+/**
+* Fonction qui déclenche une opération de maintenance sur la base et en retourne le résultat
+*/
+function doMaintenance(action) {
+// action : l'action à faire (sequences_ref_param, sequences_donnees, vacuum)
+
+var outputDiv=$('maintenance_output');
+// on initialise l'objet AJAX	
+var xhr = getXhr();
+// what to do when the response is received
+xhr.onreadystatechange = function(){
+		// while waiting for the response, display the loading animation
+	var theLoader='<div align="left"><h2>maintenance de la base...<img src="/assets/ajax-loader.gif" alt="maintenance en cours..." title="maintenance en cours..." valign="center"/></h2></div>';
+	if(xhr.readyState < 4) { outputDiv.innerHTML = theLoader;}
+	// only do something if the whole response has been received and the server says OK
+	if(xhr.readyState == 4 && xhr.status == 200){
+		maintenanceResult = xhr.responseText;
+		outputDiv.innerHTML=maintenanceResult;
+	}  
+} // end xhr.onreadystatechange
+
+// using GET to send the request
+xhr.open("GET","/edition/edition_maintenance_ajax.php?action="+action,true);
+xhr.send(null);	
+}
+
