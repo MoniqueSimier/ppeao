@@ -36,9 +36,7 @@ switch ($action) {
 			
 			// on met a jour la valeur maximale de la sequence concernee
 			$sqlUpdate='SELECT pg_catalog.setval(\''.$seq["sequence_name"].'\','.$maxVal.',true);';
-			if ($resultUpdate=pg_query($connectPPEAO,$sqlUpdate)) {$ok=true;} else {$success=false;}
-			//debug 			echo('<pre>');print_r($maxArray);echo('</pre>');
-			
+			if ($resultUpdate=pg_query($connectPPEAO,$sqlUpdate)) {$ok=true;} else {$success=false;}			
 			
 		}
 		
@@ -68,7 +66,7 @@ switch ($action) {
 			// on met a jour la valeur maximale de la sequence concernee
 			$sqlUpdate='SELECT pg_catalog.setval(\''.$seq["sequence_name"].'\','.$maxVal.',true);';
 			if ($resultUpdate=pg_query($connectPPEAO,$sqlUpdate)) {$ok=true;} else {$success=false;}
-			//debug 			echo('<pre>');print_r($maxArray);echo('</pre>');
+		}
 
 	break;
 	case 'vacuum':
