@@ -812,6 +812,97 @@ ALTER TABLE ONLY admin_log_modules
 
 ALTER TABLE admin_log_modules CLUSTER ON admin_log_modules_pkey;
 
+
+--
+-- Name: admin_sequences; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE TABLE admin_sequences (
+    sequence_id integer NOT NULL,
+    table_id integer NOT NULL,
+    column_name character varying(255) NOT NULL,
+    sequence_name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.admin_sequences OWNER TO devppeao;
+
+--
+-- Name: TABLE admin_sequences; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON TABLE admin_sequences IS 'cette table contient une liste des séquences (pour le script de mise à jour manuelle des séquences)';
+
+
+--
+-- Name: COLUMN admin_sequences.sequence_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_sequences.sequence_id IS 'id unique de la séquence';
+
+
+--
+-- Name: COLUMN admin_sequences.table_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_sequences.table_id IS 'id de la table à laquelle la séquence est attachée';
+
+
+--
+-- Name: COLUMN admin_sequences.column_name; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_sequences.column_name IS 'nom de la colonne à laquelle la séquence est attachée';
+
+
+--
+-- Name: COLUMN admin_sequences.sequence_name; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_sequences.sequence_name IS 'nom de la séquence';
+
+
+--
+-- Name: admin_sequences_sequence_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE admin_sequences_sequence_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.admin_sequences_sequence_id_seq OWNER TO devppeao;
+
+--
+
+--
+-- Name: sequence_id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_sequences ALTER COLUMN sequence_id SET DEFAULT nextval('admin_sequences_sequence_id_seq'::regclass);
+
+
+--
+-- Name: admin_sequences_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_sequences
+    ADD CONSTRAINT admin_sequences_pkey PRIMARY KEY (sequence_id);
+
+ALTER TABLE admin_sequences CLUSTER ON admin_sequences_pkey;
+
+
+--
+-- Name: admin_sequences_table_id_index; Type: INDEX; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE INDEX admin_sequences_table_id_index ON admin_sequences USING btree (table_id);
+
+
+
+
 --
 -- Name: admin_usergroups; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
 --
@@ -1187,5 +1278,12 @@ ALTER TABLE ONLY admin_log
 
 ALTER TABLE ONLY admin_log
     ADD CONSTRAINT admin_log_log_user_id_fkey FOREIGN KEY (log_user_id) REFERENCES admin_users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+--
+-- Name: admin_sequences_table_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_sequences
+    ADD CONSTRAINT admin_sequences_table_id_fkey FOREIGN KEY (table_id) REFERENCES admin_dictionary_tables(dico_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 

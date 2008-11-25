@@ -222,6 +222,47 @@ INSERT INTO admin_log_modules (module_id, module_name) VALUES (7, 'Portage autom
 
 ALTER TABLE admin_log_modules ENABLE TRIGGER ALL;
 
+
+
+
+--
+-- Name: admin_sequences_sequence_id_seq; Type: SEQUENCE SET; Schema: public; Owner: devppeao
+--
+
+--
+-- Data for Name: admin_sequences; Type: TABLE DATA; Schema: public; Owner: devppeao
+--
+
+INSERT INTO admin_sequences VALUES (1, 4, 'id', 'art_agglomeration_id_seq');
+INSERT INTO admin_sequences VALUES (2, 5, 'id', 'art_categorie_socio_professionnelle_id_seq');
+INSERT INTO admin_sequences VALUES (3, 6, 'id', 'art_etat_ciel_id_seq');
+INSERT INTO admin_sequences VALUES (4, 10, 'id', 'art_type_agglomeration_id_seq');
+INSERT INTO admin_sequences VALUES (5, 12, 'id', 'art_type_sortie_id_seq');
+INSERT INTO admin_sequences VALUES (6, 13, 'id', 'art_vent_id_seq');
+INSERT INTO admin_sequences VALUES (7, 14, 'id', 'exp_contenu_id_seq');
+INSERT INTO admin_sequences VALUES (8, 17, 'id', 'exp_force_courant_id_seq');
+INSERT INTO admin_sequences VALUES (9, 18, 'id', 'exp_position_id_seq');
+INSERT INTO admin_sequences VALUES (10, 19, 'id', 'exp_qualite_id_seq');
+INSERT INTO admin_sequences VALUES (11, 22, 'id', 'exp_sens_courant_id_seq');
+INSERT INTO admin_sequences VALUES (12, 24, 'id', 'exp_stade_id_seq');
+INSERT INTO admin_sequences VALUES (13, 30, 'id', 'ref_famille_id_seq');
+INSERT INTO admin_sequences VALUES (14, 31, 'id', 'ref_ordre_id_seq');
+INSERT INTO admin_sequences VALUES (15, 32, 'id', 'ref_origine_kb_id_seq');
+INSERT INTO admin_sequences VALUES (16, 34, 'id', 'ref_secteur_id_seq');
+INSERT INTO admin_sequences VALUES (17, 35, 'id', 'ref_systeme_id_seq');
+INSERT INTO admin_sequences VALUES (18, 43, 'id', 'art_activite_id_seq');
+INSERT INTO admin_sequences VALUES (19, 44, 'id', 'art_debarquement_id_seq');
+INSERT INTO admin_sequences VALUES (20, 45, 'id', 'art_engin_activite_id_seq');
+INSERT INTO admin_sequences VALUES (21, 46, 'id', 'art_engin_peche_id_seq');
+INSERT INTO admin_sequences VALUES (22, 3, 'id', 'art_lieu_de_peche_id_seq');
+INSERT INTO admin_sequences VALUES (23, 48, 'id', 'art_poisson_mesure_id_seq');
+INSERT INTO admin_sequences VALUES (24, 49, 'id', 'art_unite_peche_id_seq');
+INSERT INTO admin_sequences VALUES (25, 51, 'id', 'exp_campagne_id_seq');
+INSERT INTO admin_sequences VALUES (26, 52, 'id', 'exp_cp_peche_id_seq');
+INSERT INTO admin_sequences VALUES (27, 55, 'id', 'exp_contenu_biologie_id_seq');
+
+SELECT pg_catalog.setval('admin_sequences_sequence_id_seq', 27, true);
+
 --
 -- Name: admin_users_groups_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: devppeao
 --
