@@ -57,7 +57,10 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 	<p>utilisez cet outil apr&egrave;s avoir import&eacute; en batch des donn&eacute;es de p&ecirc;che artisanale ou exp&eacute;rimentale, pour mettre &agrave; jour la prochaine valeur de la s&eacute;quence des tables ayant des identifiants uniques g&eacute;n&eacute;r&eacute;s automatiquement.</p>
 	</li>
 	<li><h2><a href="javascript:doMaintenance('vacuum');">VACUUM</a></h2>
-	<p>utilisez cet outil apr&egrave;s avoir effectu&eacute; un grand nombre d&#x27;insertions ou de suppressions dans la base de donn&eacute;es.</p>
+	<p>utilisez cet outil apr&egrave;s avoir effectu&eacute; un grand nombre de suppressions dans la base de donn&eacute;es.</p>
+	</li>
+	<li><h2><a href="javascript:doMaintenance('reindex');">REINDEX</a></h2>
+	<p>utilisez cet outil pour recréer les index apr&egrave;s avoir effectu&eacute; un grand nombre d&#x27;insertions ou de suppressions dans la base de donn&eacute;es.</p>
 	</li>
 </ul>	
 

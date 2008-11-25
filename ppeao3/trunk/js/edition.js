@@ -766,7 +766,7 @@ xhr.send(null);
 * Fonction qui déclenche une opération de maintenance sur la base et en retourne le résultat
 */
 function doMaintenance(action) {
-// action : l'action à faire (sequences_ref_param, sequences_donnees, vacuum)
+// action : l'action à faire (sequences_ref_param, sequences_donnees, vacuum, reindex)
 
 var outputDiv=$('maintenance_output');
 // on initialise l'objet AJAX	

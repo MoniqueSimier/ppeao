@@ -74,6 +74,11 @@ switch ($action) {
 		if ($result=pg_query($connectPPEAO,$sql)) {$success=true;} else {$success=false;}
 		$operation="&quot;VACUUM ANALYSE&quot;";
 	break;
+	case 'reindex':
+		$sql='REINDEX DATABASE '.$base_principale.'';
+		if ($result=pg_query($connectPPEAO,$sql)) {$success=true;} else {$success=false;}
+		$operation="de r&eacute;indexation de la base";
+	break;
 	default: 
 	break;
 	
