@@ -126,7 +126,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 				}
 				
 				if ( ! $doc =="") {
-					displayDocumentation($doc);
+					displayDocumentation($doc,"");
 				}
 
 				include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
