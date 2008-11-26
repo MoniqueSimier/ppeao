@@ -14,8 +14,7 @@ $PathFicConf = $_SERVER["DOCUMENT_ROOT"]."/conf/processAuto.txt" ;//*
 
 //*** Config pour comparaison BD_PPEAO / BD_PECHE *******************
 // connexion a BD_PECHE												*
-//$bd_peche="BD_PECHE_01";			// Nom BD						*
-$bd_peche="bdpeche";			// Nom BD	IRD
+$bd_peche=$base_portage;	// Nom BD								*
 // ******************************************************************
 
 ?>

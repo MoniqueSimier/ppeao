@@ -44,7 +44,7 @@ if (isset($_GET['exec'])) {
 // Recuperation des parametres (nom repertoire, nom fichiers etc..) depuis le fichier de parametres
 $dirLog = GetParam("backupNomBD",$PathFicConf);
 $dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
-$BDsource = "ppeao_travail";// Pour test a virer apres
+$BDsource = $bdd_principale;// Pour test a virer apres
 $BDBackup = GetParam("backupNomBD",$PathFicConf);
 
 // On remet à zéro le fichier reverse SQL. On le fait ici même si on n'utilise pas le fichier ici
