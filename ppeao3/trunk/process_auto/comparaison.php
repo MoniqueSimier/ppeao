@@ -71,7 +71,7 @@ if (isset($_GET['action'])) {
 			$BDSource = "connectPPEAO";
 			$BDCible = "connectBDPECHE";
 			$nomFenetre = "comparaison";
-			$nomAction = "comparaison du referentiel / parametrage peche scientifique";
+			$nomAction = "comparaison du referentiel / param. peche scientifique";
 			$nomFicSQL = "ref_param_ppeao";
 			$numFen = 2;
 			break;
@@ -80,7 +80,7 @@ if (isset($_GET['action'])) {
 			$BDSource = "connectBDPECHE";
 			$BDCible = "connectPPEAO";
 			$nomFenetre = "comparaisonInv";
-			$nomAction = "comparaison du parametrage peche artisanale";
+			$nomAction = "comparaison du param. peche artisanale";
 			$nomFicSQL = "param_bdpeche";
 			$numFen = 3;
 			break;

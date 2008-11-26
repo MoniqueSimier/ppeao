@@ -44,7 +44,7 @@ if (isset($_GET['exec'])) {
 // Recuperation des parametres (nom repertoire, nom fichiers etc..) depuis le fichier de parametres
 $dirLog = GetParam("backupNomBD",$PathFicConf);
 $dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
-$BDsource = $bdd_principale;// Pour test a virer apres
+$BDsource = $base_principale;// 
 $BDBackup = GetParam("backupNomBD",$PathFicConf);
 
 // On remet à zéro le fichier reverse SQL. On le fait ici même si on n'utilise pas le fichier ici
@@ -82,14 +82,15 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 
 		
 		$createBDSQL = "create database ".$BDBackup." with template ".$BDsource;
-		$createBDResult = pg_query($connectPPEAO,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
+		$createBDResult = pg_query($connectPPEAO,$createBDSQL);
+		$erreurQuery = pg_last_error();
 		if (!$createBDResult) {
 			// erreur
 			// On met globalement le process en erreur
 			if (isset($_SESSION['s_status_process_auto'])) { $_SESSION['s_status_process_auto'] = "ko"; }
 			// message d'erreur
-			logWriteTo(7,"error","**- Fin Sauvegarde : en erreur : erreur dans la creation de la base de sauvegarde ".$BDBackup,"","","0");			
-			echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde en erreur : erreur dans la creation de la base de sauvegarde ".$BDBackup."</div><div id=\"comparaison_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+			logWriteTo(7,"error","**- Fin Sauvegarde : en erreur : erreur dans la creation de la base de sauvegarde ".$BDBackup." erreur = ".$erreurQuery,"","","0");			
+			echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde en erreur : erreur dans la creation de la base de sauvegarde ".$BDBackup." erreur = ".$erreurQuery."</div><div id=\"comparaison_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 
 		} else {
 			// Sauvegarde OK ==> message
