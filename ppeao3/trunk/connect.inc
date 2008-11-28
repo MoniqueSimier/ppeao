@@ -3,7 +3,8 @@
 // les variables qui suivent sont celles qui peuvent être modifiées en fonction des paramètres de connexion
 
 // serveur sur lequel sont situées les bases de données (hostname)
-$hostname='vmppeao-l3.mpl.ird.fr';
+//$hostname='vmppeao-l3.mpl.ird.fr';
+$hostname='vmppeao.mpl.ird.fr';
 // port de connexion au serveur de bases de données
 $port='5432';
 // nom de la base de données principale PPEAO
