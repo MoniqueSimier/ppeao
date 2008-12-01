@@ -38,7 +38,8 @@ switch($typeAction){
 		$listTableMajID = GetParam("listeTableMajsc",$PathFicConf);
 		break;
 	case "majrec" :
-		$listTableMajID = GetParam("listeTableMajrec",$PathFicConf);
+		// on rajoute la table art_periode_enquete qui est mise a jour uniquement lors du portage
+		$listTableMajID = "art_periode_enquete,".GetParam("listeTableMajrec",$PathFicConf);
 		break;
 }
 // pour TEST

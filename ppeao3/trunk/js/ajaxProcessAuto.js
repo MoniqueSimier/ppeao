@@ -148,7 +148,7 @@ function stateChanged1()
 				progPhp = "/process_auto/processAuto.php" ;
 				nomFen = "processAutoRec" ;
 				nomURL = "base="+DBname+"&nb_enr="+nbEnreg+"&adresse="+adresse+"&numproc="+numProcess+"&pg=rec&exec="+recExec;
-				texte = "Recalcul automatique des données en cours ...";
+				texte = "Recomposition automatique des données en cours ...";
 			  break;
 			case 5:
 				progPhp = "/process_auto/processAuto.php" ;
@@ -160,7 +160,7 @@ function stateChanged1()
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "copieRecomp" ;
 				nomURL = "action=majrec&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+majrecExec+"&adresse="+adresse;
-				texte = "Copie des donn&eacute;es recompos&eacute;es en cours...";
+				texte = "Copie des p&ecirc;ches artisanales en cours...";
 			  break;
 			case 7:
 			  finTrt = true;

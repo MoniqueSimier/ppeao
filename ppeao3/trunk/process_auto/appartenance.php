@@ -126,7 +126,7 @@ case "art_unite_peche" :
 			WriteCompLog ($logComp,"Pas de resultat d'appartenance ".$nomTable." id = ".$idNomTable,$pasdefichier);
 		}
 		$pasDeRequete = true;
-		$tempetatAction = "a"; // On les ajoute quand meme...
+		$tempetatAction = ""; // On les ajoute quand meme...
 	} else {
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -281,7 +281,7 @@ case "art_stat_gt" :
 		// Message d'erreur
 		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
 		$pasDeRequete = true;
-		$tempetatAction = "a";
+		$tempetatAction = "";
 	} else {
 		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
@@ -307,7 +307,7 @@ case "art_stat_gt_sp" :
 		// Message d'erreur
 		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
 		$pasDeRequete = true;
-		$tempetatAction = "a";
+		$tempetatAction = "";
 	} else {
 		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
@@ -333,7 +333,7 @@ case "art_stat_sp" :
 		// Message d'erreur
 		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
 		$pasDeRequete = true;
-		$tempetatAction = "a";
+		$tempetatAction = "";
 	} else {
 		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
@@ -359,7 +359,7 @@ case "art_taille_gt_sp" :
 		// Message d'erreur
 		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
 		$pasDeRequete = true;
-		$tempetatAction = "a";
+		$tempetatAction = "";
 	} else {
 		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
@@ -385,7 +385,7 @@ case "art_taille_sp" :
 		// Message d'erreur
 		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
 		$pasDeRequete = true;
-		$tempetatAction = "a";
+		$tempetatAction = "";
 	} else {
 		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
@@ -439,7 +439,7 @@ case "art_poisson_mesure" :
 		// Message d'erreur
 		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
 		$pasDeRequete = true;
-		$tempetatAction = "a";
+		$tempetatAction = "";
 	} else {
 		if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -471,7 +471,7 @@ case "art_activite" :
 		// Message d'erreur
 		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
 		$pasDeRequete = true;
-		$tempetatAction = "a";
+		$tempetatAction = "";
 	} else {
 		if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -507,7 +507,7 @@ case "art_engin_activite" :
 		// Message d'erreur
 		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
 		$pasDeRequete = true;
-		$tempetatAction = "a";
+		$tempetatAction = "";
 	} else {
 		if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);

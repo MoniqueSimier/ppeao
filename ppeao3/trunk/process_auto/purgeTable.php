@@ -92,6 +92,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	// Etape 1 de la purge : suppression de la base de sauvegarde
 	// **********************************************************
 	$BDBackup = GetParam("backupNomBD",$PathFicConf);
+	$BDBackupPortage = $BDBackup."Portage";
 	$createBDSQL = "drop database ".$BDBackup;
 	$createBDResult = pg_query($connectPPEAO,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
 	if ($createBDResult) {
@@ -101,7 +102,16 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		$CRexecution = "Erreur suppression ".$BDBackup.".<br/>";
 		logWriteTo(7,"error","erreur suppression de la base de donnee de sauvegarde ".$BDBackup,"","","0");
 	}
-
+	$connectBDPECHE =pg_connect ("host=".$host." dbname=".$bd_peche." user=".$user." password=".$passwd);
+	$createBDSQL = "drop database ".$BDBackupPortage;
+	$createBDResult = pg_query($connectBDPECHE,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
+	if ($createBDResult) {
+		$CRexecution .= "Base de sauvegarde ".$BDBackupPortage." supprim&eacute;e.<br/>";
+		logWriteTo(7,"notice","Base de sauvegarde ".$BDBackupPortage." supprimee.","","","0");
+	} else {
+		$CRexecution .= "Erreur suppression ".$BDBackupPortage.".<br/>";
+		logWriteTo(7,"error","erreur suppression de la base de donnee de sauvegarde ".$BDBackupPortage,"","","0");
+	}
 
 	// Etape 2 de la purge : nettoyage des fichiers de paramétrage et de référence dans la base bdpeche
 	// **********************************************************
