@@ -38,8 +38,9 @@ $cptAllID=0;
 $cptTableEq = 0;
 $cptTableTotal = 0;
 $cptErreurTotal = 0;
-$start_while=timer(); // début du chronométrage du for
-$UniqExecSQL = false ; // Debug pour n'executer que les SQL
+$start_while=timer(); 		// début du chronométrage du for
+$UniqExecSQL = false ; 		// Debug pour n'executer que les SQL
+
 //****************************************************
 // Pre traitement
 // Creation des tables dans la BD pour
@@ -49,7 +50,7 @@ $UniqExecSQL = false ; // Debug pour n'executer que les SQL
 if (!$UniqExecSQL) {
 if ($tableEnCours == "") {
 	echo "<b>Etape 1</b> : creation des tables temporaires <br/>";
-	$CRexecution = "** Creation des tables temporaires <br/>";
+	$CRexecution = "<b>Creation des tables temporaires</b> <br/>";
 	// on ne le fait qu'une fois...
 	set_time_limit(90);
 	// Faire un vaccuum avant !
@@ -255,7 +256,8 @@ if ($tableEnCours == "") {
 	$compReadSql = " select ".$condSelect." from ".$tablesACont." order by ".$condOrder;
 	$compReadResult = pg_query(${$BDSource},$compReadSql) or die('erreur dans la requete : '.pg_last_error());
 	if (pg_num_rows($compReadResult) == 0) {
-		echo "table ".$tablesACont." dans ".$nomBDSource." vide <br/>";
+		echo "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> table de reference ".$tablesACont." dans ".$nomBDSource." vide <br/>";
+		$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> table de reference".$tablesACont." vide dans ". pg_dbname(${$BDSource})." risque pour l'import<br/>";
 		// message d'erreur
 	} else {
 
@@ -443,17 +445,17 @@ if ($tableEnCours == "") {
 
 if (!$UniqExecSQL) {
 if (!$cptTableEq ==0) {
-	$CRexecution = "** Nombre de peche ".$tempType." deja existantes = ".$cptTableEq." / ".$cptTableTotal." lues <br/>";
+	$CRexecution = $CRexecution."** Nombre de peche ".$tempType." deja existantes = ".$cptTableEq." / ".$cptTableTotal." lues <br/>";
 } else {
-	$CRexecution = "** Nombre de peche ".$tempType." traitees = ".$cptTableTotal."<br/>";
+	$CRexecution = $CRexecution."** Nombre de peche ".$tempType." traitees = ".$cptTableTotal."<br/>";
 }
 if (! $cptErreurTotal == 0) {
-	$CRexecution = "** erreur d'insertion dans temp_exist_peche = ".$CRexecution."<br/>";
+	$CRexecution = $CRexecution."** erreur d'insertion dans temp_exist_peche = ".$CRexecution."<br/>";
 }
 $cptTableEq = 0;
 $cptTableTotal = 0;
 echo "<b>Etape 2</b> : creation des SQL <br/>";
-$CRexecution .="Creation des SQL <br/>";
+$CRexecution .="<b>Creation des SQL</b> <br/>";
 // On récupère toutes les tables à mettre à jour
 
 set_time_limit(ini_get('max_execution_time')); // on remet le timer normal
@@ -580,7 +582,8 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 		$envSrcResult = pg_query(${$BDSource},$envSrcSql) or die('erreur dans la requete : '.pg_last_error());
 		if (pg_num_rows($envSrcResult) == 0) {
 		// Message d'erreur
-			echo "table ".$tableMajID[$cptID]." vide dans ".$nomBDSource." <br/>";
+			echo "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> table ".$tableMajID[$cptID]." vide dans ".$nomBDSource." <br/>";
+			$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>".$tableMajID[$cptID]." vide dans ". pg_dbname(${$BDSource})." ==> pas d'import <br/>";
 			$tableEnCours == "";
 		} else {
 			//echo "nb enreg ".$tableMajID[$cptID]." = ".pg_num_rows($envSrcResult)." where = ".$condWhere."<br/>";

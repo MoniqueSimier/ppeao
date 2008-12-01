@@ -15,9 +15,8 @@
 
 $cpt=0;
 $tempType = "";
-
 $nomAction = "Exec. SQL pour ".$nomAction;
-
+$pasDeSQL = true;
 //****************************************************
 // Traitement
 // Etape 1 : générer les correspondances d'ID pour toutes les tables à importer
@@ -26,7 +25,7 @@ $nomAction = "Exec. SQL pour ".$nomAction;
 
 
 echo "<b>Etape 3</b> : execution des SQL <br/>";
-$CRexecution .="Execution des SQL <br/>";
+$CRexecution .="<b>Execution des SQL</b> <br/>";
 // On récupère toutes les tables à mettre à jour
 if (!$finmajDP) { // on ne lance pas le timer si on sort directement de majDonneesPeches.sql
 	$start_while=timer(); // début du chronométrage du for
@@ -177,6 +176,7 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 				$insertSQL = $envRow[7];
 				// Execution du SQL
 				$insertSQLResult = pg_query(${$BDCible},$insertSQL) ;
+				$pasDeSQL = false;
 				$errorSQL = pg_last_error(${$BDCible});
 				if ($insertSQLResult) {
 					$cptAjoutMaj ++;
@@ -219,5 +219,7 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 	
 } // end for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++)
 
-
+if ($pasDeSQL) {
+	$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> Pas de scripts SQL &agrave; ex&eacute;cuter. <br/>";
+}
 ?>

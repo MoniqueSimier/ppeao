@@ -330,8 +330,8 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	}
 	
 	// Gestion des noms des BD
-	$nomBDSource = pg_dbname($$BDSource);
-	$nomBDCible = pg_dbname($$BDCible);
+	$nomBDSource = pg_dbname(${$BDSource});
+	$nomBDCible = pg_dbname(${$BDCible});
 	
 	// Initialisation des logs
 	if ($tableEnCours == "") {

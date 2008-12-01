@@ -1,6 +1,12 @@
 <?php 
 	if (!$ArretTimeOut) {
 	// ***************************
+	// modification du CR pour l'integration dans un email
+	$CRfichier = str_replace("<br/>","\r\n",$CRexecution);
+	$CRfichier = str_replace ("<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>","*--> ",$CRfichier);
+	$CRfichier = str_replace ("<b>","",$CRfichier);
+	$CRfichier = str_replace ("</b>","",$CRfichier);
+	// ***************************
 	// Si on est dans le cas normal, on génère le compte rendu de fin de traitement.
 		if ($_SESSION['s_erreur_process']) {
 			$_SESSION['s_status_process_auto'] = 'ko';
@@ -32,6 +38,9 @@
 				WriteCompLog ($logComp,"* Pour info Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide'],$pasdefichier); 
 			} else {
 				$FicCRexecution = str_replace ("<br/>","\r\n".date('y\-m\-d\-His')."- ",$CRexecution);
+				$FicCRexecution = str_replace ("<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>","*--> ",$FicCRexecution);
+				$FicCRexecution = str_replace ("<b>","",$FicCRexecution);
+				$FicCRexecution = str_replace ("</b>","",$FicCRexecution);
 				WriteCompLog ($logComp,$FicCRexecution,$pasdefichier);
 			}
 		}
@@ -85,7 +94,7 @@
 				
 			} else {
 				// Différences
-				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s <br/>mais des tables sont diff&eacute;rentes et/ou vides. Des mises &agrave; jour sont n&eacute;cessaires <br/>avant de relancer le traitement.<br/> (pour info = les scripts SQL pour ces mises a jours pr&eacute;sents dans ".date('y\-m\-d')."-".$nomFicSQL."-xxx.sql)";
+				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s <br/>Mais des tables sont diff&eacute;rentes et/ou vides. Des mises &agrave; jour sont n&eacute;cessaires <br/>avant de relancer le traitement.<br/> (pour info = les scripts SQL pour ces mises a jours pr&eacute;sents dans ".date('y\-m\-d')."-".$nomFicSQL."-xxx.sql)";
 				if ($EcrireLogComp ) {
 				echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : <a href=\"".$nomLogLien."\" target=\"log\">".$nomLogLien."</a>";
 				}
@@ -105,7 +114,7 @@
 				echo"<div id=\"vertical_slide".$numFen."\">".$CRexecution." ".$messageGen."</div>";			
 			} else {
 			// Aucune erreur dans la mise à jour
-				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." Le contenu des tables a &eacute;t&eacute; ajout&eacute; ou modifi&eacute; avec succ&egrave;s.";
+				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." ; des tables ont &eacute;t&eacute; ajout&eacute; ou modifi&eacute; avec succ&egrave;s.";
 				if ($EcrireLogComp ) {
 					echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : <a href=\"".$nomLogLien."\" target=\"log\">".$nomLogLien."</a>";
 				}
@@ -135,6 +144,7 @@
 			$msg .="* Nombre de tables avec des donnees manquantes et differentes = ".$_SESSION['s_cpt_table_diff_manquant']."\r\n";
 			$msg .="* Nombre de tables vides = ".$_SESSION['s_cpt_table_vide']."\r\n"; 
 			$msg .="* Pour info Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide']."\r\n";
+			$msg .="* ".$CRfichier."\r\n";
 			// Affichage d'avertissement si erreur dans le traitement
 			if ($_SESSION['s_erreur_process']) {
 				if ($typeAction == "comp" || $typeAction == "compinv") {
