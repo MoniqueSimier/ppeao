@@ -111,79 +111,45 @@ case "exp_trophique" :
 // Gestion des tables pour les peches artisanales
 // **********************************************
 case "art_unite_peche" :
-	// Recuperation des enregs de peche art pour
-	//echo $idNomTable."<br/>";
-	$scriptSQLini = "select id,art_agglomeration_id,annee,mois from art_debarquement where art_unite_peche_id=".$idNomTable;
+	if ($debugAff==true) {
+		$debugTimer = number_format(timer()-$start_while,4);
+		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
+	}
+	$scriptSQLini = "select art_agglomeration_id,annee,mois from art_activite where art_unite_peche_id = ".$idNomTable;
+	
 	$scriptSQLResultini = pg_query(${$BDSource},$scriptSQLini) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance apres requete 1 ".$nomTable." :".$debugTimer."<br/>";
 	}
-	$locErreur = false;
 	if (pg_num_rows($scriptSQLResultini) == 0) {
 		// Message d'erreur
-		if ($EcrireLogComp ) {
-			WriteCompLog ($logComp,"Pas de resultat d'appartenance ".$nomTable." id = ".$idNomTable,$pasdefichier);
+		if ($EcrireLogComp ) { 
+			WriteCompLog ($logComp," Requete (select art_agglomeration_id,annee,mois from art_activite where art_unite_peche_id = ".$idNomTable.") ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
+		} else {
+			echo "Pas de resultat pour la requete select art_agglomeration_id,annee,mois from art_activite where art_unite_peche_id = ".$idNomTable."<br/>";
 		}
 		$pasDeRequete = true;
-		$tempetatAction = ""; // On les ajoute quand meme...
+		$tempetatAction = "";
 	} else {
 		if ($debugAff==true) {
+		$debugTimer = number_format(timer()-$start_while,4);
+		echo "Appartenance avant requete 2 ".$nomTable." :".$debugTimer."<br/>";
+	}
+		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
+		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
+		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
-			echo "Appartenance avant requete 2 ".$nomTable." :".$debugTimer."<br/>";
+			echo "Appartenance apres requete 2 ".$nomTable." :".$debugTimer."<br/>";
 		}
-		// controle supplementaire de la qualite des données
-		// toutes les enregs doivent appartenir a la meme peche art
-		if (pg_num_rows($scriptSQLResultini) == 1) {
-			$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini) ;
-			$locNumAgg = $scriptSQLIniRow[1];
-			$locAnnee = $scriptSQLIniRow[2];
-			$locMois = $scriptSQLIniRow[3];			
-		} else {
-		
-			$locNumAgg = 0;
-			$locAnnee = 0;
-			$locMois = 0;
-			$locNumAggPrev = 0;
-			$locAnneePrev = 0;
-			$locMoisPrev = 0;
-
-			$locCpt = 1;
-			while ($scriptSQLIniRow = pg_fetch_row($scriptSQLResultini) ) {
-				$locNumAgg = $scriptSQLIniRow[1];
-				$locAnnee = $scriptSQLIniRow[2];
-				$locMois = $scriptSQLIniRow[3];	
-				if (!$locNumAggPrev == 0 && (!$locNumAgg==$locNumAggPrev || !$locNumAgg==$locNumAggPrev || !$locNumAgg==$locNumAggPrev)) {
-				// message d'erreur
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp,$nomTable." pour id = ".$idNomTable." correspond a plusieurs peches artisanales differentes",$pasdefichier);
-					}
-					echo $nomTable." pour id = ".$idNomTable." correspond a plusieurs peches artisanales differentes<br/>";
-					$locErreur = true;
-					$pasDeRequete = true;
-					$tempetatAction = "a";
-					break;
-				}
-				
-				$locNumAggPrev = $locNumAgg;
-				$locAnneePrev = $locAnnee;
-				$locMoisPrev = $locMois;			
-				$locCpt ++;
-			}
-		}
-		if (! $locErreur) {
-			$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
-			$scriptSQLResult = pg_query(${$BDSource},$scriptSQL);
-			$errorSQL = pg_last_error(${$BDSource});
-			if ($debugAff==true) {
-				$debugTimer = number_format(timer()-$start_while,4);
-				echo "Appartenance apres requete 2 ".$nomTable." :".$debugTimer."<br/>";
-			}
-		}
-		
+	}
+	if ($debugAff==true) {
+		$debugTimer = number_format(timer()-$start_while,4);
+		echo "Appartenance apres requete ".$nomTable." :".$debugTimer."<br/>";
 	}
 	break;
-
+	
 case "art_lieu_de_peche" :
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -252,9 +218,13 @@ case "art_stat_totale" :
 	}
 	if (pg_num_rows($scriptSQLResultini) == 0) {
 		// Message d'erreur
-		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
+		if ($EcrireLogComp ) { 
+			WriteCompLog ($logComp," Requete (select id,art_agglomeration_id,annee,mois from art_stat_totale where id = ".$idNomTable.") ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
+		} else {
+			echo "Pas de resultat pour la requete select id,art_agglomeration_id,annee,mois from art_stat_totale where id = ".$idNomTable.".<br/>";
+		}
 		$pasDeRequete = true;
-		$tempetatAction = "a";
+		$tempetatAction = "";
 	} else {
 		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
@@ -279,7 +249,11 @@ case "art_stat_gt" :
 	}
 	if (pg_num_rows($scriptSQLResultini) == 0) {
 		// Message d'erreur
-		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
+		if ($EcrireLogComp ) { 
+			WriteCompLog ($logComp," Requete (select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id =".$idNomTable.") ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
+		} else {
+			echo "Pas de resultat pour la requete select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id =".$idNomTable."<br/>";
+		}
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
@@ -305,7 +279,11 @@ case "art_stat_gt_sp" :
 	}
 	if (pg_num_rows($scriptSQLResultini) == 0) {
 		// Message d'erreur
-		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
+		if ($EcrireLogComp ) { 
+			WriteCompLog ($logComp," Requete (select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id = (select art_stat_gt_id from art_stat_gt_sp where id =".$idNomTable.")) ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
+		} else {
+			echo "Pas de resultat pour la requete select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id = (select art_stat_gt_id from art_stat_gt_sp where id =".$idNomTable.").<br/>";
+		}
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
@@ -331,7 +309,11 @@ case "art_stat_sp" :
 	}
 	if (pg_num_rows($scriptSQLResultini) == 0) {
 		// Message d'erreur
-		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
+		if ($EcrireLogComp ) { 
+			WriteCompLog ($logComp," Requete (select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_sp where id =".$idNomTable.")) ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
+		} else {
+			echo "Pas de resultat pour la requete select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_sp where id =".$idNomTable.").<br/>";
+		}
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
@@ -357,7 +339,11 @@ case "art_taille_gt_sp" :
 	}
 	if (pg_num_rows($scriptSQLResultini) == 0) {
 		// Message d'erreur
-		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
+		if ($EcrireLogComp ) { 
+			WriteCompLog ($logComp," Requete (select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id = (select art_stat_gt_id from art_stat_gt_sp where id = (select art_stat_gt_sp_id from art_taille_gt_sp where id =".$idNomTable.")))) ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
+		} else {
+			echo "Pas de resultat pour la requete select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id = (select art_stat_gt_id from art_stat_gt_sp where id = (select art_stat_gt_sp_id from art_taille_gt_sp where id =".$idNomTable."))).<br/>";
+		}
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
@@ -383,7 +369,11 @@ case "art_taille_sp" :
 	}
 	if (pg_num_rows($scriptSQLResultini) == 0) {
 		// Message d'erreur
-		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
+		if ($EcrireLogComp ) { 
+			WriteCompLog ($logComp," Requete (select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_sp where id = (select art_stat_sp_id from art_taille_sp where id =".$idNomTable."))) ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
+		} else {
+			echo "Pas de resultat pour la requete select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_sp where id = (select art_stat_sp_id from art_taille_sp where id =".$idNomTable.")).<br/>";
+		}
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
@@ -437,7 +427,11 @@ case "art_poisson_mesure" :
 	}
 	if (pg_num_rows($scriptSQLResultini) == 0) {
 		// Message d'erreur
-		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
+		if ($EcrireLogComp ) { 
+			WriteCompLog ($logComp," Requete (select art_fraction_id from art_poisson_mesure where id = ".$idNomTable.") ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
+		} else {
+			echo "Pas de resultat pour la requete select art_fraction_id from art_poisson_mesure where id = ".$idNomTable."<br/>";
+		}
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
@@ -469,7 +463,11 @@ case "art_activite" :
 	}
 	if (pg_num_rows($scriptSQLResultini) == 0) {
 		// Message d'erreur
-		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
+		if ($EcrireLogComp ) { 
+			WriteCompLog ($logComp," Requete (select art_agglomeration_id,annee,mois from art_activite where id = ".$idNomTable.") ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
+		} else {
+			echo "Pas de resultat pour la requete select art_agglomeration_id,annee,mois from art_activite where id = ".$idNomTable.".<br/>";
+		}
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
@@ -505,7 +503,11 @@ case "art_engin_activite" :
 	}
 	if (pg_num_rows($scriptSQLResultini) == 0) {
 		// Message d'erreur
-		echo "erreur execution query appartenance etape 1 pour ".$nomTable.".<br/>";
+				if ($EcrireLogComp ) { 
+			WriteCompLog ($logComp," Requete (select art_agglomeration_id,annee,mois from art_activite where id = (select art_activite_id from art_engin_activite where id=".$idNomTable.")) ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
+		} else {
+			echo "Pas de resultat pour la requete select art_agglomeration_id,annee,mois from art_activite where id = (select art_activite_id from art_engin_activite where id=".$idNomTable.").<br/>";
+		}
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
@@ -536,7 +538,9 @@ if (!$pasDeRequete) {
 	if (pg_num_rows($scriptSQLResult) == 0) {
 	// Message d'erreur
 		if ($EcrireLogComp ) {
-			WriteCompLog ($logComp,"Pas de resultat d'appartenance ".$nomTable." id = ".$idNomTable,$pasdefichier);
+			WriteCompLog ($logComp," Requete (".$scriptSQL.") ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
+		} else {
+			echo "Pas de resultat pour la requete ".$scriptSQL." <br/>";
 		}
 	} else {
 		if ($debugAff==true) {
