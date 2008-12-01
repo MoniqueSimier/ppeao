@@ -99,7 +99,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	// *********************************************
 	if ($continueDump) {
 		logWriteTo(7,"notice","Sauvegarde de la base de donnee","","","0");
-		$createBDSQL = "create database ".$BDBackup." with template ".$BDsource;
+		$createBDSQL = "create database \"".$BDBackup."\" with template \"".$BDsource."\"";
 		$createBDResult = pg_query($connectPPEAO,$createBDSQL);
 		$erreurQuery = pg_last_error();
 		if (!$createBDResult) {
@@ -122,7 +122,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			if (!$connectBDPECHE) { 
 				echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Erreur de connexion a la base de donn&eacute;es ".$bd_peche."</div><div id=\"sauvegarde_chk\">Exec= ".$Labelpasdetraitement."</div>" ; exit;
 			} else {
-				$createBDPortSQL = "create database ".$BDBackupPortage." with template ".$BDsourcePortage;
+				$createBDPortSQL = "create database \"".$BDBackupPortage."\" with template \"".$BDsourcePortage."\"";
 				$createBDPortResult = pg_query($connectBDPECHE,$createBDPortSQL);
 				$erreurQueryPort = pg_last_error();
 				if (!$createBDPortResult) {
