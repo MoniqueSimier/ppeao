@@ -503,7 +503,15 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 		//echo "XXXX---  table en lecture = ".$tableEnLecture."<br/>";
 		// Compteur 
 		$compReadSqlC = " select count(id) from ".$tableMajID[$cptID];
-		$compReadResultC = pg_query(${$BDSource},$compReadSqlC) or die('erreur dans la requete : '.pg_last_error());
+		$compReadResultC = pg_query(${$BDSource},$compReadSqlC);
+		$erreurSQL = pg_last_error(${$BDSource});
+		if (!$compReadResultC) {
+			//erreur, a priori c'est parce que la table n'existe pas...
+			echo "<img src=\"/assets/incomplete_small.png\" alt=\"Erreur\"/> Erreur ".$tableMajID[$cptID]." pour execution requete (select count(id) from ".$tableMajID[$cptID].") - cette table est ignoree - erreur complete = ".$erreurSQL." <br/>";
+			if ($EcrireLogComp ) { WriteCompLog ($logComp,"Erreur ".$tableMajID[$cptID]." pour execution requete (select count(id) from ".$tableMajID[$cptID].") - cette table est ignoree - erreur complete = ".$erreurSQL,$pasdefichier);}
+			$CRexecution = $CRexecution." <img src=\"/assets/incomplete_small.png\" alt=\"Erreur\"/>".$tableMajID[$cptID]." n'existe pas dans ".pg_dbname(${$BDSource})."<br/>";
+			continue;
+		}
 		$compRowC = pg_fetch_row($compReadResultC);
 		$totalLignes = $compRowC[0];
 		pg_free_result($compReadResultC);
