@@ -40,17 +40,10 @@ $zone=0; // zone publique (voir table admin_zones)
 	?>
 
 	<div id="main_container" class="home">
+		<h2>Syst&egrave;me d&#x27;informations sur les Peuplements de poissons et la P&ecirc;che artisanale des &Eacute;cosyst&egrave;mes estuariens, lagunaires ou continentaux d&rsquo;Afrique de l&rsquo;Ouest</h2>
+	<div id="home_thumbs"><img src="/assets/home/1.jpg" width="120" height="70" alt="1"><img src="/assets/home/2.jpg" width="120" height="70" alt="2"><img src="/assets/home/3.jpg" width="120" height="70" alt="3"><img src="/assets/home/4.jpg" width="120" height="70" alt="4"><img src="/assets/home/5.jpg" width="120" height="70" alt="5"><img src="/assets/home/6.jpg" width="120" height="70" alt="6"></div>
 	<div id="main_contact">
-		<div id="main_contact">
-			<div id="ligne1">
-				<div id="imageTop"><img src="/assets/contact-ph2.jpg" alt=""/></div>
-				<div id="contactTitre"><h1 class="contact">Peuplement de poissons et la p&ecirc;che artisanale des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d'Afrique de l'Ouest</h1>
-				</div>
-			</div>
-			<br/>
-			<br/>
-			<br/>
-			<br/>
+			
 			<div id="contentcontact">
 				<p class="contact">La base PPEAO a &eacute;t&eacute; r&eacute;alis&eacute;e techniquement par: </p>
 				<ul class="contact">
@@ -69,7 +62,7 @@ $zone=0; // zone publique (voir table admin_zones)
 				<div class="adresse">199 rue de l'Oppidum 34170 CASTELNAU LE LEZ<br/>tel : +33 5 67 59 36 40 <br/>cell : +33 06 73 19 70 17<br/>Contact : info@advancedsolutionsaccelerator.com</div><br/
 				<div id="logo4"><img src="/assets/otolithe_logo.gif" alt="otolithe"/></div>
 				<div id="otolithe">&nbsp;otolithe</div>
-				<div class="adresse"><a href="http://www.otolithe.com/" target="externe">www.otolithe.com</a><br/>tel : +33 4 67 85 75 88 <br/> cell : +33 6 75 77 12 31<br/>Contact : <a href="#" onClick="o='@';o='&#111;&#108;&#105;&#118;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='otolithe.fr';this.href=o;"><script type="text/javascript"> <!-- o='@';o=''+o;o+='otolithe.fr';document.write(o);//--> </script>Olivier Roux</a></div><br/>
+				<div class="adresse"><a href="http://www.otolithe.com/" target="_blank">www.otolithe.com</a><br/>tel : +33 4 67 85 75 88 <br/> cell : +33 6 75 77 12 31<br/>Contact : <a href="#" onClick="o='@';o='&#111;&#108;&#105;&#118;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='otolithe.fr';this.href=o;"><script type="text/javascript"> <!-- o='@';o=''+o;o+='otolithe.fr';document.write(o);//--> </script>Olivier Roux</a></div><br/>
 				</div>
 			</div>
 		</div>

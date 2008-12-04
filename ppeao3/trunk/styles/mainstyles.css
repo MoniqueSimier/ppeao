@@ -206,19 +206,43 @@ color:#7C8781;
 
 
 #smalloginform {
-	font-size: 10px;
+	font-size: 9px;
+	margin:0;
+	padding:6px 0 0 18px;
 }
 
 #smalloginform dd {
 	display:inline;
+	margin:0;
+	padding:0;
 }
 #smalloginform dt {
 	display:inline;
+	margin:0;
+	padding:0;
 }
 
+#sloginform  div {
+	float:left;
+	text-align:center;
+	line-height:8px;
+}
+
+#sloginform  p {
+	padding-top: 9px;
+	display:block;
+}
+
+#sloginform input {
+	height:6px;
+	font-size:8px;
+}
 
 /* ************************ */
 /* the footer              */
+.inline {
+	display:inline;
+}
 
 #footer {
 clear:both;
@@ -226,6 +250,8 @@ text-align:center;
 font-family : Georgia, 'Times New Roman', serif;
 font-size:10px;
 margin-top:18px;
+width:800px;
+
 
 }
 
@@ -247,7 +273,8 @@ width:100%;
 /* the login block      */
 
 #login_block {
-margin: 6px;
+margin: 0;
+padding:0;
 }
 
 /* *********************** */
@@ -334,7 +361,7 @@ font-size: 9px;
 /* the home page        */
 
 #home_thumbs img {
-	margin:3px 6px;
+	margin:3px 6px 12px 3px;
 }
 
 /* if the browser is NOT Internet Explorer, we pass a pixel font size*/

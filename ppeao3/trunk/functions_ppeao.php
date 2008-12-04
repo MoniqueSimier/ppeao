@@ -627,7 +627,15 @@ if (isset($_SESSION['s_ppeao_login_status'])) {
 		break;
 	} // end switch
 } else {
-$message='<div id="access_denied">Vous devez vous connecter pour acc&eacute;der &agrave; la section "'.$zoneName.'".</div>';
+	// on personnalise le message selon la section
+	switch ($zoneName) {
+case "extraction": $message="En fonction des autorisations qui vous sont accord&eacute;es (<a href=\"/contact.php\">demander un compte d&#x27;acc&egrave;s</a>), il est possible de consulter et d&rsquo;extraire des informations issues des p&ecirc;ches scientifiques, des p&ecirc;ches artisanales ou des donn&eacute;es de statistiques de p&ecirc;che. 
+Le r&eacute;sultat de cette consultation pourra &ecirc;tre export&eacute; vers votre poste de travail sous forme de fichiers texte compact&eacute;s.
+";
+break;
+default:$message='<div id="access_denied">Vous devez vous connecter pour acc&eacute;der &agrave; la section "'.$zoneName.'".</div>';
+break;
+}
 }
 
 echo($message);

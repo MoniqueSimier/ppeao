@@ -47,10 +47,12 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 
 ?>
 <div id="home_thumbs"><img src="/assets/home/1.jpg" width="120" height="70" alt="1"><img src="/assets/home/2.jpg" width="120" height="70" alt="2"><img src="/assets/home/3.jpg" width="120" height="70" alt="3"><img src="/assets/home/4.jpg" width="120" height="70" alt="4"><img src="/assets/home/5.jpg" width="120" height="70" alt="5"><img src="/assets/home/6.jpg" width="120" height="70" alt="6"></div>
-<p class="texte">Durant les 30 derni&egrave;res ann&eacute;es, de nombreux travaux ont &eacute;t&eacute; men&eacute;s &agrave; l&rsquo;IRD sur l&rsquo;environnement, les peuplements de poissons et les activit&eacute;s de p&ecirc;che, dans diff&eacute;rents &eacute;cosyst&egrave;mes estuariens, lagunaires et lacustres ouest-africains. Depuis sa cr&eacute;ation en 2001, l&#x27;Unit&eacute; de Recherches RAP (R&eacute;ponses Adaptatives des populations et peuplements de Poissons aux pressions de l&rsquo;environnement) de l&rsquo;IRD a eu pour priorit&eacute; de regrouper et d&rsquo;harmoniser les informations r&eacute;colt&eacute;es lors de ces diverses &eacute;tudes. Vous trouverez plus d&#x27;informations sur PPEAO dans la rubrique &quot;<a href="/apropos.php" title="s&#x27;informer'">s&#x27;informer</a>&quot;.</p>
+<br />
+<p class="texte">La base PPEAO archive des informations sur les poissons, leur &eacute;cologie et leur exploitation par la p&ecirc;che artisanale de nombreux &eacute;cosyst&egrave;mes aquatiques de l&rsquo;Afrique de l&rsquo;Ouest.
+</p>
 
-<p class="texte">Ce site permet aux visiteurs de <a href="/extraction/preselection.php" title="consulter">consulter l&#x27;ensemble des donn&eacute;es</a> (historiques et actuelles) compil&eacute;es par le projet PPEAO.</p>
-<p class="texte">Il permet &eacute;galement aux chercheurs responsables du projet de <a href="/gerer.php" title="g&eacute;rer">g&eacute;rer et importer des donn&eacute;es</a>.</p>
+<p class="texte"><em>Elle a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;IRD (Institut de Recherches pour le D&eacute;veloppement).</em></p>
+<p class="texte"><em>Elle est accessible via le portail de l&rsquo;&eacute;coscope du CRH (Centre de Recherches Halieutiques de S&egrave;te, France).</em>.</p>
 
 
 
@@ -66,10 +68,12 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 else {userAccessDenied($zone);}
 ?>
 
+</div> <!-- end div id="main_container"-->
+
 <?php 
 include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
 
 ?>
-</div> <!-- end div id="main_container"-->
+
 </body>
 </html>

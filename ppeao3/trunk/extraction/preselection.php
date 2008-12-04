@@ -470,11 +470,11 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 else {userAccessDenied($zone);}
 
 ?>
-
+</div>	<!-- end div id="main_container"-->
 <?php 
 include $_SERVER["DOCUMENT_ROOT"].'/footer.inc';
 
 ?>
-</div>	<!-- end div id="main_container"-->
+
 </body>
 </html>
