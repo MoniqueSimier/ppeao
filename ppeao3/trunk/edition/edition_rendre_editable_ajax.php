@@ -20,12 +20,19 @@ $editTable=$_GET["editTable"];
 $editColumn=$_GET["editColumn"];
 // l'enregistrement concerné (son ID)
 $editRecord=$_GET["editRecord"];
-// l'enregistrement concerné (sa valeur)
-$editValue=$_GET["editValue"];
+
 // l'action à effectuer 
 $editAction=$_GET["editAction"];
 
-//debug echo('<pre>');print_r($_GET);echo('</pre>');
+// on récupère la valeur du champ dans la base de données pour éviter les problèmes d'encodage...
+$sql='	SELECT '.$editColumn.' FROM '.$tablesDefinitions[$editTable]["table"].' 
+		WHERE '.$tablesDefinitions[$editTable]["id_col"].'=\''.$editRecord.'\' ';
+$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$values=pg_fetch_all($result);
+pg_free_result($result);
+$editValue=htmlspecialchars($values[0][$editColumn]);
+
+
 
 
 
@@ -55,8 +62,8 @@ switch ($editAction) {
 
 	// on ajoute les boutons "OK/ANNULER"
 	$theField.='<div id="edit_buttons_'.$editColumn.'_'.$editRecord.'" name="edit_buttons_'.$editColumn.'_'.$editRecord.'" class="small edit_buttons">';
-		$theField.='<a href="javascript:saveChange(\''.$editTable.'\',\''.$editColumn.'\',\''.addSlashes($editValue).'\',\''.$editRecord.'\',\'save\');"" class="edit_button" title="enregistrer la modification">enregistrer</a>';
-		$theField.='<a href="javascript:makeEditable(\''.$editTable.'\',\''.$editColumn.'\',\''.addSlashes($editValue).'\',\''.$editRecord.'\',\'cancel\');" class="edit_button" title="annuler la modification">annuler</a>';
+		$theField.='<a href="javascript:saveChange(\''.$editTable.'\',\''.$editColumn.'\',\''.$editRecord.'\',\'save\');"" class="edit_button" title="enregistrer la modification">enregistrer</a>';
+		$theField.='<a href="javascript:makeEditable(\''.$editTable.'\',\''.$editColumn.'\',\''.$editRecord.'\',\'cancel\');" class="edit_button" title="annuler la modification">annuler</a>';
 
 	$theField.='</div>';
 

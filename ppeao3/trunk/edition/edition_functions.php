@@ -58,7 +58,7 @@ function buildTableList($typeTableNom)
 		else {
 			$domain='';}
 		
-		if ($table["selector"]) {
+		if ($table["selector"] && !empty($table["selector_cascade"])) {
 			$href='/edition/edition_selector.php?selector=yes&targetTable='.$handle;
 		} // end if $table["selector"]
 		else {
@@ -224,9 +224,10 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 			echo('</select>');
 			
 			// les boutons permettant de sélectionner/désélectionner toutes les valeurs du SELECT
-			echo('<p id="selectlink__'.$level.'" class="select_link">s&eacute;lectionner ');
+			// desactives car source de confusion
+			/*echo('<p id="selectlink__'.$level.'" class="select_link">s&eacute;lectionner ');
 				echo('<a href="#" onclick="javascript:toggleSelect(\''.$level.'\',\''.$theTable.'\',\'all\');" class="link_button">tout</a> ');echo(' <a href="#" onclick="javascript:toggleSelect(\''.$level.'\',\''.$theTable.'\',\'none\');"  class="link_button">rien</a>');
-			echo('</p>');
+			echo('</p>');*/
 			
 			// le lien permettant d'éditer la table ou les valeurs sélectionnées
 			echo('<p id="editlink_'.$level.'" class="edit_link">');
@@ -243,7 +244,12 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 					echo('&eacute;diter la s&eacute;lection');
 				}
 			echo('</a>');
-			
+			echo('</p>');
+			// lien pour ajouter un enregistrement
+			echo('<p id="addlink_'.$level.'" class="edit_link">');
+			echo('<a id="ajouter_'.$level.'" class="link_button" href="#" onclick="modalDialogAddRecord(1,\''.$theTable.'\')">');
+			echo('ajouter un enregistrement');
+			echo('</a>');
 			echo('</p>');
 			echo('</div>');
 			}
@@ -407,7 +413,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				
 				switch ($action) {
 						case 'filter':
-						$theField='<div class="filter>"<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onchange="javascript:filterTable(\''.$theUrl.'\');">';
+						$theField='<div class="filter"<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onchange="javascript:filterTable(\''.$theUrl.'\');">';
 							// on ajoute une valeur "vide"
 								$theField.='<option value="" '.$selected.'>-</option>';
 							foreach($theOptions as $theOption) {
@@ -415,9 +421,9 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 								if ($theOption==$value) {$selected='selected="selected"';} else {$selected='';}
 								$theField.='<option value='.$theOption.' '.$selected.'>'.$theOption.'</option>';
 								}
-						$theField.='</select>';
+						$theField.='</select></div>';
 					break;
-					case 'display' : $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">'.$value.'</div>';
+					case 'display' : $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
 					break;
 					case 'add':
 					case 'edit': $theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
@@ -467,7 +473,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 					else {
 						$theDisplayValue='';
 					}
-					$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquer pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.addSlashes($value).'\',\''.$editRow.'\',\'edit\');">'.$theDisplayValue.'</div>';
+					$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquer pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$theDisplayValue.'</div>';
 					break;
 
 					case 'add':
@@ -534,7 +540,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				case 'boolean':
 				if (empty($value)) {$value='f';};
 				if ($value=='t' || $value=='oui' || $value=="true") {$value='oui';} else {$value='non';};
-				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$value.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
+				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
 				break;
 				
 				// cas d'un mot de passe (data_type défini "à la main", n'existe pas sous postgresql)
@@ -545,14 +551,19 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				else {$value="changer le mot de passe";};
 				// dans tous les cas, on crée un nouveau mot de passe, donc on passe une valeur vide au javascript
 				$valueJS="";
-				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour d&eacute;finir un nouveau mot de passe" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$valueJS.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
+				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour d&eacute;finir un nouveau mot de passe" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
 				break;
 				
 				// le cas générique : on ne fait rien à la valeur
 				default:
 				// on encode d'éventuels sauts de ligne pour javascript
 				$valueJS=preg_replace("/\r?\n/", "\\n", addslashes($value));
-				if (empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$valueJS.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
+				$valueJS=htmlspecialchars($valueJS);
+				//debug 
+				if (empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
+				
+				// end debug
+				
 				break;
 				} // end switch $theDetails["data type"]
 			

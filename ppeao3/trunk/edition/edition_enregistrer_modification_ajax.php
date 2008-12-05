@@ -20,12 +20,19 @@ $editTable=$_GET["editTable"];
 $editColumn=$_GET["editColumn"];
 // l'enregistrement concerné (son ID)
 $editRecord=$_GET["editRecord"];
-// l'enregistrement concerné (sa valeur)
-$oldValue=$_GET["oldValue"];
 // l'action à effectuer 
 $editAction=$_GET["editAction"];
 // la nouvelle valeur saisie
 $newValue=$_GET["newValue"];
+//debug echo('XXX '.$newValue.' XXX');
+// la valeur actuelle du champ
+// on récupère la valeur du champ dans la base de données pour éviter les problèmes d'encodage...
+$sql='	SELECT '.$editColumn.' FROM '.$tablesDefinitions[$editTable]["table"].' 
+		WHERE '.$tablesDefinitions[$editTable]["id_col"].'=\''.$editRecord.'\' ';
+$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$values=pg_fetch_all($result);
+pg_free_result($result);
+$oldValue=htmlspecialchars($values[0][$editColumn]);
 
 //debug echo('<pre>');print_r($_GET);echo('</pre>');
 

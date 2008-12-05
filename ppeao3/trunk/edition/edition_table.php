@@ -243,7 +243,7 @@ if ($countTotal>$rowsPerPage) {
 	}
 
 ?>
-<h1>votre s&eacute;lection : <?php echo($countTotal.' "'.$tablesDefinitions[$editTable]["label"].'" sur '.$countAllTotal.' '.$paginationString);?><span class="showHide"><a id="add_new_record" href="#" onclick="modalDialogAddRecord(1,'<?php echo($editTable) ?>');">[ajouter un enregistrement]</a></span></h1>
+<h1>votre s&eacute;lection : <?php echo('"'.$tablesDefinitions[$editTable]["label"].'" '.$countTotal.' sur '.$countAllTotal.' '.$paginationString);?><span class="showHide"><a id="add_new_record" href="#" onclick="modalDialogAddRecord(1,'<?php echo($editTable) ?>');">[ajouter un enregistrement]</a></span></h1>
 <p class="hint small">aide : pour trier la table, cliquer sur un nom de colonne, cliquer &agrave; nouveau pour inverser l'ordre de tri; pour filtrer la table, saisissez ou choisissez une valeur et appuyez sur ENTR&Eacute;E (le filtrage est cumulatif et de type "commence par" : vous pouvez ajouter % au début de la valeur de filtre pour faire un "contient"); pour &eacute;diter une valeur, cliquer dessus.</p>
 <?php 
 // on affiche la table

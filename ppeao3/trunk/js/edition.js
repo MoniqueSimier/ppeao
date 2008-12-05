@@ -263,11 +263,10 @@ cntelement.innerHTML = (maxlimit - field.value.length)+' caract&egrave;re(s) res
 /**
 * Fonction qui rend une valeur éditable dans le module d'édition des tables
 */
-function makeEditable(table,column,value,record,action) {
+function makeEditable(table,column,record,action) {
 // table : la table concernée (son pointeur dans le tableau $tablesDefinitions)
 // column : la colonne concernée (son nom dans la base)
-// value : la valeur du champ concerné
-// record : l'identifiant unique dans la table de l'enregistrement concerné
+// record : l'identifiant unique de l'enregistrement concerné
 // action : l'action à faire (edit/save/cancel)
 	
 	//debug	alert(record);
@@ -298,7 +297,7 @@ xhr.onreadystatechange = function(){
 } // end xhr.onreadystatechange
 
 // using GET to send the request
-xhr.open("GET","/edition/edition_rendre_editable_ajax.php?editAction="+action+"&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&editValue="+value,true);
+xhr.open("GET","/edition/edition_rendre_editable_ajax.php?editAction="+action+"&editTable="+table+"&editColumn="+column+"&editRecord="+record,true);
 xhr.send(null);	
 }
 
@@ -306,16 +305,17 @@ xhr.send(null);
 /**
 * Fonction qui vérifie la valeur saisie et la stocke dans la base si elle est valide (dans le module d'édition des tables)
 */
-function saveChange(table,column,oldValue,record) {
+function saveChange(table,column,record) {
 // table : la table concernée (son pointeur dans le tableau $tablesDefinitions)
 // column : la colonne concernée (son nom dans la base)
-// oldValue : la valeur originale du champ concerné (en cas de nouvelle saisie non valide)
+
 // record : l'identifiant unique dans la table de l'enregistrement concerné
 
 
 // la cellule concernée
 var theCell=$("edit_cell_"+column+"_"+record);
 // le div contenant les boutons d'enregistrement/annulation
+//debug alert("edit_buttons_"+column+"_"+record)
 var theEditButtons=$("edit_buttons_"+column+"_"+record);
 var theEditButtonsContent=theEditButtons.innerHTML;
 // le champ concerné
@@ -372,7 +372,7 @@ xhr.onreadystatechange = function(){
 //debug alert("/edition/edition_enregistrer_modification_ajax.php?&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&newValue="+newValue+"&oldValue="+oldValue);
 
 // using GET to send the request
-xhr.open("GET","/edition/edition_enregistrer_modification_ajax.php?&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&newValue="+newValue+"&oldValue="+oldValue,true);
+xhr.open("GET","/edition/edition_enregistrer_modification_ajax.php?&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&newValue="+escape(newValue),true);
 xhr.send(null);	
 
 }
