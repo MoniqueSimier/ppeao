@@ -173,7 +173,7 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 				}
 				// On récupère le SQL
 				//echo $envRow[7]."<br/>";
-				$insertSQL = $envRow[7];
+				$insertSQL = stripslashes($envRow[7]);
 				// Execution du SQL
 				$insertSQLResult = pg_query(${$BDCible},$insertSQL) ;
 				$pasDeSQL = false;

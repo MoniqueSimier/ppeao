@@ -459,7 +459,7 @@ $CRexecution .="<b>Creation des SQL</b> <br/>";
 // On récupère toutes les tables à mettre à jour
 
 set_time_limit(ini_get('max_execution_time')); // on remet le timer normal
-
+$max_time = ini_get('max_execution_time');
 // Liste des tables a traiter
 switch($typeAction){
 	case "majsc":
