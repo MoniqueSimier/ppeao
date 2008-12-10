@@ -52,7 +52,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 </p>
 
 <p class="texte"><em>Elle a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;IRD (Institut de Recherches pour le D&eacute;veloppement).</em></p>
-<p class="texte"><em>Elle est accessible via le portail de l&rsquo;&eacute;coscope du CRH (Centre de Recherches Halieutiques de S&egrave;te, France).</em>.</p>
+<p class="texte"><em>Elle est accessible via le portail de l&rsquo;&eacute;coscope du CRH (Centre de Recherches Halieutiques de S&egrave;te, France)</em>.</p>
 
 
 
