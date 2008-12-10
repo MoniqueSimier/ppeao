@@ -31,6 +31,6 @@ $theList.='\'';
 $whereClause=' AND '.$tablesDefinitions[$parentTable]["table"].'_id IN ('.$theList.') ';
 
 // on génère le SELECT
-createTableSelect($thisTable,$selectedValues,$thisLevel,$whereClause);
+echo(iconv('ISO-8859-15','UTF-8',createTableSelect($thisTable,$selectedValues,$thisLevel,$whereClause)));
 
 ?>
