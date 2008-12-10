@@ -120,7 +120,7 @@ return $meta;
 // retourne la liste des contraintes d'une table postgresql
 function getTableConstraints ($connection,$table) {
 // $connection : la connexion à la base postgres
-// $table : le nom de la table
+// $table : le nom de la table dans la base
 $sql='SELECT DISTINCT tc.constraint_name, tc.constraint_type
     FROM information_schema.table_constraints tc
    	WHERE tc.table_name = \''.$table.'\'
