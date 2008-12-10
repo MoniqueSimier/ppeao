@@ -720,15 +720,17 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 						if ($i!=(count($theCascadeValues)-1)) {
 							$onchange=' onchange="updateEditSelects(\''.$theId.'\',\''.$i.'\',\''.$cv["thisTable"].'\',\''.$cv["thisKeyName"].'\',\''.$tablesDefinitions[$theFtableAlias]["selector_cascade"].'\');"';
 							// les valeurs de ces selects ne doivent pas être sauvées
-							$id='';
+							$id=' id="'.$theId.'_select_'.$i.'"';
+							$name=' name="'.$theId.'_select_'.$i.'"';
 						} else {
 							$onchange='';
-							// on insère l'id du select dont on veut sauver la valeur
+							// on insère l'id et le name du select dont on veut sauver la valeur
 							$id=' id="'.$theId.'" ';
+							$name=' name="'.$theId.'" ';
+							
 						}	
 							
-							$theField='<select '.$id.' name="'.$theId.'_select"
-							'. $onchange.'>';
+							$theField='<select '.$id.' '.$name.'	'. $onchange.' class="'.$theClass.'">';
 							
 								// on insère la première ligne "vide" si on n'a pas de valeur de la clé ($value)
 								if (empty($value)) {
@@ -768,8 +770,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							// on insère l'id du select dont on veut sauver la valeur
 							$id=' id="'.$theId.'" ';
 						}		
-							$theField.='<select '.$id.' name="'.$theId.'_select" 
-							'.$onchange.'>';
+							$theField.='<select '.$id.' name="'.$theId.'" '.$onchange.'  class="'.$theClass.'">';
 								
 								// on insère la première ligne "vide" si on n'a pas de valeur de la clé ($value)
 								if (empty($value)) {

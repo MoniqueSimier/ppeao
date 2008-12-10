@@ -800,7 +800,7 @@ function updateEditSelects(theId,theLevel,theTable,theKey,theCascade) {
 // theKey : la colonne du SELECT declencheur
 // theCascade : la cascade de SELECT comme définie dans la table de dictionnaire 
 
-var theSelects=$$('select[name='+theId+'_select]');
+var theSelects=$$('select[name^='+theId+']');
 // la valeur selectionnee dans le SELECT declencheur
 var theKeyValue=theSelects[theLevel].value;
 

@@ -224,7 +224,7 @@ function formToUrl(theFormId,theClass) {
 			if (theParams[i].selectedIndex!=-1) {theUrl+='&'+theParams[i].name+'='+theParams[i].value;}
 		}
 		}
-		
+		//debug		alert(theUrl);
 		return theUrl;			
 }
 
