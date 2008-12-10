@@ -154,7 +154,7 @@ echo('<div id="selector_content">');
 		echo('<div id="level_'.$level.'" class="level_div">');
 		
 		// on construit le SELECT
-		createTableSelect($oneTable,$selectedValues,$level,$whereClause);
+		echo(createTableSelect($oneTable,$selectedValues,$level,$whereClause));
 		echo('</div>');
 		$level++;
 		$parentTable=$oneTable;
@@ -184,7 +184,7 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 	
 	//debug	print_r($selectedValues);
 	// le nom de la table
-	echo('<p>'.htmlentities($tablesDefinitions[$theTable]["label"]).'</p>');
+	$theSelect='<p>'.htmlentities($tablesDefinitions[$theTable]["label"]).'</p>';
 	// le SELECT avec les valeurs de la table
 	//le SELECT accepte-t-il les sélections multiples
 	//debug 
@@ -212,16 +212,16 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 			//debug			print_r($valuesTable);
 
 			if (!empty($valuesTable)) {
-			echo('<div id="select_'.$level.'" name="select_'.$level.'">');
-			echo('<select id="'.$theTable.'" name="'.$theTable.'[]" size="10" '.$isMultiple.' onchange="javascript:showNewLevel(\''.($level+1).'\',\''.$theTable.'\');" class="level_select">');
+			$theSelect.='<div id="select_'.$level.'" name="select_'.$level.'">';
+			$theSelect.='<select id="'.$theTable.'" name="'.$theTable.'[]" size="10" '.$isMultiple.' onchange="javascript:showNewLevel(\''.($level+1).'\',\''.$theTable.'\');" class="level_select">';
 			// on cronstruit la liste des OPTION
 			foreach ($valuesTable as $value) {
 				// on détermine les OPTION à sélectionner
 				if (@in_array($value["value"], $selectedValues)) {$selected='selected="selected"';} else {$selected='';}
 				// on affiche l'OPTION
-				echo('<option value="'.$value["value"].'" '.$selected.'>'.$value["text"].'</option>');
+				$theSelect.='<option value="'.$value["value"].'" '.$selected.'>'.$value["text"].'</option>';
 			}
-			echo('</select>');
+			$theSelect.='</select>';
 			
 			// les boutons permettant de sélectionner/désélectionner toutes les valeurs du SELECT
 			// desactives car source de confusion
@@ -230,34 +230,36 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 			echo('</p>');*/
 			
 			// le lien permettant d'éditer la table ou les valeurs sélectionnées
-			echo('<p id="editlink_'.$level.'" class="edit_link">');
+			$theSelect.='<p id="editlink_'.$level.'" class="edit_link">';
 			
 			// on prépare l'URL du lien
 			$theUrl=replaceQueryParam ($_SERVER["QUERY_STRING"],'editTable',$theTable);
-			echo('<a id="edita_'.$level.'" class="link_button" href="edition_table.php?'.$theUrl.'">');
+			$theSelect.='<a id="edita_'.$level.'" class="link_button" href="edition_table.php?'.$theUrl.'">';
 				// si aucune valeur du SELECT n'est sélectionnée, on met un lien "éditer la table"
 				if (empty($selectedValues)) {
-					echo('&eacute;diter la table');
+					$theSelect.='&eacute;diter la table';
 					}
 				// si une ou plusieurs valeurs sont sélectionnées, on met un lien "éditer la sélection" et on adapte l'URL
 				else {
-					echo('&eacute;diter la s&eacute;lection');
+					$theSelect.='&eacute;diter la s&eacute;lection';
 				}
-			echo('</a>');
-			echo('</p>');
+			$theSelect.='</a>';
+			$theSelect.='</p>';
 			// lien pour ajouter un enregistrement
-			echo('<p id="addlink_'.$level.'" class="edit_link">');
-			echo('<a id="ajouter_'.$level.'" class="link_button" href="#" onclick="modalDialogAddRecord(1,\''.$theTable.'\')">');
-			echo('ajouter un enregistrement');
-			echo('</a>');
-			echo('</p>');
-			echo('</div>');
+			$theSelect.='<p id="addlink_'.$level.'" class="edit_link">';
+			$theSelect.='<a id="ajouter_'.$level.'" class="link_button" href="#" onclick="modalDialogAddRecord(1,\''.$theTable.'\')">';
+			$theSelect.='ajouter un enregistrement';
+			$theSelect.='</a>';
+			$theSelect.='</p>';
+			$theSelect.='</div>';
 			}
 	
 			} // end if (!empty($valuesTable))
 			else {
-			echo('<div id="select_'.$level.'" name="select_'.$level.'"></div>');	
+			$theSelect.='<div id="select_'.$level.'" name="select_'.$level.'"></div>';	
 			}
+			
+			return $theSelect;
 	
 }
 
@@ -274,6 +276,18 @@ function getTableAliasFromName($tableName) {
 	
 }
 
+//******************************************************************************
+// retourne le nom dans la base d'une table connue par son alias dans la variable de config $tablesDefinitions
+function getTableNameFromAlias($tableAlias) {
+	global $tablesDefinitions;
+	$tableName='';
+	foreach ($tablesDefinitions as $key=>$value) {
+		if ($key==$tableAlias) {$tableName=$value["table"];}
+	}
+	return $tableName;
+	
+}
+
 
 //******************************************************************************
 // affiche un champ de formulaire permettant d'éditer un champ d'une table
@@ -282,7 +296,7 @@ function makeField($cDetails,$table,$column,$value,$action,$theUrl) {
 // table : la table concernée (identifiant de la table dans la variable $tablesDefinitions de edition_config.inc)
 // $column : la colonne concernée
 // $value : la valeur du champ de la colonne concernée
-// $action : 'display=xxx'/'edit=xxx' pour créer un champ afichable/éditable de l'enregistrement xxx, 'filter' pour un champ de filtre, 'add' pour l'ajout d'un nouvel enregistrement
+// $action : 'display=xxx'/'edit=xxx' pour créer un champ affichable/éditable de l'enregistrement xxx, 'filter' pour un champ de filtre, 'add' pour l'ajout d'un nouvel enregistrement
 // $theUrl : l'URL à utiliser pour les champs de tri de type SELECT ()
 
 // la connection à la base
@@ -447,16 +461,28 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				
 				switch ($action) {
 					
-					case 'display':
-					// on recupere la valeurs de la clé etrangere -> on utilise la table indiquée dans $cDetails
+					case 'display':	
+					// dans le cas où une valeur de la clé étrangère est définie
+					if (!empty($value)) {
+					// la table référencée par la contrainte
 					$theFtable=$theConstraint["references_table"];
+					// l'alias de la table a partir de son nom dans la base
 					$theFtableAlias=getTableAliasFromName($theFtable);
+										
+					// on teste si on doit afficher la valeur de la clé étrangère en utilisant une cascade ou pas
+					if ($tablesDefinitions[$theFtableAlias]["cascade_foreign_key"]=='t' && !empty($tablesDefinitions[$theFtableAlias]["selector_cascade"])) {
+
+					// oui, alors on construit la valeur à afficher en utilisant les éléments de la cascade
+					// par exemple "pays/systeme/secteur" pour une valeur du secteur
+					// on commence par la fin, i.e. la cle elle-meme, puis on remonte a travers ses parents
+					$cascade=array_reverse(explode(',',$tablesDefinitions[$theFtableAlias]["selector_cascade"]));
+					// on boucle à travers la cascade en commençant par la fin
+					$i=0;
+					foreach($cascade as $fkey) {
+					if ($i==0) {
 					$theFKeys=$tablesDefinitions[$theFtableAlias]["id_col"];
 					$theFValues=$tablesDefinitions[$theFtableAlias]["noms_col"];
 
-					
-					// dans le cas où une valeur de la clé étrangère est définie
-					if (!empty($value)) {
 					$sqlFValue='SELECT '.$theFValues.'
 								FROM '.$theFtable.'
 								WHERE '.$theFKeys.'=\''.$value.'\' 
@@ -468,16 +494,80 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 					
 					// la valeur à afficher
 					$theDisplayValue=$fValue[0][$theFValues];
+					// on met à jour la valeur de la table et de la clé filles 
+					$childTable=$tablesDefinitions[$fkey]["table"];
+					$childValue=$value;
+					$childPrimaryKey=$theFKeys;
+					}
+					
+					else {
+						$thisTable=$tablesDefinitions[$fkey]["table"];
+						$thisPrimaryKey=$tablesDefinitions[$fkey]["id_col"];
+						$thisPrimaryValue=$tablesDefinitions[$fkey]["noms_col"];
+						
+						// on determine le nom de la colonne referencant la colonne dans la table fille
+						$cd=getTableConstraintDetails($connectPPEAO,$childTable);
+						foreach($cd as $c) {
+							if ($c["references_table"]==$thisTable && 
+							$c["references_field"]==$thisPrimaryKey) {
+								$childForeignKey=$c["column_name"];
+								} // end if
+							} // end foreach $cd
+						
+						
+						$sql="SELECT $thisTable.$thisPrimaryKey, $thisTable.$thisPrimaryValue FROM $thisTable, $childTable WHERE $childTable.$childForeignKey=$thisTable.$thisPrimaryKey AND $childTable.$childPrimaryKey=$childValue";
+						//debug		echo($sql);
+						$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+						$resultArray=pg_fetch_all($result);
+						pg_free_result($result);									
+						
+						$thisValue=$resultArray[0][$thisPrimaryKey];
+						
+						$theDisplayValue=$resultArray[0][$thisPrimaryValue].'/'.$theDisplayValue;
+																
+					// on met à jour la valeur de la table et de la clé filles
+					$childTable=$thisTable;
+					$childValue=$thisValue;
+					$childForeignKey=$thisPrimaryKey;	
+					}
+
+					$i++;
+					}
+					
+						
+					} // fin de si on utilise une cascade pour l'affichage
+					
+					else {
+					// on n'utilise pas la cascade
+					// on recupere la valeurs de la clé etrangere
+
+					$theFKeys=$tablesDefinitions[$theFtableAlias]["id_col"];
+					$theFValues=$tablesDefinitions[$theFtableAlias]["noms_col"];
+
+					$sqlFValue='SELECT '.$theFValues.'
+								FROM '.$theFtable.'
+								WHERE '.$theFKeys.'=\''.$value.'\' 
+								ORDER BY '.$theFValues;
+																
+					$resultFvalue=pg_query($connectPPEAO,$sqlFValue) or die('erreur dans la requete : '.$sqlFValue. pg_last_error());
+					$fValue=pg_fetch_all($resultFvalue);
+					pg_free_result($resultFvalue);
+					
+					// la valeur à afficher
+					$theDisplayValue=$fValue[0][$theFValues];
+					} // end si on n'utilise pas la cascade
+					
+					
+					
 					} // end if !empty($value)
-					// si la valeur de la clé étrangère est NULL
+					
+					// dans le cas où on n'a pas de valeur pour la clé étrangère
 					else {
 						$theDisplayValue='';
 					}
 					$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquer pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$theDisplayValue.'</div>';
 					break;
 
-					case 'add':
-					case 'edit': 
 					case 'filter':
 						// on recupere les valeurs de la clé etrangere -> on utilise la table indiquée dans $cDetails
 						$theFtable=$theConstraint["references_table"];
@@ -509,7 +599,209 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							$theField.='<option value='.$fKey[$theFKeys].' '.$selected.'>'.$theValue.'</option>';
 						}
 						$theField.='</select></div>';
-					break;
+					break; // end case  filter
+					
+					case 'add':
+					case 'edit':
+						// la table référencée par la contrainte
+					$theFtable=$theConstraint["references_table"];
+					// l'alias de la table a partir de son nom dans la base
+					$theFtableAlias=getTableAliasFromName($theFtable);
+										
+					// on teste si on doit afficher la valeur de la clé étrangère en utilisant une cascade ou pas
+					if ($tablesDefinitions[$theFtableAlias]["cascade_foreign_key"]=='t' && !empty($tablesDefinitions[$theFtableAlias]["selector_cascade"])) {
+
+					// oui, alors on construit la valeur à afficher en utilisant les éléments de la cascade
+					// par exemple "pays/systeme/secteur" pour une valeur du secteur
+					// on commence par la fin, i.e. la cle elle-meme, puis on remonte a travers ses parents
+					$cascade=array_reverse(explode(',',$tablesDefinitions[$theFtableAlias]["selector_cascade"]));
+					// on boucle à travers la cascade en commençant par la fin
+					$i=0;
+					foreach($cascade as $fkey) {
+					if ($i==0) {
+					$theFKeys=$tablesDefinitions[$theFtableAlias]["id_col"];
+					$theFValues=$tablesDefinitions[$theFtableAlias]["noms_col"];
+
+					$sqlFValue='SELECT '.$theFValues.'
+								FROM '.$theFtable.'
+								WHERE '.$theFKeys.'=\''.$value.'\' 
+								ORDER BY '.$theFValues;
+																
+					$resultFvalue=pg_query($connectPPEAO,$sqlFValue) or die('erreur dans la requete : '.$sqlFValue. pg_last_error());
+					$fValue=pg_fetch_all($resultFvalue);
+					pg_free_result($resultFvalue);
+					
+					// la valeur à afficher
+					$theDisplayValue=$fValue[0][$theFValues];
+					// on met à jour la valeur de la table et de la clé filles 
+					$childTable=$tablesDefinitions[$fkey]["table"];
+					$childValue=$value;
+					$childPrimaryKey=$theFKeys;
+					$theCascadeValues[$i]=array(
+					"thisTable"=>$childTable,
+					"thisKeyName"=>$childPrimaryKey,
+					"thisKeyValue"=>$childValue,
+					"thisLabelName"=>$theFValues,
+					"thisLabelValue"=>$fValue[0][$theFValues],
+					"childTable"=>'',
+					"childForeignKey"=>'');
+					}
+					
+					else {
+						$thisTable=$tablesDefinitions[$fkey]["table"];
+						$thisPrimaryKey=$tablesDefinitions[$fkey]["id_col"];
+						$thisPrimaryValue=$tablesDefinitions[$fkey]["noms_col"];
+						
+						// on determine le nom de la colonne referencant la colonne dans la table fille
+						$cd=getTableConstraintDetails($connectPPEAO,$childTable);
+						foreach($cd as $c) {
+							if ($c["references_table"]==$thisTable && 
+							$c["references_field"]==$thisPrimaryKey) {
+								$childForeignKey=$c["column_name"];
+								} // end if
+							} // end foreach $cd
+						
+						
+						$sql="SELECT $thisTable.$thisPrimaryKey, $thisTable.$thisPrimaryValue FROM $thisTable, $childTable WHERE $childTable.$childForeignKey=$thisTable.$thisPrimaryKey AND $childTable.$childPrimaryKey=$childValue";
+						//debug		echo($sql);
+						$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+						$resultArray=pg_fetch_all($result);
+						pg_free_result($result);									
+						
+						$thisValue=$resultArray[0][$thisPrimaryKey];
+																						
+					// on met à jour la valeur de la table et de la clé filles
+					$theCascadeValues[$i]=array(
+						"thisTable"=>$thisTable,
+						"thisKeyName"=>$thisPrimaryKey,
+						"thisKeyValue"=>$thisValue,
+						"thisLabelName"=>$thisPrimaryValue,
+						"thisLabelValue"=>$resultArray[0][$thisPrimaryValue],
+						"childTable"=>$childTable,
+						"childForeignKey"=>$childForeignKey
+					);
+					$childTable=$thisTable;
+					$childValue=$thisValue;
+					$childForeignKey=$thisPrimaryKey;					
+					}
+
+					$i++;
+					} // end foreach $cascade as $fkey
+					
+					// on a maintenant un tableau $theCascadeValues contenant les différents niveau de la cascade et leurs valeurs
+					// on le renverse pour commencer par le haut de la cascade :
+					$theCascadeValues=array_reverse($theCascadeValues);
+										
+					// et on le parcourt pour construire les selects en cascade
+					
+					$i=0;
+					foreach ($theCascadeValues as $cv) {
+						
+					//debug 						echo('<pre>');print_r($cv);echo('</pre>');
+
+						if ($i==0) {
+							// si on est a la premiere ligne du tableau, pas besoin de filtrer
+							// on recupere les valeurs de la cle pour construire le SELECT
+							$sql='	SELECT '.$cv["thisKeyName"].' as val,
+							 				'.$cv["thisLabelName"].' as lab
+									FROM '.$cv["thisTable"].'
+									ORDER BY '.$cv["thisLabelName"].'';
+							$result=pg_query($connectPPEAO,$sql) or die();
+							$resultArray=pg_fetch_all($result);
+							pg_free_result($result);									
+							
+						// on insère le comportement onchange si on n'est pas à la dernière ligne du tableau
+						if ($i!=(count($theCascadeValues)-1)) {
+							$onchange=' onchange="updateEditSelects(\''.$theId.'\',\''.$i.'\',\''.$cv["thisTable"].'\',\''.$cv["thisKeyName"].'\',\''.$tablesDefinitions[$theFtableAlias]["selector_cascade"].'\');"';
+							// les valeurs de ces selects ne doivent pas être sauvées
+							$id='';
+						} else {
+							$onchange='';
+							// on insère l'id du select dont on veut sauver la valeur
+							$id=' id="'.$theId.'" ';
+						}	
+							
+							$theField='<select '.$id.' name="'.$theId.'_select"
+							'. $onchange.'>';
+							
+								foreach($resultArray as $line) {
+									if ($line["val"]==$cv["thisKeyValue"]) {$selected='selected="selected"';}  else {$selected='';}
+									$theField.='<option value="'.$line["val"].'" '.$selected.'>'.$line["lab"].'</option>';
+								}
+							$theField.='</select>';
+						}
+						else {
+							// pour les niveaux suivants, on ajoute le filtrage
+							// on recupere les valeurs de la cle pour construire le SELECT
+							$sql='	SELECT '.$cv["thisKeyName"].' as val,
+							 				'.$cv["thisLabelName"].' as lab
+									FROM '.$cv["thisTable"].'
+									WHERE '.$theCascadeValues[$i-1]["childForeignKey"].'=\''.$theCascadeValues[$i-1]["thisKeyValue"].'\'
+									ORDER BY '.$cv["thisLabelName"].'';
+							
+							//debug							echo($sql.'<br>');
+							
+							$result=pg_query($connectPPEAO,$sql) or die();
+							$resultArray=pg_fetch_all($result);
+							pg_free_result($result);									
+							
+							// on insère le comportement onchange si on n'est pas à la dernière ligne du tableau
+						if ($i!=(count($theCascadeValues)-1)) {
+							$onchange=' onchange="updateEditSelects(\''.$theId.'\',\''.$i.'\',\''.$cv["thisTable"].'\',\''.$cv["thisKeyName"].'\',\''.$tablesDefinitions[$theFtableAlias]["selector_cascade"].'\');"';
+							// les valeurs de ces selects ne doivent pas être sauvées
+							$id='';
+						} else {
+							$onchange='';
+							// on insère l'id du select dont on veut sauver la valeur
+							$id=' id="'.$theId.'" ';
+						}		
+							
+							$theField.='<select '.$id.' name="'.$theId.'_select" 
+							'.$onchange.'>';
+								foreach($resultArray as $line) {
+									if ($line["val"]==$cv["thisKeyValue"]) {$selected='selected="selected"';} else {$selected='';}
+									$theField.='<option value="'.$line["val"].'"'.$selected.'>'.$line["lab"].'</option>';
+								}
+							$theField.='</select>';
+						}
+					$i++;
+					}
+					
+						
+					} // fin de si on utilise une cascade pour l'affichage
+					else {
+						// on recupere les valeurs de la clé etrangere -> on utilise la table indiquée dans $cDetails
+						$theFtable=$theConstraint["references_table"];
+						$theFtableAlias=getTableAliasFromName($theFtable);
+						$theFKeys=$tablesDefinitions[$theFtableAlias]["id_col"];
+						$theFValues=$tablesDefinitions[$theFtableAlias]["noms_col"];
+
+						$sqlFkey='SELECT '.$theFKeys.', '.$theFValues.'
+									FROM '.$theFtable.'
+									WHERE TRUE
+									ORDER BY '.$theFValues;
+						$resultFkey=pg_query($connectPPEAO,$sqlFkey) or die('erreur dans la requete : '.$sqlFkey. pg_last_error());
+						$fKeys=pg_fetch_all($resultFkey);
+						pg_free_result($resultFkey);
+
+						if ($action=='filter')
+							{$onAction='onchange="javascript:filterTable(\''.$theUrl.'\');"';} 
+							else {
+							$onAction='';}
+						$theField='<div class="filter"><select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" '.$onAction.'>';
+						// on ajoute une valeur "vide" si on est en édition ou ajout (clé secondaire JAMAIS NULL)
+						//if ($action=='filter') {$theField.='<option value="" '.$selected.'>-</option>';}
+						$theField.='<option value="NULL" '.$selected.'>-</option>';
+						foreach ($fKeys as $fKey) {
+							if ($fKey[$theFKeys]==$value) {$selected='selected="selected"';} else {$selected='';}
+							// selon que l'on a passé la valeur directement ou depuis la base
+							$theValue=$fKey[$theFValues];
+							//if (true) {$theEncodedValue=iconv('ISO-8859-15','UTF-8',$fKey[$theFValues]);} else {$theEncodedValue=$fKey[$theFValues];}
+							$theField.='<option value='.$fKey[$theFKeys].' '.$selected.'>'.$theValue.'</option>';
+						}
+						$theField.='</select></div>';
+					}
+					break; // end case add edit
 
 				}
 				;
