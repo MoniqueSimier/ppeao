@@ -103,7 +103,8 @@ CREATE TABLE admin_dictionary_tables (
     domain_id integer NOT NULL,
     selector_cascade character varying(255),
     selector boolean DEFAULT false NOT NULL,
-    zone_id integer DEFAULT 1 NOT NULL
+    zone_id integer DEFAULT 1 NOT NULL,
+	cascade_foreign_key boolean DEFAULT false NOT NULL
 );
 
 
@@ -197,6 +198,12 @@ COMMENT ON COLUMN admin_dictionary_tables.selector IS 'true si on veut que la ta
 --
 
 COMMENT ON COLUMN admin_dictionary_tables.zone_id IS 'identifiant de la zone d''accès à laquelle appartient la table';
+
+--
+-- Name: COLUMN admin_dictionary_tables.cascade_foreign_key; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_dictionary_tables.cascade_foreign_key IS 'faut-il utiliser une cascade pour la sélection des valeurs de cette clé étrangère';
 
 
 --
