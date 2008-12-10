@@ -7,6 +7,7 @@ CREATE INDEX art_engin_activite_art_activite_id_index ON art_engin_activite (art
 CREATE INDEX art_engin_peche_art_debarquement_id_index ON art_engin_peche (art_debarquement_id);
 CREATE INDEX art_fraction_art_debarquement_id_index ON art_fraction (art_debarquement_id);
 CREATE INDEX art_lieu_de_peche_ref_secteur_id_index ON art_lieu_de_peche (ref_secteur_id);
+CREATE INDEX art_periode_enquete_art_agglomeration_id_index ON art_periode_enquete (art_agglomeration_id);
 CREATE INDEX art_poisson_mesure_art_fraction_id_index ON art_poisson_mesure (art_fraction_id);
 CREATE INDEX art_type_engin_art_grand_type_engin_id_index ON art_type_engin (art_grand_type_engin_id);
 CREATE INDEX art_unite_peche_art_agglomeration_id_index ON art_unite_peche (art_agglomeration_id);
