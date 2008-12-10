@@ -291,6 +291,125 @@ ALTER TABLE ONLY art_lieu_de_peche
     ADD CONSTRAINT art_lieu_de_peche_id_pkey PRIMARY KEY (id);
 
 
+-- -------------------------------------------------------------------------------------
+-- Name: art_periode_enquete; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE TABLE art_periode_enquete (
+    id integer NOT NULL,
+    art_agglomeration_id integer NOT NULL,
+    annee integer NOT NULL,
+    mois integer NOT NULL,
+    date_debut date,
+    date_fin date,
+    description character varying(100),
+    exec_recomp boolean DEFAULT false,
+    date_recomp date,
+    exec_stat boolean DEFAULT false,
+    date_stat date
+);
+
+
+ALTER TABLE public.art_periode_enquete OWNER TO devppeao;
+
+--
+-- Name: TABLE art_periode_enquete; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON TABLE art_periode_enquete IS 'Table recensant les peches artisanales par agglomeration / annee / mois (peche unique)';
+
+
+--
+-- Name: COLUMN art_periode_enquete.id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_periode_enquete.id IS 'id unique pour la table';
+
+
+--
+-- Name: COLUMN art_periode_enquete.art_agglomeration_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_periode_enquete.art_agglomeration_id IS 'id de l''agglomération pour la peche artisanale (clé unique 1/3)';
+
+
+--
+-- Name: COLUMN art_periode_enquete.annee; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_periode_enquete.annee IS 'annee pour cette peche artisanale (clé unique 2/3)';
+
+
+--
+-- Name: COLUMN art_periode_enquete.mois; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_periode_enquete.mois IS 'mois pour cette peche artisanale (clé unique 3/3)';
+
+
+--
+-- Name: COLUMN art_periode_enquete.date_debut; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_periode_enquete.date_debut IS 'date de début de la pêche artisanale';
+
+
+--
+-- Name: COLUMN art_periode_enquete.date_fin; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_periode_enquete.date_fin IS 'date de fin de la pêche artisanale';
+
+
+--
+-- Name: COLUMN art_periode_enquete.description; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_periode_enquete.description IS 'description de cette peche';
+
+
+--
+-- Name: COLUMN art_periode_enquete.exec_recomp; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_periode_enquete.exec_recomp IS 'Est-ce que la recomposition a été effectuée pour cette pêche ?';
+
+
+--
+-- Name: COLUMN art_periode_enquete.date_recomp; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_periode_enquete.date_recomp IS 'date de la recomposition quand effectuée';
+
+
+--
+-- Name: COLUMN art_periode_enquete.exec_stat; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_periode_enquete.exec_stat IS 'Est-ce que le calcul des stats a été effectué pour cette pêche ?';
+
+
+--
+-- Name: COLUMN art_periode_enquete.date_stat; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_periode_enquete.date_stat IS 'date du calcul des stats quand effectué';
+
+--
+-- Name: art_periode_enquete_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY art_periode_enquete
+    ADD CONSTRAINT art_periode_enquete_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: Aggl_annee_mois; Type: INDEX; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE UNIQUE INDEX "Aggl_annee_mois" ON art_periode_enquete USING btree (art_agglomeration_id, annee, mois);
+
+
 
 -- ---------------------------------------------------------------------------
 -- Name: art_poisson_mesure; Type: TABLE; Schema: public; Owner: -; Tablespace: 
@@ -885,7 +1004,7 @@ CREATE SEQUENCE sys_periodes_enquete_id_seq
 ALTER TABLE sys_periodes_enquete ALTER COLUMN id SET DEFAULT nextval('sys_periodes_enquete_id_seq'::regclass);
 
 
-
+-- DÉFINITION DES CONTRAINTES DE CLÉS ÉTRANGÈRES (À LA FIN POUR ÉVITER LES PROBLÈMES D'INTÉGRITÉ) ----------
 --
 -- Name: art_activite_art_agglomeration_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
@@ -1050,6 +1169,16 @@ ALTER TABLE ONLY art_fraction
 
 ALTER TABLE ONLY art_lieu_de_peche
     ADD CONSTRAINT art_lieu_de_peche_ref_secteur_id_fkey FOREIGN KEY (ref_secteur_id) REFERENCES ref_secteur(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: art_periode_enquete_art_agglomeration_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY art_periode_enquete
+    ADD CONSTRAINT art_periode_enquete_art_agglomeration_id_fkey FOREIGN KEY (art_agglomeration_id) REFERENCES art_agglomeration(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
 
 
 --

@@ -162,6 +162,26 @@ CREATE TABLE art_millieu (
 
 
 --
+-- Name: art_art_millieu_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE art_millieu_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.art_millieu_id_seq OWNER TO devppeao;
+
+
+--
+-- Name: art_type_agglomeration; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE art_millieu ALTER COLUMN id SET DEFAULT nextval('art_millieu_id_seq'::regclass);
+
+--
 -- Name: art_millieu_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1060,6 +1080,14 @@ ALTER TABLE ONLY exp_station
 
 ALTER TABLE ONLY exp_station
     ADD CONSTRAINT exp_station_exp_vegetation_id_fkey FOREIGN KEY (exp_vegetation_id) REFERENCES exp_vegetation(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+--
+-- Name: exp_station_ref_secteur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY exp_station
+    ADD CONSTRAINT exp_station_ref_secteur_id_fkey FOREIGN KEY (ref_secteur_id) REFERENCES ref_secteur(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
 
 
 
