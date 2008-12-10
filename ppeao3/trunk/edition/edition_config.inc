@@ -37,7 +37,8 @@ foreach ($tables as $table) {
 	"domaine_description"=>$table["domaine_description"],
 	"selector_cascade"=>$table["selector_cascade"],
 	"selector"=>$table["selector"],
-	"zone"=>$table["zone_id"]
+	"zone"=>$table["zone_id"],
+	"cascade_foreign_key"=>$table["cascade_foreign_key"]
 	);
 }
 ?>
