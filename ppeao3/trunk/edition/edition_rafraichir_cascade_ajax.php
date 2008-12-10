@@ -25,18 +25,14 @@ $cascade=explode(',',$theCascade);
 
 // le select que l'on doit rafraichir et filtrer
 $thisTableAlias=$cascade[$theLevel+1];
-//debug echo('XXXXXXX'.$thisTableAlias);
 
 // la table correspondante
 $theTable=$tablesDefinitions[$thisTableAlias]["table"];
 
 
-//debug echo('xxxxxx'.$theTable);
-
 // on determine la colonne qui utilise la table et la colonne passées en parametres comme cle etrangere
 $cd=getTableConstraintDetails($connectPPEAO,$theTable);
 
-//debug echo('<pre>');print_r($cd);echo('</pre>');
 
 
 foreach($cd as $c) {
@@ -56,14 +52,12 @@ $sql=	'SELECT '.$theKeys.' as val, '.$theLabels.' as lab
 		WHERE '.$theForeignKey.'=\''.$parentValue.'\'
 		ORDER BY '.$theLabels.'';
 
-//debug echo($sql);
 
 $result=pg_query($connectPPEAO,$sql) or die();
 $resultArray=pg_fetch_all($result);
 pg_free_result($result);
 			
 
-//debug echo('<pre>');print_r($resultArray);echo('</pre>');
 
 // on construit la liste des options à retourner 
 // si il n'y a pas de résultats
@@ -76,7 +70,6 @@ if (empty($resultArray)) {
 		$options.='<option value="'.$option["val"].'">'.$option["lab"].'</option>';
 		}
 }
-//debug echo($options);
 
 echo($options);
 

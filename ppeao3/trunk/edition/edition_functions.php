@@ -622,17 +622,22 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 					$theFKeys=$tablesDefinitions[$theFtableAlias]["id_col"];
 					$theFValues=$tablesDefinitions[$theFtableAlias]["noms_col"];
 
+					// si on n'a pas de valeur de la clé ($value), on ne met rien
+					if (empty($value)) {$theDisplayValue='' ;} 
+					// sinon, on récupère cette valeur
+					else {
 					$sqlFValue='SELECT '.$theFValues.'
 								FROM '.$theFtable.'
 								WHERE '.$theFKeys.'=\''.$value.'\' 
-								ORDER BY '.$theFValues;
-																
+								ORDER BY '.$theFValues.'
+								LIMIT 1';									
 					$resultFvalue=pg_query($connectPPEAO,$sqlFValue) or die('erreur dans la requete : '.$sqlFValue. pg_last_error());
 					$fValue=pg_fetch_all($resultFvalue);
 					pg_free_result($resultFvalue);
 					
 					// la valeur à afficher
 					$theDisplayValue=$fValue[0][$theFValues];
+					}
 					// on met à jour la valeur de la table et de la clé filles 
 					$childTable=$tablesDefinitions[$fkey]["table"];
 					$childValue=$value;
@@ -652,7 +657,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 						$thisPrimaryKey=$tablesDefinitions[$fkey]["id_col"];
 						$thisPrimaryValue=$tablesDefinitions[$fkey]["noms_col"];
 						
-						// on determine le nom de la colonne referencant la colonne dans la table fille
+						// on determine le nom de la colonne referençant la colonne dans la table fille
 						$cd=getTableConstraintDetails($connectPPEAO,$childTable);
 						foreach($cd as $c) {
 							if ($c["references_table"]==$thisTable && 
@@ -661,14 +666,15 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 								} // end if
 							} // end foreach $cd
 						
-						
+						// si on n'a pas de valeur de la clé ($value), on ne met rien
+					if (empty($value)) {$thisValue='' ;} else {
 						$sql="SELECT $thisTable.$thisPrimaryKey, $thisTable.$thisPrimaryValue FROM $thisTable, $childTable WHERE $childTable.$childForeignKey=$thisTable.$thisPrimaryKey AND $childTable.$childPrimaryKey=$childValue";
 						//debug		echo($sql);
 						$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 						$resultArray=pg_fetch_all($result);
 						pg_free_result($result);									
 						
-						$thisValue=$resultArray[0][$thisPrimaryKey];
+						$thisValue=$resultArray[0][$thisPrimaryKey];}
 																						
 					// on met à jour la valeur de la table et de la clé filles
 					$theCascadeValues[$i]=array(
@@ -688,11 +694,11 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 					$i++;
 					} // end foreach $cascade as $fkey
 					
-					// on a maintenant un tableau $theCascadeValues contenant les différents niveau de la cascade et leurs valeurs
+					// on a maintenant un tableau $theCascadeValues contenant les différents niveaux de la cascade et leurs valeurs
 					// on le renverse pour commencer par le haut de la cascade :
 					$theCascadeValues=array_reverse($theCascadeValues);
 										
-					// et on le parcourt pour construire les selects en cascade
+					// et on le parcourt pour construire les select en cascade
 					
 					$i=0;
 					foreach ($theCascadeValues as $cv) {
@@ -724,13 +730,20 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							$theField='<select '.$id.' name="'.$theId.'_select"
 							'. $onchange.'>';
 							
-								foreach($resultArray as $line) {
+								// on insère la première ligne "vide" si on n'a pas de valeur de la clé ($value)
+								if (empty($value)) {
+									$theField.='<option value="NULL">- choisir '.$tablesDefinitions[getTableAliasFromName($cv["thisTable"])]["label"].' -</option>';
+								}
+								// si on n'est pas en mode "ajouter", on insere le select avec ses valeurs 
+																foreach($resultArray as $line) {
 									if ($line["val"]==$cv["thisKeyValue"]) {$selected='selected="selected"';}  else {$selected='';}
 									$theField.='<option value="'.$line["val"].'" '.$selected.'>'.$line["lab"].'</option>';
 								}
 							$theField.='</select>';
 						}
 						else {
+							
+							if ($action!='add') {
 							// pour les niveaux suivants, on ajoute le filtrage
 							// on recupere les valeurs de la cle pour construire le SELECT
 							$sql='	SELECT '.$cv["thisKeyName"].' as val,
@@ -739,12 +752,12 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 									WHERE '.$theCascadeValues[$i-1]["childForeignKey"].'=\''.$theCascadeValues[$i-1]["thisKeyValue"].'\'
 									ORDER BY '.$cv["thisLabelName"].'';
 							
-							//debug							echo($sql.'<br>');
+							//debug			echo($sql.'<br>');
 							
 							$result=pg_query($connectPPEAO,$sql) or die();
 							$resultArray=pg_fetch_all($result);
 							pg_free_result($result);									
-							
+							}
 							// on insère le comportement onchange si on n'est pas à la dernière ligne du tableau
 						if ($i!=(count($theCascadeValues)-1)) {
 							$onchange=' onchange="updateEditSelects(\''.$theId.'\',\''.$i.'\',\''.$cv["thisTable"].'\',\''.$cv["thisKeyName"].'\',\''.$tablesDefinitions[$theFtableAlias]["selector_cascade"].'\');"';
@@ -755,13 +768,20 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							// on insère l'id du select dont on veut sauver la valeur
 							$id=' id="'.$theId.'" ';
 						}		
-							
 							$theField.='<select '.$id.' name="'.$theId.'_select" 
 							'.$onchange.'>';
+								
+								// on insère la première ligne "vide" si on n'a pas de valeur de la clé ($value)
+								if (empty($value)) {
+									$theField.='<option value="NULL">- choisir '.$tablesDefinition[$cv["thisTable"]]["label"].' -</option>';
+								}
+								// si on n'est pas en mode "ajouter", on insere le select avec ses valeurs 
+								if ($action!='add') {
+								
 								foreach($resultArray as $line) {
 									if ($line["val"]==$cv["thisKeyValue"]) {$selected='selected="selected"';} else {$selected='';}
 									$theField.='<option value="'.$line["val"].'"'.$selected.'>'.$line["lab"].'</option>';
-								}
+								}}
 							$theField.='</select>';
 						}
 					$i++;
