@@ -788,3 +788,51 @@ xhr.open("GET","/edition/edition_maintenance_ajax.php?action="+action,true);
 xhr.send(null);	
 }
 
+
+/**
+* Fonction pour rafraichir les SELECT dependants en mode edition d'une cle etrangere avec cascade
+*/
+function updateEditSelects(theId,theLevel,theTable,theKey,theCascade) {
+	
+// theId : l'id du SELECT dont on veut sauver la valeur
+// theLevel : le niveau du SELECT declenchant le refresh dans la cascade (p.e. : 1 pour systeme dans pays,systeme,secteur)
+// theTable : la table du SELECT declencheur
+// theKey : la colonne du SELECT declencheur
+// theCascade : la cascade de SELECT comme définie dans la table de dictionnaire 
+
+var theSelects=$$('select[name='+theId+'_select]');
+// la valeur selectionnee dans le SELECT declencheur
+var theKeyValue=theSelects[theLevel].value;
+
+var ln=theSelects.length;
+//alert(ln);
+
+// on initialise l'objet AJAX	
+var xhr = getXhr();
+// what to do when the response is received
+xhr.onreadystatechange = function(){
+		
+	if(xhr.readyState < 4) {
+		// en attendant la réponse, on "vide" les SELECTs suivants
+		for (i=parseInt(theLevel)+1;i<ln;i++) {
+		//alert(i);
+		theSelects[i].innerHTML = '<option value="">&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;</option>';
+		}
+		
+	}
+	// only do something if the whole response has been received and the server says OK
+	if(xhr.readyState == 4 && xhr.status == 200){
+		var theResponseText = xhr.responseText;
+		theSelects[parseInt(theLevel)+1].innerHTML=theResponseText;
+
+		} // end if xhr.readyState == 4 && xhr.status == 200
+	
+} // end xhr.onreadystatechange
+
+
+// using GET to send the request
+xhr.open("GET","/edition/edition_rafraichir_cascade_ajax.php?theId="+theId+"&theLevel="+theLevel+"&theTable="+theTable+"&theKey="+theKey+"&theKeyValue="+theKeyValue+"&theCascade="+theCascade,true);
+xhr.send(null);
+
+}
+
