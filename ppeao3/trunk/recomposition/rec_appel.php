@@ -47,6 +47,7 @@ $zone=3; // zone portage (voir table admin_zones)
 				<li>une estimation du nombre et du poids des poissons d'une fraction dite d&eacute;barqu&eacute;e</li>
 				<li>une comparaison des poids des fractions d&eacute;barqu&eacute;es avec le poids total du d&eacute;barquement annonc&eacute; par l'enqu&ecirc;teur</li>
 				<li>la prise en compte &eacute;ventuelle de fractions non observ&eacute;es directement par l'enqu&ecirc;teur.</li>
+				<li>Version JME 12 2008.<li>
 			</ul>
 
 			<br/><br/>
