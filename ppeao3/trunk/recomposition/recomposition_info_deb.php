@@ -24,8 +24,19 @@ foreach($info_deb as $key=>$val){
 		$Wdft = $info_deb[$key][$key2][12];
 		$Wm = $info_deb[$key][$key2][13];
 		$info_deb=choix_cas_recomposition(true,$info_deb,$key,$key2,$Wfdbq,$Nfdbq,$Ndft,$Wdft,$Wm);
+		
+		/*print_debug("  ");
+		print_debug( $Wfdbq );
+		print_debug( $Nfdbq );
+		print_debug( $Ndft );
+		print_debug( $Wdft );
+		print_debug( $Wm );
+		print_debug( $key);
+		print_debug( $key2);
+		print_debug("  "); */
+		
 		//   COMPARAISON ENTRE LE POIDS TOTAL DE L'ENQUETE ET LA SOMME DES WFdbq     
-		$Wt = $info_deb[$key][$key2][5];            //poid total du débarquement
+		$Wt = $info_deb[$key][$key2][5];            //poids total du débarquement
 		$Wfdbq = $info_deb[$key][$key2][8];
 		$WfdbqI += $Wfdbq;			    //somme des poids des fractions
 	}

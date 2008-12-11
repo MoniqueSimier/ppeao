@@ -18,7 +18,6 @@ while($row = pg_fetch_row($result)){
 	$coef_esp[$esp][0]= $k;
 	$coef_esp[$esp][1]= $b;
 	$coef_esp[$esp][2]= $ref;
-
 	
 }
 //pg_close();

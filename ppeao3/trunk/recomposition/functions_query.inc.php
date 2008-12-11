@@ -276,7 +276,7 @@ function query_from_e($values,$key, $key2,$round){
 			and AF.debarquee = 1 
 			and AF.id != '" . $key2 ."'"; 
 			break;
-		case"1" : return "select AF.id, AD.id 
+		case "1" : return "select AF.id, AD.id 
 		from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, ref_secteur as RS 
 		where AD.id = AF.art_debarquement_id 
 		and AD.art_agglomeration_id = AA.id 
@@ -288,7 +288,7 @@ function query_from_e($values,$key, $key2,$round){
 		and AF.debarquee = 1 
 		and AF.poids != 0 
 		and AF.nbre_poissons != 0 
-		and AF.id != '" . $key2 ."'";
+		and AF.id != '" . $key2 ."'";                
 		break;
 	}
 	return $query;

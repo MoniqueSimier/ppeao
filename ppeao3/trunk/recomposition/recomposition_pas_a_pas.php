@@ -36,7 +36,7 @@ include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/functions_query.inc.php';
 include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/create_array_info_deb.php';
 include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/create_array_tailles.php';
 include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/create_array_info_non_deb.php';
-
+include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/create_array_coef_esp.php';
 
 //CALCUL ET AJOUT DES Wdft et Ndft POUR CHAQUE FRACTION DANS LE TABLEAU  $info_deb       
 $info_deb=calcul_Wdft_Ndft_par_fraction($info_deb,$FT,$coef_esp);
@@ -58,7 +58,7 @@ pg_close();
 // Subject
 $subject = 'Base de données'.$_GET['base'];
 // Message
-$msg = 'Fin du taitement de recomposition des données';
+$msg = 'Fin du traitement de recomposition des données';
 // Headers
 $headers = 'From: base_PPEAO'."\r\n";
 $headers .= "\r\n";

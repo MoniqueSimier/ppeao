@@ -20,12 +20,13 @@ fonction récursive pour la recomposition des enquêtes cas 3 et 4
  @param string $round 0 ou 1 1er ou 2ème parcours des différentes strates
  @return array $datas tableau contenant les enregistrement recomposés
  */
-function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb=true,$Wfdbq,$Nfdbq,$Wm){
+function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb,$Wfdbq,$Nfdbq,$Wm){
 	global $connection;
 	//global $info_deb;
 	//global $key;
 	//global $key2;
 	getTime();
+	//print_debug($deb);
 	print_debug("cas = ".$cas." strate= ".$strate." round= ".$round);
 	switch($strate."_".$round){
 		case "ste_0":$query=query_from_ste($datas,$key,$key2,"0");break;
@@ -36,7 +37,7 @@ function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb=true,$
 		case "ste_1":$query=query_from_ste($datas,$key,$key2,"1");break;
 		case "ste_plus_1":$query=query_from_ste_plus($datas,$key,$key2,"1");break;
 		case "se_1":$query=query_from_se($datas,$key,$key2,"1");break;
-		case "e_1":$query=query_from_e($datas,$key,$key,"1");break;
+		case "e_1":$query=query_from_e($datas,$key,$key2,"1");break;
 		case "e_plus_1":$query=query_from_e_plus($datas,$key,$key2,"1");
 	}
 	print_debug($query);
@@ -53,7 +54,9 @@ function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb=true,$
 	
 	//si aucun resultat, on fait une nouvelle requete qui donne 1 seul resultat pour rentrer dans la boucle suivante
 	$nb = pg_num_rows($result);
-	if($nb>5){
+	//print_debug("ss");
+	//print_debug($nb);
+	if($nb>=5){
 		//$compteur=0;
 		while($row = pg_fetch_row($result)){
 				//$compteur++;
@@ -81,7 +84,6 @@ function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb=true,$
 				if ($round=="0" && $cas=="3"){
 					
 					//$Ndft = $datas[$deb_concerné][$frac_concernées][11];
-					//$Wdft = $datas[$deb_concerné][$frac_concernées][12];
 					
 					$WdftI += $Wdft;
 					$NdftI += $Ndft;
@@ -91,7 +93,17 @@ function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb=true,$
 						$Wm = ($WdftI / $NdftI);
 					}
 					$Nfdbq = round( (($Wfdbq * 1000)/$Wm) , 0);
-					$datas[$key][$key2][9] = $Nfdbq; 
+					$datas[$key][$key2][9] = $Nfdbq;
+//print_debug($Wm);
+//print_debug($Nfdbq);
+//print_debug($datas[$key][$key2][9] );
+//print_debug( $key);
+//print_debug( $key2);
+	//print_debug("bb");
+	//print_debug($Wm);
+	//print_debug($datas[$key][$key2][9]);
+	return $datas;
+	
 				}elseif($round=="1" && $cas=="3"){
 					
 					//$Wfdbq = $datas[$deb_concerné][$frac_concernées][9];
@@ -103,7 +115,8 @@ function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb=true,$
 						$Wm_i = $Wfdbq / $Nfdbq ;
 						$Wm += $Wm_i / ($nb-$nb_enlev);
 						$Nfdbq = round( (($Wfdbq * 1000)/$Wm) , 0);
-						$datas[$key][$key2][9] = $Nfdbq; 
+						$datas[$key][$key2][9] = $Nfdbq;
+						return $datas;	
 					}
 					
 				}elseif($round=="0" && $cas=="4"){
@@ -122,6 +135,10 @@ function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb=true,$
 					}
 					$Wfdbq = round( (($Wm * $Nfdbq)/1000) , 2);  //en kg
 					$datas[$key][$key2][8] = $Wfdbq;
+	//print_debug("cc");
+	//print_debug($Wm);
+	//print_debug($datas[$key][$key2][8]);
+					return $datas;
 				
 				}elseif($round=="1" && $cas=="4"){
 					//$Wfdbq = $datas[$deb_concerné][$frac_concernées][9];
@@ -133,39 +150,56 @@ function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb=true,$
 						$Wm_i = $Wfdbq / $Nfdbq ;
 						$Wm += $Wm_i / ($nb-$nb_enlev);
 						$Wfdbq = round( (($Wm * $Nfdbq)/1000) , 2);  //en kg
-						$datas[$key][$key2][8] = $Wfdbq;	
+						$datas[$key][$key2][8] = $Wfdbq;
+						return $datas;						
 				
 					}
 				}
 		}
 	}else{	
 		switch($strate."_".$round){
-				case "ste_0" : recomposition_cas_3_4($cas,$datas,$key,$key2,"ste_plus","0",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
-				case "ste_plus_0" : recomposition_cas_3_4($cas,$datas,$key,$key2,"se","0",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
-				case "se_0" : recomposition_cas_3_4($cas,$datas,$key,$key2,"e","0",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
-				case "e_0" : recomposition_cas_3_4($cas,$datas,$key,$key2,"e_plus","0",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
-				case "e_plus_0" : recomposition_cas_3_4($cas,$datas,$key,$key2,"ste","1",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
-				case "ste_1" : recomposition_cas_3_4($cas,$datas,$key,$key2,"ste_plus","1",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
-				case "ste_plus_1" : recomposition_cas_3_4($cas,$datas,$key,$key2,"se","1",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
-				case "se_1" : recomposition_cas_3_4($cas,$datas,$key,$key2,"e","1",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
-				case "e_1" : recomposition_cas_3_4($cas,$datas,$key,$key2,"e_plus","1",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
-				case "e_plus_1" :
-						if ($datas[$key][$key2][7]=='PDU')$Wm = 10;
-						elseif ($datas[$key][$key2][7]=='SEP')$Wm = 125;
-						elseif ($datas[$key][$key2][7]=='CAL')$Wm = 40;
-						elseif ($datas[$key][$key2][7]=='CAA')$Wm = 40;
-						elseif ($datas[$key][$key2][7]=='CMB')$Wm = 600;
-						elseif ($datas[$key][$key2][7]=='OVU')$Wm = 125;
-						else break;//on laisse la valeur à 0
-						$Nfdbq = round( (($Wfdbq * 1000)/$Wm) , 0);
-						$datas[$key][$key2][9] = $Nfdbq;
-						break;	
+				case "ste_0" : $datas = recomposition_cas_3_4($cas,$datas,$key,$key2,"ste_plus","0",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
+				case "ste_plus_0" : $datas =  recomposition_cas_3_4($cas,$datas,$key,$key2,"se","0",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
+				case "se_0" : $datas =  recomposition_cas_3_4($cas,$datas,$key,$key2,"e","0",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
+				case "e_0" : $datas = recomposition_cas_3_4($cas,$datas,$key,$key2,"e_plus","0",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
+				case "e_plus_0" : $datas =  recomposition_cas_3_4($cas,$datas,$key,$key2,"ste","1",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
+				case "ste_1" : $datas =  recomposition_cas_3_4($cas,$datas,$key,$key2,"ste_plus","1",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
+				case "ste_plus_1" : $datas =  recomposition_cas_3_4($cas,$datas,$key,$key2,"se","1",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
+				case "se_1" : $datas =  recomposition_cas_3_4($cas,$datas,$key,$key2,"e","1",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
+				case "e_1" : $datas =  recomposition_cas_3_4($cas,$datas,$key,$key2,"e_plus","1",$deb,$Wfdbq,$Nfdbq,$Wm);break;	
+				case "e_plus_1" : $datas = query_e_plus_1($datas, $key, $key2, "1", $Wfdbq,$Nfdbq,$Wm);break;
+				return $datas;			
+// Correction des appels des fonctions récursives pour forcer la sortie de la fonction    JME 12 2008						
 		}
 	}
-	
+	//print_debug("aa");
+	//print_debug($Wm);
+	//print_debug($datas[$key][$key2][9]);
 	return $datas;
 }
 
+/*
+fonction query_e_plus_1
+fonction créé 12 2008 pour éviter les conséquences de la récursivité
+*/
+function query_e_plus_1($values, $key, $key2, $round, $Wfdbq, $Nfdbq, $Wm){
+	
+	$Wm=0;
+	if ($values[$key][$key2][7]=='PDU')$Wm = 10;
+	elseif ($values[$key][$key2][7]=='SEP')$Wm = 125;
+	elseif ($values[$key][$key2][7]=='CAL')$Wm = 40;
+	elseif ($values[$key][$key2][7]=='CAA')$Wm = 40;
+	elseif ($values[$key][$key2][7]=='CMB')$Wm = 600;
+	elseif ($values[$key][$key2][7]=='OVU')$Wm = 125;
+	else $Wm = 0;
+	
+	if ($Wm != 0) $Nfdbq = round( (($Wfdbq * 1000)/$Wm) , 0); 
+	else $nfdbq = 0;
+	$values[$key][$key2][9] = $Nfdbq;
+	return $values;
+//						
+}
+						
 /*
 fonction recomposition cas 1
 @param $datas tableau à traiter
@@ -216,16 +250,18 @@ fonction choix du cas pour la recomposition
 @param reel $Wfdbq Poids
 @return array $datas 
 */
-function choix_cas_recomposition($deb,$datas,$key,$key2,$Wfdbq,$Nfdbq,$Ndft=0,$Wdft=0,$Wm=0){
+//ATTENTION changement de passge de parametre   JME
+function choix_cas_recomposition($deb,$datas,$key,$key2,$Wfdbq,$Nfdbq,$Ndft,$Wdft,$Wm){
+	//function choix_cas_recomposition($deb,$datas,$key,$key2,$Wfdbq,$Nfdbq,$Ndft=0,$Wdft=0,$Wm=0)
 	//print_debug($key." - ".$key2);
 	//cas n°1 :   Wfdbq = 0 , Nfdbq > 0, DFT existe   //
+
 	if ( (($Wfdbq == 0)||($Wfdbq == "")) && ($Nfdbq>0) && ($Ndft>0)){
 
 		print_debug("CAS 1");
 		return recomposition_cas_1($datas,$key,$key2,$Nfdbq,$Wdft,$Wm);
 	}elseif ( ($Wfdbq>0) && (($Nfdbq == 0)||($Nfdbq == "")) && ($Ndft>0)){//cas n°2 : Wfdbq > 0 , Nfdbq = 0, DFT existe   //
-		print_debug("CAS 2");
-	
+		print_debug("CAS 2") ;
 		return recomposition_cas_2($datas,$key,$key2,$Wfdbq,$Ndft,$Wdft,$Wm);
 	}elseif ( ($Wfdbq>0) && (($Nfdbq == 0)||($Nfdbq == "")) && (($Ndft == 0)||($Ndft == "")) ){//cas n°3 : Wfdbq >0  , Nfdbq = 0, pas de DFT   //
 		print_debug("CAS 3");
@@ -241,7 +277,7 @@ function choix_cas_recomposition($deb,$datas,$key,$key2,$Wfdbq,$Nfdbq,$Ndft=0,$W
 		//print ("<br>cas 6 et 7 Wfdbq =".$Wfdbq." , Nfdbq =".$Nfdbq);
 	}elseif ( (($Wfdbq == 0)||($Wfdbq == "")) && (($Nfdbq == 0)||($Nfdbq == "")) && (($Ndft == 0)||($Ndft == "")) ){//cas n°8 :Wfdbq =0, Nfdbq=0, pas de DFT     //
 		print_debug("CAS 8");
-		unset($datas[$key][$key2]);
+		//unset($datas[$key][$key2]);        // correction JME 12 2008
 	}else{
 		//print_debug("AUTRE CAS PB!!!!!!!!!!!!");
 	
@@ -267,6 +303,7 @@ function calcul_Wdft_Ndft_par_fraction($datas,$FT,$coef_esp){
 			if(isset($FT[$key2] ))$Ndft = count($FT[$key2]);
 			$datas[$key][$key2][11] = $Ndft;                    //Ndft ds tableau récap		
 			$esp = $val2[7];
+
 			$Wdft = 0;                                             //mise à zéro de la variable
 			for($i=0; $i<$Ndft ; $i++){
 				
@@ -279,8 +316,12 @@ function calcul_Wdft_Ndft_par_fraction($datas,$FT,$coef_esp){
 			}else{
 				$Wm = 0;
 			}
+		//print_debug( $Ndft );
+		//print_debug( $Wdft );
+		//print_debug( $Wm );      //JME 12 2008
+		
+		$datas[$key][$key2][13] = $Wm;			//Wm ds tableau recap
 			
-			$datas[$key][$key2][13] = $Wm;			//Wm ds tableau recap
 			// avec précision = 0.1
 		}
 	}
@@ -300,6 +341,7 @@ function comparaison_WT_SW($datas,$key,$val,$Wt,$WfdbqI){
 	//if ($Wt == 0){ $info_deb[$key][$key2][5] = round($WfdbqI,2);}	//Wt = somme(Wfdbq)
 	//05/11
 	reset($val);
+	$rapport = 0 ;          //JME 12 2008
 	if ($Wt == 0){ 
 		foreach($val as $key2=>$val2){			//pour chaque fraction
 			$datas[$key][$key2][5] = round($WfdbqI,2);
@@ -307,6 +349,7 @@ function comparaison_WT_SW($datas,$key,$val,$Wt,$WfdbqI){
 	//$Wt=$info_deb[$key][$key2][5];
 	}else{//Wt = somme(Wfdbq)
 		$rapport= round(($WfdbqI / $Wt),2);
+
 		//cas (somme Wfdbq / Wt) <0.95 :
 		if ($rapport < 0.95000){
 			foreach($val as $key2=>$val2){			//pour chaque fraction
@@ -332,6 +375,8 @@ function comparaison_WT_SW($datas,$key,$val,$Wt,$WfdbqI){
 			}
 		}
 	}//fin du else Wt=0
+	
+	//print_debug($rapport);
 	return $datas;
 }
 ?>
