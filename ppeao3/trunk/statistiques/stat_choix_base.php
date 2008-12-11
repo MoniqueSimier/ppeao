@@ -1,4 +1,8 @@
 <?php
+// Corrigé JME 12 2008
+// Appel programme ajaxStat.js qui contient la liaison avec stat_traitement.php
+// pb ligne 23 "utf-8" est-il valable?
+
 // Mis à jour par Olivier ROUX, 29-07-2008
 // definit a quelle section appartient la page
 $section="gerer";

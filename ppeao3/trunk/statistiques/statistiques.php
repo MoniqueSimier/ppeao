@@ -1,5 +1,8 @@
 <?php
 // Mis à jour Yann LAURENT, 01-07-2008
+// Corrigé par JME 12 2008 : suppression pg_close et exit
+// correction vers ligne 1500 d'une division par 0
+// suppresion des lignes de commentaires inutiles
 
 $bdd = $_GET['base'];
 if ($bdd==""){
@@ -21,18 +24,11 @@ if(! ini_set("max_execution_time", "120")) {echo "échec";}
 
 <?php
 
-//$user="devppeao";			// Le nom d'utilisateur 
-//$passwd="2devppe!!";			// Le mot de passe 
-//$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-//$host= "localhost";
-//$bdd = "bourlaye_rec";
-
 
 
 $connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 if (!$connection) { echo "Pas de connection"; exit;}
-//$pays = $_POST['pays'];
-//$systeme = $_POST['systeme'];
+
 
 //tout d'abord, on efface les données statistiques déjà présente
 $eff1 = "delete from art_taille_gt_sp;";
@@ -49,7 +45,7 @@ $eff6 = "delete from art_stat_totale;";
 $result = pg_exec($connection, $eff6);
 
 
-
+// Sélection  des pays systèmes pouvant servir aux calculs
 
 $query_systeme = " select distinct ref_pays.nom, ref_systeme.libelle 
 from ref_pays, ref_systeme, ref_secteur, art_agglomeration , 
@@ -72,7 +68,6 @@ while($row = pg_fetch_row($result_systeme))
 	$syst_etudie[$systeme] = $pays;
 	}
 pg_free_result($result_systeme);
-pg_close();
 
 
 
@@ -84,24 +79,17 @@ $pays=$val_syst_etudie;
 $systeme=$key_syst_etudie;
 
 
-
-
 print("<br><div align='center'>");
 //print("<Font Color =\"#333366\">");
-print("<br><br>Statistique de Pêche pour le système : <Font Color =\"#333366\">".$systeme."</font> ( <Font Color =\"#333366\">".$pays."</font> )<br>");
+print("<br><br>Statistiques de Pêche pour le système : <Font Color =\"#333366\">".$systeme."</font> ( <Font Color =\"#333366\">".$pays."</font> )<br>");
 print("</div>");
 print("</Font>");
-
-
-//print("<br><div align='center'>");
-//print("Calculs des statistiques globales");
-//print("</div>");
 
 
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////STATISTIQUES GLOBALES//////////////////////////////////////////
+///////////////////////////////STATISTIQUES GLOBALES//////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -110,10 +98,8 @@ $pays = str_replace("'","\'",$pays);
 $systeme = str_replace("'","\'",$systeme);
 
 
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////
-//                                 Estimation de pue_tot                                    //
+//                                 Estimation de pue_tot                                                                                            //
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 $connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
@@ -140,21 +126,12 @@ while($row = pg_fetch_row($result))
 	$i=$i+1;
 	}
 pg_free_result($result);
-pg_close();
-
 
 
 reset($ST);
 $id = 0;
 while (list($key, $val) = each($ST))
 	{
-	/*$query = "select sum(AD_rec.poids_total), count(distinct AD_rec.id), 
-	min(AD_rec.poids_total), max(AD_rec.poids_total), STDdev(AD_rec.poids_total) 
-	from art_debarquement as AD, art_debarquement_rec as AD_rec 
-	where AD.id = AD_rec.art_debarquement_id 
-	and AD.art_agglomeration_id = ".$val[0]." 
-	and AD.annee = ".$val[1]." 
-	and AD.mois = ".$val[2]." "; */     //changement 01/2008
 	
 	$query = "select sum(AD_rec.poids_total), count(AD.id), 
 	min(AD_rec.poids_total), max(AD_rec.poids_total), STDdev(AD_rec.poids_total), 
@@ -163,10 +140,6 @@ while (list($key, $val) = each($ST))
 	where AD.art_agglomeration_id = ".$val[0]." 
 	and AD.annee = ".$val[1]." 
 	and AD.mois = ".$val[2]." ";
-	
-	
-	
-	
 	
 	//print ("<br>".$query);
 	
@@ -193,25 +166,20 @@ while (list($key, $val) = each($ST))
 
 	}
 pg_free_result($result);
-pg_close();
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////STATISTIQUES PAR ESPECE//////////////////////////////////////////
+/////////////////////////////STATISTIQUES PAR ESPECE//////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-//                                 Estimation de pue_sp                                     //
+//                                 Estimation de pue_sp                                                                                           //
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 reset($ST);
 $id_sp = 0;	//identifiant sp
 while (list($key, $val) = each($ST))
 	{
-	//if($val[0]!=2)continue;
-	//if($val[1]!=2003)continue;
-	//if($val[2]!=3)continue;
-	
 	
 	
 	$query1 = "select count(distinct AD.id) 
@@ -249,7 +217,7 @@ while (list($key, $val) = each($ST))
 		{
 		$esp = $ligne[0];
 		
-		//si 2fraction avec meme nom esp dans 1 debarquement, on cumul
+		//si 2 fractions avec meme nom esp dans 1 debarquement, on cumule
 		
 		if(!isset($intermediaire[$ligne[2]][$esp]))$intermediaire[$ligne[2]][$esp] = $ligne[1];
 		else $intermediaire[$ligne[2]][$esp] += $ligne[1];
@@ -264,21 +232,17 @@ while (list($key, $val) = each($ST))
 		if (!isset($tab_esp[$esp]))$tab_esp[$esp][0]= $val_inter2;
 		else
 			{
-			//$nb_valeur_esp = array_count_values ($tab_esp[$esp]);
-			//$tab_esp[$esp][($nb_valeur_esp+1)]= $val_inter2;
-			$tab_esp[$esp][]= $val_inter2;//ok  12/2007
+
+			$tab_esp[$esp][]= $val_inter2;    //ok  12/2007
 			}
 		
-		//$tab_esp[$esp][]= $val_inter2;//avant
-		//if (!isset($tab_esp[$esp][]))$tab_esp[$esp][]= $ligne[1];
-		//else $tab_esp[$esp][]+= $ligne[1];
 		}
 	}
 		
 		
 	
 	reset($tab_esp);
-	//$id_sp = 0;	//identifiant sp
+
 	while (list($key2, $val2) = each($tab_esp))
 		{
 		$id_sp ++;	//identifiant sp
@@ -292,7 +256,6 @@ while (list($key, $val) = each($ST))
 			$nb_presence ++;
 			}
 		reset($val2);
-		//print ("<br>".$nb_presence);//ok
 
 		$poids_total = 0;
 		
@@ -309,8 +272,7 @@ while (list($key, $val) = each($ST))
 				if ($val2[$i]>$max){$max = $val2[$i];}
 				}
 			}
-		//print ("<br>".$min);//ok
-		//print ("<br>".$max);//ok
+
 		$pue_sp = round (($poids_total / $nb_deb) , 3);
 		
 		//calcul de l'ecart type = racine carré de (somme des (x - moy x)²/n)
@@ -332,21 +294,19 @@ while (list($key, $val) = each($ST))
 		.$cle_tab_tot [$val[0]][$val[1]][$val[2]].")"; 
 		
 		$result11 = pg_exec($connection, $query11);
-		//if (!$result11) {  echo "pb d'insertion "; print ("<br>".$query11); continue;}
 		//print ("<br>".$query11);
 	
 		}
 }
 pg_free_result($result);
 pg_free_result($result2);
-pg_close();
-//exit;
+
 //////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////STATISTIQUES PAR GRAND TYPE//////////////////////////////////////
+/////////////////////////////STATISTIQUES PAR GRAND TYPE/////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-//                                 Estimation de pue_gt                                     //
+//                                 Estimation de pue_gt                                                                                            //
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 reset($ST);
@@ -355,9 +315,6 @@ $id_gt_sp =0;
 $enplus=Array();
 while (list($key, $val) = each($ST))
 	{
-	//if($val[0]!=2)continue;
-	//if($val[1]!=2003)continue;
-	//if($val[2]!=3)continue;
 	
 	
 	$query2 = "select sum(AD_rec.poids_total), count(AD_rec.poids_total), 
@@ -370,8 +327,6 @@ while (list($key, $val) = each($ST))
 
 	//print ("<br>".$query2);
 	
-	
-
 	
 	$result2 = pg_query($connection, $query2);
 	while($row = pg_fetch_row($result2))
@@ -401,7 +356,6 @@ while (list($key, $val) = each($ST))
 		$cle_tab_gt [$val[0]][$val[1]][$val[2]][$gt]=$id_gt;  //pour les clefs de stat_gt_sp
 		
 		$result12 = pg_exec($connection, $query12);
-		//if (!$result12) {  echo "pb d'insertion "; print ("<br>".$query12); continue;}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -420,7 +374,6 @@ while (list($key, $val) = each($ST))
 		and AD.mois = ".$val[2]." 
 		and AD.art_grand_type_engin_id = '".$gt."'
 		order by AD_rec.id, AF_rec.ref_espece_id";
-		//modif 18/11
 		
 
 		$result3 = pg_query($connection, $query3);
@@ -429,8 +382,6 @@ while (list($key, $val) = each($ST))
 		////////
 		
 		
-		//$tab_esp=Array();
-		//$result2 = pg_query($connection, $query2);
 	
 		$intermediaire=Array();
 		while($ligne = pg_fetch_row($result3))
@@ -457,11 +408,6 @@ while (list($key, $val) = each($ST))
 			}
 		}
 		
-		
-		
-		
-		
-
 
 		reset($tab_gt_esp);
 		while (list($key2, $val2) = each($tab_gt_esp))
@@ -507,7 +453,6 @@ while (list($key, $val) = each($ST))
 				}
 			$ecart_type_gt_sp = round ( sqrt($temp/$nb_gt) , 3);
 			
-			//print ("agglo : ".$val[0]." , annee :".$val[1]." , mois :".$val[2]." , gt :".$gt." ,poids total de " . $key2." = ".$poids_total.", nb_gt : ".$nb_gt.", min : ".$min.", max: ".$max.", pue_gt_sp: ".$pue_gt_sp.", ecart_type_gt_sp: ".$ecart_type_gt_sp."<br>");
 			
 			
 			
@@ -520,7 +465,6 @@ while (list($key, $val) = each($ST))
 			$cle_tab_gt_sp [$val[0]][$val[1]][$val[2]][$gt][$key2] = $id_gt_sp;
 
 			$result12 = pg_exec($connection, $query12);
-			//if (!$result12) {  echo "pb d'insertion "; print ("<br>".$query12); continue;}
 			//print ("<br>".$query12);
 			
 			
@@ -528,7 +472,6 @@ while (list($key, $val) = each($ST))
 			$tab_gt_esp =Array();	//destruction du tableau
 
 		}
-	//print("<br>");
 
 $query_enplus = "select distinct art_activite.art_grand_type_engin_id 
 from art_activite  
@@ -543,7 +486,6 @@ while($ligne_enplus = pg_fetch_row($result_enplus))
 	{
 	if(!isset($enplus[$val[0]][$val[1]][$val[2]][$ligne_enplus[0]]))
 		{
-		//print("<br>!!!!!".$val[0]." , ".$val[1]." , ".$val[2]." , ".$ligne_enplus[0]);
 		$id_gt ++;
 		$gt=$ligne_enplus[0];
 		$query_enplus2= "insert into art_stat_gt ( id, art_grand_type_engin_id, art_stat_totale_id) 
@@ -558,30 +500,23 @@ while($ligne_enplus = pg_fetch_row($result_enplus))
 	}
 
 
-
-
 	}//fin de ST
 pg_free_result($result2);
 pg_free_result($result3);
 pg_free_result($result12);
-pg_close();
-//exit;
-
-
-
 
 
 $enplus=Array();
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////CALCUL DES EFFORTS DE PECHE//////////////////////////////////////
+/////////////////////////////CALCUL DES EFFORTS DE PECHE///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 reset($ST);
 while (list($key, $val) = each($ST))
 	{
-	//print("<br>".$key." , ".$val[0]." , ".$val[1]." , ".$val[2]);
+
 	$NbEnqAct =0;
 	$NbS =0;
 	$Fpe = 0;
@@ -615,7 +550,6 @@ while (list($key, $val) = each($ST))
 	
 	reset($tab_effort);
 	$Nbjoe = count(array_keys($tab_effort));
-	//print ("nb_date : ". $Nbjoe);
 	
 	while (list($key2, $val2) = each($tab_effort))
 		{
@@ -659,19 +593,8 @@ while (list($key, $val) = each($ST))
 	$Fpe = $NbS / $NbEnqAct * ($NbUPr_def * $Nbjoe);
 	$Fm = round (($Fpe * $Nbjo / $Nbjoe) , 3);
 	
-	/*print ("<br>agglo : ".$val[0]);
-	print ("<br>nb_date : Nbjoe : ". $Nbjoe);
-	print ("<br>NbEnqAct : ". $NbEnqAct);
-	print ("<br>NbS : ". $NbS);
-	print ("<br>nbre_unite_recenecé NbUPr : ". $NbUPr);
-	print ("<br>mois : ". $val[2]);
-	print ("<br>Nbjo : ". $Nbjo);
-	print ("<br>Fpe : ". $Fpe);
-	print ("<br>Fm : ". $Fm);
-	print ("<br>NbUPr_def : ". $NbUPr_def);
-	
-	print ("<br><br><br>");
-*/
+
+
 
 	$query13 = "update art_stat_totale 
 	set nbre_unite_recensee_periode = ".$NbUPr_def.", nbre_jour_activite = ".$Nbjoe.", fpe = ".$Fpe.", fm = ".$Fm." 
@@ -680,11 +603,11 @@ while (list($key, $val) = each($ST))
 	and art_agglomeration_id = ".$val[0]." ";
 	
 	$result13 = pg_exec($connection, $query13);
-	//if (!$result13) {  echo "pb d'insertion "; print ("<br>".$query13); continue;}
+
 	
 //////////////////////////////////////////////////////////////////////////////////////////////
-//                           CALCUL DES EFFORTS DE PECHE                                    //
-//                                 par Grand Type                                           //
+//                           CALCUL DES EFFORTS DE PECHE                                                                             //
+//                                 par Grand Type                                                                                                    //
 //////////////////////////////////////////////////////////////////////////////////////////////
 	
 	$tab_gt = Array();
@@ -734,7 +657,7 @@ while (list($key, $val) = each($ST))
 		while (list($key3, $val3) = each($tab_effort_gt))
 			{
 			$i=0;
-			//print ("<br>date :".$key3);
+
 			
 			$NbS_gt_i = 0;
 			$enlev = 0;
@@ -752,7 +675,6 @@ while (list($key, $val) = each($ST))
 					$i =$i+1;
 				}
 				
-			//print ("<br>NbS_gt_i : ". $NbS_gt_i);
 
 			
 			$NbS_gt += $NbS_gt_i;
@@ -761,15 +683,6 @@ while (list($key, $val) = each($ST))
 		$Fpe_gt = $NbS_gt / $NbEnqAct * ($NbUPr_def * $Nbjoe);
 		$Fm_gt = round (($Fpe_gt * $Nbjo / $Nbjoe) , 3);
 		
-		/*print ("nb_date : Nbjoe : ". $Nbjoe);
-		print ("<br>NbEnqAct : ". $NbEnqAct);
-		print ("<br>NbS_gt : ". $NbS_gt);
-		print ("<br>NbUPr : ". $NbUPr);
-		print ("<br>mois : ". $val[2]);
-		print ("<br>Nbjo : ". $Nbjo);
-		print ("<br>Fpe_gt : ". $Fpe_gt);
-		print ("<br>Fm_gt : ". $Fm_gt);
-		print ("<br><br>");*/
 
 		
 		$query14 = "update art_stat_gt 
@@ -778,7 +691,7 @@ while (list($key, $val) = each($ST))
 		and art_stat_totale_id = ".$cle_tab_tot [$val[0]][$val[1]][$val[2]]." ";
 
 		$result14 = pg_exec($connection, $query14);
-		//if (!$result14) {  echo "pb d'insertion "; print ("<br>".$query14); continue;}
+
 		}
 	
 	}//fin du while (list($key, $val) = each($ST))
@@ -786,13 +699,12 @@ while (list($key, $val) = each($ST))
 pg_free_result($result);
 pg_free_result($result13);
 pg_free_result($result14);
-pg_close();
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-//                                                                                          //
-//                           CALCUL DE LA CAPTURE TOTALE                                    //
-//                                                                                          //
+//                                                                                                                                                              //
+//                           CALCUL DE LA CAPTURE TOTALE                                                                              //
+//                                                                                                                                                             //
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 reset($ST);
@@ -811,8 +723,6 @@ while (list($key, $val) = each($ST))
 		{
 		$capt_tot = round (($row[0] * $row[1]) ,1);
 		
-		//print("<br> agglo :".$val[0].", annee :".$val[1].", periode :".$val[2]. 
-		//" ,capt_tot : ".$capt_tot); 
 
 
 		$query15 = "update art_stat_totale 
@@ -826,7 +736,6 @@ while (list($key, $val) = each($ST))
 		
 		
 		$result15 = pg_exec($connection, $query15);
-		//if (!$result15) {  echo "pb d'insertion "; print ("<br>".$query15); continue;}
 		
 		}
 	}
@@ -851,9 +760,6 @@ while (list($key, $val) = each($ST))
 		{
 		$capt_sp = round(($row[0] * $row[1]) , 1);
 		
-		//print("<br> agglo :".$val[0].", annee :".$val[1].", periode :".$val[2]. 
-		//" ,capt_sp : ".$capt_sp. ", ref_espece_id : ".$row[2]); 
-
 	
 		$query16 = "update art_stat_sp 
 		set cap_sp = ".$capt_sp." 
@@ -861,7 +767,7 @@ while (list($key, $val) = each($ST))
 		and art_stat_totale_id = ".$cle_tab_tot [$val[0]][$val[1]][$val[2]]." ";
 		
 		$result16 = pg_exec($connection, $query16);
-		//if (!$result16) {  echo "pb d'insertion "; print ("<br>".$query16); continue;}
+
 		}
 	}
 pg_free_result($result);
@@ -872,6 +778,7 @@ pg_free_result($result16);
 reset($ST);
 while (list($key, $val) = each($ST))
 	{
+
 	$tab_effort = Array();
 	$tab_pue = Array();
 	$tab_pue_manquant = Array();
@@ -1045,31 +952,8 @@ while (list($key, $val) = each($ST))
 			else	{	//ds enquetes de la même agglo avec GT id
 					//quelque soit le mois sur une période de moi-12 à mois +12
 				
-				/*$query_int4 = "select AA.id, A_S_gt.pue_gt, A_S_gt.art_grand_type_engin_id 
-				from ref_secteur as RF, art_agglomeration as AA, art_stat_gt as A_S_gt,
-				art_stat_totale as AST 
-				where RF.id = ".$secteur." 
-				and RF.id= AA.ref_secteur_id 
-				and AA.id = AST.art_agglomeration_id 
-				and AST.id = A_S_gt.art_stat_totale_id 
-				and AST.annee = ".$val[1]." 
-				and A_S_gt.obs_gt_max is not null 
-				and A_S_gt.art_grand_type_engin_id = '".$key2."'";*/
+
 				
-				
-				/*
-				$query_int4 = "select AA.id, A_S_gt.pue_gt, A_S_gt.art_grand_type_engin_id 
-				from ref_secteur as RF, art_agglomeration as AA, art_stat_gt as A_S_gt,
-				art_stat_totale as AST 
-				where RF.id = ".$secteur." 
-				and RF.id= AA.ref_secteur_id 
-				and AA.id = AST.art_agglomeration_id 
-				and AST.id = A_S_gt.art_stat_totale_id 
-				and AST.annee = ".$val[1]." 
-				and AST.art_agglomeration_id = ".$val[0]." 
-				and A_S_gt.obs_gt_max is not null 
-				and A_S_gt.art_grand_type_engin_id = '".$key2."'";
-				*/
 				
 				$annee_cour = $val[1];
 				$annee_moins_un = $val[1]-1;
@@ -1296,9 +1180,6 @@ while (list($key, $val) = each($ST))
 				
 				
 				
-				
-				
-				
 //print("<br>3 : ".$query_int4);
 				$result4=Array();
 				$result4 = pg_query($connection, $query_int4);
@@ -1368,17 +1249,6 @@ while (list($key, $val) = each($ST))
 					else	{	//ds enquetes du meme systeme avec GT id
 							//quelque soit le mois  sur une période allant de mois-12 à mois +12
 						
-						/*$query_int6 = "select AA.id, A_S_gt.pue_gt, A_S_gt.art_grand_type_engin_id 
-						from ref_secteur as RF, art_agglomeration as AA, art_stat_gt as A_S_gt, 
-						ref_systeme as RS, art_stat_totale as AST 
-						where RS.libelle = '".$systeme."' 
-						and RS.id = RF.ref_systeme_id 
-						and RF.id= AA.ref_secteur_id 
-						and AA.id = AST.art_agglomeration_id 
-						and AST.id = A_S_gt.art_stat_totale_id 
-						and AST.annee = ".$val[1]." 
-						and A_S_gt.obs_gt_max is not null 
-						and A_S_gt.art_grand_type_engin_id = '".$key2."'";*/
 						
 						$annee_cour = $val[1];
 						$annee_moins_un = $val[1]-1;
@@ -1603,9 +1473,7 @@ while (list($key, $val) = each($ST))
 							break;
 							}
 							
-							
-							
-							
+								
 						
 
 //print("<br>5 : ".$query_int6);
@@ -1622,7 +1490,12 @@ while (list($key, $val) = each($ST))
 							}	
 						//on insere le resultat ds $tab_pue
 						
+						if ($nb_query_int6 == 0) {
+						$pue_int6 = 0;
+						}
+						else{
 						$pue_int6 = $pue_query_int6 / $nb_query_int6;
+						}
 						$tab_pue[$key2]=$pue_int6;
 						//on insere le resultat dans la base
 						$query_5 = "update art_stat_gt 
@@ -1694,9 +1567,8 @@ while (list($key, $val) = each($ST))
 					{
 					$res += $row[0];
 					$nb = $nb +1;
-					//print("<br>nb : ".$nb);
-					}
-				}//print("<br>nb def : ".$nb);
+										}
+				}
 			//on insere le resultat ds $tab_effort
 			if ($nb != 0)	$tab_effort[$key3]=($res / $nb);//$tab_effort[$key3]=($res / $nb);
 			
@@ -1709,13 +1581,11 @@ while (list($key, $val) = each($ST))
 				and art_stat_totale_id = ".$cle_tab_tot [$val[0]][$val[1]][$val[2]]." ";
 				$result_fm_2 = pg_exec($connection, $query_fm_2);
 				//print("<br>fm_2 : ".$query_fm_2);
-				//print("<br>res".$res);
-				//print("<br>nb".$nb);
+
 				}
 			}
 		}
 		
-	//Capgt = [puegt * Fmgt / (somme(puegt * Fmgt)] * Captot
 	$var = 0;
 	reset($tab_effort);
 	while (list($key5, $val5) = each($tab_effort))
@@ -1725,9 +1595,9 @@ while (list($key, $val) = each($ST))
 	reset($tab_effort);
 	while (list($key6, $val6) = each($tab_effort))
 		{
-		//print("<br>tab_pue[key6] ".$capture_totale);
+
 		$cap_gt = round((($tab_pue[$key6] * $tab_effort[$key6] / $var) * $capture_totale) , 1);
-		//print("<br>agglo ".$val[0]. " annee : ".$val[1]. " mois : ".$val[2]." gt : ".$key6 ." cap_gt : ".$cap_gt);
+
 		
 		$query_base = "update art_stat_gt 
 		set cap_gt = ".$cap_gt." 
@@ -1735,17 +1605,10 @@ while (list($key, $val) = each($ST))
 		and art_stat_totale_id = ".$cle_tab_tot [$val[0]][$val[1]][$val[2]]." ";
 
 		$result = pg_exec($connection, $query_base);
-		//if (!$result14) {  echo "pb d'insertion "; print ("<br>".$query14); continue;}
+
 		}
 	}
 pg_free_result($result);
-
-
-
-
-
-
-
 
 
 /////////////////////////CALCUL DE LA CAPTURE PAR GT_SP////////////////////////
@@ -1772,8 +1635,6 @@ while (list($key, $val) = each($ST))
 		{
 		$capt_gt_sp = round(($row[0] * $row[1] / $row[2]) , 1 );
 		
-		//print("<br> agglo :".$val[0].", annee :".$val[1].", periode :".$val[2]. 
-		//" ,capt_gt_sp : ".$capt_gt_sp. ", ref_espece_id : ".$row[3]. ", gt : ".$row[4]); 
 	
 
 	
@@ -1783,21 +1644,14 @@ while (list($key, $val) = each($ST))
 		and art_stat_gt_id = ".$cle_tab_gt [$val[0]][$val[1]][$val[2]][$row[4]]." ";
 
 		$result = pg_exec($connection, $query21);
-		//if (!$result) {  echo "pb d'insertion "; print ("<br>".$query21); continue;}
 		
 		}
 	}
 pg_free_result($result20);
 
 
-
-	//exit;
-
-
-
-
 //////////////////////////////////////////////////////////////////////	
-/////////////////////////CALCUL DES TAILLES_SP////////////////////////
+/////////////                     CALCUL DES TAILLES_SP               /////////////
 //////////////////////////////////////////////////////////////////////
 
 
@@ -1818,7 +1672,6 @@ while($row = pg_fetch_row($result30)){
 	$coef_esp[$esp][2]= $ref;
 	}
 
-pg_close();
 
 
 //remise à zéro du pointeur
@@ -1844,8 +1697,6 @@ while (list($key30, $val30) = each($coef_esp))
 		}
 	
 	}// fin du while
-
-
 
 
 
@@ -1897,8 +1748,7 @@ while (list($key_st, $val_st) = each($ST))
 		else $taille_stand=((substr($row[1],0,2))*10)+5;//ex 123->125
 		
 		//on somme les effectifs de même tailles.
-		//if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[0];
-		//else $tab_taille[$row[3]][$taille_stand][0]+=$row[0];//nb
+
 		if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=$row[0];if(!isset($tab_taille[$row[3]][$taille_stand][0]))$tab_taille[$row[3]][$taille_stand][0]=1;
 		else $tab_taille[$row[3]][$taille_stand][0]+=1;//nb
 		$tab_taille[$row[3]][$taille_stand][1]=$row[2];//cap_sp
@@ -1910,18 +1760,17 @@ while (list($key_st, $val_st) = each($ST))
 	reset($tab_taille);
 	while (list($key_esp, $val_esp) = each($tab_taille))	//pour chaque sp
 		{
-		//if($val_st[0]!=125)continue;
+
 		$wdft_sp = 0;
 		while (list($key_taille, $val_taille) = each($val_esp))	//pour chaque taille
 			{
 			$wdft_sp += ($val_taille[0]*( $coef_esp[$key_esp][0] * pow(10, -5) * pow($key_taille,$coef_esp[$key_esp][1])))/1000;
-			//print("<br>".$val_taille[0]." , ".$key_taille);
+
 			}
-		//print("<br>!!!!!!".$val_st[0]." , ".$val_st[1]." , ".$val_st[2]." ,esp :".$key_esp." , w: ".$wdft_sp);
+
 		reset($val_esp);
 		while (list($key_taille, $val_taille) = each($val_esp))	//pour chaque taille
 			{
-			//$li=substr($key_taille,0,2);
 			
 			if($key_taille==5)$li=0;
 			else if ($key_taille <99)$li=substr($key_taille,0,1);
@@ -1990,17 +1839,10 @@ while (list($key_st, $val_st) = each($ST))
 		
 		
 		
-		//$taille_stand=((substr($row[1],0,2))*10)+5;
-		/*
+
+		
 		//on somme les effectifs de même tailles.
-		if(!isset($tab_taille_gt[$row[6]][$row[3]][$row[1]][0]))$tab_taille_gt[$row[6]][$row[3]][$row[1]][0]=$row[0];
-		else $tab_taille_gt[$row[6]][$row[3]][$row[1]][0]+=$row[0];//nb
-		$tab_taille_gt[$row[6]][$row[3]][$row[1]][1]=$row[2];//cap_gt_sp
-		$tab_taille_gt[$row[6]][$row[3]][$row[1]][2]=$row[4];//art_stat_gt_sp_id
-		*/
-		//on somme les effectifs de même tailles.
-		//if(!isset($tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]))$tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]=$row[0];
-		//else $tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]+=$row[0];//nb
+
 		if(!isset($tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]))$tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]=1;
 		else $tab_taille_gt[$row[6]][$row[3]][$taille_stand][0]+=1;//nb
 		$tab_taille_gt[$row[6]][$row[3]][$taille_stand][1]=$row[2];//cap_gt_sp
@@ -2012,18 +1854,17 @@ while (list($key_st, $val_st) = each($ST))
 	reset($tab_taille_gt);
 	while (list($key_gt, $val_gt) = each($tab_taille_gt))	//pour chaque grand type
 		{
-		//print("<br>".$key_gt);
-		//if($val_st[0]!=125)continue;
+
 		while (list($key_esp, $val_esp) = each($val_gt))	//pour chaque espece
 			{
-			//if($key_esp!='AMA')continue;
+
 			$wdft_gt_sp = 0;
 			while (list($key_taille, $val_taille) = each($val_esp))	//pour chaque taille
 				{
 				$wdft_gt_sp += ($val_taille[0]*( $coef_esp[$key_esp][0] * pow(10, -5) * pow($key_taille,$coef_esp[$key_esp][1])))/1000;
-				//print("<br>".$val_taille[0]." , ".$key_taille);
+
 				}
-			//print("<br>!!!!!!".$val_st[0]." , ".$val_st[1]." , ".$val_st[2]." ,esp :".$key_esp." , w: ".$wdft_gt_sp);
+
 			
 			reset($val_esp);
 			while (list($key_taille, $val_taille) = each($val_esp))	//pour chaque taille
@@ -2033,7 +1874,6 @@ while (list($key_st, $val_st) = each($ST))
 				else $li=substr($key_taille,0,2);
 				
 				
-				//$li=substr($key_taille,0,2);
 				
 				$xi=round(($val_taille[0]*($val_taille[1]/$wdft_gt_sp)),1);//mettre à 1 pour réel 0.1
 				
@@ -2053,27 +1893,20 @@ while (list($key_st, $val_st) = each($ST))
 	
 
 
-pg_close();
 
 
 }//fin pour 1 systeme
 
 //envoie mail confirm
-// To
-//$to = 'fauchier@mpl.ird.fr';
 // Subject
 $subject = 'PPEAO';
 // Message
-$msg = 'Fin du traitement de création de données statistiques';
+$msg = 'Fin du traitement de calcul des données statistiques';
 // Headers
 $headers = 'From: base_PPEAO'."\r\n";
 $headers .= "\r\n";
 // Function mail()
 mail($to, $subject, $msg, $headers);
-
-
-
-
 
 
 print("<br><br><br>");
