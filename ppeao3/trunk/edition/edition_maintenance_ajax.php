@@ -17,19 +17,20 @@ switch ($action) {
 
 		// on sélectionne les sequences, leurs tables et leurs colonnes
 		// pour les tables de ref (type_table_id=2) et de param (type_table_id=3)
-		$sql='	SELECT ads.sequence_name, ads.column_name, addt.table_db 
+		$sql='	SELECT ads.sequence_name, ads.column_name, ads.table_db
 				FROM admin_sequences ads, admin_dictionary_tables addt 
-				WHERE (ads.table_id=addt.dico_id) AND (addt.type_table_id=2 OR addt.type_table_id=3)';
-		$result=pg_query($connectPPEAO,$sql);
+				WHERE (ads.table_db=addt.table_db) AND (addt.type_table_id=2 OR addt.type_table_id=3)';
+		$result=pg_query($connectPPEAO,$sql) or  die('erreur dans la requete : '.$sql. pg_last_error());;
 		$seqArray=pg_fetch_all($result);
-		//debug 		echo('<pre>');print_r($seqArray);echo('</pre>');
+		//debug 			echo('<pre>');print_r($seqArray);echo('</pre>');
 		
 		// on boucle sur chaque sequence `
 		foreach ($seqArray as $seq) {
 			// on recupere la plus grande valeur de la colonne correspondant a la sequence
 			$sqlMax='	SELECT max('.$seq["column_name"].') as maxval
 						FROM '.$seq["table_db"].'
-						WHERE true';
+						';
+			//debug 			echo($sqlMax);
 			$resultMax=pg_query($connectPPEAO,$sqlMax);
 			$maxArray=pg_fetch_row($resultMax);
 			$maxVal=$maxArray[0];
@@ -46,9 +47,9 @@ switch ($action) {
 		$operation="de mise-&agrave;-jour des s&eacute;quences des tables de donn&eacute;es";
 		// on sélectionne les sequences, leurs tables et leurs colonnes
 		// pour les tables de donnees (type_table_id=4)
-		$sql='	SELECT ads.sequence_name, ads.column_name, addt.table_db 
+		$sql='	SELECT ads.sequence_name, ads.column_name, ads.table_db 
 				FROM admin_sequences ads, admin_dictionary_tables addt 
-				WHERE (ads.table_id=addt.dico_id) AND (addt.type_table_id=4)';
+				WHERE (ads.table_db=addt.table_db) AND (addt.type_table_id=4)';
 		$result=pg_query($connectPPEAO,$sql);
 		$seqArray=pg_fetch_all($result);
 		//debug 		echo('<pre>');print_r($seqArray);echo('</pre>');
@@ -58,7 +59,7 @@ switch ($action) {
 			// on recupere la plus grande valeur de la colonne correspondant a la sequence
 			$sqlMax='	SELECT max('.$seq["column_name"].') as maxval
 						FROM '.$seq["table_db"].'
-						WHERE true';
+						';
 			$resultMax=pg_query($connectPPEAO,$sqlMax);
 			$maxArray=pg_fetch_row($resultMax);
 			$maxVal=$maxArray[0];
