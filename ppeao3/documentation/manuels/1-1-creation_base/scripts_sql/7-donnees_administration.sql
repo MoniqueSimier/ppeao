@@ -99,6 +99,8 @@ INSERT INTO admin_dictionary_tables VALUES (57, 'domaines', 'domaine thématique'
 INSERT INTO admin_dictionary_tables VALUES (58, 'tables', 'définition des tables de la base', 'admin_dictionary_tables', 'dico_id', 'label', 1, 6, '', false, 1, false);
 INSERT INTO admin_dictionary_tables VALUES (59, 'typetables', 'les différentes catégories de tables', 'admin_dictionary_type_tables', 'type_table_id', 'type_table_nom', 1, 6, '', false, 1, false);
 
+
+
 ALTER TABLE admin_dictionary_tables ENABLE TRIGGER ALL;
 
 --
