@@ -235,13 +235,6 @@ function filterTable(theUrl) {
 	document.location=newUrl;
 	
 }
-/**
-* Cette fonction déclenche filterTable() lorsque l'utilisateur appuie sur la touche ENTER
-*/
-function filterTableOnEnter(theUrl) {
-// permet de déclencher le filtrage de la table quand l'utilisateur entre une valeur dans un <input text> et appuie sur ENTER
-	if(event.keyCode == 13) {filterTable(theUrl);}
-}
 
 
 /**
@@ -599,6 +592,15 @@ xhr.onreadystatechange = function(){
 					var theOldElement=$('add_record_'+theLevel+'_'+theKey);
 					// on remplace l'ancien élément par le nouveau
 					theOldElement.replaceWith(theNewElement);
+					// on efface les éventuels éléments de message ou les selecteurs en cascade
+					// message d'erreur de validation
+					if ($('add_record_'+theLevel+'_'+theKey+'_error')) {$('add_record_'+theLevel+'_'+theKey+'_error').remove();};
+					// compteur du nombre de caracteres restants
+					if ($('add_record_'+theLevel+'_'+theKey+'_counter'))
+					{$('add_record_'+theLevel+'_'+theKey+'_counter').remove();};
+					// selecteur en cascade
+					if ($('add_record_'+theLevel+'_'+theKey+'_foreign_key_cascade'))
+					{$('add_record_'+theLevel+'_'+theKey+'_foreign_key_cascade').remove();};
 				}// end for
 				
 			// maintenant, on change le comportement du bouton "fermer"

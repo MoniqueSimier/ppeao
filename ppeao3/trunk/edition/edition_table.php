@@ -139,6 +139,14 @@ if (isset($_GET[$editTable])) {
 			
 			//debug 			echo('<pre>'.$key.'<br/>');print_r($cDetails[$key]["constraints"][$key]);echo('</pre>');
 			
+			//si la valeur passée est un booleen
+			if ($cDetails[$key]["data_type"]=="boolean") {
+				if ($_GET['f_'.$key]=="t") {$val='TRUE';} else {$val='FALSE';}
+				$whereClause.=' AND '.$key.'='.$val;
+			} 
+			// si ce n'est pas un booleen
+			else {
+			
 			// si la valeur passée est un nombre et que la colonne correspondante est numérique, on fait un =
 			if (is_numeric($_GET['f_'.$key]) && ($cDetails[$key]["data_type"]=="real" || $cDetails[$key]["data_type"]=="integer")) {
 				$whereClause.=' AND '.$key.' = '.$_GET['f_'.$key].'';}
@@ -153,6 +161,7 @@ if (isset($_GET[$editTable])) {
 					$whereClause.=' AND lower('.$key.') LIKE \''.strtolower($_GET['f_'.$key]).'%\'';
 				}
 			} // end else is_numeric
+			}// end else de if (boolean)
 
 		}// end if isset
 		//debug 

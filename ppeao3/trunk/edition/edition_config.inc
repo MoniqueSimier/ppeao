@@ -41,4 +41,9 @@ foreach ($tables as $table) {
 	"cascade_foreign_key"=>$table["cascade_foreign_key"]
 	);
 }
+
+// nombre maximal de valeurs des clés étrangères à afficher dans les menus déroulants <select> des filtres des tables de résultats
+// si le nombre est superieur a cette valeur, on affiche un simple champ <input>
+$maxForeignKeyMenuLength=1000;
+
 ?>

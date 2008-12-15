@@ -303,6 +303,9 @@ function makeField($cDetails,$table,$column,$value,$action,$theUrl) {
 global $connectPPEAO;
 global $tablesDefinitions;
 
+// nombre maximal de valeurs des clés étrangères à afficher 
+global $maxForeignKeyMenuLength;
+
 // la longueur (et longueur max) par défaut des champs INPUT de type TEXT
 $defaultTextInputLength=15;
 $defaultTextInputMaxLength=30;
@@ -523,7 +526,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 						
 						$thisValue=$resultArray[0][$thisPrimaryKey];
 						
-						$theDisplayValue=$resultArray[0][$thisPrimaryValue].'/'.$theDisplayValue;
+						$theDisplayValue='<span class="grey">'.$resultArray[0][$thisPrimaryValue].'/</span>'.$theDisplayValue;
 																
 					// on met à jour la valeur de la table et de la clé filles
 					$childTable=$thisTable;
@@ -582,11 +585,24 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 						$resultFkey=pg_query($connectPPEAO,$sqlFkey) or die('erreur dans la requete : '.$sqlFkey. pg_last_error());
 						$fKeys=pg_fetch_all($resultFkey);
 						pg_free_result($resultFkey);
+						
+						// on compte le nombre de valeurs
+						$valueNumber=count($fKeys);
 
 						if ($action=='filter')
 							{$onAction='onchange="javascript:filterTable(\''.$theUrl.'\');"';} 
 							else {
 							$onAction='';}
+						
+						// si le nombre de valeurs de la clé est trop grand (), on n'affiche pas de champ de filtre
+						// note : le plan etait d'afficher un champ <input> comme pour les autres champs,
+						// mais cela pose le probleme de filtrer une cle etrangere sur la valeur de son "libelle"
+						// et non de son "id"
+						if ($valueNumber>$maxForeignKeyMenuLength) {
+							$theField='';
+						}
+						// sinon on affiche un menu <select>
+						else {
 						$theField='<div class="filter"><select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" '.$onAction.'>';
 						// on ajoute une valeur "vide" si on est en édition ou ajout (clé secondaire JAMAIS NULL)
 						//if ($action=='filter') {$theField.='<option value="" '.$selected.'>-</option>';}
@@ -599,6 +615,8 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							$theField.='<option value='.$fKey[$theFKeys].' '.$selected.'>'.$theValue.'</option>';
 						}
 						$theField.='</select></div>';
+					
+					}
 					break; // end case  filter
 					
 					case 'add':
@@ -697,9 +715,11 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 					// on a maintenant un tableau $theCascadeValues contenant les différents niveaux de la cascade et leurs valeurs
 					// on le renverse pour commencer par le haut de la cascade :
 					$theCascadeValues=array_reverse($theCascadeValues);
-										
-					// et on le parcourt pour construire les select en cascade
 					
+					// le span contenant la cascade
+					$theField='<span id="'.$theId.'_foreign_key_cascade">';	
+					
+					// et on le parcourt pour construire les select en cascade					
 					$i=0;
 					foreach ($theCascadeValues as $cv) {
 						
@@ -730,7 +750,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							
 						}	
 							
-							$theField='<select '.$id.' '.$name.'	'. $onchange.' class="'.$theClass.'">';
+							$theField.='<select '.$id.' '.$name.'	'. $onchange.' class="'.$theClass.'">';
 							
 								// on insère la première ligne "vide" si on n'a pas de valeur de la clé ($value)
 								if (empty($value)) {
@@ -770,6 +790,8 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							// on insère l'id du select dont on veut sauver la valeur
 							$id=' id="'.$theId.'" ';
 						}		
+							// on ferme le span contenant la cascade des tables parentes
+							$theField.='</span>';
 							$theField.='<select '.$id.' name="'.$theId.'" '.$onchange.'  class="'.$theClass.'">';
 								
 								// on insère la première ligne "vide" si on n'a pas de valeur de la clé ($value)
@@ -882,7 +904,21 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 			
 			break; // end case 'display'
 
-			case 'filter': 	$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input></div>';
+			case 'filter': 	
+			// il faut tenir compte de deux cas particuliers : les BOOLEAN et les DATE
+				switch ($theDetails["data_type"]) {
+					// les booleens
+				case 'boolean':
+				$theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'"  onchange="javascript:filterTable(\''.$theUrl.'\');">';
+					$theField.='<option value="x" selected="selected">-</option>';
+					$theField.='<option value="t">oui</option>';
+					$theField.='<option value="f">non</option>';
+					$theField.='</select>';
+				break;
+				default:
+			$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input></div>';
+				break;
+				}
 			break;
 			
 			case 'add':
