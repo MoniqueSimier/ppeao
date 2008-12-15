@@ -1281,6 +1281,6 @@ ALTER TABLE ONLY admin_log
 --
 
 ALTER TABLE ONLY admin_sequences
-    ADD CONSTRAINT admin_sequences_table_id_fkey FOREIGN KEY (table_id) REFERENCES admin_dictionary_tables(dico_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT admin_sequences_table_id_fkey FOREIGN KEY (table_db) REFERENCES admin_dictionary_tables(table_db) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
