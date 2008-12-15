@@ -78,7 +78,7 @@ INSERT INTO admin_dictionary_tables VALUES (35, 'systeme', 'systèmes', 'ref_syst
 INSERT INTO admin_dictionary_tables VALUES (36, 'jgroupzone', 'relations groupes-zones', 'admin_j_group_zone', 'jgroupzone_id', 'jgroupzone_id', 1, 5, '', false, 1, false);
 INSERT INTO admin_dictionary_tables VALUES (37, 'jusergroup', 'relations utilisateurs-groupes', 'admin_j_user_group', 'user_id', 'user_id', 1, 5, '', false, 1, false);
 INSERT INTO admin_dictionary_tables VALUES (38, 'juserzone', 'relations utilisateurs-zones', 'admin_j_user_zone', 'juserzone_id', 'juserzone_id', 1, 5, '', false, 1, false);
-INSERT INTO admin_dictionary_tables VALUES (39, 'log_modules', 'modules de l''application', 'admin_log_modules', 'module_id', 'module_name', 1, 5, '', false, 1, false);
+INSERT INTO admin_dictionary_tables VALUES (39, 'log_modules', 'modules de l''application', 'admin_log_modules', 'module_id', 'module_name', 1, 6, '', false, 1, false);
 INSERT INTO admin_dictionary_tables VALUES (40, 'usergroups', 'groupes d''utilisateurs', 'admin_usergroups', 'group_id', 'group_name', 1, 5, '', false, 1, false);
 INSERT INTO admin_dictionary_tables VALUES (41, 'users', 'utilisateurs', 'admin_users', 'user_id', 'user_name', 1, 5, '', false, 1, false);
 INSERT INTO admin_dictionary_tables VALUES (42, 'zones', 'zones d''accès', 'admin_zones', 'zone_id', 'zone_name', 1, 5, '', false, 1, false);
@@ -242,14 +242,8 @@ INSERT INTO admin_sequences VALUES (11, 'art_type_sortie_id_seq', 'id', 'art_typ
 INSERT INTO admin_sequences VALUES (12, 'art_unite_peche_id_seq', 'id', 'art_unite_peche');
 INSERT INTO admin_sequences VALUES (13, 'art_vent_id_seq', 'id', 'art_vent');
 INSERT INTO admin_sequences VALUES (14, 'exp_campagne_id_seq', 'id', 'exp_campagne');
-INSERT INTO admin_sequences VALUES (15, 'exp_contenu_biologie_id_seq', 'id', 'exp_contenu_biologie');
-INSERT INTO admin_sequences VALUES (16, 'exp_contenu_id_seq', 'id', 'exp_contenu');
+INSERT INTO admin_sequences VALUES (15, 'exp_trophique_id_seq', 'id', 'exp_trophique');
 INSERT INTO admin_sequences VALUES (17, 'exp_cp_peche_id_seq', 'id', 'exp_cp_peche');
-INSERT INTO admin_sequences VALUES (18, 'exp_force_courant_id_seq', 'id', 'exp_force_courant');
-INSERT INTO admin_sequences VALUES (19, 'exp_position_id_seq', 'id', 'exp_position');
-INSERT INTO admin_sequences VALUES (20, 'exp_qualite_id_seq', 'id', 'exp_qualite');
-INSERT INTO admin_sequences VALUES (21, 'exp_sens_courant_id_seq', 'id', 'exp_sens_courant');
-INSERT INTO admin_sequences VALUES (22, 'exp_stade_id_seq', 'id', 'exp_stade');
 INSERT INTO admin_sequences VALUES (23, 'ref_famille_id_seq', 'id', 'ref_famille');
 INSERT INTO admin_sequences VALUES (24, 'ref_ordre_id_seq', 'id', 'ref_ordre');
 INSERT INTO admin_sequences VALUES (25, 'ref_origine_kb_id_seq', 'id', 'ref_origine_kb');

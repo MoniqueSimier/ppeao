@@ -733,8 +733,6 @@ INSERT INTO exp_contenu VALUES (14, '14 - gastéropode');
 INSERT INTO exp_contenu VALUES (15, '15- céphalopode');
 INSERT INTO exp_contenu VALUES (16, '16- bouillie');
 
-SELECT pg_catalog.setval('exp_contenu_id_seq',16,true);
-
 ALTER TABLE exp_contenu ENABLE TRIGGER ALL;
 
 
@@ -792,8 +790,6 @@ INSERT INTO exp_force_courant VALUES (1, '1- courant léger');
 INSERT INTO exp_force_courant VALUES (2, '2- notable');
 INSERT INTO exp_force_courant VALUES (3, '3- fort');
 
-SELECT pg_catalog.setval('exp_force_courant_id_seq',3,true);
-
 ALTER TABLE exp_force_courant ENABLE TRIGGER ALL;
 
 
@@ -811,7 +807,6 @@ INSERT INTO exp_position VALUES (5, '5- AV (vers aval)');
 INSERT INTO exp_position VALUES (6, '6- RV (perpendiculai');
 INSERT INTO exp_position VALUES (7, '7- AM (vers amont)');
 
-SELECT pg_catalog.setval('exp_position_id_seq',7,true);
 
 ALTER TABLE exp_position ENABLE TRIGGER ALL;
 
@@ -829,7 +824,6 @@ INSERT INTO exp_qualite VALUES (4, '4- coup dont les résultats ont paru douteux 
 INSERT INTO exp_qualite VALUES (5, '5- coup rejoué');
 
 
-SELECT pg_catalog.setval('exp_qualite_id_seq',5,true);
 
 ALTER TABLE exp_qualite ENABLE TRIGGER ALL;
 
@@ -882,7 +876,6 @@ INSERT INTO exp_sens_courant VALUES (3, '3- étale de haute mer');
 INSERT INTO exp_sens_courant VALUES (4, '4- étale de basse mer');
 INSERT INTO exp_sens_courant VALUES (5, '5- étale');
 
-SELECT pg_catalog.setval('exp_sens_courant_id_seq',5,true);
 
 ALTER TABLE exp_sens_courant ENABLE TRIGGER ALL;
 
@@ -917,7 +910,6 @@ INSERT INTO exp_stade VALUES (7, '7- (6-2) post-ponte et retour au stade 2');
 INSERT INTO exp_stade VALUES (8, '8- (6-3) post-ponte et retour au stade 3');
 INSERT INTO exp_stade VALUES (9, '9- (6-4) post-ponte et retour au stade 4');
 
-SELECT pg_catalog.setval('exp_stade_id_seq',9,true);
 
 ALTER TABLE exp_stade ENABLE TRIGGER ALL;
 

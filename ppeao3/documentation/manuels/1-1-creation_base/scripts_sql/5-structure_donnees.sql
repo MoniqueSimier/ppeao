@@ -857,24 +857,24 @@ CREATE TABLE exp_trophique (
 );
 
 --
--- Name: exp_contenu_biologie_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+-- Name: exp_trophique_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
 --
 
-CREATE SEQUENCE exp_contenu_biologie_id_seq
+CREATE SEQUENCE exp_trophique_id_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
 
-ALTER TABLE public.exp_contenu_biologie_id_seq OWNER TO devppeao;
+ALTER TABLE public.exp_trophique_id_seq OWNER TO devppeao;
 
 
 --
 -- Name: exp_trophique; Type: DEFAULT; Schema: public; Owner: devppeao
 --
 
-ALTER TABLE exp_trophique ALTER COLUMN id SET DEFAULT nextval('exp_contenu_biologie_id_seq'::regclass);
+ALTER TABLE exp_trophique ALTER COLUMN id SET DEFAULT nextval('exp_trophique_id_seq'::regclass);
 
 --
 -- Name: exp_contenu_biologie_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 

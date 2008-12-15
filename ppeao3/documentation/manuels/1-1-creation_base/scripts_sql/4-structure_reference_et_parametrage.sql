@@ -364,25 +364,7 @@ CREATE TABLE exp_contenu (
     libelle character varying(50)
 );
 
---
--- Name: exp_contenu_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
 
-CREATE SEQUENCE exp_contenu_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.exp_contenu_id_seq OWNER TO devppeao;
-
-
---
--- Name: exp_contenu; Type: DEFAULT; Schema: public; Owner: devppeao
---
-
-ALTER TABLE exp_contenu ALTER COLUMN id SET DEFAULT nextval('exp_contenu_id_seq'::regclass);
 
 --
 -- Name: exp_contenu_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
@@ -444,25 +426,7 @@ CREATE TABLE exp_force_courant (
     libelle character varying(50)
 );
 
---
--- Name: exp_force_courant_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
 
-CREATE SEQUENCE exp_force_courant_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.exp_force_courant_id_seq OWNER TO devppeao;
-
-
---
--- Name: exp_force_courant; Type: DEFAULT; Schema: public; Owner: devppeao
---
-
-ALTER TABLE exp_force_courant ALTER COLUMN id SET DEFAULT nextval('exp_force_courant_id_seq'::regclass);
 --
 -- Name: exp_force_courant_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
@@ -482,25 +446,6 @@ CREATE TABLE exp_position (
 );
 
 
---
--- Name: exp_position_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
-
-CREATE SEQUENCE exp_position_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.exp_position_id_seq OWNER TO devppeao;
-
-
---
--- Name: exp_position; Type: DEFAULT; Schema: public; Owner: devppeao
---
-
-ALTER TABLE exp_position ALTER COLUMN id SET DEFAULT nextval('exp_position_id_seq'::regclass);
 
 --
 -- Name: exp_position_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
@@ -520,25 +465,6 @@ CREATE TABLE exp_qualite (
     libelle character varying(100)
 );
 
---
--- Name: exp_qualite_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
-
-CREATE SEQUENCE exp_qualite_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.exp_qualite_id_seq OWNER TO devppeao;
-
-
---
--- Name: exp_qualite; Type: DEFAULT; Schema: public; Owner: devppeao
---
-
-ALTER TABLE exp_qualite ALTER COLUMN id SET DEFAULT nextval('exp_qualite_id_seq'::regclass);
 
 --
 -- Name: exp_qualite_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
@@ -597,25 +523,6 @@ CREATE TABLE exp_sens_courant (
     libelle character varying(50)
 );
 
---
--- Name: exp_sens_courant_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
-
-CREATE SEQUENCE exp_sens_courant_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.exp_sens_courant_id_seq OWNER TO devppeao;
-
-
---
--- Name: exp_sens_courant; Type: DEFAULT; Schema: public; Owner: devppeao
---
-
-ALTER TABLE exp_sens_courant ALTER COLUMN id SET DEFAULT nextval('exp_sens_courant_id_seq'::regclass);
 
 --
 -- Name: exp_sens_courant_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
@@ -657,25 +564,6 @@ CREATE TABLE exp_stade (
 );
 
 
---
--- Name: exp_stade_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
---
-
-CREATE SEQUENCE exp_stade_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.exp_stade_id_seq OWNER TO devppeao;
-
-
---
--- Name: exp_stade; Type: DEFAULT; Schema: public; Owner: devppeao
---
-
-ALTER TABLE exp_stade ALTER COLUMN id SET DEFAULT nextval('exp_stade_id_seq'::regclass);
 
 --
 -- Name: exp_stade_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
