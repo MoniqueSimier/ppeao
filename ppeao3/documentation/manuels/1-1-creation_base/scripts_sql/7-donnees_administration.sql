@@ -7,6 +7,35 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET search_path = public, pg_catalog;
 
+
+--
+-- Data for Name: admin_config_mois; Type: TABLE DATA; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_config_mois DISABLE TRIGGER ALL;
+
+INSERT INTO admin_config_mois VALUES (1, 1, 'janvier');
+INSERT INTO admin_config_mois VALUES (2, 2, 'février');
+INSERT INTO admin_config_mois VALUES (3, 3, 'mars');
+INSERT INTO admin_config_mois VALUES (4, 4, 'avril');
+INSERT INTO admin_config_mois VALUES (5, 5, 'mai');
+INSERT INTO admin_config_mois VALUES (6, 6, 'juin');
+INSERT INTO admin_config_mois VALUES (7, 7, 'juillet');
+INSERT INTO admin_config_mois VALUES (8, 8, 'août');
+INSERT INTO admin_config_mois VALUES (9, 9, 'septembre');
+INSERT INTO admin_config_mois VALUES (10, 10, 'octobre');
+INSERT INTO admin_config_mois VALUES (11, 11, 'novembre');
+INSERT INTO admin_config_mois VALUES (12, 12, 'décembre');
+
+ALTER TABLE admin_config_mois ENABLE TRIGGER ALL;
+
+
+--
+-- Name: art_param_mois_mois_id_seq; Type: SEQUENCE SET; Schema: public; Owner: devppeao
+--
+
+SELECT pg_catalog.setval('art_param_mois_mois_id_seq', 12, true);
+
 --
 -- Name: admin_dictionary_domains_domain_id_seq; Type: SEQUENCE SET; Schema: public; Owner: devppeao
 --
@@ -98,7 +127,9 @@ INSERT INTO admin_dictionary_tables VALUES (55, 'trophique_exp', 'trophique', 'e
 INSERT INTO admin_dictionary_tables VALUES (57, 'domaines', 'domaine thématique', 'admin_dictionary_domains', 'domain_id', 'domaine_nom', 1, 6, '', false, 1, false);
 INSERT INTO admin_dictionary_tables VALUES (58, 'tables', 'définition des tables de la base', 'admin_dictionary_tables', 'dico_id', 'label', 1, 6, '', false, 1, false);
 INSERT INTO admin_dictionary_tables VALUES (59, 'typetables', 'les différentes catégories de tables', 'admin_dictionary_type_tables', 'type_table_id', 'type_table_nom', 1, 6, '', false, 1, false);
-
+INSERT INTO admin_dictionary_tables VALUES (60, 'stat_effort', 'effort de pêche', 'art_stat_effort', 'effort_id', 'effort_date', 4, 1, 'pays,systeme', false, 1, false);
+INSERT INTO admin_dictionary_tables VALUES (61, 'config_mois', 'mois de l''année', 'admin_config_mois', 'mois_id', 'mois_numero', 1, 6, NULL, false, 1, false);
+INSERT INTO admin_dictionary_tables VALUES (62, 'type_effort', 'type d''effort de pêche', 'art_param_type_effort', 'type_effort_id', 'type_effort_libelle', 3, 1, 'pays,systeme', false, 1, false);
 
 
 ALTER TABLE admin_dictionary_tables ENABLE TRIGGER ALL;
