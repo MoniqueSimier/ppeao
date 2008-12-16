@@ -156,9 +156,13 @@ if (isset($_GET[$editTable])) {
 				if ($cDetails[$key]["constraints"][$key]["constraint_type"]=='FOREIGN KEY') {
 					$whereClause.=' AND lower('.$key.') LIKE \''.strtolower($_GET['f_'.$key]).'\'';}
 				
-				// sinon on fait un LIKE en tenant compte de l'utilisation d'une éventuelle wildcard "%" en début de chaine
-				else {					
-					$whereClause.=' AND lower('.$key.') LIKE \''.strtolower($_GET['f_'.$key]).'%\'';
+				// sinon on fait un LIKE en tenant compte de l'utilisation d'une éventuelle wildcard "*" en début de chaine
+				else {
+					//on recherche la wildcard					
+					if (strpos($_GET['f_'.$key],'*')==0) {$search='%'.ltrim($_GET['f_'.$key],'*');} else {$search=$_GET['f_'.$key];}
+					// on nettoie les éventuels espaces et * avant et après la chaine
+					$search=ltrim(rtrim($search,'* '),'* ');
+					$whereClause.=' AND lower('.$key.') LIKE \''.strtolower($search).'%\'';
 				}
 			} // end else is_numeric
 			}// end else de if (boolean)
@@ -200,6 +204,9 @@ $countRow=pg_fetch_row($countResult);
 $countTotal=$countRow[0];
  /* Libération du résultat */ 
  pg_free_result($countResult);
+
+
+//debug echo('XXX'.$countSql.'YYY');
 
 
 // on prend en compte la pagination
@@ -253,7 +260,7 @@ if ($countTotal>$rowsPerPage) {
 
 ?>
 <h1>votre s&eacute;lection : <?php echo('"'.$tablesDefinitions[$editTable]["label"].'" '.$countTotal.' sur '.$countAllTotal.' '.$paginationString);?><span class="showHide"><a id="add_new_record" href="#" onclick="modalDialogAddRecord(1,'<?php echo($editTable) ?>');">[ajouter un enregistrement]</a></span></h1>
-<p class="hint small">aide : pour trier la table, cliquer sur un nom de colonne, cliquer &agrave; nouveau pour inverser l'ordre de tri; pour filtrer la table, saisissez ou choisissez une valeur et appuyez sur ENTR&Eacute;E (le filtrage est cumulatif et de type "commence par" : vous pouvez ajouter % au début de la valeur de filtre pour faire un "contient"); pour &eacute;diter une valeur, cliquer dessus.</p>
+<p class="hint small">aide : pour trier la table, cliquer sur un nom de colonne, cliquer &agrave; nouveau pour inverser l'ordre de tri; pour filtrer la table, saisissez ou choisissez une valeur et appuyez sur ENTR&Eacute;E (le filtrage est cumulatif et de type "commence par" : vous pouvez ajouter * au début de la valeur de filtre pour faire un "contient"); pour &eacute;diter une valeur, cliquer dessus.</p>
 <?php 
 // on affiche la table
 echo('<form id="the_table_form" name="the_table_form" action="/edition/edition_table.php">');
