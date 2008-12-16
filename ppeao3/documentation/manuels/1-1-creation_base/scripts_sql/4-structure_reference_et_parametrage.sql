@@ -189,6 +189,78 @@ ALTER TABLE ONLY art_millieu
 
 
 
+--
+-- Name: art_param_type_effort; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE TABLE art_param_type_effort (
+    type_effort_id integer NOT NULL,
+    type_effort_libelle character varying(255) NOT NULL,
+    type_effort_description text
+);
+
+
+ALTER TABLE public.art_param_type_effort OWNER TO devppeao;
+
+--
+-- Name: TABLE art_param_type_effort; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON TABLE art_param_type_effort IS 'les différents types de mesures d''effort de pêche';
+
+
+--
+-- Name: COLUMN art_param_type_effort.type_effort_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_param_type_effort.type_effort_id IS 'id unique de l''enregistrement';
+
+
+--
+-- Name: COLUMN art_param_type_effort.type_effort_libelle; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_param_type_effort.type_effort_libelle IS 'libellé du type d''effort (unité)';
+
+
+--
+-- Name: COLUMN art_param_type_effort.type_effort_description; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_param_type_effort.type_effort_description IS 'description longue de l''unité d''effort';
+
+
+--
+-- Name: art_param_type_effort_type_effort_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE art_param_type_effort_type_effort_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.art_param_type_effort_type_effort_id_seq OWNER TO devppeao;
+
+
+--
+-- Name: type_effort_id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE art_param_type_effort ALTER COLUMN type_effort_id SET DEFAULT nextval('art_param_type_effort_type_effort_id_seq'::regclass);
+
+
+--
+-- Name: art_param_type_effort_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY art_param_type_effort
+    ADD CONSTRAINT art_param_type_effort_pkey PRIMARY KEY (type_effort_id);
+
+
+
+
 -- ---------------------------------------------------------------------------
 -- Name: art_type_activite; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
