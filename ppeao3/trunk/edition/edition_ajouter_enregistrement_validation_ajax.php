@@ -36,6 +36,8 @@ foreach ($theColumns as $oneColumn) {
 	if ($cDetail["data_type"]=='real') {
 		$newValue=str_replace(',','.',$newValue);
 	}
+	// on "echappe" les caracteres speciaux
+	$newValue=addslashes($newValue);
 	// on teste la validité de la valeur saisie
 	// si le champ est géré par une séquence
 	if (getTableColumnSequence($connectPPEAO,$tablesDefinitions[$table]["table"],$oneColumn)) {
