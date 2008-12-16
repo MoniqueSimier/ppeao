@@ -468,6 +468,128 @@ ALTER TABLE ONLY art_poisson_mesure
     ADD CONSTRAINT art_poisson_mesure_pkey PRIMARY KEY (id);
 
 
+
+-- --------------------------------------------------------------------------------
+-- Name: art_stat_effort; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE TABLE art_stat_effort (
+    effort_id integer NOT NULL,
+    ref_systeme_id integer  NOT NULL,
+    ref_secteur_id integer  NOT NULL,
+    art_grand_type_engin_id character varying(10) NOT NULL,
+    annee integer NOT NULL,
+    ref_mois_id integer NOT NULL,
+    effort_date date,
+    art_param_type_effort_id integer NOT NULL,
+    effort_valeur integer NOT NULL,
+    commentaire text
+);
+
+
+ALTER TABLE public.art_stat_effort OWNER TO devppeao;
+
+--
+-- Name: TABLE art_stat_effort; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON TABLE art_stat_effort IS 'valeurs d''effort saisies par les administrateurs, pour le calcul de statistiques';
+
+
+--
+-- Name: COLUMN art_stat_effort.effort_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_stat_effort.effort_id IS 'id unique de l''enregistrement';
+
+
+--
+-- Name: COLUMN art_stat_effort.ref_systeme_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_stat_effort.ref_systeme_id IS 'id du systeme pour lequel l''effort est enregistré  (note : on saisit un secteur OU un système)';
+
+
+--
+-- Name: COLUMN art_stat_effort.ref_secteur_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_stat_effort.ref_secteur_id IS 'id du secteur pour lequel l''effort est enregistré (note : on saisit un secteur OU un système)';
+
+
+--
+-- Name: COLUMN art_stat_effort.art_grand_type_engin_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_stat_effort.art_grand_type_engin_id IS 'id du grand type d''engin';
+
+
+--
+-- Name: COLUMN art_stat_effort.annee; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_stat_effort.annee IS 'annee de la date de la mesure d''effort';
+
+
+--
+-- Name: COLUMN art_stat_effort.ref_mois_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_stat_effort.ref_mois_id IS 'id du mois de la date de la mesure d''effort';
+
+
+--
+-- Name: COLUMN art_stat_effort.effort_date; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_stat_effort.effort_date IS 'date complète de la mesure d''effort';
+
+
+--
+-- Name: COLUMN art_stat_effort.art_param_type_effort_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_stat_effort.art_param_type_effort_id IS 'id du type de mesure d''effort';
+
+
+--
+-- Name: COLUMN art_stat_effort.effort_valeur; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_stat_effort.effort_valeur IS 'la valeur de l''effort mesuré';
+
+
+--
+-- Name: COLUMN art_stat_effort.commentaire; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN art_stat_effort.commentaire IS 'éventuel commentaire sur la valeur mesurée';
+
+
+--
+-- Name: art_stat_effort_effort_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE art_stat_effort_effort_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.art_stat_effort_effort_id_seq OWNER TO devppeao;
+
+
+--
+-- Name: art_stat_effort_effort_id_key; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY art_stat_effort
+    ADD CONSTRAINT art_stat_effort_effort_id_key UNIQUE (effort_id);
+
+
+
 -- ---------------------------------------------------------------------------
 -- Name: art_stat_gt; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
@@ -1237,6 +1359,47 @@ ALTER TABLE ONLY art_periode_enquete
 
 ALTER TABLE ONLY art_poisson_mesure
     ADD CONSTRAINT art_poisson_mesure_art_fraction_id_fkey FOREIGN KEY (art_fraction_id) REFERENCES art_fraction(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
+--
+-- Name: art_stat_effort_art_grand_type_engin_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY art_stat_effort
+    ADD CONSTRAINT art_stat_effort_art_grand_type_engin_id_fkey FOREIGN KEY (art_grand_type_engin_id) REFERENCES art_grand_type_engin(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: art_stat_effort_ref_mois_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY art_stat_effort
+    ADD CONSTRAINT art_stat_effort_ref_mois_id_fkey FOREIGN KEY (ref_mois_id) REFERENCES admin_config_mois(mois_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: art_stat_effort_ref_secteur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY art_stat_effort
+    ADD CONSTRAINT art_stat_effort_ref_secteur_id_fkey FOREIGN KEY (ref_secteur_id) REFERENCES ref_secteur(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: art_stat_effort_ref_systeme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY art_stat_effort
+    ADD CONSTRAINT art_stat_effort_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: art_stat_effort_ref_type_effort_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY art_stat_effort
+    ADD CONSTRAINT art_stat_effort_ref_type_effort_id_fkey FOREIGN KEY (art_param_type_effort_id) REFERENCES art_param_type_effort(type_effort_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
