@@ -742,13 +742,14 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							// les valeurs de ces selects ne doivent pas être sauvées
 							$id=' id="'.$theId.'_select_'.$i.'"';
 							$name=' name="'.$theId.'_select_'.$i.'"';
-						} else {
+						} else // si on est a la fin du tableau
+						{
 							$onchange='';
 							// on insère l'id et le name du select dont on veut sauver la valeur
 							$id=' id="'.$theId.'" ';
 							$name=' name="'.$theId.'" ';
 							
-						}	
+						}	// fin de else if ($i!=(count($theCascadeValues)-1))
 							
 							$theField.='<select '.$id.' '.$name.'	'. $onchange.' class="'.$theClass.'">';
 							
@@ -762,7 +763,10 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 									$theField.='<option value="'.$line["val"].'" '.$selected.'>'.$line["lab"].'</option>';
 								}
 							$theField.='</select>';
-						}
+						// si on est a l'avant dernière ligne du tableau, on ferme le span contenant les parents
+						if ($i==(count($theCascadeValues)-2)) {
+							$theField.='</span>';}
+						} // fin de if $i==0
 						else {
 							
 							if ($action!='add') {
@@ -779,7 +783,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							$result=pg_query($connectPPEAO,$sql) or die();
 							$resultArray=pg_fetch_all($result);
 							pg_free_result($result);									
-							}
+							} // end if action !=add 
 							// on insère le comportement onchange si on n'est pas à la dernière ligne du tableau
 						if ($i!=(count($theCascadeValues)-1)) {
 							$onchange=' onchange="updateEditSelects(\''.$theId.'\',\''.$i.'\',\''.$cv["thisTable"].'\',\''.$cv["thisKeyName"].'\',\''.$tablesDefinitions[$theFtableAlias]["selector_cascade"].'\');"';
@@ -790,8 +794,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							// on insère l'id du select dont on veut sauver la valeur
 							$id=' id="'.$theId.'" ';
 						}		
-							// on ferme le span contenant la cascade des tables parentes
-							$theField.='</span>';
+							
 							$theField.='<select '.$id.' name="'.$theId.'" '.$onchange.'  class="'.$theClass.'">';
 								
 								// on insère la première ligne "vide" si on n'a pas de valeur de la clé ($value)
@@ -806,6 +809,9 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 									$theField.='<option value="'.$line["val"].'"'.$selected.'>'.$line["lab"].'</option>';
 								}}
 							$theField.='</select>';
+							// si on est a l'avant dernière ligne du tableau, on ferme le span contenant les parents
+						if ($i==(count($theCascadeValues)-2)) {
+							$theField.='</span>';}
 						}
 					$i++;
 					}
@@ -909,11 +915,11 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				switch ($theDetails["data_type"]) {
 					// les booleens
 				case 'boolean':
-				$theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'"  onchange="javascript:filterTable(\''.$theUrl.'\');">';
-					$theField.='<option value="x" selected="selected">-</option>';
+				$theField='<div class="filter"><select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'"  onchange="javascript:filterTable(\''.$theUrl.'\');">';
+					$theField.='<option value="" selected="selected">-</option>';
 					$theField.='<option value="t">oui</option>';
 					$theField.='<option value="f">non</option>';
-					$theField.='</select>';
+					$theField.='</select></div>';
 				break;
 				default:
 			$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input></div>';
@@ -929,7 +935,14 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				// les booleens
 				case 'boolean':
 					$theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
-					if ($value=='oui' || $value=='t' || $value=='true' || empty($value)) {$ouiSelected='selected="selected"'; $nonSelected='';} else {$nonSelected='selected="selected"'; $ouiSelected='';}
+					
+					// dans le cas ou aucune valeur n'est spécifiée, on récupère la valeur par défaut
+					if (empty($value)) {$value=$theDetails["column_default"];};
+					
+					if ($value=='oui' || $value=='t' || $value=='true') {$ouiSelected='selected="selected"'; $nonSelected='';} else {$nonSelected='selected="selected"'; $ouiSelected='';}
+					
+					
+					
 					$theField.='<option value="t" '.$ouiSelected.'>oui</option>';
 					$theField.='<option value="f" '.$nonSelected.'>non</option>';
 					$theField.='</select>';
@@ -1020,7 +1033,17 @@ else {
 	if ($mustBeUnique) {
 		// on suppose que la valeur n'existe pas déjà dans la base
 		$isUnique=TRUE;
+		switch ($cDetail["data_type"]) {
+		//si la colonne est un nombre
+		case 'integer':
+		case 'real':
+		$uniqueSql='SELECT count('.$column.') FROM '.$table.' WHERE '.$column.'=\''.$value.'\'';
+		break;
+		//sinon, on teste sur la valeur lowercase (pour éviter d'avoir des ID du type AAA et aaa)
+		default:
 		$uniqueSql='SELECT count('.$column.') FROM '.$table.' WHERE lower('.$column.')=\''.strtolower($value).'\'';
+		break;
+		}
 		$uniqueResult=pg_query($connectPPEAO,$uniqueSql) or die('erreur dans la requete : '.$uniqueSql. pg_last_error());
 		$uniqueRow=pg_fetch_row($uniqueResult);
 		$uniqueCount=$uniqueRow[0];
