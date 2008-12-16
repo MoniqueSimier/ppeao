@@ -8,6 +8,76 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
+-- Name: admin_config_mois; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE TABLE admin_config_mois (
+    mois_id integer NOT NULL,
+    mois_numero integer NOT NULL,
+    mois_libelle character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.admin_config_mois OWNER TO devppeao;
+
+--
+-- Name: TABLE admin_config_mois; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON TABLE admin_config_mois IS 'table listant les 12 mois de l''année';
+
+
+--
+-- Name: COLUMN admin_config_mois.mois_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_config_mois.mois_id IS 'id unique de l''enregistrement';
+
+
+--
+-- Name: COLUMN admin_config_mois.mois_numero; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_config_mois.mois_numero IS 'le numéro du mois';
+
+
+--
+-- Name: COLUMN admin_config_mois.mois_libelle; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_config_mois.mois_libelle IS 'le nom du mois';
+
+
+--
+-- Name: art_param_mois_mois_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE art_param_mois_mois_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.art_param_mois_mois_id_seq OWNER TO devppeao;
+
+--
+-- Name: mois_id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_config_mois ALTER COLUMN mois_id SET DEFAULT nextval('art_param_mois_mois_id_seq'::regclass);
+
+
+--
+-- Name: art_param_mois_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_config_mois
+    ADD CONSTRAINT art_param_mois_pkey PRIMARY KEY (mois_id);
+
+
+
+--
 -- Name: admin_dictionary_domains; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
 --
 
