@@ -342,6 +342,25 @@ INSERT INTO art_grand_type_engin VALUES ('SE_TO', 'Senne tournante');
 ALTER TABLE art_grand_type_engin ENABLE TRIGGER ALL;
 
 
+
+--
+-- Data for Name: art_param_type_effort; Type: TABLE DATA; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE art_param_type_effort DISABLE TRIGGER ALL;
+
+INSERT INTO art_param_type_effort VALUES (1, 'nombre d''unités de pêche', '');
+INSERT INTO art_param_type_effort VALUES (2, 'nombre de sorties par mois', '');
+
+ALTER TABLE art_param_type_effort ENABLE TRIGGER ALL;
+
+--
+-- Name: art_param_type_effort_type_effort_id_seq; Type: SEQUENCE SET; Schema: public; Owner: devppeao
+--
+
+SELECT pg_catalog.setval('art_param_type_effort_type_effort_id_seq', 2, true);
+
+
 --
 -- Data for Name: art_millieu; Type: TABLE DATA; Schema: public; Owner: devppeao
 --
