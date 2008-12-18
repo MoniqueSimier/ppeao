@@ -38,44 +38,6 @@ function query_from_ste($values,$key,$key2,$round){
 
 	
 	
-	//A tyester =========== Refaire les requêtes
-/*	ex.
-	select distinct AF.id, AD.id
- from art_debarquement as AD, art_fraction as AF, art_agglomeration as AA, art_poisson_mesure as APM
- where AD.id = AF.art_debarquement_id
- and APM.art_fraction_id = AF.id
- and AD.art_agglomeration_id = AA.id
- and AF.ref_espece_id = 'PDU'
- and AA.nom = 'Sedhiou'
- and AD.mois = 5
- and AD.annee = 2005
- and AD.art_grand_type_engin_id = 'FMDEp'
- and AF.debarquee = 1
- and AF.id != 'SN_47966'
-and AF.debarquee = 1 
-				
- 
-première requête => on récupère les fractions
- select AD.id 
- FROM art_deparquement AS AD, art_agglomeration AS AA
-WHERE AD.art_agglomeration_id = AA.id
- and AA.nom = 'Sedhiou'
- and AD.mois = 5
- and AD.annee = 2005
- and AD.art_grand_type_engin_id = 'FMDEp'
- 
- Si il y a des fractions => on récupère les débarquements qui y sont associés
- sinon renvoie 0 et on passe à la strate suivante
-select AF.id, AF.art_debarquement_id
- FROM art_fraction as AF, art_poisson_mesure as APM
-	WHERE PM.art_fraction_id = AF.id
-	and AF.ref_espece_id = 'PDU'
-	and AF.debarquee = 1
-	and AF.id != 'SN_47966'
-	and AF.debarquee = 1 
- 
-	
-	*/
 	
 	
 	}
@@ -351,7 +313,7 @@ function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 		foreach ($val as $key2=>$val2){
 			$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
 				values ('".$key2."', ".$datas[$key][$key2][8].", ".$datas[$key][$key2][9].", '".$datas[$key][$key2][7]."');";
-			print_debug($query);
+			//print_debug($query);
 			$RunQErreur = runQuery($query,$connection);
 			if ($RunQErreur){
 			
@@ -369,7 +331,7 @@ function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 		// nouvelle insertion données en utilisant la fonction runQuery
 		
 		if($Wti!=0) {
-			print_debug($query);
+			//print_debug($query);
 			$messageProcess .= "".$query."<br/>";
 			$RunQErreur = runQuery($query,$connection);
 			if ( $RunQErreur){

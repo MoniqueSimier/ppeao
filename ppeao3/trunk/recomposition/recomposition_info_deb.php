@@ -5,7 +5,7 @@
 //                        grâce au tableau recapitulatif $info_deb                                //
 //                             (travail fraction par fraction)                                    //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-$nume_prodgr=1/$nb_enr;
+//$nume_prodgr=1/$nb_enr;
 reset($info_deb);
 //$datas=$info_deb;
 //while (list($key, $val) = each($info_deb)){//pour tous les debarquements

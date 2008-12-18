@@ -52,7 +52,7 @@ echo insert_values_recompose($info_deb,$afficherMessage,$nb_enr);
 
 pg_close();
 
-
+/*
 //ENVOI MAIL
 //$to = 'f@.ird.fr';
 // Subject
@@ -64,7 +64,7 @@ $headers = 'From: base_PPEAO'."\r\n";
 $headers .= "\r\n";
 // Function mail()
 mail($to, $subject, $msg, $headers);
-
+*/
 
 print_debug(getTime()."ms");
 
