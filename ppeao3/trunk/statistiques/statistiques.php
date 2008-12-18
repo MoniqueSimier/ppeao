@@ -3,6 +3,7 @@
 // Corrigé par JME 12 2008 : suppression pg_close et exit
 // correction vers ligne 1500 d'une division par 0
 // suppresion des lignes de commentaires inutiles
+// rectification des ecarts types à n-1 
 
 $bdd = $_GET['base'];
 if ($bdd==""){
@@ -11,15 +12,12 @@ if ($bdd==""){
 
 $to = $_GET['adresse'];
 
-print("travail sur la base : ".$bdd);
-if(! ini_set("max_execution_time", "120")) {echo "échec";}
+//print("travail sur la base : ".$bdd);
+if(! ini_set("max_execution_time", "360")) {echo "échec";}
 //phpinfo();
 ?>
 
 
-<div align='center'>
-<h3>Calcul des statistiques de pêche par agglomération enquêtée.</h3>
-</div>
 
 
 <?php
@@ -78,13 +76,13 @@ while (list($key_syst_etudie, $val_syst_etudie) = each($syst_etudie))
 $pays=$val_syst_etudie;
 $systeme=$key_syst_etudie;
 
-
+/*
 print("<br><div align='center'>");
 //print("<Font Color =\"#333366\">");
 print("<br><br>Statistiques de Pêche pour le système : <Font Color =\"#333366\">".$systeme."</font> ( <Font Color =\"#333366\">".$pays."</font> )<br>");
 print("</div>");
 print("</Font>");
-
+*/
 
 
 
@@ -149,11 +147,12 @@ while (list($key, $val) = each($ST))
 		{
 		$id = $id +1;
 		$pue_tot = round(($row[0]/$row[1]) , 3);
+		$ecart_type = sqrt ($row[4] * $row[4] * $row[1] / ($row[1] - 1));   // JME 12 2008
 			
 		$query10 = "insert into art_stat_totale( id, annee, mois, nbre_obs, obs_min, obs_max, 
 		pue, pue_ecart_type, art_agglomeration_id, nbre_jour_enq_deb) 
 		values (".$id.", ".$val[1].", ".$val[2].", ".$row[1].", ".round($row[2],3).", ".round($row[3],3)
-		.", ".$pue_tot.", ".round($row[4],3).", ".$val[0].", ".$row[5].")";
+		.", ".$pue_tot.", ".round($ecart_type,3).", ".$val[0].", ".$row[5].")";
 	
 		//print ("<br>".$query10);
 		$result10 = pg_exec($connection, $query10);
@@ -275,7 +274,7 @@ while (list($key, $val) = each($ST))
 
 		$pue_sp = round (($poids_total / $nb_deb) , 3);
 		
-		//calcul de l'ecart type = racine carré de (somme des (x - moy x)²/n)
+		//calcul de l'ecart type = racine carré de (somme des (x - moy x)²/n)  corrigé n-1 JME 12/2008
 		$temp = 0;
 		for ($i=0; $i<$nb_deb; $i++)
 			{
@@ -284,7 +283,11 @@ while (list($key, $val) = each($ST))
 				$temp += (($val2[$i] - $pue_sp) * ($val2[$i] - $pue_sp));
 				}
 			}
-		$ecart_type_sp = round ( sqrt($temp/$nb_deb) , 3);
+		if ($nb_deb > 1) {
+			$ecart_type_sp = round ( sqrt($temp/($nb_deb-1)) , 3);
+			} else {
+			$ecart_type_sp= 0;
+			}
 		
 		$cle_tab_sp [$val[0]][$val[1]][$val[2]][$key2]=$id_sp;
 		
@@ -344,7 +347,9 @@ while (list($key, $val) = each($ST))
 		$min= $row[2];
 		$max = $row[3];
 		$pue_gt= round ($row[4],3);
-		$ecart_type_gt = round($row[5] , 3);
+		if ($nb_gt > 1) {
+		$ecart_type_gt = round( sqrt( $row[5] * $row[5] * $nb_gt / ( $nb_gt-1)), 3); }	//JME 12 2008
+		else { $ecart_type_gt = 0; }
 		$gt = $row[6];
 
 		$query12 = "insert into art_stat_gt ( id, nbre_enquete_gt, obs_gt_min, obs_gt_max, 
@@ -442,7 +447,7 @@ while (list($key, $val) = each($ST))
 				}
 			$pue_gt_sp = round (($poids_total / $nb_gt) , 3);
 			
-			//calcul de l'ecart type = racine carré de (somme des (x - moy x)²/n)
+			//calcul de l'ecart type = racine carré de (somme des (x - moy x)²/n) corrigé n-1 JME 12/2008
 			$temp = 0;
 			for ($i=0; $i<$nb_gt; $i++)
 				{
@@ -451,7 +456,11 @@ while (list($key, $val) = each($ST))
 					$temp += (($val2[$i] - $pue_gt_sp) * ($val2[$i] - $pue_gt_sp));
 					}
 				}
-			$ecart_type_gt_sp = round ( sqrt($temp/$nb_gt) , 3);
+			if ($nb_gt > 1) {
+				$ecart_type_gt_sp = round ( sqrt($temp/($nb_gt-1)) , 3);
+				} else {
+				$ecart_type_gt = 0;
+				}
 			
 			
 			
@@ -1896,7 +1905,7 @@ while (list($key_st, $val_st) = each($ST))
 
 
 }//fin pour 1 systeme
-
+/*
 //envoie mail confirm
 // Subject
 $subject = 'PPEAO';
@@ -1906,15 +1915,11 @@ $msg = 'Fin du traitement de calcul des données statistiques';
 $headers = 'From: base_PPEAO'."\r\n";
 $headers .= "\r\n";
 // Function mail()
-mail($to, $subject, $msg, $headers);
-
+//mail($to, $subject, $msg, $headers);
+*/
 
 print("<br><br><br>");
 ?>
 
-<div align='center'>Statistiques réalisées
-<form name="form"  >
-<input type="button" value='Fermer' onClick='self.close()' name="button">
-</form>
-</div>
+
 
