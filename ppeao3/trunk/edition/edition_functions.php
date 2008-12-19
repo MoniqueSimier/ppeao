@@ -69,7 +69,7 @@ function buildTableList($typeTableNom)
 		
 		} // end if  $table["type_table_nom"]==$typeTableNom
 	} // end foreach
-	if (!empty($list)) {
+	if (!my_empty($list)) {
 		echo($list);
 	}
 	
@@ -193,7 +193,7 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 	
 
 		// si la table parent a au moins une valeur sélectionnée (whereClause non vide) ou qu'on est au premier niveau, on affiche le sélect
-		if (!empty($whereClause) || $level==1) {
+		if (!my_empty($whereClause) || $level==1) {
 		
 		
 			// on détermine si il existe des valeurs du nouveau SELECT correspondant aux sélections précédentes
@@ -211,7 +211,7 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 
 			//debug			print_r($valuesTable);
 
-			if (!empty($valuesTable)) {
+			if (!my_empty($valuesTable)) {
 			$theSelect.='<div id="select_'.$level.'" name="select_'.$level.'">';
 			$theSelect.='<select id="'.$theTable.'" name="'.$theTable.'[]" size="10" '.$isMultiple.' onchange="javascript:showNewLevel(\''.($level+1).'\',\''.$theTable.'\');" class="level_select">';
 			// on cronstruit la liste des OPTION
@@ -236,7 +236,7 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 			$theUrl=replaceQueryParam ($_SERVER["QUERY_STRING"],'editTable',$theTable);
 			$theSelect.='<a id="edita_'.$level.'" class="link_button" href="edition_table.php?'.$theUrl.'">';
 				// si aucune valeur du SELECT n'est sélectionnée, on met un lien "éditer la table"
-				if (empty($selectedValues)) {
+				if (my_empty($selectedValues)) {
 					$theSelect.='&eacute;diter la table';
 					}
 				// si une ou plusieurs valeurs sont sélectionnées, on met un lien "éditer la sélection" et on adapte l'URL
@@ -254,7 +254,7 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 			$theSelect.='</div>';
 			}
 	
-			} // end if (!empty($valuesTable))
+			} // end if (!my_empty($valuesTable))
 			else {
 			$theSelect.='<div id="select_'.$level.'" name="select_'.$level.'"></div>';	
 			}
@@ -291,13 +291,14 @@ function getTableNameFromAlias($tableAlias) {
 
 //******************************************************************************
 // affiche un champ de formulaire permettant d'éditer un champ d'une table
-function makeField($cDetails,$table,$column,$value,$action,$theUrl) {
+function makeField($cDetails,$table,$column,$value,$action,$theUrl,$theTabIndex) {
 // $cDetails : tableau retourné par la fonction getTableColumnsDetails()
 // table : la table concernée (identifiant de la table dans la variable $tablesDefinitions de edition_config.inc)
 // $column : la colonne concernée
 // $value : la valeur du champ de la colonne concernée
 // $action : 'display=xxx'/'edit=xxx' pour créer un champ affichable/éditable de l'enregistrement xxx, 'filter' pour un champ de filtre, 'add' pour l'ajout d'un nouvel enregistrement
 // $theUrl : l'URL à utiliser pour les champs de tri de type SELECT ()
+// $theTabIndex : numero d'ordre du champ (pour l'accessibilite du formulaire via la touche TAB)
 
 // la connection à la base
 global $connectPPEAO;
@@ -312,7 +313,8 @@ $defaultTextInputMaxLength=30;
 // nombre de rows par défaut des <textarea>
 $defaultTextRows=3;
 
-
+//si on passe une valeur de $theTabIndex, on doit l'insérer dans le champ de formulaire
+if (!my_empty($theTabIndex) && is_int($theTabIndex)) {$tabIndex=' tabindex="'.$theTabIndex.'" ';} else {$tabIndex='';}
 
 if (substringBefore($action,'=')=='edit') {$editRow=substringAfter($action,'=');$action='edit';}
 if (substringBefore($action,'=')=='display') {$editRow=substringAfter($action,'=');$action='display';}
@@ -347,7 +349,7 @@ if ($theDetails["column_name"]=="user_password") {
 
 // on teste si la colonne concernée a une contrainte de type clé primaire, clé étrangère ou énumération (ou plusieurs...)
 $keyConstraint=FALSE;
-if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
+if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) {
 	$constraintsToCheck=array('PRIMARY KEY','ENUM','FOREIGN KEY');
 	// on teste le type de contraintes
 	foreach($theDetails["constraints"] as $oneConstraint) {
@@ -357,7 +359,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 		}
 	} // end foreach		
 	// si l'on a plusieurs contraintes de type primary, foreign ou enum (cas d'une colonne primary ET foreign)
-	if (isset($theConstraints) && !empty($theConstraints)) {
+	if (isset($theConstraints) && !my_empty($theConstraints)) {
 		// on prioritise la clé étrangère, pour le cas des tables de jointure
 		if (isset($theConstraints["FOREIGN KEY"])) {$theConstraint=$theConstraints["FOREIGN KEY"]; $constraint=$theConstraint["constraint_type"];} else {if (isset($theConstraints["PRIMARY KEY"])) {$theConstraint=$theConstraints["PRIMARY KEY"];$constraint=$theConstraint["constraint_type"];} else {$theConstraint=current($theConstraints);$constraint=$theConstraint["constraint_type"];}}
 	}
@@ -376,7 +378,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				switch ($action) {
 					
 					case 'filter':
-						if (!empty($theDetails["character_maximum_length"])) {
+						if (!my_empty($theDetails["character_maximum_length"])) {
 							$maxLength=$theDetails["character_maximum_length"];}
 						else {
 							$length=$defaultTextInputLength;
@@ -407,7 +409,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 						$theSize=$defaultTextInputMaxLength;
 					}
 					else {
-						if (!empty($theDetails["character_maximum_length"])) {
+						if (!my_empty($theDetails["character_maximum_length"])) {
 							$theSize=$theDetails["character_maximum_length"];
 							$theMaxLength=$theDetails["character_maximum_length"];
 							}
@@ -417,7 +419,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							}
 					}
 					
-					$theField='<input id="'.$theId.'" name="'.$theId.'" size="'.$theSize.'" maxlength="'.$theMaxLength.'" class="'.$theClass.'" value="" />';}
+					$theField='<input '.$tabIndex.' id="'.$theId.'" name="'.$theId.'" size="'.$theSize.'" maxlength="'.$theMaxLength.'" class="'.$theClass.'" value="" />';}
 					break;
 
 				} // end switch $action
@@ -443,7 +445,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 					case 'display' : $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
 					break;
 					case 'add':
-					case 'edit': $theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
+					case 'edit': $theField='<select '.$tabIndex.' id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
 						// on ajoute une valeur "vide"
 							$theField.='<option value="" '.$selected.'>-</option>';
 						foreach($theOptions as $theOption) {
@@ -461,19 +463,18 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 			// cas d'une clé étrangère : on construit un <SELECT> avec les valeurs de la table/colonne référencée
 			case 'FOREIGN KEY':
 	
-				
 				switch ($action) {
 					
 					case 'display':	
 					// dans le cas où une valeur de la clé étrangère est définie
-					if (!empty($value)) {
+					if (!my_empty($value)) {
 					// la table référencée par la contrainte
 					$theFtable=$theConstraint["references_table"];
 					// l'alias de la table a partir de son nom dans la base
 					$theFtableAlias=getTableAliasFromName($theFtable);
 										
 					// on teste si on doit afficher la valeur de la clé étrangère en utilisant une cascade ou pas
-					if ($tablesDefinitions[$theFtableAlias]["cascade_foreign_key"]=='t' && !empty($tablesDefinitions[$theFtableAlias]["selector_cascade"])) {
+					if ($tablesDefinitions[$theFtableAlias]["cascade_foreign_key"]=='t' && !my_empty($tablesDefinitions[$theFtableAlias]["selector_cascade"])) {
 
 					// oui, alors on construit la valeur à afficher en utilisant les éléments de la cascade
 					// par exemple "pays/systeme/secteur" pour une valeur du secteur
@@ -562,7 +563,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 					
 					
 					
-					} // end if !empty($value)
+					} // end if !my_empty($value)
 					
 					// dans le cas où on n'a pas de valeur pour la clé étrangère
 					else {
@@ -627,7 +628,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 					$theFtableAlias=getTableAliasFromName($theFtable);
 										
 					// on teste si on doit afficher la valeur de la clé étrangère en utilisant une cascade ou pas
-					if ($tablesDefinitions[$theFtableAlias]["cascade_foreign_key"]=='t' && !empty($tablesDefinitions[$theFtableAlias]["selector_cascade"])) {
+					if ($tablesDefinitions[$theFtableAlias]["cascade_foreign_key"]=='t' && !my_empty($tablesDefinitions[$theFtableAlias]["selector_cascade"])) {
 
 					// oui, alors on construit la valeur à afficher en utilisant les éléments de la cascade
 					// par exemple "pays/systeme/secteur" pour une valeur du secteur
@@ -641,7 +642,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 					$theFValues=$tablesDefinitions[$theFtableAlias]["noms_col"];
 
 					// si on n'a pas de valeur de la clé ($value), on ne met rien
-					if (empty($value)) {$theDisplayValue='' ;} 
+					if (my_empty($value)) {$theDisplayValue='' ;} 
 					// sinon, on récupère cette valeur
 					else {
 					$sqlFValue='SELECT '.$theFValues.'
@@ -685,7 +686,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							} // end foreach $cd
 						
 						// si on n'a pas de valeur de la clé ($value), on ne met rien
-					if (empty($value)) {$thisValue='' ;} else {
+					if (my_empty($value)) {$thisValue='' ;} else {
 						$sql="SELECT $thisTable.$thisPrimaryKey, $thisTable.$thisPrimaryValue FROM $thisTable, $childTable WHERE $childTable.$childForeignKey=$thisTable.$thisPrimaryKey AND $childTable.$childPrimaryKey=$childValue";
 						//debug		echo($sql);
 						$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
@@ -715,6 +716,8 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 					// on a maintenant un tableau $theCascadeValues contenant les différents niveaux de la cascade et leurs valeurs
 					// on le renverse pour commencer par le haut de la cascade :
 					$theCascadeValues=array_reverse($theCascadeValues);
+					//debug 					echo('<pre>');print_r($theCascadeValues);echo('</pre>');
+					
 					
 					// le span contenant la cascade
 					$theField='<span id="'.$theId.'_foreign_key_cascade">';	
@@ -751,10 +754,10 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							
 						}	// fin de else if ($i!=(count($theCascadeValues)-1))
 							
-							$theField.='<select '.$id.' '.$name.'	'. $onchange.' class="'.$theClass.'">';
+							$theField.='<select '.$tabIndex.'  '.$id.' '.$name.'	'. $onchange.' class="'.$theClass.'">';
 							
 								// on insère la première ligne "vide" si on n'a pas de valeur de la clé ($value)
-								if (empty($value)) {
+								if (my_empty($value)) {
 									$theField.='<option value="NULL">- choisir '.$tablesDefinitions[getTableAliasFromName($cv["thisTable"])]["label"].' -</option>';
 								}
 								// si on n'est pas en mode "ajouter", on insere le select avec ses valeurs 
@@ -778,7 +781,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 									WHERE '.$theCascadeValues[$i-1]["childForeignKey"].'=\''.$theCascadeValues[$i-1]["thisKeyValue"].'\'
 									ORDER BY '.$cv["thisLabelName"].'';
 							
-							//debug			echo($sql.'<br>');
+							//debug									echo($sql.'<br>');
 							
 							$result=pg_query($connectPPEAO,$sql) or die();
 							$resultArray=pg_fetch_all($result);
@@ -798,7 +801,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							$theField.='<select '.$id.' name="'.$theId.'" '.$onchange.'  class="'.$theClass.'">';
 								
 								// on insère la première ligne "vide" si on n'a pas de valeur de la clé ($value)
-								if (empty($value)) {
+								if (my_empty($value)) {
 									$theField.='<option value="NULL">- choisir '.$tablesDefinition[$cv["thisTable"]]["label"].' -</option>';
 								}
 								// si on n'est pas en mode "ajouter", on insere le select avec ses valeurs 
@@ -837,7 +840,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 							{$onAction='onchange="javascript:filterTable(\''.$theUrl.'\');"';} 
 							else {
 							$onAction='';}
-						$theField='<div class="filter"><select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" '.$onAction.'>';
+						$theField='<div class="filter"><select '.$tabIndex.' id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" '.$onAction.'>';
 						// on ajoute une valeur "vide" si on est en édition ou ajout (clé secondaire JAMAIS NULL)
 						//if ($action=='filter') {$theField.='<option value="" '.$selected.'>-</option>';}
 						$theField.='<option value="NULL" '.$selected.'>-</option>';
@@ -862,7 +865,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 	else {
 		// si c'est pour le filtre
 		if ($action=='filter') {
-			if (!empty($theDetails["character_maximum_length"])) {
+			if (!my_empty($theDetails["character_maximum_length"])) {
 				$maxLength=$theDetails["character_maximum_length"];
 			}
 			else {
@@ -879,7 +882,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				switch ($theDetails["data_type"]) {
 				// les booleens
 				case 'boolean':
-				if (empty($value)) {$value='f';};
+				if (!my_empty($value)) {$value='f';};
 				if ($value=='t' || $value=='oui' || $value=="true") {$value='oui';} else {$value='non';};
 				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
 				break;
@@ -887,7 +890,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				// cas d'un mot de passe (data_type défini "à la main", n'existe pas sous postgresql)
 				case 'password' :
 				// si on n'a pas défini de mot de passe, on propose d'en créer un
-				if (empty($value)) {$value="";}				
+				if (my_empty($value)) {$value="";}				
 				// sinon, on propose d'en créer un nouveau
 				else {$value="changer le mot de passe";};
 				// dans tous les cas, on crée un nouveau mot de passe, donc on passe une valeur vide au javascript
@@ -901,7 +904,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				$valueJS=preg_replace("/\r?\n/", "\\n", addslashes($value));
 				$valueJS=htmlspecialchars($valueJS);
 				//debug 
-				if (empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
+				if (my_empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
 				
 				// end debug
 				
@@ -934,10 +937,10 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				switch ($theDetails["data_type"]) {
 				// les booleens
 				case 'boolean':
-					$theField='<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
+					$theField='<select '.$tabIndex.'  id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
 					
 					// dans le cas ou aucune valeur n'est spécifiée, on récupère la valeur par défaut
-					if (empty($value)) {$value=$theDetails["column_default"];};
+					if (my_empty($value)) {$value=$theDetails["column_default"];};
 					
 					if ($value=='oui' || $value=='t' || $value=='true') {$ouiSelected='selected="selected"'; $nonSelected='';} else {$nonSelected='selected="selected"'; $ouiSelected='';}
 					
@@ -950,7 +953,7 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 				
 				// les dates
 				case 'date':
-					$theField='<input title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="10" maxlength="10"  '.$onAction.'></input>';
+					$theField='<input  '.$tabIndex.' title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="10" maxlength="10"  '.$onAction.'></input>';
 				break;
 				
 				default:				
@@ -973,20 +976,20 @@ if (isset($theDetails["constraints"]) && !empty($theDetails["constraints"])) {
 
 								// si on a une longueur maximale autorisée pour la <textarea>, on ajoute le javascript de controle
 									// (il est impossible de limiter le contenu d'une <textarea> en HTML)
-										if (!empty($theMaxLength)) {
+										if (!my_empty($theMaxLength)) {
 											$args='$(\''.$theId.'\'),$(\''.$theId.'_counter\'),'.$theMaxLength.'';
 											$theLengthLimitation='onKeyDown="fieldTextLimiter('.$args.')" onKeyUp="fieldTextLimiter('.$args.')"  onFocus="fieldTextLimiter('.$args.')" onBlur="fieldTextLimiter('.$args.')"';
 											//$textRows=round($theMaxLength/$defaultTextInputMaxLength)+1;
 											$textRows=$defaultTextRows;
 											}
 											else {$theLengthLimitation='';$textRows=$defaultTextRows;}
-											$theField='<textarea id="'.$theId.'" name="'.$theId.'" 
+											$theField='<textarea  '.$tabIndex.' id="'.$theId.'" name="'.$theId.'" 
 					cols="'.$defaultTextInputMaxLength.'" rows="'.$textRows.'" '.$theLengthLimitation.'  '.$onAction.'  class="'.$theClass.'">'.stripSlashes($value).'</textarea><p id="'.$theId.'_counter" class="small"></p>';
 							} // end if textarea
 
 							// on affiche un <input>
 							if ($theType=='input') {
-							$theField='<input title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
+							$theField='<input  '.$tabIndex.' title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
 							} // end if input
 				break; // end default:
 				} //end switch 'data_type'
@@ -1007,7 +1010,10 @@ function checkValidity($cDetails,$table,$column,$value) {
 // $column : la colonne concernée
 // $value : la valeur dont on veut tester la validité
 
+// la connextion a la base
 global $connectPPEAO;
+// tableau contenant la description des tables de la base
+global $tablesDefinitions;
 
 // on stocke les informations sur la colonne concernée
 $cDetail=$cDetails[$column];
@@ -1018,17 +1024,17 @@ $validityCheck=array("validity"=>1, "errorMessage"=>'',"valeur"=>$value);
 // on commence les vérifications
 // si la valeur saisie est "null" et que la colonne ne le permet pas
 if ((is_null($value) || $value=='') && $cDetail["is_nullable"]!='YES') {
-	$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur ne peut pas être vide',"valeur"=>$value);	
+	$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur ne peut pas être vide',"valeur"=>$value);
 } // end if null
 else {
 	// on vérifie si la valeur doit être unique
 	// on commence par supposer que la valeur ne doit pas être unique
 	$mustBeUnique=FALSE;
-	if (!empty($cDetail["constraints"])) {
+	if (!my_empty($cDetail["constraints"])) {
 		foreach ($cDetail["constraints"] as $constraint) {
 			if ($constraint["constraint_type"]=='UNIQUE' || $constraint["constraint_type"]=='PRIMARY KEY') {$mustBeUnique=TRUE;}
 		}// end foreach $cDetail["constraints"]
-	} // end if (!empty($cDetail["constraints"]))
+	} // end if (!my_empty($cDetail["constraints"]))
 	// si la valeur doit être unique, on recherche dans la table si une valeur égale à celle saisie existe déjà
 	if ($mustBeUnique) {
 		// on suppose que la valeur n'existe pas déjà dans la base
