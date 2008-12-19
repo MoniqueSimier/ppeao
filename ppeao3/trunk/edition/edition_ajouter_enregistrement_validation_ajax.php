@@ -18,6 +18,8 @@ global $tablesDefinitions;
 $table=$_GET["table"];
 $level=$_GET["level"];
 
+	//debug 		echo('<pre>');print_r($_GET);echo('</pre>');
+
 
 // on compile les informations sur les colonnes de la table $editTable
 $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$table]["table"]);
@@ -30,7 +32,37 @@ foreach ($theColumns as $oneColumn) {
 	
 	$cDetail=$cDetails[$oneColumn];
 	$newValue=$_GET["add_record_".$level.'_'.$oneColumn];
-
+	
+	
+	// si la valeur passée est NULL 
+	if (is_null($newValue) || my_empty($newValue) || $newValue=='NULL') {
+		// et que l'on a affaire a une cle etrangere
+		$reference=getTableColumnForeignReference($connectPPEAO,$tablesDefinitions[$table]["table"],$oneColumn);
+		//debug 		echo($oneColumn.'<pre>');print_r($reference);echo('</pre>');
+		
+		if ($reference["is_foreign"]) {
+			//debug			echo("XXXXXXXX");
+			// alors on essaie de voir si la cle referencee a un enregistrement
+			// dont l'id est 0 et le label "aucun" ou "aucune"
+			if ($cDetail["data_type"]=='integer') {$clause='0';} else {$clause='\'0\'';}
+			$refTable=$reference["references_table"];
+			$refAlias=getTableAliasFromName($refTable);
+			$refId=$reference["references_field"];
+			$refLabel=$tablesDefinitions[$refAlias]["noms_col"];
+			$sql='SELECT count(*) FROM '.$refTable.' WHERE '.$refId.'='.$clause.' AND ('.$refLabel.'=\'aucun\' OR '.$refLabel.'=\'aucune\')';
+			//debug			echo($sql);
+			$result=@pg_query($connectPPEAO,$sql);
+			$array=@pg_fetch_array($result);
+			@pg_free_result($result);
+			// si on a un tel enregistrement, alors on le passe a la place de la valeur NULL
+			if (!empty($array) && $array[0]>0) {
+				$newValue=0;
+			} // end if (!empty($array) && $array[0]>0) 
+			
+		} // end if ($reference["is_foreign"])
+	} // end if (is_null($newValue) || my_empty($newValue))
+	
+	
 	// on "nettoie" la valeur saisie
 	// si la valeur doit être un réel, on commence par convertir une éventuelle saisie au format décimal "," au lieu de "."
 	if ($cDetail["data_type"]=='real') {
@@ -64,6 +96,7 @@ if ($valid=='valid') {
 	$addSql='	INSERT INTO '.$tablesDefinitions[$table]["table"].'
 				('.arrayToList($theInsertKeys,',','').')
 				VALUES ('.arrayToList($newValues,',','').')';
+	//debug 	echo($addSql);
 	if($addResult=pg_query($connectPPEAO,$addSql)) {
 	// et on renvoie un message positif
 	$message='<!--[CDATA[Enregistrement ajout&eacute; dans la table '.$table.']]-->';
