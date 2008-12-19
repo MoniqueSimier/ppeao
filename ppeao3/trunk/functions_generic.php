@@ -510,5 +510,11 @@ function br2nl( $data ) {
 // $data : la chaine de caractères à traiter
    return preg_replace( '!&lt;br /&gt;!iU', "\n", $data );
 }
+//***************************************************************************************************
+// fonction testant si une variable est vide mais ne considerant pas que 0 est "vide"
+// la fonction PHP empty() considère que $var=0 est vide!
+function my_empty($val) {
+    return empty($val) && $val !==0 && $val!=='0'; 
+}
 
 ?>
