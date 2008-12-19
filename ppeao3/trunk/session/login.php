@@ -17,7 +17,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/session/login_forms.php';
 
 
 
-if(isset($_GET) && !empty($_GET['login']) && !empty($_GET['pass'])) {
+if(isset($_GET) && !my_empty($_GET['login']) && !my_empty($_GET['pass'])) {
   extract($_GET);
   // on recupère le password de la table qui correspond au login du visiteur, 
   $loginSql = "	SELECT user_id, user_password, user_longname,  user_active, user_email
