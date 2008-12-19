@@ -11,7 +11,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 
 $tableType=$tablesDefinitions[$editTable]["type_table_description"];
-if (!empty($tablesDefinitions[$editTable]["zone"])) {$zone=$tablesDefinitions[$editTable]["zone"];}
+if (!my_empty($tablesDefinitions[$editTable]["zone"])) {$zone=$tablesDefinitions[$editTable]["zone"];}
 
 // on détermine à quelle subsection et à quelle zone appartient la table choisie
 
@@ -135,7 +135,7 @@ if (isset($_GET[$editTable])) {
 // note : on compare les valeurs en les passant en minuscules, afin de contourner la sensibilité à la casse
 // des requêtes SQL
 	foreach ($cDetails as $key=>$value) {
-		if (isset($_GET['f_'.$key]) && !empty($_GET['f_'.$key])) {
+		if (isset($_GET['f_'.$key]) && !my_empty($_GET['f_'.$key])) {
 			
 			//debug 			echo('<pre>'.$key.'<br/>');print_r($cDetails[$key]["constraints"][$key]);echo('</pre>');
 			
@@ -325,7 +325,7 @@ foreach ($theHeads as $oneHead) {
 	// on prépare la valeur de l'input du filtre pour la colonne courante
 	if (isset($_GET['f_'.$oneHead]) && !is_null($_GET['f_'.$oneHead])) {$theFilterValue=$_GET['f_'.$oneHead];} else {$theFilterValue='';}
 	echo('<td class="small">');
-	echo(makeField($cDetails,$editTable,$oneHead,$theFilterValue,'filter',$filterUrl));
+	echo(makeField($cDetails,$editTable,$oneHead,$theFilterValue,'filter',$filterUrl,''));
 	echo('</td>');
 	}
 	
@@ -355,7 +355,7 @@ if ($countTotal!=0) {
 				// on encode la chaine pour la passer au javascript
 				//$value=htmlentities($value, ENT_QUOTES,  'ISO-8859-15', FALSE );
 
-				echo(makeField($cDetails,$editTable,$key,$value,'display='.$theRow[$id],$theUrl));
+				echo(makeField($cDetails,$editTable,$key,$value,'display='.$theRow[$id],$theUrl,''));
 				
 				//echo($theColumn);
 				echo('</td>');
