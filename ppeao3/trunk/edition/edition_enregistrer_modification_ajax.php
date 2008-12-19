@@ -81,7 +81,7 @@ if ($validityCheck["validity"]) {
 	// note : en cas de valeur passée NULL, postgres n'accepte pas SET champ='NULL' si champ est de type INTEGER
 	// alors que l'on peut faire SET champ='200'... d'où le test qui suit
 	
-	if ($newValue=='NULL' || empty($newValue)) {$newValueSet='NULL';} else {$newValueSet='\''.$newValue.'\'';}
+	if ($newValue=='NULL' || my_empty($newValue)) {$newValueSet='NULL';} else {$newValueSet='\''.$newValue.'\'';}
 		$saveSql=' UPDATE '.$tablesDefinitions[$editTable]["table"].'
 				SET '.$editColumn.'='.$newValueSet.' WHERE '.$tablesDefinitions[$editTable]["id_col"].'=\''.$editRecord.'\'';
 	if ($saveResult=@pg_query($connectPPEAO,$saveSql)) {		
@@ -125,7 +125,7 @@ if ($valid=='valid') {
 	
 	//$theNewValue=iconv("ISO-8859-15", "UTF-8",$theNewValue);
 	
-	$response='<!--[CDATA['.makeField($cDetails,$editTable,$editColumn,$theNewValue,'display='.$editRecord,'').']]-->';
+	$response='<!--[CDATA['.makeField($cDetails,$editTable,$editColumn,$theNewValue,'display='.$editRecord,'','').']]-->';
 ;}
 //sinon on retourne un message explicant l'erreur et on invite l'utilisateur à recommencer
 else {
