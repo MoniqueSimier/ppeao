@@ -257,6 +257,35 @@ foreach($meta as $column) {
 return $columnsDetails;
 }
 
+
+//*********************************************************************
+// teste si une colonne est une cle entrangere et, si oui, retourne les infos sur la colonne parent 
+function getTableColumnForeignReference($connection,$table,$column) {
+// $connection : la connection a la base
+// $table : le nom de la table dasn la base
+// $column : le nom de la colonne a verifier
+	$allConstraints=getTableConstraintDetails ($connection,$table);
+	//debug 	echo('$allConstraints<pre>');print_r($allConstraints);echo('</pre>');
+	
+	$constraints=getColumnConstraintDetails ($allConstraints,$column);
+	//debug 	echo('$constraints<pre>');print_r($constraints);echo('</pre>');
+	$foreignReference=array();
+	if (!my_empty($constraints)) {
+		foreach($constraints as $constraint) {
+			if ($constraint["constraint_type"]=="FOREIGN KEY") {
+				$foreignReference=array(
+				"is_foreign"=>true,
+				"table_name"=>$constraint["table_name"],
+				"column_name"=>$constraint["column_name"],
+				"references_table"=>$constraint["references_table"],
+				"references_field"=>$constraint["references_field"]
+				);}
+		} // end foreach($constraints as $constraint)
+	} // end if (!my_empty($constraints))
+	return $foreignReference;
+}
+
+
 //*********************************************************************
 // retourne l'éventuelle séquence associée à une colonne d'une table postgresql
 function getTableColumnSequence($connection,$table,$column) {
@@ -312,7 +341,7 @@ function getPrimaryKeyReferences($connection,$tableName,$primaryKey) {
 // $primaryKey : le nom de la colonne de la clé primaire
 // $references : un tableau qui liste les tables qui utilisent la clé primaire comme clé étrangère
 
-if (empty($primaryKey)) {$primaryKeyArray=getTablePrimaryKey ($connection,$tableName); $primaryKey=$primaryKeyArray["column"];} 
+if (my_empty($primaryKey)) {$primaryKeyArray=getTablePrimaryKey ($connection,$tableName); $primaryKey=$primaryKeyArray["column"];} 
 
 $sql='	SELECT DISTINCT tc.constraint_name, tc.constraint_type, tc.table_name, kcu.column_name, ccu.table_name AS references_table, ccu.column_name AS references_field
 		FROM information_schema.table_constraints tc 
@@ -341,16 +370,16 @@ function countPrimaryKeyReferencedRows($connection, $tableName, $primaryKey, $pr
 // qui font référence à la valeur $primaryRecord de $primaryKey
 // (utilisé pour compter le nombre d'enregistrement impactés en cascade lors de la suppression d'un enregistrement servant de clé étrangère)
 
-if (empty($primaryKey)) {$primaryKeyArray=getTablePrimaryKey ($connection,$tableName); $primaryKey=$primaryKeyArray["column"];} 
+if (my_empty($primaryKey)) {$primaryKeyArray=getTablePrimaryKey ($connection,$tableName); $primaryKey=$primaryKeyArray["column"];} 
 
 
 $references=getPrimaryKeyReferences($connection,$tableName,$primaryKey);
 
-if (!empty($references)) {
+if (!my_empty($references)) {
 foreach ($references as $reference) {
 
 $localPrimary=getTablePrimaryKey ($connection,$reference["table_name"]);
-if (empty($localPrimary["column"])) {$localPrimary["column"]="*";}
+if (my_empty($localPrimary["column"])) {$localPrimary["column"]="*";}
 
 $sql='SELECT '.$localPrimary["column"].'
 		FROM '.$reference["table_name"].'
@@ -360,11 +389,11 @@ $result=pg_query($connection,$sql) or die('erreur dans la requete : '.$sql. pg_l
 $temp=pg_fetch_all($result);
 pg_free_result($result);
 
-if (!empty($temp)) {
+if (!my_empty($temp)) {
 $impacted[$reference["table_name"]]=$temp;
 }
 }
-} // end if !empty($references)
+} // end if !my_empty($references)
 else {$impacted=array();}
 
 return $impacted;
