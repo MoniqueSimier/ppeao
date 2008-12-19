@@ -31,7 +31,7 @@ $timestamp=date('Y-m-d G:i:s'); // on assigne un UNIX timestamp
 
 // on recupere le userId de la session, sinon on lui assigne 0 (zero)
 if (isset($_SESSION['s_ppeao_user_id'])) {$userId=$_SESSION['s_ppeao_user_id'];} else {
-		if (empty($userId))  {$userId=0;}; // if there is no $userId set, we assume it is a visitor
+		if (my_empty($userId))  {$userId=0;}; // if there is no $userId set, we assume it is a visitor
 	} // end else
 
 // on recupere le chemin du script actif
@@ -50,7 +50,7 @@ $logCountTotal=$logCountRow[0];
  pg_free_result($logCountResult);
 // on le compare au nombre maximum défini dans variables.inc
 // sécurité : si on n'a pas défini de valeur maxi, on utilise 1000
-if (!isset($logAutoArchiveEntriesNumber) || !is_numeric($logAutoArchiveEntriesNumber) || empty($logAutoArchiveEntriesNumber)) {
+if (!isset($logAutoArchiveEntriesNumber) || !is_numeric($logAutoArchiveEntriesNumber) || my_empty($logAutoArchiveEntriesNumber)) {
 	$logAutoArchiveEntriesNumber=1000;
 }
 if ($logCountTotal>=$logAutoArchiveEntriesNumber) {
@@ -138,10 +138,10 @@ $filter=array();
 	} // fin if (is_int($moduleId))
 	
 	// on verifie que $messageBit n'est pas vide
-	if (!empty($messageBit)) {$filter["messageBit"]=" l.log_message LIKE '%".$messageBit."%' ";}
+	if (!my_empty($messageBit)) {$filter["messageBit"]=" l.log_message LIKE '%".$messageBit."%' ";}
 	
 	// on vérifie que $messageType n'est pas vide et si c'est une valeur qui existe;
-	if (!empty($messageType)) {
+	if (!my_empty($messageType)) {
 		// on teste si $messageType est dans la table admin_log_message_types
 		$typesSql="	SELECT  count(message_type)
 					FROM admin_log_message_types
@@ -227,7 +227,7 @@ function logTable($logArray,$format)
 $logTable="";
 global $debug; // si $debug=1, alors on affiche des infos de débug dans le log (comme le script php)
 
-if (!empty($logArray["logRows"])) { // si le log n'est pas vide
+if (!my_empty($logArray["logRows"])) { // si le log n'est pas vide
 
 switch ($format) {
 
@@ -261,7 +261,7 @@ switch ($format) {
 		
 		// si on a un email pour l'utilisateur, on transforme son nom en lien mailto:
 		// on inscrit la connexion dans le journal
-		if (!empty($logRow['user_email'])) {$theName='<a href="mailto:'.$logRow['user_email'].'">'.$logRow["user_name"].'</a>';} else {$theName=$logRow["user_name"];}
+		if (!my_empty($logRow['user_email'])) {$theName='<a href="mailto:'.$logRow['user_email'].'">'.$logRow["user_name"].'</a>';} else {$theName=$logRow["user_name"];}
 		
 		$logTable.='<td class="logTableTime">'.$logRow["log_time"].'</td><td class="logTableUser">'.$theName.'</td><td class="logTableModule">'.$logRow["module_name"].'</td><td class="logTableMessage">'.$logRow["log_message"].'</td><td class="logTableDo">'.$logRow["log_action_do"].'</td><td class="logTableUndo">'.$logRow["log_action_undo"].'</td>';
 		if ($debug) {$logTable.='<td class="logTableScript">'.$logRow["log_script_file"].'</td><td>'.$logRow["log_message_type"].'</td>';}
@@ -271,7 +271,7 @@ switch ($format) {
 	} // end foreach $logArray["logRow"]
 	
 	// si on doit paginer, on insère la pagination
-	if (!empty($logArray["pagination"])) {
+	if (!my_empty($logArray["pagination"])) {
 		
 			// on insère la pagination
 		$logTable.='<tr><td colspan="8">';
@@ -527,7 +527,7 @@ function userGetAuthorizedZones($user_id) {
 global $connectPPEAO;
 
 // si aucun utilisateur n'est indiqué, on considère que on a affaire à un visiteur
-if (empty($user_id)) {$user_id=0;}
+if (my_empty($user_id)) {$user_id=0;}
 
 // on collecte la liste des zones auxquelles l'utilisateur a accès
 $zonesArray1=array();
@@ -538,7 +538,7 @@ $zonesSql1='SELECT DISTINCT zone_id
 $zonesResult1 = pg_query($connectPPEAO,$zonesSql1) or die('erreur dans la requete : '.$zonesSql1. pg_last_error());
 while($data1=pg_fetch_array($zonesResult1)) {$zonesArray1[]=$data1['zone_id'];}
 // si aucun résultat, on considère que l'utilisateur n'a accès qu'aux zones publiques
-if (empty($zonesArray1)) {$zonesArray1=array();}
+if (my_empty($zonesArray1)) {$zonesArray1=array();}
 
 
 //debug echo('$zonesArray1=');echo('<pre>');print_r($zonesArray1);echo('</pre>');
