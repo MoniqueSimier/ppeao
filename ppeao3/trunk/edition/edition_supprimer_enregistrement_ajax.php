@@ -39,7 +39,7 @@ $affectedTables=countPrimaryKeyReferencedRows($connectPPEAO, $table,$key, $recor
 $theMessage.='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregistrement &quot;'.$label.'&quot; ('.$key.'=&quot;'.$record.'&quot;)</h1></div>';
 
 // si on ne trouve aucun enregistrement affecté
-if (empty($affectedTables)) {
+if (my_empty($affectedTables)) {
 	$theMessage.="<p>Cet enregistrement n&#x27;est pas utilis&eacute; comme cl&eacute; &eacute;trang&egrave;re par d&#x27;autres tables, le supprimer n&#x27;entra&icirc;nera pas de suppression en cascade.</p>";
 }
 
