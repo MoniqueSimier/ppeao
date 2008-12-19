@@ -57,7 +57,7 @@ switch ($editAction) {
 	
 	// on ajoute le champ éditable
 	//$theField.=iconv('ISO-8859-15','UTF-8',makeField($cDetails,$editTable,$editColumn,$editValue,'edit='.$editRecord,''));
-	$theField.=makeField($cDetails,$editTable,$editColumn,$editValue,'edit='.$editRecord,'');
+	$theField.=makeField($cDetails,$editTable,$editColumn,$editValue,'edit='.$editRecord,'','','');
 	
 
 	// on ajoute les boutons "OK/ANNULER"
@@ -72,7 +72,7 @@ switch ($editAction) {
 	// on veut annuler les modifications faites au champ
 	case 'cancel':
 		//$theField=makeField($cDetails,$editTable,$editColumn,stripSlashes($editValue),'display='.$editRecord,'');
-		$theField=makeField($cDetails,$editTable,$editColumn,stripSlashes($editValue),'display='.$editRecord,'');
+		$theField=makeField($cDetails,$editTable,$editColumn,stripSlashes($editValue),'display='.$editRecord,'','');
 	break;
 
 
