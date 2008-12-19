@@ -11,7 +11,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 
 $tableType=$tablesDefinitions[$targetTable]["type_table_description"];
-if (!empty($tablesDefinitions[$targetTable]["zone"])) {$zone=$tablesDefinitions[$targetTable]["zone"];}
+if (!my_empty($tablesDefinitions[$targetTable]["zone"])) {$zone=$tablesDefinitions[$targetTable]["zone"];}
 
 // on détermine à quelle subsection et à quelle zone appartient la table choisie
 
