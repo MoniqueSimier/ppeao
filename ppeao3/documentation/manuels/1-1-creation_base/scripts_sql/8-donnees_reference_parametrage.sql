@@ -2235,6 +2235,7 @@ ALTER TABLE ref_origine_kb ENABLE TRIGGER ALL;
 
 ALTER TABLE ref_pays DISABLE TRIGGER ALL;
 
+INSERT INTO ref_pays VALUES ('0', 'aucun');
 INSERT INTO ref_pays VALUES ('BN', 'Benin');
 INSERT INTO ref_pays VALUES ('GA', 'Gambia, The');
 INSERT INTO ref_pays VALUES ('GH', 'Ghana');
@@ -2260,6 +2261,7 @@ ALTER TABLE ref_pays ENABLE TRIGGER ALL;
 
 ALTER TABLE ref_secteur DISABLE TRIGGER ALL;
 
+INSERT INTO ref_secteur VALUES (0, NULL, 'aucun', NULL, NULL);
 INSERT INTO ref_secteur VALUES (1, 1, 'Inconnu', 0, 1);
 INSERT INTO ref_secteur VALUES (2, 1, 'Ebrie Secteur I', 22, 3);
 INSERT INTO ref_secteur VALUES (3, 2, 'Ebrie Secteur II', 62, 3);
@@ -2328,6 +2330,7 @@ ALTER TABLE ref_secteur ENABLE TRIGGER ALL;
 
 ALTER TABLE ref_systeme DISABLE TRIGGER ALL;
 
+INSERT INTO ref_systeme VALUES (0, 'Aucun', '0', NULL);
 INSERT INTO ref_systeme VALUES (1, 'Inconnu', 'IN', 0);
 INSERT INTO ref_systeme VALUES (2, 'Lagune Aby', 'IV', 424);
 INSERT INTO ref_systeme VALUES (3, 'Lagune Ebrie', 'IV', 566);
