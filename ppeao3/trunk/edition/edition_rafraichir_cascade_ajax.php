@@ -61,7 +61,7 @@ pg_free_result($result);
 
 // on construit la liste des options à retourner 
 // si il n'y a pas de résultats
-if (empty($resultArray)) {
+if (my_empty($resultArray)) {
 	$options='<option value="NULL">- pas de '.iconv('ISO-8859-15','UTF-8',$tablesDefinitions[$thisTableAlias]["label"]).' -</option>';
 // si il y a des résultats
 } else {
