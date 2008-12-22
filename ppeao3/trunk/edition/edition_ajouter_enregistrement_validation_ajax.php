@@ -7,7 +7,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_generic.php';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
-include $_SERVER["DOCUMENT_ROOT"].'/functions_PPEAO.php';
+include $_SERVER["DOCUMENT_ROOT"].'/functions_ppeao.php';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 
@@ -111,6 +111,7 @@ if ($valid=='valid') {
 	}
 }
 else {$message='';}
+
 
 
 // on commence à créer la réponse en XML
