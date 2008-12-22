@@ -2330,7 +2330,7 @@ ALTER TABLE ref_secteur ENABLE TRIGGER ALL;
 
 ALTER TABLE ref_systeme DISABLE TRIGGER ALL;
 
-INSERT INTO ref_systeme VALUES (0, 'Aucun', '0', NULL);
+INSERT INTO ref_systeme VALUES (0, 'aucun', '0', NULL);
 INSERT INTO ref_systeme VALUES (1, 'Inconnu', 'IN', 0);
 INSERT INTO ref_systeme VALUES (2, 'Lagune Aby', 'IV', 424);
 INSERT INTO ref_systeme VALUES (3, 'Lagune Ebrie', 'IV', 566);
