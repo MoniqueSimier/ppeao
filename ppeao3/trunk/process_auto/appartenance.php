@@ -210,7 +210,7 @@ case "art_stat_totale" :
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
 	
-	$scriptSQLini = "select id,art_agglomeration_id,annee,mois from art_stat_totale where id = ".$idNomTable;
+	$scriptSQLini = "select art_agglomeration_id,annee,mois from art_stat_totale where id = ".$idNomTable;
 	$scriptSQLResultini = pg_query(${$BDSource},$scriptSQLini) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -226,7 +226,8 @@ case "art_stat_totale" :
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
+		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -241,7 +242,7 @@ case "art_stat_gt" :
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
-	$scriptSQLini = "select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id =".$idNomTable.")";
+	$scriptSQLini = "select art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id =".$idNomTable.")";
 	$scriptSQLResultini = pg_query(${$BDSource},$scriptSQLini) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -257,7 +258,8 @@ case "art_stat_gt" :
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
+		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -271,7 +273,7 @@ case "art_stat_gt_sp" :
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
-	$scriptSQLini = "select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id = (select art_stat_gt_id from art_stat_gt_sp where id =".$idNomTable."))";
+	$scriptSQLini = "select art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id = (select art_stat_gt_id from art_stat_gt_sp where id =".$idNomTable."))";
 	$scriptSQLResultini = pg_query(${$BDSource},$scriptSQLini) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -287,7 +289,8 @@ case "art_stat_gt_sp" :
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
+		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -301,7 +304,7 @@ case "art_stat_sp" :
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
-		$scriptSQLini = "select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_sp where id =".$idNomTable.")";
+		$scriptSQLini = "select art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_sp where id =".$idNomTable.")";
 	$scriptSQLResultini = pg_query(${$BDSource},$scriptSQLini) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -317,7 +320,8 @@ case "art_stat_sp" :
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
+		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -331,7 +335,7 @@ case "art_taille_gt_sp" :
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
-	$scriptSQLini = "select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id = (select art_stat_gt_id from art_stat_gt_sp where id = (select art_stat_gt_sp_id from art_taille_gt_sp where id =".$idNomTable.")))";
+	$scriptSQLini = "select art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_gt where id = (select art_stat_gt_id from art_stat_gt_sp where id = (select art_stat_gt_sp_id from art_taille_gt_sp where id =".$idNomTable.")))";
 	$scriptSQLResultini = pg_query(${$BDSource},$scriptSQLini) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -347,7 +351,8 @@ case "art_taille_gt_sp" :
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
+		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -361,7 +366,7 @@ case "art_taille_sp" :
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
-			$scriptSQLini = "select id,art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_sp where id = (select art_stat_sp_id from art_taille_sp where id =".$idNomTable."))";
+	$scriptSQLini = "select art_agglomeration_id,annee,mois from art_stat_totale where id = (select art_stat_totale_id from art_stat_sp where id = (select art_stat_sp_id from art_taille_sp where id =".$idNomTable."))";
 	$scriptSQLResultini = pg_query(${$BDSource},$scriptSQLini) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -377,7 +382,8 @@ case "art_taille_sp" :
 		$pasDeRequete = true;
 		$tempetatAction = "";
 	} else {
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$locNumAgg." and cle2 =".$locAnnee." and cle3=".$locMois ;
+		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -503,7 +509,7 @@ case "art_engin_activite" :
 	}
 	if (pg_num_rows($scriptSQLResultini) == 0) {
 		// Message d'erreur
-				if ($EcrireLogComp ) { 
+		if ($EcrireLogComp ) { 
 			WriteCompLog ($logComp," Requete (select art_agglomeration_id,annee,mois from art_activite where id = (select art_activite_id from art_engin_activite where id=".$idNomTable.")) ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
 		} else {
 			echo "Pas de resultat pour la requete select art_agglomeration_id,annee,mois from art_activite where id = (select art_activite_id from art_engin_activite where id=".$idNomTable.").<br/>";

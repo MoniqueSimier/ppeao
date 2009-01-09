@@ -43,10 +43,11 @@ switch($typeAction){
 }
 // pour TEST
 //$listTableMajID ="exp_campagne";
-//$listTableMajID ="exp_campagne,exp_environnement,exp_coup_peche,exp_fraction"; // test
+//$listTableMajID ="exp_campagne,exp_coup_peche"; // test
 //$listTableMajID ="exp_environnement,exp_coup_peche,exp_fraction,exp_biologie,exp_trophique";
 //$listTableMajID ="art_unite_peche,art_lieu_de_peche,art_debarquement,art_fraction";
 //$listTableMajID ="art_unite_peche";
+//$listTableMajID ="art_stat_totale,art_stat_gt,art_stat_gt_sp,art_stat_sp,art_taille_gt_sp,art_taille_sp";
 $NbrTableAlire = substr_count($listTableMajID,",");
 if ($NbrTableAlire == 0) {
 	$NbrTableAlire = 1;

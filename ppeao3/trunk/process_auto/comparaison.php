@@ -98,7 +98,7 @@ if (isset($_GET['action'])) {
 			$BDSource = "connectBDPECHE";
 			$BDCible = "connectPPEAO";
 			$nomFenetre = "copieRecomp";
-			$nomAction = "mise a jour donnees recomponsees";
+			$nomAction = "mise a jour donnees recomposees";
 			$nomFicSQL = "majdatarecomp";
 			$numFen = 7;
 			break;
@@ -304,7 +304,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			//$listTable="exp_campagne"; //TEST
 			 break;
 		case "majrec":
-		// Données recomposées à mettre à jour
+			// Données recomposées à mettre à jour
 			$listTable = GetParam("listeTableMajrec",$PathFicConf);
 			//$listTable="art_unite_peche,art_lieu_de_peche,art_debarquement,art_debarquement_rec,art_fraction_rec"; //TEST
 			 break;
@@ -563,7 +563,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 							// L'enregistrement n'existe pas dans la base cible
 							$cptChampVide++ ;
 							//logWriteTo(7,"notice","id = ".$compRow[$RangId]." enreg manquant dans base cible","","","1");
-							$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,0,"n","","",$start_while);
+							$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,0,"n","","",$start_while,$EcrireLogComp,$logComp,$pasdefichier);
 							
 							if ($EcrireLogComp ) { WriteCompLog ($logComp," MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
 							// On génère un fichier de mise à jour utilisable
@@ -587,7 +587,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 									// différent
 									$cptChampDiff++ ;
 									$enregDiff = true;
-									$scriptSQL = GetSQL('update',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,0,"n","","",$start_while);
+									$scriptSQL = GetSQL('update',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,0,"n","","",$start_while,$EcrireLogComp,$logComp,$pasdefichier);
 									
 									if ($EcrireLogComp ) {WriteCompLog ($logComp," DIFF ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." est different (ref= ".$compRow[$cpt1]." dans ".$nomBDCible." = ".$compCibleRow[$cpt1].")",$pasdefichier);}
 									break;
@@ -611,7 +611,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 						$tableVide = true;
 						if ($EcrireLogComp ) { WriteCompLog ($logComp," TOUT MANQUANT ".$tables[$cpt]." l'enreg id = ".$compRow[$RangId]." n'existe pas dans ".$nomBDCible.".",$pasdefichier);}
 						
-						$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,0,"n","","",$start_while);
+						$scriptSQL = GetSQL('insert',  $tables[$cpt], $where, $compRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,0,"n","","",$start_while,$EcrireLogComp,$logComp,$pasdefichier);
 
 						// On génère un fichier de mise à jour utilisable
 							WriteCompSQL ($SQLComp,$scriptSQL.";",$pasdefichier);

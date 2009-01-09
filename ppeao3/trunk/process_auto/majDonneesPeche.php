@@ -229,7 +229,7 @@ if ($tableEnCours == "") {
 			$tempType = "exp";
 			break;
 		case "majrec" :
-			$condSelect = " art_agglomeration_id,annee,mois,id,date_depart"; // ici 5 champs, le 5ieme sera testé uniquement si pech art
+			$condSelect = " art_agglomeration_id,annee,mois,id,date_debarquement"; // ici 5 champs, le 5ieme sera testé uniquement si pech art
 			$condOrder =" art_agglomeration_id ASC,annee ASC,mois ASC";
 			$tempType = "art";
 			break;
@@ -470,12 +470,14 @@ switch($typeAction){
 		break;
 }
 // pour TEST
+//$listTableMajID ="exp_campagne,exp_coup_peche";
 //$listTableMajID ="exp_campagne";
 //$listTableMajID ="exp_campagne,exp_environnement,exp_coup_peche,exp_fraction"; // test
 //$listTableMajID ="exp_environnement,exp_coup_peche,exp_fraction,exp_biologie,exp_trophique";
 //$listTableMajID ="art_unite_peche,art_lieu_de_peche,art_debarquement,art_debarquement_rec,art_fraction_rec";
 //$listTableMajID ="art_unite_peche";
 //$listTableMajID ="art_unite_peche,art_lieu_de_peche,art_debarquement,art_fraction";
+//$listTableMajID ="art_stat_totale,art_stat_gt,art_stat_gt_sp,art_stat_sp,art_taille_gt_sp,art_taille_sp";
 //echo "liste table = ".$listTableMajID." <br/>";
 $NbrTableAlire = substr_count($listTableMajID,",");
 if ($NbrTableAlire == 0) {
@@ -671,10 +673,10 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 						$sourceSqlRow = pg_fetch_row($sourceSqlResult);
 						switch	($tempetatAction) {
 						case "a" ;
-							$tempSQL = GetSQL('insert',  $tableMajID[$cptID], $where, $sourceSqlRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,$tempNewID,"y",$ListeTableIDPasNum,$debugAff,$start_while);						
+							$tempSQL = GetSQL('insert',  $tableMajID[$cptID], $where, $sourceSqlRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,$tempNewID,"y",$ListeTableIDPasNum,$debugAff,$start_while,$EcrireLogComp,$logComp,$pasdefichier);						
 							break;
 						case "m" :					
-							$tempSQL = GetSQL('update',  $tableMajID[$cptID], $where, $sourceSqlRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,$tempNewID,"n",$ListeTableIDPasNum,$debugAff,$start_while);
+							$tempSQL = GetSQL('update',  $tableMajID[$cptID], $where, $sourceSqlRow,${$BDSource},$nomBDSource,$typeAction,$PathFicConf,$tempNewID,"n",$ListeTableIDPasNum,$debugAff,$start_while,$EcrireLogComp,$logComp,$pasdefichier);
 							break;
 						}					
 					}	

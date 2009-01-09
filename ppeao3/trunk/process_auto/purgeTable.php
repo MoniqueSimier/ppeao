@@ -16,6 +16,9 @@
 // Mettre les noms des fichiers dans un fichier texte
 session_start();
 
+// Pour test !
+$_SESSION['s_status_process_auto'] = 'ko' ;
+$_SESSION['s_status_restauration'] = "no";
 
 // Variable de test (en fonctionnement production, les deux variables sont false)
 $pasdetraitement = true;
@@ -34,13 +37,13 @@ $CRexecution = ""; // compte rendu de traitement
 // ***** Test si arret processus lié à l'exécution du traitement précédent 	
 // Si le traitement précédent a échoué, arrêt du traitement
 
-if (isset($_SESSION['s_status_process_auto'])) {
-	if ($_SESSION['s_status_process_auto'] == 'ko') {
-		logWriteTo(7,"error","**- ARRET du traitement de nettoyage des donn&eacute;es car le processus precedent est en erreur.","","","0");
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> ARRET du traitement car le processus precedent est en erreur</div>" ;
-		exit;
-	}
-}
+//if (isset($_SESSION['s_status_process_auto'])) {
+//	if ($_SESSION['s_status_process_auto'] == 'ko') {
+//		logWriteTo(7,"error","**- ARRET du traitement de nettoyage des donn&eacute;es car le processus //precedent est en erreur.","","","0");
+//		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div //id=\"".$nomFenetre."_txt\"> ARRET du traitement car le processus precedent est en erreur</div>" ;
+//		exit;
+//	}
+//}
 if (isset($_GET['exec'])) {
 	if ($_GET['exec'] == "false") {
 		$pasdetraitement =  true;
@@ -91,65 +94,83 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 
 	// Etape 1 de la purge : suppression de la base de sauvegarde
 	// **********************************************************
-	$BDBackup = GetParam("backupNomBD",$PathFicConf);
-	$BDBackupPortage = $BDBackup."Portage";
-	$createBDSQL = "drop database ".$BDBackup;
-	$createBDResult = pg_query($connectPPEAO,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
-	if ($createBDResult) {
-		$CRexecution = "Base de sauvegarde ".$BDBackup." supprim&eacute;e.<br/>";
-		logWriteTo(7,"notice","Base de sauvegarde ".$BDBackup." supprimee.","","","0");
-	} else {
-		$CRexecution = "Erreur suppression ".$BDBackup.".<br/>";
-		logWriteTo(7,"error","erreur suppression de la base de donnee de sauvegarde ".$BDBackup,"","","0");
-	}
-	$connectBDPECHE =pg_connect ("host=".$host." dbname=".$bd_peche." user=".$user." password=".$passwd);
-	$createBDSQL = "drop database ".$BDBackupPortage;
-	$createBDResult = pg_query($connectBDPECHE,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
-	if ($createBDResult) {
-		$CRexecution .= "Base de sauvegarde ".$BDBackupPortage." supprim&eacute;e.<br/>";
-		logWriteTo(7,"notice","Base de sauvegarde ".$BDBackupPortage." supprimee.","","","0");
-	} else {
-		$CRexecution .= "Erreur suppression ".$BDBackupPortage.".<br/>";
-		logWriteTo(7,"error","erreur suppression de la base de donnee de sauvegarde ".$BDBackupPortage,"","","0");
-	}
-
-	// Etape 2 de la purge : nettoyage des fichiers de paramétrage et de référence dans la base bdpeche
-	// **********************************************************
-	//$ListeTableAVider = GetParam("listeTableAViderParam",$PathFicConf); 
-	$ListeTableAVider = ""; // TEST
-	
-	$tables = explode(",",$ListeTableAVider);
-	$nbTables = count($tables) - 1;
-	logWriteTo(7,"notice"," Nb tables = ".$nbTables ,"","","1");
-	// Début du traitement de suppression par table.
-	// *********************************************
-	$start_while=timer(); // début du chronométrage du for
-	for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
-		if ((!$tableEnCours == "" && $tableEnCours == $tables[$cpt]) || $tableEnCours == "") {
-			$tableEnLecture = $tables[$cpt] ;
-			
-			// Gestion du timeout
-			$ourtime = (int)number_format(timer()-$start_while,7);
-			$seuiltemps= ceil(0.9*$max_time);
-			// On prend un peu de marge par rapport au temps max.
-			if ($ourtime >= $seuiltemps) {
-				$delai=number_format(timer() - $start_while,7);
-				$ArretTimeOut =true;
-				break;
+	if (isset($_SESSION['s_status_process_auto'])) { // Devrait toujours etre vrai mais bon....
+		$BDBackup = GetParam("backupNomBD",$PathFicConf);
+		$BDBackupPortage = $BDBackup."Portage";
+		if ($_SESSION['s_status_process_auto'] == 'ko' && $_SESSION['s_status_restauration'] == "yes") {
+			$CRexecution = "Lancement de la restauration des bases.<br/>";
+			// Si le processus est en erreur, on fait une restauration des bases avant la suppression des 
+			// sauvegardes. 
+			$ErreurProcess = RestoreBD($CRexecution,$connectPPEAO,$base_principale,$BDBackup,$host,$user,$passwd,$port);
+			if (! $ErreurProcess) {
+				$connectBDPECHE =pg_connect ("host=".$host." dbname=".$bd_peche." user=".$user." password=".$passwd);
+				$ErreurProcess = RestoreBD($CRexecution,$connectBDPECHE,$bd_peche,$BDBackupPortage,$hostname,$username,$password,$port);
 			}
-	
-			$scriptDelete = "delete from ".$tables[$cpt];
-			$RunQErreur = runQuery($scriptDelete,$connectBDPECHE);
-			if ( $RunQErreur){
-				$CRexecution = $CRexecution." ".$tables[$cpt]." videe - ";
+		
+		} else {
+			// Traitement normal : suppression des bases de sauvegardes + purge base de portage
+			$BDBackup = GetParam("backupNomBD",$PathFicConf);
+			$BDBackupPortage = $BDBackup."Portage";
+			$createBDSQL = "drop database ".$BDBackup;
+			$createBDResult = pg_query($connectPPEAO,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
+			if ($createBDResult) {
+				$CRexecution = "Base de sauvegarde ".$BDBackup." supprim&eacute;e.<br/>";
+				logWriteTo(7,"notice","Base de sauvegarde ".$BDBackup." supprimee.","","","0");
 			} else {
-				$ErreurProcess = true;
-				$CRexecution = $CRexecution." Erreur vidage ".$tables[$cpt]." - ";
-	
+				$CRexecution = "Erreur suppression ".$BDBackup.".<br/>";
+				logWriteTo(7,"error","erreur suppression de la base de donnee de sauvegarde ".$BDBackup,"","","0");
 			}
-		}	
-	}
-	
+			$connectBDPECHE =pg_connect ("host=".$host." dbname=".$bd_peche." user=".$user." password=".$passwd);
+			$createBDSQL = "drop database ".$BDBackupPortage;
+			$createBDResult = pg_query($connectBDPECHE,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
+			if ($createBDResult) {
+				$CRexecution .= "Base de sauvegarde ".$BDBackupPortage." supprim&eacute;e.<br/>";
+				logWriteTo(7,"notice","Base de sauvegarde ".$BDBackupPortage." supprimee.","","","0");
+			} else {
+				$CRexecution .= "Erreur suppression ".$BDBackupPortage.".<br/>";
+				logWriteTo(7,"error","erreur suppression de la base de donnee de sauvegarde ".$BDBackupPortage,"","","0");
+			}
+		
+			// Etape 2 de la purge : nettoyage des fichiers de paramétrage et de référence dans la base bdpeche
+			// **********************************************************
+			//$ListeTableAVider = GetParam("listeTableAViderParam",$PathFicConf); 
+			if ($_SESSION['s_status_process_auto'] == 'ok') {
+				$ListeTableAVider = ""; // TEST a recuperer du fichier sinon
+				$tables = explode(",",$ListeTableAVider);
+				$nbTables = count($tables) - 1;
+				logWriteTo(7,"notice"," Nb tables = ".$nbTables ,"","","1");
+				// Début du traitement de suppression par table.
+				// *********************************************
+				$start_while=timer(); // début du chronométrage du for
+				for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
+					if ((!$tableEnCours == "" && $tableEnCours == $tables[$cpt]) || $tableEnCours == "") {
+						$tableEnLecture = $tables[$cpt] ;
+						// Gestion du timeout
+						$ourtime = (int)number_format(timer()-$start_while,7);
+						$seuiltemps= ceil(0.9*$max_time);
+						// On prend un peu de marge par rapport au temps max.
+						if ($ourtime >= $seuiltemps) {
+							$delai=number_format(timer() - $start_while,7);
+							$ArretTimeOut =true;
+							break;
+						}
+						$scriptDelete = "delete from ".$tables[$cpt];
+						$RunQErreur = runQuery($scriptDelete,$connectBDPECHE);
+						if ( $RunQErreur){
+							$CRexecution = $CRexecution." ".$tables[$cpt]." videe - ";
+						} else {
+							$ErreurProcess = true;
+							$CRexecution = $CRexecution." Erreur vidage ".$tables[$cpt]." - ";
+						}
+					}	
+				}
+			} else {
+				//Lecompte rendu est temporaire car ici systematiquement le process est mis en erreur pour eviter les purges
+				//$CRexecution = $CRexecution."Le process etait en erreur, on ne purge pas la base portage.<br/>";
+				$CRexecution = $CRexecution."Pas de purge car portage pas encore valid&eacute;.<br/>";
+			} // fin du if ($_SESSION['s_status_process_auto'] == 'ok')
+		} //fin du if ($_SESSION['s_status_process_auto'] == 'ko' && $_SESSION['s_status_restauration'] == "yes"))
+	} // fin du if (isset($_SESSION['s_status_process_auto']))
 	
 	if (!$ArretTimeOut) {
 		if ($ErreurProcess) {

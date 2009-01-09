@@ -86,7 +86,7 @@ return $formattedValue;
 
 //*********************************************************************
 // GetSQL : génère le code SQL pour mettre à jour la table
-function GetSQL($SQLAction, $tableName, $whereStatement,$value,$connectionBD,$nomBD,$typeProcess,$PathFichierConf,$newID,$majID,$ListeTableIDPasNum,$debugBool,$start_time) {
+function GetSQL($SQLAction, $tableName, $whereStatement,$value,$connectionBD,$nomBD,$typeProcess,$PathFichierConf,$newID,$majID,$ListeTableIDPasNum,$debugBool,$start_time,$EcrireLogComp,$logComp,$pasdefichier) {
 // Cette fonction permet de générer le code SQL en fonction de la table en entrée et du type d'action à mener.
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -188,7 +188,10 @@ if (pg_num_rows($getAttrBD) == 0) {
 					if (pg_num_rows($recIDSQLResult) == 0) {
 						// on garde le meme ID
 						$locNouvelID = $value[$numChamp];
-						echo $tableAControler."erreur lecture nouvel ID / on garde l'ancien ID = ".$value[$numChamp]."<br/>";
+						if ($EcrireLogComp ) { 
+							WriteCompLog ($logComp,$tableAControler." - erreur lecture nouvel ID / on garde l'ancien ID = ".$value[$numChamp],$pasdefichier);
+						} else {
+						echo $tableAControler." - erreur lecture nouvel ID / on garde l'ancien ID = ".$value[$numChamp]."<br/>"; }
 					} else {
 						$recIDRow = pg_fetch_row($recIDSQLResult);
 						$valChamp = $recIDRow[0];
@@ -429,6 +432,99 @@ if ( file_exists($nomFichier)) {
 return $ParamValue;
 }
 
+
+//*********************************************************************
+// RestoreBD : script de restauation d'un base de données à partir de sa sauvegarde
+function RestoreBD($CRexecution,$connectRestaure,$baseRestaure,$baseBackup,$host,$user,$passwd,$port) {
+// Cette fonction permet de restaurer à partir d'une base de sauvegarde
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $CRexecution : le compte rendu de traitement
+// $connectRestaure : la connexion a la base a restaurer
+// $baseRestaure : la base à restaurer
+// $baseBackup : la base de sauvegarde
+// $host,$user,$passwd : les paramètres de connection aux bases de données
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie le statut de l'execution de la sauvegarde
+//*********************************************************************
+	$ErreurProcess = false;
+
+	set_time_limit(240);
+	// On attend un peu pour eviter les blocages sur les bases a copier...
+	// Le create database with template est assez sensible aux locks et aux transactions
+	// encore en cours sur la base a copier (le create with template n'est pas forcement
+	// concu pour ca initialement...)
+	sleep(20);
+	//$lev=error_reporting (8); //Pour eviter les avertissements si la base n'existe pas.
+	if (! pg_close($connectRestaure) ) {
+	
+		$traitementfin = false;
+		$CRexecution .= "Erreur fermeture connexion a PPEAO. <br/>La restauration devra se faire a la main.<br/>";
+		$ErreurProcess = true;
+	} else {
+		$connectBackup =pg_connect ("host=".$host." port=".$port." dbname=".$baseBackup." user=".$user." password=".$passwd);
+		$dropBDSQL = "drop database \"".$baseRestaure."\"";
+		$dropBDResult = pg_query($connectBackup,$dropBDSQL);
+		$erreurQuery = pg_last_error($connectBackup);
+		if ($dropBDResult) {
+			pg_free_result($dropBDResult);
+			$traitementfin = false;
+			$CRexecution .= "Base principale ".$baseRestaure." supprim&eacute;e.<br/>";
+			// On continue le traitement
+			// Copie de la base backup en base principale
+			$createBDSQL = "create database \"".$baseRestaure."\" with template \"".$baseBackup."\"";
+			$createBDResult = pg_query($connectBackup,$createBDSQL);
+			$erreurQuery = pg_last_error($connectBackup);
+			if (!$createBDResult) {
+				// c'est certainement un probleme de lock...
+				// On attend encore plus
+				sleep(40);
+				$createBDSQL = "create database \"".$baseRestaure."\" with template \"".$baseBackup."\"";
+				$createBDResult = pg_query($connectBackup,$createBDSQL);
+				$erreurQuery = pg_last_error($baseBackup);
+				if (!$createBDResult) {
+					$ErreurProcess = true;
+					$CRexecution .= "La base principale ".$baseRestaure." n'a pas pu etre recr&eacute;e au deuxieme essai.<br/> Contactez votre administrateur pour recreer la base.<br/>";
+				} else {
+					$CRexecution .= "Base principale ".$baseRestaure." recr&eacute;e au deuxieme essai.<br/>";
+					$traitementfin = true;
+				}
+			} else {
+				// On autorise le dernier traitement
+				$CRexecution .= "Base principale ".$baseRestaure." recr&eacute;e.<br/>";
+				$traitementfin = true;
+			}
+			// Lancement du dernier traitement : drop de la base PPEAO
+			if ($traitementfin) {
+				$connectRestaure = pg_connect("host=".$host." port=".$port." dbname=".$baseRestaure." user=".$user." password=".$passwd."") or die('Connexion impossible a la base : ' . pg_last_error());
+				if (! pg_close($connectBackup) ) {
+					$traitementfin = false;
+					$CRexecution .= "Erreur fermeture connexion a BACKUP. <br/>La suppression de ".$baseBackup." devra se faire a la main.<br/>";
+					$ErreurProcess = true;
+				} else {
+					$dropBDSQL = "drop database \"".$baseBackup."\"";
+					$dropBDResult = pg_query($connectRestaure,$dropBDSQL);
+					$erreurQuery = pg_last_error($connectRestaure);
+					if ($dropBDResult) {
+						$CRexecution .= "Fin du process de restauration : suppression de ".$baseBackup.".<br/>";
+					} else {
+						$CRexecution .= "Erreur suppression ".$baseBackup.". La suppression de la base de sauvegarde devra se faire a la main. (erreur complete = ".$erreurQuery .")<br/>";
+						$ErreurProcess = true;
+					}
+				}
+			} // fin du if ($traitementfin)
+		} else {
+			$CRexecution .= "Erreur suppression ".$baseRestaure.". La restauration devra se faire a la main. (erreur complete = ".$erreurQuery .")<br/>";
+			$ErreurProcess = true;
+		} // fin du if ($dropBDResult)
+		// Meme chose pour la base de portage... 
+		
+	} // fin du if (! pg_close($connectRestaure) )
+	//error_reporting ($lev); // retour au avertissements par defaut
+return $ErreurProcess;
+
+}
 
 
 

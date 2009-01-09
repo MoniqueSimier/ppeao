@@ -59,7 +59,12 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 			$_SESSION['s_max_envir_Id_Source'] = 0;
 			$_SESSION['s_cpt_maj'] 	= 0; 
 			$_SESSION['s_max_Id_Source'] = 0;
-
+			$_SESSION['s_status_restauration'] = "no";
+			
+			// Pour test: les 3 premières etapes et la purge sont obligatoires.
+			// On ajoute une variable qui permet de les rendre globalement obligatoire
+			$boutDisabled = "disabled=\"disabled\""; // desactivés
+			//$boutDisabled = ""; // activés
 		
 		?>
 
@@ -92,8 +97,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				?>
 				<div id="runProcess">
 				<form id="formProcessAuto">
-					Vous pouvez saisir une adresse mail pour recevoir le compte-rendu de traitement de recomposition automatique.
-					<input type="text" name="adresse" id="adresse"/>
+					<!--Vous pouvez saisir une adresse mail pour recevoir le compte-rendu de traitement de recomposition automatique.
+					<input type="text" name="adresse" id="adresse"/>-->
+					<input type="hidden" name="adresse" id="adresse" value=""/>
 					<br/>
 
 					<input id="startProcess" type="button" value="Lancer le traitement" onClick="runProcess()"/>
@@ -108,7 +114,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				<div id="sauvegarde">
 					<div id="sauvegarde_img"><img src="/assets/incomplete.png" alt=""/></div>
 					<div id="sauvegarde_txt">Sauvegarde.</div>
-					<div id="sauvegarde_chk">Lancer sauvegarde&nbsp;<input type="checkbox" id="svgcheck" checked="checked"/></div>
+					<div id="sauvegarde_chk">Lancer sauvegarde&nbsp;<input type="checkbox" id="svgcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 					<?php 	$navbarLevel = 1;
 							$texteDiv = "Compte rendu de sauvegarde.";	
 							include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
@@ -117,7 +123,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				<div id="comparaison">
 					<div id="comparaison_img"><img src="/assets/incomplete.png" alt=""/></div>
 					<div id="comparaison_txt">Comparaison r&eacute;f&eacute;rentiel et param&eacute;trage.</div>
-					<div id="comparaison_chk">Lancer comp. param / ref&nbsp;<input type="checkbox" id="compcheck" checked="checked"/></div>
+					<div id="comparaison_chk">Lancer comp. param / ref&nbsp;<input type="checkbox" id="compcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 					<?php 	$navbarLevel = 2;
 							$texteDiv = "Compte rendu de comparaison r&eacute;f&eacute;rentiel et param&eacute;trage";	
 							include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
@@ -126,7 +132,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				<div id="comparaisonInv">
 					<div id="comparaisonInv_img"><img src="/assets/incomplete.png" alt=""/></div>
 					<div id="comparaisonInv_txt">Comparaison du param&eacute;trage p&ecirc;ches artisanales avec la base de r&eacute;f&eacute;rence.</div>
-					<div id="comparaisonInv_chk">Lancer comp. param. art.&nbsp;<input type="checkbox" id="compinvcheck" checked="checked"/></div>
+					<div id="comparaisonInv_chk">Lancer comp. param. art.&nbsp;<input type="checkbox" id="compinvcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 					<?php 	$navbarLevel = 3;
 							$texteDiv = "Compte rendu de comparaison r&eacute;f&eacute;rentiel et param&eacute;trage";	
 							include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
@@ -136,7 +142,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				<div id="copieScientifique">
 					<div id="copieScientifique_img"><img src="/assets/incomplete.png" alt=""/></div>
 					<div id="copieScientifique_txt">Copie des p&ecirc;ches scientifiques.</div>
-					<div id="copieScientifique_chk">Lancer copie p&ecirc;ches scient.&nbsp;<input type="checkbox" id="majsccheck" checked="checked"/></div>
+					<div id="copieScientifique_chk">Lancer copie p&ecirc;ches scient.&nbsp;<input type="checkbox" id="majsccheck" checked="checked" /></div>
 					<?php 	$navbarLevel = 4;
 							$texteDiv = "Compte rendu de copie des p&ecirc;ches scientifiques.";	
 							include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
@@ -172,7 +178,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				<div id="portageOK"><div id="portageOK_img"><img src="/assets/incomplete.png" alt=""/></div><div id="portageOK_txt">Status du portage automatique.</div></div>
 				<div id="purge"><div id="purge_img"><img src="/assets/incomplete.png" alt=""/></div>
 				<div id="purge_txt">Purge des donn&eacute;es.</div>
-				<div id="purge_chk">Lancer purge donn&eacute;es&nbsp;<input type="checkbox" id="purgecheck" checked="checked"/></div>
+				<div id="purge_chk">Lancer purge donn&eacute;es&nbsp;<input type="checkbox" id="purgecheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 									
 				<?php 	$navbarLevel = 8;
 						$texteDiv = "Compte rendu de la purge des donn&eacute;es.";	

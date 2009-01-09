@@ -115,7 +115,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			
 		case "stat":
 			include $_SERVER["DOCUMENT_ROOT"].'/statistiques/statistiques.php';	
-			$messageinfo = " Traitement non effectue";
+			$messageinfo = " Traitement effectu&eacute;";
 			$traitRecompOk = true;
 			break;
 	} 

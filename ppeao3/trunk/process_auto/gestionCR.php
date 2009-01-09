@@ -10,6 +10,11 @@
 	// Si on est dans le cas normal, on génère le compte rendu de fin de traitement.
 		if ($_SESSION['s_erreur_process']) {
 			$_SESSION['s_status_process_auto'] = 'ko';
+			if ($typeAction == "comp" || $typeAction == "compinv") {
+				$_SESSION['s_status_restauration'] = "no";
+			} else {
+				$_SESSION['s_status_restauration'] = "yes";
+			}
 		}	
 		// On met à jour la table des logs avec les données
 		logWriteTo(7,"notice","**- Compte rendu traitement ".$nomAction,"","","0");
@@ -126,49 +131,53 @@
 		
 	
 		//Gestion du compte_rendu envoyé par mail
-		if (isset ($_GET['adresse']) && !$_GET['adresse']=="") {
-			$to = $_GET['adresse'];
-			// Subject
-			$subject = $typeAction." pour la base de donnees ".pg_dbname($connectPPEAO);
-			// Message
-			$msg = "Vous trouverez ci-dessous le compte-rendu pour le traitement ".$nomAction."\r\n \r\n";
-			
-			$msg .="******************************************\r\n";
-			$msg .="* Compte rendu traitement ".$nomAction." \r\n";
-			$msg .="*- source : ".$nomBDSource." cible : ".$nomBDCible." \r\n";
-			$msg .="******************************************\r\n";
-			$msg .="* Nombre total de tables lues = ".$_SESSION['s_cpt_table_total']."\r\n";
-			$msg .="* Nombre de tables identiques = ".$_SESSION['s_cpt_table_egal']."\r\n";
-			$msg .="* Nombre de tables avec uniquement des donnees differentes = ".$_SESSION['s_cpt_table_diff']."\r\n";
-			$msg .="* Nombre de tables avec uniquement des donnees manquantes = ".$_SESSION['s_cpt_table_manquant']."\r\n";
-			$msg .="* Nombre de tables avec des donnees manquantes et differentes = ".$_SESSION['s_cpt_table_diff_manquant']."\r\n";
-			$msg .="* Nombre de tables vides = ".$_SESSION['s_cpt_table_vide']."\r\n"; 
-			$msg .="* Pour info Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide']."\r\n";
-			$msg .="* ".$CRfichier."\r\n";
-			// Affichage d'avertissement si erreur dans le traitement
-			if ($_SESSION['s_erreur_process']) {
-				if ($typeAction == "comp" || $typeAction == "compinv") {
-					// Avertissement dans le cas de la comparaison
-						$msg .="*---------------------------------------------/n";
-						$msg .="* ATTENTION, des mises a jour sont requises pour les tables ou des enregitrements manquent ou sont differents\r\n";
-						$msg .="* Scripts SQL pour ces mises a jours presents dans ".date('y\-m\-d')."-".$nomFicSQL."-xxx.sql\r\n";
-	
-				} else {
-				// L'avertissement est différent pour la mise à jour
-						$msg .="*---------------------------------------------\r\n";
-						$msg .="* ATTENTION, il y a eu des erreurs sur des ajouts / mises a jour de table.\r\n";
-						$msg .="* Merci de controler avec l'admin BD les integrites des donnees a copier.\r\n";
+		// On le desactive
+		$emailActiv = false;
+		if ($emailActiv) {
+			if (isset ($_GET['adresse']) && !$_GET['adresse']=="") {
+				$to = $_GET['adresse'];
+				// Subject
+				$subject = $typeAction." pour la base de donnees ".pg_dbname($connectPPEAO);
+				// Message
+				$msg = "Vous trouverez ci-dessous le compte-rendu pour le traitement ".$nomAction."\r\n \r\n";
+				
+				$msg .="******************************************\r\n";
+				$msg .="* Compte rendu traitement ".$nomAction." \r\n";
+				$msg .="*- source : ".$nomBDSource." cible : ".$nomBDCible." \r\n";
+				$msg .="******************************************\r\n";
+				$msg .="* Nombre total de tables lues = ".$_SESSION['s_cpt_table_total']."\r\n";
+				$msg .="* Nombre de tables identiques = ".$_SESSION['s_cpt_table_egal']."\r\n";
+				$msg .="* Nombre de tables avec uniquement des donnees differentes = ".$_SESSION['s_cpt_table_diff']."\r\n";
+				$msg .="* Nombre de tables avec uniquement des donnees manquantes = ".$_SESSION['s_cpt_table_manquant']."\r\n";
+				$msg .="* Nombre de tables avec des donnees manquantes et differentes = ".$_SESSION['s_cpt_table_diff_manquant']."\r\n";
+				$msg .="* Nombre de tables vides = ".$_SESSION['s_cpt_table_vide']."\r\n"; 
+				$msg .="* Pour info Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide']."\r\n";
+				$msg .="* ".$CRfichier."\r\n";
+				// Affichage d'avertissement si erreur dans le traitement
+				if ($_SESSION['s_erreur_process']) {
+					if ($typeAction == "comp" || $typeAction == "compinv") {
+						// Avertissement dans le cas de la comparaison
+							$msg .="*---------------------------------------------/n";
+							$msg .="* ATTENTION, des mises a jour sont requises pour les tables ou des enregitrements manquent ou sont differents\r\n";
+							$msg .="* Scripts SQL pour ces mises a jours presents dans ".date('y\-m\-d')."-".$nomFicSQL."-xxx.sql\r\n";
+		
+					} else {
+					// L'avertissement est différent pour la mise à jour
+							$msg .="*---------------------------------------------\r\n";
+							$msg .="* ATTENTION, il y a eu des erreurs sur des ajouts / mises a jour de table.\r\n";
+							$msg .="* Merci de controler avec l'admin BD les integrites des donnees a copier.\r\n";
+					}
 				}
+				$msg .="*---------------------------------------------\r\n";
+				$msg .="*- FIN TRAITEMENT ".$typeAction." \r\n";
+				$msg .="*---------------------------------------------\r\n";
+				// Headers
+				$headers = 'From: base_PPEAO'."\r\n";
+				$headers .= "\r\n";
+				// Function mail()
+				mail($to, $subject, $msg, $headers);
 			}
-			$msg .="*---------------------------------------------\r\n";
-			$msg .="*- FIN TRAITEMENT ".$typeAction." \r\n";
-			$msg .="*---------------------------------------------\r\n";
-			// Headers
-			$headers = 'From: base_PPEAO'."\r\n";
-			$headers .= "\r\n";
-			// Function mail()
-			mail($to, $subject, $msg, $headers);
-		}
+		} // fin du if ($emailActiv)
 		// ************************************
 		// Fin du traitement, on reinitialise les compteurs pour la prochaine utilisation de ce programme
 		$_SESSION['s_cpt_champ_total'] = 0 ;
