@@ -70,6 +70,7 @@ if (isset($_SESSION['s_status_process_auto'])) {
 
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
 	// le processus de recomposition des données
+	$messageinfo = "";
 	switch($typeAction){
 		case "rec":
 			// Contrôle préliminaire
@@ -98,24 +99,37 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					pg_free_result($resultTest);
 				}
 			if ($continueTrait) {
+				$queryDelete = "delete from art_debarquement_rec";
+				$resultTest = pg_query($connectionTest, $queryDelete);				
+				if (!$resultTest) {
+					$messageinfo .= "<b>Erreur</b> vidage art_debarquement_rec <br/>";
+				} else {
+					$messageinfo .= "<b>art_debarquement_rec</b> vid&eacute;e.<br/>";
+				}
+				$queryDelete2 = "delete from art_fraction_rec";
+				$resultTest2 = pg_query($connectionTest, $queryDelete2);				
+				if (!$resultTest2) {
+					$messageinfo .= "<b>Erreur</b> vidage art_fraction_rec <br/>";
+				} else {
+					$messageinfo .= "<b>art_fraction_rec</b> vid&eacute;e.<br/>";
+				}
 				include $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition_pas_a_pas.php';
-				$messageinfo = "";
 				$query = "select count(id) FROM art_debarquement_rec";
 				$result = pg_query($connectionTest, $query);
 				$row= pg_fetch_row($result);
 				$nb_deja_rec = $row[0];
 				if ($nb_deja_rec == 0){
-					$messageinfo = " pas d'enqu&ecirc;te recompos&eacute;e. ";
+					$messageinfo .= " pas d'enqu&ecirc;te recompos&eacute;e. ";
 				} else {
 					$traitRecompOk = true;
-					$messageinfo = $nb_deja_rec . " enqu&ecirc;te(s) recompos&eacute;e(s). ";
+					$messageinfo .= $nb_deja_rec . " enqu&ecirc;te(s) recompos&eacute;e(s). ";
 				}
 			}
 			break;
 			
 		case "stat":
 			include $_SERVER["DOCUMENT_ROOT"].'/statistiques/statistiques.php';	
-			$messageinfo = " Traitement effectu&eacute;";
+			$messageinfo .= " Traitement effectu&eacute;";
 			$traitRecompOk = true;
 			break;
 	} 

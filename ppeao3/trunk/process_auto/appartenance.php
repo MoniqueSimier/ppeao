@@ -111,6 +111,7 @@ case "exp_trophique" :
 // Gestion des tables pour les peches artisanales
 // **********************************************
 case "art_unite_peche" :
+	$continueOK = true;
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
@@ -123,15 +124,24 @@ case "art_unite_peche" :
 		echo "Appartenance apres requete 1 ".$nomTable." :".$debugTimer."<br/>";
 	}
 	if (pg_num_rows($scriptSQLResultini) == 0) {
-		// Message d'erreur
-		if ($EcrireLogComp ) { 
-			WriteCompLog ($logComp," Requete (select art_agglomeration_id,annee,mois from art_activite where art_unite_peche_id = ".$idNomTable.") ne renvoie pas de resultat. Ligne ignoree" ,$pasdefichier);
-		} else {
-			echo "Pas de resultat pour la requete select art_agglomeration_id,annee,mois from art_activite where art_unite_peche_id = ".$idNomTable."<br/>";
-		}
-		$pasDeRequete = true;
-		$tempetatAction = "";
-	} else {
+		// On controle si l'unite de peche est liée à un art_debarquement
+		pg_free_result($scriptSQLResultini);
+		$scriptSQLini = "select art_agglomeration_id,annee,mois from art_debarquement where art_unite_peche_id = ".$idNomTable;
+	
+		$scriptSQLResultini = pg_query(${$BDSource},$scriptSQLini) or die('erreur dans la requete : '.pg_last_error());
+		if (pg_num_rows($scriptSQLResultini) == 0) {
+			// Message d'erreur
+			if ($EcrireLogComp ) { 
+				WriteCompLog ($logComp," Requete (select art_agglomeration_id,annee,mois from art_activite / art_debarquement where art_unite_peche_id = ".$idNomTable.") ne renvoie pas de resultat ==> pas de debarquement / activite associe. Ligne ignoree" ,$pasdefichier);
+			} else {
+				echo "Pas de resultat pour la requete select art_agglomeration_id,annee,mois from art_activite where art_unite_peche_id = ".$idNomTable."<br/>";
+			}
+			$pasDeRequete = true;
+			$tempetatAction = "";
+			$continueOK = false;
+		} 
+	}
+	if ($continueOK) {
 		if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete 2 ".$nomTable." :".$debugTimer."<br/>";
