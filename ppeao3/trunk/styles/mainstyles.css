@@ -229,7 +229,7 @@ color:#7C8781;
 #sloginform  div {
 	float:left;
 	text-align:center;
-	line-height:8px;
+	line-height:12px;
 }
 
 #sloginform  p {
@@ -238,8 +238,8 @@ color:#7C8781;
 }
 
 #sloginform input {
-	height:6px;
-	font-size:8px;
+	height:11px;
+	font-size:11px;
 }
 
 /* ************************ */
