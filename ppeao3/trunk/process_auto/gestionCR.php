@@ -99,7 +99,7 @@
 				
 			} else {
 				// Différences
-				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s <br/>Mais des tables sont diff&eacute;rentes et/ou vides. Des mises &agrave; jour sont n&eacute;cessaires <br/>avant de relancer le traitement.<br/> (pour info = les scripts SQL pour ces mises a jours pr&eacute;sents dans ".date('y\-m\-d')."-".$nomFicSQL."-xxx.sql)";
+				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s <br/>Des tables sont <b>diff&eacute;rentes et/ou vides</b>. ==> Mise &agrave; jour n&eacute;cessaires avant de relancer le traitement.<br/> (voir le fichier ".date('y\-m\-d')."-".$nomFicSQL."-xxx.sql contenant les mises &agrave; jour)";
 				if ($EcrireLogComp ) {
 				echo "<br/>Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : <a href=\"".$nomLogLien."\" target=\"log\">".$nomLogLien."</a>";
 				}
@@ -201,7 +201,7 @@
 		}
 		logWriteTo(7,"notice","Interruption gestion timeout pour la table ".$tableEnLecture." et Id = ".$IDEnLecture,"","","0");
 		// test
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Table ".$tableEnLecture." (".$_SESSION['s_cpt_table_total']." sur ".$NbrTableAlire." ) / enreg. ".$cptChampTotal." sur ".$totalLignes." <br/>".$nomAction." en cours (execution en ".$delai." time maxi = ".$max_time.") </div>";
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Table ".$tableEnLecture." (".$_SESSION['s_cpt_table_total']." sur ".$NbrTableAlire." ) / enreg. ".$cptChampTotal." sur ".$totalLignes." <br/>".$nomAction." en cours </div>";
 		echo "<form id=\"formtest\"> 
 		<input id=\"nomtable\" 	type=\"hidden\" value=\"".$tableEnLecture."\"/>
 		<input id=\"numID\" 	type=\"hidden\" value=\"".$IDEnLecture."\"/>

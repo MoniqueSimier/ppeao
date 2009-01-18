@@ -112,6 +112,7 @@ case "exp_trophique" :
 // **********************************************
 case "art_unite_peche" :
 	$continueOK = true;
+	$quelleActivite = "";
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
@@ -139,7 +140,11 @@ case "art_unite_peche" :
 			$pasDeRequete = true;
 			$tempetatAction = "";
 			$continueOK = false;
+		} else {
+			$quelleActivite = "artDeb";
 		} 
+	} else {
+		$quelleActivite = "artAct";
 	}
 	if ($continueOK) {
 		if ($debugAff==true) {
@@ -147,7 +152,7 @@ case "art_unite_peche" :
 		echo "Appartenance avant requete 2 ".$nomTable." :".$debugTimer."<br/>";
 	}
 		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='".$quelleActivite."' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -165,7 +170,7 @@ case "art_lieu_de_peche" :
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
-	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and id in (select id from art_debarquement where art_lieu_de_peche_id=".$idNomTable.")";
+	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and id in (select id from art_debarquement where art_lieu_de_peche_id=".$idNomTable.")";
 	$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -178,7 +183,7 @@ case "art_debarquement" :
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
-	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and id =".$idNomTable ;
+	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and id =".$idNomTable ;
 	$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -191,7 +196,7 @@ case "art_debarquement_rec" :
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
-	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and id = (select art_debarquement_id from art_debarquement_rec where id=".$idNomTable.")";
+	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and id = (select art_debarquement_id from art_debarquement_rec where id=".$idNomTable.")";
 	$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -206,7 +211,7 @@ case "art_fraction_rec" :
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
-	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and id = (select art_debarquement_id from art_fraction where id=".$idNomTable.")";
+	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and id = (select art_debarquement_id from art_fraction where id=".$idNomTable.")";
 	$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -237,7 +242,7 @@ case "art_stat_totale" :
 		$tempetatAction = "";
 	} else {
 		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -269,7 +274,7 @@ case "art_stat_gt" :
 		$tempetatAction = "";
 	} else {
 		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -300,7 +305,7 @@ case "art_stat_gt_sp" :
 		$tempetatAction = "";
 	} else {
 		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -331,7 +336,7 @@ case "art_stat_sp" :
 		$tempetatAction = "";
 	} else {
 		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -362,7 +367,7 @@ case "art_taille_gt_sp" :
 		$tempetatAction = "";
 	} else {
 		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -393,7 +398,7 @@ case "art_taille_sp" :
 		$tempetatAction = "";
 	} else {
 		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -407,7 +412,7 @@ case "art_engin_peche" :
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
-	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and id = (select art_debarquement_id from art_engin_peche where id=".$idNomTable.")";
+	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and id = (select art_debarquement_id from art_engin_peche where id=".$idNomTable.")";
 	$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
 		$debugTimer = number_format(timer()-$start_while,4);
@@ -420,7 +425,7 @@ case "art_fraction" :
 		$debugTimer = number_format(timer()-$start_while,4);
 		echo "Appartenance avant requete ".$nomTable." :".$debugTimer."<br/>";
 	}
-	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and id = (select art_debarquement_id from art_fraction where id=".$idNomTable.")";
+	$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and id = (select art_debarquement_id from art_fraction where id=".$idNomTable.")";
 	//echo $scriptSQL."<br/>";
 	$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 	if ($debugAff==true) {
@@ -456,7 +461,7 @@ case "art_poisson_mesure" :
 		echo "Appartenance avant requete 2 ".$nomTable." :".$debugTimer."<br/>";
 	}
 		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and id = (select art_debarquement_id from art_fraction where id='".$scriptSQLIniRow[0]."')";
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and id = (select art_debarquement_id from art_fraction where id='".$scriptSQLIniRow[0]."')";
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -492,7 +497,7 @@ case "art_activite" :
 		echo "Appartenance avant requete 2 ".$nomTable." :".$debugTimer."<br/>";
 	}
 		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -532,7 +537,7 @@ case "art_engin_activite" :
 		echo "Appartenance avant requete 2 ".$nomTable." :".$debugTimer."<br/>";
 	}
 		$scriptSQLIniRow = pg_fetch_row($scriptSQLResultini);	
-		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='art' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
+		$scriptSQL = "select exist,supp,newid,id from temp_exist_peche where type ='artDeb' and cle1 =".$scriptSQLIniRow[0]." and cle2 =".$scriptSQLIniRow[1]." and cle3=".$scriptSQLIniRow[2];
 		$scriptSQLResult = pg_query(${$BDSource},$scriptSQL) or die('erreur dans la requete : '.pg_last_error());
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);

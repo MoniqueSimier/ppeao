@@ -41,6 +41,8 @@ $cptErreurTotal = 0;
 $start_while=timer(); 		// début du chronométrage du for
 $UniqExecSQL = false ; 		// Debug pour n'executer que les SQL
 
+$affichageDetail = false; // Pour afficher ou non le detail des traitements à l'écran
+
 //****************************************************
 // Pre traitement
 // Creation des tables dans la BD pour
@@ -52,7 +54,7 @@ if ($tableEnCours == "") {
 	echo "<b>Etape 1</b> : creation des tables temporaires <br/>";
 	$CRexecution = "<b>Creation des tables temporaires</b> <br/>";
 	// on ne le fait qu'une fois...
-	set_time_limit(90);
+	set_time_limit(180);
 	// Faire un vaccuum avant !
 	
 	// Creation d'une table temporaire sur la BD pour accelerer les acces vu la quantite de données potentielles a renomer
@@ -70,7 +72,10 @@ if ($tableEnCours == "") {
 		scriptSQL character varying(1000),
 		controlenum1 integer ,
 		controlenum2 integer ,
-		controletxt1 character varying(20)
+		controlenum3 integer ,
+		controletxt1 character varying(20),
+		date1 date,
+		date2 date
 		);
 		ALTER TABLE public.temp_recomp_id OWNER TO devppeao;
 		COMMENT ON TABLE temp_recomp_id IS 'Table temporaire pour gerer la mise a jour des id';
@@ -82,9 +87,12 @@ if ($tableEnCours == "") {
 		COMMENT ON COLUMN temp_recomp_id.exist IS 'existe deja dans la base ?';
 		COMMENT ON COLUMN temp_recomp_id.etatAction IS 's=supprimer m=mettre a jour r=rien';
 		COMMENT ON COLUMN temp_recomp_id.scriptSQL IS 'sql a executer';
-		COMMENT ON COLUMN temp_recomp_id.controlenum1 IS 'valeur numerique 1 pour tester validite recalcul';
-		COMMENT ON COLUMN temp_recomp_id.controlenum2 IS 'valeur numerique 2 pour tester validite recalcul';
+		COMMENT ON COLUMN temp_recomp_id.controlenum1 IS 'valeur numerique 1 pour tester validite recalcul / maj donnees';
+		COMMENT ON COLUMN temp_recomp_id.controlenum2 IS 'valeur numerique 2 pour tester validite recalcul / maj donnees';
+		COMMENT ON COLUMN temp_recomp_id.controlenum3 IS 'valeur numerique 3 pour tester validite recalcul / maj donnees';
 		COMMENT ON COLUMN temp_recomp_id.controletxt1 IS 'valeur texte 1 pour tester validite recalcul';
+		COMMENT ON COLUMN temp_recomp_id.date1 IS 'valeur date 1 pour tester validite recalcul / maj donnees';
+		COMMENT ON COLUMN temp_recomp_id.date2 IS 'valeur date 2 pour tester validite recalcul / maj donnees';
 		CREATE INDEX \"table_ID\" ON temp_recomp_id USING btree (nomtable, idsource);
 		CREATE INDEX \"table_IDCHAR\" ON temp_recomp_id USING btree (nomtable, idsourcechar);
 	";
@@ -103,7 +111,11 @@ if ($tableEnCours == "") {
 		scriptSQL character varying(1000),
 		controlenum1 integer ,
 		controlenum2 integer ,
-		controletxt1 character varying(20));
+		controlenum3 integer ,
+		controletxt1 character varying(20),
+		date1 date,
+		date2 date
+		);
 		ALTER TABLE public.temp_recomp_id OWNER TO devppeao;
 		COMMENT ON TABLE temp_recomp_id IS 'Table temporaire pour gerer la mise a jour des id';
 		COMMENT ON COLUMN temp_recomp_id.nomTable IS 'Nom de la table';
@@ -114,19 +126,24 @@ if ($tableEnCours == "") {
 		COMMENT ON COLUMN temp_recomp_id.exist IS 'existe deja dans la base ?';
 		COMMENT ON COLUMN temp_recomp_id.etatAction IS 's=supprimer a=ajouter m=mettre a jour r=rien';
 		COMMENT ON COLUMN temp_recomp_id.scriptSQL IS 'sql a executer';
-		COMMENT ON COLUMN temp_recomp_id.controlenum1 IS 'valeur numerique 1 pour tester validite recalcul';
-		COMMENT ON COLUMN temp_recomp_id.controlenum2 IS 'valeur numerique 2 pour tester validite recalcul';
+		COMMENT ON COLUMN temp_recomp_id.controlenum1 IS 'valeur numerique 1 pour tester validite recalcul / maj donnees';
+		COMMENT ON COLUMN temp_recomp_id.controlenum2 IS 'valeur numerique 2 pour tester validite recalcul / maj donnees';
+		COMMENT ON COLUMN temp_recomp_id.controlenum3 IS 'valeur numerique 3 pour tester validite recalcul / maj donnees';
 		COMMENT ON COLUMN temp_recomp_id.controletxt1 IS 'valeur texte 1 pour tester validite recalcul';
+		COMMENT ON COLUMN temp_recomp_id.date1 IS 'valeur date 1 pour tester validite recalcul / maj donnees';
+		COMMENT ON COLUMN temp_recomp_id.date2 IS 'valeur date 2 pour tester validite recalcul / maj donnees';
 		CREATE INDEX \"table_ID\" ON temp_recomp_id USING btree (nomtable, idsource);
 		CREATE INDEX \"table_IDCHAR\" ON temp_recomp_id USING btree (nomtable, idsourcechar);
 		";
 		$createTableResult = pg_query(${$BDSource},$createTableSql);
 		$erreurSQL = pg_last_error(${$BDSource});
 		if (!$createTableResult ) {
-			echo "Erreur creation tem_recomp_id <br/>";
+			echo "Erreur creation temp_recomp_id <br/>";
 		}
 	} else {
-		echo "creation temp_recomp_id apres DROP <br/>";
+		if ($affichageDetail) {
+			echo "creation temp_recomp_id apres DROP <br/>";
+		}
 	}
 	if ($EcrireLogComp ) { WriteCompLog ($logComp,"Table temporaire temp_recomp_id creee",$pasdefichier);}
 	pg_free_result($createTableResult);
@@ -146,7 +163,8 @@ if ($tableEnCours == "") {
 		supp character varying(1),
 		id integer,
 		newid integer,
-		numPeche integer
+		numPeche integer,
+		datePeche date
 	 );
 	ALTER TABLE public.temp_exist_peche OWNER TO devppeao;
 	COMMENT ON TABLE temp_exist_peche IS 'Table temporaire pour identifier les peches exp et art deja existantes';
@@ -159,6 +177,7 @@ if ($tableEnCours == "") {
 	COMMENT ON COLUMN temp_exist_peche.id IS 'id de exp_campagne ou art_debarquement (en cours )';
 	COMMENT ON COLUMN temp_exist_peche.newid IS 'nouvel id de exp_campagne ou art_debarquement';
 	COMMENT ON COLUMN temp_exist_peche.numPeche IS 'numero de la campagne ou de la peche art';
+	COMMENT ON COLUMN temp_exist_peche.datePeche  IS 'date de la peche artisanale';
 	CREATE INDEX \"id_type\" ON temp_exist_peche USING btree (type, id);
 	CREATE INDEX \"type_cle1_cle2_cle3\" ON temp_exist_peche USING btree (type,cle1,cle2,cle3);
 	 ";
@@ -174,7 +193,8 @@ if ($tableEnCours == "") {
 			supp character varying(1),
 			id integer,
 			newid integer,
-			numPeche integer
+			numPeche integer,
+			datePeche date
 		 );
 		ALTER TABLE public.temp_exist_peche OWNER TO devppeao;
 		COMMENT ON TABLE temp_exist_peche IS 'Table temporaire pour identifier les peches exp et art deja existantes';
@@ -187,6 +207,7 @@ if ($tableEnCours == "") {
 		COMMENT ON COLUMN temp_exist_peche.id IS 'id de exp_campagne ou art_debarquement (en cours )';
 		COMMENT ON COLUMN temp_exist_peche.newid IS 'nouvel id de exp_campagne ou art_debarquement';
 		COMMENT ON COLUMN temp_exist_peche.numPeche IS 'numero de la campagne ou de la peche art';
+		COMMENT ON COLUMN temp_exist_peche.datePeche  IS 'date de la peche artisanale';
 		CREATE INDEX \"id_type\" ON temp_exist_peche USING btree (type, id);
 		CREATE INDEX \"type_cle1_cle2_cle3\" ON temp_exist_peche USING btree (type,cle1,cle2,cle3);
 		 ";
@@ -200,9 +221,7 @@ if ($tableEnCours == "") {
 	}
 	if ($EcrireLogComp ) { WriteCompLog ($logComp,"Table temporaire temp_exist_peche creee",$pasdefichier);}
 	pg_free_result($createTableResult);
-	
 	error_reporting ($lev); // retour au avertissements par defaut
-	
 	//****************************************************
 	// Traitement
 	// Etape 1 : controler les peches experimentales (campagne) / peches artisanales presentes (agglo / annee / mois)
@@ -210,233 +229,284 @@ if ($tableEnCours == "") {
 	switch($typeAction){
 		case "majsc":
 			$tablesACont = "exp_campagne";
-			$tableEnLecture = $tablesACont;
 			break;
 		case "majrec" :
-			$tablesACont = "art_debarquement";
-			$tableEnLecture = $tablesACont;
+			$tablesACont = "art_debarquement,art_activite";
 			break;
 	}
-	
-	
-	$valDernierID =0;
 	// Preparation de la requete selon le type de peche, exp ou art
-	echo "traitement de la table ".$tablesACont."<br/>";
 	switch($typeAction){
 		case "majsc":
-			$condSelect = " numero_campagne,ref_systeme_id,date_debut,id"; // date_debut n'est la que pour avoir id en 4 ieme position... Je sais, c'est pas beau...
+			$condSelect = " numero_campagne,ref_systeme_id,date_debut,id,date_fin"; 
 			$condOrder =" numero_campagne ASC,ref_systeme_id ASC";
 			$tempType = "exp";
 			break;
 		case "majrec" :
-			$condSelect = " art_agglomeration_id,annee,mois,id,date_debarquement"; // ici 5 champs, le 5ieme sera testé uniquement si pech art
 			$condOrder =" art_agglomeration_id ASC,annee ASC,mois ASC";
-			$tempType = "art";
 			break;
 	}
-	// On recupere le nom d'enreg a traiter pour les affichages ecran.
-	$maxReadSql = " select max(id) from ".$tablesACont;
-	$maxReadResult = pg_query(${$BDSource},$maxReadSql) or die('erreur dans la requete : '.pg_last_error());
-	if (pg_num_rows($maxReadResult) == 0) {
-		echo "erreur : table ".$tablesACont." vide <br/>";
-		// message d'erreur
-	} else {
-		$maxRow = pg_fetch_row($maxReadResult);
-		if ( $maxRow[0] == null) {
-			$valDernierID  = 1;
-		} else {
-			$valDernierID  = $maxRow[0];
-		}
-		
-	}
-	pg_free_result($maxReadResult);
-
 	// Début du traitement on charge l'ensemble des données pour la table en cours de test
 	// *********************************
-	$compReadSql = " select ".$condSelect." from ".$tablesACont." order by ".$condOrder;
-	$compReadResult = pg_query(${$BDSource},$compReadSql) or die('erreur dans la requete : '.pg_last_error());
-	if (pg_num_rows($compReadResult) == 0) {
-		echo "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> table de reference ".$tablesACont." dans ".$nomBDSource." vide <br/>";
-		$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> table de reference".$tablesACont." vide dans ". pg_dbname(${$BDSource})." risque pour l'import<br/>";
-		// message d'erreur
-	} else {
-
-		while ($compRow = pg_fetch_row($compReadResult) ) {
-			$pechArtExistDeja = false;
-			// Variables pour la creation de la peche artisanal dans art_periode_enquete
-			$pecheArtComplete = true; 	// Variable pour la cohérence de l'existence de la peche artisanal
-			$tempSQL = "";				// Sql pour creer l'enregistrement
-			$tempetatAction = "";		// Action a faire (maj ou creation ou suppression)
-			$date_debut = "NULL";			// date de debut de peche
-			$date_fin = "NULL";			// date de fin de peche
-			// On va remplir la table temp_exist_peche pour chaque entite en indiquant si elle existe ou non
-			// si non, lui affecter un nouvel ID
-			switch($typeAction){
-				case "majsc":
-					$condwhere = "numero_campagne =".$compRow[0]." and ref_systeme_id=".$compRow[1];
-					$tempCle3 = 0;
-					$tempNumPeche = $compRow[0];
-					break;
-				case "majrec" :
-					$condwhere = "art_agglomeration_id =".$compRow[0]." and annee=".$compRow[1]." and mois=".$compRow[2];
-					$tempCle3 = $compRow[2];
-					// Calcul de la peche art en cours
-					// soit on a deja cree dans temp_exist_peche une peche art avec les memes caractéristiques
-					// soit on incremente
-					$testSQL = "select numPeche from temp_exist_peche where type = 'art' and cle1=".$compRow[0]." and cle2=".$compRow[1]." and cle3=".$compRow[2];
-					$testSQLResult = pg_query(${$BDSource},$testSQL);
-					$erreurSQL = pg_last_error(${$BDSource});
-					if (!$testSQLResult) {
-						//echo "erreur select temp_exist_peche script = ".$testSQL." erreur complete = ".$erreurSQL."<br/>";
-						if ($EcrireLogComp ) { 
-							WriteCompLog ($logComp,"erreur insert temp_exist_peche script = ".$testSQL." erreur complete = ".$erreurSQL,$pasdefichier);
-						}
-					}
-					if (pg_num_rows($testSQLResult) == 0) {
-					// On n'a pas cree encore cette peche art
-						$test2SQL = "select max(numPeche) from temp_exist_peche where type = 'art' ";
-						$test2SQLResult = pg_query(${$BDSource},$test2SQL) or die('erreur dans la requete : '.pg_last_error());
-						if (pg_num_rows($test2SQLResult) == 0) {
-							// C'est la premiere peche artisanale
-							$tempNumPeche =1;
-						} else {
-							// On recupere le numero de la campagne
-							$test2SQLRow = pg_fetch_row($test2SQLResult);
-							if ($test2SQLRow[0] == null) {
-								$tempNumPeche = 1;
-							} else {
-								$tempNumPeche = $test2SQLRow[0] + 1 ;
+	if ($typeAction == "majrec") {
+		// Dernier ID pour les periodes d'enquete
+		$maxPerSql = " select max(cast(id as int)) from art_periode_enquete";
+		$maxPerResult = pg_query(${$BDCible},$maxPerSql) or die('erreur dans la requete : '.pg_last_error());
+		$valDernierIDPer  = 1;
+		if (pg_num_rows($maxPerResult) == 0) {
+			
+		} else {
+			$maxRow = pg_fetch_row($maxPerResult);
+			if ( $maxRow[0] == null) {
+				$valDernierIDPer  = 1;
+			} else {
+				$valDernierIDPer  = $maxRow[0] + 1;
+			}
+		}
+		pg_free_result($maxPerResult);
+	}
+	$tableCont = explode(",",$tablesACont);
+	$nbTablesCont = count($tableCont) - 1;
+	for ($cpt = 0; $cpt <= $nbTablesCont; $cpt++) {
+		if ($affichageDetail) {
+			echo "traitement de la table ".$tableCont[$cpt]."<br/>";
+		}
+		$valDernierID =0;
+		// On recupere le nom d'enreg a traiter pour les affichages ecran.
+		$maxReadSql = " select max(cast(id as int)) from ".$tableCont[$cpt];
+		$maxReadResult = pg_query(${$BDCible},$maxReadSql) or die('erreur dans la requete : '.pg_last_error());
+		if (pg_num_rows($maxReadResult) == 0) {
+			echo "erreur : table ".$tableCont[$cpt]." vide <br/>";
+			// message d'erreur
+		} else {
+			$maxRow = pg_fetch_row($maxReadResult);
+			if ( $maxRow[0] == null) {
+				$valDernierID  = 1;
+			} else {
+				$valDernierID  = $maxRow[0];
+			}
+		}
+		pg_free_result($maxReadResult);
+		if ($typeAction == "majrec") {
+			if ($tableCont[$cpt] == "art_debarquement") {
+				$condSelect = "art_agglomeration_id,annee,mois,id,date_debarquement";
+				$tempType = "artDeb";
+			} else {
+				$condSelect = "art_agglomeration_id,annee,mois,id,date_activite";
+				$tempType = "artAct";
+			}
+		}
+		$tableEnLecture = $tableCont[$cpt];
+		$compReadSql = " select ".$condSelect." from ".$tableCont[$cpt]." order by ".$condOrder;
+		$compReadResult = pg_query(${$BDSource},$compReadSql) or die('erreur dans la requete : '.pg_last_error());
+		if (pg_num_rows($compReadResult) == 0) {
+			echo "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> table de reference ".$tableCont[$cpt]." dans ".$nomBDSource." vide <br/>";
+			$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> table de reference".$tableCont[$cpt]." vide dans ". pg_dbname(${$BDSource})." risque pour l'import<br/>";
+			// message d'erreur
+		} else {
+	
+			while ($compRow = pg_fetch_row($compReadResult) ) {
+				$pechArtExistDeja = false;
+				// Variables pour la creation de la peche artisanal dans art_periode_enquete
+				$tempSQL = "";				// Sql pour creer l'enregistrement
+				$tempetatAction = "";		// Action a faire (maj ou creation ou suppression)
+				$tempDate = "1900-01-01";
+				$date_debut = "null";
+				$date_fin = "null";
+				// On va remplir la table temp_exist_peche pour chaque entite en indiquant si elle existe ou non
+				// si non, lui affecter un nouvel ID
+				switch($typeAction){
+					case "majsc":
+						$condwhere = "numero_campagne =".$compRow[0]." and ref_systeme_id=".$compRow[1];
+						$tempCle3 = 0;
+						$tempNumPeche = $compRow[0];
+						break;
+					case "majrec" :
+						$condwhere = "art_agglomeration_id =".$compRow[0]." and annee=".$compRow[1]." and mois=".$compRow[2];
+						$tempCle3 = $compRow[2];
+						$tempDate = $compRow[4];
+						// Calcul de la peche art en cours
+						// soit on a deja cree dans temp_exist_peche une peche art avec les mêmes caractéristiques
+						// soit on incremente
+						$testSQL = "select numPeche from temp_exist_peche where type in ('artDeb','artAct') and cle1=".$compRow[0]." and cle2=".$compRow[1]." and cle3=".$compRow[2];
+						$testSQLResult = pg_query(${$BDSource},$testSQL);
+						$erreurSQL = pg_last_error(${$BDSource});
+						if (!$testSQLResult) {
+							//echo "erreur select temp_exist_peche script = ".$testSQL." erreur complete = ".$erreurSQL."<br/>";
+							if ($EcrireLogComp ) { 
+								WriteCompLog ($logComp,"erreur insert temp_exist_peche script = ".$testSQL." erreur complete = ".$erreurSQL,$pasdefichier);
 							}
 						}
-					} else {
-						// On recupere le numero de la peche
-						$testSQLRow = pg_fetch_row($testSQLResult);
-						$tempNumPeche = $testSQLRow[0];
-						$pechArtExistDeja = true;
+						if (pg_num_rows($testSQLResult) == 0) {
+						// On n'a pas cree encore cette peche art
+							$test2SQL = "select max(numPeche) from temp_exist_peche where type in ('artDeb','artAct') ";
+							$test2SQLResult = pg_query(${$BDSource},$test2SQL) or die('erreur dans la requete : '.pg_last_error());
+							if (pg_num_rows($test2SQLResult) == 0) {
+								// C'est la premiere peche artisanale
+								$tempNumPeche =1;
+							} else {
+								// On recupere le numero de la campagne
+								$test2SQLRow = pg_fetch_row($test2SQLResult);
+								if ($test2SQLRow[0] == null) {
+									$tempNumPeche = 1;
+								} else {
+									$tempNumPeche = $test2SQLRow[0] + 1 ;
+								}
+							}
+						} else {
+							// On recupere le numero de la peche
+		 					$testSQLRow = pg_fetch_row($testSQLResult);
+							$tempNumPeche = $testSQLRow[0];
+							$pechArtExistDeja = true;
+						}
+						// Fin de la recuperation / affectation du num de peche art
+						break;
+				} // end switch
+				$tempCle1 = $compRow[0];
+				$tempCle2 = $compRow[1];
+				//******************************************************
+				// REQUETE pour lire l'enregistrement dans la base cible
+				// *****************************************************
+				$compCibleReadSql = " select id from ".$tableCont[$cpt]." where ".$condwhere; 
+				$compCibleReadResult = pg_query(${$BDCible},$compCibleReadSql);
+				$erreurSQL = pg_last_error(${$BDCible});
+				if (!$compCibleReadResult) {
+					//echo "erreur select id from ".$tablesACont." script = ".$compCibleReadSql." erreur complete = ".$erreurSQL."<br/>";
+					if ($EcrireLogComp ) { 
+						WriteCompLog ($logComp,"erreur insert temp_exist_peche script = ".$compCibleReadSql." erreur complete = ".$erreurSQL,$pasdefichier);
 					}
-					// Fin de la recuperation / affectation du num de peche art
-					break;
-			}
-			$tempCle1 = $compRow[0];
-			$tempCle2 = $compRow[1];
-			//******************************************************
-			// REQUETE pour lire l'enregistrement dans la base cible
-			// *****************************************************
-			$compCibleReadSql = " select id from ".$tablesACont." where ".$condwhere; 
-			$compCibleReadResult = pg_query(${$BDCible},$compCibleReadSql);
-			$erreurSQL = pg_last_error(${$BDCible});
-			if (!$compCibleReadResult) {
-				//echo "erreur select id from ".$tablesACont." script = ".$compCibleReadSql." erreur complete = ".$erreurSQL."<br/>";
-				if ($EcrireLogComp ) { 
-					WriteCompLog ($logComp,"erreur insert temp_exist_peche script = ".$compCibleReadSql." erreur complete = ".$erreurSQL,$pasdefichier);
 				}
-			}
-			if (pg_num_rows($compCibleReadResult) == 0) {
-			// C'est une nouvelle peche
-			// La cible est la base BDPPEAO la source est la base BDPECHE
-				$compCibleRow = pg_fetch_row($compCibleReadResult); // une seule ligne en retour, pas besoin de faire une boucle
-				$tempExist = "n";
-				$tempNewID = $valDernierID;
-				$valDernierID ++;
-				$tempSupp = "n";
-				$tempID = $compRow[3];
-				if ($typeAction == "majrec") {
-					$tempSQL = "insert into art_periode_enquete (id,art_agglomeration_id,annee,mois,date_debut,date_fin,description,exec_recomp,date_recomp,exec_stat,date_stat) values (".$tempNewID.",".$compRow[0].",".$compRow[1].",".$compRow[2].",".$date_debut.",".$date_fin.",''Peche artisanale pour agglomeration id = ".$compRow[0].", annee = ".$compRow[1].", mois = ".$compRow[2]."'',null,null,null,null)";
+				if (pg_num_rows($compCibleReadResult) == 0) {
+				// C'est une nouvelle peche
+					$compCibleRow = pg_fetch_row($compCibleReadResult); // une seule ligne en retour, pas besoin de faire une boucle
+					$tempExist = "n";
+					$valDernierID ++;
+					$tempSupp = "n";
+					$tempNewID = $valDernierID;
+					$tempID = $compRow[3];					
+				} else {
+					// La peche existe déjà. On doit demander si on la supprime ou non
+					$cptTableEq ++;
+					$tempExist = "y";
+					$tempID = $compRow[3];
+					$tempNewID = $compRow[3];
+					$tempSupp = "n";
 				}
 				
-			} else {
-				// La peche existe déjà. On doit demander si on la supprime ou non
-				$cptTableEq ++;
-				$tempExist = "y";
-				$tempID = $compRow[3];
-				$tempNewID = $compRow[3];
-				$tempSupp = "n";
-			}
-			// **********************************
-			// Controle supplementaire
-			// Dans le cas d'une peche artisanale, un art_debarquement doit avoir un enreg correspondant dans art_activite
-			// On test le art_activite dans la base source (BDPECHE)...
-			// **********************************
-			if ($typeAction == "majrec"){
-				// On regarde si la peche est deja présente dans art_periode_enquete ne sera le cas que si la peche a déjà été chargé, si oui, cela voudra dire que les controles ont déjà été fait et que la peche art est cohérente
-				$controleArtSql = " select id from art_periode_enquete where art_agglomeration_id =".$compRow[0]." and annee=".$compRow[1]." and mois=".$compRow[2]; 
-				$controleArtResult = pg_query(${$BDCible},$controleArtSql) or die('erreur dans la requete : '.pg_last_error());
-				if (pg_num_rows($controleArtResult) == 0) {
-					// La peche n'est pas présente dans art_periode_enquete, c'est certainement une nouvelle pêche
-					// on test art_activite
-					$controleSql = " select id,date_activite from art_activite where art_agglomeration_id =".$compRow[0]." and annee=".$compRow[1]." and mois=".$compRow[2]; 
-					$controleResult = pg_query(${$BDSource},$controleSql) or die('erreur dans la requete : '.pg_last_error());
-					if (pg_num_rows($controleResult) == 0) {
-						echo "pour agglo id = ".$compRow[0].", mois = ".$compRow[1].", annee=".$compRow[2].", il existe un enreg dans art_debarquement a importer, mais pas dans art_activite dans la base portage ".$BDSource."<br/>";
-						if ($EcrireLogComp ) { 
-							WriteCompLog ($logComp,"ERREUR pour agglo id = ".$compRow[0].", mois = ".$compRow[1].", annee=".$compRow[2].", il existe un enreg dans art_debarquement, mais pas dans art_activite dans la base portage ".$BDSource,$pasdefichier);
-						}
-						$pecheArtComplete = false;
-					} else {
-						if ($tempExist == "y") {
-							// On vérifie que l'enreg de art_activite existe bien dans la base cible
-							$controleSql2 = " select id from art_activite where art_agglomeration_id =".$compRow[0]." and annee=".$compRow[1]." and mois=".$compRow[2]; 
-							$controleResult2 = pg_query(${$BDCible},$controleSql2) or die('erreur dans la requete : '.pg_last_error());
-							if (pg_num_rows($controleResult2) == 0) {
-								echo "pour agglo id = ".$compRow[0].", mois = ".$compRow[1].", annee=".$compRow[2].", il existe un enreg dans art_debarquement deja importe, mais pas dans art_activite dans la base de reference ".$BDCible."<br/>";
-								if ($EcrireLogComp ) { 
-									WriteCompLog ($logComp,"ERREUR pour agglo id = ".$compRow[0].", mois = ".$compRow[1].", annee=".$compRow[2].", il existe un enreg dans art_debarquement, mais pas dans art_activite dans la base ".$BDCible,$pasdefichier);
-								}
-								$pecheArtComplete = false;
-							} 
-							pg_free_result($controleResult2);
-						}
-					} 
-					pg_free_result($controleResult);
-				}
-				pg_free_result($controleArtResult);
-			}
-			// Fin controle supplementaire pech art
-			// **********************************
-			$cptTableTotal ++;
-			if (($typeAction == "majrec" && $pecheArtComplete == true) || $typeAction == "majsc" ) {
 				// **********************************
 				// La creation du script SQL avec toutes les info recuperees.
 				// Sauvegarde dans la table temp_exist_peche
 				// **********************************
-				//echo "numpeche = ".$tempNumPeche."<br/>";
-				$insertSQL = "insert into temp_exist_peche values ('".$tempType."', ".$tempCle1.", ".$tempCle2.", ".$tempCle3.", '".$tempExist."', '".$tempSupp."',".$tempID.",".$tempNewID.",".$tempNumPeche.")";
+				$insertSQL = "insert into temp_exist_peche values ('".$tempType."', ".$tempCle1.", ".$tempCle2.", ".$tempCle3.", '".$tempExist."', '".$tempSupp."',".$tempID.",".$tempNewID.",".$tempNumPeche.",'".$tempDate."')";
 				//echo $insertSQL."<br/>";
 				$insertSQLResult = pg_query(${$BDSource},$insertSQL);
 				$erreurSQL = pg_last_error(${$BDSource});
 				if (!$insertSQLResult) {
 					$cptErreurTotal ++;
-					//echo "erreur insert temp_exist_peche script = ".$insertSQL." erreur complete = ".$erreurSQL."<br/>";
 					if ($EcrireLogComp ) { 
 						WriteCompLog ($logComp,"erreur insert temp_exist_peche script = ".$insertSQL." erreur complete = ".$erreurSQL,$pasdefichier);
 					}
 				}
 				pg_free_result($insertSQLResult);
+
 				if ($typeAction == "majrec" && $tempExist == "n" && !$pechArtExistDeja) {
-					// On prepare la création de la peche artisanale dans la table art_periode_enquete.
-					$insertSQL = "insert into temp_recomp_id values ('art_periode_enquete',".$tempID.",null,".$tempNewID.",null,'n','a','".$tempSQL."',".$tempNewID.",".$tempID.",'')";
-					$insertSQLResult = pg_query(${$BDSource},$insertSQL);
-					$erreurSQL = pg_last_error(${$BDSource});
-					if (!$insertSQLResult) {
-						//echo "erreur insert temp_exist_peche script = ".$insertSQL." erreur complete = ".$erreurSQL."<br/>";
+				// *********************************************
+				// Traitement specifique aux peches artisanales : creation de la periode d'enquete
+				// *********************************************
+					$cptTableTotal ++;
+
+					// Uniquement pour les peches artisanales. On gere les periodes d'enquete
+					// On controle que la periode d'enquete n'existe pas deja. 
+					$testPerEnqSql = " select id from art_periode_enquete where ".$condwhere; 
+					$testPerEnqResult = pg_query(${$BDCible},$testPerEnqSql);
+					$erreurSQL = pg_last_error(${$BDCible});
+					if (!$testPerEnqResult) {
 						if ($EcrireLogComp ) { 
-							WriteCompLog ($logComp,"erreur insert temp_exist_peche script = ".$insertSQL." erreur complete = ".$erreurSQL,$pasdefichier);
+							WriteCompLog ($logComp,"erreur lecture art_periode_enquete erreur complete = ".$erreurSQL,$pasdefichier);
 						}
-					}
-					pg_free_result($insertSQLResult);
-				}
-			} else {
-				// message d'erreur
-				if ($EcrireLogComp ) { 
-					WriteCompLog ($logComp,"ERREUR pour agglo id = ".$compRow[0].", mois = ".$compRow[1].", annee=".$compRow[2].", la peche n'est pas cree dans la base cible ".$BDCible,$pasdefichier);
-				}
-			}
-	
-			
-		} // end while ($compRow = pg_fetch_row($compReadResult) ) {
-	} //end else if (pg_num_rows($compReadResult)
+					} else {
+						if (pg_num_rows($testPerEnqResult) == 0) {
+							// Creation de la periode d'enquete
+							// Le xx et le yy seront remplacés plus tard par les bonnes valeurs des dates min et max
+							$tempSQL = "insert into art_periode_enquete (id,art_agglomeration_id,annee,mois,date_debut,date_fin,description,exec_recomp,date_recomp,exec_stat,date_stat) values (".$valDernierIDPer.",".$compRow[0].",".$compRow[1].",".$compRow[2].",''xx'',''yy'',''Peche artisanale pour agglomeration id = ".$compRow[0].", annee = ".$compRow[1].", mois = ".$compRow[2]."'',null,null,null,null)";
+
+							// On prepare la création de la peche artisanale dans la table art_periode_enquete.
+							$insertSQL = "insert into temp_recomp_id values ('art_periode_enquete',".$valDernierIDPer.",null,".$valDernierIDPer.",null,'n','a','".$tempSQL."',".$compRow[0].",".$compRow[1].",".$compRow[2].",'',null,null)";
+							$insertSQLResult = pg_query(${$BDSource},$insertSQL);
+							$erreurSQL = pg_last_error(${$BDSource});
+							if (!$insertSQLResult) {
+								//echo "erreur insert temp_exist_peche script = ".$insertSQL." erreur complete = ".$erreurSQL."<br/>";
+								if ($EcrireLogComp ) { 
+									WriteCompLog ($logComp,"erreur insert temp_exist_peche pour art_periode_enquete script = ".$insertSQL." erreur complete = ".$erreurSQL,$pasdefichier);
+								}
+							}
+							pg_free_result($insertSQLResult);
+							$valDernierIDPer ++;								
+						} // end if (pg_num_rows($testPerEnqResult) == 0)
+					} // end else if (!$testPerEnqResult)
+				} // end else if ($typeAction == "majrec" && $tempExist == "n" && !$pechArtExistDeja)
+			} // end while ($compRow = pg_fetch_row($compReadResult) ) {
+		} //end else if (pg_num_rows($compReadResult)
+	} // end for ($cpt = 0; $cpt <= $nbTablesCont; $cpt++)
 } // end if ($tableEnCours == "")
 } // end if (!$UniqExecSQL)
+
+//******************************************************
+// Traitement supplementaire pour mettre à jour les dates
+//******************************************************
+set_time_limit(180);
+if ($typeAction == "majrec" && $tableEnCours == "") {
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp,"Lancement calcul des dates min / max pour les peches artisanales.",$pasdefichier);
+	}
+	$majDateSQL = " select idcible,controlenum1,controlenum2,controlenum3,scriptsql from temp_recomp_id where nomtable = 'art_periode_enquete'";
+	$majDateResult = pg_query(${$BDSource},$majDateSQL);
+	$erreurSQL = pg_last_error(${$BDSource});
+	if (pg_num_rows($majDateResult) == 0) {
+		if ($EcrireLogComp ) { WriteCompLog ($logComp,"Erreur lors evaluation date",$pasdefichier);}
+	} else {
+		echo "date en cours eval<br/>";
+		while ($majDateRow = pg_fetch_row($majDateResult) ) {
+			// On balaye toutes les enquetes de peche artisanales à intégrer
+			// On recupere le min et le max des dates pour mises à jour
+			// Minimun
+			$minSQL = "select min(datePeche) from temp_exist_peche where type in ('artDeb','artAct') and cle1 = ".$majDateRow[1]." and cle2 = ".$majDateRow[2]." and cle3 = ".$majDateRow[3];
+			$minSQLResult = pg_query(${$BDSource},$minSQL);
+			if (pg_num_rows($minSQLResult) == 0) {
+			//...
+			} else {
+				$minDateRow = pg_fetch_row($minSQLResult);
+				$minDate = $minDateRow[0];
+			}
+			// Maximun
+			$maxSQL = "select max(datePeche) from temp_exist_peche where type in ('artDeb','artAct') and cle1 = ".$majDateRow[1]." and cle2 = ".$majDateRow[2]." and cle3 = ".$majDateRow[3];
+			$maxSQLResult = pg_query(${$BDSource},$maxSQL);
+			if (pg_num_rows($maxSQLResult) == 0) {
+			//...
+			} else {
+				$maxDateRow = pg_fetch_row($maxSQLResult);
+				$maxDate = $maxDateRow[0];
+			}
+			// Mise à jour de l'enreg dans temp_recomp_id
+			$scriptAMAJ = $majDateRow[4];
+			$scriptAMAJ = str_replace ("xx",$minDate,$scriptAMAJ);
+			$scriptAMAJ = str_replace ("yy",$maxDate,$scriptAMAJ);
+			$scriptAMAJ = str_replace ("'","''",$scriptAMAJ);
+			$updateSQL = "update temp_recomp_id set scriptsql = '".$scriptAMAJ."' where idcible = ".$majDateRow[0];
+			$updateResult = pg_query(${$BDSource},$updateSQL);
+			$erreurSQL = pg_last_error(${$BDSource});
+			if (!$updateResult) {
+			echo "erreur <br/>";
+			} else {
+				if ($EcrireLogComp ) { 
+					WriteCompLog ($logComp,"Maj date pour enquete agg = ".$majDateRow[1]." annee = ".$majDateRow[2]." mois = ".$majDateRow[3]." idcible = ".$majDateRow[0]." min = ".$minDate." max = ".$maxDate,$pasdefichier);
+				}
+			}
+			
+		}
+	}
+} // end if ($typeAction == "majrec")
+// Fin recalcul des dates
+
 //****************************************************
 // Traitement
 // Etape 2 : générer les correspondances d'ID pour toutes les tables à importer
@@ -457,7 +527,6 @@ $cptTableTotal = 0;
 echo "<b>Etape 2</b> : creation des SQL <br/>";
 $CRexecution .="<b>Creation des SQL</b> <br/>";
 // On récupère toutes les tables à mettre à jour
-
 set_time_limit(ini_get('max_execution_time')); // on remet le timer normal
 $max_time = ini_get('max_execution_time');
 // Liste des tables a traiter
@@ -491,7 +560,6 @@ $tableMajID = explode(",",$listTableMajID);
 $nbtableMajID = count($tableMajID) - 1;
 for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 	// controle de la table en cours si besoin (gestion TIMEOUT)
-	//echo "table = ".$nbtableMajID." tableencours = ".$tableEnCours."<br/>";
 	if ((!$tableEnCours == "" && $tableEnCours == $tableMajID[$cptID]) || $tableEnCours == "") {
 		if ($debugAff==true) {
 			$debugTimer = number_format(timer()-$start_while,4);
@@ -502,7 +570,6 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 		echo $cptID." / ".$nbtableMajID." Creation SQL table en cours = ".$tableMajID[$cptID]."<br/>";
 		//Pour gestion timeout, la valeur de la table en cours
 		$tableEnLecture = $tableMajID[$cptID];
-		//echo "XXXX---  table en lecture = ".$tableEnLecture."<br/>";
 		// Compteur 
 		$compReadSqlC = " select count(id) from ".$tableMajID[$cptID];
 		$compReadResultC = pg_query(${$BDSource},$compReadSqlC);
@@ -555,9 +622,11 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 		// Traitement dans le cas du timeout 
 		if ($tableEnCours == "") {
 			// Reconstruire tous les id pour cette entité
-			echo "traitement table ".$tableMajID[$cptID]."<br/>";
+			if ($affichageDetail) {
+				echo "traitement table ".$tableMajID[$cptID]."<br/>";
+			}
 			$maxenvirIdSource  = 1;
-			$maxReadSql = " select max(id) from ".$tableMajID[$cptID];
+			$maxReadSql = " select max(cast(id as int)) from ".$tableMajID[$cptID];
 			$maxReadResult = pg_query(${$BDCible},$maxReadSql) or die('erreur dans la requete : '.pg_last_error());
 			if (pg_num_rows($maxReadResult) == 0) {
 				echo "erreur : table ".$tableMajID[$cptID]." vide <br/>";
@@ -570,11 +639,12 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 					$maxenvirIdSource  = intval($maxRow[0] + 1);
 				}
 			}
-			
 			pg_free_result($maxReadResult);
 		} else  {
 			$maxenvirIdSource  = $_SESSION['s_max_envir_Id_Source'];
-			echo "timeout ".$tableEnCours." id en cours =".$maxenvirIdSource."<br/>";
+			if ($affichageDetail) {
+				echo "timeout ".$tableEnCours." id en cours =".$maxenvirIdSource."<br/>";
+			}
 		}
 		// Gestion TIMEOUT : on reprend la ou on s'etait arrete
 		// Comme on trie par ID, on ne va pas en perdre en route
@@ -596,22 +666,21 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 			$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>".$tableMajID[$cptID]." vide dans ". pg_dbname(${$BDSource})." ==> pas d'import <br/>";
 			$tableEnCours == "";
 		} else {
-			//echo "nb enreg ".$tableMajID[$cptID]." = ".pg_num_rows($envSrcResult)." where = ".$condWhere."<br/>";
 			while ($envRow = pg_fetch_row($envSrcResult) ) {
 				if ($debugAff==true) {
 					$debugTimer = number_format(timer()-$start_while,4);
 					echo "xxx debut trt enreg :".$debugTimer."<br/>";
 				}
 				// Gestion TIMEOUT
-				//echo "XX-----  table lue = ".$tableMajID[$cptID]."  id lu = ".$envRow[$RangId]." table en lecture = ".$tableEnLecture." id en lecture = ".$IDEnLecture."<br/>";
 				$ourtime = (int)number_format(timer()-$start_while,7);
 				$seuiltemps= ceil(0.9*$max_time);
-				//echo $ourtime."  ".$seuiltemps."<br/>";
 				// On prend un peu de marge par rapport au temps max.
 				if ($ourtime >= ceil(0.9*$max_time)) {
 					$delai=number_format(timer() - $start_while,7);
 					$ArretTimeOut =true;
-					echo "timeout table en lecture = ".$tableEnLecture." id en lecture = ".$IDEnLecture."<br/>";
+					if ($affichageDetail) {
+						echo "timeout table en lecture = ".$tableEnLecture." id en lecture = ".$IDEnLecture."<br/>";
+					}
 					break;
 				}
 
@@ -629,8 +698,6 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 				$cptChampTotal++;
 				$IDEnLecture = $envRow[$RangId] ;					
 				// On regarde si l'enregistrement est a maj dans la base ou non
-				//echo "Traitement de l'enregistrement ".$cptChampTotal." sur ".$totalLignes;
-
 				$nomTable = $tableMajID[$cptID];
 				// attention gérer les id en char... notamment pour art_fraction
 				
@@ -703,7 +770,7 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 						echo "avant insert du sql dans la BD :".$debugTimer."<br/>";
 					}
 					//On rajoute a la fin du script les valeurs de du nouvel Id et l'ancien ID de la campagne
-					$insertSQL = "insert into temp_recomp_id values ('".$tableMajID[$cptID]."',".$idNomTable.",".$tempIDchar.",".$tempNewID.",".$tempNewIDchar.",'".$tempExist."','".$tempetatAction."','".$tempSQL."',".$tempNewID.",".$tempID.",'')";
+					$insertSQL = "insert into temp_recomp_id values ('".$tableMajID[$cptID]."',".$idNomTable.",".$tempIDchar.",".$tempNewID.",".$tempNewIDchar.",'".$tempExist."','".$tempetatAction."','".$tempSQL."',".$tempNewID.",".$tempID.",0,null,null)";
 					
 					//$insertSQL = "insert into temp_recomp_id values ('".$tableMajID[$cptID]."',".$idNomTable.",".$tempNewID.",'".$tempExist."','".$tempetatAction."','".$tempSQL."',".$tempNewID.",".$tempID.",'')";
 					//echo $insertSQL."<br/>";

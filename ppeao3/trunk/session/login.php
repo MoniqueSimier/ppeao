@@ -17,7 +17,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/session/login_forms.php';
 
 
 
-if(isset($_GET) && !my_empty($_GET['login']) && !my_empty($_GET['pass'])) {
+if(isset($_GET) && !empty($_GET['login']) && !empty($_GET['pass'])) {
   extract($_GET);
   // on recupère le password de la table qui correspond au login du visiteur, 
   $loginSql = "	SELECT user_id, user_password, user_longname,  user_active, user_email
@@ -72,7 +72,11 @@ if(isset($_GET) && !my_empty($_GET['login']) && !my_empty($_GET['pass'])) {
 	$_SESSION['s_max_envir_Id_Source'] = 0;
 	$_SESSION['s_cpt_maj'] 	= 0; 
 	$_SESSION['s_max_Id_Source'] = 0;
+	$_SESSION['s_max_Id_Source'] = 0;
+	$_SESSION['s_status_restauration'] = "no";
 	// Fin variables process auto
+	// variable export
+	$_SESSION['s_status_export'] = 'ok';
 	
 	// on inscrit la connexion dans le journal
 	$loginMessage='connexion de '.$_SESSION['s_ppeao_longname'];

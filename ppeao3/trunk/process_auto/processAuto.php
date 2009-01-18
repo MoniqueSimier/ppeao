@@ -21,7 +21,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 
 $traitRecompOk = false;
 $CRexecution = "";
-
+$affichageDetail = false; // Pour afficher ou non le detail des traitements à l'écran
 session_start();
 // On identifie si le traitement est exécutable ou non
 if (isset($_GET['exec'])) {
@@ -104,14 +104,18 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				if (!$resultTest) {
 					$messageinfo .= "<b>Erreur</b> vidage art_debarquement_rec <br/>";
 				} else {
-					$messageinfo .= "<b>art_debarquement_rec</b> vid&eacute;e.<br/>";
+					if ($affichageDetail) {
+						$messageinfo .= "<b>art_debarquement_rec</b> vid&eacute;e.<br/>";
+					}
 				}
 				$queryDelete2 = "delete from art_fraction_rec";
 				$resultTest2 = pg_query($connectionTest, $queryDelete2);				
 				if (!$resultTest2) {
 					$messageinfo .= "<b>Erreur</b> vidage art_fraction_rec <br/>";
 				} else {
-					$messageinfo .= "<b>art_fraction_rec</b> vid&eacute;e.<br/>";
+					if ($affichageDetail) {
+						$messageinfo .= "<b>art_fraction_rec</b> vid&eacute;e.<br/>";
+					}
 				}
 				include $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition_pas_a_pas.php';
 				$query = "select count(id) FROM art_debarquement_rec";
@@ -129,7 +133,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			
 		case "stat":
 			include $_SERVER["DOCUMENT_ROOT"].'/statistiques/statistiques.php';	
-			$messageinfo .= " Traitement effectu&eacute;";
+			$messageinfo .= " Traitement effectu&eacute; (c'est toujours le cas, stastistiques.php ne renvoie jamais d'erreur)";
 			$traitRecompOk = true;
 			break;
 	} 

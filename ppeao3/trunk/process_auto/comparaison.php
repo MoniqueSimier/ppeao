@@ -40,7 +40,7 @@ $cptAjoutMaj = 0; // pour compatibilite
 $debugAff = false; // variable globale pour lancer le programme en mode debug
 // Variables de traitement
 $ErreurProcess = false; // Flag si erreur process
-
+$affichageDetail = false; // Pour afficher ou non le detail des traitements à l'écran
 // Includes standard
 include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
@@ -344,9 +344,9 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
 		}
 	} else {
-		logWriteTo(7,"notice","**- Relance traitement pour la table ".$tableEnCours." a partir de l'enreg ID = ".$IDEnCours." (gestion TIEMOUT AJAX)","","","0");
+		logWriteTo(7,"notice","**- Relance traitement pour la table ".$tableEnCours." a partir de l'enreg ID = ".$IDEnCours." (gestion TIMEOUT AJAX)","","","0");
 		if ($EcrireLogComp ) {
-			WriteCompLog ($logComp, "Relance traitement pour la table ".$tableEnCours." a partir de l'enreg ID = ".$IDEnCours." (gestion TIEMOUT AJAX)",$pasdefichier);
+			WriteCompLog ($logComp, "Relance traitement pour la table ".$tableEnCours." a partir de l'enreg ID = ".$IDEnCours." (gestion TIMEOUT AJAX)",$pasdefichier);
 		}
 	}
 	// Paramètres  de comparaison.
@@ -639,7 +639,9 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			// On aura deux comptes-rendus selon si c'est une comparaison ou une mise à jour
 			// Dans le cas de la comparaison, on indique les différents cas trouvés.
 			// Dans le cas de la maj, on n'indique juste le type de maj
-			$CRexecution = $CRexecution." *-".$tables[$cpt]." : ";
+			if ($cptChampVide > 0 || $cptChampDiff > 0 || $tableSourceVide || $tableVide || $affichageDetail){
+				$CRexecution = $CRexecution." <br/>*- <b>".$tables[$cpt]."</b> : ";			
+			}
 			if ($EcrireLogComp ) {
 				WriteCompLog ($logComp,"TABLE ".$tables[$cpt]." : ".$nomAction,$pasdefichier);
 				//WriteCompLog ($logComp,"TEST champvide = ".$cptChampVide." champDiff ".$cptChampDiff." tableVide ".$tableVide,$pasdefichier);
@@ -699,7 +701,9 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 					} else {
 						if ($cptChampVide == 0) {
 							$cptTableEq ++;
-							$CRexecution = $CRexecution." identique -";
+							if ($affichageDetail) {
+								$CRexecution = $CRexecution." identique -";
+							}
 							if ($EcrireLogComp ) {			
 								WriteCompLog ($logComp,"   -->  identique",$pasdefichier);
 							}
@@ -721,8 +725,11 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 						}
 					}
 				}
+			}
+			if ($cptChampVide > 0 || $cptChampDiff > 0 || $tableSourceVide || $tableVide || $affichageDetail){
+				//$CRexecution = $CRexecution." <br/>" ;			
 			} 
-			$CRexecution = $CRexecution." <br/>" ;
+
 		} // End for statement if ((!$ArretTimeOut)
 		
 		} // End for statement if ((!$tableEnCours == "" && tableEnCours == $tables[$cpt]) || $tableEnCours == "")
