@@ -454,7 +454,7 @@ if ($tableEnCours == "") {
 // Traitement supplementaire pour mettre à jour les dates
 //******************************************************
 set_time_limit(180);
-if ($typeAction == "majrec" && $tableEnCours == "") {
+if ($typeAction == "majrec" && $tableEnCours == "" && !$UniqExecSQL ) {
 	if ($EcrireLogComp ) {
 		WriteCompLog ($logComp,"Lancement calcul des dates min / max pour les peches artisanales.",$pasdefichier);
 	}
@@ -721,6 +721,7 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 					}
 					// Cas particulier des tables de références
 					// On a déjà réévalué le nouvel ID....
+					// Cas particulier de art_fraction_rec
 					$tempNewID = $maxenvirIdSource;
 					switch ($tableMajID[$cptID]) {
 						case "exp_campagne" : 
@@ -729,6 +730,21 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 						case "art_debarquement" : 
 							$tempNewID = $scriptSQLRow[2];
 							break;
+						case "art_fraction_rec" :
+							// On prend le meme id que pour art_fraction
+							$fracRecSql = " select idciblechar from temp_recomp_id where nomtable = 'art_fraction' and idsourcechar = ".$idNomTable;
+							$fracRecResult = pg_query(${$BDSource},$fracRecSql) or die('erreur dans la requete : '.pg_last_error());
+							if (pg_num_rows($fracRecResult) == 0) {
+								if ($EcrireLogComp ) {
+									WriteCompLog ($logComp,"erreur : impossible de trouver le art_fraction pour le art_fraction_rec id = ".$envRow[$RangId]." ==> risque d'incoherence dans la table art_fraction_rec",$pasdefichier);
+								} else {
+								echo "erreur : impossible de trouver le art_fraction pour le art_fraction_rec id = ".$envRow[$RangId]."<br/>";
+								}
+								$_SESSION['s_erreur_process'] = true; 
+							} else {
+								$fracRecSqlRow = pg_fetch_row($fracRecResult);
+								$tempNewID = $fracRecSqlRow[0];
+							}
 					}
 
 					// Evaluation du type de SQL a executer
@@ -736,6 +752,7 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 					if (pg_num_rows($sourceSqlResult) == 0) {
 					// Ca ne devrait jamais etre le cas !
 						echo "Vous ne devriez pas voir ce message; arrggghhhh.<br/>";
+						$_SESSION['s_erreur_process'] = true;
 					} else {
 						$sourceSqlRow = pg_fetch_row($sourceSqlResult);
 						switch	($tempetatAction) {
