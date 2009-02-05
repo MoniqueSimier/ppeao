@@ -424,6 +424,10 @@ function logArchivesList($archivePath)
 	    closedir($handle);
 	}
 	
+		//on trie le tableau pour avoir les fichiers les plus récents en haut
+		rsort($logArchiveFiles);	
+
+	
 	if (!empty($logArchiveFiles)) {
 		$archiveList='<div id="archives_list">';
 		$archiveList.='<p><a id="showHideArchives">afficher la liste des archives</a></p>';
