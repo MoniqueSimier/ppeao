@@ -34,6 +34,18 @@ foreach ($theColumns as $oneColumn) {
 	$newValue=$_GET["add_record_".$level.'_'.$oneColumn];
 	
 	
+	// cas d'une colonne stockant le mot de passe d'un nouvel utilisateur
+	// on stocke la valeur ENCRYPTEE au moyen du user name
+	if ($oneColumn=="user_password") {
+		$cDetail["data_type"]="password";
+		// on utilise les deux premiers caractères du username comme "salt"
+		$username=$_GET["add_record_".$level.'_user_name'];
+		$salt=substr($username,0,2);
+		//on encrypte le mot de passe soumis avant de le stocker
+		$newValue=crypt($newValue,$salt);
+	}
+	
+	
 	// si la valeur passée est NULL 
 	if (is_null($newValue) || my_empty($newValue) || $newValue=='NULL') {
 		// et que l'on a affaire a une cle etrangere
