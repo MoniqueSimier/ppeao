@@ -38,7 +38,8 @@ foreach ($tables as $table) {
 	"selector_cascade"=>$table["selector_cascade"],
 	"selector"=>$table["selector"],
 	"zone"=>$table["zone_id"],
-	"cascade_foreign_key"=>$table["cascade_foreign_key"]
+	"cascade_foreign_key"=>$table["cascade_foreign_key"],
+	"editable"=>$table["editable"]
 	);
 }
 

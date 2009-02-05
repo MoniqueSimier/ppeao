@@ -41,14 +41,14 @@ function buildTableSelect($hierarchyLabel,$selected)
 //***************************************************************************************************
 //construit une liste de lien permettant d'éditer les valeurs des tables d'un type donné
 function buildTableList($typeTableNom)
-// $typeTable : le type de table (admin_dictionary_type_tables)
+// $typeTableNom : le type de table (admin_dictionary_type_tables)
 {
 	global $tablesDefinitions;
 	
 	$tableList='';
 	$previousDomain='';
 	foreach ($tablesDefinitions as $handle=>$table) {
-		if ($table["type_table_nom"]==$typeTableNom) {
+		if ($table["type_table_nom"]==$typeTableNom && $table["editable"]=='t') {
 		//debug
 		if ($table["domaine_nom"]!=$previousDomain) {
 			$domain='</ul><h2>'.$table["domaine_description"].'</h2>';
