@@ -474,7 +474,10 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 					$theFtableAlias=getTableAliasFromName($theFtable);
 										
 					// on teste si on doit afficher la valeur de la clé étrangère en utilisant une cascade ou pas
-					if ($tablesDefinitions[$theFtableAlias]["cascade_foreign_key"]=='t' && !my_empty($tablesDefinitions[$theFtableAlias]["selector_cascade"])) {
+					// note : cela ne s'applique pas aux tables de donnees
+					if ($tablesDefinitions[$theFtableAlias]["cascade_foreign_key"]=='t' 
+					&& !my_empty($tablesDefinitions[$theFtableAlias]["selector_cascade"]) 
+					&& $tablesDefinitions[$theFtableAlias]["type_table_nom"]!='data') {
 
 					// oui, alors on construit la valeur à afficher en utilisant les éléments de la cascade
 					// par exemple "pays/systeme/secteur" pour une valeur du secteur
@@ -517,10 +520,11 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 								$childForeignKey=$c["column_name"];
 								} // end if
 							} // end foreach $cd
+													
 						
 						
 						$sql="SELECT $thisTable.$thisPrimaryKey, $thisTable.$thisPrimaryValue FROM $thisTable, $childTable WHERE $childTable.$childForeignKey=$thisTable.$thisPrimaryKey AND $childTable.$childPrimaryKey=$childValue";
-						//debug		echo($sql);
+						
 						$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 						$resultArray=pg_fetch_all($result);
 						pg_free_result($result);									
@@ -579,6 +583,22 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 						$theFKeys=$tablesDefinitions[$theFtableAlias]["id_col"];
 						$theFValues=$tablesDefinitions[$theFtableAlias]["noms_col"];
 
+						
+						// on commence par compter le nombre de valeurs de la cle etrangere
+						// pour eviter les problemes de depassement de memmoire
+						$sqlCountFkey='SELECT count('.$theFKeys.')
+									FROM '.$theFtable.'
+									WHERE TRUE';
+						$resultCountFkey=pg_query($connectPPEAO,$sqlCountFkey) or die('erreur dans la requete : '.$sqlCountFkey. pg_last_error());
+						$countfKeys=pg_fetch_all($resultCountFkey);
+						pg_free_result($resultCountFkey);
+						// le nombre total d'enregistrements
+						$valueNumber=$countfKeys[0]["count"];
+						
+						// si le nombre total n'est pas supérieur au nombre maximal défini dans le fichier edition_config.inc
+						// alors on récupère les données pour construire le menu
+						if ($valueNumber<=$maxForeignKeyMenuLength) {
+						
 						$sqlFkey='SELECT '.$theFKeys.', '.$theFValues.'
 									FROM '.$theFtable.'
 									WHERE TRUE
@@ -586,9 +606,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 						$resultFkey=pg_query($connectPPEAO,$sqlFkey) or die('erreur dans la requete : '.$sqlFkey. pg_last_error());
 						$fKeys=pg_fetch_all($resultFkey);
 						pg_free_result($resultFkey);
-						
-						// on compte le nombre de valeurs
-						$valueNumber=count($fKeys);
+						}
 
 						if ($action=='filter')
 							{$onAction='onchange="javascript:filterTable(\''.$theUrl.'\');"';} 
@@ -882,8 +900,8 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 				switch ($theDetails["data_type"]) {
 				// les booleens
 				case 'boolean':
-				if (!my_empty($value)) {$value='f';};
-				if ($value=='t' || $value=='oui' || $value=="true") {$value='oui';} else {$value='non';};
+				if (my_empty($value)) {$value='f';};
+				if ($value=='t' || $value=='oui' || $value=="true" || $value=="TRUE") {$value='oui';} else {$value='non';};
 				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
 				break;
 				
