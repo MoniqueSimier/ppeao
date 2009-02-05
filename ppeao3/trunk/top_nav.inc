@@ -33,12 +33,6 @@ switch ($section) {
 <!-- le menu de navigation horizontal -->
 <div id="nav_container">
 	<div id="nav_menu"><a href="/index.php" class="menu<?php echo($home)?>">accueil</a><a href="/extraction/preselection.php" class="menu<?php echo($consulter)?>">consulter</a><a href="/gerer.php" class="menu <?php echo($gerer)?>">g&eacute;rer</a><a href="/apropos.php" class="menu<?php echo($sinformer)?>">s&#x27;informer</a><a href="/contact.php" class="menu<?php echo($contacter)?>">contacter</a>
-		<div id="login_block">
-			<?php 
-			// inclut le script de formulaire de login compact
-			include ($_SERVER["DOCUMENT_ROOT"].'/session/loginform_s.php');
-			?>
-		</div> <!-- end div id="login_block" -->
 	</div> <!-- end div id="nav_menu" -->
 </div> <!-- end div id="nav_container" -->
 
@@ -71,4 +65,11 @@ if ($section=='gerer') {
 }
 
 ?>
+
+<div id="login_block">
+			<?php 
+			// inclut le script de formulaire de login compact
+			include ($_SERVER["DOCUMENT_ROOT"].'/session/loginform_s.php');
+			?>
+		</div> <!-- end div id="login_block" -->
 
