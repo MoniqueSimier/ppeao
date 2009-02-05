@@ -513,9 +513,12 @@ $groupsSql='	SELECT DISTINCT group_id
 $groupsResult = pg_query($connectPPEAO,$groupsSql) or die('erreur dans la requete : '.$groupsSql. pg_last_error());
 $groupsArray=pg_fetch_all($groupsResult);
 
+// si l'utilisateur n'est pas défini comme appartenant a un groupe, on considere que c'est un visiteur (groupe 0)
+if (empty($groupsArray)) {$groupsArray=array("group_id"=>"0");}
 
 foreach($groupsArray as $group)
 	{$groupsArray2[]=$group['group_id'];}
+
 
 return $groupsArray2;
 
