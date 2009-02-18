@@ -1,0 +1,25 @@
+; Configuration Export vers base ACCESS
+; Configuration Sauvegarde base
+
+; Export ACCESS
+; Repertoire base de ref (pour les copies / zip)
+nomRepBD=export/base_ref;
+; Nom des bases de ref (nom de la connexion ODBC, meme nom que le nom du fichier physique...)
+; Peche artisanale
+nomBDRefArt=Pechart;
+; Peche experimentale
+nomBDRefExp=Exp2003_bdd;
+; Repertoire des fichiers log
+repLogAccess=log;
+; Nom fichier de log supplementaire (la date est ajoutée)
+nomFicLogSuppAc=ExportAccess.log;
+; Nom fichier de compression (le type de peche est ajoutée)
+nomFicLogCompression=Compression
+; tables a vider
+listeaViderACCESS=activImporter,CoefficientKb,ConditionPhysicoChimiq,CorrespondanceMaille,debarqImporter,engactiImporter,engpechImporter,Enqueteur,EspeceTMO,Journal,ModeCalcul,MotDePasse,NomVernaculaire,PaysFragmentation,PECHEXPcat_ecol,PECHEXPcat_troph,PECHEXPespece,PECHEXPfamille,PECHEXPnom,PECHEXPordre,PeriodeEnquete,poidsImporter,Recap,RecapCoef,SuiviExtractImport,SuiviExtractImportRec,tailleImporter,vdueauImporter;
+; tables a copier entre la base de travail et la base PPEAO de reference
+listeaViderPPEAO=Agglomeration,CategorieSocioProfessionnelle,EtatCiel,GrandTypeEngin,Milieu,TypeActivite,TypeAgglomeration,TypeEngin,TypeSortie,Vent,CategorieEcologique,Categorietrophique,CoefficientKb,Espece,Nom,Famille,Ordre,OrigineKb,Pays,Secteur,Systeme;
+; tables a copier entre la base de travail et la base ACCESS de reference
+listeTableRefACCESS=CoefficientKb,CorrespondanceMaille,debarqImporter,Enqueteur,EspeceTMO,Journal,ModeCalcul,MotDePasse,NomVernaculaire,PaysFragmentation,PeriodeEnquete,poidsImporter,SuiviExtractImport;
+; tables a copier entre la base de travail et la base PPEAO de reference
+listeTableRefPPEAO=Pays,Systeme,Secteur,CategorieEcologique,Categorietrophique,Ordre,Famille,Espece,Nom,OrigineKb,TypeAgglomeration,Agglomeration,CategorieSocioProfessionnelle,EtatCiel,GrandTypeEngin,Milieu,TypeActivite,TypeEngin,TypeSortie,Vent;
