@@ -51,7 +51,9 @@ $affichageDetail = false; // Pour afficher ou non le detail des traitements à l'
 //*****************************************
 if (!$UniqExecSQL) {
 if ($tableEnCours == "") {
-	echo "<b>Etape 1</b> : creation des tables temporaires <br/>";
+	if ($affichageDetail){
+		echo "<b>Etape 1</b> : creation des tables temporaires <br/>";
+	}
 	$CRexecution = "<b>Creation des tables temporaires</b> <br/>";
 	// on ne le fait qu'une fois...
 	set_time_limit(180);
@@ -98,7 +100,9 @@ if ($tableEnCours == "") {
 	";
 	$createTableResult = pg_query(${$BDSource},$createTableSql);
 	if ($createTableResult == false ) {
-		echo "creation temp_recomp_id complete <br/>";
+		if ($affichageDetail){
+			echo "creation temp_recomp_id complete <br/>";
+		}
 		$createTableSql = "
 		CREATE TABLE temp_recomp_id (
 		nomTable character varying(30) NOT NULL,  
@@ -464,7 +468,9 @@ if ($typeAction == "majrec" && $tableEnCours == "" && !$UniqExecSQL ) {
 	if (pg_num_rows($majDateResult) == 0) {
 		if ($EcrireLogComp ) { WriteCompLog ($logComp,"Erreur lors evaluation date",$pasdefichier);}
 	} else {
-		echo "date en cours eval<br/>";
+		if ($affichageDetail){
+			echo "date en cours eval<br/>";
+		}
 		while ($majDateRow = pg_fetch_row($majDateResult) ) {
 			// On balaye toutes les enquetes de peche artisanales à intégrer
 			// On recupere le min et le max des dates pour mises à jour
@@ -524,7 +530,9 @@ if (! $cptErreurTotal == 0) {
 }
 $cptTableEq = 0;
 $cptTableTotal = 0;
-echo "<b>Etape 2</b> : creation des SQL <br/>";
+if ($affichageDetail){
+	echo "<b>Etape 2</b> : creation des SQL <br/>";
+}
 $CRexecution .="<b>Creation des SQL</b> <br/>";
 // On récupère toutes les tables à mettre à jour
 set_time_limit(ini_get('max_execution_time')); // on remet le timer normal
@@ -566,8 +574,9 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 			echo "lecture table :".$debugTimer."<br/>";
 		}
 		if ($EcrireLogComp ) { WriteCompLog ($logComp,"Creation SQL pour ".$tableMajID[$cptID],$pasdefichier);}
-
-		echo $cptID." / ".$nbtableMajID." Creation SQL table en cours = ".$tableMajID[$cptID]."<br/>";
+		if ($affichageDetail){
+			echo $cptID." / ".$nbtableMajID." Creation SQL table en cours = ".$tableMajID[$cptID]."<br/>";
+		}
 		//Pour gestion timeout, la valeur de la table en cours
 		$tableEnLecture = $tableMajID[$cptID];
 		// Compteur 

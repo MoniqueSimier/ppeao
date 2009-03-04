@@ -17,14 +17,17 @@ $cpt=0;
 $tempType = "";
 $nomAction = "Exec. SQL pour ".$nomAction;
 $pasDeSQL = true;
+$affichageDetail = false; // Pour afficher ou non le detail des traitements à l'écran
+
 //****************************************************
 // Traitement
 // Etape 1 : générer les correspondances d'ID pour toutes les tables à importer
 // On ne se pose pas la question de savoir si la table existe ou non.. On le testera apres
 //****************************************************
 
-
-echo "<b>Etape 3</b> : execution des SQL <br/>";
+if ($affichageDetail){
+	echo "<b>Etape 3</b> : execution des SQL <br/>";
+}
 $CRexecution .="<b>Execution des SQL</b> <br/>";
 // On récupère toutes les tables à mettre à jour
 if (!$finmajDP) { // on ne lance pas le timer si on sort directement de majDonneesPeches.sql
@@ -66,7 +69,9 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 			$debugTimer = number_format(timer()-$start_while,4);
 			echo "Exec SQL lecture table :".$debugTimer."<br/>";
 		}
-		echo $cptID." / ".$nbtableMajID." Execution SQL table en cours = ".$tableMajID[$cptID]." <br/>";
+		if ($affichageDetail){
+			echo $cptID." / ".$nbtableMajID." Execution SQL table en cours = ".$tableMajID[$cptID]." <br/>";
+		}
 		if ($EcrireLogComp ) { WriteCompLog ($logComp,"Exec SQL pour ".$tableMajID[$cptID],$pasdefichier);}
 
 		//Pour gestion timeout, la valeur de la table en cours
@@ -151,7 +156,9 @@ for ($cptID = 0; $cptID <= $nbtableMajID; $cptID++) {
 				if ($ourtime >= ceil(0.9*$max_time)) {
 					$delai=number_format(timer() - $start_while,7);
 					$ArretTimeOut =true;
-					echo "timeout table en lecture = ".$tableEnLecture." id en lecture = ".$IDEnLecture."<br/>";
+					if ($affichageDetail){
+						echo "timeout table en lecture = ".$tableEnLecture." id en lecture = ".$IDEnLecture."<br/>";
+					}
 					break;
 				}
 				if ($testTtypeIDChar === false) {
