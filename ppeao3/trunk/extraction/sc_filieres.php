@@ -1396,12 +1396,13 @@ print ("<div id=\"affFic\"><br><br><br>");
 
 print ("<br>La sélection représente ".($nombre_ligne -1)." lignes dans le fichier de sortie.
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
-//print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/temp_selection_globale.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
-//print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_globale.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+// correction JME en 03 2009 insertion .$hostname pour adresser l'exportation
 // Ajout variable chemin
-$pathtar = "https://devppeao.mpl.ird.fr/extraction"; // Production
-$pathtar = $_SERVER["DOCUMENT_ROOT"]."/extraction";//test windows YL
+$pathtar = "http://".$hostname."/extraction"; 
+//$pathtar = "https://devppeao.mpl.ird.fr/extraction"; // Production
+//$pathtar = $_SERVER["DOCUMENT_ROOT"]."/extraction";//test windows YL
 if ($choix==" Peuplement ")print ("<br><br><a href=\"".$pathtar."/selection_peupl.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 else if ($choix == "Environnement")print ("<br><br><a href=\"".$pathtar."/selection_envir.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 else if ($choix == "    NT, PT    ")print ("<br><br><a href=\"".$pathtar."/selection_nt_pt.txt.gz\"<b>Enregistrement du fichier texte</b></a>");

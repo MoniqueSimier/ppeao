@@ -12,7 +12,10 @@ include_once("../connect.inc");
 $connection = pg_connect ("host=".$host." dbname=".$db_default." user=".$user." password=".$passwd);
 if (!$connection) { echo "Pas de connection"; exit;}
 
-
+/*
+Correction 03 2009 de l'adressage relatif des fichiers d'exportation
+JME
+*/
 
 
 
@@ -499,7 +502,12 @@ print ("<div align='center'><br><br><br>Le fichier texte contenant les résultats
 print ("<br>Celui ci comporte ".($nombre_ligne-1)." lignes.
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 
-print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/temp_selection_activ.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+// correction JME en 03 2009 insertion .$hostname pour adresser l'exportation
+// Ajout variable chemin
+$pathtar = "http://".$hostname."/extraction"; 
+print ("<br><br><a href=\"".$pathtar."/selection_activ.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+//print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/temp_selection_activ.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 //print ("<br><br><a href=\"https://localhost/extraction/selection_activ.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 ?>
@@ -1042,7 +1050,12 @@ print ("<div align='center'><br><br><br>");
 print ("<br>La sélection représente ".($nombre_ligne -1)." lignes dans le fichier de sortie.
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 
-print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/selection_captu.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+// correction JME en 03 2009 insertion .$hostname pour adresser l'exportation
+// Ajout variable chemin
+$pathtar = "http://".$hostname."/extraction"; 
+print ("<br><br><a href=\"".$pathtar."/selection_captu.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+//print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/selection_captu.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 //print ("<br><br><a href=\"https://localhost/extraction/selection_captu.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
@@ -1922,8 +1935,13 @@ print ("<div align='center'><br><br><br>");
 print ("<br>La sélection représente ".($nombre_ligne -1)." lignes dans le fichier de sortie.
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 
+// correction JME en 03 2009 insertion .$hostname pour adresser l'exportation
+// Ajout variable chemin
+$pathtar = "http://".$hostname."/extraction"; 
+print ("<br><br><a href=\"".$pathtar."/selection_Fdbq.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
 //print ("<br><br><a href=\"https://localhost/extraction/selection_Fdbq.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
-print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/selection_Fdbq.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+//print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/selection_Fdbq.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
 
@@ -2792,7 +2810,12 @@ print ("<div align='center'><br><br>");
 print ("<br>La sélection représente ".($nombre_ligne -1)." lignes dans le fichier de sortie.
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 
-print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/selection_taille.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+// correction JME en 03 2009 insertion .$hostname pour adresser l'exportation
+// Ajout variable chemin
+$pathtar = "http://".$hostname."/extraction"; 
+print ("<br><br><a href=\"".$pathtar."/selection_taille.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+//print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/selection_taille.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 //print ("<br><br><a href=\"https://localhost/extraction/selection_taille.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
@@ -3211,7 +3234,12 @@ print ("<div align='center'><br>");
 print ("<br>La sélection représente ".($nombre_ligne -1)." lignes dans le fichier de sortie.
 <br>Vous devez sauvegarder ce fichier sur votre ordinateur pour ne pas perdre la sélection en cours.<br>Cliquez sur le lien pour l'enregistrement.");
 
-print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/temp_selection_engin.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+// correction JME en 03 2009 insertion .$hostname pour adresser l'exportation
+// Ajout variable chemin
+$pathtar = "http://".$hostname."/extraction"; 
+print ("<br><br><a href=\"".$pathtar."/selection_engin.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+//print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/temp_selection_engin.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 //print ("<br><br><a href=\"https://localhost/extraction/selection_engin.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
