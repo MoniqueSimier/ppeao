@@ -202,12 +202,14 @@
 		logWriteTo(7,"notice","Interruption gestion timeout pour la table ".$tableEnLecture." et Id = ".$IDEnLecture,"","","0");
 		// test
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/dep.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Table ".$tableEnLecture." (".$_SESSION['s_cpt_table_total']." sur ".$NbrTableAlire." ) / enreg. ".$cptChampTotal." sur ".$totalLignes." <br/>".$nomAction." en cours </div>";
+		echo"</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+		echo"<div id=\"vertical_slide".$numFen."\">";
 		echo "<form id=\"formtest\"> 
 		<input id=\"nomtable\" 	type=\"hidden\" value=\"".$tableEnLecture."\"/>
 		<input id=\"numID\" 	type=\"hidden\" value=\"".$IDEnLecture."\"/>
 		<input id=\"numproc\" 	type=\"hidden\" value=\"".$numProcess."\"/>
 		<input id=\"execsql\" 	type=\"hidden\" value=\"".$ExecSQL."\"/>
-		</form>";
+		</form></div>";
 	}
 
 ?>

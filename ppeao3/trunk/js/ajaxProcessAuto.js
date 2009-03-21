@@ -209,7 +209,7 @@ function runClean(locURL)
 	} else {
 		addURL = "&"+locURL;
 	}
-	xmlHttp.open("GET","/process_auto/purgeTable.php?exec="+purgeExec+addURL,true);
+	xmlHttp.open("GET","/process_auto/purgeTable.php?exec="+purgeExec+"&log="+checkLog+addURL,true);
 	xmlHttp.send(null);
 }
 

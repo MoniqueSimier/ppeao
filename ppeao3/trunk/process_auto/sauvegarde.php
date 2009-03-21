@@ -19,7 +19,7 @@
 // Mettre les noms des fichiers dans un fichier texte
 session_start();
 $_SESSION['s_status_process_auto'] = 'ok';
-set_time_limit(120);
+set_time_limit(0);
 // Variable de test (en fonctionnement production, les deux variables sont false)
 $pasdetraitement = true;
 $pasdefichier = false; // Variable de test pour linux. Meme valeur que dans comparaison.php
@@ -158,7 +158,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Etape de sauvegarde non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"sauvegarde_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 	logWriteTo(7,"error","**- En Test Etape de sauvegarde non executee par choix de l'utilisateur","","","0");
 } // fin du if (! $pasdetraitement )
-
+set_time_limit(ini_get('max_execution_time')); // on remet le timer normal
 if (!$backupPortCree || !$backupRefCree) {
 	if ($backupRefCree) {
 	// Ca veut dire que le process de création de la base de sauvegarde pour le portage a echoué
