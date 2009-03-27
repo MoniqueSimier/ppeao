@@ -138,6 +138,10 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			break;
 	} 
 	// Lancement de l'étape de calcul statistique
+	// Pour renvoyer au javascript l'etat du traitement
+	echo "<form id=\"formtrt\"> 
+		<input id=\"trtok".$numFen."\" 	type=\"hidden\" value=\"".$_SESSION['s_status_process_auto']."\"/>
+		</form>";
 	if ($traitRecompOk) {
 		// Traitement OK
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Processus ".$nomAction." ex&eacute;cut&eacute; avec succ&egrave;s : </div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>";	

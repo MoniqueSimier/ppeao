@@ -1,5 +1,6 @@
 <?php 
 	if (!$ArretTimeOut) {
+
 	// ***************************
 	// modification du CR pour l'integration dans un email
 	$CRfichier = str_replace("<br/>","\r\n",$CRexecution);
@@ -15,7 +16,10 @@
 			} else {
 				$_SESSION['s_status_restauration'] = "yes";
 			}
-		}	
+		}
+		echo "<form id=\"formtrt\"> 
+			<input id=\"trtok".$numFen."\" type=\"hidden\" value=\"".$_SESSION['s_status_process_auto']."\"/>
+			</form>";	
 		// On met à jour la table des logs avec les données
 		logWriteTo(7,"notice","**- Compte rendu traitement ".$nomAction,"","","0");
 		logWriteTo(7,"notice","*-- Nombre total de tables lues = ".$_SESSION['s_cpt_table_total'],$_SESSION['s_cpt_table_total'],"","0");

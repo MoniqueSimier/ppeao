@@ -1,3 +1,6 @@
+// Javascript qui gère l'enchainement des scripts php lors du portage
+// Permet notamment de gérer les timeout.
+
 var xmlHttp
 var fenID
 var numProcess = 1
@@ -22,9 +25,13 @@ var majrecExec = true;	// Copie données recomposées
 var recExec = true;		// Exécution recompistion données
 var statExec = true;	// Exécution calcul stats
 var purgeExec = true;	// Exécution purge
+// Variables complementaires
+var trtok = "ok";		// Etat de l'execution du traitement
 
 function runProcess()
 {
+	// Premiere fonction initialise la fenetre générale
+	// lance la sauvegarde
 	// On récupère les valeurs des différents paramètres entrée
 	adresse = document.getElementById("adresse").value;
 	DBname = document.getElementById("BDName").value;
@@ -61,7 +68,10 @@ function runProcess()
 
 function runProcessNext(phpProcess,locFenID,locURL,locTexte)
 {
-	
+	// Fonction générique qui permet d'enchainer les executions de scripts php
+	// Recupere le nom du script et les paramétres a envoyer dans l'url
+	// Commence par afficher l'image gif qui indique le traitement en cours pour cette action
+	// Puis execute le script php
 	fenID = locFenID;
 	fenIDImg = locFenID+"_img";
 	fenIDText = locFenID+"_txt";
@@ -88,7 +98,10 @@ function runProcessNext(phpProcess,locFenID,locURL,locTexte)
 
 function runProcessEnd()
 {
+	// Fonction qui lance la derniere action = purge des tables
 	
+	// Recuperation de l'etat d'execution de la précedente action si elle a ete lancee.
+	if (majrecExec && trtok=="ok") { trtok = document.getElementById("trtok7").value;}
 	fenID = "portageOK";
 	fenIDImg = fenID+"_img";
 	fenIDText = fenID+"_txt";
@@ -126,37 +139,47 @@ function stateChanged1()
 		switch(numProcess)
 		{
 			case 1:
-
+				// Recuperation de l'etat d'execution de la précedente action si elle a ete lancee.
+				if (svgExec && trtok=="ok") { trtok = document.getElementById("trtok1").value;}
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "comparaison" ;
 				nomURL = "action=comp&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+compExec+"&adresse="+adresse;
 				texte = "Comparaison du referentiel / parametrage de reference en cours...";
 			  break;    
 			case 2:
+				// Recuperation de l'etat d'execution de la précedente action si elle a ete lancee.
+				if (compExec && trtok=="ok") { trtok = document.getElementById("trtok2").value;}
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "comparaisonInv" ;
 				nomURL = "action=compinv&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+compInvExec+"&adresse="+adresse;
 				texte = "Comparaison du parametrage de BDPECHE en cours...";
 			  break;
 			case 3:
+				// Recuperation de l'etat d'execution de la précedente action si elle a ete lancee.
+				if (compInvExec && trtok=="ok") { trtok = document.getElementById("trtok3").value;}
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "copieScientifique" ;
 				nomURL = "action=majsc&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+majscExec+"&adresse="+adresse;
 				texte = "Copie des donn&eacute;es scientifiques en cours...";
 			  break;
 			case 4:
+				if (majscExec && trtok=="ok") { trtok = document.getElementById("trtok4").value;}
 				progPhp = "/process_auto/processAuto.php" ;
 				nomFen = "processAutoRec" ;
 				nomURL = "base="+DBname+"&nb_enr="+nbEnreg+"&adresse="+adresse+"&numproc="+numProcess+"&pg=rec&exec="+recExec;
 				texte = "Recomposition automatique des données en cours ...";
 			  break;
 			case 5:
+				// Recuperation de l'etat d'execution de la précedente action si elle a ete lancee.
+				if (recExec && trtok=="ok") { trtok = document.getElementById("trtok5").value;}
 				progPhp = "/process_auto/processAuto.php" ;
 				nomFen = "processAutoStat" ;
 				nomURL = "base="+DBname+"&nb_enr="+nbEnreg+"&adresse="+adresse+"&numproc="+numProcess+"&pg=stat&exec="+statExec;
 				texte = "Calcul statistique automatique des données en cours ...";
 			  break;
 			case 6:
+				// Recuperation de l'etat d'execution de la précedente action si elle a ete lancee.
+				if (statExec && trtok=="ok") { trtok = document.getElementById("trtok6").value;}
 				progPhp = "/process_auto/comparaison.php" ;
 				nomFen = "copieRecomp" ;
 				nomURL = "action=majrec&log="+checkLog+"&numproc="+numProcess+URLSupp+"&exec="+majrecExec+"&adresse="+adresse;
@@ -197,6 +220,7 @@ function runClean(locURL)
 	fenIDText = fenID+"_txt";
 	document.getElementById(fenIDImg).innerHTML="<img src='/assets/ajax-loader_32px.gif' alt=''/>";
 	document.getElementById(fenIDText).innerHTML="Purge en cours";
+
 	xmlHttp=GetXmlHttpObject();
 	if (xmlHttp==null)
 	  {
@@ -209,7 +233,19 @@ function runClean(locURL)
 	} else {
 		addURL = "&"+locURL;
 	}
-	xmlHttp.open("GET","/process_auto/purgeTable.php?exec="+purgeExec+"&log="+checkLog+addURL,true);
+	// Message d'avertissement : si tout s'est bien passe, est-ce que l'utilisateur veut quand meme annuler l'execution
+	// de l'action de vider les tables.
+	if (trtok =="ok") {
+		var msg = "Le traitement s'est bien passé. Voulez-vous vider les tables? (oui = ok non = annuler)";
+		if (confirm(msg)) {
+			delTable = "yes";	
+		} else {
+			delTable = "no";
+		} 
+	} else {
+		delTable = "no";	
+	}
+	xmlHttp.open("GET","/process_auto/purgeTable.php?exec="+purgeExec+"&videT="+delTable+"&log="+checkLog+addURL,true);
 	xmlHttp.send(null);
 }
 

@@ -17,9 +17,8 @@
 session_start();
 
 // Pour test !
-//$_SESSION['s_status_process_auto'] = 'ko' ;
-//$_SESSION['s_status_restauration'] = "no";
-
+$_SESSION['s_status_process_auto'] = 'ko' ;
+$_SESSION['s_status_restauration'] = "yes";
 // Variable de test (en fonctionnement production, les deux variables sont false)
 $pasdetraitement = true;
 $pasdefichier = false; // Variable de test pour linux. Meme valeur que dans comparaison.php
@@ -67,6 +66,15 @@ if (isset($_GET['log'])) {
 		$EcrireLogComp = true;
 	}
 }
+if (isset($_GET['videT'])) {
+
+	if ($_GET['videT'] == "no") {
+		$viderTable = false;// Est-ce que l'utilisateur veut vider les tables ?
+	} else {
+		$viderTable = true;
+	}
+}
+
 $dirLog = GetParam("repLogAuto",$PathFicConf);
 $nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
 $dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
@@ -90,7 +98,7 @@ $max_time = ini_get('max_execution_time');
 // 30 secondes par défaut:
 if ($max_time == '') $max_time = 60;
 // pour test
-$max_time = 30;
+//$max_time = 30;
 // on prend 10% du temps maximal comme marge de sécurité
 $ourtime = ceil(0.9*$max_time);
 // fin test
@@ -105,6 +113,7 @@ logWriteTo(7,"notice","**- Debut lancement purge base portage automatique.","","
 
 // Paramètres  de sauvegarde
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
+
 	logWriteTo(7,"notice","**- Debut lancement purge table (portage automatique)","","","0");
 	if ($EcrireLogComp ) {
 		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
@@ -125,9 +134,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	// **********************************************************
 	if (isset($_SESSION['s_status_process_auto'])) { // Devrait toujours etre vrai mais bon....
 		$BDBackup = GetParam("backupNomBD",$PathFicConf);
-		$BDBackupPortage = $BDBackup."Portage";
+		$BDBackupPortage = $BDBackup."portage";
 		if ($_SESSION['s_status_process_auto'] == 'ko' && $_SESSION['s_status_restauration'] == "yes") {
-			$CRexecution = "Lancement de la restauration des bases.<br/>";
+			$CRexecution .= "Lancement de la restauration des bases.<br/>";
 			if ($EcrireLogComp ) {
 				WriteCompLog ($logComp,"Lancement de la restauration des bases.",$pasdefichier);
 			}
@@ -137,6 +146,17 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			if (! $ErreurProcess) {
 				$connectBDPECHE =pg_connect ("host=".$host." dbname=".$bd_peche." user=".$user." password=".$passwd);
 				$ErreurProcess = RestoreBD($CRexecution,$connectBDPECHE,$bd_peche,$BDBackupPortage,$hostname,$username,$password,$port);
+				if ($EcrireLogComp ) {
+					if (! $ErreurProcess) {
+						WriteCompLog ($logComp,"Restauration des bases effectuees avec succes.",$pasdefichier);
+					} else {
+						WriteCompLog ($logComp,"Erreur dans l'etape 2 de la restauration des bases.",$pasdefichier);
+					}
+				}
+			} else {
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp,"Erreur dans l'etape 1 de la restauration des bases.",$pasdefichier);
+				}
 			}
 		
 		} else {
@@ -146,30 +166,39 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$createBDSQL = "drop database ".$BDBackup;
 			$createBDResult = pg_query($connectPPEAO,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
 			if ($createBDResult) {
-				$CRexecution = "Base de sauvegarde ".$BDBackup." supprim&eacute;e.<br/>";
-				logWriteTo(7,"notice","Base de sauvegarde ".$BDBackup." supprimee.","","","0");
+				$CRexecution .= "Base de sauvegarde ".$BDBackup." supprim&eacute;e.<br/>";
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp,"Base de sauvegarde ".$BDBackup." supprimee.",$pasdefichier);
+				}
+				
 			} else {
-				$CRexecution = "Erreur suppression ".$BDBackup.".<br/>";
-				logWriteTo(7,"error","erreur suppression de la base de donnee de sauvegarde ".$BDBackup,"","","0");
+				$CRexecution .= "Erreur suppression ".$BDBackup.".<br/>";
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp,"erreur suppression de la base de donnee de sauvegarde ".$BDBackup,$pasdefichier);
+				}
 			}
 			$connectBDPECHE =pg_connect ("host=".$host." dbname=".$bd_peche." user=".$user." password=".$passwd);
 			$createBDSQL = "drop database ".$BDBackupPortage;
 			$createBDResult = pg_query($connectBDPECHE,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
 			if ($createBDResult) {
 				$CRexecution .= "Base de sauvegarde ".$BDBackupPortage." supprim&eacute;e.<br/>";
-				logWriteTo(7,"notice","Base de sauvegarde ".$BDBackupPortage." supprimee.","","","0");
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp,"Base de sauvegarde ".$BDBackupPortage." supprimee.",$pasdefichier);
+				}
 			} else {
 				$CRexecution .= "Erreur suppression ".$BDBackupPortage.".<br/>";
-				logWriteTo(7,"error","erreur suppression de la base de donnee de sauvegarde ".$BDBackupPortage,"","","0");
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp,"erreur suppression de la base de donnee de sauvegarde ".$BDBackupPortage,$pasdefichier);
+				}
 			}
-		
-			// Etape 2 de la purge : nettoyage des fichiers de paramétrage et de référence dans la base bdpeche
-			// **********************************************************
-			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp,"Lancement purge base portage.",$pasdefichier);
-			}
-			$ListeTableAVider = GetParam("listeTableAViderParam",$PathFicConf); 
-			if ($_SESSION['s_status_process_auto'] == 'ok') {
+			if ($viderTable && $_SESSION['s_status_process_auto'] == 'ok') {
+				// Etape 2 de la purge : nettoyage des fichiers de paramétrage et de référence dans la base bdpeche
+				// **********************************************************
+				
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp,"Lancement purge base portage.",$pasdefichier);
+				}
+				$ListeTableAVider = GetParam("listeTableAViderParam",$PathFicConf); 
 				//$ListeTableAVider = ""; // TEST a recuperer du fichier sinon
 				$tables = explode(",",$ListeTableAVider);
 				$nbTables = count($tables) - 1;
@@ -180,17 +209,17 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				// Etape 1 on enleve les contraintes sur les tables
 				for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
 					$scriptDelete = "ALTER TABLE ".$tables[$cpt]." DISABLE TRIGGER ALL; ";
-						$RunQErreur = runQuery($scriptDelete,$connectBDPECHE);
-						if ( $RunQErreur){
-							
-						} else {
-							$ErreurProcess = true;
-							if ($EcrireLogComp ) {
+					$RunQErreur = runQuery($scriptDelete,$connectBDPECHE);
+					if ( $RunQErreur){
+						
+					} else {
+						$ErreurProcess = true;
+						if ($EcrireLogComp ) {
 							WriteCompLog ($logComp,"Erreur suppression Trigger ".$tables[$cpt],$pasdefichier);
-		}
-							if ($affichageDetail) {
-								$CRexecution = $CRexecution."Erreur suppression Trigger ".$tables[$cpt]." <br/> "; }
 						}
+						if ($affichageDetail) {
+							$CRexecution .= $CRexecution."Erreur suppression Trigger ".$tables[$cpt]." <br/> "; }
+					}
 				}
 				// Etape 2: on vide les tables
 				for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
@@ -212,14 +241,14 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 								WriteCompLog ($logComp,$tables[$cpt]." videe ",$pasdefichier);
 							}
 							if ($affichageDetail) {
-								$CRexecution = $CRexecution." ".$tables[$cpt]." videe <br/> "; }
+								$CRexecution .= $CRexecution." ".$tables[$cpt]." videe <br/> "; }
 							
 						} else {
 							if ($EcrireLogComp ) {
 								WriteCompLog ($logComp,"Erreur vidage ".$tables[$cpt],$pasdefichier);
 							}
 							if ($affichageDetail) {
-								$CRexecution = $CRexecution." Erreur vidage ".$tables[$cpt]." <br/> "; 
+								$CRexecution .= $CRexecution." Erreur vidage ".$tables[$cpt]." <br/> "; 
 							}
 							$ErreurProcess = true;
 							
@@ -238,15 +267,23 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 							WriteCompLog ($logComp,"Erreur rajout Trigger ".$tables[$cpt],$pasdefichier);
 						}
 						if ($affichageDetail) {
-							$CRexecution = $CRexecution."Erreur rajout Trigger ".$tables[$cpt]." <br/> "; 
+							$CRexecution .= $CRexecution."Erreur rajout Trigger ".$tables[$cpt]." <br/> "; 
 						}
 					}
-				}	
+				}
+				if ($ErreurProcess) {
+					$CRexecution .= $CRexecution."Erreur dans le vidage des tables de la base de portage.";	
+				} else {
+					$CRexecution .= $CRexecution."Les tables de la base de portage ont été vidées avec succès.";
+				}
 			} else {
-				//Lecompte rendu est temporaire car ici systematiquement le process est mis en erreur pour eviter les purges
-				//$CRexecution = $CRexecution."Le process etait en erreur, on ne purge pas la base portage.<br/>";
-				$CRexecution = $CRexecution."Pas de purge car portage pas encore valid&eacute;.<br/>";
-			} // fin du if ($_SESSION['s_status_process_auto'] == 'ok')
+				// Customisation du message d'erreur
+				if ($_SESSION['s_status_process_auto'] == 'ko') {
+					$CRexecution .= $CRexecution."Le process etait en erreur, on ne purge pas la base portage.<br/>";
+				} else {
+					$CRexecution .= $CRexecution."L'utilisateur a choisi de ne pas vider les table";
+				}
+			} 	//fin du if ($viderTable && ...)  
 		} //fin du if ($_SESSION['s_status_process_auto'] == 'ko' && $_SESSION['s_status_restauration'] == "yes"))
 	} // fin du if (isset($_SESSION['s_status_process_auto']))
 	
@@ -264,7 +301,12 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Nettoyage ex&eacute;cut&eacute; avec succ&egrave;s.</div><div id=\"purge_chk\">Exec= ".$Labelpasdetraitement."</div>";
 			echo"<div id=\"vertical_slide8\">Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : <a href=\"".$nomLogLien."\" target=\"log\">".$nomLogLien."</a><br/>".$CRexecution."</div>"; 
 		}
-	
+		
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
+			WriteCompLog ($logComp,"*- FIN TRAITEMENT purge table ",$pasdefichier);
+			WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
+		}	
 	} else { // End for statement ($ArretTimeOut)
 	// Le traitement est relancé pour cause de timeout, on met a jour le(s) log(s)
 		if ($EcrireLogComp ) {
@@ -277,12 +319,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		<input id=\"nomtable\" 	type=\"hidden\" value=\"".$tableEnLecture."\"/>
 		</form>";
 	}
-		if ($EcrireLogComp ) {
-			WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
-			WriteCompLog ($logComp,"*- FIN TRAITEMENT ",$pasdefichier);
-			WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
-			logWriteTo(7,"notice","*-- Log plus complet disponible dans <a href=\"".$nomLogLien."\" target=\"log\">".$nomFicLogComp."</a>","","","0");
-		}	
+	
 } else {
 	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Etape de purge non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>";
 	logWriteTo(7,"error","**- Etape de purge non executee par choix de l'utilisateur","","","0");

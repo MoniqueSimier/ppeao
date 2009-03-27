@@ -153,7 +153,10 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				echo"<div id=\"vertical_slide1\">".$messageGen."</div>";
 
 	} // fin du if ($continueDump)
-
+	echo "<form id=\"formtrt\"> 
+		<input id=\"trtok1\" 	type=\"hidden\" value=\"".$_SESSION['s_status_process_auto']."\"/>
+		</form>";
+		
 } else { // else du if (! $pasdetraitement )
 	echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Etape de sauvegarde non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"sauvegarde_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 	logWriteTo(7,"error","**- En Test Etape de sauvegarde non executee par choix de l'utilisateur","","","0");

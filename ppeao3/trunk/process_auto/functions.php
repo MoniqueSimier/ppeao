@@ -450,7 +450,7 @@ function RestoreBD($CRexecution,$connectRestaure,$baseRestaure,$baseBackup,$host
 //*********************************************************************
 	$ErreurProcess = false;
 
-	set_time_limit(240);
+	set_time_limit(0);
 	// On attend un peu pour eviter les blocages sur les bases a copier...
 	// Le create database with template est assez sensible aux locks et aux transactions
 	// encore en cours sur la base a copier (le create with template n'est pas forcement
@@ -525,7 +525,5 @@ function RestoreBD($CRexecution,$connectRestaure,$baseRestaure,$baseBackup,$host
 return $ErreurProcess;
 
 }
-
-
 
 ?>
