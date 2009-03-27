@@ -1,1 +1,1 @@
-<div id="version">Version 2.1 du 25 octobre 2008</div>
+<div id="version"></div>
