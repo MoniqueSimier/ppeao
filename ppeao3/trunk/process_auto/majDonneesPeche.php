@@ -57,8 +57,6 @@ if ($tableEnCours == "") {
 	$CRexecution = "<b>Creation des tables temporaires</b> <br/>";
 	// on ne le fait qu'une fois...
 	set_time_limit(0);
-	// Faire un vaccuum avant !
-	
 	// Creation d'une table temporaire sur la BD pour accelerer les acces vu la quantite de données potentielles a renomer
 	$lev=error_reporting (8); //Pour eviter les avertissements si la base n'existe pas.
 	$createTableSql = "

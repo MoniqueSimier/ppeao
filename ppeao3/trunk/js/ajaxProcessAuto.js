@@ -59,7 +59,7 @@ function runProcess()
 	  	alert ("Your browser does not support AJAX!");
 	  	return;
 	  } 
-	var url="/process_auto/sauvegarde.php?exec="+svgExec;
+	var url="/process_auto/sauvegarde.php?exec="+svgExec+"&log="+checkLog;
 	fenID = "sauvegarde";
 	xmlHttp.onreadystatechange=stateChanged1;
 	xmlHttp.open("GET",url,true);

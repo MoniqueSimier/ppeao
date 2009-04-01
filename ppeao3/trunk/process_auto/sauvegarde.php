@@ -23,7 +23,8 @@ set_time_limit(0);
 // Variable de test (en fonctionnement production, les deux variables sont false)
 $pasdetraitement = true;
 $pasdefichier = false; // Variable de test pour linux. Meme valeur que dans comparaison.php
-
+$ErreurProcess = false ; // Flag pour le succes du traitement
+$CRexecution = ""; // compte rendu de traitement
 // Include standard
 include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
@@ -41,9 +42,16 @@ if (isset($_GET['exec'])) {
 		$Labelpasdetraitement ="oui";
 	}
 } 
+if (isset($_GET['log'])) {
 
+	if ($_GET['log'] == "false") {
+		$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
+	} else {
+		$EcrireLogComp = true;
+	}
+}
 // Recuperation des parametres (nom repertoire, nom fichiers etc..) depuis le fichier de parametres
-$dirLog = GetParam("backupNomBD",$PathFicConf);
+$dirLog = GetParam("repLogAuto",$PathFicConf);
 $dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
 // Variables pour la sauvegarde de la base de reference (PPEAO)
 $BDsource = $base_principale;// 
@@ -51,6 +59,23 @@ $BDBackup = GetParam("backupNomBD",$PathFicConf);
 // Variables pour la sauvegarde de la base de reference (BDPECHE)
 $BDsourcePortage = $bd_peche;// 
 $BDBackupPortage = $BDBackup."portage";
+
+$nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
+$fileLogComp = GetParam("nomFicLogSupp",$PathFicConf);
+//	Controle fichiers
+//	Resultat de la comparaison
+if ($EcrireLogComp ) {
+	$nomFicLogComp = $dirLog."/".date('y\-m\-d')."-".$fileLogComp;
+	$nomLogLien = $nomLogLien."/".date('y\-m\-d')."-".$fileLogComp;
+	$logComp = fopen($nomFicLogComp , "a+");
+	if (! $logComp ) {
+		$CRexecution = " erreur de cr&eacute;ation du fichier de log";
+		logWriteTo(7,"error","Erreur de creation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php","","","0");
+		echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">ERREUR .".$CRexecution."</div>" ;
+		exit;		
+	}
+}
+
 
 // Flags pour savoir si on a cree les backups pour savoir si on doit supprimer une base (un des process en erreur)
 $backupRefCree = false;
@@ -68,6 +93,79 @@ logWriteTo(7,"notice","**- Debut lancement sauvegarde portage automatique.","","
 
 // Paramètres  de sauvegarde
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
+		WriteCompLog ($logComp, "*- DEBUT lancement sauvegarde (portage automatique)",$pasdefichier);
+		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
+	}
+	// ajout demande JME pour purge des tables sys_ (tables import sinthi)
+	// Connexion à la BD pour maj des logs
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp,"Lancement purge tables sys_.",$pasdefichier);
+	}
+	$connectBDPECHE =pg_connect ("host=".$host." dbname=".$bd_peche." user=".$user." password=".$passwd);
+	if (!$connectBDPECHE) { 
+		echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Erreur de connexion a la base de donn&eacute;es ".$bd_peche."</div>" ; 
+		exit;
+	}
+	$ListeTableAVider = "sys_activites_a_migrer,sys_campagnes_a_migrer,sys_debarquements_a_migrer,sys_periodes_enquete"; 
+	//$ListeTableAVider = ""; // TEST a recuperer du fichier sinon
+	$tables = explode(",",$ListeTableAVider);
+	$nbTables = count($tables) - 1;
+	// Début du traitement de suppression par table.
+	// *********************************************
+	// Etape 1 on enleve les contraintes sur les tables
+	for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
+		$scriptDelete = "ALTER TABLE ".$tables[$cpt]." DISABLE TRIGGER ALL; ";
+		$RunQErreur = runQuery($scriptDelete,$connectBDPECHE);
+		if ( $RunQErreur){
+			
+		} else {
+			$ErreurProcess = true;
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp,"Erreur suppression Trigger ".$tables[$cpt],$pasdefichier);
+			}
+		}
+	}
+	// Etape 2: on vide les tables
+	for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
+		$scriptDelete = "delete from ".$tables[$cpt];
+		$RunQErreur = runQuery($scriptDelete,$connectBDPECHE);
+		if ( $RunQErreur){
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp,$tables[$cpt]." videe ",$pasdefichier);
+			}
+		} else {
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp,"Erreur vidage ".$tables[$cpt],$pasdefichier);
+			}
+			$ErreurProcess = true;
+			
+		} //fin du if ( $RunQErreur)
+	}
+	// Etape 3 on rajoute les contraintes sur les tables
+	for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
+		$scriptDelete = "ALTER TABLE ".$tables[$cpt]." ENABLE TRIGGER ALL; ";
+		$RunQErreur = runQuery($scriptDelete,$connectBDPECHE);
+		if ( $RunQErreur){
+			
+		} else {
+			$ErreurProcess = true;
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp,"Erreur rajout Trigger ".$tables[$cpt],$pasdefichier);
+			}
+		}
+	}
+	if ($ErreurProcess) {
+		$CRexecution = $CRexecution."Erreur dans le vidage des tables de la base de portage.";	
+		$_SESSION['s_status_process_auto'] = "ko";
+	} else {
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp,"Les tables sys_ ont ete videes avec succes.",$pasdefichier);
+		} else {
+			$CRexecution.="Les tables sys_ ont &eacute;t&eacute; vid&eacute;es avec succ&egrave;s.";
+		}
+	}
 
 	$continueDump = false;
 	// *********************************************
@@ -78,7 +176,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	$lev=error_reporting (8); //Pour eviter les avertissements si la base n'existe pas.
 	$connectTest = pg_connect ("host=".$host." dbname=".$BDBackup." user=".$user." password=".$passwd);
 	if ($connectTest) { 
-		$messageGen="La base de sauvegarde de la base de reference <b>".$BDBackup."</b> sur  <b>".$host."</b> existe deja !<br/>";
+		$CRexecution.="La base de sauvegarde de la base de reference <b>".$BDBackup."</b> sur  <b>".$host."</b> existe deja !<br/>";
 	} else {
 		pg_close($connectTest);
 		$continueDump = true;
@@ -87,7 +185,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		// On test si la base de sauvegarde de la base de portage
 		$connectTest2 = pg_connect ("host=".$host." dbname=".$BDBackupPortage." user=".$user." password=".$passwd);
 		if ($connectTest2) { 
-			$messageGen.="La base de sauvegarde de la base de portage <b>".$BDBackupPortage."</b> sur <b>".$host."</b> existe deja !<br/>";
+			$CRexecution.="La base de sauvegarde de la base de portage <b>".$BDBackupPortage."</b> sur <b>".$host."</b> existe deja !<br/>";
 			$continueDump = false;
 			pg_close($connectTest2);
 		}
@@ -97,6 +195,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	// *********************************************
 	// Etape 1 : sauvegarde de la base de reference
 	// *********************************************
+	if ($ErreurProcess) {
+		$continueDump = false;
+	}
 	if ($continueDump) {
 		logWriteTo(7,"notice","Sauvegarde de la base de donnee","","","0");
 		$createBDSQL = "create database \"".$BDBackup."\" with template \"".$BDsource."\"";
@@ -133,7 +234,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					logWriteTo(7,"error","**- Fin Sauvegarde : en erreur : erreur dans la creation de la base de sauvegarde portage".$BDBackupPortage." erreur = ".$erreurQueryPort,"","","0");			
 					echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde en erreur : erreur dans la creation de la base de sauvegarde pour portage ".$BDBackupPortage." </div><div id=\"sauvegarde_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 					echo"<div id=\"vertical_slide1\">Erreur = ".$erreurQueryPort."</div>";
-		
+					if ($EcrireLogComp ) {
+						WriteCompLog ($logComp,"* Erreur dans sauvegarde",$pasdefichier);
+					}
 				} else {
 					// Sauvegarde OK ==> message
 					logWriteTo(7,"notice","Etape 2 Sauvegarde : base ".$BDsourcePortage." copiee dans ".$BDBackupPortage,"","","0");					
@@ -141,6 +244,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					$messageTRT .= "Sauvegarde ex&eacute;cut&eacute;e avec succ&egrave;s : base ".$BDsourcePortage." copiee dans ".$BDBackupPortage."<br/>";
 					echo "<div id=\"sauvegarde_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde ex&eacute;cut&eacute;e avec succ&egrave;s </div><div id=\"sauvegarde_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 					echo"<div id=\"vertical_slide1\">".$messageTRT."</div>";
+					if ($EcrireLogComp ) {
+						WriteCompLog ($logComp,"* Sauvegarde effectuee avec succes",$pasdefichier);
+					}
 					$backupPortCree = true;
 				} // fin du if (!$createBDPortResult)
 			} // fin du if (!$connectBDPECHE)
@@ -148,9 +254,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	} else {
 			// Unes des bases de sauvegarde existe déjà ==> erreur
 			if (isset($_SESSION['s_status_process_auto'])) { $_SESSION['s_status_process_auto'] = "ko"; }
-			logWriteTo(7,"error","**- Fin Sauvegarde : en erreur : ".$messageGen,"","","0");			
+			logWriteTo(7,"error","**- Fin Sauvegarde : en erreur : ".$CRexecution,"","","0");			
 				echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Sauvegarde en erreur </div><div id=\"comparaison_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
-				echo"<div id=\"vertical_slide1\">".$messageGen."</div>";
+				echo"<div id=\"vertical_slide1\">".$CRexecution."</div>";
 
 	} // fin du if ($continueDump)
 	echo "<form id=\"formtrt\"> 
@@ -176,6 +282,17 @@ if (!$backupPortCree || !$backupRefCree) {
 		logWriteTo(7,"notice","**- Fin Sauvegarde *****************","","","0");
 	}
 }
+if ($EcrireLogComp ) {
+	WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
+	WriteCompLog ($logComp,"*- FIN TRAITEMENT sauvegarde ",$pasdefichier);
+	WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
+}	
+if (! $pasdefichier) {
+	if ($EcrireLogComp ) {
+		fclose($logComp);
+	}
+}
+
 exit;
 
 ?>

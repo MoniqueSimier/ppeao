@@ -81,17 +81,17 @@ $dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
 $fileLogComp = GetParam("nomFicLogSupp",$PathFicConf);
 //	Controle fichiers
 //	Resultat de la comparaison
-	if ($EcrireLogComp ) {
-		$nomFicLogComp = $dirLog."/".date('y\-m\-d')."-".$fileLogComp;
-		$nomLogLien = $nomLogLien."/".date('y\-m\-d')."-".$fileLogComp;
-		$logComp = fopen($nomFicLogComp , "a+");
-		if (! $logComp ) {
-			$messageGen = " erreur de cr&eacute;ation du fichier de log";
-			logWriteTo(7,"error","Erreur de creation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php","","","0");
-			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
-			exit;		
-		}
+if ($EcrireLogComp ) {
+	$nomFicLogComp = $dirLog."/".date('y\-m\-d')."-".$fileLogComp;
+	$nomLogLien = $nomLogLien."/".date('y\-m\-d')."-".$fileLogComp;
+	$logComp = fopen($nomFicLogComp , "a+");
+	if (! $logComp ) {
+		$messageGen = " erreur de cr&eacute;ation du fichier de log";
+		logWriteTo(7,"error","Erreur de creation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php","","","0");
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
+		exit;		
 	}
+}
 // Pour test...
 // temps maximal d'exécution du script autorisé par le serveur
 $max_time = ini_get('max_execution_time');
@@ -287,6 +287,24 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				}
 			} 	//fin du if ($viderTable && ...)  
 		} //fin du if ($_SESSION['s_status_process_auto'] == 'ko' && $_SESSION['s_status_restauration'] == "yes"))
+	// On exécute systématiquement un vaccuum
+		set_time_limit(0);
+		$scriptVacuum='VACUUM ANALYZE';
+		$resultVacuum=pg_query($connectBDPECHE,$scriptVacuum);
+		if ( $resultVacuum){
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp,"Vacuum / Analysze execute avec succes sur BDPECHE ",$pasdefichier);
+			}			
+		} else {
+			$ErreurProcess = true;
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp,"Erreur vacuum sur BDPECHE ",$pasdefichier);
+			}
+			if ($affichageDetail) {
+				$CRexecution = $CRexecution."Erreur vacuum sur BDPECHE<br/> "; 
+			}
+		}
+
 	} // fin du if (isset($_SESSION['s_status_process_auto']))
 	
 	if (!$ArretTimeOut) {

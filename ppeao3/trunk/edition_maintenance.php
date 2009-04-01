@@ -62,6 +62,12 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 	<li><h2><a href="javascript:doMaintenance('reindex');">REINDEX</a></h2>
 	<p>utilisez cet outil pour recréer les index apr&egrave;s avoir effectu&eacute; un grand nombre d&#x27;insertions ou de suppressions dans la base de donn&eacute;es.</p>
 	</li>
+	<li><h2><a href="javascript:doMaintenance('disable_trigger');">Suppression des contraintes</a></h2>
+	<p>utilisez cet outil pour supprimer temporairement les contraintes sur la base (BDPECHE) contenant les donn&eacute;es &agrave; porter dans la base de r&eacute;f&eacute;rence (PPEAO).</p>
+	</li>
+	<li><h2><a href="javascript:doMaintenance('enable_trigger');">Activer les contraintes</a></h2>
+	<p>utilisez cet outil pour r&eacute;activer les contraintes sur la base (BDPECHE) contenant les donn&eacute;es &agrave; porter  dans la base de r&eacute;f&eacute;rence (PPEAO).</p>
+	</li>	
 </ul>	
 
 <div id="maintenance_output"></div>
