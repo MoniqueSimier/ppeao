@@ -430,7 +430,12 @@ if($fp = fopen($filename, "rb"))
 //affichage du lien
 print ("<div align='center'><br><br><br>Le fichier texte contenant les résultats des sélections a été créé.");
 print ("<br><br>Cliquez sur le lien pour l'enregistrer sur votre ordinateur.");
-print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_cap_tot.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+// Ajout variable chemin
+$pathtar = "http://".$hostname."/extraction"; 
+print ("<br><br><a href=\"".$pathtar."/temp_selection_stat_cap_tot.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+//print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_cap_tot.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
 print("<div align='center'><br><br>");
@@ -506,10 +511,10 @@ print("</div>");
 
 if(isset($_POST['case2']))
 	{
-	$user="devppeao";			// Le nom d'utilisateur 
+/*	$user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 
 $host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-$bdd = "jerome_manant";
+$bdd = "jerome_manant"; */
 
 	
 	
@@ -918,7 +923,14 @@ if($fp = fopen($filename, "rb"))
 //affichage du lien
 print ("<div align='center'><br><br><br>Le fichier texte contenant les résultats des sélections a été créé.");
 print ("<br><br>Cliquez sur le lien pour l'enregistrer sur votre ordinateur.");
-print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_cap_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+// Ajout variable chemin
+$pathtar = "http://".$hostname."/extraction"; 
+print ("<br><br><a href=\"".$pathtar."/temp_selection_stat_cap_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+
+
+//print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_cap_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
 print("<div align='center'><br><br>");
@@ -984,10 +996,10 @@ print("</div>");
 
 if(isset($_POST['case3']))
 	{
-	$user="devppeao";			// Le nom d'utilisateur 
+	/*$user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 
 $host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-$bdd = "jerome_manant";
+$bdd = "jerome_manant";  */
 
 	
 	
@@ -1404,8 +1416,15 @@ if($fp = fopen($filename, "rb"))
 //affichage du lien
 print ("<div align='center'><br><br><br>Le fichier texte contenant les résultats des sélections a été créé.");
 print ("<br><br>Cliquez sur le lien pour l'enregistrer sur votre ordinateur.");
+
+// Ajout variable chemin
+$pathtar = "http://".$hostname."/extraction"; 
+print ("<br><br><a href=\"".$pathtar."/temp_selection_stat_dft_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+
+
 //print ("<br><br><a href=\"http://vmppeao.mpl.ird.fr/extraction/temp_selection_globale.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
-print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_dft_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+//print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_dft_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
 print("<div align='center'><br><br>");
@@ -1470,10 +1489,10 @@ print("</div>");
 
 if(isset($_POST['case4']))
 	{
-	$user="devppeao";			// Le nom d'utilisateur 
+/*	$user="devppeao";			// Le nom d'utilisateur 
 	$passwd="2devppe!!";			// Le mot de passe 
 	$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-	$bdd = "jerome_manant";
+	$bdd = "jerome_manant";  */
 
 	
 	
@@ -1879,7 +1898,13 @@ if($fp = fopen($filename, "rb"))
 //affichage du lien
 print ("<div align='center'><br><br><br>Le fichier texte contenant les résultats des sélections a été créé.");
 print ("<br><br>Cliquez sur le lien pour l'enregistrer sur votre ordinateur.");
-print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_cap_gt.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+// Ajout variable chemin
+$pathtar = "http://".$hostname."/extraction"; 
+print ("<br><br><a href=\"".$pathtar."/temp_selection_stat_cap_gt.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+
+//print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_cap_gt.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
 print("<div align='center'><br><br>");
@@ -1943,10 +1968,10 @@ print("</div>");
 
 if(isset($_POST['case5']))
 	{
-	$user="devppeao";			// Le nom d'utilisateur 
+/*	$user="devppeao";			// Le nom d'utilisateur 
 	$passwd="2devppe!!";			// Le mot de passe 
 	$host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-	$bdd = "jerome_manant";
+	$bdd = "jerome_manant";   */
 
 	
 	
@@ -2377,7 +2402,13 @@ if($fp = fopen($filename, "rb"))
 //affichage du lien
 print ("<div align='center'><br><br><br>Le fichier texte contenant les résultats des sélections a été créé.");
 print ("<br><br>Cliquez sur le lien pour l'enregistrer sur votre ordinateur.");
-print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_cap_gt_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+// Ajout variable chemin
+$pathtar = "http://".$hostname."/extraction"; 
+print ("<br><br><a href=\"".$pathtar."/temp_selection_stat_cap_gt_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+
+//print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_cap_gt_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
 print("<div align='center'><br><br>");
@@ -2440,10 +2471,10 @@ print("</div>");
 
 if(isset($_POST['case6']))
 	{
-	$user="devppeao";			// Le nom d'utilisateur 
+/*	$user="devppeao";			// Le nom d'utilisateur 
 $passwd="2devppe!!";			// Le mot de passe 
 $host= "vmppeao.mpl.ird.fr";	// L'hôte (ordinateur sur lequel le SGBD est installé) 
-$bdd = "jerome_manant";
+$bdd = "jerome_manant";   */
 
 	
 	
@@ -2872,7 +2903,13 @@ if($fp = fopen($filename, "rb"))
 //affichage du lien
 print ("<div align='center'><br><br><br>Le fichier texte contenant les résultats des sélections a été créé.");
 print ("<br><br>Cliquez sur le lien pour l'enregistrer sur votre ordinateur.");
-print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_dft_gt_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+// Ajout variable chemin
+$pathtar = "http://".$hostname."/extraction"; 
+print ("<br><br><a href=\"".$pathtar."/temp_selection_stat_dft_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
+
+
+//print ("<br><br><a href=\"https://devppeao.mpl.ird.fr/extraction/temp_selection_stat_dft_gt_sp.txt.gz\"<b>Enregistrement du fichier texte</b></a>");
 
 print ("</div>");
 print("<div align='center'><br><br>");
