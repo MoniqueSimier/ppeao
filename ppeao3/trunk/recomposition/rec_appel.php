@@ -47,7 +47,7 @@ $zone=3; // zone portage (voir table admin_zones)
 				<li>une estimation du nombre et du poids des poissons d'une fraction dite d&eacute;barqu&eacute;e</li>
 				<li>une comparaison des poids des fractions d&eacute;barqu&eacute;es avec le poids total du d&eacute;barquement annonc&eacute; par l'enqu&ecirc;teur</li>
 				<li>la prise en compte &eacute;ventuelle de fractions non observ&eacute;es directement par l'enqu&ecirc;teur.</li>
-				<li>Version JME 12 2008.<li>
+				<li>Version JME 05 2009.<li>
 			</ul>
 
 			<br/><br/>
@@ -83,24 +83,28 @@ $zone=3; // zone portage (voir table admin_zones)
 			
 			pg_close();
 			?>
-			
 			<div id="formRecomp">
 			<br/>
-			<form name="form" >
-			  <p>
+			<form name="form">
+							
+
+				
+				<p>
 				Vous pouvez entrer une adresse mail.<br/>
 				<input type="text" name="adresse" id="adresse">
 				<br/>
+				
 				Si vous rentrez une adresse valide, 
 				il vous sera envoy&eacute; un mail de confirmation &agrave; la fin de la recomposition des donn&eacute;es.<br/>
 				<br/>
 				
+
 				<input type="hidden" name="nb_enr" value="<?php  print($nb_enr);?>" />
 				<input type="hidden" name="base" value="<?php  print($bdd);?>" />
 				<input type="hidden" name="aff" value="1" >
 				<!--<input type="submit" name="Recomposition" value="Recomposer les données" onClick="pop_it3(form);">-->
 			 	<input type="button" name="Recomposition" value="Recomposer les donnees" onClick="runRecomp('<?php  print($nb_enr);?>','<?php  print($bdd);?>');">
-			  </p>
+			  	</p>
 			</form>
 			</div>
 			

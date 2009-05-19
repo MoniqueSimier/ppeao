@@ -1,5 +1,5 @@
 <?php
-getTime();
+//getTime();
 set_time_limit(0);
 //***********************************************
 // Création Yann LAURENT, 01-07-2008
@@ -28,8 +28,12 @@ $messageProcess .= "<br/>travail sur la base : ".$bdd ;
 $connection =pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
 //print "host=".$host." dbname=".$bdd." user=".$user." password=".$passwd;
 if (!$connection) {  echo "Non connecté"; exit;}
+
 include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/functions_recomposition_generique.inc.php';
 include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/functions_query.inc.php';
+
+$date = date("H:i:s");
+//print_debug("bb".$date);
 
 //CREATION DES TABLEAUX DE DONNEES
 //include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/create_array_coef_esp.php';
@@ -40,9 +44,15 @@ include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/create_array_coef_esp.php
 
 //CALCUL ET AJOUT DES Wdft et Ndft POUR CHAQUE FRACTION DANS LE TABLEAU  $info_deb       
 $info_deb=calcul_Wdft_Ndft_par_fraction($info_deb,$FT,$coef_esp);
-	
+
+$date = date("H:i:s");
+//print_debug("cc".$date);
+print ($date);	
 // TRAITEMENT DES FRACTIONS DEBARQUEES Et compraison des poids               //
 include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition_info_deb.php';
+
+$date = date("H:i:s");
+//print_debug("dd".$date);
 
 //  TRAITEMENT DES FRACTIONS NON DEBARQUEES                            Fndbq                               Et nex fractions                 //
 include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition_info_non_deb.php';
@@ -65,7 +75,5 @@ $headers .= "\r\n";
 // Function mail()
 mail($to, $subject, $msg, $headers);
 */
-
-print_debug(getTime()."ms");
 
 ?>

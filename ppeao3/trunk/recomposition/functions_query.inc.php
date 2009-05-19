@@ -300,47 +300,62 @@ function INSERTION DES DONNEES RESULTATS CONTENUES DANS $info_deb DANS LA BASE D
 @param array datas tableau des données recomposées
 @param string $afficherMessage
 @return $afficherMessage 
+
+correction JME 05/2009, insertion dans la table dbq_rec des données de débarquement sans fractions débarquées
+y compris les enquêtes avec un débarquement de poids total =0
 */
 function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 	global $connection;
 	$messageProcess="";
 	reset($datas);
 	$compteur=0;
+	//print_debug($nb_enr);
+	//print_debug($datas);
+	
 	foreach($datas as $key =>$val){
 		$compteur++;
 		$messageProcess.="<br/><b>Recomposisiton de l'enqu&ecirc;te ".$compteur . " sur ".$nb_enr ."</b><br/><br/>";
 		$Wti =0;
-		foreach ($val as $key2=>$val2){
-			$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
-				values ('".$key2."', ".$datas[$key][$key2][8].", ".$datas[$key][$key2][9].", '".$datas[$key][$key2][7]."');";
-			//print_debug($query);
-			$RunQErreur = runQuery($query,$connection);
-			if ($RunQErreur){
-			
-			}else {
-				$messageProcess.="<font color='blue'>Pb insertion de cette requête</font><br/>";
-				// traitement d'erreur ? On arrête ou seulement avertissement ?
+
+		if(is_null($datas[$key][''])) {
+
+			foreach ($val as $key2=>$val2){
+				$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
+					values ('".$key2."', ".$datas[$key][$key2][8].", ".$datas[$key][$key2][9].", '".$datas[$key][$key2][7]."');";
+				//print_debug($query);
+				$RunQErreur = runQuery($query,$connection);
+				if ($RunQErreur){
+				
+				}else {
+					$messageProcess.="<font color='blue'>Pb insertion de cette requête</font><br/>";
+					// traitement d'erreur ? On arrête ou seulement avertissement ?
+				}
+				$messageProcess .= "".$query."<br/>";
+				$Wti += $datas[$key][$key2][8];
 			}
-			$messageProcess .= "".$query."<br/>";
-			$Wti += $datas[$key][$key2][8];
 		}
+		else {
+			//$Wti = $datas[$key][$key2][5];      // cas où il n'y a pas de Fdbq poids total rec =Pt initial
+			$Wti = $datas[$key][''][5];
+		}
+		
 		$query = "insert into art_debarquement_rec ( id, poids_total, art_debarquement_id ) 
 		values ('rec_".$key."', ".$Wti.", ".$key.");";
 		// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
 		//if($Wti!=0)$result2 = pg_exec($connection, $query2); // Ancienne ajout données. 
 		// nouvelle insertion données en utilisant la fonction runQuery
 		
-		if($Wti!=0) {
+		//if($Wti!=0) {
 			//print_debug($query);
-			$messageProcess .= "".$query."<br/>";
-			$RunQErreur = runQuery($query,$connection);
-			if ( $RunQErreur){
+		$messageProcess .= "".$query."<br/>";
+		$RunQErreur = runQuery($query,$connection);
+		if ( $RunQErreur){
 				
-			} else {
-				$messageProcess.="<font color='blue'>Pb insertion de cette requête</font><br/>";
+		} else {
+			$messageProcess.="<font color='blue'>Pb insertion de cette requête</font><br/>";
 				// traitement d'erreur ? On arrête ou seulement avertissement ?
-			}
 		}
+		//}
 	}
 	if ($afficherMessage == "1") {
 		return $messageProcess ;
