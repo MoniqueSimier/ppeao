@@ -303,6 +303,7 @@ function INSERTION DES DONNEES RESULTATS CONTENUES DANS $info_deb DANS LA BASE D
 
 correction JME 05/2009, insertion dans la table dbq_rec des données de débarquement sans fractions débarquées
 y compris les enquêtes avec un débarquement de poids total =0
+Validation de la non insertion d'enquetes recomposées dont rapport Wt/Wt est supérieur à 2
 */
 function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 	global $connection;
@@ -316,48 +317,63 @@ function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 		$compteur++;
 		$messageProcess.="<br/><b>Recomposisiton de l'enqu&ecirc;te ".$compteur . " sur ".$nb_enr ."</b><br/><br/>";
 		$Wti =0;
+		$pas_insert=0;		//variable de controle si dbq doit etre supprimé
 
 		if(is_null($datas[$key][''])) {
+		
 
 			foreach ($val as $key2=>$val2){
-				$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
-					values ('".$key2."', ".$datas[$key][$key2][8].", ".$datas[$key][$key2][9].", '".$datas[$key][$key2][7]."');";
-				//print_debug($query);
-				$RunQErreur = runQuery($query,$connection);
-				if ($RunQErreur){
-				
-				}else {
-					$messageProcess.="<font color='blue'>Pb insertion de cette requête</font><br/>";
-					// traitement d'erreur ? On arrête ou seulement avertissement ?
+				if ($datas[$key][$key2][5] == "-1") {	
+					
+					// si  $datas[$key][$key2][5] soit poids total est egal -1 l'enquête n'est pas recomposée
+					//print_debug("E".$key." pas d insertion Fdbq");
+					$pas_insert = 1;
+					break;
 				}
-				$messageProcess .= "".$query."<br/>";
-				$Wti += $datas[$key][$key2][8];
+				else{
+					$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
+						values ('".$key2."', ".$datas[$key][$key2][8].", ".$datas[$key][$key2][9].", '".$datas[$key][$key2][7]."');";
+					//print_debug($query);
+					$RunQErreur = runQuery($query,$connection);
+					if ($RunQErreur){
+				
+					}else {
+						$messageProcess.="<font color='blue'>Pb insertion de cette requete</font><br/>";
+						// traitement d'erreur ? On arrête ou seulement avertissement ?
+					}
+					$messageProcess .= "".$query."<br/>";
+					$Wti += $datas[$key][$key2][8];
+					//print_debug("E".$key." insertion Fdbq");
+				}
 			}
 		}
 		else {
 			//$Wti = $datas[$key][$key2][5];      // cas où il n'y a pas de Fdbq poids total rec =Pt initial
 			$Wti = $datas[$key][''][5];
 		}
-		
-		$query = "insert into art_debarquement_rec ( id, poids_total, art_debarquement_id ) 
-		values ('rec_".$key."', ".$Wti.", ".$key.");";
+		if($pas_insert == 1) {
+			//print_debug("E".$key." pas insertion dbq");
+		}
+		else{
+			$query = "insert into art_debarquement_rec ( id, poids_total, art_debarquement_id ) 
+			values ('rec_".$key."', ".$Wti.", ".$key.");";
+			//print_debug("E".$key." insertion dbq");
 		// Modification YL 15/07/2008 pour eviter les warning affichés à l'écran erreur ==> dans le log
 		//if($Wti!=0)$result2 = pg_exec($connection, $query2); // Ancienne ajout données. 
 		// nouvelle insertion données en utilisant la fonction runQuery
 		
-		//if($Wti!=0) {
 			//print_debug($query);
-		$messageProcess .= "".$query."<br/>";
-		$RunQErreur = runQuery($query,$connection);
-		if ( $RunQErreur){
+			$messageProcess .= "".$query."<br/>";
+			$RunQErreur = runQuery($query,$connection);
+			if ( $RunQErreur){
 				
-		} else {
+			} else {
 			$messageProcess.="<font color='blue'>Pb insertion de cette requête</font><br/>";
 				// traitement d'erreur ? On arrête ou seulement avertissement ?
+			}
 		}
-		//}
 	}
-	if ($afficherMessage == "1") {
+	if ($afficherMessage == 1) {
 		return $messageProcess ;
 	}else{
 		return "";

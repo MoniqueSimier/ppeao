@@ -335,23 +335,26 @@ Fonction de comparaison entre le poids total et la somme des poids des fractions
 @param double $Wt poids total
 @param double $Wfdbq Somme des poids des fractions
 @return $datas
+
+test JME 05 2009 sur le test valeur du rapport des poids; mise à -1 de poids total ($datas[$key][$key2][5]) 
+qui sert de temoin si une enquete doit etre supprimée
 */
 function comparaison_WT_SW($datas,$key,$val,$Wt,$WfdbqI){
-	//reset($val);
-	//if ($Wt == 0){ $info_deb[$key][$key2][5] = round($WfdbqI,2);}	//Wt = somme(Wfdbq)
-	//05/11
+
 	reset($val);
 	$rapport = 0 ;          //JME 12 2008
-	if ($Wt == 0){ 
+	if ($Wt == 0){
+//print_debug("Wt=0".$WfdbqI);	
 		foreach($val as $key2=>$val2){			//pour chaque fraction
 			$datas[$key][$key2][5] = round($WfdbqI,2);
 		}
-	//$Wt=$info_deb[$key][$key2][5];
-	}else{//Wt = somme(Wfdbq)
+
+	}else{
 		$rapport= round(($WfdbqI / $Wt),2);
 
 		//cas (somme Wfdbq / Wt) <0.95 :
 		if ($rapport < 0.95000){
+//print_debug("R<0.95");		
 			foreach($val as $key2=>$val2){			//pour chaque fraction
 				
 				$Wfdbq = $datas[$key][$key2][8];
@@ -362,16 +365,20 @@ function comparaison_WT_SW($datas,$key,$val,$Wt,$WfdbqI){
 				$datas[$key][$key2][9] = round($Nfdbq,0);
 			}
 		}elseif (($rapport  >= 0.949999) && ($rapport  < 1.049999)){	//cas (somme Wfdbq / Wt) >= 0.95 et < 1.05:
+//print_debug("R=1");			
 			foreach($val as $key2=>$val2){			//pour chaque fraction
 				$datas[$key][$key2][5] = round($WfdbqI,2);		//Wt = somme(Wfdbq)
 			}
 		}elseif (($rapport  >= 1.050000) && ($rapport  < 1.99999)){	//cas (somme Wfdbq / Wt) >= 1.05 et < 2:
+//print_debug("R 1-2");
 			foreach($val as $key2=>$val2){			//pour chaque fraction
 				$datas[$key][$key2][5] = round($WfdbqI,2);		//Wt = somme(Wfdbq)
 			}
 		}elseif ($rapport  >= 2.00000){//cas (somme Wfdbq / Wt) >= 2:
+//print_debug("R>2");			
 			foreach($val as $key2=>$val2){			//pour chaque fraction
-				unset($datas[$key][$key2]);
+				//unset($datas[$key][$key2]);
+				$datas[$key][$key2][5] = -1 ;
 			}
 		}
 	}//fin du else Wt=0

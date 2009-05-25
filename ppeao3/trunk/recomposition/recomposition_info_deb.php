@@ -15,12 +15,12 @@ foreach($info_deb as $key=>$val){
 	//$messageProcess .= "Recomposition de l'enqu&ecirc;te ".$numero . " sur ".$nb_enr." <br/>";
 	
 	$date = date("H:i:s");
-	//print_debug("D".$key."   ".$date);
+	print_debug("D".$key."   ".$date);
 	$NfdbqI=0;
 	$WfdbqI=0;
 
-	if ($key2 != NULL) {
-	
+	if(is_null($info_deb[$key][''])) {
+
 	foreach($val as $key2=>$val2){			//pour chaque fraction
 		//     calcul et ajout des Wdft et Ndft pour chaque fraction         dans le tableau recapitulatif $info_deb                //
 		
@@ -45,11 +45,11 @@ foreach($info_deb as $key=>$val){
 		$Wt = $info_deb[$key][$key2][5];            //poids total du débarquement
 		$Wfdbq = $info_deb[$key][$key2][8];
 		$WfdbqI += $Wfdbq;			    //somme des poids des fractions
-		$Nfdbq += 1;						//compte nombre fractions JME 05 2009
+		$NfdbqI += 1;						//compte nombre fractions JME 05 2009
 	}
-	
+print_debug($NfdbqI);	
 	if ($NfdbqI > 0) {
-	$info_deb=comparaison_WT_SW($info_deb,$key,$val,$Wt,$WfdbqI);
+		$info_deb=comparaison_WT_SW($info_deb,$key,$val,$Wt,$WfdbqI);
 	}
 	}	// ajout du test pour les dbq sans fractions JME 05 2009
 }
