@@ -47,7 +47,7 @@ foreach($info_deb as $key=>$val){
 		$WfdbqI += $Wfdbq;			    //somme des poids des fractions
 		$NfdbqI += 1;						//compte nombre fractions JME 05 2009
 	}
-print_debug($NfdbqI);	
+//print_debug($WfdbqI);	
 	if ($NfdbqI > 0) {
 		$info_deb=comparaison_WT_SW($info_deb,$key,$val,$Wt,$WfdbqI);
 	}
