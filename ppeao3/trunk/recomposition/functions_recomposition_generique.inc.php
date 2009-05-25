@@ -14,11 +14,7 @@ fonction récursive pour la recomposition des enquêtes cas 3 et 4
 				7=>ref_espece_id espèce de la fraction
 				8=>poids poids de la fraction = Wfdbq
 				9=>nbre_poissons nb de poissons de la fraction = Nfdbq
-@param string $key : index du tableau ID du débarquement
-@param string $key2  index 2 du tableau ID de la fraction
-@param string $strate strate à appliquer pour la selection
- @param string $round 0 ou 1 1er ou 2ème parcours des différentes strates
- @return array $datas tableau contenant les enregistrement recomposés
+
  */
 function recomposition_cas_3_4($cas,$datas,$key,$key2,$strate,$round,$deb,$Wfdbq,$Nfdbq,$Wm){
 	global $connection;
@@ -354,7 +350,7 @@ function comparaison_WT_SW($datas,$key,$val,$Wt,$WfdbqI){
 
 		//cas (somme Wfdbq / Wt) <0.95 :
 		if ($rapport < 0.95000){
-//print_debug("R<0.95");		
+	
 			foreach($val as $key2=>$val2){			//pour chaque fraction
 				
 				$Wfdbq = $datas[$key][$key2][8];
@@ -365,17 +361,17 @@ function comparaison_WT_SW($datas,$key,$val,$Wt,$WfdbqI){
 				$datas[$key][$key2][9] = round($Nfdbq,0);
 			}
 		}elseif (($rapport  >= 0.949999) && ($rapport  < 1.049999)){	//cas (somme Wfdbq / Wt) >= 0.95 et < 1.05:
-//print_debug("R=1");			
+			
 			foreach($val as $key2=>$val2){			//pour chaque fraction
 				$datas[$key][$key2][5] = round($WfdbqI,2);		//Wt = somme(Wfdbq)
 			}
 		}elseif (($rapport  >= 1.050000) && ($rapport  < 1.99999)){	//cas (somme Wfdbq / Wt) >= 1.05 et < 2:
-//print_debug("R 1-2");
+
 			foreach($val as $key2=>$val2){			//pour chaque fraction
 				$datas[$key][$key2][5] = round($WfdbqI,2);		//Wt = somme(Wfdbq)
 			}
 		}elseif ($rapport  >= 2.00000){//cas (somme Wfdbq / Wt) >= 2:
-//print_debug("R>2");			
+
 			foreach($val as $key2=>$val2){			//pour chaque fraction
 				//unset($datas[$key][$key2]);
 				$datas[$key][$key2][5] = -1 ;
@@ -383,7 +379,6 @@ function comparaison_WT_SW($datas,$key,$val,$Wt,$WfdbqI){
 		}
 	}//fin du else Wt=0
 	
-	//print_debug($rapport);
 	return $datas;
 }
 ?>

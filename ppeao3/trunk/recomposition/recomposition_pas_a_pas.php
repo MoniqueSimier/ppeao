@@ -47,7 +47,7 @@ $info_deb=calcul_Wdft_Ndft_par_fraction($info_deb,$FT,$coef_esp);
 
 $date = date("H:i:s");
 //print_debug("cc".$date);
-print ($date);	
+//print ($date);	
 // TRAITEMENT DES FRACTIONS DEBARQUEES Et compraison des poids               //
 include_once $_SERVER["DOCUMENT_ROOT"].'/recomposition/recomposition_info_deb.php';
 

@@ -297,9 +297,6 @@ function query_from_e_plus($values,$key,$key2,$round){
 
 /*
 function INSERTION DES DONNEES RESULTATS CONTENUES DANS $info_deb DANS LA BASE DE DONNEES PPEAO  (tables art_debarquement_rec et art_fraction_rec)
-@param array datas tableau des données recomposées
-@param string $afficherMessage
-@return $afficherMessage 
 
 correction JME 05/2009, insertion dans la table dbq_rec des données de débarquement sans fractions débarquées
 y compris les enquêtes avec un débarquement de poids total =0
