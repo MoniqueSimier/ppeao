@@ -166,7 +166,7 @@ function stateChanged1()
 				if (majscExec && trtok=="ok") { trtok = document.getElementById("trtok4").value;}
 				progPhp = "/process_auto/processAuto.php" ;
 				nomFen = "processAutoRec" ;
-				nomURL = "base="+DBname+"&nb_enr="+nbEnreg+"&adresse="+adresse+"&numproc="+numProcess+"&pg=rec&exec="+recExec;
+				nomURL = "base="+DBname+"&log="+checkLog+"&nb_enr="+nbEnreg+"&adresse="+adresse+"&numproc="+numProcess+"&pg=rec&exec="+recExec;
 				texte = "Recomposition automatique des données en cours ...";
 			  break;
 			case 5:
@@ -174,7 +174,7 @@ function stateChanged1()
 				if (recExec && trtok=="ok") { trtok = document.getElementById("trtok5").value;}
 				progPhp = "/process_auto/processAuto.php" ;
 				nomFen = "processAutoStat" ;
-				nomURL = "base="+DBname+"&nb_enr="+nbEnreg+"&adresse="+adresse+"&numproc="+numProcess+"&pg=stat&exec="+statExec;
+				nomURL = "base="+DBname+"&log="+checkLog+"&nb_enr="+nbEnreg+"&adresse="+adresse+"&numproc="+numProcess+"&pg=stat&exec="+statExec;
 				texte = "Calcul statistique automatique des données en cours ...";
 			  break;
 			case 6:

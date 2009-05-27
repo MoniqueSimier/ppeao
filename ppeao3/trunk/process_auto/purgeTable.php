@@ -258,21 +258,22 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					} // fin du if ((!$tableEnCours == "" && $tableEnCours == $tables[$cpt]) || $tableEnCours == "")
 				}
 				// Etape 3 on rajoute les contraintes sur les tables
-				for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
-					$scriptDelete = "ALTER TABLE ".$tables[$cpt]." ENABLE TRIGGER ALL; ";
-					$RunQErreur = runQuery($scriptDelete,$connectBDPECHE);
-					if ( $RunQErreur){
+				// Cette étape est supprimée (27/05/2009) pour permettre le fonctionnement correct de sinthi
+				//for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
+				//	$scriptDelete = "ALTER TABLE ".$tables[$cpt]." ENABLE TRIGGER ALL; ";
+				//	$RunQErreur = runQuery($scriptDelete,$connectBDPECHE);
+				//	if ( $RunQErreur){
 						
-					} else {
-						$ErreurProcess = true;
-						if ($EcrireLogComp ) {
-							WriteCompLog ($logComp,"Erreur rajout Trigger ".$tables[$cpt],$pasdefichier);
-						}
-						if ($affichageDetail) {
-							$CRexecution = $CRexecution."Erreur rajout Trigger ".$tables[$cpt]." <br/> "; 
-						}
-					}
-				}
+				//	} else {
+				//		$ErreurProcess = true;
+				//		if ($EcrireLogComp ) {
+				//			WriteCompLog ($logComp,"Erreur rajout Trigger ".$tables[$cpt],$pasdefichier);
+				//		}
+				//		if ($affichageDetail) {
+				//			$CRexecution = $CRexecution."Erreur rajout Trigger ".$tables[$cpt]." <br/> "; 
+				//		}
+				//	}
+				//}
 				if ($ErreurProcess) {
 					$CRexecution = $CRexecution."Erreur dans le vidage des tables de la base de portage.";	
 				} else {

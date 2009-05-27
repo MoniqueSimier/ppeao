@@ -10,6 +10,7 @@
 
 // Variable de test
 $pasdetraitement = true;
+$pasdefichier = false; // Variable de test pour linux. Meme valeur que dans comparaison.php
 $continueTrait = true;
 // Includes standard
 include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
@@ -33,7 +34,31 @@ if (isset($_GET['exec'])) {
 		$Labelpasdetraitement ="oui";
 	}
 }
+if (isset($_GET['log'])) {
 
+	if ($_GET['log'] == "false") {
+		$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. Attention, cela prend de la ressource !
+	} else {
+		$EcrireLogComp = true;
+	}
+}
+$dirLog = GetParam("repLogAuto",$PathFicConf);
+$nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
+$dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
+$fileLogComp = GetParam("nomFicLogSupp",$PathFicConf);
+//	Controle fichiers
+//	Resultat de la comparaison
+if ($EcrireLogComp ) {
+	$nomFicLogComp = $dirLog."/".date('y\-m\-d')."-".$fileLogComp;
+	$nomLogLien = $nomLogLien."/".date('y\-m\-d')."-".$fileLogComp;
+	$logComp = fopen($nomFicLogComp , "a+");
+	if (! $logComp ) {
+		$messageGen = " erreur de cr&eacute;ation du fichier de log";
+		logWriteTo(7,"error","Erreur de creation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php","","","0");
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
+		exit;		
+	}
+}
 // Si le traitement précédent a échoué, arrêt du traitement
 if (isset($_GET['pg'])) {
 	$typeAction = $_GET['pg'];
@@ -65,7 +90,11 @@ if (isset($_SESSION['s_status_process_auto'])) {
 	}
 }
 
-
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
+		WriteCompLog ($logComp, "*- DEBUT lancement ".$nomAction." (portage automatique)",$pasdefichier);
+		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
+	}
 
 
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
@@ -147,14 +176,27 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Processus ".$nomAction." ex&eacute;cut&eacute; avec succ&egrave;s : </div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>";	
 						//echo"<div class=\"marginCR\">Compte Rendu&nbsp;<a id=\"v_slidein".$numFen."\" href=\"#\"> Afficher </a>|<a id=\"v_slideout".$numFen."\" href=\"#\"> Fermer </a>| <strong>status</strong>: <span id=\"vertical_status".$numFen."\">open</span>				</div>";
 		echo"<div id=\"vertical_slide".$numFen."\">".$messageinfo."</div>";
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp,"Processus ".$nomAction." execute avec succes",$pasdefichier);
+			WriteCompLog ($logComp,$messageinfo,$pasdefichier);
+		}
 	} else {
 		// Erreur dans le traitement
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur dans le processus ".$nomAction." des donn&eacute;es </div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 						//echo"<div class=\"marginCR\">Compte Rendu&nbsp;<a id=\"v_slidein".$numFen."\" href=\"#\"> Afficher </a>|<a id=\"v_slideout".$numFen."\" href=\"#\"> Fermer </a>| <strong>status</strong>: <span id=\"vertical_status".$numFen."\">open</span>				</div>";
 		echo"<div id=\"vertical_slide".$numFen."\">".$messageinfo."</div>";
+		
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp,"Erreur dans le processus ".$nomAction,$pasdefichier);
+			WriteCompLog ($logComp,$messageinfo,$pasdefichier);
+		}
 	}
 	// Le processus de recalcul des stats
-
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
+			WriteCompLog ($logComp,"*- FIN TRAITEMENT ".$nomAction." ",$pasdefichier);
+			WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
+		}
 
 
 } else {
