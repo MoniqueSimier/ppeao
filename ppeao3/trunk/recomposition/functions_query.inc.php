@@ -303,6 +303,7 @@ y compris les enquêtes avec un débarquement de poids total =0
 Validation de la non insertion d'enquetes recomposées dont rapport Wt/Wt est supérieur à 2
 */
 function insert_values_recompose($datas,$afficherMessage,$nb_enr){
+	
 	global $connection;
 	$messageProcess="";
 	reset($datas);
@@ -317,20 +318,19 @@ function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 		$pas_insert=0;		//variable de controle si dbq doit etre supprimé
 
 		if(is_null($datas[$key][''])) {
-		
-
+			
+			print_debug($val);
 			foreach ($val as $key2=>$val2){
 				if ($datas[$key][$key2][5] == "-1") {	
 					
-					// si  $datas[$key][$key2][5] soit poids total est egal -1 l'enquête n'est pas recomposée
-					//print_debug("E".$key." pas d insertion Fdbq");
+					// si  $datas[$key][$key2][5] (le poids total) est egal -1, l'enquête n'est pas recomposée
+					print_debug("E".$key." pas d insertion Fdbq a");
 					$pas_insert = 1;
 					break;
 				}
 				else{
 					$query = "insert into art_fraction_rec ( id, poids , nbre_poissons, ref_espece_id ) 
 						values ('".$key2."', ".$datas[$key][$key2][8].", ".$datas[$key][$key2][9].", '".$datas[$key][$key2][7]."');";
-					//print_debug($query);
 					$RunQErreur = runQuery($query,$connection);
 					if ($RunQErreur){
 				
@@ -349,7 +349,7 @@ function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 			$Wti = $datas[$key][''][5];
 		}
 		if($pas_insert == 1) {
-			//print_debug("E".$key." pas insertion dbq");
+			print_debug("E".$key." pas insertion dbq b");
 		}
 		else{
 			$query = "insert into art_debarquement_rec ( id, poids_total, art_debarquement_id ) 
@@ -359,7 +359,6 @@ function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 		//if($Wti!=0)$result2 = pg_exec($connection, $query2); // Ancienne ajout données. 
 		// nouvelle insertion données en utilisant la fonction runQuery
 		
-			//print_debug($query);
 			$messageProcess .= "".$query."<br/>";
 			$RunQErreur = runQuery($query,$connection);
 			if ( $RunQErreur){
