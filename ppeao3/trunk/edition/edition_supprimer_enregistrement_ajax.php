@@ -1,8 +1,7 @@
 <?php
 session_start();
 
-// script appelé par la fonction javascript showNewLevel
-// 
+ 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_generic.php';
@@ -56,6 +55,6 @@ else {
 
 $theMessage.='note : la suppression des enregistrements des tables mentionn&eacute;es ci-dessus pourra entra&icirc;ner &agrave; son tour la suppression d&#x27;autres enregistrements.';
 }
-
+// on renvoie le message de résultat
 echo($theMessage);
 ?>
