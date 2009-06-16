@@ -159,7 +159,7 @@ if (isset($_GET[$editTable])) {
 				// sinon on fait un LIKE en tenant compte de l'utilisation d'une éventuelle wildcard "*" en début de chaine
 				else {
 					//on recherche la wildcard					
-					if (strpos($_GET['f_'.$key],'*')==0) {$search='%'.ltrim($_GET['f_'.$key],'*');} else {$search=$_GET['f_'.$key];}
+					if (strpos($_GET['f_'.$key],'*')===0) {$search='%'.ltrim($_GET['f_'.$key],'*');} else {$search=$_GET['f_'.$key];}
 					// on nettoie les éventuels espaces et * avant et après la chaine
 					$search=ltrim(rtrim($search,'* '),'* ');
 					$whereClause.=' AND lower('.$key.') LIKE \''.strtolower($search).'%\'';
