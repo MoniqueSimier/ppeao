@@ -7,7 +7,7 @@
 //*****************************************
 // Ce programme lance la comparaison des deux bases BD_PPEAO et BD_PECHE
 // En fonction du paramètre d'entrée, ce programme renvoie juste un compte rendu (avec un fichier contenant les scripts) soit 
-// exécute les scripts de mise à jour.
+// exécute les scripts de mise à jour en appelant les scripts majDonnesPeches.php et associés.
 // Le résultat du traitement est envoyé à portage_auto.php dans deux div qui seront insérés dans le div général (id="comparaison")
 // avec une icone de bonne ou mauvaise exécution (dans div id="comparaison_img") et l'explication
 // de l'erreur dans div id = "comparaison_txt"
@@ -18,6 +18,10 @@
 // comp = 'compinv' : on lance une comparaison sans maj (du parametrage de BDPECHE par rapport a la reference)
 // comp = 'majsc'  : on lance une comparaison avec maj (donnees scientifiques) ==> majDonneesPeche.php
 // comp = 'majrec'  : on lance une comparaison avec maj (donnees recomposees) ==> majDonneesPeche.php
+// log : flag contenant la sélection sur le log supplémentaire ;
+// numproc : numéro du processus (voir dans le fichier js aja;xProcessAuto.js) pour traiter les timeout ;
+// exec : contient la valeur de la case à cocher pour lancer ou non le traitement ;
+// adresse : contient l'adresse e-mail à laquelle envoyer le compte-rendu de traitement – Obsolète.
 
 // Paramètres en sortie
 // La liste des différences par table est affichée à l'écran et est stockée dans un fichier

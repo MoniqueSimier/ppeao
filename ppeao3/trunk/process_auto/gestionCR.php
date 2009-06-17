@@ -1,4 +1,12 @@
 <?php 
+//*****************************************
+// gestionCR.php
+//*****************************************
+// Created by Yann Laurent
+// 2008-07-01 : creation
+//*****************************************
+// Cet include de comparaison.php gère les affichages des comptes-rendu à l'ecran
+//*****************************************
 	if (!$ArretTimeOut) {
 
 	// ***************************

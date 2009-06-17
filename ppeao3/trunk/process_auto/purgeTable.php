@@ -6,12 +6,16 @@
 // 2008-09-09 : creation
 //*****************************************
 // Ce programme lance les purges dans la base de données source (donnees artisanales / scientifiques).
-
+// Il gère aussi la suppression ou restauration des sauavegardes
 //*****************************************
 // Paramètres en entrée
+// log : flag contenant la sélection sur le log supplémentaire ;
+// table : inutilisé pour l'instant, pas de gestion de timeout
+// exec : contient la valeur de la case à cocher pour lancer ou non le traitement ;
+// videT : est-ce que l'utilisateur veut vider les tables de bdpeche ?
 // Paramètres en sortie
 // aucun
-
+//*****************************************
 
 // Mettre les noms des fichiers dans un fichier texte
 session_start();

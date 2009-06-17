@@ -5,7 +5,7 @@
 // Created by Yann Laurent
 // 2008-07-01 : creation
 //*****************************************
-// Ce programme lance la creation d'un script SQL de sauvegarde pour la base PPEAO de référence.
+// Ce programme lance la sauvegarde des bases bdpeche et bdppeao.
 // La bonne exécution du programme est controlée au final par l'existence du fichier de sauvegarde dans le répertoire
 // On affiche comme resultat de l'exécution de ce programme dans deux div (qui eux-même vont s'insérer dans le div principal dont
 // l'ID est "sauvegarde" avec une icone de bonne ou mauvaise exécution (dans div id="sauvegarde_img") et l'explication
@@ -93,6 +93,16 @@ logWriteTo(7,"notice","**- Debut lancement sauvegarde portage automatique.","","
 
 // Paramètres  de sauvegarde
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
+	// Ajout d'un bloc pour indiquer le début du lancement du portage automatique 
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "#",$pasdefichier);
+		WriteCompLog ($logComp, "#",$pasdefichier);
+		WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
+		WriteCompLog ($logComp, "*- DEBUT PORTAGE AUTOMATIQUE ".date('y\-m\-d\-His'),$pasdefichier);
+		WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
+		WriteCompLog ($logComp, "#",$pasdefichier);
+		WriteCompLog ($logComp, "#",$pasdefichier);
+	}
 	if ($EcrireLogComp ) {
 		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
 		WriteCompLog ($logComp, "*- DEBUT lancement sauvegarde (portage automatique)",$pasdefichier);

@@ -5,8 +5,19 @@
 // Created by Yann Laurent
 // 2008-07-15 : creation
 //*****************************************
-// Ce programme lance les processus automatiques de recomposition de données
-
+// Ce programme lance les processus automatiques de recomposition de données issus du lot 2
+//*****************************************
+// Paramètres en entrée
+//•	pg : type de programme. 
+//		rec : pour lancer la recomposition ou 
+//		stat : pour lancer le calcul des statistiques. 
+// log : flag contenant la sélection sur le log supplémentaire ;
+// numproc : numéro du processus (voir dans le fichier js aja;xProcessAuto.js) pour traiter les timeout ;
+// exec : contient la valeur de la case à cocher pour lancer ou non le traitement ;
+// adresse : contient l'adresse e-mail à laquelle envoyer le compte-rendu de traitement – Obsolète.
+// Paramètres en sortie
+// aucun
+//*****************************************
 
 // Variable de test
 $pasdetraitement = true;
