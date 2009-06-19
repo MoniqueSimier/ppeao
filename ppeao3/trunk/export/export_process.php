@@ -222,16 +222,27 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		case "copAC":
 			// Copie entre bases ACCESS (reference et travail)
 			$nomAction 	= "Copie param de la base ACCESS de ref";
-			$listTable 	= GetParam("listeTableRefACCESS",$PathFicConfAccess);
-			//$listTable	="CoefficientKb,CorrespondanceMaille,Enqueteur,EspeceTMO"; //TEST
-			$listTable	="CorrespondanceMaille";
+			switch ($typePeche) { 
+				case "exp":
+					$listTable 	= GetParam("listeTableRefExpACCESS",$PathFicConfAccess);
+					break;
+				case "art":
+					$listTable 	= GetParam("listeTableRefArtACCESS",$PathFicConfAccess);
+					break;	
+			}
+
 			 break;
 		case "copPPEAO":
 			// Copie entre base postgres de ref (PPEAO) et base ACCESS de travail
 			$nomAction = "Copie param de la base POSTGRESQL (PPEAO) de ref";
-			$listTable = GetParam("listeTableRefPPEAO",$PathFicConfAccess);
-			//$listTable="Pays,Systeme,Secteur,CategorieEcologique,Categorietrophique,Ordre,Famille,Espece,Nom,OrigineKb"; //TEST
-			//$listTable="nom";
+			switch ($typePeche) { 
+				case "exp":
+					$listTable = GetParam("listeTableRefExpPPEAO",$PathFicConfAccess);
+					break;
+				case "art":
+					$listTable = GetParam("listeTableRefArtPPEAO",$PathFicConfAccess);
+					break;	
+			}
 			break;
 	}
 	$NbrTableAlire = substr_count($listTable,",");
@@ -248,14 +259,17 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			$nomBDSource = "Base ACCESS de ref";
 			$BDSource = "connectAccess";
 			$BDCible = "connectAccessTravail";
+			$nomPeche = "peches experimentales";
 			break;
 		case "art":
 			$BDACCESS = GetParam("nomBDRefArt",$PathFicConfAccess);
 			$nomBDSource = "Base POSTGRESQL de ref (PPEAO)";
 			$BDSource = "connectPPEAO";
 			$BDCible = "connectAccessTravail";
+			$nomPeche = "peches artisanales";
 			break;	
 	}
+	$nomAction = $nomAction." ".$nomPeche;
 	$BDACCESSTravail = $BDACCESS."_travail";	
 	$nomBDCible = "Base ACCESS de travail";
 	// Test de la connexion à la BD de ref (pour log entre autre)
@@ -263,7 +277,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es BD_PPEAO pour maj des logs</div>" ; exit;
 	}
 	// Test connexion base de travail
-	$connectAccess = odbc_connect($BDACCESS,'','');
+	$connectAccess = odbc_connect($BDACCESS,'','',SQL_CUR_USE_ODBC);
 	if (!$connectAccess) {
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "Erreur de la connection à la base ACCESS de reference ".$BDACCESS,$pasdefichier);
@@ -299,7 +313,6 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 
 	$tables = explode(",",$listTable);
 	$nbTables = count($tables) - 1;
-	logWriteTo(8,"notice"," Nb tables = ".$nbTables ,"","","1");
 	// Début du traitement de comparaison par table.
 	// *********************************************
 
@@ -345,24 +358,27 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			// Reinitialisation variable pour creation SQL
 			$where="";
 			$alias="";
+			$continueControle = true;
 			// Pour construire une requete compatible ACCESS et POSTGRESQL
 			switch($typeAction){
 					case "copAC":
 						$nomTableEC = $tables[$cpt];
 						break; 
 					case "copPPEAO":
-						$ficXMLDef = $_SERVER["DOCUMENT_ROOT"]."/conf/AccessConv.xml";
-						$nomTableEC = getTableNamePostGRE($ficXMLDef,$tables[$cpt]);
+						$ficXMLDef = $_SERVER["DOCUMENT_ROOT"]."/conf/AccessConv".$typePeche.".xml";
+						if (! file_exists($ficXMLDef )) {
+						$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Le fichier ".$ficXMLDef." n existe pas..<br/>";
+							$continueControle = false;
+							$erreurProcess = true;
+						} else {
+							$nomTableEC = getTableNamePostGRE($ficXMLDef,$tables[$cpt]);
+						}
 						break;
 				}
 			// Gestion TIMEOUT
 			$tableEnLecture = $tables[$cpt]; // On garde ici le nom de la table ACCESS pour le timeout, on le teste en tout debut de boucle			
-			logWriteTo(8,"notice","*-- Comparaison de la table ".$nomTableEC,"","","0");
-
-			// Construction des requetes SQL
-			$continueControle = true ; 
 			
-			if ($continueControle) { // obsolete on le garde pour des tests 
+			if ($continueControle) {
 				// ************************************************
 				// Gestion TIMEOUT : on reprend la ou on s'etait arrete
 				// Comme on trie par ID, on ne va pas en perdre en route
@@ -391,6 +407,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 				if ( !$compReadResultC ) { 
 					$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur access table ".$nomTableEC." pour ".$nomBDSource." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 					$erreurProcess = true;
+					$continueControle = false ;
 				} else {
 					switch($typeAction){
 						case "copAC":
@@ -423,12 +440,14 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 				if ( !$compReadResultC ) { 
 				$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur access table ".$nomTableEC." pour ".$nomBDSource." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 					$erreurProcess = true;
+					$continueControle = false ;
 				} 
 				// *****************************************************
 				// analyse de la requete, génération et exécution du SQL
 				// *****************************************************
+				if ($continueControle) {
 				if ($totalLignes  == 0) {
-					// La table dans BD_PPEAO est vide
+					// La table dans bdppeao est vide
 					if ($EcrireLogComp ) { WriteCompLog ($logComp,"Table de reference ".$nomTableEC." dans ".$nomBDSource." vide",$pasdefichier);}
 					$tableSourceVide = true;
 				} else {
@@ -454,8 +473,9 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 									break;
 								}
 								//echo "<br/>lecture ".$compRow[0]." - ".$compRow[1];
-								$scriptSQL = GetSQLACCESS('insert',  $nomTableEC, $where, $compRow,"ACCESS",$tables[$cpt],$connectAccessTravail,$connectPPEAO);
+								$scriptSQL = GetSQLACCESS('insert',  $nomTableEC, $where, $compRow,"ACCESS",$tables[$cpt],$connectAccessTravail,$connectPPEAO,$typePeche);
 								$testPos = strpos($scriptSQL,"*-ERREUR*-" );
+								//echo $scriptSQL."<br/>";
 								if ($testPos === false){
 									$execSQLResult = odbc_exec($connectAccessTravail,$scriptSQL);
 									$erreurSQL = odbc_errormsg($connectAccessTravail); //
@@ -475,6 +495,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 							} // end while (odbc_fetch_row($compReadResult))
 							break;
 						case "copPPEAO":
+						//echo $tables[$cpt]."<br/>";
 							while ($compRow = pg_fetch_array($compReadResult)) {
 								// Gestion du timeout
 								$ourtime = (int)number_format(timer()-$start_while,7);
@@ -486,17 +507,65 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 									$ArretTimeOut =true;
 									break;
 								}
-								$scriptSQL = GetSQLACCESS('insert',  $nomTableEC, $where, $compRow,"POSTGRE",$tables[$cpt],$connectAccessTravail,$connectPPEAO);
-								$testPos = strpos($scriptSQL,"*-ERREUR*-" );
+								$scriptSQL = GetSQLACCESS('insert',  $nomTableEC, $where, $compRow,"POSTGRE",$tables[$cpt],$connectAccessTravail,$connectPPEAO,$typePeche);
+								//echo $scriptSQL."<br/>";
+								//if ($EcrireLogComp ) {
+								//	WriteCompLog ($logComp,$scriptSQL,$pasdefichier);
+								//}
+								$testPos = strpos($scriptSQL[0],"*-ERREUR*-" );
 								if ($testPos === false){
-									$execSQLResult = odbc_exec($connectAccessTravail,$scriptSQL);
-									$erreurSQL = odbc_errormsg($connectAccessTravail); //
-									if (! $execSQLResult) {
-										echo "erreur dans ".$scriptSQL."<br/>";
-										$cptSQLErreur ++;
+									// Il semble que le connecteur ODBC n'aime pas les scripts SQL avec plusieurs instructions. Donc, on eclate le scripts et on execute les instructions une a une.
+									// Pour gagner du temps, on separe les deux comportements, une seule instruction, plus d'une instruction
+									if (strpos($scriptSQL,"#;#" ) === false ) {
+										// Execution de l'instruction unique
+										$execSQLResult = odbc_exec($connectAccessTravail,$scriptSQL);
+										$erreurSQL = odbc_errormsg($connectAccessTravail); //
+										if (! $execSQLResult) {
+											if ($EcrireLogComp ) {
+														WriteCompLog ($logComp,"ERREUR ".$tables[$cpt]."erreur dans ".$scriptSQL." (erreur complete =".$erreurSQL.")",$pasdefichier);
+											} else {
+												echo "erreur dans ".$scriptSQL." (erreur complete =".$erreurSQL.")<br/>";
+											}
+											$ErreurProcess = true;
+											$cptSQLErreur ++;
+										} else {
+											$cptMajPOSTtoACC++;
+										}									
+
 									} else {
-										$cptMajPOSTtoACC++;
-									}								
+										// Execution de toutes les instructions
+										$InstructionSQL = explode("#;#",$scriptSQL);
+										$nbInstructions = count($InstructionSQL) - 1;
+										for ($cptIns = 0; $cptIns <= $nbInstructions; $cptIns++) {
+											if ($InstructionSQL[$cptIns] == ""){
+												if ($EcrireLogComp ) {
+														WriteCompLog ($logComp,"SQL vide pour table ".$tables[$cpt],$pasdefichier);
+												} else {
+													echo "SQL vide pour table ".$tables[$cpt]."<br/>";
+												}
+											} else {
+											//echo $InstructionSQL[$cptIns]."<br/>";
+												$execSQLResult = odbc_exec($connectAccessTravail,$InstructionSQL[$cptIns]);
+												$erreurSQL = odbc_errormsg($connectAccessTravail); //
+												if (! $execSQLResult) {
+													if ($EcrireLogComp ) {
+														WriteCompLog ($logComp,"ERREUR TABLE ".$tables[$cpt]." : pour instruction ".$InstructionSQL[$cptIns],$pasdefichier);																									
+														WriteCompLog ($logComp,"COMPLEMENT ERREUR erreur complete =".$erreurSQL,$pasdefichier);
+														
+													} else {
+														echo "erreur dans ".$InstructionSQL[$cptIns]." (erreur complete =".$erreurSQL.")<br/>";
+													}
+													$ErreurProcess = true;
+													$cptSQLErreur ++;
+												} else {
+													$cptMajPOSTtoACC++;
+												}
+											odbc_free_result($execSQLResult);											
+											}
+										
+										}
+									}
+																	
 								} else {
 									// Erreur dans l'execution de la creation du script, en general lie a une erreur dans le fichier de definition du dico de la table
 									$CRexecution .= str_replace("*-ERREUR*-","*- ERREUR : ",$scriptSQL);
@@ -516,8 +585,10 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 					// TIMEOUT, reinitialisation des variables EnCours
 					$IDEnCours = 0;
 					$tableEnCours = "";
-				} // end if(pg_num_rows($compReadResult) == 0) table de ref vide ?
-				// Libère le requete sur BD_PECHE
+				} // end if($totalLignes  == 0)
+				} // end if(!$erreurprocess)
+				
+				// Libère la requete sur bdppeao
 				switch($typeAction){
 					case "copAC":
 						odbc_free_result($compReadResult);
@@ -528,7 +599,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 				}
 
 			} // end if ($continueControle) 
-			if (!$ArretTimeOut) {
+			if (!$ArretTimeOut && $continueControle) {
 				// On aura deux comptes-rendus selon si c'est une comparaison ou une mise à jour
 				// Dans le cas de la comparaison, on indique les différents cas trouvés.
 				// Dans le cas de la maj, on n'indique juste le type de maj
@@ -566,7 +637,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 					}
 				} 
 				$CRexecution = $CRexecution." <br/>" ;
-			} // End for statement if ((!$ArretTimeOut)
+			} // End for statement if ((!$ArretTimeOut) 
 			
 			} // End for statement if ((!$tableEnCours == "" && tableEnCours == $tables[$cpt]) || $tableEnCours == "")
 		} // End for statement for ($cpt = 0; $cpt <= $nbTables; $cpt++)
@@ -598,7 +669,6 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	}
 } else {
 	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Etape de ".$nomAction." non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
-	logWriteTo(8,"error","**- Etape de ".$nomAction." non executee par choix de l'utilisateur","","","0");
 } // end if (! $pasdetraitement )
 
 exit;

@@ -101,7 +101,7 @@ function runProcessEnd()
 	  	return;
 	  } 
 	xmlHttp.onreadystatechange=stateChanged2;
-	xmlHttp.open("GET","/export/finExport.php",true);
+	xmlHttp.open("GET","/export/finExport.php?log="+checkLog,true);
 	xmlHttp.send(null);
 }
 

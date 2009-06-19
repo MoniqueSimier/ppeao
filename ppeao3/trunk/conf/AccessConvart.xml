@@ -2,55 +2,58 @@
 <tables>
 	<table>
 		<tablename>CoefficientKb</tablename>
-		<postgretablename>ACCESS</postgretablename>
+		<postgretablename>ref_espece</postgretablename>
 		<champs>
 		<champ>
 				<name>CodeEspece</name>
 				<type>text</type>
-				<postgrename>ACCESS</postgrename>
-				<postgretype>ACCESS</postgretype>
+				<postgrename>id</postgrename>
+				<postgretype>text</postgretype>
 			</champ>
 			<champ>
 				<name>IdSysteme</name>
 				<type>integer</type>
-				<postgrename>ACCESS</postgrename>
-				<postgretype>ACCESS</postgretype>
+				<postgrename>SPEC</postgrename>
+				<postgretype>SPEC</postgretype>
 			</champ>
 			<champ>
 				<name>CodeOrigineKb</name>
 				<type>real</type>
-				<postgrename>ACCESS</postgrename>
-				<postgretype>ACCESS</postgretype>
+				<postgrename>ref_origine_kb_id</postgrename>
+				<postgretype>real</postgretype>
 			</champ>
 			<champ>
 				<name>CoefA</name>
 				<type>real</type>
-				<postgrename>ACCESS</postgrename>
-				<postgretype>ACCESS</postgretype>
+				<postgrename>coefficient_k</postgrename>
+				<postgretype>real</postgretype>
 			</champ>
 			<champ>
 				<name>CoefB</name>
 				<type>real</type>
-				<postgrename>ACCESS</postgrename>
-				<postgretype>ACCESS</postgretype>
+				<postgrename>coefficient_b</postgrename>
+				<postgretype>real</postgretype>
 			</champ>			
 			<champ>
 				<name>Renvoi</name>
 				<type>integer</type>
-				<postgrename>ACCESS</postgrename>
-				<postgretype>ACCESS</postgretype>
+				<postgrename>VALDEF</postgrename>
+				<postgretype>integer</postgretype>
+				<valdefaut>vide</valdefaut>
 			</champ>
 			<champ>
 				<name>RenvoiSyst</name>
 				<type>integer</type>
-				<postgrename>ACCESS</postgrename>
-				<postgretype>ACCESS</postgretype>
+				<postgrename>VALDEF</postgrename>
+				<postgretype>integer</postgretype>
+				<valdefaut>null</valdefaut>
 			</champ>
 			<champ>
 				<name>ValeurConserve</name>
 				<type>boolean</type>
-				<postgrename>ACCESS</postgrename>
-				<postgretype>ACCESS</postgretype>
+				<postgrename>VALDEF</postgrename>
+				<postgretype>boolean</postgretype>
+				<valdefaut>1</valdefaut>
 			</champ>
 		</champs>
 	</table>
@@ -522,7 +525,7 @@
 		<postgretablename>ref_espece</postgretablename>
 		<champs>
 			<champ>
-			<name>CodeEspece</name>
+				<name>CodeEspece</name>
 				<type>text</type>
 				<postgrename>id</postgrename>
 				<postgretype>text</postgretype>
@@ -540,7 +543,7 @@
 				<postgretype>text</postgretype>
 			</champ>	
 			<champ>
-			<name>CodeFamille</name>
+				<name>CodeFamille</name>
 				<type>integer</type>
 				<postgrename>ref_famille_id</postgrename>
 				<postgretype>integer</postgretype>
@@ -548,9 +551,12 @@
 			<champ>
 				<name>NonPoisson</name>
 				<type>boolean</type>
-				<postgrename>non_poisson</postgrename>
+				<postgrename>AUTRETABLE</postgrename>
 				<postgretype>boolean</postgretype>
-				<valdefaut>0</valdefaut>
+				<autretablename>ref_famille</autretablename>
+				<autretableidAccess>CodeFamille</autretableidAccess>
+				<autretableidPostgre>ref_famille_id</autretableidPostgre>
+				<autrenom>non_poisson</autrenom>
 			</champ>
 		</champs>
 	</table>

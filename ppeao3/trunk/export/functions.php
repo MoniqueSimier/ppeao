@@ -93,8 +93,8 @@ function litXML($fichier,$item,$champs,$nomTable) {
 		}
 		// et on retourne le tableau dans la fonction
 		if (!$Jaitrouvelatable) {
-			$LocScriptSQL = "*-ERREUR*- pas de definition de la structure de la table ".$nomTable." dans le fichier XML /conf/AccessConv.xml";
-			return $LocScriptSQL;
+			$tempArray[0][0] = "*-ERREUR*- pas de definition de la structure de la table ".$nomTable." dans le fichier XML /conf/AccessConv.xml";
+			return $tempArray;
 		} else {
 			foreach($tmp3 as $row) {
 				$tableNamePostGRE = $row[1];
@@ -113,12 +113,43 @@ function litXML($fichier,$item,$champs,$nomTable) {
 				$tempArray[$cptArr][2] = $tempval2[1];	
 				$tempval2 = preg_split("/<\/?postgretype>/",$tempval[$cpt]);	
 				$tempArray[$cptArr][3] = $tempval2[1];
+				// Gestion d'une valeur par defaut
 				if (strpos($tempval[$cpt],"valdefaut") === false) {
 					$tempArray[$cptArr][4] = "rien";
 				} else {
 					$tempval2 = preg_split("/<\/?valdefaut>/",$tempval[$cpt]);	
 					$tempArray[$cptArr][4] = $tempval2[1];
 				}
+				// Gestion d'une lecture d'une valeur venant d'une autre table
+				// Le nom de la table alternative
+				if (strpos($tempval[$cpt],"autretablename") === false) {
+					$tempArray[$cptArr][5] = "rien";
+				} else {
+					$tempval2 = preg_split("/<\/?autretablename>/",$tempval[$cpt]);	
+					$tempArray[$cptArr][5] = $tempval2[1];
+				}
+				// Le nom de la clé unique pour la recherche de la donnée dans la base access
+				if (strpos($tempval[$cpt],"autretableidAccess") === false) {
+					$tempArray[$cptArr][6] = "rien";
+				} else {
+					$tempval2 = preg_split("/<\/?autretableidAccess>/",$tempval[$cpt]);	
+					$tempArray[$cptArr][6] = $tempval2[1];
+				}
+				// Le nom de la clé unique pour la recherche de la donnée dans la base postgre
+				if (strpos($tempval[$cpt],"autretableidPostgre") === false) {
+					$tempArray[$cptArr][7] = "rien";
+				} else {
+					$tempval2 = preg_split("/<\/?autretableidPostgre>/",$tempval[$cpt]);	
+					$tempArray[$cptArr][7] = $tempval2[1];
+				}
+				// Le nom du champ de la table alternative a partir duquel on va lire la donnée
+				if (strpos($tempval[$cpt],"autrenom") === false) {
+					$tempArray[$cptArr][8] = "rien";
+				} else {
+					$tempval2 = preg_split("/<\/?autrenom>/",$tempval[$cpt]);	
+					$tempArray[$cptArr][8] = $tempval2[1];
+				}				
+
 				$cptArr++;
 			}
 			return $tempArray;
@@ -128,7 +159,7 @@ function litXML($fichier,$item,$champs,$nomTable) {
 
 //*********************************************************************
 // GetSQL : génère le code SQL pour mettre à jour la table
-function GetSQLACCESS($SQLAction, $tableName, $whereStatement,$value,$BDType,$nomTableACCESS,$connACCESS,$connPOST) {
+function GetSQLACCESS($SQLAction, $tableName, $whereStatement,$value,$BDType,$nomTableACCESS,$connACCESS,$connPOST,$TypePeche) {
 // Cette fonction permet de générer le code SQL en fonction de la table en entrée et du type d'action à mener.
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -151,16 +182,22 @@ $LocListAttrUp = "";
 $LocListAttrIn1 = "";
 $LocListAttrIn2 = "";
 $locNouvelID = 0;
-
+$LocFlagSPEC = false;
 $numChamp = 0;
 // Etape 1 - on récupère tous les champs de la table à ajouter ou à mettre à jour
 
 // Lecture du du fichier XML et recuperation de la liste des champs (champ1 ACCESS, nom champ1 dans la table POSTGRE,
 // champ2 ACCESS, nom champ2 dans la table POSTGRE, etc...)
 
-$ficXMLDef = $_SERVER["DOCUMENT_ROOT"]."/conf/AccessConv.xml";
+$ficXMLDef = $_SERVER["DOCUMENT_ROOT"]."/conf/AccessConv".$TypePeche.".xml";
 $tempArray = litXML($ficXMLDef,"table",array("tablename","postgretablename","champs"),$nomTableACCESS);
+$testPos = strpos($tempArray[0][0] ,"*-ERREUR*-" );
+;
+if ($testPos === false ) {
 
+} else {
+	return $tempArray[0][0];
+}
 $Attr = $tempArray;
 $nbAttr = count($Attr) - 1;
 for ($cpt = 0; $cpt <= $nbAttr; $cpt++) {
@@ -169,21 +206,7 @@ for ($cpt = 0; $cpt <= $nbAttr; $cpt++) {
 	$typeChampACCESS = $Attr[$cpt][1];
 	$NomChampPOSTGRE = $Attr[$cpt][2];
 	$typeChampPOSTGRE = $Attr[$cpt][3];
-	switch ($Attr[$cpt][4]) {
-		case "rien" : 
-			$valeurDefaut ="";
-			break;
-		case "vide" : 
-			if ($typeChampACCESS == "integer" || $typeChampACCESS == "real") {
-				$valeurDefaut = 0; 
-			} else {
-				$valeurDefaut = "' '";
-			}
-			break;
-		default : 
-			$valeurDefaut = $Attr[$cpt][4];
-			break;	
-	}
+	$valeurDefaut = $Attr[$cpt][4];
 	// selon la base a maj, ce ne sont pas les memes noms de champs
 	switch ($BDType) {
 		case "ACCESS" : 
@@ -209,19 +232,73 @@ for ($cpt = 0; $cpt <= $nbAttr; $cpt++) {
 			break;
 		case "AUTRETABLE" :
 			// On doit recuperer la valeur dans une autre table (uniquement valable pour POSTGRE)
-			
+			//	<postgreinfocomp>
+			//		<autretablename>ref_famille</autretablename>				==> 5 	[nom table]
+			//		<autretableidAccess>CodeFamille</autretableidAccess>		==> 6	[nom ID ACCESS]
+			//		<autretableidPostgre>ref_famille_id</autretableidPostgre>	==> 7	[nom ID postgre]
+			//		<autrenom>non_poisson</autrenom>							==> 8	[nom champ]
+			//	</postgreinfocomp>
+			if ($SQLAction=="insert") {
+				// On va recuperer dans la liste des attributs la position du champs de reference pour ensuite lire la valeur. C'est un peu rsustre comme evaluation mais c'est fait assez peu souvent.			
+				$listeChamps = explode(",",$LocListAttrIn1);
+				$nbChamps = count($listeChamps ) - 1;
+				for ($cpt1 = 0; $cpt1 <= $nbChamps; $cpt1++) {
+					if ($listeChamps[$cpt1] == $Attr[$cpt][6]) {
+						break;
+					}
+				}
+				$listeValeur = explode(",",$LocListAttrIn2);
+				$valeurID = $listeValeur[$cpt1];
+				$LocSQL = "select ".$Attr[$cpt][8]." from ".$Attr[$cpt][5]." where id = ".$valeurID ;
+				$LocResult = pg_query($connPOST,$LocSQL);
+				$LocerreurSQL = pg_last_error($connPOST);
+				if (!$LocResult) {
+					echo "erreur lecture base post gre pour table ".$Attr[$cpt][5]." erreur complete = ".$LocerreurSQL."<br/>";
+				} else {
+					if (pg_num_rows($LocResult) == 0) {
+						echo "pas de resultat lecture base post gre pour table ".$Attr[$cpt][5]."<br/>";
+					} else {
+						$LocRow = pg_fetch_row($LocResult);
+						$valChampSQL = $LocRow[0];
+					}
+				}
+			} 
+			break;
+		case "SPEC" :
+			// On met à jour le flag SPEC ==> un traitement particulier doit être fait.
+				$LocFlagSPEC = true;
 			break;
 		default:
-			if ($valeurDefaut == "") {
+			if ($valeurDefaut == "rien") {
 				$valChamp = $value[$nomChampSQL];
 				$valChampSQL = formatSQL($valChamp,$typeChampACCESS);
 			} else {
-				$valChampSQL = $valeurDefaut;
+
+				switch ($valeurDefaut) {
+					case "null": 
+
+						$valChampSQL = "NULL";
+						break;
+					case "vide" : 
+
+						if ($typeChampACCESS == "integer" || $typeChampACCESS == "real") {
+							$valChampSQL = 0; 
+						} else {
+							$valChampSQL = "' '";
+						}
+						break;
+					default : 
+
+						$valChampSQL = $valeurDefaut;
+						break;	
+				}
+				//echo "val defaut SQL = ".$valChampSQL."<br/>";
 			}
-	}
+			break;
+	}		
 
 	//echo $NomChampACCESS." ".$valChamp."<br/>";	
-	if ($SQLAction=="insert") {
+	if ($SQLAction=="insert" && !($NomChampPOSTGRE=="SPEC")) {
 		if ($LocListAttrIn1 == "" ) {
 			$LocListAttrIn1 = $NomChampACCESS;
 		} else {
@@ -235,7 +312,9 @@ for ($cpt = 0; $cpt <= $nbAttr; $cpt++) {
 		}
 	}
 	// construit la liste des champs pour l'update
-	if ($SQLAction=="update") {
+	// Pas appeler....
+	
+	if ($SQLAction=="update" && !($NomChampPOSTGRE=="SPEC")) {
 		if ($LocListAttrUp == "" ) {
 			$LocListAttrUp = $NomChampACCESS."=".$valChampSQL ;
 		} else {
@@ -243,20 +322,22 @@ for ($cpt = 0; $cpt <= $nbAttr; $cpt++) {
 		}	
 	}
 }
-
 // Etape 2 - on construit l'instruction SQL complète.
-switch ($SQLAction) {
-	case "update":
-		$LocScriptSQL ="update ".$nomTableACCESS." set ".$LocListAttrUp." ".$whereStatement ;
-		break;
-	case "insert":
-		$LocScriptSQL ="insert into ".$nomTableACCESS." (".$LocListAttrIn1.") values (".$LocListAttrIn2.")";
-		break;
-	case "delete":
-		$LocScriptSQL ="delete from ".$nomTableACCESS." ".$whereStatement ;
-		break;
-} 
-
+if ($LocFlagSPEC) {
+	include $_SERVER["DOCUMENT_ROOT"].'/export/spec.php';
+} else {
+	switch ($SQLAction) {
+		case "update":
+			$LocScriptSQL ="update ".$nomTableACCESS." set ".$LocListAttrUp." ".$whereStatement ;
+			break;
+		case "insert":
+			$LocScriptSQL ="insert into ".$nomTableACCESS." (".$LocListAttrIn1.") values (".$LocListAttrIn2.")";
+			break;
+		case "delete":
+			$LocScriptSQL ="delete from ".$nomTableACCESS." ".$whereStatement ;
+			break;
+	} 
+}
 
 return $LocScriptSQL;
 }

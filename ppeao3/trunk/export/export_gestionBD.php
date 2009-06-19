@@ -111,19 +111,21 @@ $BDrep = GetParam("nomRepBD",$PathFicConfAccess);
 switch ($typePeche) { 
 	case "exp":
 		$BDACCESS = GetParam("nomBDRefExp",$PathFicConfAccess);
+		$nomPeche = "peches experimentales";
 		break;
 	case "art":
 		$BDACCESS = GetParam("nomBDRefArt",$PathFicConfAccess);
+		$nomPeche = "peches artisanales";
 		break;	
 }
 switch ($action) { 
 	case "ctrl":
-		$nomAction = "Controle base de donnees";
+		$nomAction = "Controle base de donnees ".$nomPeche;
 		$numFen = 1;
 		$nomFenetre = "controleBase";
 		break;
 	case "vide":
-		$nomAction = "Vidage base de travail";
+		$nomAction = "Vidage base de travail ".$nomPeche;
 		$BDACCESS = $BDACCESS."_travail";
 		$numFen = 2;
 		$nomFenetre = "vidage";
@@ -132,6 +134,16 @@ switch ($action) {
 
 
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
+	// Début des traitements
+	if ($EcrireLogComp && $action=="ctrl") {
+		WriteCompLog ($logComp, "#",$pasdefichier);
+		WriteCompLog ($logComp, "#",$pasdefichier);
+		WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
+		WriteCompLog ($logComp, "*- EXPORT ACCESS ".date('y\-m\-d\-His'),$pasdefichier);
+		WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
+		WriteCompLog ($logComp, "#",$pasdefichier);
+		WriteCompLog ($logComp, "#",$pasdefichier);
+	}
 	// Initialisation des logs
 	logWriteTo(8,"notice","**- Debut lancement ".$nomAction." ","","","0");
 	if ($EcrireLogComp ) {
@@ -204,10 +216,21 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					if ($affichageDetail) {
 						$CRexecution .= "Connection avec succ&egrave;s à la base ACCESS ".$BDACCESS."<br/>";
 					}
-					// Tables avec correspondance PPEAO	
-					$listTable = GetParam("listeaViderACCESS",$PathFicConfAccess);
-					// Tables specifiques ACCESS			
-					$listTable2 = GetParam("listeaViderPPEAO",$PathFicConfAccess);
+					switch ($typePeche) { 
+						case "exp":
+							// Tables avec correspondance PPEAO	
+							$listTable = GetParam("listeaViderExpACCESS",$PathFicConfAccess);
+							// Tables specifiques ACCESS			
+							$listTable2 = GetParam("listeaViderExpPPEAO",$PathFicConfAccess);
+							break;
+						case "art":
+							// Tables avec correspondance PPEAO	
+							$listTable = GetParam("listeaViderArtACCESS",$PathFicConfAccess);
+							// Tables specifiques ACCESS			
+							$listTable2 = GetParam("listeaViderArtPPEAO",$PathFicConfAccess);
+							break;	
+					}
+
 					$ListeTableAVider = $listTable.",".$listTable2;
 					//echo $ListeTableAVider."<br/>";
 

@@ -11,24 +11,14 @@
 		if ($_SESSION['s_erreur_process']) {
 			$_SESSION['s_status_process_auto'] = 'ko';
 		}	
-		// On met à jour la table des logs avec les données
-		logWriteTo(8,"notice","**- Compte rendu traitement ".$nomAction,"","","0");
-		logWriteTo(8,"notice","*-- Nombre total de tables lues = ".$_SESSION['s_cpt_table_total'],$_SESSION['s_cpt_table_total'],"","0");
-		logWriteTo(8,"notice","*-- Nombre de tables identiques = ".$_SESSION['s_cpt_table_egal'],$_SESSION['s_cpt_table_egal'],"","0");		
-		logWriteTo(8,"notice","*-- Nombre de tables avec uniquement des donnees differences = ".$_SESSION['s_cpt_table_diff'],$_SESSION['s_cpt_champ_diff'],"","0");
-		logWriteTo(8,"notice","*-- Nombre de tables avec uniquement des donnees manquantes = ".$_SESSION['s_cpt_table_manquant'],$_SESSION['s_cpt_table_manquant'],"","0");
-				logWriteTo(8,"notice","*-- Nombre de tables avec des donnees manquantes et differentes = ".$_SESSION['s_cpt_table_diff_manquant'],$_SESSION['s_cpt_table_diff_manquant'],"","0");
-		logWriteTo(8,"notice","*-- Nombre de tables vides = ".$_SESSION['s_cpt_table_vide'],$_SESSION['s_cpt_table_vide'],"","0");
-		logWriteTo(8,"notice","*-- Nombre de tables de references vides = ".$_SESSION['s_cpt_table_source_vide'],$_SESSION['s_cpt_table_source_vide'],"","0");
-		logWriteTo(8,"notice","*-- Nombre d'erreur lors de la maj = ".$_SESSION['s_cpt_erreurs_sql'],$_SESSION['s_cpt_erreurs_sql'],"","0");
-	
+
 		if ($EcrireLogComp ) {
 			// Si on a choisi de générer le log complémentaire, alors
 			// gestion fin de traitement 
 			WriteCompLog ($logComp,"**----------------------------------------------------",$pasdefichier);
 			WriteCompLog ($logComp,"* Compte rendu traitement ".$nomAction,$pasdefichier);
 			WriteCompLog ($logComp,"* Nombre total de tables lues = ".$_SESSION['s_cpt_table_total'],$pasdefichier);						
-			$FicCRexecution = str_replace ("<br/>","\r\n".date('y\-m\-d\-His')."-",$CRexecution);
+			$FicCRexecution = str_replace ("<br/>","\r\n".date('y\-m\-d\-His')."- ",$CRexecution);
 			$FicCRexecution = str_replace ("<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>","*--> ",$FicCRexecution);
 			$FicCRexecution = str_replace ("<b>","",$FicCRexecution);
 			$FicCRexecution = str_replace ("</b>","",$FicCRexecution);

@@ -15,11 +15,19 @@ repLogAccess=log;
 nomFicLogSuppAc=ExportAccess.log;
 ; Nom fichier de compression (le type de peche est ajoutée)
 nomFicLogCompression=Compression
-; tables a vider
-listeaViderACCESS=activImporter,CoefficientKb,ConditionPhysicoChimiq,CorrespondanceMaille,debarqImporter,engactiImporter,engpechImporter,Enqueteur,EspeceTMO,Journal,ModeCalcul,MotDePasse,NomVernaculaire,PaysFragmentation,PECHEXPcat_ecol,PECHEXPcat_troph,PECHEXPespece,PECHEXPfamille,PECHEXPnom,PECHEXPordre,PeriodeEnquete,poidsImporter,Recap,RecapCoef,SuiviExtractImport,SuiviExtractImportRec,tailleImporter,vdueauImporter;
+; tables a vider Peches Artisanales
+listeaViderArtACCESS=activImporter,CoefficientKb,ConditionPhysicoChimiq,CorrespondanceMaille,debarqImporter,engactiImporter,engpechImporter,Enqueteur,EspeceTMO,Journal,ModeCalcul,MotDePasse,NomVernaculaire,PaysFragmentation,PECHEXPcat_ecol,PECHEXPcat_troph,PECHEXPespece,PECHEXPfamille,PECHEXPnom,PECHEXPordre,PeriodeEnquete,poidsImporter,Recap,RecapCoef,SuiviExtractImport,SuiviExtractImportRec,tailleImporter,vdueauImporter;
 ; tables a copier entre la base de travail et la base PPEAO de reference
-listeaViderPPEAO=Agglomeration,CategorieSocioProfessionnelle,EtatCiel,GrandTypeEngin,Milieu,TypeActivite,TypeAgglomeration,TypeEngin,TypeSortie,Vent,CategorieEcologique,Categorietrophique,CoefficientKb,Espece,Nom,Famille,Ordre,OrigineKb,Pays,Secteur,Systeme;
+listeaViderArtPPEAO=Agglomeration,CategorieSocioProfessionnelle,EtatCiel,GrandTypeEngin,Milieu,TypeActivite,TypeAgglomeration,TypeEngin,TypeSortie,Vent,CategorieEcologique,Categorietrophique,CoefficientKb,Espece,Nom,Famille,Ordre,OrigineKb,Pays,Secteur,Systeme;
 ; tables a copier entre la base de travail et la base ACCESS de reference
-listeTableRefACCESS=CoefficientKb,CorrespondanceMaille,debarqImporter,Enqueteur,EspeceTMO,Journal,ModeCalcul,MotDePasse,NomVernaculaire,PaysFragmentation,PeriodeEnquete,poidsImporter,SuiviExtractImport;
+listeTableRefArtACCESS=CorrespondanceMaille,debarqImporter,Enqueteur,EspeceTMO,Journal,ModeCalcul,MotDePasse,NomVernaculaire,PaysFragmentation,PeriodeEnquete,poidsImporter,SuiviExtractImport;
 ; tables a copier entre la base de travail et la base PPEAO de reference
-listeTableRefPPEAO=Pays,Systeme,Secteur,CategorieEcologique,Categorietrophique,Ordre,Famille,Espece,Nom,OrigineKb,TypeAgglomeration,Agglomeration,CategorieSocioProfessionnelle,EtatCiel,GrandTypeEngin,Milieu,TypeActivite,TypeEngin,TypeSortie,Vent;
+listeTableRefArtPPEAO=Pays,Systeme,Secteur,CategorieEcologique,Categorietrophique,Ordre,Famille,Espece,Nom,OrigineKb,CoefficientKb,TypeAgglomeration,Agglomeration,CategorieSocioProfessionnelle,EtatCiel,GrandTypeEngin,Milieu,TypeActivite,TypeEngin,TypeSortie,Vent;
+; tables a vider Peches Experimentales
+listeaViderExpACCESS=;
+; tables a copier entre la base de travail et la base PPEAO de reference
+listeaViderExpPPEAO=;
+; tables a copier entre la base de travail et la base ACCESS de reference
+listeTableRefExpACCESS=;
+; tables a copier entre la base de travail et la base PPEAO de reference
+listeTableRefExpPPEAO=;
