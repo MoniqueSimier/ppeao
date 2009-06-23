@@ -218,7 +218,7 @@ INSERT INTO admin_log_modules (module_id, module_name) VALUES (4, 'journal');
 INSERT INTO admin_log_modules (module_id, module_name) VALUES (5, 'session');
 INSERT INTO admin_log_modules (module_id, module_name) VALUES (6, 'Gestion de la documentation');
 INSERT INTO admin_log_modules (module_id, module_name) VALUES (7, 'Portage automatique');
-
+INSERT INTO admin_log_modules (module_id, module_name) VALUES (8, 'Export');
 
 ALTER TABLE admin_log_modules ENABLE TRIGGER ALL;
 
