@@ -4,7 +4,7 @@
 $section="consulter";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
-$zone=6; // zone portage (voir table admin_zones)
+$zone=6; // zone extraction (voir table admin_zones)
 ?>
 
 <?php 
@@ -97,8 +97,11 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 			<div id="versionTemp">
 		Derni&egrave;re maj 10/2008 - version 2.4 JME modifi&eacute;e Yann Laurent  <?php //******************* A ENLEVER en final?>
 		</div>
-			
 			<br/>
+		<div id="versionTemp">
+		Pour acc&eacute;der &agrave; la nouvelle version de l'extraction, cliquez <a href="./extraction/extraction.php" >ici</a>.
+		</div>		
+		<br/>
 			<?php
 			if($type==""){
 				if ($AfficheInfoDebug=="y") {
