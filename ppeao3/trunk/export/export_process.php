@@ -148,19 +148,21 @@ $ourtime = ceil(0.9*$max_time);
 
 if (isset($_SESSION['s_status_export'])) {
 	if ($_SESSION['s_status_export'] == 'ko') {
-		logWriteTo(8,"error","**- ARRET du traitement ".$nomAction." car le processus precedent est en erreur.","","","0");
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> ARRET du traitement car le processus precedent est en erreur</div>" ;
 		exit;
 	}
 }
 
+if ($typeAction == "copAC" && $typePeche="exp") {
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> Pas de mise a jour de donnees depuis la base ACCESS de reference pour les peches experimentales</div>" ;
+		exit;
+
+}
 
 // ***** Variables de traitements
-$CRexecution = ""; 			// Variable contenant le résultat du traitement
+$CRexecution = "<br/>"; 			// Variable contenant le résultat du traitement
 $cptChampTotal = 0;			// Lecture d'une table, nombre d'enregistrements lus total
 $cptTableTotal = 0;			// Nombre global de tables lues
-$cptTableVide = 0;			// Nombre global de tables vides dans cible 
-$cptTableSourceVide = 0;	// Nombre global de tables vides dans source 
 $cptSQLErreur = 0 ;			// Nombre d'erreur lors de la mise a jour de la table
 $scriptSQL = "";			// Stockage du script SQL à exécuter pour créer ou maj les données
 $logComp="";
@@ -179,8 +181,6 @@ $fileLogComp = GetParam("nomFicLogSuppAc",$PathFicConfAccess);
 if ($tableEnCours == "") {
 	$_SESSION['s_CR_export'] = "";
 	$_SESSION['s_cpt_exp_champ_total'] = 0;
-	$_SESSION['s_cpt_exp_table_vide'] = 0;
-	$_SESSION['s_cpt_exp_table_manquant'] = 0; 
 	$_SESSION['s_cpt_exp_erreurs_sql'] = 0; 
 }
 
@@ -272,12 +272,26 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	$nomAction = $nomAction." ".$nomPeche;
 	$BDACCESSTravail = $BDACCESS."_travail";	
 	$nomBDCible = "Base ACCESS de travail";
+	
+	// Test préliminaire, si la base de travail est lockée, ca ne sert à rien de continuer !
+		// test d'existence du fichier de lock ACCESS : si il est présent, arrêt du traitement et action de l'admin BD
+	$BDrep = GetParam("nomRepBD",$PathFicConfAccess);
+	$BDficLock = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$BDACCESSTravail.".ldb";
+	if (file_exists($BDficLock)) {
+		$CRexecution .= "ERREUR : un fichier de lock (".$BDACCESSTravail.".ldb)pour la base de donnees est present dans ".$BDrep.". <br/>Merci de reparer le probleme.<br/>Le traitement s'arrete.";
+		if ($EcrireLogComp ) {
+				WriteCompLog ($logComp,"*- ERREUR : un fichier de lock (".$BDACCESSTravail.".ldb)pour la base de donnees est present dans ".$BDrep.".",$pasdefichier);
+		}
+		$erreurProcess = true;
+	} else {
+	
+	
 	// Test de la connexion à la BD de ref (pour log entre autre)
 	if (!$connectPPEAO) { 
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es BD_PPEAO pour maj des logs</div>" ; exit;
 	}
 	// Test connexion base de travail
-	$connectAccess = odbc_connect($BDACCESS,'','',SQL_CUR_USE_ODBC);
+	$connectAccess = odbc_connect($BDACCESS,'','');
 	if (!$connectAccess) {
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "Erreur de la connection à la base ACCESS de reference ".$BDACCESS,$pasdefichier);
@@ -310,7 +324,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	// *********************************************
 	// Lancement de la comparaison. On met à jour la variable contenuDiv avec le résultat de la comparaison.
 	// On met à jour le fichier de log spécifique avec plus de détails.
-
+	//$listTable = "cat_ecol,cat_troph,contenu"; // test
 	$tables = explode(",",$listTable);
 	$nbTables = count($tables) - 1;
 	// Début du traitement de comparaison par table.
@@ -326,10 +340,8 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
 			// controle de la table en cours si besoin (gestion TIMEOUT)
 			if ((!$tableEnCours == "" && $tableEnCours == $tables[$cpt]) || $tableEnCours == "") {
-			
 			// Reinitialisation des compteurs
 			$cptChampTotal = 0;
-			$cptChampDiff = 0;
 			$cptChampVide = 0;
 			$cptSQLErreur = 0 ;
 			$cptMajACCtoACC = 0;
@@ -347,8 +359,6 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 				// on reinitialise les valeurs avec les variables de session mise à jour lors du traitement précédent
 				$CRexecution 	= $_SESSION['s_CR_export'];
 				$cptChampTotal 	= $_SESSION['s_cpt_champ_total'];
-				$cptTableVide	= $_SESSION['s_cpt_table_vide'];
-				$cptTableLignesVides = $_SESSION['s_cpt_table_manquant']; 
 				$ErreurProcess 	= $_SESSION['s_erreur_process'];
 				// On reinitialise pour eviter de compter deux fois les memes donnees
 				$_SESSION['s_CR_export'] 	= "";
@@ -367,14 +377,18 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 					case "copPPEAO":
 						$ficXMLDef = $_SERVER["DOCUMENT_ROOT"]."/conf/AccessConv".$typePeche.".xml";
 						if (! file_exists($ficXMLDef )) {
-						$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Le fichier ".$ficXMLDef." n existe pas..<br/>";
+							$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Le fichier ".$ficXMLDef." n existe pas..<br/>";
 							$continueControle = false;
-							$erreurProcess = true;
+							$ErreurProcess = true;
 						} else {
 							$nomTableEC = getTableNamePostGRE($ficXMLDef,$tables[$cpt]);
 						}
 						break;
-				}
+			}
+			if ($ErreurProcess) {
+				//$_SESSION['s_erreur_process'] = true;
+				break;
+			}
 			// Gestion TIMEOUT
 			$tableEnLecture = $tables[$cpt]; // On garde ici le nom de la table ACCESS pour le timeout, on le teste en tout debut de boucle			
 			
@@ -448,7 +462,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 				if ($continueControle) {
 				if ($totalLignes  == 0) {
 					// La table dans bdppeao est vide
-					if ($EcrireLogComp ) { WriteCompLog ($logComp,"Table de reference ".$nomTableEC." dans ".$nomBDSource." vide",$pasdefichier);}
+					if ($EcrireLogComp ) { WriteCompLog ($logComp,"ERREUR : Table de reference ".$nomTableEC." dans ".$nomBDSource." vide",$pasdefichier);}
 					$tableSourceVide = true;
 				} else {
 					// On va balayer tous les enreg (ligne) de la table controlée
@@ -522,9 +536,9 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 										$erreurSQL = odbc_errormsg($connectAccessTravail); //
 										if (! $execSQLResult) {
 											if ($EcrireLogComp ) {
-														WriteCompLog ($logComp,"ERREUR ".$tables[$cpt]."erreur dans ".$scriptSQL." (erreur complete =".$erreurSQL.")",$pasdefichier);
+												WriteCompLog ($logComp,"ERREUR ".$tables[$cpt]." pour script ".$scriptSQL." (erreur complete =".$erreurSQL.")",$pasdefichier);
 											} else {
-												echo "erreur dans ".$scriptSQL." (erreur complete =".$erreurSQL.")<br/>";
+												echo "Erreur dans ".$scriptSQL." (erreur complete =".$erreurSQL.")<br/>";
 											}
 											$ErreurProcess = true;
 											$cptSQLErreur ++;
@@ -606,7 +620,6 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 				$CRexecution = $CRexecution."*- ".$tables[$cpt]." : ";
 				if ($EcrireLogComp ) {
 					WriteCompLog ($logComp,"TABLE ".$tables[$cpt]." : ".$nomAction,$pasdefichier);
-					//WriteCompLog ($logComp,"TEST champvide = ".$cptChampVide." champDiff ".$cptChampDiff." tableVide ".$tableVide,$pasdefichier);
 				}
 				if ($tableSourceVide) {
 					$cptTableSourceVide++;
@@ -642,26 +655,24 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			} // End for statement if ((!$tableEnCours == "" && tableEnCours == $tables[$cpt]) || $tableEnCours == "")
 		} // End for statement for ($cpt = 0; $cpt <= $nbTables; $cpt++)
 	} // End if (!$ArretTimeOut)
-
+	} // End if if (!file_exists($BDficLock)) 
 	// Fin de traitement : affichage des résultats.
 	// *********************************************
 	// On faire le decompte total
 	// Les valeurs sur les champs sont stockees dans le cas ou le process est relancé pour cause de time out.
 	$_SESSION['s_CR_processAuto'] 	= $_SESSION['s_CR_export'].$CRexecution;
-	$_SESSION['s_cpt_champ_total'] 	+= 	$cptChampTotal;// Lecture d'une table, nombre d'enregistrements lus total
 	$_SESSION['s_cpt_table_total']	+=	$cptTableTotal; 	// Nombre global de tables lues
-	$_SESSION['s_cpt_table_source_vide']+=	$cptTableSourceVide;// Nombre global de tables vides dans cible
 	$_SESSION['s_cpt_erreurs_sql']	+= $cptSQLErreur; //
 	if (!$_SESSION['s_erreur_process']){
 		$_SESSION['s_erreur_process'] = $ErreurProcess;
 	}
-
 	// Include qui gère à la fois les compte-rendus à l'écran et la mise à jour des logs avec les ditCR.
 	include $_SERVER["DOCUMENT_ROOT"].'/export/exportCR.php';
 
-
 	// Fin de traitement : Fermeture base de données et fichier log/SQL	
 	// *********************************************	
+	odbc_close($connectAccess);
+	odbc_close($connectAccessTravail);
 	if (! $pasdefichier) {
 		if ($EcrireLogComp ) {
 			fclose($logComp);

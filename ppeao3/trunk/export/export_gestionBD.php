@@ -154,7 +154,19 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	// test d'existence du fichier
 	$BDfic = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$BDACCESS.".mdb";
 	if (!file_exists($BDfic)) {
-		$CRexecution .= "le fichier de base de donnees de references n'existe pas.".$BDfic."<br/>";
+		$CRexecution .= "ERREUR : le fichier de base de donnees de references n'existe pas. (".$BDfic.")<br/>";
+		if ($EcrireLogComp ) {
+				WriteCompLog ($logComp,"*- ERREUR : le fichier de base de donnees de references n'existe pas. (".$BDfic.")",$pasdefichier);
+		}		
+		$erreurProcess = true;
+	}
+	// test d'existence du fichier de lock ACCESS : si il est présent, arrêt du traitement et action de l'admin BD
+	$BDficLock = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$BDACCESS.".ldb";
+	if (file_exists($BDficLock)) {
+		$CRexecution .= "ERREUR : un fichier de lock (".$BDACCESS.".ldb)pour la base de donnees est present dans ".$BDrep.". <br/>Merci de reparer le probleme.<br/>Le traitement s'arrete.";
+		if ($EcrireLogComp ) {
+				WriteCompLog ($logComp,"*- ERREUR : un fichier de lock (".$BDACCESS.".ldb)pour la base de donnees est present dans ".$BDrep.".",$pasdefichier);
+		}
 		$erreurProcess = true;
 	}
 
@@ -180,7 +192,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				} else {
 					$diffDate = 52 - intval($weekControle) + intval($weekRef);
 				}
-				$CRexecution .= $BDACCESS."a &eacute;t&eacute; modifi&eacute; pour la derni&egrave;re fois le : ".date("F d Y H:i:s.", filectime($BDfic)).".<br/>";
+				$CRexecution .= $BDACCESS." a &eacute;t&eacute; modifi&eacute; pour la derni&egrave;re fois le : ".date("F d Y H:i:s.", filectime($BDfic)).".<br/>";
 				// Attention, le calcul doit prendre en compte l'année.
 				if ( $diffDate  > 2) {
 					if ($EcrireLogComp ) {
@@ -207,14 +219,25 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				}
 				// ************** vidage de la base de ref  *********************
 				// Test connection ODBC	
-				$lev=error_reporting (8); //Pour eviter les avertissements si la base n'existe pas.	
+				//$lev=error_reporting (8); //Pour eviter les avertissements si la base n'existe pas.	
 				$connectAccess = odbc_connect($BDACCESS,'','');
+				// affichage test PB lock ACCESS
+				if ($EcrireLogComp && $affichageDetail) {
+					WriteCompLog ($logComp,"*- INFO : apres connexion",$pasdefichier);
+				}
 				if (!$connectAccess) {
 					$CRexecution .= "Erreur de la connection à la base ACCESS ".$BDACCESS."<br/>";
+					if ($EcrireLogComp ) {
+						WriteCompLog ($logComp,"*- ERREUR : Erreur de la connection à la base ACCESS ".$BDACCESS,$pasdefichier);
+					}
 					$erreurProcess = true;
 				} else {
+					// affichage test PB lock ACCESS
+					if ($EcrireLogComp && $affichageDetail) {
+						WriteCompLog ($logComp,"*- INFO : Connexion ok",$pasdefichier);
+					}
 					if ($affichageDetail) {
-						$CRexecution .= "Connection avec succ&egrave;s à la base ACCESS ".$BDACCESS."<br/>";
+						$CRexecution .= "Connection avec succ&egrave;s &agrave; la base ACCESS ".$BDACCESS."<br/>";
 					}
 					switch ($typePeche) { 
 						case "exp":
@@ -230,10 +253,80 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 							$listTable2 = GetParam("listeaViderArtPPEAO",$PathFicConfAccess);
 							break;	
 					}
+					if ($listTable == "" && $listTable2 =="") {
+						$CRexecution .= "ERREUR : dans le fichier de conf, les listes des tables a supprimer sont vides...";				if ($EcrireLogComp ) {
+							WriteCompLog ($logComp,"*- ERREUR : dans le fichier de conf, les listes des tables a supprimer sont vides... Arret traitement.",$pasdefichier);
+						
+						}
+						$erreurProcess = true;
+					} else {
+						if ($listTable =="") {
+							$ListeTableAVider = $listTable2;
+						} else {
+							//listTable2 est jamais vide
+							$ListeTableAVider = $listTable.",".$listTable2;
+						}
+					}
+					// affichage test PB lock ACCESS
+					if ($EcrireLogComp && $affichageDetail) {
+						WriteCompLog ($logComp,"*- INFO : liste table a vider = ".$ListeTableAVider,$pasdefichier);
+					}
+					if ($typePeche == "exp" ) {
+						// Derniers controles : il semble que si il y a trop d'erreurs lors de la suppression des données,
+						// le process plante mais il n'y a pas de deconnexion de la base ACCESS.
+						// Le cas ou le vidage va planter en masse est si des données sont présentes dans la base de référence.
+						// On teste donc le cas ou on a des données autre que le ref et le param
+						$listTableDonnees = GetParam("listeDonneesExp",$PathFicConfAccess);
 
-					$ListeTableAVider = $listTable.",".$listTable2;
-					//echo $ListeTableAVider."<br/>";
+						$tablesDonnees = explode(",",$listTableDonnees);
+						$nbTablesDonnees = count($tablesDonnees) - 1;
+						for ($cptDon = 0; $cptDon <= $nbTablesDonnees; $cptDon++) {
+						// Ca aurait ete mieux dans du parametrage....
+						switch ($tablesDonnees[$cptDon]) { 
+							case "biolo":
+								$champCount = "bio_num";
+								break;
+							case "campagne":
+								$champCount = "camp_num";
+								break;
+							case "cp_peche":
+								$champCount = "cp_num";
+								break;
+							case "envir":
+								$champCount = "env_num";
+								break;		
+							case "fraction":
+								$champCount = "fra_num";
+								break;
+							case "trophique":
+								$champCount = "con_num";
+								break;
+							}
 
+					
+							$scriptCount = "select count(".$champCount.") from ".$tablesDonnees[$cptDon];
+							$SQLcountResult = odbc_exec($connectAccess,$scriptCount);
+							$erreurSQL = odbc_errormsg($connectAccess); //
+							if ($SQLcountResult) {
+								if ($EcrireLogComp ) {
+									WriteCompLog ($logComp,"*- Errreur comptage de la table ".$tablesDonnees[$cptDon]." (erreur complete = ".$erreurSQL.")",$pasdefichier);
+								}
+							} else	{ 
+								$countRowC = odbc_fetch_row($SQLcountResult);
+								$countID = odbc_result($SQLcountResult,1);
+								if ($countID > 0) {
+								$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>La table <b>".$tablesDonnees[$cptDon]."</b> n'est pas vide. La base de travail devrait etre vide de toute donnees (elle ne contient que du referentiel ou du parametrage). <br/>Il y a un risque sur la creation des tables de reference.<br/> <b>Merci de vider la table</b>.";
+									!$erreurProcess = true;
+								} else {
+									// affichage test PB lock ACCESS
+									if ($EcrireLogComp && $affichageDetail) {
+										WriteCompLog ($logComp,"*- INFO : table ".$tablesDonnees[$cptDon]." vide ",$pasdefichier);
+									}
+								}
+							} 
+						}
+					}
+					if (!$erreurProcess) {					
 					$tables = explode(",",$ListeTableAVider);
 					$nbTables = count($tables) - 1;
 					logWriteTo(8,"notice"," Nb tables = ".$nbTables ,"","","1");
@@ -242,27 +335,40 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					$nbSuppOk = 0;
 					$nbSuppErr = 0;
 					$start_while=timer(); // début du chronométrage du for
-					for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
-						$scriptDelete = "delete * from ".$tables[$cpt];
-						$SQLcountResult = odbc_exec($connectAccess,$scriptDelete);
-						$erreurSQL = odbc_errormsg($connectAccess); // 
-						if (!$SQLcountResult) {
-							$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur de suppression de la table ".$tables[$cpt]."(erreur compl&egrave;te = ".$erreurSQL.")<br/>";
-							$erreurProcess = true;
-							$nbSuppErr++;
-						} else	{ 
-							$nbSuppOk ++;
-							if ($affichageDetail) {
-								$CRexecution .= $tables[$cpt]." vid&eacute;e .<br/>";
-							}
-						} 
-					}// fin du for	
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp,"* Nb tables videes ok     = ".$nbSuppOk,$pasdefichier);
-						WriteCompLog ($logComp,"* Nb tables erreur vidage = ".$nbSuppErr,$pasdefichier);
-					}				
+
+						for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
+							$scriptDelete = "delete * from ".$tables[$cpt];
+							$SQLDeleteResult = odbc_exec($connectAccess,$scriptDelete);
+							$erreurSQL = odbc_errormsg($connectAccess); // 
+							if (!$SQLDeleteResult) {
+								$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur de suppression de la table ".$tables[$cpt]."(erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+								if ($EcrireLogComp ) {
+									WriteCompLog ($logComp,"*- erreur de suppression de la table ".$tables[$cpt]."(erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+								}
+								$erreurProcess = true;
+								$nbSuppErr++;
+							} else	{ 
+								$nbSuppOk ++;
+								if ($affichageDetail) {
+									$CRexecution .= $tables[$cpt]." vid&eacute;e .<br/>";
+									if ($EcrireLogComp ) {
+										WriteCompLog ($logComp,"*- ".$tables[$cpt]." videe .",$pasdefichier);
+									}
+								}
+							} 
+						}// fin du for	
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp,"* Nb tables videes ok     = ".$nbSuppOk,$pasdefichier);
+							WriteCompLog ($logComp,"* Nb tables erreur vidage = ".$nbSuppErr,$pasdefichier);
+						}	
+					} else {
+						odbc_close($BDACCESS);
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp,"*- Erreur arret du traitement",$pasdefichier);
+						}
+					}//fin du if (!$erreurProcess)	
 				} // fin du if (!$connectAccess)
-				error_reporting ($lev); // retour au avertissements par defaut
+				//error_reporting ($lev); // retour au avertissements par defaut
 				break;
 			// ************** fin du case "vide"; ************
 		} // fin du switch
@@ -270,19 +376,21 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 
 	// ************ Gestion des erreurs de process *****************
 	if ($erreurProcess) {
+			$_SESSION['s_status_export'] = 'ko';
 			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Traitement en erreur (voir d&eacute;tail ci-dessous)</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 			echo"<div id=\"vertical_slide".$numFen."\">".$CRexecution."</div>";
 			logWriteTo(8,"error","**- Traitement en erreur : ".$CRexecution."","","","0");
 	} 
 	else {
+		if ($action=="vide") {
+			odbc_close($connectAccess);
+		}
 		if ($EcrireLogComp ) {
 				WriteCompLog ($logComp,"*------------------------------------------------------",$pasdefichier);
 				WriteCompLog ($logComp,"*- FIN TRAITEMENT ".$nomAction,$pasdefichier);
 				WriteCompLog ($logComp,"*******************************************************",$pasdefichier);
-				logWriteTo(8,"notice","*-- Log plus complet disponible dans <a href=\"".$nomLogLien."\" target=\"log\">".$nomFicLogComp."</a>","","","0");
 			}
-			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div //id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s </div><div id=\"
-	".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div //id=\"".$nomFenetre."_txt\">".$nomAction." ex&eacute;cut&eacute;e avec succ&egrave;s </div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 			echo"<div id=\"vertical_slide".$numFen."\">".$CRexecution."</div>";
 	}
 

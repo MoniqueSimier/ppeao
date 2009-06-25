@@ -26,8 +26,12 @@ listeTableRefArtPPEAO=Pays,Systeme,Secteur,CategorieEcologique,Categorietrophiqu
 ; tables a vider Peches Experimentales
 listeaViderExpACCESS=;
 ; tables a copier entre la base de travail et la base PPEAO de reference
-listeaViderExpPPEAO=;
+listeaViderExpPPEAO=cat_ecol,cat_troph,contenu,debris,engin,f_courant,position,qualite,rempliss,s_courant,sediment,sexe,stade,station,vegetation,Espece,Nom,Famille,Ordre,Pays,Systeme;
 ; tables a copier entre la base de travail et la base ACCESS de reference
 listeTableRefExpACCESS=;
 ; tables a copier entre la base de travail et la base PPEAO de reference
-listeTableRefExpPPEAO=;
+listeTableRefExpPPEAO=cat_ecol,cat_troph,contenu,debris,engin,f_courant,position,qualite,rempliss,s_courant,sediment,sexe,stade,station,vegetation,Pays,Systeme,Ordre,Famille,Espece,Nom;
+; tables de données pour peches artisanales et peches expérimentales
+listeDonneesExp=envir,campagne,cp_peche,fraction,biolo,trophique;
+: prevu mais pas utilisé pour les peches arts
+listeDonneesArt=;

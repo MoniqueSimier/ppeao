@@ -82,7 +82,6 @@ if (isset($_GET['tp'])) {
 
 if (isset($_SESSION['s_status_export'])) {
 	if ($_SESSION['s_status_export'] == 'ko') {
-		logWriteTo(8,"error","**- ARRET du traitement ".$nomAction." car le processus precedent est en erreur.","","","0");
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> ARRET du traitement car le processus precedent est en erreur</div>" ;
 		exit;
 	}

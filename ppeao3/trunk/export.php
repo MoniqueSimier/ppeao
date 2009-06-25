@@ -1,5 +1,4 @@
 <?php 
-// Mis à jour par Olivier ROUX, 29-07-2008
 // definit a quelle section appartient la page
 $section="gerer";
 $subsection="";
@@ -33,23 +32,27 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 	<h1>Export</h1>
 	<p>Cette section permet d'exporter les donn&eacute;es.</p>
 <?php
-//debug echo('+'.$_SESSION['s_ppeao_user_id'].'+');
+	if (isset($_SESSION['s_ppeao_user_id'])){ 
+		$userID = $_SESSION['s_ppeao_user_id'];
+	} else {
+		$userID=null;
+	}
 
-// on teste à quelle zone l'utilisateur a accès
-if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
+	// on teste à quelle zone l'utilisateur a accès
+	if (userHasAccess($userID,$zone)) {
 
 
 		$_SESSION['s_status_export'] = 'ko';
 
 ?>
 		<br/>
-		<p>La description du traitement xxxxxxxxxxxxxxxxxxxxx</p>
+		<p>Ce traitement permet de cr&eacute;er les fichiers ACCESS .mdb qui serviront de source pour les bases ACCESS d&eacute;ploy&eacute;es sur le terrain. Pour chaque cas (p&ecirc;ches exp&eacute;rimentales ou p&ecirc;ches artisanales), le r&eacute;f&eacute;rentiel et le param&eacute;trage seront mis &agrave; jour et des fichiers zip contenant toutes les bases n&eacute;cessaires aux op&eacute;rateurs sur le terrain sera g&eacute;n&eacute;r&eacute;. </p>
 		<br/>
 		<div id="runProcess">
 		<form id="formProcessAuto">
 			<br/><h2>Choissisez le type de p&ecirc;che à exporter : </h2>
-			 <input type="radio" id="typepecheexp" name="typepeche" value="exp" />&nbsp;P&ecirc;ches expérimentales<br />
-			<input type="radio" id="typepecheart" name="typepeche" value="art" checked="checked" />&nbsp;P&ecirc;ches artisanales<br/><br/>
+			 <input type="radio" id="typepecheexp" name="typepeche" value="exp" checked="checked" />&nbsp;P&ecirc;ches expérimentales<br />
+			<input type="radio" id="typepecheart" name="typepeche" value="art" />&nbsp;P&ecirc;ches artisanales<br/><br/>
 			<input id="startProcess" type="button" value="Lancer le traitement" onClick="runProcess()"/>
 
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
@@ -58,12 +61,23 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 		<div id="titleProcess">D&eacute;tail des process.</div>
 		<br/>
 		
-		<?php // for test include $_SERVER["DOCUMENT_ROOT"].'/export/export_access.php'; ?>
+		<?php // for test include $_SERVER["DOCUMENT_ROOT"].'/export/export_access.php'; 
+			
+			$_SESSION['s_erreur_process'] = false;
+			$_SESSION['s_status_export'] = 'ok';
+			$_SESSION['s_CR_export'] = "";
+			// Pour test: toutes les étapes ne sont pas obligatoires.
+			// On ajoute une variable qui permet de les rendre globalement obligatoire
+			//$boutDisabled = "disabled=\"disabled\""; // desactivés
+			$boutDisabled = ""; // activés
+		
+		
+		?>
 		
 		<div id="controleBase">
 			<div id="controleBase_img"><img src="/assets/incomplete.png" alt=""/></div>
 			<div id="controleBase_txt">Controle base de reference ACCESS.</div>
-			<div id="controleBase_chk">Controler base<input type="checkbox" id="ctrlcheck" checked="checked"/></div>
+			<div id="controleBase_chk">Controler base<input type="checkbox" id="ctrlcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 			<?php 	$navbarLevel = 1;
 					$texteDiv = "Compte rendu du controle de la base.";	
 					include $_SERVER["DOCUMENT_ROOT"].'/export/navbarCR.inc'; ?>
@@ -72,7 +86,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 		<div id="vidage">
 			<div id="vidage_img"><img src="/assets/incomplete.png" alt=""/></div>
 			<div id="vidage_txt">Vidage de la base ACCESS de travail.</div>
-			<div id="vidage_chk">Lancer vidage<input type="checkbox" id="videcheck" checked="checked"/></div>
+			<div id="vidage_chk">Lancer vidage<input type="checkbox" id="videcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 			<?php 	$navbarLevel = 2;
 					$texteDiv = "Compte rendu du vidage de la base de travail";	
 					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
@@ -80,7 +94,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 		<div id="copiePPEAO">
 			<div id="copiePPEAO_img"><img src="/assets/incomplete.png" alt=""/></div>
 			<div id="copiePPEAO_txt">Copie des donnees depuis la base PPEAO (postgreSQL) de reference.</div>
-			<div id="copiePPEAO_chk">Lancer copie PPEAO<input type="checkbox" id="copPPEAOcheck" checked="checked"/></div>
+			<div id="copiePPEAO_chk">Lancer copie PPEAO<input type="checkbox" id="copPPEAOcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 			<?php 	$navbarLevel = 3;
 					$texteDiv = "Compte rendu de copie depuis base PPEAO de reference.";	
 					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
@@ -88,7 +102,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 		<div id="copieACCESS">
 			<div id="copieACCESS_img"><img src="/assets/incomplete.png" alt=""/></div>
 			<div id="copieACCESS_txt">Copie des donnees depuis la base ACCESS de reference.</div>
-			<div id="copieACCESS_chk">Lancer copie ACCESS<input type="checkbox" id="copAcccheck" checked="checked"/></div>
+			<div id="copieACCESS_chk">Lancer copie ACCESS<input type="checkbox" id="copAcccheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 			<?php 	$navbarLevel = 4;
 					$texteDiv = "Compte rendu de copie depuis base ACCESS de reference.";	
 					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
@@ -106,7 +120,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 		<div id="copieZip">
 			<div id="copieZip_img"><img src="/assets/incomplete.png" alt=""/></div>
 			<div id="copieZip_txt">Zip des bases.</div>
-			<div id="copieZip_chk">Lancer zip des bases<input type="checkbox" id="zipcheck" checked="checked"/></div>
+			<div id="copieZip_chk">Lancer zip des bases<input type="checkbox" id="zipcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 			<?php 	$navbarLevel = 5;
 				$texteDiv = "Compte rendu du zip des bases.";	
 				include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>

@@ -62,8 +62,8 @@ if (! $pasdefichier) { // Pour test sur serveur linux
 
 // Si le traitement précédent a échoué, arrêt du traitement
 
-if (isset($_SESSION['s_status_process_auto'])) {
-	if ($_SESSION['s_status_process_auto'] == 'ko') {
+if (isset($_SESSION['s_status_export'])) {
+	if ($_SESSION['s_status_export'] == 'ko') {
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Fin du processus automatique en erreur</div>" ;
 	} else {
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Fin avec succes du processus automatique.</div>" ;

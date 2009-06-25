@@ -93,6 +93,7 @@ function litXML($fichier,$item,$champs,$nomTable) {
 		}
 		// et on retourne le tableau dans la fonction
 		if (!$Jaitrouvelatable) {
+
 			$tempArray[0][0] = "*-ERREUR*- pas de definition de la structure de la table ".$nomTable." dans le fichier XML /conf/AccessConv.xml";
 			return $tempArray;
 		} else {

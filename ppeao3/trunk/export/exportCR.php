@@ -9,8 +9,8 @@
 	// ***************************
 	// Si on est dans le cas normal, on génère le compte rendu de fin de traitement.
 		if ($_SESSION['s_erreur_process']) {
-			$_SESSION['s_status_process_auto'] = 'ko';
-		}	
+			$_SESSION['s_status_export'] = 'ko';
+		}
 
 		if ($EcrireLogComp ) {
 			// Si on a choisi de générer le log complémentaire, alors
@@ -42,9 +42,6 @@
 			WriteCompLog ($logComp,"*******************************************************",$pasdefichier);
 			logWriteTo(8,"notice","*-- Log plus complet disponible dans <a href=\"".$nomLogLien."\" target=\"log\">".$nomFicLogComp."</a>","","","0");
 		}
-		// Fin de traitement dans le log
-		logWriteTo(8,"notice","**- Fin traitement de ".$nomAction,$cptTableVide,"","","0");
-	
 	
 		// ***********************************************
 		// On gére l'affichage a l'ecran d'un compte rendu
@@ -73,15 +70,7 @@
 		// ************************************
 		// Fin du traitement, on reinitialise les compteurs pour la prochaine utilisation de ce programme
 		$_SESSION['s_cpt_champ_total'] = 0 ;
-		$_SESSION['s_cpt_champ_diff'] = 0 ;
-		$_SESSION['s_cpt_champ_egal'] = 0 ;
-		$_SESSION['s_cpt_champ_vide'] = 0 ;
 		$_SESSION['s_cpt_table_total'] = 0 ;
-		$_SESSION['s_cpt_table_diff'] = 0 ;
-		$_SESSION['s_cpt_table_egal'] = 0 ;
-		$_SESSION['s_cpt_table_vide'] = 0 ;
-		$_SESSION['s_cpt_table_manquant'] = 0 ; 
-		$_SESSION['s_num_encours_fichier_SQL'] = 1;
 		$_SESSION['s_cpt_erreurs_sql']= 0;
 		
 		
