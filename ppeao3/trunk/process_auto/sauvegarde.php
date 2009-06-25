@@ -24,7 +24,7 @@ set_time_limit(0);
 $pasdetraitement = true;
 $pasdefichier = false; // Variable de test pour linux. Meme valeur que dans comparaison.php
 $ErreurProcess = false ; // Flag pour le succes du traitement
-$CRexecution = ""; // compte rendu de traitement
+$CRexecution = "<br/>"; // compte rendu de traitement
 // Include standard
 include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';

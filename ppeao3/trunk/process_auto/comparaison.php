@@ -190,7 +190,7 @@ if (isset($_SESSION['s_status_process_auto'])) {
 
 
 // ***** Variables de traitements
-$CRexecution = ""; 			// Variable contenant le résultat du traitement
+$CRexecution = "<br/>"; 			// Variable contenant le résultat du traitement
 $cptChampTotal = 0;			// Lecture d'une table, nombre d'enregistrements lus total
 $cptChampDiff = 0; 			// Lecture d'une table, nombre d'enregistrements différents
 $cptChampVide = 0;			// Lecture d'une table, nombre d'enregistrements vide

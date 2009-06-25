@@ -32,7 +32,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 
 
 $traitRecompOk = false;
-$CRexecution = "";
+$CRexecution = "<br/>";
 $affichageDetail = false; // Pour afficher ou non le detail des traitements à l'écran
 session_start();
 // On identifie si le traitement est exécutable ou non
