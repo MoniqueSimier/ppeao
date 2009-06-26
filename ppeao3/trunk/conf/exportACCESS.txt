@@ -30,7 +30,7 @@ listeaViderExpPPEAO=cat_ecol,cat_troph,contenu,debris,engin,f_courant,position,q
 ; tables a copier entre la base de travail et la base ACCESS de reference
 listeTableRefExpACCESS=;
 ; tables a copier entre la base de travail et la base PPEAO de reference
-listeTableRefExpPPEAO=cat_ecol,cat_troph,contenu,debris,engin,f_courant,position,qualite,rempliss,s_courant,sediment,sexe,stade,station,vegetation,Pays,Systeme,Ordre,Famille,Espece,Nom;
+listeTableRefExpPPEAO=cat_ecol,cat_troph,contenu,debris,engin,f_courant,position,qualite,rempliss,s_courant,sediment,sexe,stade,vegetation,Pays,Systeme,station,Ordre,Famille,Espece,Nom;
 ; tables de données pour peches artisanales et peches expérimentales
 listeDonneesExp=envir,campagne,cp_peche,fraction,biolo,trophique;
 : prevu mais pas utilisé pour les peches arts

@@ -634,9 +634,14 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 						if (!$_SESSION['s_erreur_process']){
 							$_SESSION['s_erreur_process'] = $ErreurProcess;
 						}
-						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> ".$cptSQLErreur." erreurs de traitement - ";
+						if ($cptMajACCtoACC > 0) {
+							$compCR = " (traitement avec succes de ".$cptMajACCtoACC.")";
+						} else {
+							$compCR = " (Aucun enregistrement traite avec succes)";
+						}
+						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> ".$cptSQLErreur." erreurs de traitement - "/$compCR;
 						if ($EcrireLogComp ) {			
-								WriteCompLog ($logComp,"   - ATTENTION ".$cptSQLErreur." erreurs de traitement.",$pasdefichier);
+								WriteCompLog ($logComp,"   - ATTENTION ".$cptSQLErreur." erreurs de traitement. ".$compCR,$pasdefichier);
 						}
 					} else {
 						switch($typeAction){

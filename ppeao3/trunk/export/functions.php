@@ -220,7 +220,7 @@ for ($cpt = 0; $cpt <= $nbAttr; $cpt++) {
 	switch ($NomChampPOSTGRE) {
 		case "CALCULAUTO" :
 			// On doit generer un ID a partir de la derniere valeur de la table ACCESS
-			$countSQL = "select max(".$NomChampACCESS.") from ".$nomTableACCESS;
+			$countSQL = "select max(cint(".$NomChampACCESS.")) from ".$nomTableACCESS;
 			$countSQLResult = odbc_exec($connACCESS,$countSQL);
 			$erreurSQL = odbc_errormsg($connACCESS); //
 			if (! $countSQLResult) {
@@ -254,7 +254,8 @@ for ($cpt = 0; $cpt <= $nbAttr; $cpt++) {
 				$LocResult = pg_query($connPOST,$LocSQL);
 				$LocerreurSQL = pg_last_error($connPOST);
 				if (!$LocResult) {
-					echo "erreur lecture base post gre pour table ".$Attr[$cpt][5]." erreur complete = ".$LocerreurSQL."<br/>";
+					echo $Attr[$cpt][6]." <br/>";
+					echo "erreur lecture base post gre pour table ".$Attr[$cpt][5]." (SQL = ".$LocSQL.") - erreur complete = ".$LocerreurSQL."<br/>";
 				} else {
 					if (pg_num_rows($LocResult) == 0) {
 						echo "pas de resultat lecture base post gre pour table ".$Attr[$cpt][5]."<br/>";
@@ -306,6 +307,9 @@ for ($cpt = 0; $cpt <= $nbAttr; $cpt++) {
 			$LocListAttrIn1.=",".$NomChampACCESS ; 
 		}
 		// Liste des valeurs
+		// Petite astuce pour protéger les virgules
+		// C'est dans le cas ou on a besoin de reconstruire les valeurs (le explode sur la virgule juste avant peut merder.
+		$valChampSQL = str_replace(",","#-#",$valChampSQL);
 		if ($LocListAttrIn2 == "" ) {
 			$LocListAttrIn2 = $valChampSQL;
 		} else {
@@ -324,22 +328,54 @@ for ($cpt = 0; $cpt <= $nbAttr; $cpt++) {
 	}
 }
 // Etape 2 - on construit l'instruction SQL complète.
+// On purge d'eventuelles champs _TEMP_ que l'on a stocké pour faire des recherches complémentaires.
+$flagTemp = false;
+if (strpos($LocListAttrIn1,"_TEMP_") === false) {
+
+} else {
+	$flagTemp = true;
+	$listeTotAtt1 = explode(",",$LocListAttrIn1);
+	$LocListAttrIn1 = "";
+	$listeTotAtt2 = explode(",",$LocListAttrIn2);
+	$LocListAttrIn2 = "";
+	$nbChamps = count($listeTotAtt1 ) - 1;
+	for ($cptAtt = 0; $cptAtt <= $nbChamps; $cptAtt++) {
+		//echo $cptAtt." ".$listeTotAtt1[$cptAtt]."<br/>";
+		if (strpos($listeTotAtt1[$cptAtt],"_TEMP_") === false) {
+			// on reconstruit la liste
+			if ($LocListAttrIn1 == "" ) {
+				$LocListAttrIn1 = $listeTotAtt1[$cptAtt];
+			} else {
+				$LocListAttrIn1.=",".$listeTotAtt1[$cptAtt] ; 
+			}
+			// Liste des valeurs
+			if ($LocListAttrIn2 == "" ) {
+				$LocListAttrIn2 = $listeTotAtt2[$cptAtt];
+			} else {
+				$LocListAttrIn2.=",".$listeTotAtt2[$cptAtt] ; 
+			}		
+		}
+		//echo $cptAtt." ".$LocListAttrIn1." - ".$LocListAttrIn2." <br/>";
+	}
+
+}
+// On restore les virgules dans les valeurs
+$LocListAttrIn2 = str_replace("#-#",",",$LocListAttrIn2);
 if ($LocFlagSPEC) {
 	include $_SERVER["DOCUMENT_ROOT"].'/export/spec.php';
 } else {
 	switch ($SQLAction) {
-		case "update":
-			$LocScriptSQL ="update ".$nomTableACCESS." set ".$LocListAttrUp." ".$whereStatement ;
-			break;
 		case "insert":
 			$LocScriptSQL ="insert into ".$nomTableACCESS." (".$LocListAttrIn1.") values (".$LocListAttrIn2.")";
 			break;
-		case "delete":
-			$LocScriptSQL ="delete from ".$nomTableACCESS." ".$whereStatement ;
+		// On laisse comme ca meme si c'est moche pour montrer qu'on ne gere que le cas de l'insert
+		default : 
 			break;
 	} 
 }
-
+if ($flagTemp) {
+	//echo "SCRIPT = <b>".$LocScriptSQL."</b> <br/>";
+}
 return $LocScriptSQL;
 }
 
