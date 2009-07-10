@@ -99,3 +99,96 @@ list-style:none;
 .TableFiliere{
 	cursor: pointer;
 }
+/* ajout pour nouvelle version extraction */
+#resultat{
+	margin-left:5px;
+	width:800px;
+	background:#EDD7B7;
+	border:1px dotted #666666;
+
+}
+
+#resumeChoix{
+	margin-left:0px;
+	margin-bottom:5px;
+	width:800px;
+	background:#EDD7B7;
+	border:1px thick #666666;
+
+}
+#runProcess{
+	background:#CCCCCC;
+}
+#resultfiliere{
+width:1024 px;
+	background:#CCCCCC;
+	border:1px dotted #666666;
+}
+#menuTab{
+	position:absolute;
+	top:400px;
+	left:5px;
+	width:800px;
+	background:#D1C0A9;
+	color:#FFFFFF;
+	font-weight:bold;
+	border:1px dotted #666666;
+}
+#listeTab{
+
+}
+.criteresgen{
+	position:absolute;
+	top:420px;
+	left:5px;
+	background-color:#EEDEC7;
+	visibility:hidden;
+	width:800px;
+}
+.cateco{
+	position:absolute;
+	top:420px;
+	left:5px;
+	background-color:#EEDEC7;
+	visibility:hidden;
+	width:800px;
+}
+.cattroph{
+	position:absolute;
+	top:420px;
+	left:5px;
+	background-color:#EEDEC7;
+	visibility:hidden;
+	width:800px;
+}
+.colonnes{
+	position:absolute;
+	top:420px;
+	left:5px;
+	background-color:#EEDEC7 ;
+	visibility:hidden;
+	width:800px;
+}
+
+#voiresultat{
+	position:absolute;
+	top:570px;
+	left:5px;
+}
+.visible{
+	visibility:visible;
+}
+.ChoixChampComp {
+	width:800px;
+	background-color:#FFFFCC;
+}
+.CCCTable{
+	vertical-align:text-top;
+	border:1px dotted #666666;
+	width:300px;
+}
+.CCCChamp{
+	vertical-align:text-top;
+	border:1px dotted #666666;
+	width:800px;
+}
