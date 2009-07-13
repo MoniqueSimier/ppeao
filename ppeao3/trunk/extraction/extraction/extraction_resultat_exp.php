@@ -43,7 +43,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 
 // Fichier à analyser
-$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtraction.xml";
+$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionExp.xml";
 
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';

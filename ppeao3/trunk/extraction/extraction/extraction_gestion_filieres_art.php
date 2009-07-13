@@ -203,7 +203,7 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <?php echo AfficheColonnes($typePeche,$typeAction,$codeTableEnCours,$numTab); ?>
 </div>
 <?php // Permet d'obtenir le résultat ?>
-<div id="voiresultat"><input type="button" id="validation" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','y')" value="Voir les r&eacute;sultats"/>
+<div id="voiresultat"><input type="button" id="validation" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','y')" value="Voir les r&eacute;sultats"/>
 <input type="checkbox" id="ExpFic" />Exporter sous forme de fichier
 </div>
 

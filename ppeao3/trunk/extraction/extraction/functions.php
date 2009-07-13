@@ -141,6 +141,7 @@ function AfficherDonnees($file,$typeAction){
 	$SQLPays 	= $_SESSION['SQLPays'];
 	$SQLSysteme	= $_SESSION['SQLSysteme'];
 	$SQLSecteur	= $_SESSION['SQLSecteur'];
+	$SQLAgg		= $_SESSION['SQLAgg'];
 	$SQLEngin	= $_SESSION['SQLEngin'];
 	$SQLGTEngin = $_SESSION['SQLGTEngin'];
 	$SQLCampagne = $_SESSION['SQLCampagne'];
@@ -271,6 +272,7 @@ function AfficherDonnees($file,$typeAction){
 	// *******************************
 	// Debut du traitement principal *	
 	// *******************************
+	$builQuery = false; // il a l'air de rien celui-la, mais ce flag est super important pour créer le SQL final qui sera executé.
 	switch ($typeSelection) {
 		case "extraction" :
 		switch ($typePeche) {
@@ -392,6 +394,8 @@ function AfficherDonnees($file,$typeAction){
 				$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite....
 			}
 			
+			// MANQUE LES OPTIONS DE TRI DES VALEURS !!!!!
+			
 			// ********** PREPARATION DU SQL
 			// Definition de tout ce qui est commun aux peches expérimentales
 			$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom, stat.id, stat.nom, cpg.date_debut, cpg.id, cph.date_cp, cph.id, cph.protocole, cph.exp_qualite_id, cph.exp_engin_id, xeng.libelle";
@@ -409,8 +413,7 @@ function AfficherDonnees($file,$typeAction){
 							xqua.id = cph.exp_qualite_id and
 							".$WhereEngin."
 							xeng.id = cph.exp_engin_id ";
-			
-			
+
 			// ********** CONSTRUCTION DES SQL DEFINITIFS PAR FILIERE
 			switch ($typeAction) {
 				case "peuplement" :
@@ -422,13 +425,8 @@ function AfficherDonnees($file,$typeAction){
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,ref_espece as esp"; // attention a l'ordre pour les left outer join
 						$WhereSpec = " and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
 							esp.id = fra.ref_espece_id and
-							fam.id = esp.ref_famille_id ";						
-						$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;
-						$listeTable = $ListeTableCom.$ListeTableSel.$ListeTableSpec; // L'ordre est important pour les join
-						$WhereTotal = $WhereCom.$WhereSpec.$WhereSel;
-	
-						$SQLfinal = "select ".$listeChamps." from ".$listeTable." ".$joinSel." where ".$WhereTotal;
-						//echo $SQLfinal;"<br/>";
+							fam.id = esp.ref_famille_id ";	
+						$builQuery = true;					
 					break;
 				case "environnement" :
 						$labelSelection = "Donn&eacute;es d'environnement ";
@@ -437,12 +435,7 @@ function AfficherDonnees($file,$typeAction){
 						$listeChampsSpec = ",env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond";
 						$ListeTableSpec = ",exp_environnement as env"; // attention a l'ordre pour les left outer join
 						$WhereSpec = " 	and env.id = cph.exp_environnement_id ";						
-						$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;
-						$listeTable = $ListeTableCom.$ListeTableSel.$ListeTableSpec; // L'ordre est important pour les join
-						$WhereTotal = $WhereCom.$WhereSpec.$WhereSel;
-	
-						$SQLfinal = "select ".$listeChamps." from ".$listeTable." ".$joinSel." where ".$WhereTotal;
-						//echo $SQLfinal;"<br/>";
+						$builQuery = true;
 					break;
 				case "NtPt" :
 						$labelSelection = "Donn&eacute;es NtPt ";
@@ -452,12 +445,7 @@ function AfficherDonnees($file,$typeAction){
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
 							esp.id = fra.ref_espece_id and
 							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id ".$compPoisSQL;						
-						$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;
-						$listeTable = $ListeTableCom.$ListeTableSel.$ListeTableSpec;// L'ordre est important pour les join
-						$WhereTotal = $WhereCom.$WhereSpec.$WhereSel;
-	
-						$SQLfinal = "select ".$listeChamps." from ".$listeTable." ".$joinSel." where ".$WhereTotal;
-						//echo $SQLfinal;"<br/>";
+						$builQuery = true;
 					break;
 				case "biologie" :
 						$labelSelection = "Donn&eacute;es biologiques ";
@@ -468,13 +456,7 @@ function AfficherDonnees($file,$typeAction){
 							esp.id = fra.ref_espece_id and
 							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
 							bio.exp_fraction_id = fra.id ".$compPoisSQL;						
-						$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;
-						$listeTable = $ListeTableCom.$ListeTableSel.$ListeTableSpec; // L'ordre est important pour les join
-						$WhereTotal = $WhereCom.$WhereSpec.$WhereSel;
-	
-						$SQLfinal = "select ".$listeChamps." from ".$listeTable." ".$joinSel." where ".$WhereTotal;
-						//echo $SQLfinal;"<br/>";
-
+						$builQuery = true;
 					break;	
 				case "trophique" :
 					// Construction de la liste d'individus
@@ -487,12 +469,7 @@ function AfficherDonnees($file,$typeAction){
 							bio.exp_fraction_id = fra.id and 
 							trop.exp_biologie_id = bio.id 	and
 							cont.id = trop.exp_contenu_id ".$compPoisSQL;						
-						$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;
-						$listeTable = $ListeTableCom.$ListeTableSel.$ListeTableSpec; // L'ordre est important pour les join
-						$WhereTotal = $WhereCom.$WhereSpec.$WhereSel;
-	
-						$SQLfinal = "select ".$listeChamps." from ".$listeTable." ".$joinSel." where ".$WhereTotal;
-						//echo $SQLfinal;"<br/>";
+						$builQuery = true;	
 					break;
 					default	:	
 					$labelSelection = "Coup de p&ecirc;ches ";
@@ -507,7 +484,9 @@ function AfficherDonnees($file,$typeAction){
 							cpg.date_debut >='".$SQLdateDebut."/01' and 
 							cpg.date_fin <='".$SQLdateFin."/28'".$WhereSel;
 							//echo 	$SQLfinal."<br/>";
+							break;
 			}
+
 			break;
 			// ********** FIN TRAITEMENT PECHE EXPERIMENTALE
 			//
@@ -520,6 +499,42 @@ function AfficherDonnees($file,$typeAction){
 			$WhereSel = "";
 			$joinSel="";
 			$compSQL = "";
+			if ($SQLAgg == "") {
+				$WhereAgg = "";
+			} else {
+				$WhereAgg = "agg.id in (".$SQLAgg.") and";
+			}
+			// Grand type engin
+				if (!($_SESSION['listeCatTrop'] == "")) {
+					$restSupp .= " - restreint aux grands types engin : ";
+					$champSel = explode(",",$_SESSION['SQLGTEngin']);
+					$nbrSel = count($champSel)-1;
+					$valGTE= "";
+					for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
+						if ($valGTE == "") {
+							$valGTE = "'".$champSel[$cptSel]."'";
+						} else {
+							$valGTE .= ",'".$champSel[$cptSel]."'";
+						}
+						$restSupp .= $champSel[$cptSel]." ";
+					}
+					$compGTESQL =" gte.id in (".$valGTE.") and ";
+				} else {
+					$compGTESQL = "";
+					$restSupp .= " - toutes les grands types engin ";
+				}
+
+			
+			
+			// Les selections ci-dessous ne sont valables que pour les filieres autres que l'environnement
+			if (!($typeAction =="activite")){
+				// Maj du libelle de la selection en tete avec les restriction CatEco CatTroph et poisson
+				$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois = "";
+			} 	else {
+				$compCatEcoSQL = "";
+				$compCatTropSQL ="";
+				$compPoisSQL ="";
+			}
 			// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
 			if (!($_SESSION['listeColonne'] =="")){
 				$champSel = explode(",",$_SESSION['listeColonne']);
@@ -585,37 +600,87 @@ function AfficherDonnees($file,$typeAction){
 			}
 			// ********** PREPARATION DU SQL
 			// Definition de tout ce qui est commun aux peches expérimentales
-			$listeChampsCom = "*";
-			$ListeTableCom = "";
+			// Il va y avoir moins de données communes que pour les peches exp car certaines dependent de la filiere acti ou deb 
+			// Donc on cree des variables generales selon qu'on va traiter activite ou debarquement
+			$listeChampsArt = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,act.art_agglomeration_id,agg.nom,act.annee,act.mois,act.date_activite,act.id";
+			$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_activite as act,art_agglomeration as agg,art_unite_peche as upec,art_grand_type_engin as gte";
 			
-			$WhereCom = "";
+			$WhereArt = "	py.id = sy.ref_pays_id and
+							sy.id = se.ref_systeme_id and
+							se.id = agg.ref_secteur_id and
+							".$WhereSyst." ".$WhereAgg." ".$WhereSect."
+							gte.id = act.art_grand_type_engin_id and
+							".$compGTESQL."
+							act.art_agglomeration_id = agg.id and
+							act.date_activite >='".$SQLdateDebut."/01' and 
+							act.date_activite <='".$SQLdateFin."/28' and
+							upec.id = act.art_unite_peche_id";			
 			
+			$listeChampsDeb = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,deb.art_agglomeration_id,agg.nom,deb.art_agglomeration_id,agg.nom,deb.annee,deb.mois,deb.id";
+			$ListeTableDeb = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_debarquement as deb,art_agglomeration as agg,art_type_agglomeration as tyagg,art_unite_peche as upec";
 			
+			$WhereDeb = "	py.id = sy.ref_pays_id and
+							sy.id = se.ref_systeme_id and
+							se.id = agg.ref_secteur_id and
+							".$WhereSyst." ".$WhereAgg." ".$WhereSect."
+							deb.art_agglomeration_id = agg.id and
+							deb.date_debarquement >='".$SQLdateDebut."/01' and 
+							deb.date_debarquement <='".$SQLdateFin."/28' and
+							upec.id = deb.art_unite_peche_id";
 			// ********** CONSTRUCTION DES SQL DEFINITIFS PAR FILIERE
 			switch ($typeAction) {
-				case "peuplement" :
+				case "activite" :
+						// On considere les données d'activité. On commence par mettre à jour les varialbes communs *com
+						$listeChampsCom = $listeChampsArt;
+						$ListeTableCom = $ListeTableArt ;
+						$WhereCom = $WhereArt ;
 						$labelSelection = "Donn&eacute;es d'activit&eacute;";	
+						$listeChampsSpec = ",act.art_type_activite_id,act.nbre_unite_recencee ";
+						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
+						$WhereSpec = "";						
+						$builQuery = true;
+					break;			
+				case "capture" :
+						$labelSelection = "Donn&eacute;es de capture";	
+
+						$listeChampsSpec = "";
+						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
+						$WhereSpec = " ";						
+						$builQuery = true;
+					break;
+				case "NtPt" :
+						$labelSelection = "Donn&eacute;es NtPt";	
+
+						$listeChampsSpec = "";
+						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
+						$WhereSpec = " ";						
+						$builQuery = true;
+					break;
+				case "structure" :
+						$labelSelection = "Donn&eacute;es de structures";	
+
+						$listeChampsSpec = "";
+						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
+						$WhereSpec = " ";						
+						$builQuery = true;
+					break;
+				case "engin" :
+						$labelSelection = "Donn&eacute;es d'engin";	
 						// On n'extrait que des donnéees de fraction
 						// Il n'y aucune selection de colonnes supplémentaires
 						// On prend tous les poissons (pas de différence poisson/non poisson
 						$listeChampsSpec = "";
 						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
 						$WhereSpec = " ";						
-						$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;
-						$listeTable = $ListeTableCom.$ListeTableSel.$ListeTableSpec; // L'ordre est important pour les join
-						$WhereTotal = $WhereCom.$WhereSpec.$WhereSel;
-	
-						$SQLfinal = "select ".$listeChamps." from ".$listeTable." ".$joinSel." where ".$WhereTotal;
-						//echo $SQLfinal;"<br/>";
-					break;			
-					default	:	
+						$builQuery = true;
+					break;															
+				default	:	
 					$labelSelection = "Periode d'enquete";
 					$SQLfinal = "select * from art_periode_enquete as penq
 							where 
 							penq.art_agglomeration_id in (63) and 
 							penq.date_debut >='".$SQLdateDebut."/01' and 
 							penq.date_fin <='".$SQLdateFin."/28'".$WhereSel;
-							//$SQLfinal."<br/>";
 			}
 			break;
 			// ********** FIN TRAITEMENT PECHE ARTISANALE
@@ -636,6 +701,15 @@ function AfficherDonnees($file,$typeAction){
 				exit;
 	} // fin du switch ($typeSelection) {
 	
+	// On construit (on on) la requete finale.
+	// Elle peut avoir déjà été construite précédement, notament dans les cas par defaut
+	if ($builQuery) {
+		$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;
+		$listeTable = $ListeTableCom.$ListeTableSel.$ListeTableSpec; // L'ordre est important pour les join
+		$WhereTotal = $WhereCom.$WhereSpec.$WhereSel;
+		$SQLfinal = "select ".$listeChamps." from ".$listeTable." ".$joinSel." where ".$WhereTotal;
+	}
+	//echo $SQLfinal;"<br/>";
 	
 	
 	

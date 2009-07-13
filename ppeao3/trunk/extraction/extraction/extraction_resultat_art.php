@@ -43,7 +43,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 
 // Fichier à analyser
-$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtraction.xml";
+$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionArt.xml";
 
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
@@ -90,7 +90,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 		
 		<div id="resumeChoix">
 			<?php echo "<b>Filiere en cours</b> = ".$typeAction.""; ?>
-			<form id="navigation" action="/extraction/extraction/extraction_filieres_exp.php">
+			<form id="navigation" action="/extraction/extraction/extraction_filieres_art.php">
 			<input type ="submit" value="changer de filiere" />
 			</form>
 			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/>

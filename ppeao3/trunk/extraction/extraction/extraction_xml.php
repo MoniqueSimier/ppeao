@@ -37,6 +37,7 @@ function startElement($parser, $name, $attrs){
 	global $SQLPays 	;
 	global $SQLSysteme	;
 	global $SQLSecteur	;
+	global $SQLAgg		;
 	global $SQLEngin	;
 	global $SQLGTEngin ;
 	global $SQLCampagne ;
@@ -75,6 +76,9 @@ function startElement($parser, $name, $attrs){
 	case "SECTEURLISTE":
 		$listeSelection .="<br/><b>Liste des secteurs</b> = ";
 		break;
+	case "AGGLOMERATIONLISTE":
+		$listeSelection .="<br/><b>Liste des agglom&eacute;rations</b> = ";
+		break;
 	case "INTERVALLE":
 		$listeSelection .="<br/><b>Liste des interveaux</b> = ";
 		break;
@@ -89,7 +93,7 @@ function startElement($parser, $name, $attrs){
 		$SQLdateDebut = $attrs["ANNEE"]."/".$attrs["MOIS"];
 		break;	
 	case "DATEFIN":
-		$listeSelection .="au  ".$attrs["MOIS"]."/".$attrs["ANNEE"]."  .";
+		$listeSelection .="au  ".$attrs["MOIS"]."/".$attrs["ANNEE"]." .";
 		$SQLdateFin = $attrs["ANNEE"]."/".$attrs["MOIS"];
 		break;
 	case "FAMILLE" :
@@ -115,6 +119,9 @@ function startElement($parser, $name, $attrs){
 		break;
 	case "CAMPAGNE":
 		$SQLCampagne .= $attrs["ID"].",";
+		break;
+	case "AGGLOMERATION":
+		$SQLAgg .= $attrs["ID"].",";
 		break;
 	default :
 		break;
@@ -162,6 +169,9 @@ function endElement($parser, $name){
 		case "SECTEUR" :
 			$listeSelection .= $globaldata.", ";
 			break;
+		case "AGGLOMERATION" :
+			$listeSelection .= $globaldata.", ";
+			break;
 		case "GRANDTYPEENGIN":
 			$listeSelection .= $globaldata.", ";
 			break;
@@ -169,7 +179,7 @@ function endElement($parser, $name){
 			$listeSelection .= $globaldata.", ";
 			break;
 		default :
-			$listeSelection = substr($listeSelection,0,- 1); // pour enlever la virgule surnumeraire
+
 		break;
 	}
 	array_pop($stack);

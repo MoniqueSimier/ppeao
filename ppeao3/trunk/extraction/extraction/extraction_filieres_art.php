@@ -82,6 +82,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				$SQLPays 	= "";
 				$SQLSysteme	= "";
 				$SQLSecteur	= "";
+				$SQLAgg		= "";
 				$SQLEngin	= "";
 				$SQLGTEngin = "";
 				$SQLCampagne = "";

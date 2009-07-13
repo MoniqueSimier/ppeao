@@ -72,6 +72,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		$_SESSION['SQLPays'] = '';
 		$_SESSION['SQLSysteme'] = '';
 		$_SESSION['SQLSecteur'] = '';
+		$_SESSION['SQLAgg'] = '';
 		$_SESSION['SQLEngin'] = '';
 		$_SESSION['SQLGTEngin'] = '';
 		$_SESSION['SQLCampagne'] = '';
