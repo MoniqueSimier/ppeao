@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables>
+	<table>
+		<peches>
+			<peche>toutes</peche>
+		</peches>
+		<numOrdre>1</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>ref_pays</nom>
+		<testNom>py</testNom>
+		<libelle>Pays</libelle>
+		<champ code="id" affichage="X" libelle="Id unique"/>
+		<champ code="nom" affichage="X" libelle="nom"/>
+	</table>
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>2</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>ref_systeme</nom>
+		<testNom>sy</testNom>
+		<libelle>Systeme</libelle>
+		<champ code="id" affichage="X" libelle="Id unique"/>
+		<champ code="nom" affichage="X" libelle="nom"/>
+		<champ code="superficie" affichage="C" libelle="Superficie" />
+	</table>
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>3</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>ref_secteur</nom>
+		<testNom>se</testNom>
+		<libelle>Secteur</libelle>
+		<champ code="id" affichage="X" libelle="Id unique"/>
+		<champ code="nom" affichage="X" libelle="nom"/>
+		<champ code="superficie" affichage="C" libelle="Superficie" />
+	</table>
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>exp_station</nom>
+		<testNom>stat</testNom>
+		<libelle>Station</libelle>
+		<champ code="id" affichage="X" libelle="Id unique"/>
+		<champ code="nom" affichage="X" libelle="Nom"/>
+		<champ code="site" affichage="C" libelle="Site"/>
+	</table>
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>exp_campagne</nom>
+		<testNom>cpg</testNom>
+		<libelle>Campagne</libelle>
+		<champ code="date_debut" affichage="X" libelle="Date de debut"/>
+		<champ code="date_fin" affichage="C" libelle="Date de fin"/>		
+		<champ code="libelle" affichage="X" libelle="Libelle"/>
+		<champ code="code" affichage="C" libelle="Code"/>
+	</table>	
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>exp_coup_peche</nom>
+		<testNom>cph</testNom>
+		<libelle>Coup de peche</libelle>
+		<champ code="date_cp" affichage="X" libelle="Date coup peche"/>
+		<champ code="code" affichage="X" libelle="Code"/>		
+		<champ code="heure_debut" affichage="C" libelle="Heure de debut"/>
+		<champ code="heure_fin" affichage="C" libelle="Heure de fin"/>
+		<champ code="protocole" affichage="X" libelle="Protocole"/>
+		<champ code="exp_qualite_id" affichage="X" libelle="ID qualite"/>
+		<champ code="exp_engin_id" affichage="X" libelle="ID engin"/>		
+	</table>	
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>exp_qualite</nom>
+		<testNom>xqua</testNom>
+		<libelle>Qualite</libelle>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>	
+	</table>	
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>exp_environnement</nom>
+		<testNom>env</testNom>
+		<libelle>Environnement</libelle>
+		<champ code="id" affichage="X" libelle="Id"/>		
+	</table>
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>exp_biologie</nom>
+		<testNom>bio</testNom>
+		<libelle>Biologie</libelle>
+		<champ code="id" affichage="X" libelle="Id"/>		
+	</table>
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>exp_trophique</nom>
+		<testNom>trop</testNom>
+		<libelle>Trophique</libelle>
+		<champ code="id" affichage="X" libelle="Id"/>		
+	</table>
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>exp_contenu</nom>
+		<testNom>cont</testNom>
+		<libelle>Contenu</libelle>
+		<champ code="id" affichage="X" libelle="Id"/>		
+	</table>	
+	
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>exp_fraction</nom>
+		<testNom>fra</testNom>
+		<libelle>Fraction</libelle>
+		<champ code="id" affichage="X" libelle="Id"/>	
+	</table>
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>exp_engin</nom>
+		<testNom>xeng</testNom>
+		<libelle>Engin</libelle>
+		<champ code="libelle" affichage="X" libelle="Libelle"/>	
+		<champ code="chute" affichage="C" libelle="Chute"/>	
+		<champ code="longueur" affichage="C" libelle="Longeur"/>	
+		<champ code="maille" affichage="C" libelle="Maille"/>	
+		<champ code="memo" affichage="C" libelle="Memo"/>	
+	</table>	
+	<table>
+		<peches>
+			<peche>artisanale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>art_agglomeration</nom>
+		<testNom>agg</testNom>
+		<libelle>Agglomeration</libelle>
+		<champ code="nom" affichage="X" libelle="Nom"/>
+		<champ code="site" affichage="C" libelle="Site"/>
+	</table>
+		<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>exp_vegetation</nom>
+		<testNom>veg</testNom>		
+		<libelle>type de vegetation</libelle>
+		<champ code="id" affichage="X" libelle="Id"/>
+		<champ code="nom" affichage="C" libelle="Libelle"/>
+	</table>
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>ref_categorie_ecologique</nom>
+		<testNom>cate</testNom>		
+		<libelle>Categorie ecologique</libelle>
+		<champ code="id" affichage="X" libelle="Id"/>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>
+	</table>
+	<table>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>ref_categorie_trophique</nom>
+		<testNom>catt</testNom>		
+		<libelle>Categorie trophique</libelle>
+		<champ code="id" affichage="X" libelle="Id"/>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>
+	</table>
+</tables>

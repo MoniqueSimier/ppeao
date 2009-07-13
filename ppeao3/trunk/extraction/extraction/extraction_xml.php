@@ -64,7 +64,7 @@ function startElement($parser, $name, $attrs){
 		$listeSelection .="<br/><b>Liste des familles</b> = ";
 		break;
 	case "ESPECELISTE":
-		$listeSelection .="<br/><b>Liste des especes</b> = ";
+		$listeSelection .="<br/><b>Liste des esp&eacute;ces</b> = ";
 		break;
 	case "PAYSLISTE":
 		$listeSelection .="<br/><b>Liste des pays</b> = ";
@@ -337,9 +337,9 @@ function endElementCol($parser, $name){
 		case "LIBELLE" :
 			if ($TableAAjouter) {
 				if ($RecupDonneesOK) {
-					$ListeTable .= "<a href=\"#\" onClick = \"runFilieres('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."')\" class = \"active\">".$globaldata."</a><br/>";
+					$ListeTable .= "<a href=\"#\" onClick = \"runFilieresExp('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."')\" class = \"active\">".$globaldata."</a><br/>";
 				} else {
-					$ListeTable .= "<a href=\"#\" onClick = \"runFilieres('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."')\" class = \"\">".$globaldata."</a><br/>";
+					$ListeTable .= "<a href=\"#\" onClick = \"runFilieresExp('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."')\" class = \"\">".$globaldata."</a><br/>";
 				}
 			}	
 			if ($RecupDonneesOK == true ) {

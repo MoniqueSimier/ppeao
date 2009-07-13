@@ -43,14 +43,14 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 
 // Fichier à analyser
-$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtraction.xml";
+$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionArt.xml";
 
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 ?>
 
 <div id="main_container" class="home">
-	<h1>Extraction : choix fili&egrave;res</h1>
+	<h1>Extraction p&ecirc;che artisanale : choix fili&egrave;res</h1>
 	<br/>
 	<p>Cette section permet de tester l'export des donn&eacute;es apr&egrave;s la s&eacute;lection.</p>
     <?php
@@ -65,7 +65,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 ?>
 		<br/>
 		<p>Vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p><br/>
-			<form id="formExtraction" method="get" action="extraction_filieres.php">
+			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
 			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/><br/>
 			</form>
 		<div id="resumeChoix">
@@ -103,16 +103,20 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				$locSelection = AfficherSelection($file,""); 
 				echo $locSelection."<br/>";
 				AfficherDonnees($file,"");
-				echo "<b>".$labelSelection." selectionnes</b> = ".$compteurItem;				
+				echo "<b>".$labelSelection." selectionnes</b> = ".$compteurItem;
+				if (!( $typePeche == "artisanale")) {
+					echo "<br/><br/><b>Erreur dans le fichier XML en entr&eacute;e. Il ne s'agit pas d'une s&eacute;lection de donn&eacute;es de p&ecirc;che artisanale.</b><br/>.";
+					exit;
+				}				
 			?>
 		</div>
 		<br/>
 		<div id="runProcess"><b>Choix de la fili&egrave;re :</b>&nbsp;
-			<a href="#" onClick="runFilieres('<?php echo $typePeche ?>','peuplement','1','','n')">peuplement</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieres('<?php echo $typePeche ?>','environnement','1','','n')">environnement</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieres('<?php echo $typePeche ?>','NtPt','1','','n')">Nt/Pt</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieres('<?php echo $typePeche ?>','biologie','1','','n')">biologie</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieres('<?php echo $typePeche ?>','trophique','1','','n')">trophique</a>
+			<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','activite','1','','n')">activit&eacute;</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','capture','1','','n')">captures totales</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','NtPt','1','','n')">Nt/Pt</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','structure','1','','n')">structure de taille</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','engin','1','','n')">engins de p&ecirc;he</a>
 		</ul>
 		</div>
 		<br/>

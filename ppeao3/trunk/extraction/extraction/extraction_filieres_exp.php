@@ -1,11 +1,11 @@
 <?php 
 //*****************************************
-// extraction_resultat.php
+// extraction_filiere.php
 //*****************************************
 // Created by Yann Laurent
-// 2009-07-01 : creation
+// 2009-06-24 : creation
 //*****************************************
-// Ce programme gere l'affichage des resultats et l'export vers un fichier csv
+// Ce programme gere le choix des filieres et lance les traitements adequats
 //*****************************************
 // Paramètres en entrée
 // aucun pour l'instant.
@@ -43,59 +43,42 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 
 // Fichier à analyser
-$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtraction.xml";
+$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionExp.xml";
 
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
-	// On recupere les paramètres
-	if (isset($_GET['log'])) {
-		if ($_GET['log'] == "false") {
-			$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
-		} else {
-			$EcrireLogComp = true;
-		}
-	} else {
-		echo "erreur, il manque le parametre log <br/>";
-		exit;
-	}
-	if (isset($_GET['action'])) {
-		$typeAction = $_GET['action'];
-	} else {
-		echo "erreur, il manque le parametre action <br/>";
-		exit;
-	}	
-
 ?>
 
 <div id="main_container" class="home">
-	<h1>Extraction : resultat pour <?php echo $typeAction;?></h1>
+	<h1>Extraction p&ecirc;che exp&egrave;rimentale : choix fili&egrave;res</h1>
 	<br/>
-	<p>Cette section affiche les resultats de la selection</p>
-	<br/>
+	<p>Cette section permet de tester l'export des donn&eacute;es apr&egrave;s la s&eacute;lection.</p>
     <?php
 	if (isset($_SESSION['s_ppeao_user_id'])){ 
 		$userID = $_SESSION['s_ppeao_user_id'];
 	} else {
 		$userID=null;
 	}
-// on teste à quelle zone l'utilisateur a accès
+	// on teste à quelle zone l'utilisateur a accès
 	if (userHasAccess($userID,$zone)) {
-	if ($typeAction == "peuplement") {
-		// On precharge les valeurs par défaut :
-		$_SESSION['listeQualite'] = '1,3,5';
-		$_SESSION['listeProtocole'] = '1'; // Oui / non
-	}
-	// Dans tous les autres cas, toutes les autres valeurs auront été validés avant.
-	
+
 ?>
-		
-		<div id="resumeChoix">
-			<?php echo "<b>Filiere en cours</b> = ".$typeAction.""; ?>
-			<form id="navigation" action="/extraction/extraction/extraction_filieres.php">
-			<input type ="submit" value="changer de filiere" />
+		<br/>
+		<p>Vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p><br/>
+			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
+			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/><br/>
 			</form>
-			<br/>
-			<?php
+		<div id="resumeChoix">
+			<?php 
+			
+				// Si on change de filière, on remet tous à blanc
+				$_SESSION['listeQualite'] = '';
+				$_SESSION['listeProtocole'] = ''; // Oui / non
+				$_SESSION['listeEspeces'] = '';	// Liste des espèces selectionnées
+				$_SESSION['listeCatEco'] = ''; 	// Liste des categories ecologiques selectionnées
+				$_SESSION['listeCatTrop'] = ''; // Liste des categories trophiques selectionnées
+				$_SESSION['listeColonne'] = ''; // tableau nomTable / NomChamp des champs comple à afficher
+				// Variables pour construire les SQL	
 				$SQLPays 	= "";
 				$SQLSysteme	= "";
 				$SQLSecteur	= "";
@@ -113,32 +96,31 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				$listeEnquete = ""; // contiendra soit la 
 				$listeGTEngin = "";
 				$compteurItem = 0;
-				$restSupp = "";
 				// Pour construire le bandeau avec la sélection
 				$listeSelection ="";
 				$resultatLecture = "";
 				$labelSelection = "";
-				$locSelection = AfficherSelection($file); 
+				$locSelection = AfficherSelection($file,""); 
 				echo $locSelection."<br/>";
-				AfficherDonnees($file,$typeAction);
-				echo "<br/><b>Restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp."<br/>";
-				echo "<b>".$labelSelection."(s) s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;								
-				
+				AfficherDonnees($file,"");
+				echo "<b>".$labelSelection." selectionnes</b> = ".$compteurItem;
+				if (!( $typePeche == "experimentale")) {
+					echo "<br/><br/><b>Erreur dans le fichier XML en entr&eacute;e. Il ne s'agit pas d'une s&eacute;lection de donn&eacute;es de p&ecirc;che exp&eacute;rimentale.</b><br/>.";
+					exit;
+				}				
 			?>
 		</div>
 		<br/>
-		<div id="resultfiliere"> 
-		<?php 
-			switch ($typeAction) {
-				case "peuplement" :
-					 echo $resultatLecture; 
-					break;
-				default : 
-				echo" resultats pour les autres traitements...";
-					break;
-			}
-		?>
+		<div id="runProcess"><b>Choix de la fili&egrave;re :</b>&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','peuplement','1','','n')">peuplement</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','environnement','1','','n')">environnement</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','NtPt','1','','n')">Nt/Pt</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','biologie','1','','n')">biologie</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','trophique','1','','n')">trophique</a>
+		</ul>
 		</div>
+		<br/>
+		<div id="resultfiliere"> suite...</div>
 		<?php // for test include $_SERVER["DOCUMENT_ROOT"].'/export/export_access.php'; 
 		
 		?>

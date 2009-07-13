@@ -60,6 +60,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		$_SESSION['s_status_export'] = 'ko';
 		$_SESSION['listeQualite'] = '';
 		$_SESSION['listeProtocole'] = ''; // Oui / non
+		$_SESSION['listePoisson'] = '' ;// Oui/non
 		$_SESSION['listeEspeces'] = '';
 		$_SESSION['listeCatEco'] = '';
 		$_SESSION['listeCatTrop'] = '';
@@ -84,17 +85,19 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		<p>Cette page a pour but de permettre de tester la partie extraction des donn&eacute;es sous forme ecran ou fichier, en incluant le calcul des statistiques. Il se base sur un fichier XML contenant les donn&eacute;es s&eacute;lectionn&eacute;es. Ce fichier XML sera ult&eacute;rieurement g&eacute;n&eacute;r&eacute; par la partie sélection de l'extraction. Le fichier XML se trouve dans le r&eacute;pertoire temp &agrave; la racine du site et se nomme testExtraction.xml.</p>
 		<br/>
 		<div id="runProcess">
-			<form id="formExtraction" method="get" action="extraction_filieres.php">
-			<input id="startProcess" type="submit" value="Lancer le traitement"/>
+			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
+			<input id="startProcess" type="submit" value="Test peche exp"/>
 
 			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
 			<br/>
 			</form>
-		<br/>
+			<form id="formExtraction" method="get" action="extraction_filieres_art.php">
+			<input id="startProcess" type="submit" value="Test peche art"/>
+
+			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
+			<br/>
+			</form>
 		</div>
-		<div id="titleProcess">D&eacute;tail des process.</div>
-		<br/>
-		<div id="resultXML"> Le resultat du traitement</div>
 		<?php // for test include $_SERVER["DOCUMENT_ROOT"].'/export/export_access.php'; 
 		
 		?>
