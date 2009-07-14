@@ -116,7 +116,7 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation) {
 			}
 		}
 		// Recuperation des selections sur choix des poissons
-		for (i=1;i<=2;i++) {
+		for (i=1;i<=4;i++) {
 			if 	(document.getElementById("poisson"+i).checked) {
 				if (poiss=="") {
 					poiss = document.getElementById("poisson"+i).value
@@ -125,6 +125,7 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation) {
 				}
 			}
 		}
+		alert(poiss)
 		// Recuperation des categories ecologiques
 		limCE = document.getElementById("numCEco").value;
 		for (i=1;i<=limCE;i++) {

@@ -150,15 +150,28 @@ $colActive="";
 $ClassEnv = "";
 switch ($numTab) {
 	case "1":
-		$ClassEnv = " visible";
-		$cgActive=" visible";
+		if ($typeAction == "activite") {
+			$cgActive="";
+			$ClassEnv = "";
+		} else {
+			$cgActive=" visible";
+			$ClassEnv = " visible";
+		}
 		$tab1 = " active";
+		
+		
 		break;
 	case "2":
-		$ceActive=" visible";
+		if (!($typeAction == "activite")) {
+			$ceActive=" visible";
+		}
+		$tab2 = " active";
 		break;
 	case "3":
-		$ctActive=" visible";
+		if (!($typeAction == "activite")) {
+			$ctActive=" visible";
+		}
+		
 		$tab3 = " active";
 		break;
 	case "4":

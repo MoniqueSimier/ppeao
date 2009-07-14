@@ -199,7 +199,7 @@ function AfficherDonnees($file,$typeAction){
 	$LabCatPois = "";
 	// Analyse des categories trophiques / ecologiques / poisson-non poisson
 	if (!($_SESSION['listeCatEco'] == "")) {
-		$restSupp .= " - restreint aux cat&eacute;gories &eacute;cologique : ";
+		 $LabCatEco = " restreint aux cat&eacute;gories &eacute;cologique : ";
 		$champSel = explode(",",$_SESSION['listeCatEco']);
 		$nbrSel = count($champSel)-1;
 		$valCatE = "";
@@ -209,7 +209,7 @@ function AfficherDonnees($file,$typeAction){
 			} else {
 				$valCatE .= ",'".$champSel[$cptSel]."'";
 			}
-			$LabCatEco = $champSel[$cptSel]." ";
+			$LabCatEco .= $champSel[$cptSel]." ";
 		}
 		$compCatEcoSQL =" and esp.ref_categorie_ecologique_id in (".$valCatE.")";
 	} else {
@@ -217,7 +217,7 @@ function AfficherDonnees($file,$typeAction){
 				$LabCatEco = " - toutes les cat&eacute;gories &eacute;cologiques ";
 	}
 	if (!($_SESSION['listeCatTrop'] == "")) {
-		$restSupp .= " - restreint aux cat&eacute;gories trophiques : ";
+		$LabCatTrop = " restreint aux cat&eacute;gories trophiques : ";
 		$champSel = explode(",",$_SESSION['listeCatTrop']);
 		$nbrSel = count($champSel)-1;
 		$valCatT = "";
@@ -227,12 +227,12 @@ function AfficherDonnees($file,$typeAction){
 			} else {
 				$valCatT .= ",'".$champSel[$cptSel]."'";
 			}
-			$LabCatTrop = $champSel[$cptSel]." ";
+			$LabCatTrop .= $champSel[$cptSel]." ";
 		}
 		$compCatTropSQL =" and esp.ref_categorie_trophique_id in (".$valCatT.")";
 	} else {
 		$compCatTropSQL = "";
-			$LabCatTrop = " - toutes les cat&eacute;gories trophiques ";
+			$LabCatTrop = " toutes les cat&eacute;gories trophiques ";
 	}
 	if (!($_SESSION['listePoisson'] == "")) {
 		$champSel = explode(",",$_SESSION['listePoisson']);
@@ -254,18 +254,18 @@ function AfficherDonnees($file,$typeAction){
 						$valPoisson .= ",".$champSel[$cptSel];
 					}
 					break;
-				case "p" :
-					$LabCatPois = " - que les non poissons ";
+				case "pp" :
+					$LabCatPois = " que les non poissons ";
 					break;
 				case "np":
-					$LabCatPois = " - que les poissons ";
+					$LabCatPois = " que les poissons ";
 					break;	
 			}
 		}
 		$compPoisSQL =" and fam.non_poisson in (".$valPoisson.")";
 	} else {
 		if (!($typeAction =="environnement")){
-			$LabCatPois = " - tous les poissons ";
+			$LabCatPois = " tous les poissons ";
 		}
 	} // fin du if (!($_SESSION['listePoisson'] == ""))
 	
@@ -306,7 +306,7 @@ function AfficherDonnees($file,$typeAction){
 			// Les selections ci-dessous ne sont valables que pour les filieres autres que l'environnement
 			if (!($typeAction =="environnement")){
 				// Maj du libelle de la selection en tete avec les restriction CatEco CatTroph et poisson
-				$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois = "";
+				$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois." ";
 			} 	else {
 				$compCatEcoSQL = "";
 				$compCatTropSQL ="";
@@ -506,7 +506,7 @@ function AfficherDonnees($file,$typeAction){
 			}
 			// Grand type engin
 				if (!($_SESSION['listeCatTrop'] == "")) {
-					$restSupp .= " - restreint aux grands types engin : ";
+					$LabGTE = " - restreint aux grands types engin : ";
 					$champSel = explode(",",$_SESSION['SQLGTEngin']);
 					$nbrSel = count($champSel)-1;
 					$valGTE= "";
@@ -516,24 +516,33 @@ function AfficherDonnees($file,$typeAction){
 						} else {
 							$valGTE .= ",'".$champSel[$cptSel]."'";
 						}
-						$restSupp .= $champSel[$cptSel]." ";
+						$LabGTE .= $champSel[$cptSel]." ";
 					}
 					$compGTESQL =" gte.id in (".$valGTE.") and ";
 				} else {
 					$compGTESQL = "";
-					$restSupp .= " - toutes les grands types engin ";
+					$LabGTE = " - toutes les grands types engin ";
 				}
 
 			
 			
 			// Les selections ci-dessous ne sont valables que pour les filieres autres que l'environnement
-			if (!($typeAction =="activite")){
-				// Maj du libelle de la selection en tete avec les restriction CatEco CatTroph et poisson
-				$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois = "";
-			} 	else {
-				$compCatEcoSQL = "";
-				$compCatTropSQL ="";
-				$compPoisSQL ="";
+			switch ($typeAction) {
+				case "activite" :
+					$compCatEcoSQL = "";
+					$compCatTropSQL ="";
+					$compPoisSQL ="";
+					$compGTESQL = "";
+				break;
+				case "capture":
+					$compCatEcoSQL = "";
+					$compCatTropSQL ="";
+					$compPoisSQL ="";
+					$compGTESQL = "";
+				default :
+				$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois." - ".$LabGTE ;
+				break;
+			
 			}
 			// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
 			if (!($_SESSION['listeColonne'] =="")){
@@ -641,8 +650,11 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;			
 				case "capture" :
+				// Liste des debarquements.
 						$labelSelection = "Donn&eacute;es de capture";	
-
+						$listeChampsCom = $listeChampsDeb;
+						$ListeTableCom = $ListeTableDeb ;
+						$WhereCom = $WhereDeb ;
 						$listeChampsSpec = "";
 						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
 						$WhereSpec = " ";						
