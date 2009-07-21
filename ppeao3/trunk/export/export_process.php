@@ -154,7 +154,7 @@ if (isset($_SESSION['s_status_export'])) {
 }
 
 if ($typeAction == "copAC" && $typePeche="exp") {
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> Pas de mise a jour de donnees depuis la base ACCESS de reference pour les peches experimentales</div>" ;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> Pas de traitement pour les peches experimentales.</div>" ;
 		exit;
 
 }
@@ -234,7 +234,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			 break;
 		case "copPPEAO":
 			// Copie entre base postgres de ref (PPEAO) et base ACCESS de travail
-			$nomAction = "Copie param de la base POSTGRESQL (PPEAO) de ref";
+			$nomAction = "Copie param depuis la base POSTGRESQL de ref (PPEAO) ";
 			switch ($typePeche) { 
 				case "exp":
 					$listTable = GetParam("listeTableRefExpPPEAO",$PathFicConfAccess);
@@ -269,7 +269,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			$nomPeche = "peches artisanales";
 			break;	
 	}
-	$nomAction = $nomAction." ".$nomPeche;
+	$nomAction = $nomAction." pour peche ".$nomPeche;
 	$BDACCESSTravail = $BDACCESS."_travail";	
 	$nomBDCible = "Base ACCESS de travail";
 	
@@ -291,13 +291,15 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es BD_PPEAO pour maj des logs</div>" ; exit;
 	}
 	// Test connexion base de travail
-	$connectAccess = odbc_connect($BDACCESS,'','');
-	if (!$connectAccess) {
-		if ($EcrireLogComp ) {
-			WriteCompLog ($logComp, "Erreur de la connection à la base ACCESS de reference ".$BDACCESS,$pasdefichier);
-		}
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base ACCESS de reference ".$BDACCESS."</div>" ; exit;
-	} 
+	if ($typePeche == "art" ) { // On controle la base de reference ACCESS uniquement pour les peches exp
+		$connectAccess = odbc_connect($BDACCESS,'','');
+		if (!$connectAccess) {
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "Erreur de la connection à la base ACCESS de reference ".$BDACCESS,$pasdefichier);
+			}
+			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base ACCESS de reference ".$BDACCESS."</div>" ; exit;
+		} 
+	}
 	$connectAccessTravail = odbc_connect($BDACCESSTravail,'','');
 	if (!$connectAccessTravail) {
 		if ($EcrireLogComp ) {
@@ -676,7 +678,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 
 	// Fin de traitement : Fermeture base de données et fichier log/SQL	
 	// *********************************************	
-	odbc_close($connectAccess);
+	if ($typePeche == "art" ) { odbc_close($connectAccess); }
 	odbc_close($connectAccessTravail);
 	if (! $pasdefichier) {
 		if ($EcrireLogComp ) {

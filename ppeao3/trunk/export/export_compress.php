@@ -126,21 +126,11 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			exit;		
 		}
 	}
-	
-
 	// Test de la connexion à la BD de ref (pour log entre autre)
 	if (!$connectPPEAO) { 
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es BD_PPEAO pour maj des logs</div>" ; exit;
 	}
 	
-	// Initialisation des logs
-	logWriteTo(8,"notice","**- Debut lancement Zip","","","0");
-	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
-		WriteCompLog ($logComp, "*- DEBUT lancement Zip",$pasdefichier);
-		WriteCompLog ($logComp, "*------------------------------------------------------",$pasdefichier);
-	}
-
 	// Début du traitement de comparaison par table.
 	// *********************************************
 
@@ -152,33 +142,57 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		case "exp":
 			$BDACCESS = GetParam("nomBDRefExp",$PathFicConfAccess);
 			$filestoAdd = "";
+			$nomPeche = "peches experimentales";
 			break;
 		case "art":
 			$BDACCESS = GetParam("nomBDRefArt",$PathFicConfAccess);
 			$filestoAdd = "PechartPays.mdb,PechartSaisie.mdb";
+			$nomPeche = "peches artisanales";
 			break;	
+	}
+	// Initialisation des logs
+	logWriteTo(8,"notice","**- Debut lancement Zip","","","0");
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
+		WriteCompLog ($logComp, "*- DEBUT lancement Zip peche ".$nomPeche,$pasdefichier);
+		WriteCompLog ($logComp, "*------------------------------------------------------",$pasdefichier);
 	}
 	//1. copier et renomer la base de travail
 	$BDrep = GetParam("nomRepBD",$PathFicConfAccess);
 	$BDfic = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$BDACCESS."_travail.mdb";
+	// On va utiliser un repertoire temp pour preparer l'archive
+	// On teste si il existe
+	$TempRep = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/temp/";
+	if (! file_exists($TempRep)) {
+		if (! mkdir($TempRep) ) {
+			$messageGen = " erreur de cr&eacute;ation du r&eacute;pertoire temporaire /".$BDrep."/temp/ pour preparation archive";
+			logWriteTo(8,"error","Erreur de creation du repertoire temporaire /".$BDrep."/temp/ pour preparation archive dans comparaison.php","","","0");
+			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
+			exit;
+		}
+	}	
+
 	if (!file_exists($BDfic)) {
 		$CRexecution .= "le fichier de base de donnees de references n'existe pas.(".$BDfic.")<br/>";
 		$erreurProcess = true;
 	} else {
-		$nouveauNomFic = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/pechart_aexporter.mdb";
+		$nouveauNomFic = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/temp/".$BDACCESS.".mdb";
 		if (copy($BDfic,$nouveauNomFic)) {
 			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp,"Fichier de travail ".$BDACCESS." renomm&eacute; en pechart_aexporter.mdb",$pasdefichier);
+				WriteCompLog ($logComp,"Fichier de travail ".$BDACCESS."_travail renomme en ".$BDACCESS.".mdb",$pasdefichier);
 			}
 		} else {
-			$CRexecution .= "impossible de renommer le fichier ".$BDfic." en ".$nouveauNomFic."<br/>";
+			$CRexecution .= "Impossible de renommer le fichier ".$BDfic." en ".$nouveauNomFic."<br/>";
 			$erreurProcess = true;
 		}
 	}
 	if (!$erreurProcess) {
 		//2.ajouter cette base au fichier compresse
 		//compression du fichier pour le telechargement
+		
 		$zipFilename = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/temp-".$fileCompression.".zip";
+		$zipFilelien = "/".$BDrep."/temp-".$fileCompression.".zip";
+		$AjoutCR = "Le fichier est celui-ci : <b><a href=\"".$zipFilelien."\" target=\"\">".$zipFilelien."</a></b>.";
 		if (file_exists($zipFilename)) {
 		// pas forcement necessaire, verifier que le x+ vide le fichier
 			unlink($zipFilename);
@@ -194,17 +208,20 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			WriteCompLog ($logComp, "Ajout de ".$nouveauNomFic." dans l'archive ".$zipFilename ,$pasdefichier);
 		}
 		//3.2 ajouter les autres fichiers
-		$filetoAdd = explode(",",$filestoAdd);
-		$nbfiletoAdd = count($filetoAdd) - 1;
-		for ($cpt = 0; $cpt <= $nbfiletoAdd; $cpt++) {
-			$FileFullPath = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$filetoAdd[$cpt];
-			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp, "Ajout de ".$FileFullPath." dans l'archive ".$zipFilename ,$pasdefichier);
+		if (!($filestoAdd == "")) {
+			$filetoAdd = explode(",",$filestoAdd);
+			$nbfiletoAdd = count($filetoAdd) - 1;
+			for ($cpt = 0; $cpt <= $nbfiletoAdd; $cpt++) {
+				$FileFullPath = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$filetoAdd[$cpt];
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp, "Ajout de fichiers sup ".$FileFullPath." dans l'archive ".$zipFilename ,$pasdefichier);
+				}
+				$theZipFile->add_files($FileFullPath);
 			}
-			$theZipFile->add_files($FileFullPath);
 		}
 		// Creation effective de l'archive
 		$theZipFile->create_archive();
+		$CRexecution .= $AjoutCR;
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div //id=\"".$nomFenetre."_txt\">Zip ex&eacute;cut&eacute;e avec succ&egrave;s </div><div id=\"
 	".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 		echo"<div id=\"vertical_slide5\">".$CRexecution."</div>";	

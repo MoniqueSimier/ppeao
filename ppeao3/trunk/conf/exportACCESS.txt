@@ -16,7 +16,7 @@ nomFicLogSuppAc=ExportAccess.log;
 ; Nom fichier de compression (le type de peche est ajoutée)
 nomFicLogCompression=Compression
 ; tables a vider Peches Artisanales
-listeaViderArtACCESS=activImporter,CoefficientKb,ConditionPhysicoChimiq,CorrespondanceMaille,debarqImporter,engactiImporter,engpechImporter,Enqueteur,EspeceTMO,Journal,ModeCalcul,MotDePasse,NomVernaculaire,PaysFragmentation,PECHEXPcat_ecol,PECHEXPcat_troph,PECHEXPespece,PECHEXPfamille,PECHEXPnom,PECHEXPordre,PeriodeEnquete,poidsImporter,Recap,RecapCoef,SuiviExtractImport,SuiviExtractImportRec,tailleImporter,vdueauImporter;
+listeaViderArtACCESS=activImporter,CoefficientKb,ConditionPhysicoChimiq,CorrespondanceMaille,debarqImporter,engactiImporter,engpechImporter,Enqueteur,EspeceTMO,Journal,ModeCalcul,NomVernaculaire,PaysFragmentation,PECHEXPcat_ecol,PECHEXPcat_troph,PECHEXPespece,PECHEXPfamille,PECHEXPnom,PECHEXPordre,PeriodeEnquete,poidsImporter,Recap,RecapCoef,SuiviExtractImport,SuiviExtractImportRec,tailleImporter,vdueauImporter;
 ; tables a copier entre la base de travail et la base PPEAO de reference
 listeaViderArtPPEAO=Agglomeration,CategorieSocioProfessionnelle,EtatCiel,GrandTypeEngin,Milieu,TypeActivite,TypeAgglomeration,TypeEngin,TypeSortie,Vent,CategorieEcologique,Categorietrophique,CoefficientKb,Espece,Nom,Famille,Ordre,OrigineKb,Pays,Secteur,Systeme;
 ; tables a copier entre la base de travail et la base ACCESS de reference
@@ -26,7 +26,7 @@ listeTableRefArtPPEAO=Pays,Systeme,Secteur,CategorieEcologique,Categorietrophiqu
 ; tables a vider Peches Experimentales
 listeaViderExpACCESS=;
 ; tables a copier entre la base de travail et la base PPEAO de reference
-listeaViderExpPPEAO=cat_ecol,cat_troph,contenu,debris,engin,f_courant,position,qualite,rempliss,s_courant,sediment,sexe,stade,station,vegetation,Espece,Nom,Famille,Ordre,Pays,Systeme;
+listeaViderExpPPEAO=cat_ecol,cat_troph,contenu,debris,engin,f_courant,position,qualite,rempliss,s_courant,sediment,sexe,stade,station,vegetation,Espece,Nom,Famille,Ordre,Pays,Systeme,Zone_Postgre;
 ; tables a copier entre la base de travail et la base ACCESS de reference
 listeTableRefExpACCESS=;
 ; tables a copier entre la base de travail et la base PPEAO de reference

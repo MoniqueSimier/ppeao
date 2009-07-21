@@ -66,6 +66,38 @@ if (isset($_GET['log'])) {
 		$EcrireLogComp = true;
 	}
 }
+
+// ****************** Connecteur ODBC *************************************
+// Recupération des paramétres de connexion ODBC aux bases de references artisanales ou expermientales.
+// Variables pour la sauvegarde de la base de reference (PPEAO)
+// ***********************************************************
+$BDrep = GetParam("nomRepBD",$PathFicConfAccess);
+
+// Note: le nom de la connexion ODBC doit etre le meme que le nom du fichier .mdb
+switch ($typePeche) { 
+	case "exp":
+		$BDACCESS = GetParam("nomBDRefExp",$PathFicConfAccess);
+		$nomPeche = "peches experimentales";
+		break;
+	case "art":
+		$BDACCESS = GetParam("nomBDRefArt",$PathFicConfAccess);
+		$nomPeche = "peches artisanales";
+		break;	
+}
+switch ($action) { 
+	case "ctrl":
+		$nomAction = "Controle base de donnees ".$nomPeche;
+		$numFen = 1;
+		$nomFenetre = "controleBase";
+		break;
+	case "vide":
+		$nomAction = "Vidage base de travail ".$nomPeche;
+		$BDACCESS = $BDACCESS."_travail";
+		$numFen = 2;
+		$nomFenetre = "vidage";
+		break;	
+}
+
 // On récupère les valeurs des paramètres pour les fichiers log
 $dirLog = GetParam("repLogAccess",$PathFicConfAccess);
 $nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
@@ -101,38 +133,6 @@ if (! $pasdefichier) { // Pour test sur serveur linux
 	}
 }	
 
-// ****************** Connecteur ODBC *************************************
-// Recupération des paramétres de connexion ODBC aux bases de references artisanales ou expermientales.
-// Variables pour la sauvegarde de la base de reference (PPEAO)
-// ***********************************************************
-$BDrep = GetParam("nomRepBD",$PathFicConfAccess);
-
-// Note: le nom de la connexion ODBC doit etre le meme que le nom du fichier .mdb
-switch ($typePeche) { 
-	case "exp":
-		$BDACCESS = GetParam("nomBDRefExp",$PathFicConfAccess);
-		$nomPeche = "peches experimentales";
-		break;
-	case "art":
-		$BDACCESS = GetParam("nomBDRefArt",$PathFicConfAccess);
-		$nomPeche = "peches artisanales";
-		break;	
-}
-switch ($action) { 
-	case "ctrl":
-		$nomAction = "Controle base de donnees ".$nomPeche;
-		$numFen = 1;
-		$nomFenetre = "controleBase";
-		break;
-	case "vide":
-		$nomAction = "Vidage base de travail ".$nomPeche;
-		$BDACCESS = $BDACCESS."_travail";
-		$numFen = 2;
-		$nomFenetre = "vidage";
-		break;	
-}
-
-
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
 	// Début des traitements
 	if ($EcrireLogComp && $action=="ctrl") {
@@ -144,6 +144,12 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		WriteCompLog ($logComp, "#",$pasdefichier);
 		WriteCompLog ($logComp, "#",$pasdefichier);
 	}
+	// On ne teste pas la date de la base ACCESS EXP car on n'importe rien depuis la base ACCESS
+	if ($action == "ctrl" && $typePeche =="exp") {
+			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> Pas de traitement pour les peches experimentales.</div>" ;
+			exit;
+	}
+
 	// Initialisation des logs
 	logWriteTo(8,"notice","**- Debut lancement ".$nomAction." ","","","0");
 	if ($EcrireLogComp ) {
@@ -154,9 +160,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	// test d'existence du fichier
 	$BDfic = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$BDACCESS.".mdb";
 	if (!file_exists($BDfic)) {
-		$CRexecution .= "ERREUR : le fichier de base de donnees de references n'existe pas. (".$BDfic.")<br/>";
+		$CRexecution .= "ERREUR : le fichier .mdb de references n'existe pas. (".$BDfic.")<br/>";
 		if ($EcrireLogComp ) {
-				WriteCompLog ($logComp,"*- ERREUR : le fichier de base de donnees de references n'existe pas. (".$BDfic.")",$pasdefichier);
+				WriteCompLog ($logComp,"*- ERREUR : le fichier .mdb de references n'existe pas. (".$BDfic.")",$pasdefichier);
 		}		
 		$erreurProcess = true;
 	}
@@ -179,34 +185,35 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				// Si le fichier de reference .mdb a plus de 2 semaines on conseille de mettre à jour le fichier.
 				// Est-ce qu'on le met en erreur ?
 				// ********************************
-				if ($EcrireLogComp ) {
-					WriteCompLog ($logComp,"* Compte rendu traitement ".$nomAction,$pasdefichier);
-					WriteCompLog ($logComp,"******************************************",$pasdefichier);
-				}
-				$weekRef = date("W");
-				$yearRef = date("Y");
-				$weekControle = date("W", filectime($BDfic));
-				$yearControle = date("Y", filectime($BDfic));
-				if ($yearRef == $yearControle ){
-					$diffDate = (intval($weekRef) - intval($weekControle));
-				} else {
-					$diffDate = 52 - intval($weekControle) + intval($weekRef);
-				}
-				$CRexecution .= $BDACCESS." a &eacute;t&eacute; modifi&eacute; pour la derni&egrave;re fois le : ".date("F d Y H:i:s.", filectime($BDfic)).".<br/>";
-				// Attention, le calcul doit prendre en compte l'année.
-				if ( $diffDate  > 2) {
+				if ($typePeche == 'art') {
 					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp,"La derniere mise a jour du fichier date de plus de 15 jours ==> Mise a jour de la base ACCESS de reference requise",$pasdefichier);
+						WriteCompLog ($logComp,"* Compte rendu traitement ".$nomAction,$pasdefichier);
+						WriteCompLog ($logComp,"******************************************",$pasdefichier);
 					}
-					$CRexecution .= "La derni&egrave;re mise &agrave; jour du fichier date de plus de 15 jours <br/> ==> Mise &agrave; jour de la base ACCESS de r&eacute;f&eacute;rence requise";
-					// A faire UPLOAD
-				} else {
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp,"La derniere mise a jour du fichier date de moins de 15 jours. Pas de maj necessaire.",$pasdefichier);
+					$weekRef = date("W");
+					$yearRef = date("Y");
+					$weekControle = date("W", filectime($BDfic));
+					$yearControle = date("Y", filectime($BDfic));
+					if ($yearRef == $yearControle ){
+						$diffDate = (intval($weekRef) - intval($weekControle));
+					} else {
+						$diffDate = 52 - intval($weekControle) + intval($weekRef);
 					}
-					$CRexecution .= "La derni&egrave;re mise &agrave; jour du fichier date de moins de 15 jours <br/> Pas de maj n&eacute;cessaire.";
+					$CRexecution .= $BDACCESS." a &eacute;t&eacute; modifi&eacute; pour la derni&egrave;re fois le : ".date("F d Y H:i:s.", filectime($BDfic)).".<br/>";
+					// Attention, le calcul doit prendre en compte l'année.
+					if ( $diffDate  > 2) {
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp,"La derniere mise a jour du fichier .mdb date de plus de 15 jours ==> Mise a jour de la base ACCESS de reference requise",$pasdefichier);
+						}
+						$CRexecution .= "La derni&egrave;re mise &agrave; jour du fichier .mdb date de plus de 15 jours <br/> ==> Mise &agrave; jour de la base ACCESS de r&eacute;f&eacute;rence requise";
+						// A faire UPLOAD
+					} else {
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp,"La derniere mise a jour du fichier date de moins de 15 jours. Pas de maj necessaire.",$pasdefichier);
+						}
+						$CRexecution .= "La derni&egrave;re mise &agrave; jour du fichier date de moins de 15 jours <br/> Pas de maj n&eacute;cessaire.";
+					}
 				}
-
 				break;
 				// ************** fin du case "ctrl"; ************	
 
@@ -271,61 +278,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					if ($EcrireLogComp && $affichageDetail) {
 						WriteCompLog ($logComp,"*- INFO : liste table a vider = ".$ListeTableAVider,$pasdefichier);
 					}
-					if ($typePeche == "exp" ) {
-						// Derniers controles : il semble que si il y a trop d'erreurs lors de la suppression des données,
-						// le process plante mais il n'y a pas de deconnexion de la base ACCESS.
-						// Le cas ou le vidage va planter en masse est si des données sont présentes dans la base de référence.
-						// On teste donc le cas ou on a des données autre que le ref et le param
-						$listTableDonnees = GetParam("listeDonneesExp",$PathFicConfAccess);
 
-						$tablesDonnees = explode(",",$listTableDonnees);
-						$nbTablesDonnees = count($tablesDonnees) - 1;
-						for ($cptDon = 0; $cptDon <= $nbTablesDonnees; $cptDon++) {
-						// Ca aurait ete mieux dans du parametrage....
-						switch ($tablesDonnees[$cptDon]) { 
-							case "biolo":
-								$champCount = "bio_num";
-								break;
-							case "campagne":
-								$champCount = "camp_num";
-								break;
-							case "cp_peche":
-								$champCount = "cp_num";
-								break;
-							case "envir":
-								$champCount = "env_num";
-								break;		
-							case "fraction":
-								$champCount = "fra_num";
-								break;
-							case "trophique":
-								$champCount = "con_num";
-								break;
-							}
-
-					
-							$scriptCount = "select count(".$champCount.") from ".$tablesDonnees[$cptDon];
-							$SQLcountResult = odbc_exec($connectAccess,$scriptCount);
-							$erreurSQL = odbc_errormsg($connectAccess); //
-							if ($SQLcountResult) {
-								if ($EcrireLogComp ) {
-									WriteCompLog ($logComp,"*- Errreur comptage de la table ".$tablesDonnees[$cptDon]." (erreur complete = ".$erreurSQL.")",$pasdefichier);
-								}
-							} else	{ 
-								$countRowC = odbc_fetch_row($SQLcountResult);
-								$countID = odbc_result($SQLcountResult,1);
-								if ($countID > 0) {
-								$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>La table <b>".$tablesDonnees[$cptDon]."</b> n'est pas vide. La base de travail devrait etre vide de toute donnees (elle ne contient que du referentiel ou du parametrage). <br/>Il y a un risque sur la creation des tables de reference.<br/> <b>Merci de vider la table</b>.";
-									!$erreurProcess = true;
-								} else {
-									// affichage test PB lock ACCESS
-									if ($EcrireLogComp && $affichageDetail) {
-										WriteCompLog ($logComp,"*- INFO : table ".$tablesDonnees[$cptDon]." vide ",$pasdefichier);
-									}
-								}
-							} 
-						}
-					}
 					if (!$erreurProcess) {					
 					$tables = explode(",",$ListeTableAVider);
 					$nbTables = count($tables) - 1;
