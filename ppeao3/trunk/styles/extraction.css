@@ -120,13 +120,13 @@ list-style:none;
 	background:#CCCCCC;
 }
 #resultfiliere{
-width:1024 px;
+	width:1024 px;
 	background:#CCCCCC;
 	border:1px dotted #666666;
 }
 #menuTab{
 	position:absolute;
-	top:420px;
+	top:410px;
 	left:5px;
 	width:800px;
 	background:#D1C0A9;
@@ -139,7 +139,7 @@ width:1024 px;
 }
 .criteresgen{
 	position:absolute;
-	top:440px;
+	top:460px;
 	left:5px;
 	background-color:#EEDEC7;
 	visibility:hidden;
@@ -150,7 +150,7 @@ width:1024 px;
 }
 .cateco{
 	position:absolute;
-	top:440px;
+	top:480px;
 	left:5px;
 	background-color:#EEDEC7;
 	visibility:hidden;
@@ -158,7 +158,7 @@ width:1024 px;
 }
 .cattroph{
 	position:absolute;
-	top:440px;
+	top:480px;
 	left:5px;
 	background-color:#EEDEC7;
 	visibility:hidden;
@@ -166,16 +166,23 @@ width:1024 px;
 }
 .colonnes{
 	position:absolute;
-	top:440px;
+	top:480px;
 	left:5px;
 	background-color:#EEDEC7 ;
 	visibility:hidden;
 	width:800px;
 }
-
+.especes{
+	position:absolute;
+	top:480px;
+	left:5px;
+	background-color:#EEDEC7 ;
+	visibility:hidden;
+	width:800px;
+}
 #voiresultat{
 	position:absolute;
-	top:570px;
+	top:580px;
 	left:5px;
 }
 .visible{

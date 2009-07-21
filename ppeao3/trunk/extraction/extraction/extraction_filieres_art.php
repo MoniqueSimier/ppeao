@@ -20,6 +20,7 @@ $subsection="";
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 
 $zone=6; // zone extraction (voir table admin_zones)
+Global $debugLog;
 ?>
 
 
@@ -44,7 +45,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 // Fichier à analyser
 $file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionArt.xml";
-
+include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 ?>
@@ -65,12 +66,39 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 ?>
 		<br/>
 		<p>Vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p><br/>
-			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
-			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/><br/>
-			</form>
 		<div id="resumeChoix">
 			<?php 
-			
+				// On recupere les paramètres
+				if (isset($_GET['logsupp'])) {
+					if ($_GET['logsupp'] == "false") {
+						$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
+						echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" />";
+					} else {
+						echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
+						$EcrireLogComp = true;
+					}
+				} else {
+					echo "erreur, il manque le parametre log <br/>";
+					exit;
+				}
+				// On récupère les valeurs des paramètres pour les fichiers log
+				$dirLog = GetParam("repLogExtr",$PathFicConf);
+				$nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
+				$dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
+				$fileLogComp = GetParam("nomFicLogExtr",$PathFicConf);
+				$logComp="";
+				$nomLogLien="";
+				ouvreFichierLog($dirLog,$fileLogComp);
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp, "#",$pasdefichier);
+					WriteCompLog ($logComp, "#",$pasdefichier);
+					WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
+					WriteCompLog ($logComp, "*- DEBUT EXTRACTION PECHES ARTISANALES ".date('y\-m\-d\-His'),$pasdefichier);
+					WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
+					WriteCompLog ($logComp, "#",$pasdefichier);
+					WriteCompLog ($logComp, "#",$pasdefichier);
+				}
+
 				// Si on change de filière, on remet tous à blanc
 				$_SESSION['listeQualite'] = '';
 				$_SESSION['listeProtocole'] = ''; // Oui / non
@@ -121,10 +149,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 		</ul>
 		</div>
 		<br/>
-		<div id="resultfiliere"> suite...</div>
-		<?php // for test include $_SERVER["DOCUMENT_ROOT"].'/export/export_access.php'; 
-		
-		?>
+		<div id="resultfiliere"></div>
+		<div id="exportFic"></div>
 		
 <?php
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée

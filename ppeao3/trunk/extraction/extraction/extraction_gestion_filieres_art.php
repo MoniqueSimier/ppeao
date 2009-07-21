@@ -12,7 +12,7 @@
 // Paramètres en sortie
 // aucun pour l'instant.
 //*****************************************
-
+Global $debugLog;
 // declaration variables
 $peupActive = "";
 $envActive = "";
@@ -21,20 +21,32 @@ $bioActive = "";
 $trophActive = "";
 session_start();
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
+include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 // On recupere les paramètres
 if (isset($_GET['log'])) {
-
 	if ($_GET['log'] == "false") {
 		$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
+		echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" />";
 	} else {
+		echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
 		$EcrireLogComp = true;
 	}
 } else {
 	echo "erreur, il manque le parametre log <br/>";
 	exit;
 }
+
+// On récupère les valeurs des paramètres pour les fichiers log
+$dirLog = GetParam("repLogExtr",$PathFicConf);
+$nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
+$dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
+$fileLogComp = GetParam("nomFicLogExtr",$PathFicConf);
+$logComp="";
+$nomLogLien="";
+ouvreFichierLog($dirLog,$fileLogComp);
+
 if (isset($_GET['action'])) {
 	$typeAction = $_GET['action'];
 } else {
@@ -82,6 +94,11 @@ if (isset($_GET['Col'])) {
 } else {
 	$ListeColRecues = "";
 }
+if (isset($_GET['Esp'])) {
+	$listeEsp = $_GET['Esp'];
+} else {
+	$listeEsp = "";
+}
 // On analyse les nouvelles colonnes recues si on vient du tab 4
 // On  recontruit complement la variable de session avec ce qui a ete saisie
 if (!($ListeColRecues =="")) {
@@ -107,6 +124,7 @@ if ($changtAction == "y") {
 	$_SESSION['listeCatTrop'] ="";
 	$_SESSION['listeCatEco'] = "";
 	$_SESSION['listeColonne'] = "";
+	$_SESSION['listeEspeces'] = "";
 	switch ($typeAction) {
 		// On ne gère pas peuplement car on va directement à la page de résultat quand on clique dessus.
 		case "activite":
@@ -136,21 +154,26 @@ if ($changtAction == "y") {
 		$_SESSION['listeCatEco'] = $listeCE;
 	}
 	$_SESSION['listeCatTrop'] = $listeCT;
+	$_SESSION['listeEspeces'] = $listeEsp;
 }
 // On n'affiche pas de sélection de données liées aux especes pour l'environnement
-	
+if ($EcrireLogComp ) {
+	WriteCompLog ($logComp, "Selection de la filere ".$typeAction,$pasdefichier);
+}	
 $tab1 = "";
 $tab2 = "";
 $tab3 = "";
 $tab4 = "";
+$tab5 = "";
 $cgActive="";
 $ceActive="";
 $ctActive="";
 $colActive="";
 $ClassEnv = "";
+$espActive="";
 switch ($numTab) {
 	case "1":
-		if ($typeAction == "activite") {
+		if ($typeAction == "activite" || $typeAction == "capture" ) {
 			$cgActive="";
 			$ClassEnv = "";
 		} else {
@@ -158,11 +181,9 @@ switch ($numTab) {
 			$ClassEnv = " visible";
 		}
 		$tab1 = " active";
-		
-		
 		break;
 	case "2":
-		if (!($typeAction == "activite")) {
+		if (!($typeAction == "activite") || !($typeAction == "capture") ) {
 			$ceActive=" visible";
 		}
 		$tab2 = " active";
@@ -178,8 +199,15 @@ switch ($numTab) {
 		$colActive=" visible";
 		$tab4 = " active";
 		break;
+	case "5":
+		$espActive=" visible";
+		$tab5 = " active";
+		break;
 }
 // Gestion des valeurs déjà saisies ou valeurs par défaut
+if ($EcrireLogComp && $debugLog) {
+	WriteCompLog ($logComp, "Liste variable session: \n CatTrop = ".$_SESSION['listeCatTrop']." \n CatEco = ".$_SESSION['listeCatTrop']." \n Poissons = ".$_SESSION['listePoisson']." \n Especes ".$_SESSION['listeEspeces']." \n",$pasdefichier);
+}	
 
 if (strpos($_SESSION['listePoisson'],"0")  === false ) {$valPois1 =""; } else {$valPois1 = "checked=\"checked\"";}
 if (strpos($_SESSION['listePoisson'],"pp")  === false ) {$valPois2 =""; } else {$valPois2 = "checked=\"checked\"";}
@@ -193,7 +221,8 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <a href="#" class="<?php echo $tab1;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n')">Crit&egrave;res g&eacute;n&eacute;raux</a>|
 <a href="#" class="<?php echo $tab2;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n')">Cat&eacute;gories &eacute;cologiques</a>|
 <a href="#" class="<?php echo $tab3;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n')">Cat&eacute;gories trophiques</a>|
-<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n')">Colonnes</a>
+<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n')">Colonnes</a>|
+<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n')">Esp&egrave;ces</a>
 </div>
 <?php // Les differents div correspondant aux choix disponibles par onglet ?>
 <div id="criteresgen" class="criteresgen<?php echo $cgActive;?>">
@@ -215,9 +244,14 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <div id="colonnes" class="colonnes<?php echo $colActive;?>">
 <?php echo AfficheColonnes($typePeche,$typeAction,$codeTableEnCours,$numTab); ?>
 </div>
-<?php // Permet d'obtenir le résultat ?>
-<div id="voiresultat"><input type="button" id="validation" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','y')" value="Voir les r&eacute;sultats"/>
-<input type="checkbox" id="ExpFic" />Exporter sous forme de fichier
+<?php // l'onglet qui gere les espèces ?>
+<div id="especes" class="especes<?php echo $espActive;?>">
+<?php 
+echo "session = ".$_SESSION['SQLEspeces']." - liste espe = ".$listeEsp."<br/>";
+echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction); ?>
 </div>
-
 </form>
+
+
+
+

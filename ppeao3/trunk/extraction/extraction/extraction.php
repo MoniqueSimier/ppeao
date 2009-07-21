@@ -20,6 +20,7 @@ $subsection="";
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 
 $zone=6; // zone extraction (voir table admin_zones)
+$debugLog = true;
 ?>
 
 
@@ -76,14 +77,17 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		$_SESSION['SQLEngin'] = '';
 		$_SESSION['SQLGTEngin'] = '';
 		$_SESSION['SQLCampagne'] = '';
+		$_SESSION['SQLPeEnquete'] = '';		
 		$_SESSION['SQLFamille'] = '';
 		$_SESSION['SQLEspeces'] = '';
 		$_SESSION['SQLdateDebut'] = '';
 		$_SESSION['SQLdateFin'] = '';
 
+		
+
 ?>
 		<br/>
-		<p>Cette page a pour but de permettre de tester la partie extraction des donn&eacute;es sous forme ecran ou fichier, en incluant le calcul des statistiques. Il se base sur un fichier XML contenant les donn&eacute;es s&eacute;lectionn&eacute;es. Ce fichier XML sera ult&eacute;rieurement g&eacute;n&eacute;r&eacute; par la partie sélection de l'extraction. Le fichier XML se trouve dans le r&eacute;pertoire temp &agrave; la racine du site et se nomme testExtraction.xml.</p>
+		<p>Cette page a pour but de permettre de tester la partie extraction des donn&eacute;es sous forme ecran ou fichier, en incluant le calcul des statistiques. Il se base sur un fichier XML contenant les donn&eacute;es s&eacute;lectionn&eacute;es. Ce fichier XML sera ult&eacute;rieurement g&eacute;n&eacute;r&eacute; par la partie sélection de l'extraction. Le fichier XML se trouve dans le r&eacute;pertoire temp &agrave; la racine du site et se nomme testExtractionExp.xml (peche exp) ou testExtractionArt.xml (peche art).</p>
 		<br/>
 		<div id="runProcess">
 			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
@@ -98,6 +102,12 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
 			<br/>
 			</form>
+			<form id="formExtraction" method="get" action="extraction_filieres_stat.php">
+			<input id="startProcess" type="submit" value="Test statistiques"/>
+
+			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
+			<br/>
+			</form>			
 		</div>
 		<?php // for test include $_SERVER["DOCUMENT_ROOT"].'/export/export_access.php'; 
 		

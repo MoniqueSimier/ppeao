@@ -125,7 +125,6 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation) {
 				}
 			}
 		}
-		alert(poiss)
 		// Recuperation des categories ecologiques
 		limCE = document.getElementById("numCEco").value;
 		for (i=1;i<=limCE;i++) {
@@ -337,21 +336,50 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation) {
 			} 	
 			switch (numtab) {
 				case '1' :
+							try{
+							document.getElementById("exportFic").style.position = 'absolute';
+							document.getElementById("exportFic").style.top = '530px';
+	  						}
+							catch (e) { }
 							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '570';
+							document.getElementById("footer").style.top = '550px';
 							break;
 				case '2' :
+							try{
+							document.getElementById("exportFic").style.position = 'absolute';
+							document.getElementById("exportFic").style.top = '570px';
+							}
+							catch (e) { }
 							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '600';
+							document.getElementById("footer").style.top = '600px';
 							break;
 				case '3' :
+							try{
+							document.getElementById("exportFic").style.position = 'absolute';
+							document.getElementById("exportFic").style.top = '570px';
+							}
+							catch (e) { }
 							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '600';
+							document.getElementById("footer").style.top = '600px';
 							break;
 				case '4' :
+							try{
+							document.getElementById("exportFic").style.position = 'absolute';
+							document.getElementById("exportFic").style.top = '870px';
+							}
+							catch (e) { }
 							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '900';
+							document.getElementById("footer").style.top = '900px';
 							break;		
+				case '5' :
+							try{
+							document.getElementById("exportFic").style.position = 'absolute';
+							document.getElementById("exportFic").style.top = '870px';
+							}
+							catch (e) { }
+							document.getElementById("footer").style.position = 'absolute';
+							document.getElementById("footer").style.top = '900px';
+							break;
 			}
 			fenID = "resultfiliere";
 			var url="/extraction/extraction/extraction_gestion_filieres_art.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+"&tab="+numtab+changementAction+addURL;
@@ -388,6 +416,7 @@ function stateChanged2() {
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
 		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','peuplement','1','"+globalTableEnCours+"','n')\" class=\"peuplement"+peuActif+"\">peuplement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','environnement','1','"+globalTableEnCours+"','n')\" class=\"environnement"+envActif+"\">environnement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','biologie','1','"+globalTableEnCours+"','n')\" class=\"biologie"+bioActif+"\">biologie</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','trophique','1','"+globalTableEnCours+"','n')\" class=\"trophique"+trophActif+"\">trophique</a>";
+		document.getElementById("runProcess").innerHTML= "";
 	}
 }
 

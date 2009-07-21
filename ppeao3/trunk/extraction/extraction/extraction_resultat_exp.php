@@ -44,20 +44,31 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 // Fichier à analyser
 $file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionExp.xml";
-
+include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 	// On recupere les paramètres
 	if (isset($_GET['log'])) {
 		if ($_GET['log'] == "false") {
 			$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
+			$InputLog = "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" />";
 		} else {
+			$InputLog = "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
 			$EcrireLogComp = true;
 		}
 	} else {
 		echo "erreur, il manque le parametre log <br/>";
 		exit;
 	}
+	// On récupère les valeurs des paramètres pour les fichiers log
+	$dirLog = GetParam("repLogExtr",$PathFicConf);
+	$nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
+	$dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
+	$fileLogComp = GetParam("nomFicLogExtr",$PathFicConf);
+	$logComp="";
+	$nomLogLien="";
+	ouvreFichierLog($dirLog,$fileLogComp);
+
 	if (isset($_GET['action'])) {
 		$typeAction = $_GET['action'];
 	} else {
@@ -79,11 +90,15 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 	}
 // on teste à quelle zone l'utilisateur a accès
 	if (userHasAccess($userID,$zone)) {
-	if ($typeAction == "peuplement") {
-		// On precharge les valeurs par défaut :
-		$_SESSION['listeQualite'] = '1,3,5';
-		$_SESSION['listeProtocole'] = '1'; // Oui / non
-	}
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "Debut du traitement Resultat de l'extraction des peches experimentales pour filiere ".$typeAction,$pasdefichier);
+		}
+	
+		if ($typeAction == "peuplement") {
+			// On precharge les valeurs par défaut :
+			$_SESSION['listeQualite'] = '1,3,5';
+			$_SESSION['listeProtocole'] = '1'; // Oui / non
+		}
 	// Dans tous les autres cas, toutes les autres valeurs auront été validés avant.
 	
 ?>
@@ -100,28 +115,28 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				// ete faires par l'utilisateur juste avant de cliquer sur resultat.
 				// Si c'est le cas, les variables de sessions ne seront pas a jour.
 				if (isset($_GET['qual'])) {
-					$valeurAMJ = AnaylseVarSession($_SESSION['listeQualite'],$_GET['qual']);
+					$valeurAMJ = AnaylseVarSession($_GET['qual']);
 					$_SESSION['listeQualite'] = $valeurAMJ;
 				} 
 				if (isset($_GET['rest'])) {
-					$valeurAMJ = AnaylseVarSession($_SESSION['listeProtocole'],$_GET['rest']);
+					$valeurAMJ = AnaylseVarSession($_GET['rest']);
 					$_SESSION['listeProtocole'] = $valeurAMJ;
 				} 
 				if (isset($_GET['pois'])) {
-						$valeurAMJ = AnaylseVarSession($_SESSION['listePoisson'],$_GET['pois']);
+						$valeurAMJ = AnaylseVarSession($_GET['pois']);
 					$_SESSION['listePoisson'] = $valeurAMJ;
 				} 
 				if (isset($_GET['CE'])) {
-					$valeurAMJ = AnaylseVarSession($_SESSION['listeCatEco'],$_GET['CE']);
+					$valeurAMJ = AnaylseVarSession($_GET['CE']);
 					$_SESSION['listeCatEco'] = $valeurAMJ;
 				} 
 				if (isset($_GET['CT'])) {
-					$valeurAMJ = AnaylseVarSession($_SESSION['listeCatTrop'],$_GET['CT']);
+					$valeurAMJ = AnaylseVarSession($_GET['CT']);
 					$_SESSION['listeCatTrop'] = $valeurAMJ;
 				} 
 				
 				if (isset($_GET['Col'])) {
-					$valeurAMJ = AnaylseVarSession($_SESSION['listeColonne'],$_GET['Col']);
+					$valeurAMJ = AnaylseVarSession($_GET['Col']);
 					$_SESSION['listeColonne'] = $valeurAMJ;
 				} 
 				$exportFichier = false;
@@ -170,6 +185,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 		<div id="resultfiliere"> 
 		<?php 
 			echo $resultatLecture; 
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "Fin Extraction des peches experimentales pour filiere ".$typeAction,$pasdefichier);
+			}
 		?>
 		</div>
 

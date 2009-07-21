@@ -43,6 +43,7 @@ function startElement($parser, $name, $attrs){
 	global $SQLCampagne ;
 	global $SQLEspeces	;
 	global $SQLFamille ;
+	global $SQLPeEnquete ;
 	global $SQLdateDebut ; // format annee/mois
 	global $SQLdateFin ; // format annee/mois
 	
@@ -65,7 +66,7 @@ function startElement($parser, $name, $attrs){
 		$listeSelection .="<br/><b>Liste des familles</b> = ";
 		break;
 	case "ESPECELISTE":
-		$listeSelection .="<br/><b>Liste des esp&eacute;ces</b> = ";
+		$listeSelection .="<br/><b>Liste des esp&egrave;ces</b> = ";
 		break;
 	case "PAYSLISTE":
 		$listeSelection .="<br/><b>Liste des pays</b> = ";
@@ -87,7 +88,10 @@ function startElement($parser, $name, $attrs){
 		break;
 	case "ENGINLISTE":
 		$listeSelection .="<br/><b>Liste des engins</b> = ";
-		break;	
+		break;
+	case "ENQUETELISTE":
+		$listeSelection .="<br/><b>Liste des enqu&ecirc;tes</b> = ";
+		break;		
 	case "DATEDEBUT":
 		$listeSelection .="de  ".$attrs["MOIS"]."/".$attrs["ANNEE"]." ";
 		$SQLdateDebut = $attrs["ANNEE"]."/".$attrs["MOIS"];
@@ -120,6 +124,9 @@ function startElement($parser, $name, $attrs){
 	case "CAMPAGNE":
 		$SQLCampagne .= $attrs["ID"].",";
 		break;
+	case "ENQUETE":
+		$SQLPeEnquete .= $attrs["ID"].",";
+		break;
 	case "AGGLOMERATION":
 		$SQLAgg .= $attrs["ID"].",";
 		break;
@@ -148,7 +155,6 @@ function endElement($parser, $name){
 	global $typeSelection ;
 	global $typePeche;
 	global $typeStatistiques;
-	global $listeEnquete ; // contiendra soit la 
 	global $listeGTEngin;
 	// Pour construire le bandeau avec la sélection
 	global $listeSelection;
@@ -178,6 +184,9 @@ function endElement($parser, $name){
 		case "ENGIN":
 			$listeSelection .= $globaldata.", ";
 			break;
+		case "ENQUETE":
+			$listeSelection .= $globaldata.", ";
+			break;	
 		default :
 
 		break;
@@ -345,11 +354,16 @@ function endElementCol($parser, $name){
 			}
 			break;
 		case "LIBELLE" :
+			if ($TypePecheEnCours == "artisanale") {
+				$RunFilieres = "runFilieresArt";
+			} else {
+				$RunFilieres = "runFilieresExp";
+			}
 			if ($TableAAjouter) {
 				if ($RecupDonneesOK) {
-					$ListeTable .= "<a href=\"#\" onClick = \"runFilieresExp('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."')\" class = \"active\">".$globaldata."</a><br/>";
+					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."')\" class = \"active\">".$globaldata."</a><br/>";
 				} else {
-					$ListeTable .= "<a href=\"#\" onClick = \"runFilieresExp('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."')\" class = \"\">".$globaldata."</a><br/>";
+					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."')\" class = \"\">".$globaldata."</a><br/>";
 				}
 			}	
 			if ($RecupDonneesOK == true ) {

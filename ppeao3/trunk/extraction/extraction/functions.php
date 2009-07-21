@@ -8,6 +8,9 @@
 // Ce fichier contient une serie de fonctions php utilisées dans l'extraction des données
 //*****************************************
 
+// Definition d'un paramètre global
+$PathFicConf = $_SERVER["DOCUMENT_ROOT"]."/conf/extraction.txt" ;//*	
+$pasdefichier = false; // residu du portage que j'aurai du virer depuis longtemps
 // Variables qui seront globales dans les fonctions
 $ListeTable = "";
 $ListeChampTableDef = "";
@@ -21,8 +24,18 @@ $NumChampDef = 0;
 $NumChampFac = 0;
 $ListeTableInput = "";
 
+//*********************************************************************
+// AfficherSelection : Fonction d'affichage de la selection
 function AfficherSelection($file) {
-
+// Cette fonction est la fonction qui analyse le ficher de sélection et qui affiche la dite selection
+// Elle permet aussi de remplir les variables SQL* qui contient la traduction en liste de variables de la sélection 
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $file : le fichier de paramétrage qui contient la sélection issue de l'etape précédente
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie $listeSelection
+//*********************************************************************
 	// Données pour la selection 
 	global $typeSelection ;
 	global $typePeche;
@@ -38,6 +51,7 @@ function AfficherSelection($file) {
 	global $SQLEngin	;
 	global $SQLGTEngin ;
 	global $SQLCampagne ;
+	global $SQLPeEnquete; // liste des enquetes
 	global $SQLEspeces	;
 	global $SQLFamille ;
 	global $SQLdateDebut ; // format annee/mois
@@ -77,7 +91,8 @@ function AfficherSelection($file) {
 	$SQLCampagne = substr($SQLCampagne,0,- 1); // pour enlever la virgule surnumeraire;
 	$SQLEspeces	= substr($SQLEspeces,0,- 1); // pour enlever la virgule surnumeraire;
 	$SQLFamille = substr($SQLFamille,0,- 1); // pour enlever la virgule surnumeraire;
-
+	$SQLPeEnquete = substr($SQLPeEnquete,0,- 1); // pour enlever la virgule surnumeraire;
+	
 	if ($_SESSION['SQLPays'] == "") {$_SESSION['SQLPays'] = $SQLPays;}
 	if ($_SESSION['SQLSysteme'] == "") {$_SESSION['SQLSysteme'] = $SQLSysteme;}
 	if ($_SESSION['SQLSecteur'] == "") {$_SESSION['SQLSecteur'] = $SQLSecteur;}
@@ -85,6 +100,7 @@ function AfficherSelection($file) {
 	if ($_SESSION['SQLGTEngin'] == "") {$_SESSION['SQLGTEngin'] = $SQLGTEngin;}
 	if ($_SESSION['SQLCampagne'] == "") {$_SESSION['SQLCampagne'] = $SQLCampagne;}
 	if ($_SESSION['SQLFamille'] == "") {$_SESSION['SQLFamille'] = $SQLFamille;}
+	if ($_SESSION['SQLPeEnquete'] == "") {$_SESSION['SQLPeEnquete'] = $SQLPeEnquete;}
 	// On ajoute dans la liste des especes les ID venant des especes selectionnees.
 	// Au moins c'est fait ici, on n'a plus a se poser de questions et le faire 100 fois apres
 	$listEspFamille = "";
@@ -132,7 +148,20 @@ function AfficherSelection($file) {
 
 }
 
+//*********************************************************************
+// AfficherDonnees : Fonction d'extraction qui affiche les données
 function AfficherDonnees($file,$typeAction){
+// Cette fonction est la fonction principale de l'extraction qui permet de compter les resultats mais aussi de les afficher
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $file : le fichier de paramétrage qui contient la sélection issue de l'etape précédente
+// $typeAction : la filere en cours
+//*********************************************************************
+// En sortie : 
+// La fonction ne renvoie rien. Mais la variable $resultatLecture est mise à jour pour un affichage dans le script qui appelle
+// cette fonction. 
+//*********************************************************************
+	$debugLog = true;
 
 	// Il faut s'assurer qu'au moins une fois la fonction qui remplit ces variables de session a été lancée 
 	$typeSelection 	= $_SESSION['typeSelection'];
@@ -145,20 +174,31 @@ function AfficherDonnees($file,$typeAction){
 	$SQLEngin	= $_SESSION['SQLEngin'];
 	$SQLGTEngin = $_SESSION['SQLGTEngin'];
 	$SQLCampagne = $_SESSION['SQLCampagne'];
+	$SQLPeEnquete = $_SESSION['SQLPeEnquete']; // liste des enquetes	
 	$SQLEspeces	= $_SESSION['SQLEspeces'];
 	$SQLFamille = $_SESSION['SQLFamille'];
 	$SQLdateDebut = $_SESSION['SQLdateDebut']; // format annee/mois
 	$SQLdateFin = $_SESSION['SQLdateFin']; // format annee/mois
+
 	$listeChamps = "";
 	global $connectPPEAO;
 	global $resultatLecture;
+	global $divExportFic;
 	global $compteurItem;
 	global $restSupp;
 	global $labelSelection;
 	global $CRexecution;
 	global $erreurProcess;
 	global $exportFichier;
-		
+	global $EcrireLogComp;
+	global $pasdefichier;
+	global $logComp;
+	global $codeTableEnCours;
+	
+	if (!($typeAction == "")) {
+	$divExportFic = "<div id=\"exportFic\"><input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('".$typePeche."?>','".$typeAction."','1','".$codeTableEnCours."','y')\" value=\"Voir les r&eacute;sultats\"/>
+<input type=\"checkbox\" id=\"ExpFic\" />Exporter sous forme de fichier</div>";
+		}
 	if ($exportFichier) {
 		// On recupère les info pour creer le fichier d'export 
 		$nomLogLien = "/extraction/extraction/fichier";
@@ -198,42 +238,79 @@ function AfficherDonnees($file,$typeAction){
 	$LabCatTrop = "";
 	$LabCatPois = "";
 	// Analyse des categories trophiques / ecologiques / poisson-non poisson
+	// Analyse des categories ecologiques sélectionnées par l'utilisateur (selection restreinte depuis la filiere)
 	if (!($_SESSION['listeCatEco'] == "")) {
-		 $LabCatEco = " restreint aux cat&eacute;gories &eacute;cologique : ";
+		$compCatEcoSQL = "";
+		$CatEcoNull = false;
+		$LabCatEco = " restreint aux cat&eacute;gories &eacute;cologique : ";
 		$champSel = explode(",",$_SESSION['listeCatEco']);
 		$nbrSel = count($champSel)-1;
 		$valCatE = "";
 		for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
-			if ($valCatE == "") {
-				$valCatE = "'".$champSel[$cptSel]."'";
+			// Traitement special pour la valeur null
+			if ($champSel[$cptSel] == "null") {
+				$CatTropNull = true;
 			} else {
-				$valCatE .= ",'".$champSel[$cptSel]."'";
+				if ($valCatE == "") {
+					$valCatE = "'".$champSel[$cptSel]."'";
+				} else {
+					$valCatE .= ",'".$champSel[$cptSel]."'";
+				}
 			}
 			$LabCatEco .= $champSel[$cptSel]." ";
 		}
-		$compCatEcoSQL =" and esp.ref_categorie_ecologique_id in (".$valCatE.")";
+		if (!($valCatE=="")){
+			$compCatEcoSQL =" esp.ref_categorie_ecologique_id in (".$valCatE.") and "; // Pas and a la fin, c'est le dernier SQL
+		}
+		// Si a choisi de selectionner les categories null, il faut l'expliciter
+		if ($CatEcoNull) {
+			if ($compCatEcoSQL==""){
+				$compCatEcoSQL = "esp.ref_categorie_ecologique_id is null";
+			} else  {
+				$compCatEcoSQL = "(".$compCatEcoSQL." or esp.ref_categorie_ecologique_id is null)";
+			}
+		}
 	} else {
 		$compCatEcoSQL = "";
-				$LabCatEco = " - toutes les cat&eacute;gories &eacute;cologiques ";
+		$LabCatEco = " - toutes les cat&eacute;gories &eacute;cologiques ";
 	}
+	// Analyse des categories trophiques sélectionnées par l'utilisateur (selection restreinte  depuis la filiere)
 	if (!($_SESSION['listeCatTrop'] == "")) {
+		$compCatTropSQL = "";
+		$CatTropNull = false;
 		$LabCatTrop = " restreint aux cat&eacute;gories trophiques : ";
 		$champSel = explode(",",$_SESSION['listeCatTrop']);
 		$nbrSel = count($champSel)-1;
 		$valCatT = "";
 		for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
-			if ($valCatT == "") {
-				$valCatT = "'".$champSel[$cptSel]."'";
+			// Traitement special pour la valeur null
+			if ($champSel[$cptSel] == "null") {
+				$CatTropNull = true;
 			} else {
-				$valCatT .= ",'".$champSel[$cptSel]."'";
+				if ($valCatT == "") {
+					$valCatT = "'".$champSel[$cptSel]."'";
+				} else {
+					$valCatT .= ",'".$champSel[$cptSel]."'";
+				}
 			}
 			$LabCatTrop .= $champSel[$cptSel]." ";
 		}
-		$compCatTropSQL =" and esp.ref_categorie_trophique_id in (".$valCatT.")";
+		if (!($valCatT=="")){
+			$compCatTropSQL =" esp.ref_categorie_trophique_id in (".$valCatT.")"; // Pas and a la fin, c'est le dernier SQL
+		}
+		// Si a choisi de selectionner les categories null, il faut l'expliciter
+		if ($CatTropNull) {
+			if ($compCatTropSQL == ""){
+				$compCatTropSQL = "esp.ref_categorie_trophique_id is null";
+			} else  {
+				$compCatTropSQL = "(".$compCatTropSQL." or esp.ref_categorie_trophique_id is null)";
+			}
+		}
 	} else {
 		$compCatTropSQL = "";
 			$LabCatTrop = " toutes les cat&eacute;gories trophiques ";
 	}
+	// Analyse du type poisson non poisson sélectionné par l'utilisateur (selection restreinte depuis la filiere)
 	if (!($_SESSION['listePoisson'] == "")) {
 		$champSel = explode(",",$_SESSION['listePoisson']);
 		$nbrSel = count($champSel)-1;
@@ -262,13 +339,20 @@ function AfficherDonnees($file,$typeAction){
 					break;	
 			}
 		}
-		$compPoisSQL =" and fam.non_poisson in (".$valPoisson.")";
+		$compPoisSQL =" fam.non_poisson in (".$valPoisson.") and ";
 	} else {
-		if (!($typeAction =="environnement")){
+		if (!($typeAction =="environnement") && !($typeAction =="activite") && !($typeAction =="capture")){
 			$LabCatPois = " tous les poissons ";
 		}
 	} // fin du if (!($_SESSION['listePoisson'] == ""))
-	
+	// DEBUG
+	if ($EcrireLogComp && $debugLog) {
+		WriteCompLog ($logComp, "INFO : Liste variable session: ",$pasdefichier);
+		WriteCompLog ($logComp, "INFO : CatTrop = ".$_SESSION['listeCatTrop'],$pasdefichier);
+		WriteCompLog ($logComp, "INFO : CatEco 	= ".$_SESSION['listeCatEco'],$pasdefichier);
+		WriteCompLog ($logComp, "INFO : Poissons 	= ".$_SESSION['listePoisson'],$pasdefichier);
+		WriteCompLog ($logComp, "INFO : Especes 	=".$_SESSION['listeEspeces'],$pasdefichier);
+	}	
 	// *******************************
 	// Debut du traitement principal *	
 	// *******************************
@@ -291,7 +375,7 @@ function AfficherDonnees($file,$typeAction){
 			$compSQL = "";
 			$compPoisSQL = "";
 			if 	(!($_SESSION['listeQualite'] =="")) {
-				$compSQL =" and cph.exp_qualite_id in (".$_SESSION['listeQualite'].")";
+				$compSQL =" cph.exp_qualite_id in (".$_SESSION['listeQualite'].") and ";
 				$restSupp = " Qualit&eacute; limit&eacute;e à =".$_SESSION['listeQualite'];
 			}
 			if (!($_SESSION['listeProtocole'] == "")) {
@@ -299,7 +383,7 @@ function AfficherDonnees($file,$typeAction){
 				case "0" : $restSupp .= " - pas restreint aux coups du protocoles ";
 							break;
 				case "1" : $restSupp .= " - restreint aux coups du protocoles ";
-							$compSQL .=" and cph.protocole = 1";
+							$compSQL .=" cph.protocole = 1";
 							break;
 				}
 			}
@@ -379,8 +463,9 @@ function AfficherDonnees($file,$typeAction){
 						$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>pas de coup de peche dispo vide...<br/>";
 					} else {
 						while ($EspRow = pg_fetch_row($SQLEspResult) ) {
-							$SQLEspeces .= "'".$EspRow[0]."',";	
-				
+							if (strpos($SQLEspeces,$EspRow[0]) === false ) {
+								$SQLEspeces .= "'".$EspRow[0]."',";	
+							}
 						}		
 					}				
 				}
@@ -413,7 +498,7 @@ function AfficherDonnees($file,$typeAction){
 							xqua.id = cph.exp_qualite_id and
 							".$WhereEngin."
 							xeng.id = cph.exp_engin_id ";
-
+			$OrderCom = "";
 			// ********** CONSTRUCTION DES SQL DEFINITIFS PAR FILIERE
 			switch ($typeAction) {
 				case "peuplement" :
@@ -504,27 +589,30 @@ function AfficherDonnees($file,$typeAction){
 			} else {
 				$WhereAgg = "agg.id in (".$SQLAgg.") and";
 			}
+			if ($SQLPeEnquete == "") {
+				$WherePeEnq = "";
+			} else {
+				$WherePeEnq = "penq.id in (".$SQLPeEnquete.") and ";
+			}
 			// Grand type engin
-				if (!($_SESSION['listeCatTrop'] == "")) {
-					$LabGTE = " - restreint aux grands types engin : ";
-					$champSel = explode(",",$_SESSION['SQLGTEngin']);
-					$nbrSel = count($champSel)-1;
-					$valGTE= "";
-					for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
-						if ($valGTE == "") {
-							$valGTE = "'".$champSel[$cptSel]."'";
-						} else {
-							$valGTE .= ",'".$champSel[$cptSel]."'";
-						}
-						$LabGTE .= $champSel[$cptSel]." ";
+			if (!($_SESSION['SQLGTEngin'] == "")) {
+				$LabGTE = " - restreint aux grands types engin : ";
+				$champSel = explode(",",$_SESSION['SQLGTEngin']);
+				$nbrSel = count($champSel)-1;
+				$valGTE= "";
+				for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
+					if ($valGTE == "") {
+						$valGTE = "'".$champSel[$cptSel]."'";
+					} else {
+						$valGTE .= ",'".$champSel[$cptSel]."'";
 					}
-					$compGTESQL =" gte.id in (".$valGTE.") and ";
-				} else {
-					$compGTESQL = "";
-					$LabGTE = " - toutes les grands types engin ";
+					$LabGTE .= $champSel[$cptSel]." ";
 				}
-
-			
+				$compGTESQL ="gte.id in (".$valGTE.") and ";
+			} else {
+				$compGTESQL = "";
+				$LabGTE = " - toutes les grands types engin ";
+			}
 			
 			// Les selections ci-dessous ne sont valables que pour les filieres autres que l'environnement
 			switch ($typeAction) {
@@ -538,9 +626,9 @@ function AfficherDonnees($file,$typeAction){
 					$compCatEcoSQL = "";
 					$compCatTropSQL ="";
 					$compPoisSQL ="";
-					$compGTESQL = "";
+					break;
 				default :
-				$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois." - ".$LabGTE ;
+					$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois." - ".$LabGTE ;
 				break;
 			
 			}
@@ -578,23 +666,46 @@ function AfficherDonnees($file,$typeAction){
 			// pour les catégories trophiques/ecologiques
 			if ($SQLEspeces == "") {
 				// On reconstruit la liste des especes de la sélection.
-				$SQLEsp = "select esp.id from ref_espece as esp";
-						
+				$ajouteTable = "";
+				if (!($compGTESQL == "")) {
+					$ajouteTable .=",art_grand_type_engin as gte";
+				}
+				$SQLEsp = "select distinct(afra.ref_espece_id) from art_debarquement as deb,art_fraction as afra,art_agglomeration as agg,			
+							art_periode_enquete as penq".$ajouteTable."
+							where ".$WhereAgg." ".$WherePeEnq." ".$compGTESQL."
+							deb.art_agglomeration_id = agg.id and
+							deb.mois = penq.mois and 
+							deb.annee = penq.annee and
+							deb.art_agglomeration_id = penq.art_agglomeration_id and 
+							afra.art_debarquement_id = deb.id ";
+				//if ($EcrireLogComp && $debugLog) {
+				//	WriteCompLog ($logComp, "Var SQLEsp = ".$SQLEsp,$pasdefichier);
+				//}				
 				$SQLEspResult = pg_query($connectPPEAO,$SQLEsp);
 				$erreurSQL = pg_last_error($connectPPEAO);
 				if ( !$SQLEspResult ) { 
-					$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query ".$SQLEsp." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+					if ($EcrireLogComp ) {
+						WriteCompLog ($logComp, "ERREUR : construction liste especes. Requete en erreur : ".$SQLEsp." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+					} else {
+						$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query ".$SQLEsp." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+					}
 					$erreurProcess = true;
-				
 				} else {
-					
 					if (pg_num_rows($SQLEspResult) == 0) {
 					// Erreur
-						$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Activite/debarquement vide pour recuperer les especes...<br/>";
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp, "Activite/debarquement vide pour recuperer les especes...",$pasdefichier);
+						} else {
+							$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Activite/debarquement vide pour recuperer les especes...<br/>";}
 					} else {
+					//echo "<b>Nbre especes pr&eacute;lectionnes = &eacute;".pg_num_rows($SQLEspResult)."</b><br/>";
+					if ($EcrireLogComp ) {
+						WriteCompLog ($logComp, "INFO : nombre d'especes preselectionnees = ".pg_num_rows($SQLEspResult),$pasdefichier);
+					}
 						while ($EspRow = pg_fetch_row($SQLEspResult) ) {
-							$SQLEspeces .= "'".$EspRow[0]."',";	
-				
+							if (strpos($SQLEspeces,$EspRow[0]) === false ) {
+								$SQLEspeces .= "'".$EspRow[0]."',";	
+							}
 						}		
 					}				
 				}
@@ -604,38 +715,43 @@ function AfficherDonnees($file,$typeAction){
 			if ($SQLEspeces == "") {
 				$WhereEsp = "";
 			} else {
-				$WhereEsp = "fra.ref_espece_id in (".$SQLEspeces.") and";
+				$WhereEsp = "afra.ref_espece_id in (".$SQLEspeces.") and ";
 				$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite....
 			}
 			// ********** PREPARATION DU SQL
 			// Definition de tout ce qui est commun aux peches expérimentales
 			// Il va y avoir moins de données communes que pour les peches exp car certaines dependent de la filiere acti ou deb 
 			// Donc on cree des variables generales selon qu'on va traiter activite ou debarquement
-			$listeChampsArt = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,act.art_agglomeration_id,agg.nom,act.annee,act.mois,act.date_activite,act.id";
-			$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_activite as act,art_agglomeration as agg,art_unite_peche as upec,art_grand_type_engin as gte";
+			$listeChampsArt = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.id,se.nom, act.art_agglomeration_id, agg.nom, act.annee, act.mois, act.date_activite, act.id,act.date_activite";
+			$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_activite as act,art_agglomeration as agg,art_unite_peche as upec,art_grand_type_engin as gte";
 			
 			$WhereArt = "	py.id = sy.ref_pays_id and
 							sy.id = se.ref_systeme_id and
 							se.id = agg.ref_secteur_id and
-							".$WhereSyst." ".$WhereAgg." ".$WhereSect."
+							".$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq." 
 							gte.id = act.art_grand_type_engin_id and
 							".$compGTESQL."
 							act.art_agglomeration_id = agg.id and
-							act.date_activite >='".$SQLdateDebut."/01' and 
-							act.date_activite <='".$SQLdateFin."/28' and
+							act.mois = penq.mois and 
+							act.annee = penq.annee and
+							act.art_agglomeration_id = penq.art_agglomeration_id and
 							upec.id = act.art_unite_peche_id";			
-			
-			$listeChampsDeb = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,deb.art_agglomeration_id,agg.nom,deb.art_agglomeration_id,agg.nom,deb.annee,deb.mois,deb.id";
-			$ListeTableDeb = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_debarquement as deb,art_agglomeration as agg,art_type_agglomeration as tyagg,art_unite_peche as upec";
+			$OrderArt = "order by py.id asc, sy.id asc, agg.nom, act.annee asc,act.mois asc";
+			$listeChampsDeb = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,se.id, deb.art_agglomeration_id, agg.nom, deb.art_agglomeration_id, agg.nom, deb.annee, deb.mois, deb.id, deb.date_debarquement";
+			$ListeTableDeb = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_debarquement as deb,art_agglomeration as agg,art_unite_peche as upec,art_grand_type_engin as gte";
 			
 			$WhereDeb = "	py.id = sy.ref_pays_id and
 							sy.id = se.ref_systeme_id and
 							se.id = agg.ref_secteur_id and
-							".$WhereSyst." ".$WhereAgg." ".$WhereSect."
+							".$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq."
+							gte.id = deb.art_grand_type_engin_id and
+							".$compGTESQL."
 							deb.art_agglomeration_id = agg.id and
-							deb.date_debarquement >='".$SQLdateDebut."/01' and 
-							deb.date_debarquement <='".$SQLdateFin."/28' and
+							deb.mois = penq.mois and 
+							deb.annee = penq.annee and
+							deb.art_agglomeration_id = penq.art_agglomeration_id and
 							upec.id = deb.art_unite_peche_id";
+			$OrderDeb = "order by py.id asc, sy.id asc, agg.nom, deb.annee asc,deb.mois asc";
 			// ********** CONSTRUCTION DES SQL DEFINITIFS PAR FILIERE
 			switch ($typeAction) {
 				case "activite" :
@@ -643,6 +759,7 @@ function AfficherDonnees($file,$typeAction){
 						$listeChampsCom = $listeChampsArt;
 						$ListeTableCom = $ListeTableArt ;
 						$WhereCom = $WhereArt ;
+						$OrderCom = $OrderArt ;
 						$labelSelection = "Donn&eacute;es d'activit&eacute;";	
 						$listeChampsSpec = ",act.art_type_activite_id,act.nbre_unite_recencee ";
 						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
@@ -655,25 +772,35 @@ function AfficherDonnees($file,$typeAction){
 						$listeChampsCom = $listeChampsDeb;
 						$ListeTableCom = $ListeTableDeb ;
 						$WhereCom = $WhereDeb ;
+						$OrderCom = $OrderDeb ;
 						$listeChampsSpec = "";
 						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
-						$WhereSpec = " ";						
+						$WhereSpec = "";						
 						$builQuery = true;
 					break;
 				case "NtPt" :
-						$labelSelection = "Donn&eacute;es NtPt";	
-
-						$listeChampsSpec = "";
-						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
-						$WhereSpec = " ";						
+						$labelSelection = "Donn&eacute;es NtPt";				
+						$listeChampsCom = $listeChampsDeb;
+						$ListeTableCom = $ListeTableDeb ;
+						$WhereCom = $WhereDeb ;
+						$OrderCom = $OrderDeb ;				
+						$listeChampsSpec = ", deb.poids_total,afra.poids,afra.nbre_poissons ";
+						$ListeTableSpec = ", art_fraction as afra,ref_espece as esp "; // attention a l'ordre pour les left outer join
+						$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id 
+										and esp.id = afra.ref_espece_id	";					
 						$builQuery = true;
 					break;
 				case "structure" :
 						$labelSelection = "Donn&eacute;es de structures";	
-
-						$listeChampsSpec = "";
-						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
-						$WhereSpec = " ";						
+						$listeChampsCom = $listeChampsDeb;
+						$ListeTableCom = $ListeTableDeb ;
+						$WhereCom = $WhereDeb ;
+						$OrderCom = $OrderDeb ;	
+						$listeChampsSpec = ", deb.poids_total,afra.poids,afra.nbre_poissons,ames.taille ";
+						$ListeTableSpec = ", art_fraction as afra,ref_espece as esp,art_poisson_mesure as ames"; // attention a l'ordre pour les left outer join
+						$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id 
+										and ames.art_fraction_id = afra.id 
+										and esp.id = afra.ref_espece_id	";						
 						$builQuery = true;
 					break;
 				case "engin" :
@@ -689,10 +816,7 @@ function AfficherDonnees($file,$typeAction){
 				default	:	
 					$labelSelection = "Periode d'enquete";
 					$SQLfinal = "select * from art_periode_enquete as penq
-							where 
-							penq.art_agglomeration_id in (63) and 
-							penq.date_debut >='".$SQLdateDebut."/01' and 
-							penq.date_fin <='".$SQLdateFin."/28'".$WhereSel;
+									where penq.id in (".$SQLPeEnquete.")";
 			}
 			break;
 			// ********** FIN TRAITEMENT PECHE ARTISANALE
@@ -718,27 +842,37 @@ function AfficherDonnees($file,$typeAction){
 	if ($builQuery) {
 		$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;
 		$listeTable = $ListeTableCom.$ListeTableSel.$ListeTableSpec; // L'ordre est important pour les join
-		$WhereTotal = $WhereCom.$WhereSpec.$WhereSel;
-		$SQLfinal = "select ".$listeChamps." from ".$listeTable." ".$joinSel." where ".$WhereTotal;
+		if ($WhereSel == "") {
+			$WhereTotal = $WhereCom.$WhereSpec;
+		} else {
+			$WhereTotal = $WhereCom.$WhereSpec." and ".$WhereSel;
+		}
+		
+		$SQLfinal = "select ".$listeChamps." from ".$listeTable." ".$joinSel." where ".$WhereTotal ." ".$OrderCom;
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "INFO SQL en cours :".$SQLfinal,$pasdefichier);
+		}
 	}
-	//echo $SQLfinal;"<br/>";
-	
-	
-	
-	
+
 	
 	// Execution de la requete
 	$SQLfinalResult = pg_query($connectPPEAO,$SQLfinal);
 	$erreurSQL = pg_last_error($connectPPEAO);
 	$cpt1 = 0;
 	if ( !$SQLfinalResult ) { 
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "ERREUR : Erreur query final ".$SQLfinal." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+		}
 		$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query ".$SQLfinal." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 		$erreurProcess = true;
 	
 	} else {
 		
 		if (pg_num_rows($SQLfinalResult) == 0) {
-		// Erreur
+			// Avertissement
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "Pas de resultat disponible pour la selection ".$SQLfinal,$pasdefichier);
+			}
 			$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Pas de resultat disponible pour la sélection<br/>";
 		} else {
 			
@@ -746,7 +880,11 @@ function AfficherDonnees($file,$typeAction){
 			if ($exportFichier) {
 				$resultatFichier = str_replace(",","\t",$listeChamps);
 				if (! fwrite($ExpComp,$resultatFichier."\r\n") ) {
-					$resultatLecture .= "erreur ecriture fichier export" ;
+					if ($EcrireLogComp ) {
+							WriteCompLog ($logComp, "ERREUR : erreur ecriture dans fichier export.",$pasdefichier);
+					} else {
+						$resultatLecture .= "erreur ecriture dans fichier export" ;
+					}
 					exit;
 				}	
 			}
@@ -780,9 +918,13 @@ function AfficherDonnees($file,$typeAction){
 	
 				}
 				if ($exportFichier) {
-					$resultatFichier .="\r\n";
-					if (! fwrite($ExpComp,$resultatFichier."\r\n") ) {
-						$resultatLecture .= "erreur ecriture fichier export" ;
+					$resultatFichier .="\n";
+					if (! fwrite($ExpComp,$resultatFichier) ) {
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp, "ERREUR : erreur ecriture dans fichier export.",$pasdefichier);
+						} else {
+							$resultatLecture .= "erreur ecriture dans fichier export" ;
+						}
 						exit;
 					}	
 				}
@@ -792,10 +934,31 @@ function AfficherDonnees($file,$typeAction){
 		}
 	}
 	$compteurItem = $cpt1;
+	
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "INFO : resultat pour la requete en cours : ".$compteurItem." lignes.",$pasdefichier);
+	}
+	if ($exportFichier && $EcrireLogComp ) {
+		WriteCompLog ($logComp, "Les donnees ont ete ecrites dans le fichier ".$nomFicExpLien." pour la filiere ".$typeAction,$pasdefichier);
+	}
 
 }
 
+//*********************************************************************
+// AfficheCategories : Fonction pour afficher les catégories troph / ecologiques a selectionner
 function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction) {
+// Cette fonction permet de construire la liste des checkboxes pour la selection des especes à selectionner
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $typeCategorie : le type de catégorie, soit Ecologiques soit Trophiques
+// $typeAction : La filiere en cours
+// $ListeEsp : la liste des valeurs sélectionnées pour la categorie en cours
+// $changtAction : est-ce qu'on vient juste de changer la selection ?
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie $construitSelection
+//*********************************************************************
+
 	// Pour construire les SQL (il faut d'abord avoir rempli ces champs !!!
 	// donc avoir appele AfficherSelection
 	// Données pour la selection 
@@ -836,9 +999,11 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction) {
 		} else { 
 			$cptInput = 0;
 			// A faire : formater le resultat avec une table
+			// Analyse des categories disponibles pour l'espèce considérée
 			while ($CERow = pg_fetch_row($SQLCEcoResult) ) {
+				$ContinueTrt = false ;
+				$cptInput ++;				
 				if (!($CERow[0] =="" || $CERow[0] == null)) {
-					$cptInput ++;
 					// on récupère le libelle de la categorie ecologique
 					$SQLlibelle = "select libelle from ".$table." where id = '".$CERow[0]."'";
 					$SQLlibelleResult = pg_query($connectPPEAO,$SQLlibelle);
@@ -855,40 +1020,122 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction) {
 							echo "pas de ".$libelleTable." trouvee pour id = ".$CERow[0]."<br/>";
 							$cptInput --;
 						} else {
-							// Si on est en train de changer d'action, on remet à zéro
-							if ($changtAction =="y") {
-								$checked ="checked=\"checked\"";
-							} else {
-								// On teste si la valeur a déjà été saisie par l'utilisateur.
-								if ($ListeCE == "") {
-									$checked =""; 
-								} else {
-									if (strpos($ListeCE,$CERow[0]) === false) {
-										$checked =""; 
-									} else {
-										$checked ="checked=\"checked\"";
-									}
-								}
-							}
 							$libelleRow = pg_fetch_row($SQLlibelleResult)	;
 							$libelleCE = $libelleRow[0];
-							$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"".$CERow[0]."\" ".$checked."/>&nbsp;".$libelleCE;
-							//$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"".$CERow[0]."\" ".$checked."/>&nbsp;test".$cptInput;
+							$ContinueTrt = true;
+							$valCont = $CERow[0];
 						}
-					}// fin du if ( !$SQLtestResult )
-				}
-				
+					}// fin du if ( !$SQLtestResult )	
+				} else { 
+					$valCont = "";
+					$libelleCE = "Vide";
+					if ($CERow[0] == null) {
+						$libelleCE = "Null";
+						$valCont = "null";
+					}
+					$ContinueTrt = true;
+
+				}	// fin du if (!($CERow[0] =="" || $CERow[0] == null))
+				if ($ContinueTrt) {
+					// Si on est en train de changer d'action, on remet à zéro
+					if ($changtAction =="y") {
+						$checked ="checked=\"checked\"";
+					} else {
+						// On teste si la valeur a déjà été saisie par l'utilisateur.
+						if ($ListeCE == "") {
+							$checked =""; 
+						} else {
+							if (strpos($ListeCE,$valCont) === false) {
+								$checked =""; 
+							} else {
+								$checked ="checked=\"checked\"";
+							}
+						}
+					}
+					$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"".$valCont."\" ".$checked."/>&nbsp;".$libelleCE;
+					//$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"".$CERow[0]."\" ".$checked."/>&nbsp;test".$cptInput;
+				} // fin du if ($ContinueTrt)
 			} // fin du while
 			$construitSelection .= "<input id=\"num".$nomInput."\" type=\"hidden\" name=\"num".$nomInput."\" value=\"".$cptInput ."\"/>";
 		}
 	}	
 	pg_free_result($SQLCEcoResult);
 	return $construitSelection;
-	
 }
 
+//*********************************************************************
+// AfficheEspeces : Fonction pour afficher les especes a selectionner 
+function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction) {
+// Cette fonction permet de construire la liste des checkboxes pour la selection des especes à selectionner
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $SQLEspeces : la liste des especes issues de la sélection initiale (du module précédent)
+// $ListeEsp : la liste des especes sélectionnées
+// $changtAction : est-ce qu'on vient juste de changer la selection ?
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie $construitSelection
+//*********************************************************************
+	global $connectPPEAO;
+	$construitSelection = "";
+// Gere l'affichage des différentes espèces
+	$SQLCEco = "select id,libelle from ref_espece where id in (".$SQLEspeces.") order by id";	
+	$SQLCEcoResult = pg_query($connectPPEAO,$SQLCEco);
+	$erreurSQL = pg_last_error($connectPPEAO);
+	if ( !$SQLCEcoResult ) {
+		echo "erreur execution SQL pour ".$SQLTest." erreur complete = ".$erreurSQL."<br/>";
+	//erreur
+	} else { 
+		if (pg_num_rows($SQLCEcoResult) == 0) {
+			// Erreur
+			echo "pas d'especes trouvees dont le id est ".$SQLEspeces."<br/>" ;
+		} else { 
+			$cptInput = 0;
+			// A faire : formater le resultat avec une table
+			while ($CERow = pg_fetch_row($SQLCEcoResult) ) {
+				if (!($CERow[0] =="" || $CERow[0] == null)) {
+					$cptInput ++;
+					// Si on est en train de changer d'action, on remet à zéro
+					if ($changtAction =="y") {
+						$checked ="checked=\"checked\"";
+					} else {
+						// On teste si la valeur a déjà été saisie par l'utilisateur.
+						if ($ListeEsp == "") {
+							$checked ="checked=\"checked\""; 
+						} else {
+							if (strpos($ListeEsp,$CERow[0]) === false) {
+								$checked =""; 
+							} else {
+								$checked ="checked=\"checked\"";
+							}
+						}
+					}
+					$libelleEsp = $CERow[1];
+					$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"".$CERow[0]."\" ".$checked."/>&nbsp;".$libelleEsp;
+				}
+			} // fin du while
+			$construitSelection .= "<input id=\"numEsp\" type=\"hidden\" name=\"numEsp\" value=\"".$cptInput ."\"/>";
+		}
+	}	
+	pg_free_result($SQLCEcoResult);
+	return $construitSelection;
+}
 
+//*********************************************************************
+// AfficheColonnes : Fonction pour afficher les tables / colonnes a selectionner par type de peche
 function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab) {
+// Cette fonction permet de construire la liste des checkboxes pour la selection des tables/colonnes à selectionner
+// Pour cela, elle va lire le fichier de definition (XML)
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $typePeche : le type de peche (artisanale/experimentale)
+// $typeAction : la filere en cours
+// $TableEnCours : la table en cours d'affichage
+// $numTab: le numéro du tab en cours
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie $tableau
+//*********************************************************************
 	global $ListeTable;
 	global $ListeChampTableDef ;
 	global $ListeChampTableFac ;
@@ -940,7 +1187,19 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab) {
 	return $tableau; 
 }
 
-function AnaylseVarSession($VarSession,$ValeurATester){
+//*********************************************************************
+// AnaylseVarSession : Fonction qui reconstruit une variable de session
+function AnaylseVarSession($ValeurATester){
+// Cette fonction permet de tester si la variable de session contient la valeur à tester
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $VarSession : la variable de session
+// $ValeurATester : la valeur à tester
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie $VarSession
+//*********************************************************************
+// Euh, est-ce encore important de garder cette fonction ????? C'est un peu cretin comme truc. N'a d'interet que si on teste quelque chose..... A REVOIR ET/OU A VIRER
 // On reconstruit les valeurs pour la variable de session
 	$VarSession = "";
 	$colRecues = explode (",",$ValeurATester);
@@ -955,5 +1214,45 @@ function AnaylseVarSession($VarSession,$ValeurATester){
 	return $VarSession;
 }
 
+//*********************************************************************
+// ouvreFichierLog : Fonction pour ouvrir le fichier log
+function ouvreFichierLog($dirLog,$fileLogComp) {
+// Cette fonction permet d'ouvrir le fichier log
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $dirLog : le répertoire du fichier log
+// $fileLogComp : le nom du fichier log
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie $listeSelection
+//*********************************************************************
+	Global $logComp;
+	Global $nomLogLien;
+	Global $EcrireLogComp;
+	if (! file_exists($dirLog)) {
+		if (! mkdir($dirLog) ) {
+			$messageGen = " erreur de cr&eacute;ation du r&eacute;pertoire de log";
+			echo "<b>Erreur de cr&eacute;ation du r&eacute;pertoire de log ".$dirLog."<b/><br/>" ;
+			exit;
+		}
+	}
+//	Controle fichiers
+//	Resultat de la comparaison
+	if ($EcrireLogComp ) {
+		$nomFicLogComp = $dirLog."/".date('y\-m\-d')."-".$fileLogComp;
+		$nomLogLien = $nomLogLien."/".date('y\-m\-d')."-".$fileLogComp;
+		$logComp = fopen($nomFicLogComp , "a+");
+		if (! $logComp ) {
+			$messageGen = " erreur de cr&eacute;ation du fichier de log";
+
+			echo "<b>Erreur de cr&eacute;ation du fichier de log ".$nomFicLogComp." dans function ouvreFichierLog <b/><br/>" ;
+			exit;		
+		}
+	}
+
+
+
+
+}
 
 ?>
