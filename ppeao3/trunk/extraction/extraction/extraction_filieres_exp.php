@@ -120,10 +120,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 		</ul>
 		</div>
 		<br/>
-		<div id="resultfiliere"> suite...</div>
-		<?php // for test include $_SERVER["DOCUMENT_ROOT"].'/export/export_access.php'; 
-		
-		?>
+		<div id="resultfiliere"></div>
+		<div id="exportFic"></div>
 		
 <?php
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée

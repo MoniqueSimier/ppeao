@@ -839,7 +839,9 @@ function AfficherDonnees($file,$typeAction){
 	
 	// On construit (on on) la requete finale.
 	// Elle peut avoir déjà été construite précédement, notament dans les cas par defaut
+	//echo "<b>hello</b>".$WhereSel." - ".$WhereCom." - ".$WhereSpec."<br/>";
 	if ($builQuery) {
+	//echo "<b>build query</b><br/>";
 		$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;
 		$listeTable = $ListeTableCom.$ListeTableSel.$ListeTableSpec; // L'ordre est important pour les join
 		if ($WhereSel == "") {

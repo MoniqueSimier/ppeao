@@ -365,20 +365,20 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation) {
 				case '4' :
 							try{
 							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '870px';
+							document.getElementById("exportFic").style.top = '770px';
 							}
 							catch (e) { }
 							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '900px';
+							document.getElementById("footer").style.top = '800px';
 							break;		
 				case '5' :
 							try{
 							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '870px';
+							document.getElementById("exportFic").style.top = '770px';
 							}
 							catch (e) { }
 							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '900px';
+							document.getElementById("footer").style.top = '800px';
 							break;
 			}
 			fenID = "resultfiliere";
@@ -416,7 +416,7 @@ function stateChanged2() {
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
 		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','peuplement','1','"+globalTableEnCours+"','n')\" class=\"peuplement"+peuActif+"\">peuplement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','environnement','1','"+globalTableEnCours+"','n')\" class=\"environnement"+envActif+"\">environnement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','biologie','1','"+globalTableEnCours+"','n')\" class=\"biologie"+bioActif+"\">biologie</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','trophique','1','"+globalTableEnCours+"','n')\" class=\"trophique"+trophActif+"\">trophique</a>";
-		document.getElementById("runProcess").innerHTML= "";
+		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresExp('"+globaltypepeche+"','"+globalAction+"','1','','y')\" value=\"Afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
 	}
 }
 
@@ -437,6 +437,8 @@ function stateChanged3() {
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
 		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','activite;','1','"+globalTableEnCours+"','n')\" class=\"activite"+actActif+"\">activit&eacute</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','capture','1','"+globalTableEnCours+"','n')\" class=\"capture"+capActif+"\">captures totale</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','structure','1','"+globalTableEnCours+"','n')\" class=\"structure"+strActif+"\">structure de taille</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','engin','1','"+globalTableEnCours+"','n')\" class=\"engin"+engActif+"\">engin de p&ecirc;che</a>";
+		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('"+globaltypepeche+"','"+globalAction+"','1','','y')\" value=\"Afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
+		
 	}
 }
 

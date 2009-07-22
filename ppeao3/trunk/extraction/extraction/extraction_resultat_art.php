@@ -173,7 +173,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				AfficherDonnees($file,$typeAction);
 				echo "<br/><b>Restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp."<br/>";
 				echo "<b>".$labelSelection."(s) s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;								
-				
+				?>
 
 		<br/>
 		<div id="resultfiliere"> 
@@ -186,8 +186,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 			}
 		?>
 		</div>
-		if (!($exportFichier)) {	?>
-		<div id="exportFic">
+		<?php if (!($exportFichier)) {	?>
+		<div id="exportFic2">
 			<input type="button" id="validation" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','','y')" value="Exporter en fichier"/>
 			<input type="hidden" id="ExpFic" checked="checked"/></div>			
 		</div>

@@ -172,26 +172,26 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				AfficherDonnees($file,$typeAction);
 				echo "<br/><b>Restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp."<br/>";
 				echo "<b>".$labelSelection."(s) s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;								
-				
-		if (!($exportFichier)) {	?>
-		<div id="exportFic">
-			<input type="button" id="validation" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','','y')" value="Exporter en fichier"/>
-			<input type="hidden" id="ExpFic" checked="checked"/></div>			
-		</div>
-		<?php } else {
-		echo "<br/>";
-		}	?>
-		<br/>
-		<div id="resultfiliere"> 
-		<?php 
-			echo $resultatLecture; 
-			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp, "Fin Extraction des peches experimentales pour filiere ".$typeAction,$pasdefichier);
-			}
-		?>
-		</div>
-
+	
+				?>
+				<div id="resultfiliere"> 
+				<?php 
+					echo $resultatLecture; 
+					if ($EcrireLogComp ) {
+						WriteCompLog ($logComp, "Fin Extraction des peches experimentales pour filiere ".$typeAction,$pasdefichier);
+					}
+				?>
+				</div>
+				<?php if (!($exportFichier)) {	?>
+				<div id="exportFic2">
+					<input type="button" id="validation" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','','y')" value="Exporter en fichier"/>
+					<input type="hidden" id="ExpFic" checked="checked"/></div>			
+				</div>
+				<?php } else {
 		
+				echo "<br/>";
+				}	?>
+	
 <?php
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
 
