@@ -1,11 +1,11 @@
 <?php 
 //*****************************************
-// extraction_resultat_art.php
+// extraction_resultat_stat.php
 //*****************************************
 // Created by Yann Laurent
 // 2009-07-01 : creation
 //*****************************************
-// Ce programme gere l'affichage des resultats et l'export vers un fichier csv pour l'extraction peches artisanales
+// Ce programme gere l'affichage des resultats et l'export vers un fichier csv pour le calcul des stats
 //*****************************************
 // Paramètres en entrée
 // aucun pour l'instant.
@@ -44,7 +44,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 
 // Fichier à analyser
-$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionArt.xml";
+$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionStat.xml";
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
@@ -106,7 +106,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 ?>
 		
 		<div id="resumeChoix">
-			<?php echo "<b>Filiere en cours</b> = ".$typeAction.""; ?>
+			<?php echo "<b>Statistiques en cours</b> = ".$typeAction.""; ?>
 			<form id="navigation" action="/extraction/extraction/extraction_filieres_art.php">
 			<input type ="submit" value="changer de filiere" />
 			<?php echo $InputLog; ?>
@@ -116,26 +116,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				// Phase préliminaire : on verifie que par hasard, des nouvelles selections n'ont pas
 				// ete faires par l'utilisateur juste avant de cliquer sur resultat.
 				// Si c'est le cas, les variables de sessions ne seront pas a jour.
-				if (isset($_GET['qual'])) {
-					$valeurAMJ = AnaylseVarSession($_GET['qual']);
-					$_SESSION['listeQualite'] = $valeurAMJ;
-				} 
-				if (isset($_GET['rest'])) {
-					$valeurAMJ = AnaylseVarSession($_GET['rest']);
-					$_SESSION['listeProtocole'] = $valeurAMJ;
-				} 
-				if (isset($_GET['pois'])) {
-					$valeurAMJ = AnaylseVarSession($_GET['pois']);
-					$_SESSION['listePoisson'] = $valeurAMJ;
-				} 
-				if (isset($_GET['CE'])) {
-					$valeurAMJ = AnaylseVarSession($_GET['CE']);
-					$_SESSION['listeCatEco'] = $valeurAMJ;
-				} 
-				if (isset($_GET['CT'])) {
-					$valeurAMJ = AnaylseVarSession($_GET['CT']);
-					$_SESSION['listeCatTrop'] = $valeurAMJ;
-				} 
+
 				
 				if (isset($_GET['Col'])) {
 					$valeurAMJ = AnaylseVarSession($_GET['Col']);
@@ -181,14 +162,14 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 			echo $resultatLecture; 
 			if ($EcrireLogComp ) {
 				WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
-				WriteCompLog ($logComp, "Fin Extraction des peches artisanales pour filiere ".$typeAction,$pasdefichier);
+				WriteCompLog ($logComp, "Fin Calcul  ".$typeAction,$pasdefichier);
 				WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
 			}
 		?>
 		</div>
 		<?php if (!($exportFichier)) {	?>
 		<div id="exportFic2">
-			<input type="button" id="validation" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','','y')" value="Exporter en fichier"/>
+			<input type="button" id="validation" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','','y')" value="Exporter en fichier"/>
 			<input type="hidden" id="ExpFic" checked="checked"/></div>			
 		</div>
 		<?php } else {

@@ -137,6 +137,7 @@ list-style:none;
 #listeTab{
 
 }
+/* Poisitionnement des onglets des filieres */
 .criteresgen{
 	position:absolute;
 	top:460px;
@@ -180,6 +181,14 @@ list-style:none;
 	visibility:hidden;
 	width:800px;
 }
+.general{
+	position:absolute;
+	top:480px;
+	left:5px;
+	background-color:#EEDEC7 ;
+	visibility:hidden;
+	width:800px;
+}
 #voiresultat{
 	position:absolute;
 	top:580px;
@@ -201,4 +210,17 @@ list-style:none;
 	vertical-align:text-top;
 	border:1px dotted #666666;
 	width:800px;
+}
+/* CSS pour les tables contenant la liste des cat eco, troph et des especes */
+#CEco{
+text-align:left;
+vertical-align:top;
+}
+#CTro{
+text-align:left;
+vertical-align:top;
+}
+#espece{
+text-align:left;
+vertical-align:top;
 }

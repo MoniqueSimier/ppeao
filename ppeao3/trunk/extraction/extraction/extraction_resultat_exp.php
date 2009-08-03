@@ -1,11 +1,11 @@
 <?php 
 //*****************************************
-// extraction_resultat.php
+// extraction_resultat_exp.php
 //*****************************************
 // Created by Yann Laurent
 // 2009-07-01 : creation
 //*****************************************
-// Ce programme gere l'affichage des resultats et l'export vers un fichier csv
+// Ce programme gere l'affichage des resultats et l'export vers un fichier csv pour l'extraction peches expérimentales
 //*****************************************
 // Paramètres en entrée
 // aucun pour l'instant.

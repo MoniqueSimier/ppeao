@@ -19,6 +19,7 @@ $TableATester = "";
 $Filiere = "";
 $FiliereEnCours = "";
 $TypePecheEnCours="";
+$StatEnCours="";
 $NomTableEnCours="";
 $NumChampDef = 0;
 $NumChampFac = 0;
@@ -48,6 +49,7 @@ function AfficherSelection($file) {
 	global $SQLPays 	;
 	global $SQLSysteme	;
 	global $SQLSecteur	;
+	global $SQLAgg		;
 	global $SQLEngin	;
 	global $SQLGTEngin ;
 	global $SQLCampagne ;
@@ -86,6 +88,7 @@ function AfficherSelection($file) {
 	$SQLPays 	= substr($SQLPays,0,- 1); // pour enlever la virgule surnumeraire;
 	$SQLSysteme	= substr($SQLSysteme,0,- 1); // pour enlever la virgule surnumeraire;
 	$SQLSecteur	= substr($SQLSecteur,0,- 1); // pour enlever la virgule surnumeraire;
+	$SQLAgg	= substr($SQLAgg,0,- 1); // pour enlever la virgule surnumeraire;
 	$SQLEngin	= substr($SQLEngin,0,- 1); // pour enlever la virgule surnumeraire;
 	$SQLGTEngin = substr($SQLGTEngin,0,- 1); // pour enlever la virgule surnumeraire;
 	$SQLCampagne = substr($SQLCampagne,0,- 1); // pour enlever la virgule surnumeraire;
@@ -96,6 +99,7 @@ function AfficherSelection($file) {
 	if ($_SESSION['SQLPays'] == "") {$_SESSION['SQLPays'] = $SQLPays;}
 	if ($_SESSION['SQLSysteme'] == "") {$_SESSION['SQLSysteme'] = $SQLSysteme;}
 	if ($_SESSION['SQLSecteur'] == "") {$_SESSION['SQLSecteur'] = $SQLSecteur;}
+	if ($_SESSION['SQLAgg'] == "") {$_SESSION['SQLAgg'] = $SQLAgg;}
 	if ($_SESSION['SQLEngin'] == "") {$_SESSION['SQLEngin'] = $SQLEngin;}
 	if ($_SESSION['SQLGTEngin'] == "") {$_SESSION['SQLGTEngin'] = $SQLGTEngin;}
 	if ($_SESSION['SQLCampagne'] == "") {$_SESSION['SQLCampagne'] = $SQLCampagne;}
@@ -358,9 +362,14 @@ function AfficherDonnees($file,$typeAction){
 	// *******************************
 	$builQuery = false; // il a l'air de rien celui-la, mais ce flag est super important pour créer le SQL final qui sera executé.
 	switch ($typeSelection) {
+		// #####################################################################################
+		// EXTRACTION
+		// #####################################################################################
 		case "extraction" :
 		switch ($typePeche) {
-		// ********** DEBUT TRAITEMENT PECHE EXPERIMENTALE
+			// *********************************************************************************
+			// PECHE EXPERIMENTALE
+			// *********************************************************************************
 			case "experimentale" :
 			// ********** ANALYSE DES SELECTIONS DE L'UTILISATEUR
 			// ==> construction des SQL correspondant - traitement des cas particuliers
@@ -574,8 +583,10 @@ function AfficherDonnees($file,$typeAction){
 
 			break;
 			// ********** FIN TRAITEMENT PECHE EXPERIMENTALE
-			//
-			// **********
+			// *
+			// *********************************************************************************
+			// PECHE ARTISANALE
+			// *********************************************************************************		
 			case "artisanale" :
 			// ********** DEBUT TRAITEMENT PECHE ARTISANALE
 			// ********** Gestion de l'affichage des colonnes sélectionnées 
@@ -637,26 +648,29 @@ function AfficherDonnees($file,$typeAction){
 				$champSel = explode(",",$_SESSION['listeColonne']);
 				$nbrSel = count($champSel)-1;
 				for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
-					$TNomLongTable ="";
-					$listeChampsSel .= ",".str_replace("-",".",$champSel[$cptSel]);
-					// Recuperation de l'alias de la table pour obtenir le nom de la table.
-					$PosDas = strpos($champSel[$cptSel],"-");
-					$TNomTable = substr($champSel[$cptSel],0,$PosDas);
-					//echo $TNomTable."<br/>";
-					switch ($TNomTable) {
-						case "cate" : 		
-							$TNomLongTable = "ref_categorie_ecologique";
-							if (strpos($joinSel,$TNomTable) === false) {
-								$joinSel .= " left outer join ".$TNomLongTable." ".$TNomTable." on ".$TNomTable.".id = esp.".$TNomLongTable."_id"; 
-							}
-							break;
-						case "catt" : 		
-							$TNomLongTable = "ref_categorie_trophique";	
-							if (strpos($joinSel,$TNomTable) === false) {
-								$joinSel .= " left outer join ".$TNomLongTable." ".$TNomTable." on ".$TNomTable.".id = esp.".$TNomLongTable."_id";  
-							}
-							break;
-					} // fin du switch ($TNomTable) 
+					if (strpos($champSel[$cptSel],"-N") === false ) { // On ne traite pas les colonnes décochées
+						$ValColonne = substr($champSel[$cptSel],0,-2); // On enleve le suffixe qui indiqu
+						$TNomLongTable ="";
+						$listeChampsSel .= ",".str_replace("-",".",$ValColonne);
+						// Recuperation de l'alias de la table pour obtenir le nom de la table.
+						$PosDas = strpos($ValColonne,"-");
+						$TNomTable = substr($ValColonne,0,$PosDas);
+						//echo $TNomTable."<br/>";
+						switch ($TNomTable) {
+							case "cate" : 		
+								$TNomLongTable = "ref_categorie_ecologique";
+								if (strpos($joinSel,$TNomTable) === false) {
+									$joinSel .= " left outer join ".$TNomLongTable." ".$TNomTable." on ".$TNomTable.".id = esp.".$TNomLongTable."_id"; 
+								}
+								break;
+							case "catt" : 		
+								$TNomLongTable = "ref_categorie_trophique";	
+								if (strpos($joinSel,$TNomTable) === false) {
+									$joinSel .= " left outer join ".$TNomLongTable." ".$TNomTable." on ".$TNomTable.".id = esp.".$TNomLongTable."_id";  
+								}
+								break;
+						} // fin du switch ($TNomTable) 
+					} // fin du if (strpos($champSel[$cptSel],"-N") === false )
 				}
 			} // fin du (!($_SESSION['listeColonne'] ==""))
 			$WhereSel .= $compSQL.$compCatEcoSQL.$compCatTropSQL;
@@ -664,52 +678,21 @@ function AfficherDonnees($file,$typeAction){
 			// Cas particulier d'aucun sélection des espèces : 
 			// On reconstruit cette liste pour l'ensemble de la sélection car on va en avoir besoin
 			// pour les catégories trophiques/ecologiques
+			$ajouteTable ="";
 			if ($SQLEspeces == "") {
-				// On reconstruit la liste des especes de la sélection.
-				$ajouteTable = "";
 				if (!($compGTESQL == "")) {
-					$ajouteTable .=",art_grand_type_engin as gte";
-				}
-				$SQLEsp = "select distinct(afra.ref_espece_id) from art_debarquement as deb,art_fraction as afra,art_agglomeration as agg,			
-							art_periode_enquete as penq".$ajouteTable."
-							where ".$WhereAgg." ".$WherePeEnq." ".$compGTESQL."
-							deb.art_agglomeration_id = agg.id and
-							deb.mois = penq.mois and 
-							deb.annee = penq.annee and
-							deb.art_agglomeration_id = penq.art_agglomeration_id and 
-							afra.art_debarquement_id = deb.id ";
-				//if ($EcrireLogComp && $debugLog) {
-				//	WriteCompLog ($logComp, "Var SQLEsp = ".$SQLEsp,$pasdefichier);
-				//}				
-				$SQLEspResult = pg_query($connectPPEAO,$SQLEsp);
-				$erreurSQL = pg_last_error($connectPPEAO);
-				if ( !$SQLEspResult ) { 
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp, "ERREUR : construction liste especes. Requete en erreur : ".$SQLEsp." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
-					} else {
-						$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query ".$SQLEsp." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
-					}
-					$erreurProcess = true;
-				} else {
-					if (pg_num_rows($SQLEspResult) == 0) {
-					// Erreur
-						if ($EcrireLogComp ) {
-							WriteCompLog ($logComp, "Activite/debarquement vide pour recuperer les especes...",$pasdefichier);
-						} else {
-							$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Activite/debarquement vide pour recuperer les especes...<br/>";}
-					} else {
-					//echo "<b>Nbre especes pr&eacute;lectionnes = &eacute;".pg_num_rows($SQLEspResult)."</b><br/>";
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp, "INFO : nombre d'especes preselectionnees = ".pg_num_rows($SQLEspResult),$pasdefichier);
-					}
-						while ($EspRow = pg_fetch_row($SQLEspResult) ) {
-							if (strpos($SQLEspeces,$EspRow[0]) === false ) {
-								$SQLEspeces .= "'".$EspRow[0]."',";	
-							}
-						}		
-					}				
-				}
-				$SQLEspeces	= substr($SQLEspeces,0,- 1); // pour enlever la virgule surnumeraire;
+					$ajouteTable =",art_grand_type_engin as gte";
+			}
+			$SQLEsp = "select distinct(afra.ref_espece_id) from art_debarquement as deb,art_fraction as afra,art_agglomeration as agg,			
+				art_periode_enquete as penq".$ajouteTable."
+				where ".$WhereAgg." ".$WherePeEnq." ".$compGTESQL."
+				deb.art_agglomeration_id = agg.id and
+				deb.mois = penq.mois and 
+				deb.annee = penq.annee and
+				deb.art_agglomeration_id = penq.art_agglomeration_id and 
+				afra.art_debarquement_id = deb.id ";
+				$SQLEspeces = RecupereEspeces($SQLEsp);
+	
 			}
 			// Si malgré tout, toujours pas d'especes dispo, ben tant pis....
 			if ($SQLEspeces == "") {
@@ -825,17 +808,116 @@ function AfficherDonnees($file,$typeAction){
 				exit;
 		} 
 		break;
-		// fin case "extraction" 
-		
+		// ********** FIN TRAITEMENT EXTRACTION
+		// #
+		// #####################################################################################
+		// STATISTIQUES
+		// #####################################################################################		
 		case "statistiques" :
-		break;
-		// fin case "statistiques"
-		
-		
-		default:
+			// ********** DEBUT TRAITEMENTDES STATISTIQUES
+			// ********** Gestion de l'affichage des colonnes sélectionnées 
+			$listeChampsSel = "";
+			$ListeTableSel = "";
+			$WhereSel = "";
+			$joinSel="";
+			$compSQL = "";
+			if ($SQLAgg == "") {
+				$WhereAgg = "";
+			} else {
+				$WhereAgg = "agg.id in (".$SQLAgg.") and";
+			}
+			if ($SQLPeEnquete == "") {
+				$WherePeEnq = "";
+			} else {
+				$WherePeEnq = "penq.id in (".$SQLPeEnquete.") and ";
+			}
+			// Grand type engin
+			if (!($_SESSION['SQLGTEngin'] == "")) {
+				$LabGTE = " - restreint aux grands types engin : ";
+				$champSel = explode(",",$_SESSION['SQLGTEngin']);
+				$nbrSel = count($champSel)-1;
+				$valGTE= "";
+				for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
+					if ($valGTE == "") {
+						$valGTE = "'".$champSel[$cptSel]."'";
+					} else {
+						$valGTE .= ",'".$champSel[$cptSel]."'";
+					}
+					$LabGTE .= $champSel[$cptSel]." ";
+				}
+				$compGTESQL ="gte.id in (".$valGTE.") and ";
+			} else {
+				$compGTESQL = "";
+				$LabGTE = " - toutes les grands types engin ";
+			}
+
+			
+			switch ($typeStatistiques) {
+				// *********************************************************************************
+				// STATISTIQUES PAR AGGLOMERATION
+				// *********************************************************************************
+				case "agglomeration" :
+					// ********** DEBUT STATISTIQUES PAR AGGLOMERATION
+					// ********** CONSTRUCTION DES SQL DEFINITIFS PAR TYPE DE STATISTIQUES CHOISIS
+					switch ($typeAction) {
+						// Statistiques globales
+						case "globale" :
+							// Cas particulier d'aucun sélection des espèces : 
+							// On reconstruit cette liste pour l'ensemble de la sélection car on va en avoir besoin
+							// pour les catégories trophiques/ecologiques
+							$ajouteTable ="";
+							if ($SQLEspeces == "") {
+								if (!($compGTESQL == "")) {
+									$ajouteTable =",art_grand_type_engin as gte";
+							}
+							$SQLEsp = "select distinct(afra.ref_espece_id) from art_debarquement as deb,art_fraction as afra,art_agglomeration as agg,			
+								art_periode_enquete as penq".$ajouteTable."
+								where ".$WhereAgg." ".$WherePeEnq." ".$compGTESQL."
+								deb.art_agglomeration_id = agg.id and
+								deb.mois = penq.mois and 
+								deb.annee = penq.annee and
+								deb.art_agglomeration_id = penq.art_agglomeration_id and 
+								afra.art_debarquement_id = deb.id ";
+								$SQLEspeces = RecupereEspeces($SQLEsp);
+							}
+							// Si malgré tout, toujours pas d'especes dispo, ben tant pis....
+							if ($SQLEspeces == "") {
+								$WhereEsp = "";
+								echo "pas d'especess <br/>";
+							} else {
+								$WhereEsp = "afra.ref_espece_id in (".$SQLEspeces.") and ";
+								$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite....
+							}
+							$labelSelection = "Periode d'enquete";
+							$SQLfinal = "select * from art_periode_enquete as penq
+											where penq.id in (".$SQLPeEnquete.")";						
+						break;	
+						// Statistiques par Grand type
+						case "GT" :	
+							$labelSelection = "Periode d'enquete";
+							$SQLfinal = "select * from art_periode_enquete as penq
+											where penq.id in (".$SQLPeEnquete.")";
+						break;			
+						default	:	
+							$labelSelection = "Periode d'enquete";
+							$SQLfinal = "select * from art_periode_enquete as penq
+											where penq.id in (".$SQLPeEnquete.")";
+					}									
+					break; 
+				// ********** FIN STATISTIQUES PAR AGGLOMERATION
+				// *
+				// *********************************************************************************
+				// STATISTIQUES PAR AGGLOMERATION
+				// *********************************************************************************
+				case "generales" :
+					// ********** DEBUT STATISTIQUES GENERALES
+				break; 
+				// ********** FIN STATISTIQUES GENERALES	
+			default:
 				echo "Erreur pas d'action selectionnee. Ca ne devrait pas arriver....<br/>";
 				exit;
-	} // fin du switch ($typeSelection) {
+		} // fin du switch ($typeStatistiques) 
+	} // fin du switch ($typeSelection) 
 	
 	// On construit (on on) la requete finale.
 	// Elle peut avoir déjà été construite précédement, notament dans les cas par defaut
@@ -948,7 +1030,7 @@ function AfficherDonnees($file,$typeAction){
 
 //*********************************************************************
 // AfficheCategories : Fonction pour afficher les catégories troph / ecologiques a selectionner
-function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction) {
+function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction,$typePeche,$numTab) {
 // Cette fonction permet de construire la liste des checkboxes pour la selection des especes à selectionner
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -972,6 +1054,7 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction) {
 	$SQLEspeces	= $_SESSION['SQLEspeces'];
 	$construitSelection = "";
 	$listEspFamille = "";
+	// Definition des differents parametres selon qu'on recupere les categories trop ou eco
 	switch ($typeCategorie) {
 		case "Ecologiques":
 			$champID = "ref_categorie_ecologique_id";
@@ -986,21 +1069,38 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction) {
 			$nomInput = "CTro";
 			break;
 	}
+	// Selon le type de peches, la fonction Js n'est pas la meme.
+	switch ($typePeche) {
+		case "artisanale" :
+		$runfilieres = "runFilieresArt";
+		break;
+		case "experimentale":
+		$runfilieres = "runFilieresExp";
+		break;
+	 }
+	// Definition du SQL pour trouver toutes les catégories trophiques des especes de la selection
+	//  $SQLEspeces ne contient que la liste des ID des especes de la selection
 	$SQLCEco = "select distinct(".$champID.") from ref_espece where id in (".$SQLEspeces.")";	
 	//echo $SQLCEco."<br/>";
 	//$SQLCEco = "select * from ref_espece";
 	$SQLCEcoResult = pg_query($connectPPEAO,$SQLCEco);
 	$erreurSQL = pg_last_error($connectPPEAO);
 	if ( !$SQLCEcoResult ) {
-		echo "erreur execution SQL pour ".$SQLTest." erreur complete = ".$erreurSQL."<br/>";
+		echo "erreur execution SQL pour ".$SQLCEco." erreur complete = ".$erreurSQL."<br/>";
 	//erreur
 	} else { 
 		if (pg_num_rows($SQLCEcoResult) == 0) {
 			// Erreur
 			echo "pas d'especes trouvees dont le id est ".$SQLEspeces."<br/>" ;
 		} else { 
-			$cptInput = 0;
+			$cptInput = 1;
+			$construitSelection .="<table id=\"".$nomInput."\"><tr><td>"; 
 			// A faire : formater le resultat avec une table
+			if (strpos($ListeCE,"tout") === false) {
+				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n')\"/>&nbsp;Tout</td><td>";
+			} else {
+				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n')\"/>&nbsp;Tout</td><td>";
+			}
 			// Analyse des categories disponibles pour l'espèce considérée
 			while ($CERow = pg_fetch_row($SQLCEcoResult) ) {
 				$ContinueTrt = false ;
@@ -1036,7 +1136,6 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction) {
 						$valCont = "null";
 					}
 					$ContinueTrt = true;
-
 				}	// fin du if (!($CERow[0] =="" || $CERow[0] == null))
 				if ($ContinueTrt) {
 					// Si on est en train de changer d'action, on remet à zéro
@@ -1047,7 +1146,7 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction) {
 						if ($ListeCE == "") {
 							$checked =""; 
 						} else {
-							if (strpos($ListeCE,$valCont) === false) {
+							if (strpos($ListeCE,$valCont) === false && (strpos($ListeCE,"tout") === false)) {
 								$checked =""; 
 							} else {
 								$checked ="checked=\"checked\"";
@@ -1055,9 +1154,14 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction) {
 						}
 					}
 					$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"".$valCont."\" ".$checked."/>&nbsp;".$libelleCE;
-					//$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"".$CERow[0]."\" ".$checked."/>&nbsp;test".$cptInput;
+					if ($cptInput/2 == 2 || $cptInput/2 == 4 || $cptInput/2 == 6 || $cptInput/2 == 8 || $cptInput/2 == 10 || $cptInput/2 == 12 || $cptInput/2 == 14 || $cptInput/2 == 16 || $cptInput/2 == 18 || $cptInput/2 == 20 ) {
+						$construitSelection .= "</td></tr><tr><td>";
+					} else {
+						$construitSelection .= "</td><td>";
+					}
 				} // fin du if ($ContinueTrt)
 			} // fin du while
+			$construitSelection .="</td></tr></table>";
 			$construitSelection .= "<input id=\"num".$nomInput."\" type=\"hidden\" name=\"num".$nomInput."\" value=\"".$cptInput ."\"/>";
 		}
 	}	
@@ -1067,7 +1171,7 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction) {
 
 //*********************************************************************
 // AfficheEspeces : Fonction pour afficher les especes a selectionner 
-function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction) {
+function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeAction,$numTab) {
 // Cette fonction permet de construire la liste des checkboxes pour la selection des especes à selectionner
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -1079,21 +1183,37 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction) {
 // La fonction renvoie $construitSelection
 //*********************************************************************
 	global $connectPPEAO;
+	global $EcrireLogComp;
+	global $logComp;
+	global $pasdefichier;
 	$construitSelection = "";
+	if ($SQLEspeces == "") {
+		echo "erreur SQLEspeces vide dans la fonction AfficheEspeces<br/>Arret du traitement<br/>.";
+		exit;
+	}
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "INFO : sql espece dans AfficheEspeces = ".$SQLEspeces,$pasdefichier);
+	}
 // Gere l'affichage des différentes espèces
 	$SQLCEco = "select id,libelle from ref_espece where id in (".$SQLEspeces.") order by id";	
 	$SQLCEcoResult = pg_query($connectPPEAO,$SQLCEco);
 	$erreurSQL = pg_last_error($connectPPEAO);
 	if ( !$SQLCEcoResult ) {
-		echo "erreur execution SQL pour ".$SQLTest." erreur complete = ".$erreurSQL."<br/>";
+		echo "erreur execution SQL pour ".$SQLCEco." erreur complete = ".$erreurSQL."<br/>";
 	//erreur
 	} else { 
 		if (pg_num_rows($SQLCEcoResult) == 0) {
 			// Erreur
 			echo "pas d'especes trouvees dont le id est ".$SQLEspeces."<br/>" ;
 		} else { 
-			$cptInput = 0;
+			$cptInput = 1;
+			$construitSelection .="<table id=\"espece\"><tr><td>"; 
 			// A faire : formater le resultat avec une table
+			if (strpos($ListeEsp,"tout") === false) {
+				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"tout\"  onclick=\"runFilieresExp('".$typePeche."','".$typeAction."','".$numTab."','','n')\"/>&nbsp;Tout";
+			} else {
+				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"tout\" checked=\"checked\" onclick=\"runFilieresExp('".$typePeche."','".$typeAction."','".$numTab."','','n')\"/>&nbsp;Tout";
+			}
 			while ($CERow = pg_fetch_row($SQLCEcoResult) ) {
 				if (!($CERow[0] =="" || $CERow[0] == null)) {
 					$cptInput ++;
@@ -1105,7 +1225,7 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction) {
 						if ($ListeEsp == "") {
 							$checked ="checked=\"checked\""; 
 						} else {
-							if (strpos($ListeEsp,$CERow[0]) === false) {
+							if (strpos($ListeEsp,$CERow[0]) === false && (strpos($ListeEsp,"tout") === false)) {
 								$checked =""; 
 							} else {
 								$checked ="checked=\"checked\"";
@@ -1114,8 +1234,14 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction) {
 					}
 					$libelleEsp = $CERow[1];
 					$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"".$CERow[0]."\" ".$checked."/>&nbsp;".$libelleEsp;
+					if ($cptInput/2 == 2 || $cptInput/2 == 4 || $cptInput/2 == 6 || $cptInput/2 == 8 || $cptInput/2 == 10 || $cptInput/2 == 12 || $cptInput/2 == 14 || $cptInput/2 == 16 || $cptInput/2 == 18 || $cptInput/2 == 20 ) {
+						$construitSelection .= "</td></tr><tr>";
+					} else {
+						$construitSelection .= "</td><td>";
+					}
 				}
 			} // fin du while
+			$construitSelection .="</td></tr></table>";
 			$construitSelection .= "<input id=\"numEsp\" type=\"hidden\" name=\"numEsp\" value=\"".$cptInput ."\"/>";
 		}
 	}	
@@ -1148,7 +1274,7 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab) {
 	global $NumChampDef;	
 	global $NumChampFac;
 	global $TabEnCours;
-
+	
 	$inputNumFac = "";
 	$inputNumDef = "";
 	$inputListeTable = "";
@@ -1251,10 +1377,65 @@ function ouvreFichierLog($dirLog,$fileLogComp) {
 			exit;		
 		}
 	}
-
-
-
-
 }
+
+
+
+
+//*********************************************************************
+// ouvreFichierLog : Fonction pour ouvrir le fichier log
+function RecupereEspeces($SQLAexec){
+// Cette fonction permet d'ouvrir le fichier log
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $dirLog : le répertoire du fichier log
+// $fileLogComp : le nom du fichier log
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie $listeSelection
+//*********************************************************************
+// On reconstruit la liste des especes de la sélection.
+	global $connectPPEAO;
+	global $EcrireLogComp;
+	global $logComp;
+	global $pasdefichier;
+	global $erreurProcess;
+	global $resultatLecture;
+	$SQLEspeces = "";
+	//if ($EcrireLogComp && $debugLog) {
+	//	WriteCompLog ($logComp, "Var SQLEsp = ".$SQLEsp,$pasdefichier);
+	//}				
+	$SQLEspResult = pg_query($connectPPEAO,$SQLAexec);
+	$erreurSQL = pg_last_error($connectPPEAO);
+	if ( !$SQLEspResult ) { 
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "ERREUR : construction liste especes. Requete en erreur : ".$SQLEsp." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+		} else {
+			$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query ".$SQLEsp." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+		}
+		$erreurProcess = true;
+	} else {
+		if (pg_num_rows($SQLEspResult) == 0) {
+		// Erreur
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "Activite/debarquement vide pour recuperer les especes...",$pasdefichier);
+			} else {
+				$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Activite/debarquement vide pour recuperer les especes...<br/>";}
+		} else {
+		//echo "<b>Nbre especes pr&eacute;lectionnes = &eacute;".pg_num_rows($SQLEspResult)."</b><br/>";
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "INFO : nombre d'especes preselectionnees = ".pg_num_rows($SQLEspResult),$pasdefichier);
+		}
+			while ($EspRow = pg_fetch_row($SQLEspResult) ) {
+				if (strpos($SQLEspeces,$EspRow[0]) === false ) {
+					$SQLEspeces .= "'".$EspRow[0]."',";	
+				}
+			}		
+		}				
+	}
+	$SQLEspeces	= substr($SQLEspeces,0,- 1); // pour enlever la virgule surnumeraire;
+	return $SQLEspeces;
+}
+
 
 ?>

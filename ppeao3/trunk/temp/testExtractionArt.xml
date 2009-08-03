@@ -30,6 +30,6 @@
 	</enqueteListe>
 	<grandTypeEnginListe selection="selection">	<!-- Table de référence = art_grand_type_engin - id, libelle-->
 		<grandTypeEngin id="EPERV">Epervier</grandTypeEngin>
-		<grandTypeEngin id="PALAN ">Palangre</grandTypeEngin>
+		<grandTypeEngin id="PALAN">Palangre</grandTypeEngin>
 	</grandTypeEnginListe>
 </selection>

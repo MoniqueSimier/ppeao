@@ -4,6 +4,9 @@
 		<peches>
 			<peche>toutes</peche>
 		</peches>
+		<statistiques>
+			<statistique>toutes</statistique>
+		</statistiques>
 		<numOrdre>1</numOrdre>
 		<filieres>
 			<filiere>toutes</filiere>
@@ -18,6 +21,9 @@
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
+		<statistiques>
+			<statistique>toutes</statistique>
+		</statistiques>
 		<numOrdre>2</numOrdre>
 		<filieres>
 			<filiere>toutes</filiere>
@@ -33,6 +39,9 @@
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
+		<statistiques>
+			<statistique>toutes</statistique>
+		</statistiques>
 		<numOrdre>3</numOrdre>
 		<filieres>
 			<filiere>toutes</filiere>
@@ -202,9 +211,60 @@
 		<testNom>agg</testNom>
 		<libelle>Agglomeration</libelle>
 		<champ code="nom" affichage="X" libelle="Nom"/>
-		<champ code="site" affichage="C" libelle="Site"/>
 	</table>
 		<table>
+		<peches>
+			<peche>artisanale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<nom>art_type_agglomeration</nom>
+		<testNom>tagg</testNom>
+		<libelle>Type Agglomeration</libelle>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>
+	</table>
+	<table>
+		<peches>
+			<peche>artisanale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>activite</filiere>
+		</filieres>	
+		<nom>art_activite</nom>
+		<testNom>act</testNom>
+		<libelle>Activite</libelle>
+		<champ code="art_agglomeration_id" affichage="X" libelle="ID Agglomeration"/>
+		<champ code="annee" affichage="X" libelle="Annee"/>
+		<champ code="mois" affichage="X" libelle="Mois"/>
+		<champ code="date_activite" affichage="X" libelle="Date activite"/>
+		<champ code="id" affichage="X" libelle="ID"/>
+		<champ code="unite_peche_id" affichage="X" libelle="ID unite peche"/>		
+	</table>
+	<table>
+		<peches>
+			<peche>artisanale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>capture</filiere>
+			<filiere>NtPt</filiere>
+			<filiere>structure</filiere>
+			<filiere>engin</filiere>			
+		</filieres>	
+		<nom>art_debarquement</nom>
+		<testNom>deb</testNom>
+		<libelle>Debarquement</libelle>
+		<champ code="art_agglomeration_id" affichage="X" libelle="ID Agglomeration"/>
+		<champ code="annee" affichage="X" libelle="Annee"/>
+		<champ code="mois" affichage="X" libelle="Mois"/>
+		<champ code="date_debarquement" affichage="X" libelle="Date debarquement"/>
+		<champ code="id" affichage="X" libelle="ID"/>
+		<champ code="unite_peche_id" affichage="X" libelle="ID unite peche"/>		
+	</table>
+	<table>
 		<peches>
 			<peche>experimentale</peche>
 		</peches>

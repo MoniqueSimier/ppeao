@@ -202,36 +202,24 @@ function characterData($parser, $data){
 
 // Fonction associée à l’événement de détection d'un appel d'entité externe
 function externalEntityRefHandler($parser,$openEntityNames,$base,$systemId,$publicId){
-
 if ($systemId) { 
-	if (!list($parser, $fp) = new_xml_parser($systemId))
-	{
-	
+	if (!list($parser, $fp) = new_xml_parser($systemId))	{
 		printf("Impossible d'ouvrir %s à %s<br/>",
 						   $openEntityNames,
 						   $systemId);
 		return FALSE;
-	
 	}
-	
 	while ($data = fread($fp, 4096)) {
-	
 		if (!xml_parse($parser, $data, feof($fp))){
-		
 			printf("Erreur XML : %s à la ligne %d lors du traitement de l'entité %s\n",
 						   xml_error_string(xml_get_error_code($parser)),
 						   xml_get_current_line_number($parser),
 						   $openEntityNames);
-			
 			xml_parser_free($parser);
-			
 			return FALSE;
 		}
-	
 	}
-	
 	xml_parser_free($parser);
-	
 	return TRUE; 
 	} 
 return FALSE;
@@ -241,7 +229,6 @@ return FALSE;
 // Fonction de création du parser et d'affectation
 // des fonctions aux gestionnaires d'événements
 function new_xml_parser($file) {
-
 	global $parser_file;
 	//création du parseur
 	$xml_parser = xml_parser_create();
@@ -293,8 +280,16 @@ function startElementCol($parser, $name, $attrs){
 						$colRecues = explode (",",$_SESSION['listeColonne']);
 						$NumColR = count($colRecues) - 1;
 						for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
-							if ($colRecues[$cptCR] == $idenTableEnCours."-".$attrs["CODE"]) {
-								$checked = "checked=\"checked\"";
+							$valTest = substr($colRecues[$cptCR],0,-2);
+							// On teste si on a déjà coché cette colonne
+							if ($valTest == $idenTableEnCours."-".$attrs["CODE"]) {
+								if (strpos($colRecues[$cptCR],"-N") === false) {
+									// Soit on vient de la cocher suffixe = -X
+									$checked = "checked=\"checked\"";
+								} else {
+									// Soit on vient de la décocher suffixe = -N
+									$checked = "";
+								}
 								break;
 							}
 						}
@@ -330,8 +325,18 @@ function endElementCol($parser, $name){
 	global $NumChampDef;	
 	global $NumChampFac;
 	global $TabEnCours;
+	$filiereOK = false;
 	switch(strtoupper($name)) {
 		case "PECHE" :
+			$filiereOK = false;
+			if (strtoupper($globaldata) == strtoupper($TypePecheEnCours) || strtoupper($globaldata) == "TOUTES") {
+				$TableAAjouter = true;
+			} else {
+				$TableAAjouter = false;
+			}
+			break;	
+		case "STATISTIQUE" :
+			$filiereOK = false;
 			if (strtoupper($globaldata) == strtoupper($TypePecheEnCours) || strtoupper($globaldata) == "TOUTES") {
 				$TableAAjouter = true;
 			} else {
@@ -339,11 +344,13 @@ function endElementCol($parser, $name){
 			}
 			break;	
 		case "FILIERE" :
-			if ($TableAAjouter) {  
-				if (!(strtoupper($globaldata) == "TOUTES" || strtoupper($globaldata) == strtoupper($FiliereEnCours))) {
-				$TableAAjouter = false;
+			if (!($filiereOK) { 
+				 
+				if (strtoupper($globaldata) == "TOUTES" || strtoupper($globaldata) == strtoupper($FiliereEnCours)) {
+					$filiereOK = true;
 				}
 			}
+
 			break;
 		case "TESTNOM" :
 			$idenTableEnCours = $globaldata;
@@ -359,7 +366,7 @@ function endElementCol($parser, $name){
 			} else {
 				$RunFilieres = "runFilieresExp";
 			}
-			if ($TableAAjouter) {
+			if ($TableAAjouter && $filiereOK) {
 				if ($RecupDonneesOK) {
 					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."')\" class = \"active\">".$globaldata."</a><br/>";
 				} else {
