@@ -288,6 +288,9 @@ INSERT INTO admin_sequences VALUES (28, 'sys_activites_a_migrer_id_seq', 'id', '
 INSERT INTO admin_sequences VALUES (29, 'sys_campagnes_a_migrer_id_seq', 'id', 'sys_campagnes_a_migrer');
 INSERT INTO admin_sequences VALUES (30, 'sys_debarquements_a_migrer_id_seq', 'id', 'sys_debarquements_a_migrer');
 INSERT INTO admin_sequences VALUES (31, 'sys_periodes_enquete_id_seq', 'id', 'sys_periodes_enquete');
+INSERT INTO admin_sequences VALUES (32, 'art_stat_effort_effort_id_seq', 'sequence_id', 'art_stat_effort');
+INSERT INTO admin_sequences VALUES (33, 'art_param_type_effort_type_effort_id_seq', 'type_effort_id', 'art_param_type_effort');
+
 
 ALTER TABLE admin_sequences ENABLE TRIGGER ALL;
 
