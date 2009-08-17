@@ -49,11 +49,19 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 ?>
 
 
+<!-- on affiche les liens pour supprimer des campagnes ou des périodes d'enquête -->
+<h2>supprimer...</h2>
+<ul>
+	<li><a href="/edition_supprimer.php?domaine=exp">des campagnes</a></li>
+	<li><a href="/edition_supprimer.php?domaine=art">des p&eacute;riodes d&#x27;enqu&ecirc;te</a></li>
+</ul>
+
+
 
 <?php
 // on affiche la liste des tables
-echo('<div id="tables_liste">');	
-
+echo('<div id="tables_liste">');
+echo('<h2>&eacute;diter les donn&eacute;es des tables de...</h2>');
 	buildTableList("data");
 
 
