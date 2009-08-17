@@ -21,7 +21,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/session/login_forms.php';
 
-// on stocke l'URL courante dans le tableau des variables superglobales
+// on stocke l'URL courante dans le tableau des variables superglobales sous la forme $_SERVER['FULL_URL']
 storeUrl();
 
 echo('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
