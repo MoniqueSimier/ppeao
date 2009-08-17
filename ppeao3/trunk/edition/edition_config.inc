@@ -47,4 +47,11 @@ foreach ($tables as $table) {
 // si le nombre est superieur a cette valeur, on affiche un simple champ <input>
 $maxForeignKeyMenuLength=1000;
 
+// cascades de selecteurs a utiliser pour la suppression de campagnes ou de periodes d'enquete
+$suppression_cascades=array(
+	"exp"=>array("pays","systeme","annee_debut"),
+	"art"=>array()
+	);
+
+
 ?>

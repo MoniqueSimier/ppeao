@@ -14,7 +14,7 @@ function buildTableSelect($hierarchyLabel,$selected)
 
 	// on récupère la hiérarchie à afficher
 	$theHierarchy=$tableSelectors[$hierarchyLabel];
-	//debug	print_r(	$theHierarchy);
+	//debug	print_r($theHierarchy);
 
 //on commence le formulaire
 	echo('<form id="form_'.$hierarchyLabel.'" name="form_'.$hierarchyLabel.'" action="/edition/edition_selector.php" method="get">');
@@ -51,7 +51,8 @@ function buildTableList($typeTableNom)
 		if ($table["type_table_nom"]==$typeTableNom && $table["editable"]=='t') {
 		//debug
 		if ($table["domaine_nom"]!=$previousDomain) {
-			$domain='</ul><h2>'.$table["domaine_description"].'</h2>';
+			if ($previousDomain!='') {$domain.='</ul>';}
+			$domain.='<h3>'.$table["domaine_description"].'</h3>';
 			$domain.='<ul>';
 			$previousDomain=$table["domaine_nom"];
 			} 
@@ -181,13 +182,13 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 	
 	global $tablesDefinitions;
 	global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases : BD_PECHE et BD_PPEAO)
+	//global $debug;
 	
 	//debug	print_r($selectedValues);
 	// le nom de la table
 	$theSelect='<p>'.htmlentities($tablesDefinitions[$theTable]["label"]).'</p>';
 	// le SELECT avec les valeurs de la table
 	//le SELECT accepte-t-il les sélections multiples
-	//debug 
 	$isMultiple='multiple="multiple"';
 	
 	
@@ -204,7 +205,9 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 							ORDER BY '.$tablesDefinitions[$theTable]["noms_col"].'
 						';
 
-			//debug 				echo($valuesSql);
+			//debug 	
+			if($debug) {
+			echo($valuesSql);}
 
 			$valuesResult=pg_query($connectPPEAO,$valuesSql) or die('erreur dans la requete : '.$valuesSql. pg_last_error());
 			$valuesTable=pg_fetch_all($valuesResult);
@@ -1121,4 +1124,5 @@ else {
 return $validityCheck;
 
 }
+
 ?>

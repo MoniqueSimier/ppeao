@@ -13,6 +13,8 @@
 @import url(contact.css);
 /* styles pour le module d'export*/
 @import url(export.css);
+/* styles de test pour le debogage*/
+@import url(suppression.css);
 /* *********************** */
 /* common styles */
 
@@ -103,7 +105,9 @@ h4 {
 
 /* ***************************** */
 /* styles personnalisés globaux */
-
+.clear {
+	clear:both;;
+}
 .error {
 color:red;
 }
@@ -271,7 +275,7 @@ width:800px;
 }
 
 #main_container.edition {
-width:100%;
+width:90%;
 }
 
 
@@ -369,6 +373,8 @@ font-size: 9px;
 #home_thumbs img {
 	margin:3px 6px 12px 3px;
 }
+
+
 
 /* if the browser is NOT Internet Explorer, we pass a pixel font size*/
 <!--[if !IE]>-->

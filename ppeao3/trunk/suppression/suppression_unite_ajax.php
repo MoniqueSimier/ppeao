@@ -46,11 +46,12 @@ $coups=pg_fetch_all($resultCoups);
 pg_free_result($resultCoups);
 if (!empty($coups)) {$coupsNombre=count($coups);} else {$coupsNombre=0;}
 
+
 // environnement
 // on extrait les listes d'id des enregistrements lies aux coups de peche a supprimer
 foreach ($coups as $coup) {
-	$enviro[]=$coup["exp_environnement_id"];
-	$coups_id[]=$coup["id"];
+	if (!empty($coup["exp_environnement_id"])) {$enviro[]=$coup["exp_environnement_id"];}
+	if (!empty($coup["id"])) {$coups_id[]=$coup["id"];}
 }
 // la liste des environnements lies aux coups de peche a supprimer
 $enviroListe='\''.arrayToList($enviro,'\',\'','\'');
@@ -73,7 +74,7 @@ if (!empty($fractions)) {$fractionNombre=count($fractions);} else {$fractionNomb
 // biologie
 // on extrait les listes d'id des fractions lies aux coups de peche a supprimer
 foreach ($fractions as $fraction) {
-	$fractions_id[]=$fraction["id"];
+	if (!empty($fraction["id"])) {$fractions_id[]=$fraction["id"];}
 }
 // la liste des id des fraction a supprimer
 $fractionsListe='\''.arrayToList($fractions_id,'\',\'','\'');
@@ -87,7 +88,7 @@ if (!empty($biologies)) {$biologieNombre=count($biologies);} else {$biologieNomb
 // trophique
 // on extrait les listes d'id des biologie lies aux coups de peche a supprimer
 foreach ($biologies as $biologie) {
-	$biologies_id[]=$biologie["id"];
+	if (!empty($biologie["id"])) {$biologies_id[]=$biologie["id"];}
 }
 // la liste des id des biologies a supprimer
 $biologiesListe='\''.arrayToList($biologies_id,'\',\'','\'');
@@ -96,13 +97,16 @@ $resultTrophique=pg_query($connectPPEAO,$sqlTrophique) or die('erreur dans la re
 $trophiques=pg_fetch_all($resultTrophique);
 pg_free_result($resultTrophique);
 $trophiqueNombre=count($trophiques);
-if (!empty($trophiques)) {$trophiqueNombre=count($trophiques);} else {$trophiqueNombre=0;}
-// on extrait les listes d'id des trophiques lies aux coups de peche a supprimer
-foreach ($trophiques as $trophique) {
-	$trophiques_id[]=$trophique["id"];
-}
-// la liste des id des trophiques a supprimer
-$trophiquesListe='\''.arrayToList($trophiques_id,'\',\'','\'');
+if (!empty($trophiques)) {$trophiqueNombre=count($trophiques);
+	// on extrait les listes d'id des trophiques lies aux coups de peche a supprimer
+	foreach ($trophiques as $trophique) {
+	if (!empty($trophique["id"])) {
+		$trophiques_id[]=$trophique["id"]; 
+		// la liste des id des trophiques a supprimer
+		$trophiquesListe='\''.arrayToList($trophiques_id,'\',\'','\'');}
+	} // end foreach $trophiques
+	} else {$trophiqueNombre=0;}
+
 
 // on compose le message a afficher et on realise les actions a faire
 $theMessage="<div>";
@@ -128,32 +132,37 @@ if ($action=="delete") {
 // on realise les divers DELETE selon les listes d'id obtenues plus haut
 
 // trophique
+if ($trophiqueNombre!=0) {
 $sqlDelete='DELETE FROM exp_trophique WHERE id IN ('.$trophiquesListe.')';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
-pg_free_result($resultDelete);
+pg_free_result($resultDelete);}
 // biologie
+if ($biologieNombre!=0) {
 $sqlDelete='DELETE FROM exp_biologie WHERE id IN ('.$biologiesListe.')';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
-pg_free_result($resultDelete);
+pg_free_result($resultDelete);}
 // fraction
+if ($fractionNombre!=0) {
 $sqlDelete='DELETE FROM exp_fraction WHERE id IN ('.$fractionsListe.')';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
-pg_free_result($resultDelete);
+pg_free_result($resultDelete);}
 // environnement
+if ($enviroNombre!=0) {
 $sqlDelete='DELETE FROM exp_fraction WHERE id IN ('.$enviroListe.')';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
-pg_free_result($resultDelete);
+pg_free_result($resultDelete);}
 // coups de peche
+if ($coupsNombre!=0) {
 $sqlDelete='DELETE FROM exp_coup_peche WHERE id IN ('.$coupsListe.')';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
-pg_free_result($resultDelete);
+pg_free_result($resultDelete);}
 // campagne
 $sqlDelete='DELETE FROM exp_campagne WHERE id=\''.$lUnite["id"].'\'';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
 pg_free_result($resultDelete);
 
 
-$theMessage.='<h1 align="center" id="delete_title">suppression de la campagne :</h1>';
+	$theMessage.='<h1 align="center" id="delete_title">campagne supprim&eacute;e:</h1>';
 	$theMessage.='<h2>'.$lUnite["campagne"].'</h2>';
 	$theMessage.='<h3>pays : '.$lUnite["pays"].'</h3>';
 	$theMessage.='<h3>systeme : '.$lUnite["systeme"].'</h3>';

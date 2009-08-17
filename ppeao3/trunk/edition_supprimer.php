@@ -118,7 +118,7 @@ if ($domaine=='exp') {
 	$total=countMatchingUnits($domaine);
 	// si il n'y a pas de résultats
 	if ($total==0) {
-		echo('<div id="affiche_unites">il n&#x27;existe aucune campagne dans la base de donn&eacute;es</div>');
+		echo('<div id="affiche_unites">il n&#x27;existe aucune campagne correspondante dans la base de donn&eacute;es</div>');
 		}
 	else
 	 {
