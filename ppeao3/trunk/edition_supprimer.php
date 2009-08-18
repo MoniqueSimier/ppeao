@@ -64,6 +64,37 @@ include $_SERVER["DOCUMENT_ROOT"].'/suppression/suppression_functions.php';
 
 
 <?php
+
+// on commence par tester si il existe des campagnes ou enquetes
+$campagnes=TRUE;
+$enquetes=TRUE;
+if ($domaine=='exp') {
+$sqlCampagnes='SELECT COUNT(id) FROM exp_campagne';
+$resultCampagnes=pg_query($connectPPEAO,$sqlCampagnes) or die('erreur dans la requete : '.$sqlCampagnes. pg_last_error());
+$arrayCampagnes=pg_fetch_all($resultCampagnes);
+pg_free_result($resultCampagnes);
+if ($arrayCampagnes[0]["count"]==0) {$campagnes=FALSE;} else {$campagnes=TRUE;}
+
+ } // fin de if ($domaine=='exp') 
+
+if ($domaine=='art') {
+$sqlEnquetes='SELECT COUNT(id) FROM art_periode_enquete';
+$resultEnquetes=pg_query($connectPPEAO,$sqlEnquetes) or die('erreur dans la requete : '.$sqlEnquetes. pg_last_error());
+$arrayEnquetes=pg_fetch_all($resultEnquetes);
+pg_free_result($resultEnquetes);
+
+if ($arrayEnquetes[0]["count"]==0) {$enquetes=FALSE;} else {$enquetes=TRUE;}
+ } // fin de if ($domaine=='art') 
+
+// si on cherche des campagnes et qu'il n'y en a pas ou que l'on cherche des enquetes et qu'il n'y en a pas
+if (($domaine=='exp' AND $campagnes==FALSE) OR ($domaine=='art' AND $enquetes==FALSE)) 
+	{
+	if ($domaine=='exp') {echo("<br /><p class='error'>Il n&#x27;y a pas de campagnes dans la base de donn&eacute;es.</p>");}
+	if ($domaine=='art') {echo("<br /><p class='error'>Il n&#x27;y a pas de p&eacute;riodes d&#x27;enqu&ecirc;te dans la base de donn&eacute;es.</p>");}
+	}
+	// fin de if (($domaine=='exp' AND $campagnes==FALSE) OR ($domaine=='art' AND $enquetes==FALSE)) 
+else {
+
 // on determine si on est en mode selection ou en mode affichage des unites selectionnees
 $mode=$_GET["mode"];
 if (empty($mode)) {$mode="selection";}
@@ -127,14 +158,21 @@ if ($domaine=='exp') {
 	;} // end if domaine=exp
 // pour les periodes d'enquete
 if ($domaine=='art') {
-
+	// on compte le nombre d'enquetes correspondant a la selection
+	$total=countMatchingUnits($domaine);
+	// si il n'y a pas de résultats
+	if ($total==0) {
+		echo('<div id="affiche_unites">il n&#x27;existe aucune p&eacute;riode d&#x27;enqu&ecirc;te correspondante dans la base de donn&eacute;es</div>');
+		}
+	else
+	 {
+		echo('<div id="affiche_unites"><a href="/edition_supprimer.php?'.$_SERVER["QUERY_STRING"].'&mode=liste" id="affiche_unites_lien">afficher '.$total.' p&eacute;riode(s) d&#x27;enqu&ecirc;te correspondante(s)</a></div>');
+		}
 	;} // end if domaine=art
 	
 // fin de la construction du selecteur
 
-?>
 
-<?php
 // on affiche maintenant la table de resultats correspondants a la requete, si on est en mode=liste
 if ($mode=='liste') {
 
@@ -175,11 +213,8 @@ $tableSql.=" ORDER BY lower_pays,lower_systeme,date_debut, date_fin";
 // la pagination
 $tableSql.='	LIMIT '.$rowsPerPage.' OFFSET '.$startRow;
 
-//debug echo('pays='.$pays.'--'.'systeme='.$systeme.'--'.'debut='.$annee_debut.'--');echo($tableSql);
-
 $tableResult=pg_query($connectPPEAO,$tableSql) or die('erreur dans la requete : '.$tableSql. pg_last_error());
 $tableArray=pg_fetch_all($tableResult);
-//debug echo('<pre>');print_r($tableArray);echo('</pre>');
 // libération du résultat
 pg_free_result($tableResult);
 
@@ -217,14 +252,79 @@ echo paginate($_SERVER['PHP_SELF'].'?'.removeQueryStringParam($_SERVER['QUERY_ST
 echo('</td></tr>');
 echo('</table>'); // fin de la table de resultats
 
+} // fin de if ($domaine=='exp')
+
+
+if ($domaine=='art') {
+
+$tableSql='AND art_periode_enquete.art_agglomeration_id=art_agglomeration.id AND art_agglomeration.ref_secteur_id=ref_secteur.id AND ref_secteur.ref_systeme_id=ref_systeme.id AND ref_systeme.ref_pays_id=ref_pays.id';
+$tableSql.=' ORDER BY pays, systeme, secteur, annee, mois';
+if (!empty($annee_debut)) {$tableSql=' AND EXTRACT(YEAR FROM art_periode_enquete.date_debut) IN ('.$annee_debut.') '.$tableSql;} 
+if (!empty($agglomeration)) {$tableSql=' AND art_periode_enquete.art_agglomeration_id IN ('.$agglomeration.') '.$tableSql;}
+if (!empty($secteur)) {$tableSql=' AND art_periode_enquete.art_agglomeration_id IN (SELECT DISTINCT art_agglomeration.id FROM art_agglomeration WHERE art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN ('.$secteur.'))) '.$tableSql;}
+if (!empty($systeme)) {$tableSql=' AND art_periode_enquete.art_agglomeration_id IN (SELECT DISTINCT art_agglomeration.id FROM art_agglomeration WHERE art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.ref_systeme_id IN ('.$systeme.')))) '.$tableSql;}
+if (!empty($systeme)) {$tableSql='AND art_periode_enquete.art_agglomeration_id IN (SELECT DISTINCT art_agglomeration.id FROM art_agglomeration WHERE art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.ref_systeme_id IN (SELECT DISTINCT ref_systeme.id FROM ref_systeme WHERE ref_systeme.ref_pays_id IN ('.$pays.'))))) '.$tableSql;}
+	
+$tableSql='	SELECT DISTINCT art_periode_enquete.id, description as enquete, annee, mois, date_debut, date_fin, art_agglomeration.nom as agglomeration, art_agglomeration.id as agglo_id, ref_secteur.nom as secteur, ref_systeme.libelle as systeme, ref_pays.nom as pays 
+	FROM art_periode_enquete, art_agglomeration, ref_secteur, ref_systeme, ref_pays 
+	WHERE TRUE '.$tableSql;
+// la pagination
+$tableSql.='	LIMIT '.$rowsPerPage.' OFFSET '.$startRow;
+
+
+$tableResult=pg_query($connectPPEAO,$tableSql) or die('erreur dans la requete : '.$tableSql. pg_last_error());
+$tableArray=pg_fetch_all($tableResult);
+//debug echo('<pre>');print_r($tableArray);echo('</pre>');
+// libération du résultat
+pg_free_result($tableResult);
+
+// on affiche la table de resultats
+echo ('<div id="supprimer_container">');
+
+echo('<table id="la_table" border="0" cellspacing="0" cellpadding="0">');
+// la ligne d'en-tetes
+echo('<tr id="the_headers">');
+echo('<td class="small">&nbsp;</td><td class="small">pays</td><td class="small">systeme</td><td class="small">secteur</td><td class="small">agglom&eacute;ration</td><td class="small">p&eacute;riode d&#x27;enqu&ecirc;te</td><td class="small">ann&eacute;e-mois</td><td class="small">debut</td><td class="small">fin</td><td class="small">d&eacute;barquements</td>');
+echo('</tr>');
+
+// les donnees
+$i=0;
+foreach ($tableArray as $theRow) {
+	// affiche la ligne avec un style différent si c'est un rang pair ou impair 
+	if ( $i&1 ) {$rowStyle='edit_row_odd';} else {$rowStyle='edit_row_even';}
+	// on recupere le nombre de debarquements concernes
+	$sqlLandings='SELECT id FROM art_debarquement d WHERE d.art_agglomeration_id=\''.$theRow["agglo_id"].'\' AND d.annee=\''.$theRow["annee"].'\' AND d.mois=\''.$theRow["mois"].'\'';
+$resultLandings=pg_query($connectPPEAO,$sqlLandings) or die('erreur dans la requete : '.$sqlLandings. pg_last_error());
+$landings=pg_fetch_all($resultLandings);
+pg_free_result($resultLandings);
+if (!empty($landings)) {$landingsNombre=count($landings);} else {$landingsNombre=0;}
+
+	
+	
+	echo('<tr class="'.$rowStyle.'">');
+	echo('<td class="small"><a href="#" onclick="javascript:modalDialogDeleteUnite(1,\''.$domaine.'\',\''.$theRow["id"].'\')" class="small link_button">supprimer</a></td><td class="small">'.$theRow["pays"].'</td><td class="small">'.$theRow["systeme"].'</td><td class="small">'.$theRow["secteur"].'</td><td class="small">'.$theRow["agglomeration"].'</td><td class="small">'.$theRow["enquete"].'</td><td class="small">'.$theRow["annee"].'-'.$theRow["mois"].'</td><td class="small">'.$theRow["date_debut"].'</td><td class="small">'.$theRow["date_fin"].'</td><td class="small">'.$landingsNombre.'</td>');
+	echo('</tr>');
+	$i++;
+	} //fin foreach $tableArray
+echo('<tr><td colspan="8" class="pagination_td">');
+// on affiche la pagination
+echo paginate($_SERVER['PHP_SELF'].'?'.removeQueryStringParam($_SERVER['QUERY_STRING'],'page'), '&amp;page=', $countPages, $currentPage);
+echo('</td></tr>');
+echo('</table>'); // fin de la table de resultats
+
 } // fin de if total!=0
-} // fin de if ($domaine=='exp') 
+
+} // fin de if ($domaine=='art') 
 
 
 } // end if $mode==liste
 
 echo('</div>');
 // fin de l'affichage des resultats
+
+} // fin de else (($domaine=='exp' AND $campagnes==FALSE) OR ($domaine=='art' AND $enquetes==FALSE)) 
+
+
 ?>
 
 

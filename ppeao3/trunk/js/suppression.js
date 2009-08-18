@@ -66,7 +66,7 @@ function showNextSelect(domaine,newLevel,last) {
 
 
 /*
-* Fonction utilisée pour mettre a jour le lien permettant d'afficher les resultats, chauqe fois que la selection change
+* Fonction utilisée pour mettre a jour le lien permettant d'afficher les resultats, chaque fois que la selection change
 */
 function updateSubmitLink(domaine) {
 
@@ -91,7 +91,8 @@ function updateSubmitLink(domaine) {
 		
 	// using GET to send the request
 	// on récupère les valeurs des paramètres de l'URL (fonction gup() définie dans basic.js)
-	xhr.open("GET","suppression/refreshSubmitLink_ajax.php?&domaine="+domaine+theString,true);
+//debug	alert("/suppression/refreshSubmitLink_ajax.php?&domaine="+domaine+theString);
+	xhr.open("GET","/suppression/refreshSubmitLink_ajax.php?&domaine="+domaine+theString,true);
 	xhr.send(null);
 }
 

@@ -52,6 +52,68 @@ switch ($theNewSelect) {
 } // end if exp
 // ****** a faire pour art *****
 if ($domaine=='art') {
+switch ($theNewSelect) {
+	case "pays":
+	$sql="	SELECT DISTINCT ref_pays.id as value, ref_pays.nom as text, lower(ref_pays.nom) as lower_nom 
+			FROM  ref_pays 
+			WHERE ref_pays.id IN (
+				SELECT DISTINCT ref_systeme.ref_pays_id 
+				FROM ref_systeme 
+				WHERE ref_systeme.id IN (
+					SELECT DISTINCT ref_secteur.ref_systeme_id FROM ref_secteur 
+					WHERE ref_secteur.id IN (
+						SELECT DISTINCT art_agglomeration.ref_secteur_id 
+						FROM art_agglomeration, art_periode_enquete 
+						WHERE art_agglomeration.id=art_periode_enquete.art_agglomeration_id
+						)
+					)
+				)
+			ORDER BY lower_nom";
+	break;
+	case "systeme":
+	$sql="	SELECT DISTINCT ref_systeme.id as value, ref_systeme.libelle as text, lower(ref_systeme.libelle) as lower_libelle, ref_systeme.ref_pays_id
+			FROM ref_systeme 
+			WHERE ref_systeme.id IN (
+					SELECT DISTINCT ref_secteur.ref_systeme_id FROM ref_secteur 
+					WHERE ref_secteur.id IN (
+						SELECT DISTINCT art_agglomeration.ref_secteur_id 
+						FROM art_agglomeration, art_periode_enquete 
+						WHERE art_agglomeration.id=art_periode_enquete.art_agglomeration_id
+						)
+					) 
+				AND ref_systeme.ref_pays_id IN ($previousSelection) 
+			ORDER BY lower_libelle
+		";
+	break;
+	case "secteur":
+	$sql="	SELECT DISTINCT ref_secteur.id as value, ref_secteur.nom as text, lower(ref_secteur.nom) as lower_nom 
+			FROM ref_secteur 
+			WHERE ref_secteur.id IN (
+						SELECT DISTINCT art_agglomeration.ref_secteur_id 
+						FROM art_agglomeration, art_periode_enquete 
+						WHERE art_agglomeration.id=art_periode_enquete.art_agglomeration_id
+						) 
+				AND ref_secteur.ref_systeme_id IN ($previousSelection) 
+			ORDER BY lower_nom";
+	break;
+	case "agglomeration":
+	$sql="	SELECT DISTINCT art_agglomeration.id as value, art_agglomeration.nom as text, lower(art_agglomeration.nom) as lower_nom 
+			FROM art_agglomeration, art_periode_enquete 
+			WHERE art_agglomeration.id=art_periode_enquete.art_agglomeration_id 
+			AND art_agglomeration.ref_secteur_id IN ($previousSelection) 
+			ORDER BY lower_nom";
+	break;
+	//note: les dates sont un cas particulier, il faut extraire l'annee de la table campagne/periode d'enquete
+	case "annee_debut":
+	$sql="	SELECT DISTINCT EXTRACT(YEAR FROM date_debut) as value, EXTRACT(YEAR FROM date_debut) as text
+			FROM art_periode_enquete 
+			WHERE art_periode_enquete.art_agglomeration_id IN ($previousSelection) 
+			ORDER BY value DESC 
+			";
+	break;
+		
+}// end switch thisSelect
+
 }
 
 
@@ -68,6 +130,7 @@ $selectedValues=$_GET[$theNewSelect];
 	// le selecteur
 	// on effectue la requete SQL pour recuperer les valeurs
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+	
 	$array=pg_fetch_all($result);
 	pg_free_result($result);
 	
@@ -83,7 +146,7 @@ $selectedValues=$_GET[$theNewSelect];
 			// si il reste un ou des <select> a afficher dans $suppression_cascades[$domaine] on ajoute le onChange complet
 			if ($thisLevel<count($suppression_cascades[$domaine])) {$onchange='onchange="javascript:showNextSelect(\''.$domaine.'\',\''.$theNextLevel.'\',\'\');"';} 
 			// sinon on passe juste "last" pour uniquement raffraichir le lien d'affichage des campagnes
-			else {$onchange='onchange="javascript:showNextSelect(\'\',\'\',\'last\')"';}
+			else {$onchange='onchange="javascript:showNextSelect(\''.$domaine.'\',\'\',\'last\')"';}
 			$theSelectCode.='<select id="'.$theNewSelect.'" class="level_select" '.$onchange.' multiple="multiple" size="10" name="'.$theNewSelect.'[]">';
 				
 				foreach ($array as $row) {
@@ -124,9 +187,35 @@ $sql="SELECT DISTINCT COUNT(id) as total FROM exp_campagne WHERE TRUE ";
 } // fin de if ($domaine=='exp') 
 
 if ($domaine=='art') {
+$sql="SELECT DISTINCT COUNT(art_periode_enquete.id) as total FROM art_periode_enquete WHERE TRUE ";
+	// si des valeurs de pays ont ete passees dans l'url
+	if (!empty($_GET["pays"])) {
+		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (SELECT DISTINCT art_agglomeration.id FROM art_agglomeration WHERE
+ art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.ref_systeme_id IN (SELECT DISTINCT ref_systeme.id FROM ref_systeme WHERE ref_systeme.ref_pays_id IN (\''.arrayToList($_GET["pays"],'\',\'','\'').')))))';
+		}
+	// si des valeurs de systeme ont ete passees dans l'url
+	if (!empty($_GET["systeme"])) {
+		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (SELECT DISTINCT art_agglomeration.id FROM art_agglomeration WHERE
+ art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.ref_systeme_id IN  (\''.arrayToList($_GET["systeme"],'\',\'','\'').'))))';
+		}
+	// si des valeurs de secteur ont ete passees dans l'url
+	if (!empty($_GET["secteur"])) {
+		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (SELECT DISTINCT art_agglomeration.id FROM art_agglomeration WHERE
+ art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN  (\''.arrayToList($_GET["secteur"],'\',\'','\'').')))';
+		}
+		// si des valeurs d'agglomeration ont ete passees dans l'url
+	if (!empty($_GET["agglomeration"])) {
+		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (\''.arrayToList($_GET["agglomeration"],'\',\'','\'').')';
+		}
+	// si des valeurs de annee_debut ont ete passees dans l'url
+	if (!empty($_GET["annee_debut"])) {
+		$sql.=' AND EXTRACT(YEAR FROM art_periode_enquete.date_debut) IN  (\''.arrayToList($_GET["annee_debut"],'\',\'','\'').')';
+		}
+	
 	
 } // fin de if ($domaine=='art')
 
+// debug echo($sql);
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 	$totalArray=pg_fetch_array($result);
 	pg_free_result($result);

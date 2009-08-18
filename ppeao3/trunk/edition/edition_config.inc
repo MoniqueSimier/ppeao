@@ -50,7 +50,7 @@ $maxForeignKeyMenuLength=1000;
 // cascades de selecteurs a utiliser pour la suppression de campagnes ou de periodes d'enquete
 $suppression_cascades=array(
 	"exp"=>array("pays","systeme","annee_debut"),
-	"art"=>array()
+	"art"=>array("pays","systeme","secteur","agglomeration","annee_debut")
 	);
 
 
