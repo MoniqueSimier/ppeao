@@ -257,7 +257,7 @@ if (!empty($activites)) {$activitesNombre=count($activites);
 	$resultEnginsactivite=pg_query($connectPPEAO,$sqlEnginsactivite) or die('erreur dans la requete : '.$sqlEnginsactivite. pg_last_error());
 	$enginsactivite=pg_fetch_all($resultEnginsactivite);
 	pg_free_result($resultEnginsactivite);
-	if (!empty($enginsactivite)) {$enginsactiviteNombre=count($engins);} else {$enginsactiviteNombre=0;}
+	if (!empty($enginsactivite)) {$enginsactiviteNombre=count($enginsactivite);} else {$enginsactiviteNombre=0;}
 	} 
 	// fin de  (!empty($activites))
 	else {$activitesNombre=0; $enginsactiviteNombre=0;}
@@ -339,7 +339,7 @@ if ($action=='ask') {
 	$theMessage.='<ul>';
 	$theMessage.='<li>'.$landingsNombre.' d&eacute;barquement(s)</li>';
 	$theMessage.='<li>'.$landingsrecNombre.' d&eacute;barquement(s) recompos&eacute;(s)</li>';
-	$theMessage.='<li>'.$enginsNombre.' engins</li>';
+	$theMessage.='<li>'.$enginsNombre.' enregistrements d\'engins/p&ecirc;che</li>';
 	$theMessage.='<li>'.$fractionsNombre.' fraction(s)</li>';
 	$theMessage.='<li>'.$poissonsNombre.' poisson(s) mesur&eacute;(s)</li>';
 	$theMessage.='<li>'.$activitesNombre.' activit&eacute;(s)</li>';
