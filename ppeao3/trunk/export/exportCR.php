@@ -6,6 +6,7 @@
 	$CRfichier = str_replace ("<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>","*--> ",$CRfichier);
 	$CRfichier = str_replace ("<b>","",$CRfichier);
 	$CRfichier = str_replace ("</b>","",$CRfichier);
+	$CRfichier = str_replace ("&nbsp;"," ",$CRfichier);
 	// ***************************
 	// Si on est dans le cas normal, on génère le compte rendu de fin de traitement.
 		if ($_SESSION['s_erreur_process']) {
@@ -22,6 +23,7 @@
 			$FicCRexecution = str_replace ("<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>","*--> ",$FicCRexecution);
 			$FicCRexecution = str_replace ("<b>","",$FicCRexecution);
 			$FicCRexecution = str_replace ("</b>","",$FicCRexecution);
+			$FicCRexecution = str_replace ("&nbsp;"," ",$FicCRexecution);
 			WriteCompLog ($logComp,$FicCRexecution,$pasdefichier);
 			
 		}

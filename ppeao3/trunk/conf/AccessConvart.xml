@@ -53,7 +53,7 @@
 				<type>boolean</type>
 				<postgrename>VALDEF</postgrename>
 				<postgretype>boolean</postgretype>
-				<valdefaut>1</valdefaut>
+				<valdefaut>0</valdefaut>
 			</champ>
 		</champs>
 	</table>
@@ -334,6 +334,126 @@
 			<champ>
 				<name>IdAgglo</name>
 				<type>integer</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+		</champs>
+	</table>
+	<table>
+		<tablename>ModeCalcul</tablename>
+		<postgretablename>ACCESS</postgretablename>
+		<champs>
+			<champ>
+				<name>CodeCalcul</name>
+				<type>integer</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>LibelleCalcul</name>
+				<type>text</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+		</champs>
+	</table>
+	<table>
+		<tablename>nomVernaculaire</tablename>
+		<postgretablename>ACCESS</postgretablename>
+		<champs>
+			<champ>
+				<name>pays</name>
+				<type>text</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>codesp</name>
+				<type>text</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>nom_vern</name>
+				<type>text</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>ListeVern</name>
+				<type>text</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+		</champs>
+	</table>
+	<table>
+		<tablename>PaysFragmentation</tablename>
+		<postgretablename>ACCESS</postgretablename>
+		<champs>
+			<champ>
+				<name>CodePays</name>
+				<type>text</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>NomPays</name>
+				<type>text</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>NomPaysFrag</name>
+				<type>text</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>IdSyst</name>
+				<type>integer</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>NomSyst</name>
+				<type>text</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+		</champs>
+	</table>	
+	<table>
+		<tablename>SuiviExtractImport</tablename>
+		<postgretablename>ACCESS</postgretablename>
+		<champs>
+			<champ>
+				<name>NumBase</name>
+				<type>integer</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>NomBaseExtr</name>
+				<type>text</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>DateExtr</name>
+				<type>date</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>DateImport</name>
+				<type>date</type>
+				<postgrename>ACCESS</postgrename>
+				<postgretype>ACCESS</postgretype>
+			</champ>
+			<champ>
+				<name>Etat</name>
+				<type>text</type>
 				<postgrename>ACCESS</postgrename>
 				<postgretype>ACCESS</postgretype>
 			</champ>

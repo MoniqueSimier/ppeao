@@ -153,7 +153,7 @@ if (isset($_SESSION['s_status_export'])) {
 	}
 }
 
-if ($typeAction == "copAC" && $typePeche="exp") {
+if ($typeAction == "copAC" && $typePeche =="exp") {
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> Pas de traitement pour les peches experimentales.</div>" ;
 		exit;
 
@@ -163,6 +163,7 @@ if ($typeAction == "copAC" && $typePeche="exp") {
 $CRexecution = "<br/>"; 			// Variable contenant le résultat du traitement
 $cptChampTotal = 0;			// Lecture d'une table, nombre d'enregistrements lus total
 $cptTableTotal = 0;			// Nombre global de tables lues
+$cptTableSourceVide = 0; 	// Nombre de tables vides
 $cptSQLErreur = 0 ;			// Nombre d'erreur lors de la mise a jour de la table
 $scriptSQL = "";			// Stockage du script SQL à exécuter pour créer ou maj les données
 $logComp="";
@@ -524,10 +525,6 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 									break;
 								}
 								$scriptSQL = GetSQLACCESS('insert',  $nomTableEC, $where, $compRow,"POSTGRE",$tables[$cpt],$connectAccessTravail,$connectPPEAO,$typePeche);
-								//echo $scriptSQL."<br/>";
-								//if ($EcrireLogComp ) {
-								//	WriteCompLog ($logComp,$scriptSQL,$pasdefichier);
-								//}
 								$testPos = strpos($scriptSQL[0],"*-ERREUR*-" );
 								if ($testPos === false){
 									// Il semble que le connecteur ODBC n'aime pas les scripts SQL avec plusieurs instructions. Donc, on eclate le scripts et on execute les instructions une a une.
@@ -549,18 +546,19 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 										}									
 
 									} else {
+									//echo $scriptSQL."<br/>";
 										// Execution de toutes les instructions
 										$InstructionSQL = explode("#;#",$scriptSQL);
-										$nbInstructions = count($InstructionSQL) - 1;
+										$nbInstructions = count($InstructionSQL) - 2; // - 2 car il y a un dernier #;# a la fin de la ligne qu'il faut prendre en compte
 										for ($cptIns = 0; $cptIns <= $nbInstructions; $cptIns++) {
-											if ($InstructionSQL[$cptIns] == ""){
+											if (trim($InstructionSQL[$cptIns]) == ""){
 												if ($EcrireLogComp ) {
 														WriteCompLog ($logComp,"SQL vide pour table ".$tables[$cpt],$pasdefichier);
 												} else {
 													echo "SQL vide pour table ".$tables[$cpt]."<br/>";
 												}
 											} else {
-											//echo $InstructionSQL[$cptIns]."<br/>";
+												//echo "SQL = ".$InstructionSQL[$cptIns]."<br/>";
 												$execSQLResult = odbc_exec($connectAccessTravail,$InstructionSQL[$cptIns]);
 												$erreurSQL = odbc_errormsg($connectAccessTravail); //
 												if (! $execSQLResult) {
@@ -576,7 +574,8 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 												} else {
 													$cptMajPOSTtoACC++;
 												}
-											odbc_free_result($execSQLResult);											
+												//echo "FIN SQL ok = ".$cptMajPOSTtoACC." ko = ".$cptSQLErreur."<br/> ";
+												odbc_free_result($execSQLResult);											
 											}
 										
 										}
@@ -637,13 +636,17 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 							$_SESSION['s_erreur_process'] = $ErreurProcess;
 						}
 						if ($cptMajACCtoACC > 0) {
-							$compCR = " (traitement avec succes de ".$cptMajACCtoACC.")";
+							$compCR = " (traitement avec succes de ".$cptMajACCtoACC." enreg.)";
 						} else {
-							$compCR = " (Aucun enregistrement traite avec succes)";
+							 if ( $cptMajPOSTtoACC > 0) {
+							 	$compCR = " (traitement avec succes de ".$cptMajPOSTtoACC." enreg.)";
+							 } else {
+								$compCR = " (Aucun enregistrement traite avec succes)";
+							}
 						}
-						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> ".$cptSQLErreur." erreurs de traitement - "/$compCR;
+						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> ".$cptSQLErreur." erreurs de traitement - ".$compCR;
 						if ($EcrireLogComp ) {			
-								WriteCompLog ($logComp,"   - ATTENTION ".$cptSQLErreur." erreurs de traitement. ".$compCR,$pasdefichier);
+								WriteCompLog ($logComp,"   - ATTENTION : ".$cptSQLErreur." erreurs de traitement. ".$compCR,$pasdefichier);
 						}
 					} else {
 						switch($typeAction){

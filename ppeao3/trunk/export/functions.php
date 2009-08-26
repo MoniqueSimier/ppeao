@@ -278,11 +278,9 @@ for ($cpt = 0; $cpt <= $nbAttr; $cpt++) {
 
 				switch ($valeurDefaut) {
 					case "null": 
-
 						$valChampSQL = "NULL";
 						break;
 					case "vide" : 
-
 						if ($typeChampACCESS == "integer" || $typeChampACCESS == "real") {
 							$valChampSQL = 0; 
 						} else {

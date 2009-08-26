@@ -20,7 +20,7 @@ listeaViderArtACCESS=activImporter,CoefficientKb,ConditionPhysicoChimiq,Correspo
 ; tables a copier entre la base de travail et la base PPEAO de reference
 listeaViderArtPPEAO=Agglomeration,CategorieSocioProfessionnelle,EtatCiel,GrandTypeEngin,Milieu,TypeActivite,TypeAgglomeration,TypeEngin,TypeSortie,Vent,CategorieEcologique,Categorietrophique,CoefficientKb,Espece,Nom,Famille,Ordre,OrigineKb,Pays,Secteur,Systeme;
 ; tables a copier entre la base de travail et la base ACCESS de reference
-listeTableRefArtACCESS=CorrespondanceMaille,debarqImporter,Enqueteur,EspeceTMO,Journal,ModeCalcul,MotDePasse,NomVernaculaire,PaysFragmentation,PeriodeEnquete,poidsImporter,SuiviExtractImport;
+listeTableRefArtACCESS=CorrespondanceMaille,Enqueteur,EspeceTMO,Journal,ModeCalcul,nomVernaculaire,PaysFragmentation,SuiviExtractImport;
 ; tables a copier entre la base de travail et la base PPEAO de reference
 listeTableRefArtPPEAO=Pays,Systeme,Secteur,CategorieEcologique,Categorietrophique,Ordre,Famille,Espece,Nom,OrigineKb,CoefficientKb,TypeAgglomeration,Agglomeration,CategorieSocioProfessionnelle,EtatCiel,GrandTypeEngin,Milieu,TypeActivite,TypeEngin,TypeSortie,Vent;
 ; tables a vider Peches Experimentales
