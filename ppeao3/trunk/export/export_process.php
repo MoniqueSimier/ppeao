@@ -257,20 +257,18 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	switch ($typePeche) { 
 		case "exp":
 			$BDACCESS = GetParam("nomBDRefExp",$PathFicConfAccess);
-			$nomBDSource = "Base ACCESS de ref";
 			$BDSource = "connectAccess";
 			$BDCible = "connectAccessTravail";
 			$nomPeche = "peches experimentales";
 			break;
 		case "art":
 			$BDACCESS = GetParam("nomBDRefArt",$PathFicConfAccess);
-			$nomBDSource = "Base POSTGRESQL de ref (PPEAO)";
 			$BDSource = "connectPPEAO";
 			$BDCible = "connectAccessTravail";
 			$nomPeche = "peches artisanales";
 			break;	
 	}
-	$nomAction = $nomAction." pour peche ".$nomPeche;
+	$nomAction = $nomAction." pour ".$nomPeche;
 	$BDACCESSTravail = $BDACCESS."_travail";	
 	$nomBDCible = "Base ACCESS de travail";
 	
@@ -293,7 +291,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	}
 	// Test connexion base de travail
 	if ($typePeche == "art" ) { // On controle la base de reference ACCESS uniquement pour les peches exp
-		$connectAccess = odbc_connect($BDACCESS,'','');
+		$connectAccess = odbc_connect($BDACCESS,'Administrateurs','',SQL_CUR_USE_ODBC);
 		if (!$connectAccess) {
 			if ($EcrireLogComp ) {
 				WriteCompLog ($logComp, "Erreur de la connection à la base ACCESS de reference ".$BDACCESS,$pasdefichier);
@@ -301,7 +299,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base ACCESS de reference ".$BDACCESS."</div>" ; exit;
 		} 
 	}
-	$connectAccessTravail = odbc_connect($BDACCESSTravail,'','');
+	$connectAccessTravail = odbc_connect($BDACCESSTravail,'Administrateurs','',SQL_CUR_USE_ODBC);
 	if (!$connectAccessTravail) {
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "Erreur de la connection à la base ACCESS de travail".$BDACCESSTravail,$pasdefichier);
@@ -375,9 +373,11 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			// Pour construire une requete compatible ACCESS et POSTGRESQL
 			switch($typeAction){
 					case "copAC":
+						$nomBDSource = "Base ACCESS de ref";
 						$nomTableEC = $tables[$cpt];
 						break; 
 					case "copPPEAO":
+						$nomBDSource = "Base POSTGRESQL de ref (PPEAO)";
 						$ficXMLDef = $_SERVER["DOCUMENT_ROOT"]."/conf/AccessConv".$typePeche.".xml";
 						if (! file_exists($ficXMLDef )) {
 							$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Le fichier ".$ficXMLDef." n existe pas..<br/>";
@@ -410,7 +410,12 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 				
 				// Compteur 
 				//echo "table en cours ".$nomTableEC."<br/>";
-				$compReadSqlC = "select count(*) from ".$nomTableEC;
+				if ($nomTableEC == "Enqueteur") {
+					$compReadSqlC = "select count(IdEnqueteur) from ".$nomTableEC;
+				} else {
+					$compReadSqlC = "select count(*) from ".$nomTableEC;
+				}
+				//echo "sql test table vide ".$compReadSqlC."<br/>";
 				switch($typeAction){
 					case "copAC":
 						$compReadResultC = odbc_exec($connectAccess,$compReadSqlC);
@@ -472,10 +477,6 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 					switch($typeAction){
 						case "copAC":
 							$compRow = array();
-							// found on php.net, il y a un pb avec odbc_fetch_row.
-							// D'ou ce $bug_workaround
-							$bug_workaround=0;
-							
 							$row_num = 1; 
 							
 							while ($compRow = odbc_fetch_array($compReadResult)) {

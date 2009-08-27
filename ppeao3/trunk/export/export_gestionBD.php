@@ -224,15 +224,26 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					WriteCompLog ($logComp,"* Base ".$BDACCESS." va etre videe",$pasdefichier);
 					WriteCompLog ($logComp,"*------------------------------------------------------",$pasdefichier);
 				}
-				// ************** vidage de la base de ref  *********************
+				// ************** vidage de la base de travail  *********************
 				// Test connection ODBC	
 				//$lev=error_reporting (8); //Pour eviter les avertissements si la base n'existe pas.	
-				$connectAccess = odbc_connect($BDACCESS,'','');
+				$connectAccess = odbc_connect($BDACCESS,'','',SQL_CUR_USE_ODBC);
+				// test nunux
+				//echo "test DSN <br/>";
+				//$result = @odbc_data_source( $connectAccess, SQL_FETCH_FIRST );
+				//while($result)
+				//{
+				//	echo "DSN: " . $result['server'] . " - " . $result['description'] . "<br>\n";
+				//	$result = @odbc_data_source( $connectAccess, SQL_FETCH_NEXT );
+				//}
+
+				//echo "fin test DSN <br/>";
+				// fin test nunux
 				// affichage test PB lock ACCESS
 				if ($EcrireLogComp && $affichageDetail) {
 					WriteCompLog ($logComp,"*- INFO : apres connexion",$pasdefichier);
 				}
-				if (!$connectAccess) {
+				if (! $connectAccess ) {
 					$CRexecution .= "Erreur de la connection à la base ACCESS ".$BDACCESS."<br/>";
 					if ($EcrireLogComp ) {
 						WriteCompLog ($logComp,"*- ERREUR : Erreur de la connection à la base ACCESS ".$BDACCESS,$pasdefichier);
@@ -278,7 +289,38 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					if ($EcrireLogComp && $affichageDetail) {
 						WriteCompLog ($logComp,"*- INFO : liste table a vider = ".$ListeTableAVider,$pasdefichier);
 					}
+					// Test nunux
+					//echo "Debut ".$BDACCESS."<br/>";
+					//$scriptTest = "select count(IdEnqueteur) from Enqueteur";
+					//$SQLTestResult = odbc_prepare($connectAccess, $scriptTest);
+					//$SQLexec = odbc_execute($SQLTestResult);
+					//$erreurSQL = odbc_errormsg($connectAccess); // 
+					//if (!$SQLexec) {
+						//$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur lecture Enqueteur(erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+					//} else	{ 
+						//$compTestC = odbc_fetch_row($SQLTestResult);
+						//echo "print_r = ";
+						//print_r($compTestC);
+						//echo "<br/>";
+						//$totalLignesTest = odbc_result($SQLTestResult,1);
+						//echo "nombre total ligne = ".$totalLignesTest."<br/>";
+						//if ($totalLignesTest > 0) {
+							//$scriptTest2 = "select IdEnqueteur from Enqueteur";
+							//$SQLTestResult2 = odbc_exec($connectAccess,$scriptTest2);
+							//$erreurSQL = odbc_errormsg($connectAccess); // 
+							//if (!$SQLTestResult2) {
+								//$CRexecution .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur lecture Enqueteur(erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+							//} else	{ 
+								//$compTest = array();
+								//while ($compTest = odbc_fetch_array($SQLTestResult2)) {
+									//echo $compTest['IdEnqueteur']."<br/>";
+									
+								//}
+							//}
+						//}
+					//}
 
+					// Fin test nunux
 					if (!$erreurProcess) {					
 					$tables = explode(",",$ListeTableAVider);
 					$nbTables = count($tables) - 1;
@@ -288,6 +330,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					$nbSuppOk = 0;
 					$nbSuppErr = 0;
 					$start_while=timer(); // début du chronométrage du for
+					// test nunux 
+					$continuetest = true;
+					if ($continuetest) {
 
 						for ($cpt = 0; $cpt <= $nbTables; $cpt++) {
 							$scriptDelete = "delete * from ".$tables[$cpt];
@@ -310,10 +355,11 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 								}
 							} 
 						}// fin du for	
-						if ($EcrireLogComp ) {
-							WriteCompLog ($logComp,"* Nb tables videes ok     = ".$nbSuppOk,$pasdefichier);
-							WriteCompLog ($logComp,"* Nb tables erreur vidage = ".$nbSuppErr,$pasdefichier);
-						}	
+					}
+					if ($EcrireLogComp ) {
+						WriteCompLog ($logComp,"* Nb tables videes ok     = ".$nbSuppOk,$pasdefichier);
+						WriteCompLog ($logComp,"* Nb tables erreur vidage = ".$nbSuppErr,$pasdefichier);
+					}	
 					} else {
 						odbc_close($BDACCESS);
 						if ($EcrireLogComp ) {
