@@ -1,5 +1,5 @@
 <?php 
-// Créé par Olivier ROUX, 10-08-2009
+// Créé par Olivier ROUX, 10-08-2009 Suppression de campagnes ou d'enquetes
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page
