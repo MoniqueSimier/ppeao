@@ -165,7 +165,7 @@ return iconv('ISO-8859-15','UTF-8',$theSelectCode);
 
 
 //******************************************************************************
-// insere un <select> pour filtrer les campagnes ou enquetes a supprimer
+// compte le nombre de campagnes ou enquetes a supprimer
 function countMatchingUnits($domaine) {
 
 global $connectPPEAO;
