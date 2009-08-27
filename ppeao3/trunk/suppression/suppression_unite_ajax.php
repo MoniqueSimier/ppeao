@@ -161,6 +161,11 @@ $sqlDelete='DELETE FROM exp_campagne WHERE id=\''.$lUnite["id"].'\'';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
 pg_free_result($resultDelete);
 
+// on inscrit la suppression dans le journal
+	logWriteTo(1,'notice','suppression de la campagne '.$lUnite["campagne"].' (id='.$lUnite["id"].')','','',0);
+
+
+
 
 	$theMessage.='<h1 align="center" id="delete_title">campagne supprim&eacute;e :</h1>';
 	$theMessage.='<h2>'.$lUnite["campagne"].'</h2>';
@@ -442,6 +447,9 @@ pg_free_result($resultDelete);}
 $sqlDelete='DELETE FROM art_periode_enquete WHERE id='.$unite;
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
 pg_free_result($resultDelete);
+
+// on inscrit la suppression dans le journal
+	logWriteTo(1,'notice','suppression de la p&eacute;riode d&#x27;enqu&ecirc;te '.$lUnite["enquete"].' (id='.$lUnite["id"].')','','',0);
 
 
 // on affiche le recapitulatif de ce qui a ete supprime
