@@ -344,7 +344,7 @@ function endElementCol($parser, $name){
 			}
 			break;	
 		case "FILIERE" :
-			if (!($filiereOK) { 
+			if (!($filiereOK)) { 
 				 
 				if (strtoupper($globaldata) == "TOUTES" || strtoupper($globaldata) == strtoupper($FiliereEnCours)) {
 					$filiereOK = true;
