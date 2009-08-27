@@ -253,6 +253,12 @@ return $newDate;
 }
 
 //***************************************************************************************************
+// cette fonction retourne le dernier jour d'un mois donne pour une annee donnee
+function days_in_month($year, $month) {
+    return( date( "t", mktime( 0, 0, 0, $month, 1, $year) ) ); 
+}
+
+//***************************************************************************************************
 // does a substring to the right of $haystack after a certain string $needle
 function substringAfter($haystack, $needle)
 {
