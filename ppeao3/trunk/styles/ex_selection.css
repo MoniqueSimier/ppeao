@@ -1,0 +1,14 @@
+/*************************/
+/* CSS pour la selection en vue de l'extraction   */
+/* Creee par O. Roux */
+/*************************/
+
+
+#step_2 {
+	display:block;
+}
+
+#ex_compteur {
+	margin-top: 50px;
+	clear:both;
+}
