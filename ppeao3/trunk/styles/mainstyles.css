@@ -13,8 +13,10 @@
 @import url(contact.css);
 /* styles pour le module d'export*/
 @import url(export.css);
-/* styles de test pour le debogage*/
+/* styles pour le module de suppression des unites*/
 @import url(suppression.css);
+/* styles pour le module de selection pour extraction*/
+@import url(ex_selection.css);
 /* *********************** */
 /* common styles */
 
@@ -106,7 +108,7 @@ h4 {
 /* ***************************** */
 /* styles personnalisés globaux */
 .clear {
-	clear:both;;
+	clear:both;
 }
 .error {
 color:red;
