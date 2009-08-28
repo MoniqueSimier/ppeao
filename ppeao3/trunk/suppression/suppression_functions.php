@@ -50,7 +50,6 @@ switch ($theNewSelect) {
 	
 }// end switch thisSelect
 } // end if exp
-// ****** a faire pour art *****
 if ($domaine=='art') {
 switch ($theNewSelect) {
 	case "pays":
@@ -126,7 +125,6 @@ $theTable=$tablesDefinitions[$theNewSelect];
 
 $selectedValues=$_GET[$theNewSelect];
 
-// ici on aura la fonction
 	// le selecteur
 	// on effectue la requete SQL pour recuperer les valeurs
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
