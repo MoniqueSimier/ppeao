@@ -50,7 +50,7 @@ function showNextSelect(domaine,newLevel,last) {
 	xhr.open("GET","suppression/addNextSelect_ajax.php?&level="+newLevel+theString+"&domaine="+domaine,true);
 	xhr.send(null);
 
-	}// end xhr.onreadystatechange
+	}// end if ((currentSelect.selectedIndex!=-1)
 	
 	// else if no value is selected, we remove the next criteria select and update the edit link
 	else {

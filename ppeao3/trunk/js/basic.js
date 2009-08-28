@@ -205,7 +205,9 @@ function formToUrl(theFormId,theClass) {
 // theFormId : l'id du formulaire
 // theClass : la classe des éléments du formulaire dont on veut récupérer les valeurs
 	// on sélectionne tous les champs du filtre 
-	var theParams=$(theFormId).getElements('.'+theClass);
+	var daClass;
+	if (theClass=='') {daClass='';} else {daClass='.'+theClass}
+	var theParams=$(theFormId).getElements(daClass);
 
 	var ln=theParams.length;
 	var theUrl='';
