@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Attention, l'ordre des differentes balises est tres importante pour l'analyse par le php -->
+<!-- Voir la documentation pour plus d'information si vous voulez ajouter une nouvelle table -->
 <tables>
 	<table>
+		<nom>ref_pays</nom>	
 		<peches>
 			<peche>toutes</peche>
 		</peches>
@@ -11,13 +14,13 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>ref_pays</nom>
 		<testNom>py</testNom>
 		<libelle>Pays</libelle>
 		<champ code="id" affichage="X" libelle="Id unique"/>
 		<champ code="nom" affichage="X" libelle="nom"/>
 	</table>
 	<table>
+		<nom>ref_systeme</nom>	
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -28,7 +31,6 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>ref_systeme</nom>
 		<testNom>sy</testNom>
 		<libelle>Systeme</libelle>
 		<champ code="id" affichage="X" libelle="Id unique"/>
@@ -36,6 +38,7 @@
 		<champ code="superficie" affichage="C" libelle="Superficie" />
 	</table>
 	<table>
+		<nom>ref_secteur</nom>
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -46,7 +49,6 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>ref_secteur</nom>
 		<testNom>se</testNom>
 		<libelle>Secteur</libelle>
 		<champ code="id" affichage="X" libelle="Id unique"/>
@@ -54,6 +56,7 @@
 		<champ code="superficie" affichage="C" libelle="Superficie" />
 	</table>
 	<table>
+		<nom>exp_station</nom>
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -61,7 +64,6 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>exp_station</nom>
 		<testNom>stat</testNom>
 		<libelle>Station</libelle>
 		<champ code="id" affichage="X" libelle="Id unique"/>
@@ -69,6 +71,7 @@
 		<champ code="site" affichage="C" libelle="Site"/>
 	</table>
 	<table>
+		<nom>exp_campagne</nom>
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -76,7 +79,6 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>exp_campagne</nom>
 		<testNom>cpg</testNom>
 		<libelle>Campagne</libelle>
 		<champ code="date_debut" affichage="X" libelle="Date de debut"/>
@@ -85,6 +87,7 @@
 		<champ code="code" affichage="C" libelle="Code"/>
 	</table>	
 	<table>
+		<nom>exp_coup_peche</nom>	
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -92,7 +95,6 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>exp_coup_peche</nom>
 		<testNom>cph</testNom>
 		<libelle>Coup de peche</libelle>
 		<champ code="date_cp" affichage="X" libelle="Date coup peche"/>
@@ -104,6 +106,7 @@
 		<champ code="exp_engin_id" affichage="X" libelle="ID engin"/>		
 	</table>	
 	<table>
+		<nom>exp_qualite</nom>	
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -111,12 +114,12 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>exp_qualite</nom>
 		<testNom>xqua</testNom>
 		<libelle>Qualite</libelle>
 		<champ code="libelle" affichage="C" libelle="Libelle"/>	
 	</table>	
 	<table>
+		<nom>exp_environnement</nom>
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -124,12 +127,12 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>exp_environnement</nom>
 		<testNom>env</testNom>
 		<libelle>Environnement</libelle>
 		<champ code="id" affichage="X" libelle="Id"/>		
 	</table>
 	<table>
+		<nom>exp_biologie</nom>	
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -137,12 +140,12 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>exp_biologie</nom>
 		<testNom>bio</testNom>
 		<libelle>Biologie</libelle>
 		<champ code="id" affichage="X" libelle="Id"/>		
 	</table>
 	<table>
+		<nom>exp_trophique</nom>	
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -150,12 +153,12 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>exp_trophique</nom>
 		<testNom>trop</testNom>
 		<libelle>Trophique</libelle>
 		<champ code="id" affichage="X" libelle="Id"/>		
 	</table>
 	<table>
+		<nom>exp_contenu</nom>	
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -163,13 +166,12 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>exp_contenu</nom>
 		<testNom>cont</testNom>
 		<libelle>Contenu</libelle>
 		<champ code="id" affichage="X" libelle="Id"/>		
 	</table>	
-	
 	<table>
+		<nom>exp_fraction</nom>	
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -177,12 +179,13 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>exp_fraction</nom>
+
 		<testNom>fra</testNom>
 		<libelle>Fraction</libelle>
 		<champ code="id" affichage="X" libelle="Id"/>	
 	</table>
 	<table>
+		<nom>exp_engin</nom>	
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -190,7 +193,6 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>exp_engin</nom>
 		<testNom>xeng</testNom>
 		<libelle>Engin</libelle>
 		<champ code="libelle" affichage="X" libelle="Libelle"/>	
@@ -200,6 +202,7 @@
 		<champ code="memo" affichage="C" libelle="Memo"/>	
 	</table>	
 	<table>
+		<nom>art_agglomeration</nom>	
 		<peches>
 			<peche>artisanale</peche>
 		</peches>
@@ -207,11 +210,11 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>art_agglomeration</nom>
 		<testNom>agg</testNom>
 		<libelle>Agglomeration</libelle>
 		<champ code="nom" affichage="X" libelle="Nom"/>
 	</table>
+		<nom>art_type_agglomeration</nom>	
 		<table>
 		<peches>
 			<peche>artisanale</peche>
@@ -220,12 +223,12 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>art_type_agglomeration</nom>
 		<testNom>tagg</testNom>
 		<libelle>Type Agglomeration</libelle>
 		<champ code="libelle" affichage="C" libelle="Libelle"/>
 	</table>
 	<table>
+		<nom>art_activite</nom>	
 		<peches>
 			<peche>artisanale</peche>
 		</peches>
@@ -233,7 +236,6 @@
 		<filieres>
 			<filiere>activite</filiere>
 		</filieres>	
-		<nom>art_activite</nom>
 		<testNom>act</testNom>
 		<libelle>Activite</libelle>
 		<champ code="art_agglomeration_id" affichage="X" libelle="ID Agglomeration"/>
@@ -244,6 +246,7 @@
 		<champ code="unite_peche_id" affichage="X" libelle="ID unite peche"/>		
 	</table>
 	<table>
+		<nom>art_debarquement</nom>	
 		<peches>
 			<peche>artisanale</peche>
 		</peches>
@@ -254,7 +257,6 @@
 			<filiere>structure</filiere>
 			<filiere>engin</filiere>			
 		</filieres>	
-		<nom>art_debarquement</nom>
 		<testNom>deb</testNom>
 		<libelle>Debarquement</libelle>
 		<champ code="art_agglomeration_id" affichage="X" libelle="ID Agglomeration"/>
@@ -265,6 +267,7 @@
 		<champ code="unite_peche_id" affichage="X" libelle="ID unite peche"/>		
 	</table>
 	<table>
+		<nom>exp_vegetation</nom>	
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -272,13 +275,13 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>exp_vegetation</nom>
 		<testNom>veg</testNom>		
 		<libelle>type de vegetation</libelle>
 		<champ code="id" affichage="X" libelle="Id"/>
 		<champ code="nom" affichage="C" libelle="Libelle"/>
 	</table>
 	<table>
+		<nom>ref_categorie_ecologique</nom>	
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -286,13 +289,13 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>ref_categorie_ecologique</nom>
 		<testNom>cate</testNom>		
 		<libelle>Categorie ecologique</libelle>
 		<champ code="id" affichage="X" libelle="Id"/>
 		<champ code="libelle" affichage="C" libelle="Libelle"/>
 	</table>
 	<table>
+		<nom>ref_categorie_trophique</nom>	
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
@@ -300,7 +303,6 @@
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>	
-		<nom>ref_categorie_trophique</nom>
 		<testNom>catt</testNom>		
 		<libelle>Categorie trophique</libelle>
 		<champ code="id" affichage="X" libelle="Id"/>

@@ -246,7 +246,7 @@ function AfficherDonnees($file,$typeAction){
 	if (!($_SESSION['listeCatEco'] == "")) {
 		$compCatEcoSQL = "";
 		$CatEcoNull = false;
-		$LabCatEco = " restreint aux cat&eacute;gories &eacute;cologique : ";
+		$LabCatEco = " restreint aux cat&eacute;gories &eacute;cologiques : ";
 		$champSel = explode(",",$_SESSION['listeCatEco']);
 		$nbrSel = count($champSel)-1;
 		$valCatE = "";
@@ -264,7 +264,7 @@ function AfficherDonnees($file,$typeAction){
 			$LabCatEco .= $champSel[$cptSel]." ";
 		}
 		if (!($valCatE=="")){
-			$compCatEcoSQL =" esp.ref_categorie_ecologique_id in (".$valCatE.") and "; // Pas and a la fin, c'est le dernier SQL
+			$compCatEcoSQL =" esp.ref_categorie_ecologique_id in (".$valCatE.") "; // 
 		}
 		// Si a choisi de selectionner les categories null, il faut l'expliciter
 		if ($CatEcoNull) {
@@ -343,7 +343,7 @@ function AfficherDonnees($file,$typeAction){
 					break;	
 			}
 		}
-		$compPoisSQL =" fam.non_poisson in (".$valPoisson.") and ";
+		$compPoisSQL =" fam.non_poisson in (".$valPoisson.") ";
 	} else {
 		if (!($typeAction =="environnement") && !($typeAction =="activite") && !($typeAction =="capture")){
 			$LabCatPois = " tous les poissons ";
@@ -352,8 +352,8 @@ function AfficherDonnees($file,$typeAction){
 	// DEBUG
 	if ($EcrireLogComp && $debugLog) {
 		WriteCompLog ($logComp, "INFO : Liste variable session: ",$pasdefichier);
-		WriteCompLog ($logComp, "INFO : CatTrop = ".$_SESSION['listeCatTrop'],$pasdefichier);
-		WriteCompLog ($logComp, "INFO : CatEco 	= ".$_SESSION['listeCatEco'],$pasdefichier);
+		WriteCompLog ($logComp, "INFO : CatTrop 	= ".$_SESSION['listeCatTrop'],$pasdefichier);
+		WriteCompLog ($logComp, "INFO : CatEco 		= ".$_SESSION['listeCatEco'],$pasdefichier);
 		WriteCompLog ($logComp, "INFO : Poissons 	= ".$_SESSION['listePoisson'],$pasdefichier);
 		WriteCompLog ($logComp, "INFO : Especes 	=".$_SESSION['listeEspeces'],$pasdefichier);
 	}	
@@ -382,9 +382,8 @@ function AfficherDonnees($file,$typeAction){
 			}							
 			// Prise en compte des sélections complémentaires
 			$compSQL = "";
-			$compPoisSQL = "";
 			if 	(!($_SESSION['listeQualite'] =="")) {
-				$compSQL =" cph.exp_qualite_id in (".$_SESSION['listeQualite'].") and ";
+				$compSQL =" cph.exp_qualite_id in (".$_SESSION['listeQualite'].") ";
 				$restSupp = " Qualit&eacute; limit&eacute;e à =".$_SESSION['listeQualite'];
 			}
 			if (!($_SESSION['listeProtocole'] == "")) {
@@ -392,7 +391,11 @@ function AfficherDonnees($file,$typeAction){
 				case "0" : $restSupp .= " - pas restreint aux coups du protocoles ";
 							break;
 				case "1" : $restSupp .= " - restreint aux coups du protocoles ";
-							$compSQL .=" cph.protocole = 1";
+							if ($compSQL == "") {
+								$compSQL =" cph.protocole = 1";
+							} else {
+								$compSQL .=" and cph.protocole = 1";
+							}
 							break;
 				}
 			}
@@ -439,8 +442,26 @@ function AfficherDonnees($file,$typeAction){
 					} // fin du switch ($TNomTable) 
 				}
 			} // fin du (!($_SESSION['listeColonne'] ==""))
-			$WhereSel .= $compSQL.$compCatEcoSQL.$compCatTropSQL;
+			// Analyse des différents composants du where et ajout des and quand nécessaire
+			if ($compSQL == "" ) {
+				$WhereSel = $compCatEcoSQL;
+			} else {
+				if ($compCatEcoSQL == "") {
+					$WhereSel = $compSQL;
+				} else {
+					$WhereSel = $compSQL." and ".$compCatEcoSQL;
+				}
+			}
+	
+			if (!($compCatTropSQL == "" )) {
+				if ($WhereSel == "" ) {
+					$WhereSel = $compCatTropSQL;
+				} else {
+					$WhereSel = $WhereSel." and ".$compCatTropSQL;
+				}
+			}
 			
+
 			// Cas particulier d'aucun sélection des espèces : 
 			// On reconstruit cette liste pour l'ensemble de la sélection car on va en avoir besoin
 			// pour les catégories trophiques/ecologiques
@@ -538,7 +559,7 @@ function AfficherDonnees($file,$typeAction){
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,ref_espece as esp";// attention a l'ordre pour les left outer join
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
 							esp.id = fra.ref_espece_id and
-							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id ".$compPoisSQL;						
+							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and ".$compPoisSQL;						
 						$builQuery = true;
 					break;
 				case "biologie" :
@@ -549,7 +570,7 @@ function AfficherDonnees($file,$typeAction){
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp." 
 							esp.id = fra.ref_espece_id and
 							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
-							bio.exp_fraction_id = fra.id ".$compPoisSQL;						
+							bio.exp_fraction_id = fra.id and ".$compPoisSQL;						
 						$builQuery = true;
 					break;	
 				case "trophique" :
@@ -562,7 +583,7 @@ function AfficherDonnees($file,$typeAction){
 							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
 							bio.exp_fraction_id = fra.id and 
 							trop.exp_biologie_id = bio.id 	and
-							cont.id = trop.exp_contenu_id ".$compPoisSQL;						
+							cont.id = trop.exp_contenu_id and ".$compPoisSQL;						
 						$builQuery = true;	
 					break;
 					default	:	
@@ -673,7 +694,23 @@ function AfficherDonnees($file,$typeAction){
 					} // fin du if (strpos($champSel[$cptSel],"-N") === false )
 				}
 			} // fin du (!($_SESSION['listeColonne'] ==""))
-			$WhereSel .= $compSQL.$compCatEcoSQL.$compCatTropSQL;
+			if ($compSQL == "" ) {
+				$WhereSel = $compCatEcoSQL;
+			} else {
+				if ($compCatEcoSQL == "") {
+					$WhereSel = $compSQL;
+				} else {
+					$WhereSel = $compSQL." and ".$compCatEcoSQL;
+				}
+			}
+	
+			if (!($compCatTropSQL == "" )) {
+				if ($WhereSel == "" ) {
+					$WhereSel = $compCatTropSQL;
+				} else {
+					$WhereSel = $WhereSel." and ".$compCatTropSQL;
+				}
+			}
 			
 			// Cas particulier d'aucun sélection des espèces : 
 			// On reconstruit cette liste pour l'ensemble de la sélection car on va en avoir besoin
@@ -705,15 +742,13 @@ function AfficherDonnees($file,$typeAction){
 			// Definition de tout ce qui est commun aux peches expérimentales
 			// Il va y avoir moins de données communes que pour les peches exp car certaines dependent de la filiere acti ou deb 
 			// Donc on cree des variables generales selon qu'on va traiter activite ou debarquement
-			$listeChampsArt = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.id,se.nom, act.art_agglomeration_id, agg.nom, act.annee, act.mois, act.date_activite, act.id,act.date_activite";
-			$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_activite as act,art_agglomeration as agg,art_unite_peche as upec,art_grand_type_engin as gte";
+			$listeChampsArt = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.id,se.nom, act.art_agglomeration_id, agg.nom, act.annee, act.mois, act.date_activite, act.id,act.date_activite,upec.id";
+			$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_activite as act,art_agglomeration as agg,art_unite_peche as upec";
 			
 			$WhereArt = "	py.id = sy.ref_pays_id and
 							sy.id = se.ref_systeme_id and
 							se.id = agg.ref_secteur_id and
 							".$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq." 
-							gte.id = act.art_grand_type_engin_id and
-							".$compGTESQL."
 							act.art_agglomeration_id = agg.id and
 							act.mois = penq.mois and 
 							act.annee = penq.annee and

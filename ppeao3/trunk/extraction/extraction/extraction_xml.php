@@ -5,7 +5,8 @@
 // Created by Yann Laurent
 // 2009-06-29 : creation
 //*****************************************
-// Ce programme gere les lectures des fichiers XML
+// Ce script contient une serie de fonctions permettant de lire et de parser les fichiers XML contenant la sélection
+// et la définition des colonnes à afficher
 //*****************************************
 // Paramètres en entrée
 // aucun pour l'instant.
@@ -21,9 +22,22 @@ $globaldata ="";
 $RecupDonneesOK = false;
 $TableAAjouter = false;
 $idenTableEnCours = "";
-// Fonction associée à l’événement début d’élément
-function startElement($parser, $name, $attrs){
 
+//*********************************************************************
+// startElement:  Fonction associée à l’événement début d’élément pour la lecture du fichier XML 
+// contenant la sélection des données à extraire
+function startElement($parser, $name, $attrs){
+// Cette fonction permet de construire la liste des colonnes checkables ou non pour une table donnée $idenTableEnCours
+// Pour cela, elle va lire toutes les balises de haut niveau pour analyser les attribut de selection
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $parser : le parser en cours
+// $name : le nom de la balise en cours
+//*********************************************************************
+// En sortie : 
+// lUn certain de variables definit en GLOBAL contenant les différents SQL, 
+// Ainsi que $listeSelection qui contient le HTML rendant lisible la sélection
+//*********************************************************************
 	global $stack;
 	// Données pour la selection 
 	global $typeSelection ;
@@ -47,8 +61,6 @@ function startElement($parser, $name, $attrs){
 	global $SQLdateDebut ; // format annee/mois
 	global $SQLdateFin ; // format annee/mois
 	
-	//for ($i = 0; $i < $depth[$parser]; $i++)
-	//{print " ";}
 	array_push($stack,$name);
 
 	// Analyse de l'element et remplissage des variables
@@ -146,9 +158,20 @@ function startElement($parser, $name, $attrs){
 
 }
 
-// Fonction associée à l’événement fin d’élément
+//*********************************************************************
+// endElementCol: Fonction associée à l’événement fin d’élément pour la lecture du fichier XML 
+// contenant la sélection des données à extraire
 function endElement($parser, $name){
-
+// Cette fonction permet de construire la liste des tables valides pour le type de peche / type de stat / filieres
+// Pour cela, elle analyse les différentes balises et leur contenu
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $parser : le parser en cours
+// $name : le nom de la balise en cours
+//*********************************************************************
+// En sortie : 
+// la variable $listeSelection qui contient le HTML rendant lisible la sélection
+//*********************************************************************
 	global $stack;
 	global $globaldata;
 		// Données pour la selection 
@@ -226,9 +249,19 @@ return FALSE;
 
 }
 
-// Fonction de création du parser et d'affectation
-// des fonctions aux gestionnaires d'événements
+//*********************************************************************
+// new_xml_parser_Colonnes: Fonction de création du parser et d'affectation des fonctions aux gestionnaires d'événements
+// Pour la lecture du fichier XML contenant la sélection des données à extraire
 function new_xml_parser($file) {
+// Cette fonction permet de créer le parser pour le lire le fichier XML (en paramètre) et de créer les evenements avant et apres l'element
+// L'analyse du fichier se fait alors dans ces deux fonctions génant ces événements avant/après
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $file : le nom du fichier XML contenant la sélection des données à extraire
+//*********************************************************************
+// En sortie : 
+// une Tableau
+//*********************************************************************
 	global $parser_file;
 	//création du parseur
 	$xml_parser = xml_parser_create();
@@ -250,9 +283,21 @@ function new_xml_parser($file) {
 }
 
 
-
-// Fonction associée à l’événement début d’élément
+//*********************************************************************
+// startElementCol:  Fonction associée à l’événement début d’élément pour la lecture du fichier XML 
+// contenant la définition des colonnes à afficher
 function startElementCol($parser, $name, $attrs){
+// Cette fonction permet de construire la liste des colonnes checkables ou non pour une table donnée $idenTableEnCours
+// Pour cela, elle va lire la balise CHAMP et analyse ses attributs
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $parser : le parser en cours
+// $name : le nom de la balise en cours
+//*********************************************************************
+// En sortie : 
+// la variable $ListeChampTableFac ou $ListeChampTableDef qui contient la liste des colonnes pour la table en cours
+//*********************************************************************
+
 	global $stack;
 	// Données pour la selection 
 	global $ListeTable;
@@ -264,6 +309,7 @@ function startElementCol($parser, $name, $attrs){
 	global $NumChampDef;
 	global $NumChampFac;
 	global $idenTableEnCours ;
+	global $NomTableEnCours ;
 	array_push($stack,$name);
 
 	// Analyse de l'element et remplissage des variables
@@ -305,8 +351,23 @@ function startElementCol($parser, $name, $attrs){
 	}
 }
 
-// Fonction associée à l’événement fin d’élément
+//*********************************************************************
+// endElementCol: Fonction associée à l’événement fin d’élément pour la lecture du fichier XML 
+// contenant la définition des colonnes à afficher
 function endElementCol($parser, $name){
+// Cette fonction permet de construire la liste des tables valides pour le type de peche / type de stat / filieres
+// Pour cela, elle analyse les différentes balises et leur contenu
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $parser : le parser en cours
+// $name : le nom de la balise en cours
+//*********************************************************************
+// En sortie : 
+// la variable $ListeTable qui contient la liste des tables autorises
+//*********************************************************************
+
+
+
 // Note il aurait peut etre ete plus simple d'utiliser les librairies xml::reader pour parser le fichier xml...
 	global $stack;
 	global $globaldata;
@@ -317,6 +378,7 @@ function endElementCol($parser, $name){
 	global $TableATester ;
 	global $TableAAjouter ;
 	global $NomTableEnCours ;
+	global $NomTableBDEnCours ;
 	global $idenTableEnCours ; // Valeur un peu particuliere pour eviter de passer le nom de la table dans les param
 	global $Filiere ;
 	global $FiliereEnCours ;
@@ -325,8 +387,13 @@ function endElementCol($parser, $name){
 	global $NumChampDef;	
 	global $NumChampFac;
 	global $TabEnCours;
-	$filiereOK = false;
+	global $filiereOK ;
+	// pour test
+	$AfficheDebug = false;
 	switch(strtoupper($name)) {
+		CASE "NOM":
+			$NomTableBDEnCours = strtoupper($globaldata);
+			break;
 		case "PECHE" :
 			$filiereOK = false;
 			if (strtoupper($globaldata) == strtoupper($TypePecheEnCours) || strtoupper($globaldata) == "TOUTES") {
@@ -345,12 +412,10 @@ function endElementCol($parser, $name){
 			break;	
 		case "FILIERE" :
 			if (!($filiereOK)) { 
-				 
 				if (strtoupper($globaldata) == "TOUTES" || strtoupper($globaldata) == strtoupper($FiliereEnCours)) {
 					$filiereOK = true;
 				}
 			}
-
 			break;
 		case "TESTNOM" :
 			$idenTableEnCours = $globaldata;
@@ -385,10 +450,19 @@ function endElementCol($parser, $name){
 }
 
 
-
-// Fonction de création du parser et d'affectation
-// des fonctions aux gestionnaires d'événements
+//*********************************************************************
+// new_xml_parser_Colonnes: Fonction de création du parser et d'affectation des fonctions aux gestionnaires d'événements
+// Pour la lecture du fichier XML contenant la definition des tables et des colonnes a afficher
 function new_xml_parser_Colonnes($file) {
+// Cette fonction permet de créer le parser pour le lire le fichier XML (en paramètre) et de créer les evenements avant et apres l'element
+// L'analyse du fichier se fait alors dans ces deux fonctions génant ces événements avant/après
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $file : le nom du fichier XML contenant la definition des tables et des colonnes a afficher
+//*********************************************************************
+// En sortie : 
+// une Tableau
+//*********************************************************************
 
 	global $parser_file;
 	//création du parseur

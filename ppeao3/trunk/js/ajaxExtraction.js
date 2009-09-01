@@ -175,12 +175,12 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation) {
 		changementAction = '&chgA=y'
 		addURL = ""
 	}
+	ExpFic = ''
 	if (validation == 'y') {
 			if 	(document.getElementById("ExpFic").checked) {
-				ExpFic ="&exf=y" 
-
+				ExpFic = '&amp;exf=y' 
 			} else {
-				ExpFic =""
+				ExpFic = ''
 			}
 			var url="/extraction/extraction/extraction_resultat_exp.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+ExpFic+addURL
 			window.location.replace(url)
@@ -282,26 +282,29 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation) {
 	//document.getElementById("resultfiliere").innerHTML="<img src='/assets/ajax-loader_32px.gif' alt=''/>";
 	checkLog = document.getElementById("logsupp").checked;
 	globaltypepeche = typePeche
-	qual = "";
-	rest = "";
-	poiss = "";
-	listCE = "";
-	listCT = "";
-	listCol = "";
+	qual = ""
+	rest = ""
+	poiss = ""
+	listCE = ""
+	listCT = ""
+	listCol = ""
+	ListEsp = ""
 	if  (globalAction == typeAction) {
 		changementAction = ''
 		// On charge les données modifiées
 		// Recuperation des selections sur choix des poissons
 		poiss  = recupereSelection(4,"poisson");
 		// Recuperation des categories ecologiques
-		limCE = document.getElementById("numCEco").value;
-		listCE  = recupereSelection(limCE,"CEco");
-		// Recuperation des categories trophiques
-		limCT = document.getElementById("numCTro").value;
-		listCT  = recupereSelection(limCT,"CTro");
-		// Recuperation des especes
-		limEsp = document.getElementById("numEsp").value;
-		ListEsp  = recupereSelection(limEsp,"Esp");
+		if ( typeAction == 'NtPt' || typeAction == 'structure' ) {
+			limCE = document.getElementById("numCEco").value;
+			listCE  = recupereSelection(limCE,"CEco");
+			// Recuperation des categories trophiques
+			limCT = document.getElementById("numCTro").value;
+			listCT  = recupereSelection(limCT,"CTro");
+			// Recuperation des especes
+			limEsp = document.getElementById("numEsp").value;
+			ListEsp  = recupereSelection(limEsp,"Esp");
+		}
 		// Recuperation des colonnes en plus selectionnees
 		TEC = "&TEC="+tableEnCours;
 		TPEC = document.getElementById("tableEC").value;
