@@ -305,43 +305,55 @@ function startElementCol($parser, $name, $attrs){
 	global $ListeChampTableFac ;
 	global $TableATester ;
 	global $Filiere ;
+	global $FiliereEnCours ;
 	global $RecupDonneesOK;
 	global $NumChampDef;
 	global $NumChampFac;
 	global $idenTableEnCours ;
 	global $NomTableEnCours ;
-	array_push($stack,$name);
 
+	array_push($stack,$name);
+	$continueTrait = true;
 	// Analyse de l'element et remplissage des variables
 	switch(strtoupper($name)) {
 	case "CHAMP":
 			if ($RecupDonneesOK == true ) {
-				if ($attrs["AFFICHAGE"] =="X") {
-					$NumChampDef ++;
-					$ListeChampTableDef .= "<input id=\"".$idenTableEnCours."def".$NumChampDef."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" checked=\"checked\" disabled=\"disabled\"/>".$attrs["LIBELLE"]."<br/>";
-				} else {
-				$checked = "";
-				// On vérifie que ce champs n'a pas déjà été coché
-					if (!($_SESSION['listeColonne'] == "")) {
-						$colRecues = explode (",",$_SESSION['listeColonne']);
-						$NumColR = count($colRecues) - 1;
-						for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
-							$valTest = substr($colRecues[$cptCR],0,-2);
-							// On teste si on a déjà coché cette colonne
-							if ($valTest == $idenTableEnCours."-".$attrs["CODE"]) {
-								if (strpos($colRecues[$cptCR],"-N") === false) {
-									// Soit on vient de la cocher suffixe = -X
-									$checked = "checked=\"checked\"";
-								} else {
-									// Soit on vient de la décocher suffixe = -N
-									$checked = "";
+				if (array_key_exists("FILIERE",$attrs)) {
+				// Cela veut dire qu'au niveau du champs, on a une restriction supplémentaire par rapport à la filière.
+				// On le teste.
+					if (strpos($attrs["FILIERE"],trim($FiliereEnCours)) === false) {
+					// Si la filiere n'est pas dans la liste, on arrete
+						$continueTrait = false;
+					} 
+				}
+				if ($continueTrait){
+					if ($attrs["AFFICHAGE"] =="X") {
+						$NumChampDef ++;
+						$ListeChampTableDef .= "<input id=\"".$idenTableEnCours."def".$NumChampDef."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" checked=\"checked\" disabled=\"disabled\"/>".$attrs["LIBELLE"]."<br/>";
+					} else {
+					$checked = "";
+					// On vérifie que ce champs n'a pas déjà été coché
+						if (!($_SESSION['listeColonne'] == "")) {
+							$colRecues = explode (",",$_SESSION['listeColonne']);
+							$NumColR = count($colRecues) - 1;
+							for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
+								$valTest = substr($colRecues[$cptCR],0,-2);
+								// On teste si on a déjà coché cette colonne
+								if ($valTest == $idenTableEnCours."-".$attrs["CODE"]) {
+									if (strpos($colRecues[$cptCR],"-N") === false) {
+										// Soit on vient de la cocher suffixe = -X
+										$checked = "checked=\"checked\"";
+									} else {
+										// Soit on vient de la décocher suffixe = -N
+										$checked = "";
+									}
+									break;
 								}
-								break;
 							}
 						}
+						$NumChampFac ++;
+						$ListeChampTableFac .= "<input id=\"".$idenTableEnCours."fac".$NumChampFac."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" ".$checked."/>".$attrs["LIBELLE"]."<br/>";
 					}
-					$NumChampFac ++;
-					$ListeChampTableFac .= "<input id=\"".$idenTableEnCours."fac".$NumChampFac."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" ".$checked."/>".$attrs["LIBELLE"]."<br/>";
 				}
 				
 			}

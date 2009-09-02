@@ -27,6 +27,19 @@ $ListeTableInput = "";
 
 //*********************************************************************
 // AfficherSelection : Fonction d'affichage de la selection
+function  ajouterAuWhere($WhereEncours,$CodeAajouter) {
+	if ($WhereEncours == "" ) {
+		$WhereEncours = $CodeAajouter;
+	} else {
+		$WhereEncours .= " and ".$CodeAajouter;
+	}
+	return $WhereEncours;
+}
+
+
+
+//*********************************************************************
+// AfficherSelection : Fonction d'affichage de la selection
 function AfficherSelection($file) {
 // Cette fonction est la fonction qui analyse le ficher de sélection et qui affiche la dite selection
 // Elle permet aussi de remplir les variables SQL* qui contient la traduction en liste de variables de la sélection 
@@ -183,6 +196,13 @@ function AfficherDonnees($file,$typeAction){
 	$SQLFamille = $_SESSION['SQLFamille'];
 	$SQLdateDebut = $_SESSION['SQLdateDebut']; // format annee/mois
 	$SQLdateFin = $_SESSION['SQLdateFin']; // format annee/mois
+
+
+	// Attention, le cas des especes est un peu particulier.
+	// On utilise 2 variables de session : 
+	// SQLEspeces contient les données venant de la sélection (ie si lors de l'étape précédente, on a sélectionné des especes ou familles
+	// listeEspeces contient la sélection des especes venant des filières. Elle est au maximum égale a SQLEspeces.
+	// La référence pour le SQL final doit etre ListeEspeces.
 
 	$listeChamps = "";
 	global $connectPPEAO;
@@ -413,36 +433,46 @@ function AfficherDonnees($file,$typeAction){
 			$ListeTableSel = "";
 			$WhereSel = "";
 			$joinSel="";
+			$AjoutWhere = "";
 			// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
 			if (!($_SESSION['listeColonne'] =="")){
 				$champSel = explode(",",$_SESSION['listeColonne']);
 				$nbrSel = count($champSel)-1;
 				for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
 					$TNomLongTable ="";
-					$listeChampsSel .= ",".str_replace("-",".",$champSel[$cptSel]);
-					// Recuperation de l'alias de la table pour obtenir le nom de la table.
-					$PosDas = strpos($champSel[$cptSel],"-");
-					$TNomTable = substr($champSel[$cptSel],0,$PosDas);
-					//echo $TNomTable."<br/>";
-					switch ($TNomTable) {
-						case "xqua": //$TNomLongTable = "exp_qualite"; On l'a deja ajouté
-									break;
-						case "cate" : 		
-							$TNomLongTable = "ref_categorie_ecologique";
-							if (strpos($joinSel,$TNomTable) === false) {
-								$joinSel .= " left outer join ".$TNomLongTable." ".$TNomTable." on ".$TNomTable.".id = esp.".$TNomLongTable."_id"; 
-							}
-							break;
-						case "catt" : 		
-							$TNomLongTable = "ref_categorie_trophique";	
-							if (strpos($joinSel,$TNomTable) === false) {
-								$joinSel .= " left outer join ".$TNomLongTable." ".$TNomTable." on ".$TNomTable.".id = esp.".$TNomLongTable."_id";  
-							}
-							break;
-					} // fin du switch ($TNomTable) 
+					if (strpos($champSel[$cptSel],"-N") === false ) { // On ne traite pas les colonnes décochées
+						if ( strpos($champSel[$cptSel],"-X") === false ) {
+							$valTest = $champSel[$cptSel];
+						} else {
+							$valTest = substr($champSel[$cptSel],0,-2);
+						}
+						$listeChampsSel .= ",".str_replace("-",".",$valTest);
+						// Recuperation de l'alias de la table pour obtenir le nom de la table.
+						$PosDas = strpos($valTest,"-");
+						$TNomTable = substr($valTest,0,$PosDas);
+						//echo $TNomTable."<br/>";
+						switch ($TNomTable) {
+							case "cate" : 	
+								$TNomLongTable = "ref_categorie_ecologique";	
+								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id ");
+								break;
+							case "catt" :
+								$TNomLongTable = "ref_categorie_trophique";	
+								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id "); 		
+								break;
+							case "ord" :
+								$TNomLongTable = "ref_ordre";	
+								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = fam.".$TNomLongTable."_id "); 		
+								break;	
+						} // fin du switch ($TNomTable) 
+					}
 				}
 			} // fin du (!($_SESSION['listeColonne'] ==""))
 			// Analyse des différents composants du where et ajout des and quand nécessaire
+			// C'est un peu le bronx pour construire ces SQL, mais pas le choix. On doit pouvoir optimiser...
 			if ($compSQL == "" ) {
 				$WhereSel = $compCatEcoSQL;
 			} else {
@@ -452,7 +482,7 @@ function AfficherDonnees($file,$typeAction){
 					$WhereSel = $compSQL." and ".$compCatEcoSQL;
 				}
 			}
-	
+			// Gestion des categories trophiques...
 			if (!($compCatTropSQL == "" )) {
 				if ($WhereSel == "" ) {
 					$WhereSel = $compCatTropSQL;
@@ -460,8 +490,15 @@ function AfficherDonnees($file,$typeAction){
 					$WhereSel = $WhereSel." and ".$compCatTropSQL;
 				}
 			}
-			
-
+			// Enfin on ajoute les noms des nouveaux champs à lire depuis les colonnes
+			if ($WhereSel == "" ) {
+				$WhereSel = $AjoutWhere;
+			} else {
+				if (!($AjoutWhere == "")) {
+					$WhereSel = $WhereSel." and ".$AjoutWhere;
+				}
+			}
+			//echo "where sel = ".$WhereSel."<br/>";
 			// Cas particulier d'aucun sélection des espèces : 
 			// On reconstruit cette liste pour l'ensemble de la sélection car on va en avoir besoin
 			// pour les catégories trophiques/ecologiques
@@ -500,16 +537,35 @@ function AfficherDonnees($file,$typeAction){
 					}				
 				}
 				$SQLEspeces	= substr($SQLEspeces,0,- 1); // pour enlever la virgule surnumeraire;
+				$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite....
 			}
 			// Si malgré tout, toujours pas d'especes dispo, ben tant pis....
 			if ($SQLEspeces == "") {
 				$WhereEsp = "";
 			} else {
-				$WhereEsp = "fra.ref_espece_id in (".$SQLEspeces.") and";
-				$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite....
-			}
+				// Enfin on verifie qu'il n'y a pas eu de restriction supplémentaires
+				if (!($_SESSION['listeEspeces'] == "")) {
+					$TempSQLEspeces = $SQLEspeces;
+					$SQLEspeces = "";
+					$EspecesSele = explode (",",$_SESSION['listeEspeces']);
+					$NumEsp = count($EspecesSele) - 1;
+					for ($cptES=0 ; $cptES<=$NumEsp;$cptES++) {
+						
+						if (strpos($TempSQLEspeces,$EspecesSele[$cptES]) === false ){
 			
-			// MANQUE LES OPTIONS DE TRI DES VALEURS !!!!!
+						} else {
+							// La valeur est disponible, on la met à jour
+							if ($SQLEspeces == "" ) {
+								$SQLEspeces = "'".$EspecesSele[$cptES]."'";
+							} else {
+								$SQLEspeces .= ",'".$EspecesSele[$cptES]."'";
+							}
+						}
+					}
+				} 
+				$WhereEsp = "fra.ref_espece_id in (".$SQLEspeces.") and";
+				
+			}
 			
 			// ********** PREPARATION DU SQL
 			// Definition de tout ce qui est commun aux peches expérimentales
@@ -528,7 +584,7 @@ function AfficherDonnees($file,$typeAction){
 							xqua.id = cph.exp_qualite_id and
 							".$WhereEngin."
 							xeng.id = cph.exp_engin_id ";
-			$OrderCom = "";
+			$OrderCom = "order by py.id asc,sy.id asc,cpg.date_debut asc,cph.id asc";
 			// ********** CONSTRUCTION DES SQL DEFINITIFS PAR FILIERE
 			switch ($typeAction) {
 				case "peuplement" :
@@ -536,7 +592,7 @@ function AfficherDonnees($file,$typeAction){
 						// On n'extrait que des donnéees de fraction
 						// Il n'y aucune selection de colonnes supplémentaires
 						// On prend tous les poissons (pas de différence poisson/non poisson
-						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id";
+						$listeChampsSpec = ",esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id";
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,ref_espece as esp"; // attention a l'ordre pour les left outer join
 						$WhereSpec = " and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
 							esp.id = fra.ref_espece_id and
@@ -565,12 +621,13 @@ function AfficherDonnees($file,$typeAction){
 				case "biologie" :
 						$labelSelection = "Donn&eacute;es biologiques ";
 						// Construction de la liste d'individus
-						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond,bio.longueur";
+						$listeChampsSpec = ",fra.id, fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond,bio.longueur";
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,exp_biologie as bio,ref_espece as esp";// attention a l'ordre pour les left outer join
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp." 
 							esp.id = fra.ref_espece_id and
 							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
-							bio.exp_fraction_id = fra.id and ".$compPoisSQL;						
+							bio.exp_fraction_id = fra.id and ".$compPoisSQL;
+						$OrderCom .= ",fra.id asc ";						
 						$builQuery = true;
 					break;	
 				case "trophique" :
@@ -664,36 +721,46 @@ function AfficherDonnees($file,$typeAction){
 				break;
 			
 			}
+			$AjoutWhere = "";
 			// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
 			if (!($_SESSION['listeColonne'] =="")){
 				$champSel = explode(",",$_SESSION['listeColonne']);
 				$nbrSel = count($champSel)-1;
 				for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
+					$TNomLongTable ="";
 					if (strpos($champSel[$cptSel],"-N") === false ) { // On ne traite pas les colonnes décochées
-						$ValColonne = substr($champSel[$cptSel],0,-2); // On enleve le suffixe qui indiqu
-						$TNomLongTable ="";
-						$listeChampsSel .= ",".str_replace("-",".",$ValColonne);
+						if ( strpos($champSel[$cptSel],"-X") === false ) {
+							$valTest = $champSel[$cptSel];
+						} else {
+							$valTest = substr($champSel[$cptSel],0,-2);
+						}
+						$listeChampsSel .= ",".str_replace("-",".",$valTest);
 						// Recuperation de l'alias de la table pour obtenir le nom de la table.
-						$PosDas = strpos($ValColonne,"-");
-						$TNomTable = substr($ValColonne,0,$PosDas);
+						$PosDas = strpos($valTest,"-");
+						$TNomTable = substr($valTest,0,$PosDas);
 						//echo $TNomTable."<br/>";
 						switch ($TNomTable) {
-							case "cate" : 		
-								$TNomLongTable = "ref_categorie_ecologique";
-								if (strpos($joinSel,$TNomTable) === false) {
-									$joinSel .= " left outer join ".$TNomLongTable." ".$TNomTable." on ".$TNomTable.".id = esp.".$TNomLongTable."_id"; 
-								}
+							case "cate" : 	
+								$TNomLongTable = "ref_categorie_ecologique";	
+								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id ");
 								break;
-							case "catt" : 		
+							case "catt" :
 								$TNomLongTable = "ref_categorie_trophique";	
-								if (strpos($joinSel,$TNomTable) === false) {
-									$joinSel .= " left outer join ".$TNomLongTable." ".$TNomTable." on ".$TNomTable.".id = esp.".$TNomLongTable."_id";  
-								}
+								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id "); 		
+								break;
+							case "ord" :
+								$TNomLongTable = "ref_ordre";	
+								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = fam.".$TNomLongTable."_id "); 		
 								break;
 						} // fin du switch ($TNomTable) 
-					} // fin du if (strpos($champSel[$cptSel],"-N") === false )
+					}
 				}
 			} // fin du (!($_SESSION['listeColonne'] ==""))
+			// Analyse des différents composants du where et ajout des and quand nécessaire
+			// C'est un peu le bronx pour construire ces SQL, mais pas le choix. On doit pouvoir optimiser...
 			if ($compSQL == "" ) {
 				$WhereSel = $compCatEcoSQL;
 			} else {
@@ -703,12 +770,20 @@ function AfficherDonnees($file,$typeAction){
 					$WhereSel = $compSQL." and ".$compCatEcoSQL;
 				}
 			}
-	
+			// Gestion des categories trophiques...
 			if (!($compCatTropSQL == "" )) {
 				if ($WhereSel == "" ) {
 					$WhereSel = $compCatTropSQL;
 				} else {
 					$WhereSel = $WhereSel." and ".$compCatTropSQL;
+				}
+			}
+			// Enfin on ajoute les noms des nouveaux champs à lire depuis les colonnes
+			if ($WhereSel == "" ) {
+				$WhereSel = $AjoutWhere;
+			} else {
+				if (!($AjoutWhere == "")) {
+					$WhereSel = $WhereSel." and ".$AjoutWhere;
 				}
 			}
 			
@@ -729,19 +804,41 @@ function AfficherDonnees($file,$typeAction){
 				deb.art_agglomeration_id = penq.art_agglomeration_id and 
 				afra.art_debarquement_id = deb.id ";
 				$SQLEspeces = RecupereEspeces($SQLEsp);
+				$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite..
 	
 			}
 			// Si malgré tout, toujours pas d'especes dispo, ben tant pis....
 			if ($SQLEspeces == "") {
 				$WhereEsp = "";
 			} else {
+				// Enfin on verifie qu'il n'y a pas eu de restriction supplémentaires
+				if (!($_SESSION['listeEspeces'] == "")) {
+					$TempSQLEspeces = $SQLEspeces;
+					$SQLEspeces = "";
+					$EspecesSele = explode (",",$_SESSION['listeEspeces']);
+					$NumEsp = count($EspecesSele) - 1;
+					for ($cptES=0 ; $cptES<=$NumEsp;$cptES++) {
+						
+						if (strpos($TempSQLEspeces,$EspecesSele[$cptES]) === false ){
+			
+						} else {
+							// La valeur est disponible, on la met à jour
+							if ($SQLEspeces == "" ) {
+								$SQLEspeces = "'".$EspecesSele[$cptES]."'";
+							} else {
+								$SQLEspeces .= ",'".$EspecesSele[$cptES]."'";
+							}
+						}
+					}
+				} 
 				$WhereEsp = "afra.ref_espece_id in (".$SQLEspeces.") and ";
-				$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite....
+
 			}
 			// ********** PREPARATION DU SQL
 			// Definition de tout ce qui est commun aux peches expérimentales
 			// Il va y avoir moins de données communes que pour les peches exp car certaines dependent de la filiere acti ou deb 
 			// Donc on cree des variables generales selon qu'on va traiter activite ou debarquement
+			// Définition des SQL de base pour les activites (art_activite)
 			$listeChampsArt = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.id,se.nom, act.art_agglomeration_id, agg.nom, act.annee, act.mois, act.date_activite, act.id,act.date_activite,upec.id";
 			$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_activite as act,art_agglomeration as agg,art_unite_peche as upec";
 			
@@ -755,9 +852,9 @@ function AfficherDonnees($file,$typeAction){
 							act.art_agglomeration_id = penq.art_agglomeration_id and
 							upec.id = act.art_unite_peche_id";			
 			$OrderArt = "order by py.id asc, sy.id asc, agg.nom, act.annee asc,act.mois asc";
+			// Définition des SQL de base pour les débarquements (art_debarquement)
 			$listeChampsDeb = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,se.id, deb.art_agglomeration_id, agg.nom, deb.art_agglomeration_id, agg.nom, deb.annee, deb.mois, deb.id, deb.date_debarquement";
 			$ListeTableDeb = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_debarquement as deb,art_agglomeration as agg,art_unite_peche as upec,art_grand_type_engin as gte";
-			
 			$WhereDeb = "	py.id = sy.ref_pays_id and
 							sy.id = se.ref_systeme_id and
 							se.id = agg.ref_secteur_id and
@@ -823,10 +920,11 @@ function AfficherDonnees($file,$typeAction){
 					break;
 				case "engin" :
 						$labelSelection = "Donn&eacute;es d'engin";	
-						// On n'extrait que des donnéees de fraction
-						// Il n'y aucune selection de colonnes supplémentaires
-						// On prend tous les poissons (pas de différence poisson/non poisson
-						$listeChampsSpec = "";
+						$listeChampsCom = $listeChampsDeb;
+						$ListeTableCom = $ListeTableDeb ;
+						$WhereCom = $WhereDeb ;
+						$OrderCom = $OrderDeb ;	
+						$listeChampsSpec = ",deb.art_grand_type_engin_id";
 						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
 						$WhereSpec = " ";						
 						$builQuery = true;
@@ -953,10 +1051,14 @@ function AfficherDonnees($file,$typeAction){
 				exit;
 		} // fin du switch ($typeStatistiques) 
 	} // fin du switch ($typeSelection) 
+
+	// *
+	// *********************************************************************************
+	// EXECUTION DE LA REQUETE APRES SA CONSTRUCTION
+	// *********************************************************************************
 	
-	// On construit (on on) la requete finale.
+	// On construit (ou non) la requete finale.
 	// Elle peut avoir déjà été construite précédement, notament dans les cas par defaut
-	//echo "<b>hello</b>".$WhereSel." - ".$WhereCom." - ".$WhereSpec."<br/>";
 	if ($builQuery) {
 	//echo "<b>build query</b><br/>";
 		$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;

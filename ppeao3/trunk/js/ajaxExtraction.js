@@ -126,7 +126,6 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation) {
 		// Recuperation des especes
 		limEsp = document.getElementById("numEsp").value;
 		ListEsp  = recupereSelection(limEsp,"Esp");
-
 		// Recuperation des colonnes en plus selectionnees
 		TEC = "&TEC="+tableEnCours;
 		TPEC = document.getElementById("tableEC").value;
@@ -136,13 +135,13 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation) {
 			IDEnCours = TPEC+"fac"+i
 			if 	(document.getElementById(IDEnCours).checked) {
 				if (listCol=="") {
-					listCol = document.getElementById(IDEnCours).value
+					listCol = document.getElementById(IDEnCours).value+"-X"
 				} else {
 					listCol = listCol+","+document.getElementById(IDEnCours).value+"-X"
 				}
 			} 	else {
 				if (listCol=="") {
-					listCol = document.getElementById(IDEnCours).value
+					listCol = document.getElementById(IDEnCours).value+"-N"
 				} else {
 					listCol = listCol+","+document.getElementById(IDEnCours).value+"-N"
 				}
@@ -177,77 +176,77 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation) {
 	}
 	ExpFic = ''
 	if (validation == 'y') {
-			if 	(document.getElementById("ExpFic").checked) {
-				ExpFic = '&amp;exf=y' 
-			} else {
-				ExpFic = ''
-			}
-			var url="/extraction/extraction/extraction_resultat_exp.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+ExpFic+addURL
-			window.location.replace(url)
+		if 	(document.getElementById("ExpFic").checked) {
+			ExpFic = '&amp;exf=y' 
 		} else {
-		if (typeAction =='peuplement') {
-			// Demander si on veut exporter sous forme de fichier.
-			var url="/extraction/extraction/extraction_resultat_exp.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche
-			window.location.replace(url)
-		} else {
-			xmlHttp=GetXmlHttpObject();
-			if (xmlHttp==null){
-				alert ("Your browser does not support AJAX!");
-				return;
-			} 	
-			switch (numtab) {
-				case '1' :
-							try{
-							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '550px';
-	  						}
-							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '550px';
-							break;
-				case '2' :
-							try{
-							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '530px';
-	  						}
-							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '600px';
-							break;
-				case '3' :
-							try{
-							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '530px';
-	  						}
-							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '600px';
-							break;
-				case '4' :
-							try{
-							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '750px';
-	  						}
-							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '750px';
-							break;
-				case '5' :
-							try{
-							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '760px';
-	  						}
-							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '760px';
-							break;	
-			}
-			fenID = "resultfiliere";
-			var url="/extraction/extraction/extraction_gestion_filieres_exp.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+"&tab="+numtab+changementAction+addURL;
-			xmlHttp.onreadystatechange=stateChanged2;
-			xmlHttp.open("GET",url,true);
-			xmlHttp.send(null);
+			ExpFic = ''
 		}
+		var url="/extraction/extraction/extraction_resultat_exp.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+ExpFic+addURL
+		window.location.replace(url)
+	} else {
+		//if (typeAction =='peuplement') {
+		// Demander si on veut exporter sous forme de fichier.
+		//	var url="/extraction/extraction/extraction_resultat_exp.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche
+		//	window.location.replace(url)
+		//} else {
+		xmlHttp=GetXmlHttpObject();
+		if (xmlHttp==null){
+			alert ("Your browser does not support AJAX!");
+			return;
+		} 	
+		switch (numtab) {
+			case '1' :
+						try{
+						document.getElementById("exportFic").style.position = 'absolute';
+						document.getElementById("exportFic").style.top = '550px';
+						}
+						catch (e) { }
+						document.getElementById("footer").style.position = 'absolute';
+						document.getElementById("footer").style.top = '550px';
+						break;
+			case '2' :
+						try{
+						document.getElementById("exportFic").style.position = 'absolute';
+						document.getElementById("exportFic").style.top = '530px';
+						}
+						catch (e) { }
+						document.getElementById("footer").style.position = 'absolute';
+						document.getElementById("footer").style.top = '600px';
+						break;
+			case '3' :
+						try{
+						document.getElementById("exportFic").style.position = 'absolute';
+						document.getElementById("exportFic").style.top = '530px';
+						}
+						catch (e) { }
+						document.getElementById("footer").style.position = 'absolute';
+						document.getElementById("footer").style.top = '600px';
+						break;
+			case '4' :
+						try{
+						document.getElementById("exportFic").style.position = 'absolute';
+						document.getElementById("exportFic").style.top = '750px';
+						}
+						catch (e) { }
+						document.getElementById("footer").style.position = 'absolute';
+						document.getElementById("footer").style.top = '750px';
+						break;
+			case '5' :
+						try{
+						document.getElementById("exportFic").style.position = 'absolute';
+						document.getElementById("exportFic").style.top = '760px';
+						}
+						catch (e) { }
+						document.getElementById("footer").style.position = 'absolute';
+						document.getElementById("footer").style.top = '760px';
+						break;	
+		}
+		fenID = "resultfiliere";
+		var url="/extraction/extraction/extraction_gestion_filieres_exp.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+"&tab="+numtab+changementAction+addURL;
+		xmlHttp.onreadystatechange=stateChanged2;
+		xmlHttp.open("GET",url,true);
+		xmlHttp.send(null);
+		//}
 	}
 } 
 

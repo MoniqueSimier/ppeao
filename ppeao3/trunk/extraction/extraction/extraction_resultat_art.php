@@ -136,7 +136,10 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 					$valeurAMJ = AnaylseVarSession($_GET['CT']);
 					$_SESSION['listeCatTrop'] = $valeurAMJ;
 				} 
-				
+				if (isset($_GET['Esp'])) {
+					$valeurAMJ = AnaylseVarSession($_GET['Esp']);
+					$_SESSION['listeEspeces'] = $valeurAMJ;
+				} 					
 				if (isset($_GET['Col'])) {
 					$valeurAMJ = AnaylseVarSession($_GET['Col']);
 					$_SESSION['listeColonne'] = $valeurAMJ;

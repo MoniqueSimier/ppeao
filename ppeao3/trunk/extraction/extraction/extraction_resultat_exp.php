@@ -134,11 +134,50 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 					$valeurAMJ = AnaylseVarSession($_GET['CT']);
 					$_SESSION['listeCatTrop'] = $valeurAMJ;
 				} 
-				
-				if (isset($_GET['Col'])) {
-					$valeurAMJ = AnaylseVarSession($_GET['Col']);
-					$_SESSION['listeColonne'] = $valeurAMJ;
+				if (isset($_GET['Esp'])) {
+					$valeurAMJ = AnaylseVarSession($_GET['Esp']);
+					$_SESSION['listeEspeces'] = $valeurAMJ;
 				} 
+				if (isset($_GET['Col'])) {
+					$ListeColRecues = $_GET['Col'];
+				} else {
+					$ListeColRecues = "";
+				}			
+				// On analyse les nouvelles colonnes recues si on vient du tab 4
+				if (!($ListeColRecues =="")) {
+					//echo"list col2 = ".$_SESSION['listeColonne']." - param = ".$ListeColRecues."<br/>";
+					//$_SESSION['listeColonne'] = "";
+					$colRecues = explode (",",$ListeColRecues);
+					$NumColR = count($colRecues) - 1;
+					for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
+						// On extrait la valeur brute table.champ
+						$valTest = substr($colRecues[$cptCR],0,-2);
+						// Deux cas de figures : soit le champ a déjà été séléectionné : on le met à jour
+						// Sinon on l'ajoute avec sa valeur complete (table.nom-X ou -N)
+						// On a bseoin de cette info pour cocher ou décocher le champ
+						if (strpos($_SESSION['listeColonne'],$valTest) === false ){
+							// Cette valeur n'est pas disponible dans la liste : on l'ajoute
+							if ($_SESSION['listeColonne'] == "") {
+								$_SESSION['listeColonne'] = $colRecues[$cptCR] ;
+							} else {
+								$_SESSION['listeColonne'] .= ",".$colRecues[$cptCR];
+							}		
+						} else {
+							// La valeur est disponible, on la met à jour
+							if (strpos($_SESSION['listeColonne'],$colRecues[$cptCR]) === false) {
+								// on doit mettre à jour la valeur
+								if (strpos($colRecues[$cptCR],"-X") === false) {
+									$oldVal = $valTest."-X";
+								} else {
+									$oldVal = $valTest."-N";
+								}
+								$newVal = $colRecues[$cptCR];
+								$_SESSION['listeColonne'] = str_replace($oldVal,$newVal,$_SESSION['listeColonne']);
+							}
+						}
+					}
+				}
+				
 				$exportFichier = false;
 				if (isset($_GET['exf'])) {
 					if ($_GET['exf'] =="y") {

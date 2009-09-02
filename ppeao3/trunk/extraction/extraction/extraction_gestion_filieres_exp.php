@@ -111,6 +111,7 @@ if (isset($_GET['Esp'])) {
 }
 // On analyse les nouvelles colonnes recues si on vient du tab 4
 if (!($ListeColRecues =="")) {
+	echo"list col2 = ".$_SESSION['listeColonne']."<br/>";
 	//$_SESSION['listeColonne'] = "";
 	$colRecues = explode (",",$ListeColRecues);
 	$NumColR = count($colRecues) - 1;
@@ -202,24 +203,29 @@ $ClassEnv = "";
 $espActive="";
 switch ($numTab) {
 	case "1":
-		if ($typeAction == "environnement") {
+		if ($typeAction == "environnement" ) {
 			$ClassEnv = "";
 		} else {
 			$ClassEnv = " visible";
 		}
-		$cgActive=" visible";
+		if ($typeAction == "peuplement") {
+			$cgActive="";
+			$ClassEnv = "";
+		} else {
+			$cgActive=" visible";
+		}
 		$tab1 = " active";
 		break;
 	case "2":
 		// Inactif si environnement
-		if (!($typeAction == "environnement")) {
+		if (!($typeAction == "environnement") && !($typeAction == "peuplement")) {
 			$ceActive=" visible";
 		}
 		$tab2 = " active";
 		break;
 	case "3":
 		// Inactif si environnement
-		if (!($typeAction == "environnement")) {
+		if (!($typeAction == "environnement") && !($typeAction == "peuplement")) {
 			$ctActive=" visible";
 		}
 		$tab3 = " active";
@@ -229,7 +235,11 @@ switch ($numTab) {
 		$tab4 = " active";
 		break;
 	case "5":
-		$espActive=" visible";
+		if ($typeAction == "peuplement") {
+			$espActive="";
+		} else {
+			$espActive=" visible";
+		}
 		$tab5 = " active";
 		break;
 }
@@ -252,13 +262,18 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <form id="filiere" >
 <?php // construit les differentes onglets du tableau ?>
 <div id="menuTab">
+<?php if (!($typeAction == "peuplement")) { ?>
 <a href="#" class="<?php echo $tab1;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n')">Crit&egrave;res g&eacute;n&eacute;raux</a>|
-<?php if (!($typeAction == "environnement")) { ?>
+<?php } 
+	if (!($typeAction == "environnement") && !($typeAction == "peuplement")) { ?>
 <a href="#" class="<?php echo $tab2;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n')">Cat&eacute;gories &eacute;cologiques</a>|
 <a href="#" class="<?php echo $tab3;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n')">Cat&eacute;gories trophiques</a>|
 <?php } ?>
-<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n')">Colonnes</a>|
+
+<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n')">Colonnes</a>
+<?php if (!($typeAction == "peuplement")) { ?> |
 <a href="#" class="<?php echo $tab5;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n')">Esp&egrave;ces</a>
+<?php } ?>
 </div>
 <?php // Les differents div correspondant aux choix disponibles par onglet ?>
 <div id="criteresgen" class="criteresgen<?php echo $cgActive;?>">

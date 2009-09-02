@@ -101,6 +101,7 @@ if (isset($_GET['Esp'])) {
 }
 // On analyse les nouvelles colonnes recues si on vient du tab 4
 if (!($ListeColRecues =="")) {
+
 	//$_SESSION['listeColonne'] = "";
 	$colRecues = explode (",",$ListeColRecues);
 	$NumColR = count($colRecues) - 1;
