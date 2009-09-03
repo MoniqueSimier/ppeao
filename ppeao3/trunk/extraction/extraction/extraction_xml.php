@@ -311,7 +311,10 @@ function startElementCol($parser, $name, $attrs){
 	global $NumChampFac;
 	global $idenTableEnCours ;
 	global $NomTableEnCours ;
-
+	global $EcrireLogComp;
+	global $pasdefichier;
+	global $logComp;
+	
 	array_push($stack,$name);
 	$continueTrait = true;
 	// Analyse de l'element et remplissage des variables
@@ -331,9 +334,10 @@ function startElementCol($parser, $name, $attrs){
 						$NumChampDef ++;
 						$ListeChampTableDef .= "<input id=\"".$idenTableEnCours."def".$NumChampDef."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" checked=\"checked\" disabled=\"disabled\"/>".$attrs["LIBELLE"]."<br/>";
 					} else {
-					$checked = "";
-					// On vérifie que ce champs n'a pas déjà été coché
-						if (!($_SESSION['listeColonne'] == "")) {
+						$checked = "";
+						$dejaControle = false ;
+						// On vérifie que ce champs n'a pas déjà été coché
+						if (!($_SESSION['listeColonne'] == "") ) {
 							$colRecues = explode (",",$_SESSION['listeColonne']);
 							$NumColR = count($colRecues) - 1;
 							for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
@@ -348,10 +352,19 @@ function startElementCol($parser, $name, $attrs){
 										$checked = "";
 									}
 									break;
+								} else {
+									// Si on a déjà choisi de tout affiché alors on coh
+									if (strpos($_SESSION['listeColonne'],"toutX") > 0) { // Attention, on ne teste pas XtoutX mais bien toutX car sinon strpos renvoie 0 qui eput aussi vouloir dire false... 
+										$checked = "checked=\"checked\"";
+									} else {
+										if (strpos($_SESSION['listeColonne'],"pasttX") > 0) { // Meme remarque que precedemment sur pastoutX
+											$checked = "";
+										} 
+									}							
 								}
 							}
 						}
-						$NumChampFac ++;
+						$NumChampFac ++;					
 						$ListeChampTableFac .= "<input id=\"".$idenTableEnCours."fac".$NumChampFac."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" ".$checked."/>".$attrs["LIBELLE"]."<br/>";
 					}
 				}
@@ -400,14 +413,17 @@ function endElementCol($parser, $name){
 	global $NumChampFac;
 	global $TabEnCours;
 	global $filiereOK ;
+	global $pecheLue ;
 	// pour test
 	$AfficheDebug = false;
 	switch(strtoupper($name)) {
 		CASE "NOM":
 			$NomTableBDEnCours = strtoupper($globaldata);
+			$pecheLue = false;
 			break;
 		case "PECHE" :
 			$filiereOK = false;
+			$pecheLue = true;
 			if (strtoupper($globaldata) == strtoupper($TypePecheEnCours) || strtoupper($globaldata) == "TOUTES") {
 				$TableAAjouter = true;
 			} else {
@@ -416,10 +432,12 @@ function endElementCol($parser, $name){
 			break;	
 		case "STATISTIQUE" :
 			$filiereOK = false;
-			if (strtoupper($globaldata) == strtoupper($TypePecheEnCours) || strtoupper($globaldata) == "TOUTES") {
-				$TableAAjouter = true;
-			} else {
-				$TableAAjouter = false;
+			if (!($pecheLue)) { // Le fichier de selection est exclusif, soit peches soit statistiques. Mais le fichier XML contient les definitions pour les deux.. Donc on exclue ce test si il a déjà été fait au dessus.
+				if (strtoupper($globaldata) == strtoupper($TypePecheEnCours) || strtoupper($globaldata) == "TOUTES") {
+					$TableAAjouter = true;
+				} else {
+					$TableAAjouter = false;
+				}
 			}
 			break;	
 		case "FILIERE" :
@@ -445,9 +463,9 @@ function endElementCol($parser, $name){
 			}
 			if ($TableAAjouter && $filiereOK) {
 				if ($RecupDonneesOK) {
-					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."')\" class = \"active\">".$globaldata."</a><br/>";
+					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','')\" class = \"active\">".$globaldata."</a><br/>";
 				} else {
-					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."')\" class = \"\">".$globaldata."</a><br/>";
+					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','')\" class = \"\">".$globaldata."</a><br/>";
 				}
 			}	
 			if ($RecupDonneesOK == true ) {

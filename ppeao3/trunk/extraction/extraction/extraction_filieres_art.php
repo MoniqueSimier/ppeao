@@ -140,7 +140,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 			?>
 		</div>
 		<br/>
-		<div id="runProcess"><b>Choix de la fili&egrave;re :</b>&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','activite','1','','n')">activit&eacute;</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','capture','1','','n')">captures totales</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','NtPt','1','','n')">Nt/Pt</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','structure','1','','n')">structure de taille</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','engin','1','','n')">engins de p&ecirc;che</a></div>
+		<div id="runProcess"><b>Choix de la fili&egrave;re :</b>&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','activite','1','','n','')">activit&eacute;</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','capture','1','','n','')">captures totales</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','NtPt','1','','n','')">Nt/Pt</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','taille','1','','n','')">structure de taille</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','engin','1','','n','')">engins de p&ecirc;che</a></div>
 		<br/>
 		<div id="resultfiliere"></div>
 		<div id="exportFic"></div>

@@ -23,7 +23,7 @@
 	<table>
 		<nom>ref_systeme</nom>	
 		<peches>
-			<peche>experimentale</peche>
+			<peche>toutes</peche>
 		</peches>
 		<statistiques>
 			<statistique>toutes</statistique>
@@ -41,7 +41,7 @@
 	<table>
 		<nom>ref_secteur</nom>
 		<peches>
-			<peche>experimentale</peche>
+			<peche>toutes</peche>
 		</peches>
 		<statistiques>
 			<statistique>toutes</statistique>
@@ -59,14 +59,19 @@
 	<table>
 		<nom>ref_espece</nom>
 		<peches>
-			<peche>experimentale</peche>
+			<peche>toutes</peche>
 		</peches>
 		<statistiques>
 			<statistique>toutes</statistique>
 		</statistiques>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>peuplement</filiere>
+			<filiere>environnement</filiere>
+			<filiere>NtPt</filiere>
+			<filiere>biologie</filiere>
+			<filiere>trophique</filiere>
+			<filiere>taille</filiere>
 		</filieres>	
 		<testNom>esp</testNom>
 		<libelle>Especes</libelle>
@@ -81,14 +86,19 @@
 	<table>
 		<nom>ref_famille</nom>
 		<peches>
-			<peche>experimentale</peche>
+			<peche>toutes</peche>
 		</peches>
 		<statistiques>
 			<statistique>toutes</statistique>
 		</statistiques>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>peuplement</filiere>
+			<filiere>environnement</filiere>
+			<filiere>NtPt</filiere>
+			<filiere>biologie</filiere>
+			<filiere>trophique</filiere>
+			<filiere>taille</filiere>
 		</filieres>	
 		<testNom>fam</testNom>
 		<libelle>Famille</libelle>
@@ -99,14 +109,19 @@
 	<table>
 		<nom>ref_ordre</nom>
 		<peches>
-			<peche>experimentale</peche>
+			<peche>toutes</peche>
 		</peches>
 		<statistiques>
 			<statistique>toutes</statistique>
 		</statistiques>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>peuplement</filiere>
+			<filiere>environnement</filiere>
+			<filiere>NtPt</filiere>
+			<filiere>biologie</filiere>
+			<filiere>trophique</filiere>
+			<filiere>taille</filiere>
 		</filieres>	
 		<testNom>ord</testNom>
 		<libelle>Ordre</libelle>
@@ -116,11 +131,16 @@
 	<table>
 		<nom>ref_categorie_ecologique</nom>	
 		<peches>
-			<peche>experimentale</peche>
+			<peche>toutes</peche>
 		</peches>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>peuplement</filiere>
+			<filiere>environnement</filiere>
+			<filiere>NtPt</filiere>
+			<filiere>biologie</filiere>
+			<filiere>trophique</filiere>
+			<filiere>taille</filiere>
 		</filieres>	
 		<testNom>cate</testNom>		
 		<libelle>Categorie ecologique</libelle>
@@ -130,11 +150,16 @@
 	<table>
 		<nom>ref_categorie_trophique</nom>	
 		<peches>
-			<peche>experimentale</peche>
+			<peche>toutes</peche>
 		</peches>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>peuplement</filiere>
+			<filiere>environnement</filiere>
+			<filiere>NtPt</filiere>
+			<filiere>biologie</filiere>
+			<filiere>trophique</filiere>
+			<filiere>taille</filiere>
 		</filieres>	
 		<testNom>catt</testNom>		
 		<libelle>Categorie trophique</libelle>
@@ -450,7 +475,9 @@
 		<champ code="mois" affichage="X" libelle="Mois"/>
 		<champ code="date_activite" affichage="X" libelle="Date activite"/>
 		<champ code="id" affichage="X" libelle="ID"/>
-		<champ code="unite_peche_id" affichage="X" libelle="ID unite peche"/>		
+		<champ code="unite_peche_id" affichage="X" libelle="ID unite peche"/>
+		<champ code="art_grand_type_engin_id" affichage="X" libelle="art_grand_type_engin_id"/>
+			
 	</table>
 	<table>
 		<nom>art_debarquement</nom>	
@@ -461,7 +488,7 @@
 		<filieres>
 			<filiere>capture</filiere>
 			<filiere>NtPt</filiere>
-			<filiere>structure</filiere>
+			<filiere>taille</filiere>
 			<filiere>engin</filiere>			
 		</filieres>	
 		<testNom>deb</testNom>
@@ -471,7 +498,38 @@
 		<champ code="mois" affichage="X" libelle="Mois"/>
 		<champ code="date_debarquement" affichage="X" libelle="Date debarquement"/>
 		<champ code="id" affichage="X" libelle="ID"/>
-		<champ code="unite_peche_id" affichage="X" libelle="ID unite peche"/>		
+		<champ code="unite_peche_id" affichage="X" libelle="ID unite peche"/>
+		<champ code="prix" affichage="C" libelle="Prix" filiere="NtPt"/>		
+		<champ code="debarquee" affichage="C" libelle="Fraction Debarquee" filiere="NtPt"/>
+	</table>
+	<table>
+		<nom>art_fraction</nom>	
+		<peches>
+			<peche>artisanale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>NtPt</filiere>
+			<filiere>taille</filiere>		
+		</filieres>	
+		<testNom>afra</testNom>
+		<libelle>Fraction</libelle>
+		<champ code="ref_espece_id" affichage="X" libelle="ref_espece_id"/>
+		<champ code="ref_espece_id" affichage="X" libelle="ref_espece_id"/>	
+	</table>
+	<table>
+		<nom>art_unite_peche</nom>	
+		<peches>
+			<peche>artisanale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>			
+		</filieres>	
+		<testNom>upec</testNom>
+		<libelle>Unite de peche</libelle>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>	
+		<champ code="libelle_menage" affichage="C" libelle="Libelle menage"/>		
 	</table>
 	<!-- TABLES PARAMETRAGES PECHES ARTISANALES -->	
 	<table>
@@ -487,8 +545,8 @@
 		<libelle>Agglomeration</libelle>
 		<champ code="nom" affichage="X" libelle="Nom"/>
 	</table>
+	<table>	
 		<nom>art_type_agglomeration</nom>	
-		<table>
 		<peches>
 			<peche>artisanale</peche>
 		</peches>
@@ -498,6 +556,19 @@
 		</filieres>	
 		<testNom>tagg</testNom>
 		<libelle>Type Agglomeration</libelle>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>
+	</table>
+	<table>	
+		<nom>art_grand_type_engin</nom>	
+		<peches>
+			<peche>artisanale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<testNom>gte</testNom>
+		<libelle>Grand type engin</libelle>
 		<champ code="libelle" affichage="C" libelle="Libelle"/>
 	</table>
 </tables>

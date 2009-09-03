@@ -112,11 +112,11 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 		</div>
 		<br/>
 		<div id="runProcess"><b>Choix de la fili&egrave;re :</b>&nbsp;
-			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','peuplement','1','','n')">peuplement</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','environnement','1','','n')">environnement</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','NtPt','1','','n')">Nt/Pt</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','biologie','1','','n')">biologie</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','trophique','1','','n')">trophique</a>
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','peuplement','1','','n','')">peuplement</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','environnement','1','','n','')">environnement</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','NtPt','1','','n','')">Nt/Pt</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','biologie','1','','n','')">biologie</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','trophique','1','','n','')">trophique</a>
 		</ul>
 		</div>
 		<br/>

@@ -99,38 +99,45 @@ if (isset($_GET['Esp'])) {
 } else {
 	$listeEsp = "";
 }
-// On analyse les nouvelles colonnes recues si on vient du tab 4
 if (!($ListeColRecues =="")) {
-
-	//$_SESSION['listeColonne'] = "";
 	$colRecues = explode (",",$ListeColRecues);
 	$NumColR = count($colRecues) - 1;
 	for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
-		// On extrait la valeur brute table.champ
-		$valTest = substr($colRecues[$cptCR],0,-2);
-		// Deux cas de figures : soit le champ a déjà été séléectionné : on le met à jour
-		// Sinon on l'ajoute avec sa valeur complete (table.nom-X ou -N)
-		// On a bseoin de cette info pour cocher ou décocher le champ
-		if (strpos($_SESSION['listeColonne'],$valTest) === false ){
-			// Cette valeur n'est pas disponible dans la liste : on l'ajoute
-			if ($_SESSION['listeColonne'] == "") {
-				$_SESSION['listeColonne'] = $colRecues[$cptCR] ;
-			} else {
-				$_SESSION['listeColonne'] .= ",".$colRecues[$cptCR];
-			}		
-		} else {
-			// La valeur est disponible, on la met à jour
-			if (strpos($_SESSION['listeColonne'],$colRecues[$cptCR]) === false) {
-				// on doit mettre à jour la valeur
-				if (strpos($colRecues[$cptCR],"-X") === false) {
-					$oldVal = $valTest."-X";
-				} else {
-					$oldVal = $valTest."-N";
-				}
-				$newVal = $colRecues[$cptCR];
-				$_SESSION['listeColonne'] = str_replace($oldVal,$newVal,$_SESSION['listeColonne']);
+		// On extrait la valeur brute table.champ sauf dans le cas ou on la valeur XtoutX ou XpasttX
+		if (!($colRecues[$cptCR] == "XtoutX") && !($colRecues[$cptCR] == "XpasttX")) { 
+			$valTest = substr($colRecues[$cptCR],0,-2);
+			if ($EcrireLogComp && $debugLog) {
+				WriteCompLog ($logComp, "DEBUG : ".$colRecues[$cptCR]." - ".$valTest,$pasdefichier);
 			}
+
+			// Deux cas de figures : soit le champ a déjà été séléectionné : on le met à jour
+			// Sinon on l'ajoute avec sa valeur complete (table.nom-X ou -N)
+			// On a besoin de cette info pour cocher ou décocher le champ
+			if (strpos($_SESSION['listeColonne'],$valTest) === false ){
+				// Cette valeur n'est pas disponible dans la liste : on l'ajoute
+				if ($_SESSION['listeColonne'] == "") {
+					$_SESSION['listeColonne'] = $colRecues[$cptCR] ;
+				} else {
+					$_SESSION['listeColonne'] .= ",".$colRecues[$cptCR];
+				}		
+			} else {
+				// La valeur est disponible, on la met à jour
+				if (strpos($_SESSION['listeColonne'],$colRecues[$cptCR]) === false) {
+					// on doit mettre à jour la valeur
+					if (strpos($colRecues[$cptCR],"-X") === false) {
+						$oldVal = $valTest."-X";
+					} else {
+						$oldVal = $valTest."-N";
+					}
+					$newVal = $colRecues[$cptCR];
+					$_SESSION['listeColonne'] = str_replace($oldVal,$newVal,$_SESSION['listeColonne']);
+				}
+			}					
+		} else {
+			//$valTest = $colRecues[$cptCR];
+			$_SESSION['listeColonne'] = $colRecues[$cptCR];
 		}
+
 	}
 }
 // Préchargement des valeurs par défaut
@@ -155,7 +162,7 @@ if ($changtAction == "y") {
 				// On précharge les valeurs par defaut
 				$_SESSION['listePoisson'] = "0,np";
 			break;
-		case "structure":
+		case "taille":
 				// On précharge les valeurs par defaut
 				$_SESSION['listePoisson'] = "0,np";
 			break;
@@ -236,14 +243,14 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <?php // construit les differentes onglets du tableau ?>
 <div id="menuTab">
 <?php if (!($typeAction == "activite") && !($typeAction == "capture") && !($typeAction == "engin")) { ?>
-<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n')">Crit&egrave;res g&eacute;n&eacute;raux</a>|
-<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n')">Cat&eacute;gories &eacute;cologiques</a>|
-<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n')">Cat&eacute;gories trophiques</a>|
+<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','')">Crit&egrave;res g&eacute;n&eacute;raux</a>|
+<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n','')">Cat&eacute;gories &eacute;cologiques</a>|
+<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','')">Cat&eacute;gories trophiques</a>|
 
 <?php } ?>
-<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n')">Colonnes</a>
+<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','')">Colonnes</a>
 <?php if (!($typeAction == "activite") && !($typeAction == "capture") && !($typeAction == "engin")) { ?>
-|<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n')">Esp&egrave;ces</a>
+|<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n','')">Esp&egrave;ces</a>
 <?php } ?>
 </div>
 <?php // Les differents div correspondant aux choix disponibles par onglet ?>
@@ -264,7 +271,7 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 </div>
 <?php // l'onglet qui gere la selection des colonnes complémentaires ?>
 <div id="colonnes" class="colonnes<?php echo $colActive;?>">
-<?php echo AfficheColonnes($typePeche,$typeAction,$codeTableEnCours,$numTab); ?>
+<?php echo AfficheColonnes($typePeche,$typeAction,$codeTableEnCours,$numTab,$_SESSION['listeColonne']); ?>
 </div>
 <?php // l'onglet qui gere les espèces ?>
 <div id="especes" class="especes<?php echo $espActive;?>">

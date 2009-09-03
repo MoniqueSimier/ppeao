@@ -26,7 +26,7 @@ $NumChampFac = 0;
 $ListeTableInput = "";
 
 //*********************************************************************
-// AfficherSelection : Fonction d'affichage de la selection
+// ajouterAuWhere : test et ajoute
 function  ajouterAuWhere($WhereEncours,$CodeAajouter) {
 	if ($WhereEncours == "" ) {
 		$WhereEncours = $CodeAajouter;
@@ -35,7 +35,16 @@ function  ajouterAuWhere($WhereEncours,$CodeAajouter) {
 	}
 	return $WhereEncours;
 }
+//*********************************************************************
+// ajoutauTableSel : test et ajoute
+function  ajoutauTableSel($ListeTableSel,$TNomLongTable,$CondAAjouter) {
 
+	if (strpos($ListeTableSel,$TNomLongTable) === false ) {
+		$ListeTableSel .= $CondAAjouter;
+	} 
+	return $ListeTableSel;
+
+}
 
 
 //*********************************************************************
@@ -178,7 +187,7 @@ function AfficherDonnees($file,$typeAction){
 // La fonction ne renvoie rien. Mais la variable $resultatLecture est mise à jour pour un affichage dans le script qui appelle
 // cette fonction. 
 //*********************************************************************
-	$debugLog = true;
+	$debugLog = false;
 
 	// Il faut s'assurer qu'au moins une fois la fonction qui remplit ces variables de session a été lancée 
 	$typeSelection 	= $_SESSION['typeSelection'];
@@ -437,10 +446,18 @@ function AfficherDonnees($file,$typeAction){
 			// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
 			if (!($_SESSION['listeColonne'] =="")){
 				$champSel = explode(",",$_SESSION['listeColonne']);
+				// On va completer les champs si on a tout selectionné.
+				if (strpos($_SESSION['listeColonne'],"toutX") > 0) {
+				// A faire... 
+				} 
 				$nbrSel = count($champSel)-1;
 				for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
 					$TNomLongTable ="";
-					if (strpos($champSel[$cptSel],"-N") === false ) { // On ne traite pas les colonnes décochées
+					if (($champSel[$cptSel] == "XtoutX") || ($champSel[$cptSel] == "XpasttX")) {
+						continue ;
+					}
+					
+					if (strpos($champSel[$cptSel],"-N") === false  ) { // On ne traite pas les colonnes décochées, ni le choix tout / pas tout
 						if ( strpos($champSel[$cptSel],"-X") === false ) {
 							$valTest = $champSel[$cptSel];
 						} else {
@@ -450,21 +467,20 @@ function AfficherDonnees($file,$typeAction){
 						// Recuperation de l'alias de la table pour obtenir le nom de la table.
 						$PosDas = strpos($valTest,"-");
 						$TNomTable = substr($valTest,0,$PosDas);
-						//echo $TNomTable."<br/>";
 						switch ($TNomTable) {
 							case "cate" : 	
 								$TNomLongTable = "ref_categorie_ecologique";	
-								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
+								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id ");
 								break;
 							case "catt" :
 								$TNomLongTable = "ref_categorie_trophique";	
-								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
+								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id "); 		
 								break;
 							case "ord" :
 								$TNomLongTable = "ref_ordre";	
-								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
+								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = fam.".$TNomLongTable."_id "); 		
 								break;	
 						} // fin du switch ($TNomTable) 
@@ -721,14 +737,22 @@ function AfficherDonnees($file,$typeAction){
 				break;
 			
 			}
-			$AjoutWhere = "";
+						$AjoutWhere = "";
 			// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
 			if (!($_SESSION['listeColonne'] =="")){
 				$champSel = explode(",",$_SESSION['listeColonne']);
+				// On va completer les champs si on a tout selectionné.
+				if (strpos($_SESSION['listeColonne'],"toutX") > 0) {
+				// A faire... 
+				} 
 				$nbrSel = count($champSel)-1;
 				for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
 					$TNomLongTable ="";
-					if (strpos($champSel[$cptSel],"-N") === false ) { // On ne traite pas les colonnes décochées
+					if (($champSel[$cptSel] == "XtoutX") || ($champSel[$cptSel] == "XpasttX")) {
+						continue ;
+					}
+					
+					if (strpos($champSel[$cptSel],"-N") === false  ) { // On ne traite pas les colonnes décochées, ni le choix tout / pas tout
 						if ( strpos($champSel[$cptSel],"-X") === false ) {
 							$valTest = $champSel[$cptSel];
 						} else {
@@ -738,22 +762,49 @@ function AfficherDonnees($file,$typeAction){
 						// Recuperation de l'alias de la table pour obtenir le nom de la table.
 						$PosDas = strpos($valTest,"-");
 						$TNomTable = substr($valTest,0,$PosDas);
-						//echo $TNomTable."<br/>";
 						switch ($TNomTable) {
 							case "cate" : 	
 								$TNomLongTable = "ref_categorie_ecologique";	
-								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
+								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id ");
 								break;
 							case "catt" :
 								$TNomLongTable = "ref_categorie_trophique";	
-								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
+								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id "); 		
 								break;
 							case "ord" :
 								$TNomLongTable = "ref_ordre";	
-								$ListeTableSel .= ", ".$TNomLongTable." as ".$TNomTable;
-								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = fam.".$TNomLongTable."_id "); 		
+								// On teste si on a choisi aussi d'afficher la famille. Si non, il faut ajouter la requete.
+								if (strpos($_SESSION['listeColonne'],"fam-") === false) {
+									$ajoutFam = " ,ref_famille as fam";
+									$ajoutWhereFam = "and ref_famille.id = esp.ref_espece_id ";
+								} else {
+									$ajoutFam = "";
+									$ajoutWhereFam = "";								
+								}
+								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$ListeTableSel .= $ajoutFam;
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = fam.".$TNomLongTable."_id ");
+								$AjoutWhere .= $ajoutWhereFam; 		
+								break;	
+							case "fam" :
+							echo "FAM<br/>";
+								$TNomLongTable = "ref_famille";	
+								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id "); 		
+								break;
+							case "tagg" :
+								$TNomLongTable = "art_type_agglomeration";	
+								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = agg.".$TNomLongTable."_id "); 		
+								break;
+							case "gte" :
+								if ($typeAction == "activite") {
+									$TNomLongTable = "art_type_agglomeration";	
+									$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = agg.".$TNomLongTable."_id "); 
+								}		
 								break;
 						} // fin du switch ($TNomTable) 
 					}
@@ -905,8 +956,8 @@ function AfficherDonnees($file,$typeAction){
 										and esp.id = afra.ref_espece_id	";					
 						$builQuery = true;
 					break;
-				case "structure" :
-						$labelSelection = "Donn&eacute;es de structures";	
+				case "taille" :
+						$labelSelection = "Donn&eacute;es de tailles";	
 						$listeChampsCom = $listeChampsDeb;
 						$ListeTableCom = $ListeTableDeb ;
 						$WhereCom = $WhereDeb ;
@@ -1234,9 +1285,9 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction,$ty
 			$construitSelection .="<table id=\"".$nomInput."\"><tr><td>"; 
 			// A faire : formater le resultat avec une table
 			if (strpos($ListeCE,"tout") === false) {
-				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n')\"/>&nbsp;Tout</td><td>";
+				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','')\"/>&nbsp;Tout</td><td>";
 			} else {
-				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n')\"/>&nbsp;Tout</td><td>";
+				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','')\"/>&nbsp;Tout</td><td>";
 			}
 			// Analyse des categories disponibles pour l'espèce considérée
 			while ($CERow = pg_fetch_row($SQLCEcoResult) ) {
@@ -1328,9 +1379,16 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 		echo "erreur SQLEspeces vide dans la fonction AfficheEspeces<br/>Arret du traitement<br/>.";
 		exit;
 	}
-	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "INFO : sql espece dans AfficheEspeces = ".$SQLEspeces,$pasdefichier);
-	}
+
+	// Selon le type de peches, la fonction Js n'est pas la meme.
+	switch ($typePeche) {
+		case "artisanale" :
+		$runfilieres = "runFilieresArt";
+		break;
+		case "experimentale":
+		$runfilieres = "runFilieresExp";
+		break;
+	 }
 // Gere l'affichage des différentes espèces
 	$SQLCEco = "select id,libelle from ref_espece where id in (".$SQLEspeces.") order by id";	
 	$SQLCEcoResult = pg_query($connectPPEAO,$SQLCEco);
@@ -1347,9 +1405,9 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 			$construitSelection .="<table id=\"espece\"><tr><td>"; 
 			// A faire : formater le resultat avec une table
 			if (strpos($ListeEsp,"tout") === false) {
-				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"tout\"  onclick=\"runFilieresExp('".$typePeche."','".$typeAction."','".$numTab."','','n')\"/>&nbsp;Tout";
+				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','')\"/>&nbsp;Tout";
 			} else {
-				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"tout\" checked=\"checked\" onclick=\"runFilieresExp('".$typePeche."','".$typeAction."','".$numTab."','','n')\"/>&nbsp;Tout";
+				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"tout\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','')\"/>&nbsp;Tout";
 			}
 			while ($CERow = pg_fetch_row($SQLCEcoResult) ) {
 				if (!($CERow[0] =="" || $CERow[0] == null)) {
@@ -1388,7 +1446,7 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 
 //*********************************************************************
 // AfficheColonnes : Fonction pour afficher les tables / colonnes a selectionner par type de peche
-function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab) {
+function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColonnes) {
 // Cette fonction permet de construire la liste des checkboxes pour la selection des tables/colonnes à selectionner
 // Pour cela, elle va lire le fichier de definition (XML)
 //*********************************************************************
@@ -1397,6 +1455,7 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab) {
 // $typeAction : la filere en cours
 // $TableEnCours : la table en cours d'affichage
 // $numTab: le numéro du tab en cours
+// $ListeColonnes : la liste des colonnes deja cochées
 //*********************************************************************
 // En sortie : 
 // La fonction renvoie $tableau
@@ -1411,7 +1470,12 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab) {
 	global $NumChampDef;	
 	global $NumChampFac;
 	global $TabEnCours;
-	
+	global $EcrireLogComp;
+	global $logComp;
+	global $pasdefichier;
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "DEBUG : liste colonnes dans  affichescolonnees = ".$ListeColonnes,$pasdefichier);
+	}	
 	$inputNumFac = "";
 	$inputNumDef = "";
 	$inputListeTable = "";
@@ -1420,6 +1484,15 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab) {
 	$TableATester = $TableEnCours;
 	$FiliereEnCours = $typeAction;
 	$TypePecheEnCours = $typePeche;
+	// Selon le type de peches, la fonction Js n'est pas la meme.
+	switch ($typePeche) {
+		case "artisanale" :
+		$runfilieres = "runFilieresArt";
+		break;
+		case "experimentale":
+		$runfilieres = "runFilieresExp";
+		break;
+	 }
 	$TabEnCours = $numTab;
 	$fichiercolonne = $_SERVER["DOCUMENT_ROOT"]."/conf/ExtractionDefColonnes.xml";
 	// Appel à la fonction de création et d'initialisation du parseur
@@ -1448,7 +1521,14 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab) {
 	$inputTableEC = "<input type=\"hidden\" id=\"tableEC\" value=\"".$TableEnCours."\"/>";
 	$inputNumDef = "<input type=\"hidden\" id=\"numDef\" value=\"".$NumChampDef."\"/>";
 	$inputNumFac = "<input type=\"hidden\" id=\"numFac\" value=\"".$NumChampFac."\"/>";
-	$tableau = "<table class=\"ChoixChampComp\"><tr><td class=\"CCCTable\">".$ListeTable." </td><td class=\"CCCChamp\">Colonnes par d&eacute;faut : <br/>".$ListeChampTableDef."<br/>".$ContenuChampTableFac."</td></tr></table>".$inputTableEC.$inputNumFac.$inputNumDef;
+	$InputTout = "";
+	if (strpos($ListeColonnes,"XtoutX") === false) {
+		$InputTout = "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','tout')\" />&nbsp;Tout<br/>";
+	} else {
+		$InputTout = "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','aucun')\" checked=\"checked\" />&nbsp;Tout<br/>";
+	}
+	
+	$tableau = $InputTout."<table class=\"ChoixChampComp\"><tr><td class=\"CCCTable\">&nbsp;".$ListeTable." </td><td class=\"CCCChamp\">Colonnes par d&eacute;faut : <br/>".$ListeChampTableDef."<br/>".$ContenuChampTableFac."</td></tr></table>".$inputTableEC.$inputNumFac.$inputNumDef;
 	return $tableau; 
 }
 
@@ -1515,10 +1595,6 @@ function ouvreFichierLog($dirLog,$fileLogComp) {
 		}
 	}
 }
-
-
-
-
 //*********************************************************************
 // ouvreFichierLog : Fonction pour ouvrir le fichier log
 function RecupereEspeces($SQLAexec){
