@@ -465,6 +465,8 @@ function AfficherDonnees($file,$typeAction){
 						}
 						$listeChampsSel .= ",".str_replace("-",".",$valTest);
 						// Recuperation de l'alias de la table pour obtenir le nom de la table.
+						// Idealement ici, il faudrait aller taper dans le fichier XML pour recupérer le nom de la table.
+						// On avoir une variable globale contenant une table de correspondance chargée une fois pour toutes
 						$PosDas = strpos($valTest,"-");
 						$TNomTable = substr($valTest,0,$PosDas);
 						switch ($TNomTable) {
@@ -643,7 +645,7 @@ function AfficherDonnees($file,$typeAction){
 							esp.id = fra.ref_espece_id and
 							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
 							bio.exp_fraction_id = fra.id and ".$compPoisSQL;
-						$OrderCom .= ",fra.id asc ";						
+						$OrderCom .= ",fra.id asc, esp.id asc ";						
 						$builQuery = true;
 					break;	
 				case "trophique" :
@@ -660,7 +662,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;	
 					break;
 					default	:	
-					$labelSelection = "Coup de p&ecirc;ches ";
+					$labelSelection = "Coups de p&ecirc;ches ";
 					$SQLfinal = "select * from ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph
 							where cpg.id = cph.exp_campagne_id and
 							stat.id = cph.exp_station_id and
@@ -760,6 +762,8 @@ function AfficherDonnees($file,$typeAction){
 						}
 						$listeChampsSel .= ",".str_replace("-",".",$valTest);
 						// Recuperation de l'alias de la table pour obtenir le nom de la table.
+						// Idealement ici, il faudrait aller taper dans le fichier XML pour recupérer le nom de la table.
+						// On avoir une variable globale contenant une table de correspondance chargée une fois pour toutes
 						$PosDas = strpos($valTest,"-");
 						$TNomTable = substr($valTest,0,$PosDas);
 						switch ($TNomTable) {
@@ -789,15 +793,29 @@ function AfficherDonnees($file,$typeAction){
 								$AjoutWhere .= $ajoutWhereFam; 		
 								break;	
 							case "fam" :
-							echo "FAM<br/>";
 								$TNomLongTable = "ref_famille";	
 								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id "); 		
+								break;
+							case "aeng" :
+								$TNomLongTable = "art_engin_peche";	
+								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = gte.".$TNomLongTable."_id "); 		
+								break;
+							case "teng" :
+								$TNomLongTable = "art_type_engin";	
+								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".art_debarquement_id = deb.id "); 		
 								break;
 							case "tagg" :
 								$TNomLongTable = "art_type_agglomeration";	
 								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = agg.".$TNomLongTable."_id "); 		
+								break;
+							case "tact" :
+								$TNomLongTable = "art_type_activite";	
+								$ListeTableSel = ajoutauTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = act.".$TNomLongTable."_id "); 		
 								break;
 							case "gte" :
 								if ($typeAction == "activite") {
@@ -939,7 +957,7 @@ function AfficherDonnees($file,$typeAction){
 						$ListeTableCom = $ListeTableDeb ;
 						$WhereCom = $WhereDeb ;
 						$OrderCom = $OrderDeb ;
-						$listeChampsSpec = "";
+						$listeChampsSpec = ", deb.poids_total";
 						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
 						$WhereSpec = "";						
 						$builQuery = true;
@@ -1148,6 +1166,12 @@ function AfficherDonnees($file,$typeAction){
 			$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Pas de resultat disponible pour la sélection<br/>";
 		} else {
 			
+			if ($typeAction == "biologie") {
+				// On ajoute le libelle pour le coefficient
+				$listeChamps .=",Coeff_extrapolation";
+			}
+			// Ici, remplacer les noms des alias par le nom des tables...		
+			$listeChamps = remplaceAlias($listeChamps);
 			$resultatLecture .= "<b>".str_replace(","," - ",$listeChamps)."</b><br/>";
 			if ($exportFichier) {
 				$resultatFichier = str_replace(",","\t",$listeChamps);
@@ -1160,26 +1184,46 @@ function AfficherDonnees($file,$typeAction){
 					exit;
 				}	
 			}
-			
+
 			while ($finalRow = pg_fetch_row($SQLfinalResult) ) {
 				$resultatFichier = "";
 				// Construction de la liste des résultat
 				switch ($typeAction) {
 					case "biologie" :
-						// On doit calculer un coefficient d'extrapolation 
-						// er nombre total d'individu
+							// On doit calculer un coefficient d'extrapolation 
+							// On execute une requete supplémentaire pour recuperer le nombre d'individu dans exp_biologie pour la fraction et l'espece considerée
+							// On recupere le nombre de poissons reellement mesures pour une fraction donnée (qui elle meme correspond à 
+							// une seule espece.
+							$SQLcomplement = "Select count(id) from exp_biologie where exp_fraction_id =  ".$finalRow[16] ;
+							$SQLcomplementResult = pg_query($connectPPEAO,$SQLcomplement);
+							$erreurSQL = pg_last_error($connectPPEAO);
+							if ( !$SQLcomplementResult ) { 
+								if ($EcrireLogComp ) {
+									WriteCompLog ($logComp, "ERREUR : Erreur query complementaire biologie ".$SQLcomplement." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+								}
+						
+							} else {
+								$RowComplement = pg_fetch_row($SQLcomplementResult); 
+								$totalBio = $RowComplement[0];
+								pg_free_result($SQLcomplementResult);
+							}
+							// Calcul du coefficient = nombre de poisson peches / nombre de poissons mesures
+							$coefficient = intval($finalRow[17]) / intval($totalBio);							
 							$nbrRow = count($finalRow)-1;
+							// Transcription du resultat de la requete globale pour un affichage écran et un export sous forme de fichier
 							for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
 								$resultatLecture .= $finalRow[$cptRow]." - ";
 								if ($exportFichier) {
 									$resultatFichier .=$finalRow[$cptRow]."\t";
 								}
 							}
-							
-							$resultatLecture .="<br/>";
+							// Ajout du coefficient tout a la fin du fichier
+							$resultatLecture .= $coefficient."<br/>";
+							$resultatFichier .= $coefficient;
 						break;	
 					default	:
 							$nbrRow = count($finalRow)-1;
+							// Transcription du resultat de la requete globale pour un affichage écran et un export sous forme de fichier
 							for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
 								$resultatLecture .= $finalRow[$cptRow]." - ";
 								if ($exportFichier) {
@@ -1649,6 +1693,12 @@ function RecupereEspeces($SQLAexec){
 	$SQLEspeces	= substr($SQLEspeces,0,- 1); // pour enlever la virgule surnumeraire;
 	return $SQLEspeces;
 }
-
+function remplaceAlias($listeDesChamps) {
+	// Idealement ici, il faudrait aller taper dans le fichier XML pour recupérer le nom de la table.
+	// On avoir une variable globale contenant une table de correspondance chargée une fois pour toutes.
+	$listeDesChamps = str_replace("py.","ref_pays.",$listeDesChamps);
+	
+	return $listeDesChamps;
+}
 
 ?>
