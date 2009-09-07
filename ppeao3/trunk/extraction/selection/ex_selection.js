@@ -32,8 +32,7 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 			if(xhr.readyState == 4 && xhr.status == 200){
 				//on récupère la réponse du serveur (les <options> du select)
 				theNewOptions = xhr.responseText;
-				// debug	
-				alert(theNewOptions);
+				// debug 	alert(theNewOptions);
 				// on remplace le contenu du <select id=systemes>  :
 				systemesSelect.innerHTML=theNewOptions;
 			;} // end if xhr.readyState == 4

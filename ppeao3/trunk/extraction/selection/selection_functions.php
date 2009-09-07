@@ -233,6 +233,54 @@ return $compteur;
 
 }
 
+//******************************************************************************
+// recupere la liste des id des systemes correspondant aux campagnes, enquetes et pays selectionnes
+function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
+	// la connextion a la base
+	global $connectPPEAO;
+	//$pays: la liste des id des pays selectionnes
+	//$campagnes_ids: la liste des id des campagnes filtrees
+	//$enquetes_ids: la liste des id des enquetes filtrees
+
+	
+
+// on recupere la liste des pays correspondant aux campagnes et enquetes correspondant a la selection precedente
+	$sql_systemes='	SELECT DISTINCT ref_systeme.id, ref_systeme.libelle 
+				FROM ref_systeme
+				WHERE TRUE';
+	// si on a choisi des valeurs de pays
+	if (!empty($pays)) {
+	$sql_systemes.=' AND ref_systeme.ref_pays_id IN (\''.arrayToList($pays,'\',\'','\'').')';
+	}
+	$sql_systemes.=' AND ref_systeme.id IN ';
+	$sql_systemes.=' (SELECT DISTINCT exp_campagne.ref_systeme_id FROM exp_campagne WHERE TRUE ';
+		// si on a deja filtre les campagnes (par especes ou familles)
+		//debug 		echo('<pre>');print_r($campagnes_ids);echo('</pre>');
+		
+		if (!empty($campagnes_ids[0])) {
+		$sql_systemes.=' AND exp_campagne.id IN (\''.arrayToList($campagnes_ids,'\',\'','\'').')';
+		}
+	$sql_systemes.=') ';
+		$sql_systemes.=' OR ref_systeme.id IN (
+		SELECT DISTINCT art_agglomeration.ref_secteur_id 
+		FROM art_agglomeration 
+		WHERE art_agglomeration.id IN (
+			SELECT DISTINCT art_periode_enquete.art_agglomeration_id 
+			FROM art_periode_enquete 
+			WHERE TRUE ';
+		// si on a deja filtre les enquetes (par especes ou familles
+			if (!empty($enquetes_ids[0])) {$sql_systemes.=' AND art_periode_enquete.id IN( 
+												\''.arrayToList($enquetes_ids,'\',\'','\'').')';}
+	$sql_systemes.=('))');
+	
+	//debug	echo($sql_systemes);
+	
+	$result_systemes=pg_query($connectPPEAO,$sql_systemes) or die('erreur dans la requete : '.$sql_systemes. pg_last_error());
+	$array_systemes=pg_fetch_all($result_systemes);
+	pg_free_result($result_systemes);
+	
+		return $array_systemes;
+	} // end function displaySelectSystemes()
 
 //******************************************************************************
 // affiche le bloc permettant d'indiquer si l'on veut choisir ou non des especes
@@ -391,7 +439,9 @@ switch ($_GET["step"]) {
 		}
 	// le lien permettant d'éditer la selection des especes
 	$edit_link=replaceQueryParam ($_SERVER['FULL_URL'],'step',2);
-	echo('<p id="edit_especes"><a href="'.$edit_link.'">recommencer la sélection des espèces...</a></p>');	
+	$edit_link=removeQueryStringParam($edit_link, 'pays\[\]');
+	$edit_link=removeQueryStringParam($edit_link, 'systemes\[\]');
+	echo('<p id="edit_especes"><a href="'.$edit_link.'">recommencer la sélection des esp&egrave;ces...</a></p>');	
 	echo('</div>');
 	break;
 		
@@ -417,11 +467,17 @@ global $connectPPEAO; // la connexion a la base
 global $campagnes_ids; // la liste des campagnes deja selectionnees
 global $enquetes_ids; // la liste des enquetes deja selectionnees
 
+
+//debug echo(arrayToList($campagnes_ids,'\',\'',''));
+//debug echo('<pre>');print_r($enquetes_ids);echo('</pre>');
+
+
 // on determine si on a commence par choisir des especes
 if ($_GET["choix_espece"]==1) {$choix=1;} else {$choix=0;}
 
 // si l'on en est a l'etape en question, on affiche le selecteur
 switch ($_GET["step"]) {
+	case '':
 	case 1:
 	case 2: 
 	// on n'est pas encore arrive a cette etape, on n'affiche rien 
@@ -449,7 +505,7 @@ switch ($_GET["step"]) {
 			SELECT DISTINCT art_periode_enquete.art_agglomeration_id 
 			FROM art_periode_enquete 
 			WHERE TRUE ';
-		// si on a deja filtre les enquetes (par especes ou familles
+		// si on a deja filtre les enquetes (par especes ou familles)
 			if (!empty($enquetes_ids)) {$sql_pays.=' AND art_periode_enquete.id IN( 
 												\''.arrayToList($enquetes_ids,'\',\'','\'').')';}
 	$sql_pays.=('))');
@@ -457,14 +513,12 @@ switch ($_GET["step"]) {
 	$result_pays=pg_query($connectPPEAO,$sql_pays) or die('erreur dans la requete : '.$sql_pays. pg_last_error());
 	$array_pays=pg_fetch_all($result_pays);
 	pg_free_result($result_pays);
-	
-	//debug 	echo('<pre>');print_r($array_systeme);echo('</pre>');
-	
+		
 	// on affiche le selecteur de pays
 		echo('<div id="step_3_pays" class="level_div">');
 		echo('<p>pays</p>');
 		echo('<select id="pays" name="pays[]" size="10" multiple="multiple" class="level_select" style="min-width:10em"
-			onchange="javascript:refreshSystemes([\''.arrayToList($enquetes_ids,'\',\'','\'').'], [\''.arrayToList($campagnes_ids,'\',\'','\'').'])"
+			onchange="javascript:refreshSystemes([\''.arrayToList($campagnes_ids,'\',\'','').'\'], [\''.arrayToList($enquetes_ids,'\',\'','').'\'])"
 			>');
 			foreach($array_pays as $pays) {
 				// si la valeur est dans l'url, on la selectionne
@@ -482,6 +536,11 @@ switch ($_GET["step"]) {
 		echo('<select id="systemes" name="systemes[]" size="10" multiple="multiple" class="level_select" style="min-width:10em">');
 			// on n'affiche le contenu de ce select que si des valeurs de pays ont ete passees dans l'url
 			if (!empty($_GET["pays"])) {
+			
+			$array_systemes=listSelectSystemes($_GET["pays"],$campagnes_ids,$enquetes_ids);
+			
+			
+			
 			foreach($array_systemes as $systeme) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($systeme["id"],$_GET["systemes"])) {$selected='selected="selected" ';} else {$selected='';}
@@ -489,6 +548,10 @@ switch ($_GET["step"]) {
 			} // end foreach
 		}// fin de  if if (!empty($_GET["pays"]))
 		echo('</select>');
+		
+		//debug 			echo('<pre>xxxxx');print_r($array_systemes);echo('</pre>');
+		
+		
 		echo('</div>');
 	// on affiche le lien permettant de passer a la selection temporelle
 	// on prepare l'url pour construire le lien : on enleve les pays et systemes eventuellement selectionnes
@@ -503,6 +566,53 @@ switch ($_GET["step"]) {
 	break;
 	default:
 	// on en est a une etape ulterieure, on affiche le resume textuel
+	echo('<div id="step_3">');
+		echo("<h2>s&eacute;lectionner des pays et/ou des syst&egrave;mes</h2>");
+		if (!empty($_GET["systemes"])) {
+			// on recupere la liste des systemes selectionnes
+			$systeme_id='\''.arrayToList($_GET["systemes"],'\',\'','\'');
+			$sql='SELECT DISTINCT ref_systeme.id, ref_systeme.libelle, ref_systeme.ref_pays_id, ref_pays.nom FROM ref_systeme,ref_pays WHERE ref_systeme.id IN ('.$systeme_id.') AND (ref_pays_id=ref_pays.id) ORDER BY ref_pays_id';
+			$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+			$array=pg_fetch_all($result);
+			pg_free_result($result);
+			
+
+			//debug 			echo('<pre>');print_r($array);echo('</pre>');
+
+			$lePays='';
+			$array_pays_systemes=array();
+			$array_pays=$_GET["pays"];
+			// on recupere les noms des pays
+			$sql='SELECT id,nom FROM ref_pays WHERE id IN (\''.arrayToList($_GET["pays"],'\',\'','\'').')';
+			$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+			$array2=pg_fetch_all($result);
+			pg_free_result($result);
+			foreach($array2 as $row) {
+				$pays[$row["id"]]=$row["nom"];
+			}
+		
+			// on groupe les systemes d'un meme pays
+			foreach($array as $systeme) {
+				if ($systeme["ref_pays_id"]!=$lePays) {
+					$lePays=$systeme["ref_pays_id"];
+					// on stocke la liste des pays pour lesquels des systemes ont ete selectionnes
+					$array_pays_systemes[]=$lePays;
+					}
+				$array_systemes[$lePays][]=$systeme["libelle"];
+			}
+			
+			$liste_systemes='';
+			foreach($array_systemes as $key=>$value) {				
+				if (empty($value)) {$liste_systemes.=$pays[$key].' : tous; ';}
+				else {$liste_systemes.=$pays[$key].' : '.arrayToList($value,', ','; ');}
+			}
+						
+			echo("<p>syst&egrave;mes : $liste_systemes</p>");
+		}
+	// le lien permettant d'éditer la selection des systemes
+	$edit_link=replaceQueryParam ($_SERVER['FULL_URL'],'step',3);
+	echo('<p id="edit_systemes"><a href="'.$edit_link.'">recommencer la sélection des syst&egrave;mes...</a></p>');	
+	echo('</div>');
 	break;
 
 } // end switch($_GET["step"])
@@ -510,7 +620,111 @@ switch ($_GET["step"]) {
 }
 // on affiche le selecteur de periode
 function affichePeriode() {
+/* on numerote les etapes :
+1 = selectionner ou non des especes
+2 = selection des especes
+3 = selection pays/systemes
+4= selection periode
+*/
+global $connectPPEAO; // la connexion a la base
+global $campagnes_ids; // la liste des campagnes deja selectionnees
+global $enquetes_ids; // la liste des enquetes deja selectionnees	
+
+// on determine si on a commence par choisir des especes
+if ($_GET["choix_espece"]==1) {$choix=1;} else {$choix=0;}
+
+// si l'on en est a l'etape en question, on affiche le selecteur
+switch ($_GET["step"]) {
+	case 1:
+	case 2: 
+	case 3:
+	// on n'est pas encore arrive a cette etape, on n'affiche rien 
+	break;
+	case 4:
+	// on est arrive a cette etape, on affiche le formulaire
+	echo('<div id="step_4">');
+	echo('<form id="step_4_form" name="step_4_form" target="/extraction/selection/selection.php?choix_especes='.$choix.'" method="GET">');
+	echo("<h2>s&eacute;lectionner une periode d&#x27;int&eacute;r&ecirc;t</h2>");
+	// on determine les periodes couvertes par les campagnes filtrees
+	if (!empty($campagnes_ids[0])) {
+	$sql_c='SELECT MIN(c.date_debut) as campagne_debut, MAX(c.date_fin) as campagne_fin 
+			FROM exp_campagne c 
+			WHERE c.id IN (\''.arrayToList($campagnes_ids,'\',\'','').'\')';
+	$result_c=pg_query($connectPPEAO,$sql_c) or die('erreur dans la requete : '.$sql_c. pg_last_error());
+	$array_c=pg_fetch_all($result_c);
+	pg_free_result($result_c);} else {$array_c[]=array("campagne_debut"=>'9999-99-99',"campagne_fin"=>'0000-00-00');}
+	//debug 		echo('<pre>');print_r($array_c);echo('</pre>');
 	
+	// on determine les periodes couvertes par les campagnes filtrees
+	if (!empty($enquetes_ids[0])) {
+	$sql_e='SELECT MIN(e.date_debut) as enquete_debut, MAX(e.date_fin) as enquete_fin 
+			FROM art_periode_enquete e 
+			WHERE e.id IN (\''.arrayToList($enquetes_ids,'\',\'','').'\')';
+	$result_e=pg_query($connectPPEAO,$sql_e) or die('erreur dans la requete : '.$sql_e. pg_last_error());
+	$array_e=pg_fetch_all($result_e);
+	pg_free_result($result_e);} else {$array_e[]=array("enquete_debut"=>'9999-99-99',"enquete_fin"=>'0000-00-00');}
+	//debug 	echo('<pre>');print_r($array_e);echo('</pre>');
+	// on choisit la date de debut la plus ancienne et la date de fin la plus recente
+	$from='';
+	$to='';
+	if ($array_c[0]["campagne_debut"]<$array_e[0]["enquete_debut"]) {$from=date_parse($array_c[0]["campagne_debut"]);} else {$from=date_parse($array_c[0]["enquete_debut"]);}
+	if ($array_c[0]["campagne_fin"]>$array_e[0]["enquete_fin"]) {$to=date_parse($array_c[0]["campagne_fin"]);} else {$to=date_parse($array_c[0]["enquete_fin"]);}
+	//debug 	echo('<pre>');print_r($from);echo('</pre>');
+	//debug 	echo('<pre>');print_r($to);echo('</pre>');
+	
+
+	$debut["annee"]=$from["year"];
+	$debut["mois"]=$from["month"];
+	$debut["jour"]=$from["day"];
+	$fin["annee"]=$to["year"];
+	$fin["mois"]=$to["month"];
+	$fin["jour"]=$to["day"];
+
+	
+	//debug
+	echo($debut["annee"].'-'.$debut["mois"].'-'.$debut["jour"].'<br>');
+	echo($fin["annee"].'-'.$fin["mois"].'-'.$fin["jour"].'<br>');
+
+	
+	// la ligne pour la date de debut
+	echo('<div id="debut">de ');
+	// les annees
+	echo('<select id="d_a", name="d_a" onchange="">');
+	$i=$debut["annee"];$end=$fin["annee"];
+	// on cree un <option>  par annee
+	while ($i<=$end) {
+		// si l'annee a ete passee dans l'url
+		$lAnnee_debut=$_GET["d_a"];
+		if ($i==$lAnnee_debut) {$selected=' selected="selected" ';} else {$selected='';} 
+		echo('<option value="'.$i.'" '.$selected.'>'.$i.'</option>');
+		$i++;
+	}
+	echo('</select>');
+	// les mois sont affiches uniquement si une annee a ete choisie
+	if (!empty($_GET["d_a"])) {
+	echo('<select id="d_m" name="d_m" onchange="">');
+	$premier_mois=1;$dernier_mois=12;
+	// si on a une seule annee disponible, il se peut que les douze mois de cette annee ne soient pas disponibles
+	if ($_GET["d_a"]==$fin["annee"]) {$premier_mois=1;$dernier_mois=$fin["mois"];}
+	if ($_GET["d_a"]==$debut["annee"]) {$premier_mois=$debut["mois"];$dernier_mois=12;}
+	if ($_GET["d_a"]==$fin["annee"] && $_GET["d_a"]==$debut["annee"])
+		{$premier_mois=$debut["mois"];$dernier_mois=$fin["mois"];}
+	$i=$premier_mois;
+	while ($i<=$dernier_mois) {
+	echo('<option value="'.$i.'" '.$selected.'>'.$i.'</option>');
+		$i++;
+	}
+	echo('</select>');
+	}
+	echo('</div>'); // fin de div debut
+	echo('</form>');
+	
+	break;
+	default:
+	// on a depasse cette etape, on affiche le resume textuel
+	break;
+
+} // end switch $_GET["step"]
 }
 // on affiche le choix du type d'exploitation
 function afficheTypeExploitation() {
