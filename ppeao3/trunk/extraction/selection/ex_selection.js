@@ -16,6 +16,7 @@ function goToNextStep(step,url) {
 	document.location=url;
 }
 
+// fonction qui effectue une requete AJAX pour mettre a jour le selecteur de systemes quand on change le pays selectionne
 function refreshSystemes(liste_campagnes, liste_enquetes) {
 
 // liste_campagnes: un tableau contenant la liste des id des campagnes deja filtrees
@@ -53,6 +54,76 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 		systemesSelect.innerHTML='';
 		
 		;}
+}
 
+// fonction qui effectue une requete AJAX pour mettre a jour le selecteur de periode quand on change une des selections
+function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
+
+// element : quelle selection a change
+// valeurs possibles : d_a pour annee de debut, d_m pour mois de debut, f_a pour annee de fin
+// debut_annee : annee de debut de la periode complete 
+// debut_mois : mois de debut de la periode complete
+//fin_annee : annee de fin de la periode complete
+// fin_mois : mois de fin de la periode complete
+	// quel est le <select>  concerne?
+	var theSelect=$(selection);
+	// quelle est la valeur selectionnee?
+	var theValue=theSelect.value;
+	var theResponseText="";
 	
+	//debug 	alert(theValue);
+	
+	// si la valeur selectionnee est -1 on ne fait rien
+	if (theValue!=-1) {
+	// on declare les variables
+	var d_a=""; var d_m=""; var f_a=""; var f_m="";
+	
+	if (selection=='d_a') {d_a=theValue;}
+	if (selection=='d_m') {d_a=$("d_a").value;d_m=theValue}
+	if (selection=='f_a') {d_a=$("d_a").value; d_m=$("d_m").value;f_a=theValue;}
+
+
+		//debug			alert('valeur sélectionnée');
+		var xhr = getXhr();
+		// what to do when the response is received
+		xhr.onreadystatechange = function(){
+			// only do something if the whole response has been received and the server says OK
+			if(xhr.readyState == 4 && xhr.status == 200){
+				//on récupère la réponse du serveur (les <options> du select)
+				theResponseText = xhr.responseText;
+				// debug 	alert(theResponseText);
+				// on remplace le <select> concerne et on efface les suivants  :
+				if (selection=='d_a') 
+					{$("div_d_m").innerHTML=theResponseText; $("div_f_a").innerHTML=""; $("div_f_m").innerHTML="";}
+				if (selection=='d_m') 
+					{$("div_f_a").innerHTML=theResponseText;  $("div_f_m").innerHTML="";}
+				if (selection=='f_a') 
+					{$("div_f_m").innerHTML=theResponseText;}
+				// cas particulier: si on vient de choisir un mois de fin, on affiche le lien pour passer a la suite
+				if (selection=='f_m') {
+					var link= new Element('p', {
+						'events': {
+							'change':function() {
+								refreshPeriode('f_m','','','','');
+								}
+						},
+						'class':'clear',
+						'id':'step_4_link'
+					}
+					);
+					
+					link.injectInside($("step_4"));
+					link.innerHTML=theResponseText;
+				}
+			;} // end if xhr.readyState == 4
+		} // end xhr.onreadystatechange
+	
+	// on passe les valeurs sélectionnées des SELECT dans l'URL
+	var theString="&"+$('step_4_form').toQueryString();
+
+	// using GET to send the request
+	xhr.open("GET","/extraction/selection/refresh_periode_ajax.php?selection="+selection+"&d_a="+d_a+"&d_m="+d_m+"&f_a="+f_a+"&debut_annee="+debut_annee+"&debut_mois="+debut_mois+"&fin_annee="+fin_annee+"&fin_mois="+fin_mois,true);
+	xhr.send(null);
+
+	}
 }

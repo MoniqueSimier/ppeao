@@ -401,13 +401,13 @@ switch ($_GET["step"]) {
 		echo('</select>');
 		echo('</div>');
 	echo('</form>');
-	// on affiche le lien permettant de passer a la selection geographique
+		// on affiche le lien permettant de passer a la selection geographique
 	// on prepare l'url pour construire le lien : on enleve les familles et especes eventuellement selectionnees
 	$url=$_SERVER["FULL_URL"];
 	$url=removeQueryStringParam($url,'familles\[\]');
 	$url=removeQueryStringParam($url,'especes\[\]');
 	echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(2,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection spatiale...</a></p>');
-	echo('</div>');
+	echo('</div>');// end div id="step_2"
 	break;
 	default:
 	// on en est a une etape ulterieure, on affiche le resume textuel
@@ -473,7 +473,7 @@ global $enquetes_ids; // la liste des enquetes deja selectionnees
 
 
 // on determine si on a commence par choisir des especes
-if ($_GET["choix_espece"]==1) {$choix=1;} else {$choix=0;}
+if ($_GET["choix_especes"]==1) {$choix=1;} else {$choix=0;}
 
 // si l'on en est a l'etape en question, on affiche le selecteur
 switch ($_GET["step"]) {
@@ -549,25 +549,20 @@ switch ($_GET["step"]) {
 		}// fin de  if if (!empty($_GET["pays"]))
 		echo('</select>');
 		
-		//debug 			echo('<pre>xxxxx');print_r($array_systemes);echo('</pre>');
-		
-		
 		echo('</div>');
+	echo('</form>');
 	// on affiche le lien permettant de passer a la selection temporelle
 	// on prepare l'url pour construire le lien : on enleve les pays et systemes eventuellement selectionnes
 	$url=$_SERVER["FULL_URL"];
 	$url=removeQueryStringParam($url,'pays\[\]');
 	$url=removeQueryStringParam($url,'systemes\[\]');
 	echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(3,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection temporelle...</a></p>');
-	
-	
-	echo('</form>');
-	echo('</div>');
+	echo('</div>'); // end div id=step_3
 	break;
 	default:
 	// on en est a une etape ulterieure, on affiche le resume textuel
 	echo('<div id="step_3">');
-		echo("<h2>s&eacute;lectionner des pays et/ou des syst&egrave;mes</h2>");
+		echo("<h2>s&eacute;lectionner des syst&egrave;mes</h2>");
 		if (!empty($_GET["systemes"])) {
 			// on recupere la liste des systemes selectionnes
 			$systeme_id='\''.arrayToList($_GET["systemes"],'\',\'','\'');
@@ -576,9 +571,6 @@ switch ($_GET["step"]) {
 			$array=pg_fetch_all($result);
 			pg_free_result($result);
 			
-
-			//debug 			echo('<pre>');print_r($array);echo('</pre>');
-
 			$lePays='';
 			$array_pays_systemes=array();
 			$array_pays=$_GET["pays"];
@@ -631,7 +623,7 @@ global $campagnes_ids; // la liste des campagnes deja selectionnees
 global $enquetes_ids; // la liste des enquetes deja selectionnees	
 
 // on determine si on a commence par choisir des especes
-if ($_GET["choix_espece"]==1) {$choix=1;} else {$choix=0;}
+if ($_GET["choix_especes"]==1) {$choix=1;} else {$choix=0;}
 
 // si l'on en est a l'etape en question, on affiche le selecteur
 switch ($_GET["step"]) {
@@ -642,7 +634,7 @@ switch ($_GET["step"]) {
 	break;
 	case 4:
 	// on est arrive a cette etape, on affiche le formulaire
-	echo('<div id="step_4">');
+	echo('<div id="step_4">');	
 	echo('<form id="step_4_form" name="step_4_form" target="/extraction/selection/selection.php?choix_especes='.$choix.'" method="GET">');
 	echo("<h2>s&eacute;lectionner une periode d&#x27;int&eacute;r&ecirc;t</h2>");
 	// on determine les periodes couvertes par les campagnes filtrees
@@ -682,42 +674,106 @@ switch ($_GET["step"]) {
 
 	
 	//debug
-	echo($debut["annee"].'-'.$debut["mois"].'-'.$debut["jour"].'<br>');
-	echo($fin["annee"].'-'.$fin["mois"].'-'.$fin["jour"].'<br>');
+	echo('<p>(p&eacute;riode couverte : de '.$debut["annee"].'-'.$debut["mois"].'-'.$debut["jour"].' &agrave; '.$fin["annee"].'-'.$fin["mois"].'-'.$fin["jour"].')</p>');
 
 	
 	// la ligne pour la date de debut
 	echo('<div id="debut">de ');
 	// les annees
-	echo('<select id="d_a", name="d_a" onchange="">');
+	echo('<div id="div_d_a">');
+	echo('<select id="d_a", name="d_a", onchange="javascript:refreshPeriode(\'d_a\',\''.$debut["annee"].'\',\''.$debut["mois"].'\',\''.$fin["annee"].'\',\''.$fin["mois"].'\');">');
+	// la premiere ligne est "vide"
+	echo('<option value="-1">-ann&eacute;e-</option>');
 	$i=$debut["annee"];$end=$fin["annee"];
 	// on cree un <option>  par annee
 	while ($i<=$end) {
 		// si l'annee a ete passee dans l'url
-		$lAnnee_debut=$_GET["d_a"];
-		if ($i==$lAnnee_debut) {$selected=' selected="selected" ';} else {$selected='';} 
+		if ($i==$_GET["d_a"]) {$selected=' selected="selected" ';} else {$selected='';} 
 		echo('<option value="'.$i.'" '.$selected.'>'.$i.'</option>');
 		$i++;
 	}
 	echo('</select>');
+	echo("</div>"); // fin de div div_d_a
 	// les mois sont affiches uniquement si une annee a ete choisie
+	echo('<div id="div_d_m">');
 	if (!empty($_GET["d_a"])) {
-	echo('<select id="d_m" name="d_m" onchange="">');
+	echo('<select id="d_m" name="d_m" onchange="javascript:refreshPeriode(\'d_m\',\''.$debut["annee"].'\',\''.$debut["mois"].'\',\''.$fin["annee"].'\',\''.$fin["mois"].'\');"">');
+	
+	// la premiere ligne est "vide"
+	echo('<option value="-1">-mois-</option>');	
 	$premier_mois=1;$dernier_mois=12;
-	// si on a une seule annee disponible, il se peut que les douze mois de cette annee ne soient pas disponibles
+	// cas particuliers des annees limites : il se peut que les douze mois de ces annees ne soient pas disponibles
 	if ($_GET["d_a"]==$fin["annee"]) {$premier_mois=1;$dernier_mois=$fin["mois"];}
 	if ($_GET["d_a"]==$debut["annee"]) {$premier_mois=$debut["mois"];$dernier_mois=12;}
 	if ($_GET["d_a"]==$fin["annee"] && $_GET["d_a"]==$debut["annee"])
 		{$premier_mois=$debut["mois"];$dernier_mois=$fin["mois"];}
 	$i=$premier_mois;
 	while ($i<=$dernier_mois) {
-	echo('<option value="'.$i.'" '.$selected.'>'.$i.'</option>');
+		// si le mois a ete passe dans l'url
+		if ($i==$_GET["d_m"]) {$selected=' selected="selected" ';} else {$selected='';} 
+		echo('<option value="'.$i.'" '.$selected.'>'.number_pad($i,2).'</option>');
 		$i++;
 	}
 	echo('</select>');
-	}
+} // fin de if (!empty($_GET["d_a"]))
+	echo('</div>'); // fin de div div_d_m
 	echo('</div>'); // fin de div debut
+	
+	// la ligne pour la date de fin, dont on n'on n'affiche le contenu que si une annee et un mois de debut ont ete choisis
+	echo('<div id="fin">&nbsp;&nbsp;&agrave; ');
+	echo('<div id="div_f_a">');
+	if (!empty($_GET["d_a"]) && !empty($_GET["d_m"])) {
+	// les annees
+	echo('<select id="f_a", name="f_a" onchange="javascript:refreshPeriode(\'f_a\',\''.$debut["annee"].'\',\''.$debut["mois"].'\',\''.$fin["annee"].'\',\''.$fin["mois"].'\');"">');
+	// la premiere ligne est "vide"
+	echo('<option value="-1">-ann&eacute;e-</option>');
+	$i=$_GET["d_a"];$end=$fin["annee"];
+	while ($i<=$end) {
+		// si l'annee a ete passee dans l'url
+		if ($i==$_GET["f_a"]) {$selected=' selected="selected" ';} else {$selected='';} 
+		echo('<option value="'.$i.'" '.$selected.'>'.$i.'</option>');
+		$i++;
+	}
+	echo('</select>');
+	} //fin de 	if (!empty($_GET["d_a"]) && !empty($_GET["d_m"]))
+	echo ("</div>"); //	div id="div_f_a"
+	
+	// les mois sont affiches uniquement si une annee a ete choisie
+	echo('<div id="div_f_m">');
+	if (!empty($_GET["d_a"]) && !empty($_GET["d_m"]) && !empty($_GET["f_a"])) {
+	echo('<select id="f_m" name="f_m" onchange="refreshPeriode(\'f_m\',\'\',\'\',\'\',\'\');">');
+	// la premiere ligne est "vide"
+	echo('<option value="-1">-mois-</option>');
+	$premier_mois=1;$dernier_mois=12;
+	// cas particuliers des annees limites : il se peut que les douze mois de ces annees ne soient pas disponibles
+	if ($_GET["f_a"]==$fin["annee"]) {$premier_mois=1;$dernier_mois=$fin["mois"];}
+	if ($_GET["f_a"]==$debut["annee"]) {$premier_mois=$debut["mois"];$dernier_mois=12;}
+	if ($_GET["f_a"]==$fin["annee"] && $_GET["f_a"]==$debut["annee"])
+		{$premier_mois=$_GET["d_m"];$dernier_mois=$fin["mois"];}
+	if ($_GET["f_a"]==$_GET["d_a"])
+		{$premier_mois=$_GET["d_m"];$dernier_mois=$fin["mois"];}
+	$i=$premier_mois;
+	while ($i<=$dernier_mois) {
+		// si le mois a ete passe dans l'url
+		if ($i==$_GET["f_m"]) {$selected=' selected="selected" ';} else {$selected='';} 
+		echo('<option value="'.$i.'" '.$selected.'>'.number_pad($i,2).'</option>');
+		$i++;
+	}
+	echo('</select>');
+	} // fin de  if (!empty($_GET["d_a"]) && !empty($_GET["d_m"]) && !empty($_GET["f_a"]))
+	echo("</div>"); // fin de div id="div_f_m"
+	echo('</div>'); // fin de div id=fin
 	echo('</form>');
+	// si la selection de periode est terminee (i.e. une valeur de f_m est choisie)
+	// on affiche le lien permettant de passer a la suite
+	$url=$_SERVER["FULL_URL"];
+	$url=removeQueryStringParam($url,'d_a');
+	$url=removeQueryStringParam($url,'d_m');
+	$url=removeQueryStringParam($url,'f_a');
+	$url=removeQueryStringParam($url,'f_m');
+	if (!empty($_GET["f_m"])) {
+	echo('<p id="step_4_link"  class="clear"><a href="#" onclick="javascript:goToNextStep(4,\''.$url.'\');">ajouter et choisir un type d&#x27;exploitation ...</a></p>');}
+	echo('</div>'); // fin de div id="step_4"
 	
 	break;
 	default:
