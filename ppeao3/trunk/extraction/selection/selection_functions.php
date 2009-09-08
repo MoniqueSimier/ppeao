@@ -193,8 +193,88 @@ if (empty($totalArray)) {$total=0;$ids=array();}
 		foreach($totalArray as $row) {
 			$ids[]=$row["id"];
 		}
-		}
+	}
 $unites=array("total"=>$total,"ids"=>$ids);
+
+// maintenant on calcule le nombre de coups de peche (exp) ou de periodes d'enquete/activites
+$coups=array();$debarquements=array();$activites=array();
+
+if ($domaine=='exp') {
+	// exp : on cherche les coups de peche
+	$sql='SELECT exp_coup_peche.id FROM exp_coup_peche WHERE exp_campagne_id IN (\''.arrayToList($unites["ids"],'\',\'','\'').')';
+	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+	$coups_array=pg_fetch_all($result);
+	pg_free_result($result);
+	
+if (empty($coups_array)) {$coups_total=0;$coups_ids=array();} 
+	else {
+		$coups_total=count($coups_array);
+		foreach($coups_array as $row) {
+			$coups_ids[]=$row["id"];
+		}
+	}	
+	$coups=array("coups_total"=>$coups_total,"coups_ids"=>$coups_ids);
+
+} // fin de if ($domaine=='exp')
+
+if ($domaine=='art') {
+	// art : on cherche les debarquements
+	$debarquements_array=array();
+	foreach($unites["ids"] as $enquete) {
+	$sql='SELECT art_debarquement.id 
+	FROM art_debarquement 
+	WHERE art_agglomeration_id IN 
+		(SELECT art_agglomeration_id FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.') 
+		AND art_debarquement.annee=(SELECT annee  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.') 
+		AND art_debarquement.mois=(SELECT mois  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.')
+		';
+	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+	$array=pg_fetch_all($result);
+	if (!empty($array)) {foreach($array as $row) {$debarquements_array[]=$row["id"];}}
+	pg_free_result($result);
+	} // end foreach $unite[ids]
+if (empty($debarquements_array)) {$debarquements_total=0;$debarquements_ids=array();} 
+	else {
+		$debarquements_total=count($debarquements_array);
+		foreach($debarquements_array as $row) {
+			$debarquements_ids[]=$row;
+		}
+	$debarquements=array("debarquements_total"=>$debarquements_total,"debarquements_ids"=>$debarquements_ids);
+	}
+	
+	// art : on cherche les activites
+	$activites_array=array();
+	foreach($unites["ids"] as $enquete) {
+	$sql='SELECT art_activite.id 
+	FROM art_activite 
+	WHERE art_agglomeration_id IN 
+		(SELECT art_agglomeration_id FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.') 
+		AND art_activite.annee=(SELECT annee  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.') 
+		AND art_activite.mois=(SELECT mois  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.')
+		';
+	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+	$array=pg_fetch_all($result);
+	if (!empty($array)) {foreach($array as $row) {$activites_array[]=$row["id"];}}
+	pg_free_result($result);
+	} // end foreach $unite[ids]
+if (empty($activites_array)) {$activites_total=0;$activites_ids=array();} 
+	else {
+		$activites_total=count($activites_array);
+		foreach($activites_array as $row) {
+			$activites_ids[]=$row;
+		}
+	}
+$activites=array("activites_total"=>$activites_total,"activites_ids"=>$activites_ids);
+
+} // fin de if ($domaine=='art')
+
+	
+// on ajoute les resultats au tableau $unites
+$unites["coups"]=$coups;
+$unites["debarquements"]=$debarquements;
+$unites["activites"]=$activites;
+
+//debug echo('<pre>');print_r($unites);echo('</pre>');
 
 return $unites;
 
@@ -222,11 +302,25 @@ $total_campagnes=$campagnes["total"];
 $enquetes=countMatchingUnits2('art');
 $total_enquetes=$enquetes["total"];
 
+//debug echo('<pre>');print_r($enquetes);echo('</pre>');
+
+
 // on prepare le compteur
 
-$compteur=array("campagnes_ids"=>$campagnes["ids"], 
-				"enquetes_ids"=>$enquetes["ids"], 
-				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><ul><li>'.$total_campagnes.' campagnes</li><li>'.$total_enquetes.' p&eacute;riodes d&#x27;enqu&ecirc;te</li></ul></div>');
+if ($total_campagnes>0) {$texte_coups=' ('.$campagnes["coups"]["coups_total"].' coups de p&ecirc;che)'; } else {$texte_coups='';}
+if ($total_enquetes>0) {$texte_deb_act=' ('.$enquetes["debarquements"]["debarquements_total"].' d&eacute;barquements et '.$enquetes["activites"]["activites_total"].' activit&eacute;s)'; } else {$texte_deb_act='';}
+
+$compteur=array("campagnes_ids"=>$campagnes["ids"],
+				"campagnes_total"=>$total_campagnes,
+				"coups_ids"=>$campagnes["coups"]["coups_ids"],
+				"coups_total"=>$campagnes["coups"]["coups_total"],
+				"enquetes_ids"=>$enquetes["ids"],
+				"enquetes_total"=>$total_enquetes,
+				"debarquements_total"=>$campagnes["debarquements"]["debarquements_total"],
+				"debarquements_ids"=>$campagnes["debarquements"]["debarquements_ids"],
+				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><ul><li>'.$total_campagnes.' campagnes'.$texte_coups.'</li><li>'.$total_enquetes.' p&eacute;riodes d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></ul></div>');
+				
+
 
 return $compteur;
 
@@ -454,7 +548,7 @@ switch ($_GET["step"]) {
 
 
 //******************************************************************************
-// affiche le bloc permettant de selectionner des pays et/ou des systemes
+// affiche le bloc permettant de selectionner des systemes
 function afficheGeographie() {
 /* on numerote les etapes :
 1 = selectionner ou non des especes
@@ -466,11 +560,6 @@ function afficheGeographie() {
 global $connectPPEAO; // la connexion a la base
 global $campagnes_ids; // la liste des campagnes deja selectionnees
 global $enquetes_ids; // la liste des enquetes deja selectionnees
-
-
-//debug echo(arrayToList($campagnes_ids,'\',\'',''));
-//debug echo('<pre>');print_r($enquetes_ids);echo('</pre>');
-
 
 // on determine si on a commence par choisir des especes
 if ($_GET["choix_especes"]==1) {$choix=1;} else {$choix=0;}
@@ -486,7 +575,7 @@ switch ($_GET["step"]) {
 	// on est a cette etape, on affiche le selecteur 
 	echo('<div id="step_3">');
 	echo('<form id="step_3_form" name="step_3_form" target="/extraction/selection/selection.php?choix_especes='.$choix.'" method="GET">');
-	echo("<h2>s&eacute;lectionner des pays et/ou des syst&egrave;mes</h2>");
+	echo("<h2>s&eacute;lectionner des syst&egrave;mes</h2>");
 	
 	// on recupere la liste des pays correspondant aux campagnes et enquetes correspondant a la selection precedente
 	$sql_pays='	SELECT DISTINCT ref_pays.id, ref_pays.nom 

@@ -54,7 +54,11 @@ echo('<div id="ex_selection">');
 $compteur=afficheCompteur();
 // on en extrait la liste des campagnes et enquetes correspondant a la selection courante
 $campagnes_ids=$compteur["campagnes_ids"];
+$coups_ids=$compteur["coups_ids"];
 $enquetes_ids=$compteur["enquetes_ids"];
+
+//debug echo('<pre>');print_r($compteur);echo('</pre>');
+
 
 
 /* on numerote les etapes :
