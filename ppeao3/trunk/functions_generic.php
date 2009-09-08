@@ -523,4 +523,11 @@ function my_empty($val) {
     return empty($val) && $val !==0 && $val!=='0'; 
 }
 
+//***************************************************************************************************
+// fonction formattant un entier avec un nombre n de chiffres
+// ex. : 1 -> 0001 pour n=4
+function number_pad($number,$n) {
+return str_pad((int) $number,$n,"0",STR_PAD_LEFT);
+}
+
 ?>
