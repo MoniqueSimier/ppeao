@@ -44,7 +44,7 @@ function OpenFileReverseSQL ($howOpen,$direcLog,$PasAutorisation) {
 }
 
 //*********************************************************************
-// OpenFileReverseSQL : écrit dans le fichier de compte rendu de comparaison
+// CloseFileReverseSQL : écrit dans le fichier de compte rendu de comparaison
 function CloseFileReverseSQL ($fileRevSQL,$PasAutorisation) {
 // Cette fonction permet d'ouvrir le fichier contenant les scripts SQL pour réaliser les actions inverses.
 //*********************************************************************
@@ -61,7 +61,7 @@ function CloseFileReverseSQL ($fileRevSQL,$PasAutorisation) {
 }
 
 //*********************************************************************
-// OpenFileReverseSQL : écrit dans le fichier de compte rendu de comparaison
+// WriteFileReverseSQL : écrit dans le fichier de compte rendu de comparaison
 function WriteFileReverseSQL ($fileRevSQL,$script,$PasAutorisation) {
 // Cette fonction permet d'ouvrir le fichier contenant les scripts SQL pour réaliser les actions inverses.
 //*********************************************************************
