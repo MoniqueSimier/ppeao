@@ -167,7 +167,7 @@ function GetSQLACCESS($SQLAction, $tableName, $whereStatement,$value,$BDType,$no
 // $SQLAction : quelle est l'action à faire : INSERT ou UPDATE
 // $tableName : nom de la table qui subit l'action
 // $whereStatement : quelle est la condition where à ajouter à l'action d'update ?
-// $value : valeurs à maj (c'est un tableau issu d'un pg_fetch_row
+// $value : valeurs à maj (c'est un tableau issu d'un pg_fetch_row)
 // $BDType : soit pour maj ACCESS soit POSTGRES
 // $nomTableACCESS: nom de la table pour la recherche dans le fichier XML
 // $connACCESS: connection a la base ACCESS de travail
@@ -272,10 +272,49 @@ for ($cpt = 0; $cpt <= $nbAttr; $cpt++) {
 			break;
 		default:
 			if ($valeurDefaut == "rien") {
-				$valChamp = $value[$nomChampSQL];
-				$valChampSQL = formatSQL($valChamp,$typeChampACCESS);
-			} else {
+				if ($nomTableACCESS == "CoefficientKb") {
+				//echo "valeur ".$nomChampSQL." = ".$value[$nomChampSQL]."<br/>";
+				// Gestion du cas particulier des coefficients (on aurait du mettre un champ de plus dans le fichier XML pour le gerer de facon global, mais pas le temps pour l'instant....
+				// Si null alors on met a zéro
+					switch ($nomChampSQL) {
+						case "coefficient_k": 
+							if ($value[$nomChampSQL] == null ) {
+								$valChamp = 0;
+								$valChampSQL = 0;
+							} else  {
+								$valChamp = $value[$nomChampSQL];
+								$valChampSQL = formatSQL($valChamp,$typeChampACCESS);
+							}
+							break;
+						case "coefficient_b":
+							if ($value[$nomChampSQL] == null ) {
+								$valChamp = 0;
+								$valChampSQL = 0;
+							} else  {
+								$valChamp = $value[$nomChampSQL];
+								$valChampSQL = formatSQL($valChamp,$typeChampACCESS);
+							}
+							break;
+	
+						case "ref_origine_kb_id": 
+							if ($value[$nomChampSQL] == null ) {
+								$valChamp = 0;
+								$valChampSQL = 0;
+							} else  {
+								$valChamp = $value[$nomChampSQL];
+								$valChampSQL = formatSQL($valChamp,$typeChampACCESS);
+							}
+							break;
+						default :
+							$valChamp = $value[$nomChampSQL];
+							$valChampSQL = formatSQL($valChamp,$typeChampACCESS);
+					}
 
+				} else {
+					$valChamp = $value[$nomChampSQL];
+					$valChampSQL = formatSQL($valChamp,$typeChampACCESS);
+				}
+			} else {
 				switch ($valeurDefaut) {
 					case "null": 
 						$valChampSQL = "NULL";

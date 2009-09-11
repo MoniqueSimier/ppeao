@@ -547,9 +547,8 @@
 			<champ>
 			<name>NOM_INFO</name>
 				<type>text</type>
-				<postgrename>ACCESS</postgrename>
+				<postgrename>info</postgrename>
 				<postgretype>text</postgretype>
-				<valdefaut>vide</valdefaut>
 			</champ>			
 		</champs>
 	</table>	

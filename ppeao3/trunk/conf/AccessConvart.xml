@@ -36,10 +36,9 @@
 			</champ>			
 			<champ>
 				<name>Renvoi</name>
-				<type>integer</type>
-				<postgrename>VALDEF</postgrename>
-				<postgretype>integer</postgretype>
-				<valdefaut>vide</valdefaut>
+				<type>text</type>
+				<postgrename>ref_espece_id</postgrename>
+				<postgretype>text</postgretype>
 			</champ>
 			<champ>
 				<name>RenvoiSyst</name>
@@ -598,9 +597,8 @@
 			<champ>
 			<name>InfoNom</name>
 				<type>text</type>
-				<postgrename>ACCESS</postgrename>
+				<postgrename>info</postgrename>
 				<postgretype>text</postgretype>
-				<valdefaut>vide</valdefaut>
 			</champ>			
 		</champs>
 	</table>
