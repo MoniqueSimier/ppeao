@@ -291,16 +291,16 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <?php // construit les differentes onglets du tableau ?>
 <div id="menuTab">
 <?php if (!($typeAction == "peuplement")) { ?>
-<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','')">Crit&egrave;res g&eacute;n&eacute;raux</a>|
+<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','')">Crit&egrave;res g&eacute;n&eacute;raux</a>|
 <?php } 
 	if (!($typeAction == "environnement") && !($typeAction == "peuplement")) { ?>
-<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n','')">Cat&eacute;gories &eacute;cologiques</a>|
-<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','')">Cat&eacute;gories trophiques</a>|
+<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n','','','')">Cat&eacute;gories &eacute;cologiques</a>|
+<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','')">Cat&eacute;gories trophiques</a>|
 <?php } ?>
 
-<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','')">Colonnes</a>
+<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','')">Colonnes</a>
 <?php if (!($typeAction == "peuplement")) { ?> |
-<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n','')">Esp&egrave;ces</a>
+<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n','','','')">Esp&egrave;ces</a>
 <?php } ?>
 </div>
 <?php // Les differents div correspondant aux choix disponibles par onglet ?>
@@ -336,7 +336,7 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 </div>
 <?php // l'onglet qui gere les espèces ?>
 <div id="especes" class="especes<?php echo $espActive;?>">
-<?php echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typePeche,$typeAction,$numTab); ?>
+<?php echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typePeche,$typeAction,$numTab,""); ?>
 </div>
 
 

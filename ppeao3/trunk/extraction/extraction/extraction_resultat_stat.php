@@ -207,7 +207,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 		</div>
 		<?php if (!($exportFichier)) {	?>
 		<div id="exportFic2">
-			<input type="button" id="validation" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','','y')" value="Exporter en fichier"/>
+			<input type="button" id="validation" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','','y','','')" value="Exporter en fichier"/>
 			<input type="hidden" id="ExpFic" checked="checked"/></div>			
 		</div>
 		<?php } else {

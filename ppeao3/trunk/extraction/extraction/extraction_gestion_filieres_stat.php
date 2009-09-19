@@ -169,9 +169,9 @@ switch ($numTab) {
 <form id="filiere" >
 <?php // construit les differentes onglets du tableau ?>
 <div id="menuTab">
-<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','')">G&eacute;n&eacute;ral</a>|
-<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','2','<?php echo $codeTableEnCours;?>','n','')">Colonnes</a>|
-<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','')">Esp&egrave;ces</a>
+<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','')">G&eacute;n&eacute;ral</a>|
+<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','2','<?php echo $codeTableEnCours;?>','n','','','')">Colonnes</a>|
+<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','')">Esp&egrave;ces</a>
 </div>
 <?php // Les differents div correspondant aux choix disponibles par onglet ?>
 
@@ -186,7 +186,7 @@ Selections generales
 </div>
 <?php // l'onglet qui gere les espèces ?>
 <div id="especes" class="especes<?php echo $espActive;?>">
-<?php echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction); ?>
+<?php echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,,$typeStatistiques,$typeAction,$numTab,""); ?>
 </div>
 </form>
 

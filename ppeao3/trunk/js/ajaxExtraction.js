@@ -81,20 +81,20 @@ function explode( delimiter, string, limit ) {
 
 function recupereSelection(limSel,Selection){
 	listeVal = "";
-		for (i=1;i<=limSel;i++) {
-			if 	(document.getElementById(Selection+i).checked) {
-				if (listeVal=="") {
-					listeVal = document.getElementById(Selection+i).value;
-				} else {
-					listeVal = listeVal+","+document.getElementById(Selection+i).value;
-				}
+	for (i=1;i<=limSel;i++) {
+		if 	(document.getElementById(Selection+i).checked) {
+			if (listeVal=="") {
+				listeVal = document.getElementById(Selection+i).value;
+			} else {
+				listeVal = listeVal+","+document.getElementById(Selection+i).value;
 			}
 		}
+	}
 	return listeVal;
 }
 
 
-function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selToutesCol) {
+function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selToutesCol,selToutescat,selToutEsp) {
 // fonction runFilieresExp : permet de gerer l'affichage des différents tabs des differentes filieres pour les peches exp
 // Y compris de recuperer toutes les valeurs saisies
 
@@ -108,6 +108,8 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 	listCT = "";
 	listCol = "";
 	ListEsp = "";
+	EvalCE = false;
+	EvalCT = false;
 	if  (globalAction == typeAction) {
 		changementAction = '';
 		// On charge les données modifiées
@@ -117,15 +119,44 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		rest  = recupereSelection(2,"restreindre");
 		// Recuperation des selections sur choix des poissons
 		poiss  = recupereSelection(4,"poisson");
-		// Recuperation des categories ecologiques
-		limCE = document.getElementById("numCEco").value;
-		listCE  = recupereSelection(limCE,"CEco");
-		// Recuperation des categories trophiques
-		limCT = document.getElementById("numCTro").value;
-		listCT  = recupereSelection(limCT,"CTro");
+		// Recuperation des categories ecologiques / trophiques
+		switch (selToutescat) {
+			case "tout-CEco" :
+				listCE = "XtoutX";
+				EvalCE = true;
+				break;
+			case "aucun-CEco" :
+				listCE = "XpasttX";
+				EvalCE = true;
+				break;
+			case "tout-CTro" :
+				listCT = "XtoutX";
+				EvalCT = true;
+				break;
+			case "aucun-CTro" :
+				listCT = "XpasttX";
+				EvalCT = true;
+				break;
+		}
+		if (!EvalCE) {
+			limCE = document.getElementById("numCEco").value;
+			listCE  = recupereSelection(limCE,"CEco");
+		}
+		if (!EvalCT) {
+			limCT = document.getElementById("numCTro").value;
+			listCT  = recupereSelection(limCT,"CTro");
+		}
 		// Recuperation des especes
 		limEsp = document.getElementById("numEsp").value;
-		ListEsp  = recupereSelection(limEsp,"Esp");
+		if (!(selToutEsp == '')) {
+			if 	(selToutEsp == 'tout') {
+				ListEsp = 'XtoutX';
+			} 	else {
+				ListEsp = 'XpasttX';
+			}
+		} else {
+			ListEsp  = recupereSelection(limEsp,"Esp");
+		}
 		// Recuperation des colonnes en plus selectionnees
 		TEC = "&TEC="+tableEnCours;
 		TPEC = document.getElementById("tableEC").value;
@@ -188,7 +219,7 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 	ExpFic = '';
 	if (validation == 'y') {
 		if 	(document.getElementById("ExpFic").checked) {
-			ExpFic = '&amp;exf=y' ;
+			ExpFic = '&exf=y' ;
 		} else {
 			ExpFic = '';
 		}
@@ -278,13 +309,13 @@ function stateChanged2() {
 		if (globalAction=="trophique") {trophActif=" active";}
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
-		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','peuplement','1','"+globalTableEnCours+"','n','')\" class=\"peuplement"+peuActif+"\">peuplement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','environnement','1','"+globalTableEnCours+"','n','')\" class=\"environnement"+envActif+"\">environnement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n','')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','biologie','1','"+globalTableEnCours+"','n','')\" class=\"biologie"+bioActif+"\">biologie</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','trophique','1','"+globalTableEnCours+"','n','')\" class=\"trophique"+trophActif+"\">trophique</a>";
-		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresExp('"+globaltypepeche+"','"+globalAction+"','1','','y','')\" value=\"Afficher le resultat\"/><br/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
+		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','peuplement','1','"+globalTableEnCours+"','n','','','')\" class=\"peuplement"+peuActif+"\">peuplement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','environnement','1','"+globalTableEnCours+"','n','','','')\" class=\"environnement"+envActif+"\">environnement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n','','','')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','biologie','1','"+globalTableEnCours+"','n','','','')\" class=\"biologie"+bioActif+"\">biologie</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','trophique','1','"+globalTableEnCours+"','n','','','')\" class=\"trophique"+trophActif+"\">trophique</a>";
+		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresExp('"+globaltypepeche+"','"+globalAction+"','1','','y','','','')\" value=\"Afficher le resultat\"/><br/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
 	}
 }
 
 
-function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selToutesCol) {
+function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selToutesCol,selToutescat,selToutEsp) {
 // fonction runFilieresArt : permet de gerer l'affichage des différents tabs des differentes filieres pour les peches art
 // Y compris de recuperer toutes les valeurs saisies
 
@@ -299,6 +330,8 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 	listCT = "";
 	listCol = "";
 	ListEsp = "";
+	EvalCE = false;
+	EvalCT = false;
 	if  (globalAction == typeAction) {
 		changementAction = '';
 		// On charge les données modifiées
@@ -306,14 +339,44 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		poiss  = recupereSelection(4,"poisson");
 		// Recuperation des categories ecologiques
 		if ( typeAction == 'NtPt' || typeAction == 'taille' ) {
-			limCE = document.getElementById("numCEco").value;
-			listCE  = recupereSelection(limCE,"CEco");
-			// Recuperation des categories trophiques
-			limCT = document.getElementById("numCTro").value;
-			listCT  = recupereSelection(limCT,"CTro");
+			// Recuperation des categories ecologiques / trophiques
+			switch (selToutescat) {
+				case "tout-CEco" :
+					listCE = "XtoutX";
+					EvalCE = true;
+					break;
+				case "aucun-CEco" :
+					listCE = "XpasttX";
+					EvalCE = true;
+					break;
+				case "tout-CTro" :
+					listCT = "XtoutX";
+					EvalCT = true;
+					break;
+				case "aucun-CTro" :
+					listCT = "XpasttX";
+					EvalCT = true;
+					break;
+			}
+			if (!EvalCE) {
+				limCE = document.getElementById("numCEco").value;
+				listCE  = recupereSelection(limCE,"CEco");
+			}
+			if (!EvalCT) {
+				limCT = document.getElementById("numCTro").value;
+				listCT  = recupereSelection(limCT,"CTro");
+			}
 			// Recuperation des especes
 			limEsp = document.getElementById("numEsp").value;
-			ListEsp  = recupereSelection(limEsp,"Esp");
+			if (!(selToutEsp == '')) {
+				if 	(selToutEsp == 'tout') {
+					ListEsp = 'XtoutX';
+				} 	else {
+					ListEsp = 'XpasttX';
+				}
+			} else {
+				ListEsp  = recupereSelection(limEsp,"Esp");
+			}
 		}
 		// Recuperation des colonnes en plus selectionnees
 		TEC = "&TEC="+tableEnCours;
@@ -458,7 +521,7 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 	}
 } 
 
-function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selToutesCol) {
+function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selToutesCol,selToutescat,selToutEsp) {
 // fonction runFilieresStat : permet de gerer l'affichage des différents tabs des differentes filieres pour les statistiques
 // C'est moins complique pour les peches, on ne gere que 2 tabs.
 // Y compris de recuperer toutes les valeurs saisies
@@ -616,8 +679,8 @@ function stateChanged3() {
 		if (globalAction=="engin") {engActif=" active";}
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
-		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','activite','1','"+globalTableEnCours+"','n','')\" class=\"activite"+actActif+"\">activit&eacute</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','capture','1','"+globalTableEnCours+"','n','')\" class=\"capture"+capActif+"\">captures totales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n','')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','taille','1','"+globalTableEnCours+"','n','')\" class=\"structure"+strActif+"\">structure de taille</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','engin','1','"+globalTableEnCours+"','n','')\" class=\"engin"+engActif+"\">engin de p&ecirc;che</a>";
-		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('"+globaltypepeche+"','"+globalAction+"','1','','y','')\" value=\"Afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
+		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','activite','1','"+globalTableEnCours+"','n','','','')\" class=\"activite"+actActif+"\">activit&eacute</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','capture','1','"+globalTableEnCours+"','n','','','')\" class=\"capture"+capActif+"\">captures totales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n','','','')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','taille','1','"+globalTableEnCours+"','n','','','')\" class=\"structure"+strActif+"\">structure de taille</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','engin','1','"+globalTableEnCours+"','n','','','')\" class=\"engin"+engActif+"\">engin de p&ecirc;che</a>";
+		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('"+globaltypepeche+"','"+globalAction+"','1','','y','','','')\" value=\"Afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
 		
 	}
 }
@@ -633,8 +696,8 @@ function stateChanged4() {
 		if (globalAction=="GT") {gtActif=" active";}
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
-		document.getElementById("runProcess").innerHTML="<b>Choix type statistique &agrave; extraire :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','globale;','1','"+globalTableEnCours+"','n','')\" class=\"globale"+gloActif+"\">statistiques globales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','GT','1','"+globalTableEnCours+"','n','')\" class=\"GT"+gtActif+"\">statistiques par Grand Type</a>";
-		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('"+globaltypepeche+"','"+globalAction+"','1','','y','')\" value=\"Afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
+		document.getElementById("runProcess").innerHTML="<b>Choix type statistique &agrave; extraire :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','globale;','1','"+globalTableEnCours+"','n','','','')\" class=\"globale"+gloActif+"\">statistiques globales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','GT','1','"+globalTableEnCours+"','n','')\" class=\"GT"+gtActif+"\">statistiques par Grand Type</a>";
+		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('"+globaltypepeche+"','"+globalAction+"','1','','y','','','')\" value=\"Afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
 		
 	}
 }

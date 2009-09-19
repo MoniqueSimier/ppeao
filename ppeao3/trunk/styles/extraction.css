@@ -142,7 +142,7 @@ list-style:none;
 	position:absolute;
 	top:460px;
 	left:5px;
-	background-color:#EEDEC7;
+	background-color:#f8e19a;
 	visibility:hidden;
 	width:800px;
 }
@@ -153,7 +153,7 @@ list-style:none;
 	position:absolute;
 	top:480px;
 	left:5px;
-	background-color:#EEDEC7;
+	background-color:#f8e19a;
 	visibility:hidden;
 	width:800px;
 }
@@ -161,7 +161,7 @@ list-style:none;
 	position:absolute;
 	top:480px;
 	left:5px;
-	background-color:#EEDEC7;
+	background-color:#f8e19a;
 	visibility:hidden;
 	width:800px;
 }
@@ -169,7 +169,7 @@ list-style:none;
 	position:absolute;
 	top:480px;
 	left:5px;
-	background-color:#EEDEC7 ;
+	background-color:#f8e19a ;
 	visibility:hidden;
 	width:800px;
 }
@@ -177,7 +177,7 @@ list-style:none;
 	position:absolute;
 	top:480px;
 	left:5px;
-	background-color:#EEDEC7 ;
+	background-color:#f8e19a ;
 	visibility:hidden;
 	width:800px;
 }
@@ -185,7 +185,7 @@ list-style:none;
 	position:absolute;
 	top:480px;
 	left:5px;
-	background-color:#EEDEC7 ;
+	background-color:#f8e19a ;
 	visibility:hidden;
 	width:800px;
 }
@@ -199,7 +199,7 @@ list-style:none;
 }
 .ChoixChampComp {
 	width:800px;
-	background-color:#FFFFCC;
+	background-color:#f8e19a;
 }
 .CCCTable{
 	vertical-align:text-top;
@@ -213,14 +213,44 @@ list-style:none;
 }
 /* CSS pour les tables contenant la liste des cat eco, troph et des especes */
 #CEco{
-text-align:left;
-vertical-align:top;
+	font-size:75%;
+	text-align:left;
+	vertical-align:top;
 }
 #CTro{
-text-align:left;
-vertical-align:top;
+	font-size:75%;
+	text-align:left;
+	vertical-align:top;
+}
+.catitem{
+	text-align:left;
+	vertical-align:top;	
 }
 #espece{
-text-align:left;
-vertical-align:top;
+	text-align:left;
+	vertical-align:top;
+}
+#listeEspece{
+	font-size:75%;
+	text-align:left;
+	vertical-align:top;
+}
+#affresultat{
+	background-color: #f8e19a;
+}
+.edit_row_even {
+	font-size:75%;
+	background-color: transparent;
+}
+
+.edit_row_odd {
+	font-size:75%;
+	background-color:	#E6E6E6;
+
+}
+.affresultattitre{
+	border-bottom:2px dashed #666;
+	font-weight:bold;
+	font-size:75%;
+	vertical-align:top;
 }
