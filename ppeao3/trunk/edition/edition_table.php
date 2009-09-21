@@ -209,7 +209,7 @@ $countTotal=$countRow[0];
 //debug echo('XXX'.$countSql.'YYY');
 
 
-// on prend en compte la pagination
+// on prend en compte la pagination (utilise la fonction paginate() definie dans functions_generic.php)
 
 /* Déclaration des variables */ 
     $rowsPerPage = 15; // nombre d'entrées à afficher par page (entries per page) 
@@ -245,7 +245,9 @@ $tableArray=pg_fetch_all($tableResult);
 //debug echo('<pre>');print_r($tableArray);echo('</pre>');
 
 // libération du résultat
-pg_free_result($tableResult);}
+pg_free_result($tableResult);
+// fin de la préparation de la pagination
+}
 
 
 // on prépare l'affichage du titre
