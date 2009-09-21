@@ -1622,6 +1622,8 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 	global $logComp;
 	global $pasdefichier;
 	$construitSelection = "";
+	$listeSelectEsp = "";
+	
 	if ($SQLEspeces == "") {
 		echo "erreur SQLEspeces vide dans la fonction AfficheEspeces<br/>Arret du traitement<br/>.";
 		exit;
@@ -1650,9 +1652,6 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 		} else { 
 			$cptInput = 1;
 			$construitSelection .="<table id=\"espece\"><tr><td>"; 
-			// Dans la premiere colonne on cree une sous table pour formater l'affichage des especes
-			$construitSelection .="<table id=\"listeEspece\"><tr><td>";
-			// A faire : formater le resultat avec une table
 			if (strpos($ListeEsp,"XtoutX") === false) {
 				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"XtoutX\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','tout')\"/>&nbsp;<b>Tout</b></td><td>";
 			} else {
@@ -1687,24 +1686,36 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 				}
 			} // fin du while
 			
-			$construitSelection .="</td></tr></table></td>";
-			If ($regroup == "y") {
-				// Gestion des regroupements d'especes
-				$construitSelection .="<td class=\"regroupement\"><b>Regroupement d'especes</b> ";
-				// Construction du formulaire
-				
-				
-				
-				$construitSelection .="</td>";
-			}
-			
-			$construitSelection .="</tr></table>";
+			$construitSelection .="</td></tr></table>";
+;
 			$construitSelection .= "<input id=\"numEsp\" type=\"hidden\" name=\"numEsp\" value=\"".$cptInput ."\"/>";
 		}
 	}	
 	pg_free_result($SQLCEcoResult);
 	return $construitSelection;
 }
+
+//*********************************************************************
+// AfficheColonnes : Fonction pour afficher les tables / colonnes a selectionner par type de peche
+function AfficheRegroupEsp($SQLespeces,$RegroupEsp) {
+// Cette fonction permet de gerer les regroupements d'especes
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $SQLespeces : le SQL contenant les especes sélectionnées
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie $tableau
+//*********************************************************************
+$construitSelection = "";
+$construitSelection .= "<table id=\"regroupement\"><tr id=\"titreReg\"><td>Regroupement esp&egrave;ces</td></tr>";
+
+
+$construitSelection .= "</table>";
+return $construitSelection;
+
+}
+
+
 
 //*********************************************************************
 // AfficheColonnes : Fonction pour afficher les tables / colonnes a selectionner par type de peche

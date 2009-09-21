@@ -125,6 +125,7 @@ list-style:none;
 	border:1px dotted #666666;
 }
 #menuTab{
+	font-size:80%;
 	position:absolute;
 	top:410px;
 	left:5px;
@@ -174,6 +175,15 @@ list-style:none;
 	width:800px;
 }
 .especes{
+	position:absolute;
+	top:480px;
+	left:5px;
+	background-color:#f8e19a ;
+	visibility:hidden;
+	width:800px;
+}
+
+.regroupesp{
 	position:absolute;
 	top:480px;
 	left:5px;
@@ -253,4 +263,11 @@ list-style:none;
 	font-weight:bold;
 	font-size:75%;
 	vertical-align:top;
+}
+.regroupement{
+	border-left-style:dotted;
+	border-left-color:#666;
+	font-size:75%;
+	vertical-align:top;
+	text-align:left;
 }

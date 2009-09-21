@@ -227,6 +227,12 @@ switch ($numTab) {
 		}
 		$tab5 = " active";
 		break;
+	case "5":
+		if (!($typeAction == "activite") && !($typeAction == "capture") && !($typeAction == "engin") ) {
+			$regActive=" visible";
+		}
+		$tab5 = " active";
+		break;
 }
 // Gestion des valeurs déjà saisies ou valeurs par défaut
 if ($EcrireLogComp && $debugLog) {
@@ -250,7 +256,7 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <?php } ?>
 <a href="#" class="<?php echo $tab4;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','')">Colonnes</a>
 <?php if (!($typeAction == "activite") && !($typeAction == "capture") && !($typeAction == "engin")) { ?>
-|<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n','','','')">Esp&egrave;ces</a>
+|<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n','','','')">Esp&egrave;ces</a> | <a href="#" class="<?php echo $tab6;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','6','<?php echo $codeTableEnCours;?>','n','','','')">Regroupement Esp&egrave;ces</a>
 <?php } ?>
 </div>
 <?php // Les differents div correspondant aux choix disponibles par onglet ?>
@@ -278,6 +284,11 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <?php 
 //echo "session = ".$_SESSION['SQLEspeces']." - liste espe = ".$listeEsp."<br/>";
 echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typePeche,$typeAction,$numTab,"y"); ?>
+</div>
+<?php // l'onglet qui gere les espèces ?>
+<div id="regroupesp" class="regroupesp<?php echo $regActive;?>">
+<?php 
+echo AfficheRegroupEsp($_SESSION['SQLEspeces'],$_SESSION['ListeRegroupEsp']); ?>
 </div>
 </form>
 
