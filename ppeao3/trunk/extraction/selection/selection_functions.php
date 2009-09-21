@@ -31,7 +31,7 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 			)';
 	} // fin de if (!empty($_GET["familles"]))
 		// si des valeurs d'especes ont ete passees dans l'url
-	if (!empty($_GET["especes"])) {
+	if (!empty($_GET["especes"]) && $_GET["step"]>2) {
 		$sql.=' AND exp_campagne.id IN (
 			SELECT exp_coup_peche.exp_campagne_id FROM exp_coup_peche WHERE exp_coup_peche.id 
 			IN (
@@ -43,29 +43,29 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 	} // fin de if (!empty($_GET["familles"]))
 	
 	// si des valeurs de pays ont ete passees dans l'url
-	if (!empty($_GET["pays"])) {
+	if (!empty($_GET["pays"]) && $_GET["step"]>3) {
 		$sql.=' AND exp_campagne.ref_systeme_id IN (SELECT DISTINCT ref_systeme.id FROM ref_systeme WHERE ref_systeme.ref_pays_id IN (\''.arrayToList($_GET["pays"],'\',\'','\'').')) ';
 		}
 	// si des valeurs de systeme ont ete passees dans l'url
-	if (!empty($_GET["systeme"])) {
-		$sql.=' AND exp_campagne.ref_systeme_id IN (\''.arrayToList($_GET["systeme"],'\',\'','\'').')';
+	if (!empty($_GET["systemes"])  && $_GET["step"]>3) {
+		$sql.=' AND exp_campagne.ref_systeme_id IN (\''.arrayToList($_GET["systemes"],'\',\'','\'').')';
 		}
 	// si une valeur de debut_annee a ete passee dans l'url
-	if (!empty($_GET["debut_annee"])) {
-		$debut_annee=$_GET["debut_annee"];
+	if (!empty($_GET["d_a"])  && $_GET["step"]>4) {
+		$debut_annee=$_GET["d_a"];
 		// si aucun mois n'a ete passe, on utilise janvier soit 1
-		if (empty($_GET["debut_mois"])) {$debut_mois=1;} else {$debut_mois=$_GET["debut_mois"];}
+		if (empty($_GET["d_m"])) {$debut_mois=1;} else {$debut_mois=$_GET["d_m"];}
 		// on construit une date a partir de l'annee et du mois
 		$debut_date=$debut_annee.'-'.$debut_mois.'-01';
 		$sql.=' AND exp_campagne.date_debut>=\''.$debut_date.'\' ';
 		}
 	// si une valeur de fin_annee a ete passee dans l'url
-	if (!empty($_GET["fin_annee"])) {
-		$fin_annee=$_GET["fin_annee"];
+	if (!empty($_GET["f_a"]) && $_GET["step"]>4) {
+		$fin_annee=$_GET["f_a"];
 		// si aucun mois n'a ete passe, on utilise janvier soit 1
-		if (empty($_GET["fin_mois"])) {$fin_mois=1;} else {$fin_mois=$_GET["fin_mois"];}
+		if (empty($_GET["f_m"])) {$fin_mois=1;} else {$fin_mois=$_GET["f_m"];}
 		// on construit une date a partir de l'annee et du mois
-		$fin_date=$date=$year.'-'.$month.'-'.days_in_month($year,$month);
+		$fin_date=$fin_annee.'-'.$fin_mois.'-'.days_in_month($fin_annee,$fin_mois);
 		$sql.=' AND exp_campagne.date_debut<=\''.$fin_date.'\' ';
 		}
 } // fin de if ($domaine=='exp') 
@@ -74,7 +74,7 @@ if ($domaine=='art') {
 $sql="SELECT DISTINCT id FROM art_periode_enquete WHERE TRUE ";
 	
 	// si des valeurs d'especes ont ete passees dans l'url
-if (!empty($_GET["especes"])) {
+if (!empty($_GET["especes"]) && $_GET["step"]>2) {
 	$sql.=' AND art_periode_enquete.art_agglomeration_id IN(
 		SELECT d.art_agglomeration_id 
 		FROM art_debarquement d 
@@ -105,7 +105,7 @@ if (!empty($_GET["especes"])) {
 } // fin de if (!empty($_GET["especes"]))
 
 // si des valeurs de familles ont ete passees dans l'url
-if (!empty($_GET["familles"])) {
+if (!empty($_GET["familles"]) && $_GET["step"]>2) {
 	$sql.=' AND art_periode_enquete.art_agglomeration_id IN(
 		SELECT d.art_agglomeration_id 
 		FROM art_debarquement d 
@@ -142,40 +142,40 @@ if (!empty($_GET["familles"])) {
 } // fin de if (!empty($_GET["especes"]))
 	
 	// si des valeurs de pays ont ete passees dans l'url
-	if (!empty($_GET["pays"])) {
+	if (!empty($_GET["pays"]) && $_GET["step"]>3) {
 		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (SELECT DISTINCT art_agglomeration.id FROM art_agglomeration WHERE
  art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.ref_systeme_id IN (SELECT DISTINCT ref_systeme.id FROM ref_systeme WHERE ref_systeme.ref_pays_id IN (\''.arrayToList($_GET["pays"],'\',\'','\'').')))))';
 		}
 	// si des valeurs de systeme ont ete passees dans l'url
-	if (!empty($_GET["systeme"])) {
+	if (!empty($_GET["systemes"]) && $_GET["step"]>3) {
 		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (SELECT DISTINCT art_agglomeration.id FROM art_agglomeration WHERE
- art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.ref_systeme_id IN  (\''.arrayToList($_GET["systeme"],'\',\'','\'').'))))';
+ art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.ref_systeme_id IN  (\''.arrayToList($_GET["systemes"],'\',\'','\'').'))))';
 		}
 	// si des valeurs de secteur ont ete passees dans l'url
-	if (!empty($_GET["secteur"])) {
+	if (!empty($_GET["secteurs"]) && $_GET["step"]>7) {
 		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (SELECT DISTINCT art_agglomeration.id FROM art_agglomeration WHERE
- art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN  (\''.arrayToList($_GET["secteur"],'\',\'','\'').')))';
+ art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN  (\''.arrayToList($_GET["secteurs"],'\',\'','\'').')))';
 		}
 		// si des valeurs d'agglomeration ont ete passees dans l'url
-	if (!empty($_GET["agglomeration"])) {
-		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (\''.arrayToList($_GET["agglomeration"],'\',\'','\'').')';
+	if (!empty($_GET["agglomerations"]) && $_GET["step"]>8) {
+		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (\''.arrayToList($_GET["agglomerations"],'\',\'','\'').')';
 		}
 		// si une valeur de debut_annee a ete passee dans l'url
-	if (!empty($_GET["debut_annee"])) {
-		$debut_annee=$_GET["debut_annee"];
+	if (!empty($_GET["d_a"]) && $_GET["step"]>4) {
+		$debut_annee=$_GET["d_a"];
 		// si aucun mois n'a ete passe, on utilise janvier soit 1
-		if (empty($_GET["debut_mois"])) {$debut_mois=1;} else {$debut_mois=$_GET["debut_mois"];}
+		if (empty($_GET["d_m"])) {$debut_mois=1;} else {$debut_mois=$_GET["d_m"];}
 		// on construit une date a partir de l'annee et du mois
 		$debut_date=$debut_annee.'-'.$debut_mois.'-01';
 		$sql.=' AND art_periode_enquete.date_debut>=\''.$debut_date.'\' ';
 		}
 	// si une valeur de fin_annee a ete passee dans l'url
-	if (!empty($_GET["fin_annee"])) {
-		$fin_annee=$_GET["fin_annee"];
+	if (!empty($_GET["f_a"]) && $_GET["step"]>4) {
+		$fin_annee=$_GET["f_a"];
 		// si aucun mois n'a ete passe, on utilise janvier soit 1
-		if (empty($_GET["fin_mois"])) {$fin_mois=1;} else {$fin_mois=$_GET["fin_mois"];}
+		if (empty($_GET["f_m"])) {$fin_mois=1;} else {$fin_mois=$_GET["f_m"];}
 		// on construit une date a partir de l'annee et du mois
-		$fin_date=$date=$year.'-'.$month.'-'.days_in_month($year,$month);
+		$fin_date=$fin_annee.'-'.$fin_mois.'-'.days_in_month($fin_annee,$fin_mois);
 		$sql.=' AND art_periode_enquete.date_debut<=\''.$fin_date.'\' ';
 		}
 	
@@ -186,6 +186,9 @@ if (!empty($_GET["familles"])) {
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 	$totalArray=pg_fetch_all($result);
 	pg_free_result($result);
+	
+	//debug 	echo('<pre>xxxx');print_r($totalArray);echo('yyyy</pre>');
+	
 
 if (empty($totalArray)) {$total=0;$ids=array();} 
 	else {
@@ -200,6 +203,7 @@ $unites=array("total"=>$total,"ids"=>$ids);
 $coups=array();$debarquements=array();$activites=array();
 
 if ($domaine=='exp') {
+	if (!empty($ids)) {
 	// exp : on cherche les coups de peche
 	$sql='SELECT exp_coup_peche.id FROM exp_coup_peche WHERE exp_campagne_id IN (\''.arrayToList($unites["ids"],'\',\'','\'').')';
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
@@ -213,12 +217,16 @@ if (empty($coups_array)) {$coups_total=0;$coups_ids=array();}
 			$coups_ids[]=$row["id"];
 		}
 	}	
-	$coups=array("coups_total"=>$coups_total,"coups_ids"=>$coups_ids);
+	$coups=array("coups_total"=>$coups_total,"coups_ids"=>$coups_ids);}
+else {
+	$coups=array("coups_total"=>0,"coups_ids"=>array());
+	}
 
 } // fin de if ($domaine=='exp')
 
 if ($domaine=='art') {
 	// art : on cherche les debarquements
+	if (!empty($ids)) {
 	$debarquements_array=array();
 	foreach($unites["ids"] as $enquete) {
 	$sql='SELECT art_debarquement.id 
@@ -264,8 +272,13 @@ if (empty($activites_array)) {$activites_total=0;$activites_ids=array();}
 			$activites_ids[]=$row;
 		}
 	}
-$activites=array("activites_total"=>$activites_total,"activites_ids"=>$activites_ids);
 
+$activites=array("activites_total"=>$activites_total,"activites_ids"=>$activites_ids);
+	}
+	else {
+	$debarquements=array("debarquements_total"=>0,"debarquements_ids"=>array());
+	$activites=array("activites_total"=>0,"activites_ids"=>array());
+	}
 } // fin de if ($domaine=='art')
 
 	
@@ -283,17 +296,10 @@ return $unites;
 
 
 //******************************************************************************
-// affiche le compteur indiquant le nombre de campagnes/periodes d'enquete correspondant a la selection en cours
-function afficheCompteur() {
+// prepare le compteur indiquant le nombre de campagnes/periodes d'enquete correspondant a la selection en cours
+function prepareCompteur() {
 
-$familles=$_GET["familles"];
-$especes=$_GET["especes"];
-$pays=$_GET["pays"];
-$systemes=$_GET["systemes"];
-$debut_annee=$_GET["debut_annee"];
-$debut_mois=$_GET["debut_mois"];
-$fin_annee=$_GET["fin_annee"];
-$fin_mois=$_GET["fin_mois"];
+
 
 // on compte les campagnes
 $campagnes=countMatchingUnits2('exp');
@@ -307,10 +313,13 @@ $total_enquetes=$enquetes["total"];
 
 // on prepare le compteur
 
-if ($total_campagnes>0) {$texte_coups=' ('.$campagnes["coups"]["coups_total"].' coups de p&ecirc;che)'; } else {$texte_coups='';}
-if ($total_enquetes>0) {$texte_deb_act=' ('.$enquetes["debarquements"]["debarquements_total"].' d&eacute;barquements et '.$enquetes["activites"]["activites_total"].' activit&eacute;s)'; } else {$texte_deb_act='';}
+if ($total_campagnes>0) {$texte_coups=' &ndash; '.$campagnes["coups"]["coups_total"].' coup(s) de p&ecirc;che)'; } else {$texte_coups='';}
+if ($total_enquetes>0) {$texte_deb_act=' &ndash;'.$enquetes["debarquements"]["debarquements_total"].' d&eacute;barquement(s) et '.$enquetes["activites"]["activites_total"].' activit&eacute;(s).'; } else {$texte_deb_act='';}
 
-$compteur=array("campagnes_ids"=>$campagnes["ids"],
+switch ($_GET['donnees']) {
+	case "exp":
+	// Peches experimentales
+	$compteur=array("campagnes_ids"=>$campagnes["ids"],
 				"campagnes_total"=>$total_campagnes,
 				"coups_ids"=>$campagnes["coups"]["coups_ids"],
 				"coups_total"=>$campagnes["coups"]["coups_total"],
@@ -318,7 +327,32 @@ $compteur=array("campagnes_ids"=>$campagnes["ids"],
 				"enquetes_total"=>$total_enquetes,
 				"debarquements_total"=>$campagnes["debarquements"]["debarquements_total"],
 				"debarquements_ids"=>$campagnes["debarquements"]["debarquements_ids"],
-				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><ul><li>'.$total_campagnes.' campagnes'.$texte_coups.'</li><li>'.$total_enquetes.' p&eacute;riodes d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></ul></div>');
+				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><p>'.$total_campagnes.' campagne(s)'.$texte_coups.'</p></div>');
+	break;
+	case "art":
+	$compteur=array("campagnes_ids"=>$campagnes["ids"],
+				"campagnes_total"=>$total_campagnes,
+				"coups_ids"=>$campagnes["coups"]["coups_ids"],
+				"coups_total"=>$campagnes["coups"]["coups_total"],
+				"enquetes_ids"=>$enquetes["ids"],
+				"enquetes_total"=>$total_enquetes,
+				"debarquements_total"=>$campagnes["debarquements"]["debarquements_total"],
+				"debarquements_ids"=>$campagnes["debarquements"]["debarquements_ids"],
+				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><p>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></p></div>');
+	break;
+	default:
+	$compteur=array("campagnes_ids"=>$campagnes["ids"],
+				"campagnes_total"=>$total_campagnes,
+				"coups_ids"=>$campagnes["coups"]["coups_ids"],
+				"coups_total"=>$campagnes["coups"]["coups_total"],
+				"enquetes_ids"=>$enquetes["ids"],
+				"enquetes_total"=>$total_enquetes,
+				"debarquements_total"=>$campagnes["debarquements"]["debarquements_total"],
+				"debarquements_ids"=>$campagnes["debarquements"]["debarquements_ids"],
+				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><ul><li>'.$total_campagnes.' campagne(s)'.$texte_coups.'</li><li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></ul></div>');
+	break;
+				
+	} // end switch $exploit
 				
 
 
@@ -384,6 +418,7 @@ function afficheChoixEspeces() {
 2 = selection des especes
 3 = selection pays/systemes
 4= selection periode
+5= selection type exploitation
 */
 
 // on determine a quelle etape on en est (si step est vide on suppose que on est au step 1)
@@ -391,14 +426,18 @@ if (empty($_GET["step"])) {$step=1;} else {$step=$_GET["step"];}
 // si l'on en est a la premiere etape, on affiche le choix
 if ($step==1) {
 	echo('<div id="step_1">');
-	echo("<h2>voulez-vous commencer par s&eacute;lectionner des esp&egrave;ces?</h2>");
+	echo("<h2>1. voulez-vous commencer par s&eacute;lectionner des esp&egrave;ces?</h2>");
 	echo('<p><a href="/extraction/selection/selection.php?choix_especes=1&step=2" class="">oui</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/extraction/selection/selection.php?choix_especes=0&step=3" class="">non</a></p>');
 	echo('</div>');
+
+// on reinitialise les parametres de selection stockes dans la session
+$_SESSION["selection_1"]=array();
+
 }
 
 else {
 	echo('<div id="step_1">');
-	echo('<p><a href="/extraction/selection/selection.php">recommencer la s&eacute;lection du d&eacute;but</a></p>');
+	echo('<p><a href="/extraction/selection/selection.php">1. recommencer la s&eacute;lection du d&eacute;but</a></p>');
 	echo('</div>');
 }
 
@@ -413,6 +452,7 @@ function afficheTaxonomie() {
 2 = selection des especes
 3 = selection pays/systemes
 4= selection periode
+5= selection type exploitation
 */
 
 // la connexion a la base
@@ -431,7 +471,7 @@ switch ($_GET["step"]) {
 	// on est a cette etape, on affiche le selecteur 
 	echo('<div id="step_2">');
 	echo('<form id="step_2_form" name="step_2_form" target="/extraction/selection/selection.php?choix_especes=1" method="GET">');
-		echo("<h2>s&eacute;lectionner des familles et/ou des esp&egrave;ces</h2>");
+		echo("<h2>2. s&eacute;lectionner des familles et/ou des esp&egrave;ces</h2>");
 		
 		// on recupere la liste des especes qui sont presentes dans les campagnes ou les enquetes
 		$sql_especes='	SELECT DISTINCT id, libelle 
@@ -502,11 +542,13 @@ switch ($_GET["step"]) {
 	$url=removeQueryStringParam($url,'especes\[\]');
 	echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(2,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection spatiale...</a></p>');
 	echo('</div>');// end div id="step_2"
+	// on reinitialise les parametres de selection stockes dans la session
+	$_SESSION["selection_1"]=array();
 	break;
 	default:
 	// on en est a une etape ulterieure, on affiche le resume textuel
 	echo('<div id="step_2">');
-		echo("<h2>s&eacute;lectionner des familles et/ou des esp&egrave;ces</h2>");
+		echo("<h2>2. familles et/ou esp&egrave;ces</h2>");
 		if (!empty($_GET["familles"])) {
 			// on recupere la liste des noms des familles selectionnees
 			$familles_id='\''.arrayToList($_GET["familles"],'\',\'','\'');
@@ -535,6 +577,14 @@ switch ($_GET["step"]) {
 	$edit_link=replaceQueryParam ($_SERVER['FULL_URL'],'step',2);
 	$edit_link=removeQueryStringParam($edit_link, 'pays\[\]');
 	$edit_link=removeQueryStringParam($edit_link, 'systemes\[\]');
+	$edit_link=removeQueryStringParam($edit_link, 'd_a');
+	$edit_link=removeQueryStringParam($edit_link, 'd_m');
+	$edit_link=removeQueryStringParam($edit_link, 'f_a');
+	$edit_link=removeQueryStringParam($edit_link, 'f_m');
+	$edit_link=removeQueryStringParam($edit_link, 'exploit');
+	$edit_link=removeQueryStringParam($edit_link, 'donnees');
+	$edit_link=removeQueryStringParam($edit_link, 'secteurs\[\]');
+
 	echo('<p id="edit_especes"><a href="'.$edit_link.'">recommencer la sélection des esp&egrave;ces...</a></p>');	
 	echo('</div>');
 	break;
@@ -555,6 +605,7 @@ function afficheGeographie() {
 2 = selection des especes
 3 = selection pays/systemes
 4= selection periode
+5= selection type exploitation
 */
 
 global $connectPPEAO; // la connexion a la base
@@ -575,7 +626,7 @@ switch ($_GET["step"]) {
 	// on est a cette etape, on affiche le selecteur 
 	echo('<div id="step_3">');
 	echo('<form id="step_3_form" name="step_3_form" target="/extraction/selection/selection.php?choix_especes='.$choix.'" method="GET">');
-	echo("<h2>s&eacute;lectionner des syst&egrave;mes</h2>");
+	echo("<h2>3. s&eacute;lectionner des syst&egrave;mes</h2>");
 	
 	// on recupere la liste des pays correspondant aux campagnes et enquetes correspondant a la selection precedente
 	$sql_pays='	SELECT DISTINCT ref_pays.id, ref_pays.nom 
@@ -647,11 +698,13 @@ switch ($_GET["step"]) {
 	$url=removeQueryStringParam($url,'systemes\[\]');
 	echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(3,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection temporelle...</a></p>');
 	echo('</div>'); // end div id=step_3
+	// on reinitialise les parametres de selection stockes dans la session
+	$_SESSION["selection_1"]=array();
 	break;
 	default:
 	// on en est a une etape ulterieure, on affiche le resume textuel
 	echo('<div id="step_3">');
-		echo("<h2>s&eacute;lectionner des syst&egrave;mes</h2>");
+		echo("<h2>3. syst&egrave;mes</h2>");
 		if (!empty($_GET["systemes"])) {
 			// on recupere la liste des systemes selectionnes
 			$systeme_id='\''.arrayToList($_GET["systemes"],'\',\'','\'');
@@ -692,6 +745,13 @@ switch ($_GET["step"]) {
 		}
 	// le lien permettant d'éditer la selection des systemes
 	$edit_link=replaceQueryParam ($_SERVER['FULL_URL'],'step',3);
+	$edit_link=removeQueryStringParam($edit_link, 'd_a');
+	$edit_link=removeQueryStringParam($edit_link, 'd_m');
+	$edit_link=removeQueryStringParam($edit_link, 'f_a');
+	$edit_link=removeQueryStringParam($edit_link, 'f_m');
+	$edit_link=removeQueryStringParam($edit_link, 'exploit');
+	$edit_link=removeQueryStringParam($edit_link, 'donnees');
+	$edit_link=removeQueryStringParam($edit_link, 'secteurs\[\]');
 	echo('<p id="edit_systemes"><a href="'.$edit_link.'">recommencer la sélection des syst&egrave;mes...</a></p>');	
 	echo('</div>');
 	break;
@@ -706,16 +766,16 @@ function affichePeriode() {
 2 = selection des especes
 3 = selection pays/systemes
 4= selection periode
+5= selection type exploitation
 */
 global $connectPPEAO; // la connexion a la base
 global $campagnes_ids; // la liste des campagnes deja selectionnees
 global $enquetes_ids; // la liste des enquetes deja selectionnees	
 
-// on determine si on a commence par choisir des especes
-if ($_GET["choix_especes"]==1) {$choix=1;} else {$choix=0;}
-
 // si l'on en est a l'etape en question, on affiche le selecteur
 switch ($_GET["step"]) {
+	case NULL:
+	case 0:
 	case 1:
 	case 2: 
 	case 3:
@@ -725,7 +785,7 @@ switch ($_GET["step"]) {
 	// on est arrive a cette etape, on affiche le formulaire
 	echo('<div id="step_4">');	
 	echo('<form id="step_4_form" name="step_4_form" target="/extraction/selection/selection.php?choix_especes='.$choix.'" method="GET">');
-	echo("<h2>s&eacute;lectionner une periode d&#x27;int&eacute;r&ecirc;t</h2>");
+	echo("<h2>4. s&eacute;lectionner une periode d&#x27;int&eacute;r&ecirc;t</h2>");
 	// on determine les periodes couvertes par les campagnes filtrees
 	if (!empty($campagnes_ids[0])) {
 	$sql_c='SELECT MIN(c.date_debut) as campagne_debut, MAX(c.date_fin) as campagne_fin 
@@ -750,8 +810,7 @@ switch ($_GET["step"]) {
 	$to='';
 	if ($array_c[0]["campagne_debut"]<$array_e[0]["enquete_debut"]) {$from=date_parse($array_c[0]["campagne_debut"]);} else {$from=date_parse($array_c[0]["enquete_debut"]);}
 	if ($array_c[0]["campagne_fin"]>$array_e[0]["enquete_fin"]) {$to=date_parse($array_c[0]["campagne_fin"]);} else {$to=date_parse($array_c[0]["enquete_fin"]);}
-	//debug 	echo('<pre>');print_r($from);echo('</pre>');
-	//debug 	echo('<pre>');print_r($to);echo('</pre>');
+
 	
 
 	$debut["annee"]=$from["year"];
@@ -761,8 +820,8 @@ switch ($_GET["step"]) {
 	$fin["mois"]=$to["month"];
 	$fin["jour"]=$to["day"];
 
-	
-	//debug
+	//debug 	echo('<pre>');print_r($debut);echo('</pre>');
+	//debug 		echo('<pre>');print_r($fin);echo('</pre>');
 	echo('<p>(p&eacute;riode couverte : de '.$debut["annee"].'-'.$debut["mois"].'-'.$debut["jour"].' &agrave; '.$fin["annee"].'-'.$fin["mois"].'-'.$fin["jour"].')</p>');
 
 	
@@ -854,19 +913,32 @@ switch ($_GET["step"]) {
 	echo('</div>'); // fin de div id=fin
 	echo('</form>');
 	// si la selection de periode est terminee (i.e. une valeur de f_m est choisie)
-	// on affiche le lien permettant de passer a la suite
-	$url=$_SERVER["FULL_URL"];
+	// on affiche le lien permettant de passer a la suite	
+	$url=$_SERVER['FULL_URL'];
 	$url=removeQueryStringParam($url,'d_a');
 	$url=removeQueryStringParam($url,'d_m');
 	$url=removeQueryStringParam($url,'f_a');
 	$url=removeQueryStringParam($url,'f_m');
+
 	if (!empty($_GET["f_m"])) {
 	echo('<p id="step_4_link"  class="clear"><a href="#" onclick="javascript:goToNextStep(4,\''.$url.'\');">ajouter et choisir un type d&#x27;exploitation ...</a></p>');}
 	echo('</div>'); // fin de div id="step_4"
-	
+	// on reinitialise les parametres de selection stockes dans la session
+	$_SESSION["selection_1"]=array();
+	$_SESSION["selection_0"]=replaceQueryParam ($_SERVER['FULL_URL'],'step',4);
 	break;
 	default:
 	// on a depasse cette etape, on affiche le resume textuel
+	echo('<div id="step_4">');
+	echo("<h2>4. p&eacute;riode d&#x27;int&eacute;r&ecirc;t</h2>");
+	echo('de '.number_pad($_GET["d_m"],2).'/'.$_GET["d_a"].' &agrave; '.number_pad($_GET["f_m"],2).'/'.$_GET["f_a"]);
+	// le lien permettant d'éditer la selection de la periode
+	$edit_link=replaceQueryParam ($_SERVER['FULL_URL'],'step',4);
+	$edit_link=removeQueryStringParam($edit_link, 'exploit');
+	$edit_link=removeQueryStringParam($edit_link, 'donnees');
+	$edit_link=removeQueryStringParam($edit_link, 'secteurs\[\]');
+	echo('<p id="edit_periode"><a href="'.$edit_link.'">recommencer la sélection de la p&eacute;riode...</a></p>');	
+	echo('</div>');
 	break;
 
 } // end switch $_GET["step"]
@@ -874,6 +946,241 @@ switch ($_GET["step"]) {
 // on affiche le choix du type d'exploitation
 function afficheTypeExploitation() {
 	
+/* on numerote les etapes :
+1 = selectionner ou non des especes
+2 = selection des especes
+3 = selection pays/systemes
+4= selection periode
+5= selection type exploitation
+6= selection type de donnees (exp ou art)
+*/	
+
+global $connectPPEAO; // la connexion a la base
+global $campagnes_ids; // la liste des campagnes deja selectionnees
+global $enquetes_ids; // la liste des enquetes deja selectionnees
+
+// si l'on en est a l'etape en question, on affiche le selecteur
+switch ($_GET["step"]) {
+	case NULL:
+	case 0:
+	case 1:
+	case 2: 
+	case 3:
+	case 4:
+	// on n'est pas encore arrive a cette etape, on n'affiche rien 
+	break;
+	case 5:
+	// on en est a cette etape, on affiche le selecteur
+	echo('<div id="step_5">');
+	echo('<h2>5. s&eacute;lectionner un type d&#x27;exploitation</h2>');
+	echo('<ul>');
+		echo('<li><a href="selection.php?exploit=donnees&step=6">extraction de donn&eacute;es</a></li>');
+		echo('<li><a href="selection.php?exploit=stats&step=6">statistiques de p&ecirc;che</a></li>');
+		echo('<li><a href="selection.php?exploit=cartes&step=6">fonds de cartes</a></li>');
+		/*echo('<li>graphiques</li>');
+		echo('<li>indicateurs &eacute;cologiques</li>');*/
+	echo('</ul>');
+	echo('</div>');
+	// et on stocke les paramètres de l'URL actuelle dans une variable de session pour les passer au script suivant
+	$_SESSION["selection_1"]=$_GET;
+	// on enleve le param "step" puisque on le passe via l'url
+	unset($_SESSION["selection_1"]["step"]);
+	//debug 	echo('<pre>');print_r($_SESSION["selection_1"]);echo('</pre>');
+	
+	break;
+	default:
+	// on en est a une etape ulterieure, on affiche le resume textuel
+	echo('<div id="step_5">');
+	echo('<h2>5. type d&#x27;exploitation</h2>');
+	switch ($_GET["exploit"]) {
+		case "donnees":
+			echo("<p>extraction de donn&eacute;es</p>");
+		break;
+		case "stats":
+			echo("<p>statistiques de p&ecirc;che</p>");
+		break;
+		case "cartes":
+			echo("<p>fonds de cartes</p>");
+		break;
+		case "graphes":
+			echo("<p>graphiques</p>");
+		break;
+		case "indics":
+			echo("<p>indicateurs &eacute;cologiques</p>");
+		break;
+	}
+	// le lien permettant d'éditer la selection du type d'exploitation
+	$edit_link=$_SESSION["selection_0"];
+	echo('<p id="edit_exploit"><a href="'.$edit_link.'">recommencer la s&eacute;lection du type d&#x27;exploitation...</a></p>');	
+	echo('</div>');
+} // end switch
 }
 
+
+function afficheTypeDonnees() {
+	
+/* on numerote les etapes :
+1 = selectionner ou non des especes
+2 = selection des especes
+3 = selection pays/systemes
+4= selection periode
+5= selection type exploitation
+6= selection type de donnees (exp ou art)
+*/	
+
+global $connectPPEAO; // la connexion a la base
+global $campagnes_ids; // la liste des campagnes deja selectionnees
+global $enquetes_ids; // la liste des enquetes deja selectionnees
+global $compteur;
+
+	switch($_GET["step"]) {
+		case 6:
+		// on en est a cette etape, on affiche le selecteur
+		echo('<div id="step_6">');
+		echo('<h2>6. s&eacute;lectionner le type de donn&eacute;es &agrave; extraire</h2>');
+		echo('<ul>');
+		//si il reste des campagnes
+		if ($compteur["campagnes_total"]!=0) {
+		echo('<li><a href="selection.php?exploit=donnees&donnees=exp&step=7">donn&eacute;es de p&ecirc;che exp&eacute;rimentale</a></li>');}
+		//si il reste des enquetes
+		if ( $compteur["enquetes_total"]!=0) {
+		echo('<li><a href="selection.php?exploit=donnees&donnees=art&step=7">donn&eacute;es de p&ecirc;che artisanale</a></li>');}
+		echo('</ul>');
+		break;
+		// on a depasse cette etape, on affiche le resume textuel
+		default:
+		echo('<div id="step_6">');
+		echo('<h2>type de donn&eacute;es &agrave; extraire</h2>');
+		switch($_GET["donnees"]) {
+			case "exp":
+			echo('<p>donn&eacute;es de p&ecirc;che exp&eacute;rimentale</p>');
+			break;
+			case "art":
+			echo('<p>donn&eacute;es de p&ecirc;che artisanale</p>');
+			break;
+		}
+		// le lien permettant d'éditer la selection du type de donnees a extraire
+		$edit_link=replaceQueryParam ($_SERVER['FULL_URL'],'step',6);
+		$edit_link=removeQueryStringParam($edit_link, 'donnees');
+		$edit_link=removeQueryStringParam($edit_link, 'secteurs\[\]');
+		echo('<p id="edit_donnees"><a href="'.$edit_link.'">6. recommencer la s&eacute;lection du type de donn&eacute;es &agrave; extraire...</a></p>');	
+		echo('</div>');
+		break;
+	}
+}
+
+
+function afficheSecteurs($donnees) {
+	
+	global $connectPPEAO;
+	global $campagnes_ids;
+	global $enquetes_ids;
+	
+	switch($_GET["step"]) {
+		case 7: 
+		// on en est a cette etape, on affiche le selecteur
+		echo('<div id="step_7">');
+			echo('<form id="step_7_form" name="step_7_form" target="/extraction/selection/selection.php" method="GET">');
+		echo('<h2>7. s&eacute;lectionner des secteurs</h2>');
+		
+		// on recupere la liste des secteurs pour les campagnes ou periodes d'enquetes selectionnees
+		switch($donnees) {
+			case "exp":
+			$sql='SELECT DISTINCT ref_secteur.id, ref_secteur.nom as secteur, ref_systeme.libelle as systeme, ref_pays.nom as pays FROM ref_secteur, ref_systeme,ref_pays WHERE ref_secteur.ref_systeme_id IN 
+				(SELECT DISTINCT ref_systeme_id FROM exp_campagne WHERE exp_campagne.id IN
+					(\''.arrayToList($campagnes_ids,'\',\'','\'').')
+				) 
+				 AND ref_systeme.id=ref_secteur.ref_systeme_id AND ref_pays.id=ref_systeme.ref_pays_id 
+				 ORDER BY ref_pays.nom, ref_systeme.libelle, ref_secteur.nom
+				';
+			//debug 			echo('<pre>');print_r($sql);echo('</pre>');
+			$nextSelectionStep='campagnes';
+			break; // end case exp
+			case "art":
+			$sql='SELECT DISTINCT ref_secteur.id, ref_secteur.nom as secteur, ref_systeme.libelle as systeme, ref_pays.nom as pays FROM ref_secteur, ref_systeme,ref_pays WHERE ref_secteur.ref_systeme_id IN 
+				(SELECT DISTINCT ref_systeme_id FROM art_agglomeration WHERE art_agglomeration.id IN (
+					SELECT DISTINCT art_periode_enquete.art_agglomeration_id FROM art_periode_enquete WHERE art_periode_enquete.id IN (
+					\''.arrayToList($enquetes_ids,'\',\'','\'').'
+						)
+					)
+				) 
+				 AND ref_systeme.id=ref_secteur.ref_systeme_id AND ref_pays.id=ref_systeme.ref_pays_id 
+				 ORDER BY ref_pays.nom, ref_systeme.libelle, ref_secteur.nom
+				';
+			//debug 			echo('<pre>');print_r($sql);echo('</pre>');
+			$nextSelectionStep='agglom&eacute;rations';
+			break; // end case art
+			
+		}
+			$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+			$secteurs=pg_fetch_all($result);
+			pg_free_result($result);
+			
+			//debug 			echo('<pre>');print_r($array);echo('</pre>');
+			
+			// on affiche le select
+			echo('<select id="secteurs" name="secteurs[]" size="10" multiple="multiple" class="level_select">');
+			foreach($secteurs as $secteur) {
+				// si la valeur est dans l'url, on la selectionne
+				if (in_array($secteur["id"],$_GET["secteurs"])) {$selected='selected="selected" ';} else {$selected='';}
+				echo('<option value="'.$secteur["id"].'" '.$selected.'>('.$secteur["pays"].'/'.$secteur["systeme"].') '.$secteur["secteur"].'</option>');
+			} // end foreach
+			echo('</select>');
+			
+			// on affiche le lien permettant de passer a la selection temporelle
+			// on prepare l'url pour construire le lien : on enleve les secteurs eventuellement selectionnes
+			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'secteurs\[\]');
+			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(7,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des '.$nextSelectionStep.'...</a></p>');
+		echo('</form>');
+		echo('</div>');
+		break; // end case step=7
+		
+		case ($_GET["step"]>7):
+		echo('<div id="step_7">');
+		echo('<h2>secteurs</h2>');
+		if (!empty($_GET["secteurs"])) {
+		$secteurs_id='\''.arrayToList($_GET["secteurs"],'\',\'','\'');
+		$sql='SELECT DISTINCT ref_secteur.nom as secteur, ref_systeme.libelle as systeme, ref_pays.nom as pays 
+				FROM ref_secteur , ref_systeme, ref_pays
+				WHERE ref_secteur.id IN ('.$secteurs_id.') 
+				 AND ref_systeme.id=ref_secteur.ref_systeme_id AND ref_pays.id=ref_systeme.ref_pays_id 
+				 ORDER BY ref_pays.nom, ref_systeme.libelle, ref_secteur.nom';
+		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+		$array=pg_fetch_all($result);
+		pg_free_result($result);
+		foreach ($array as $secteur) {$secteurs_noms[]='<span class="grey">('.$secteur["pays"].'/'.$secteur["systeme"].')</span> '.$secteur["secteur"];}
+		$liste_secteurs=arrayToList($secteurs_noms,', ','.');}
+		else {
+			$liste_secteurs="tous";
+		}
+		echo("<p>secteurs : $liste_secteurs</p>");
+		// le lien permettant d'éditer la selection des secteurs
+		$edit_link=replaceQueryParam ($_SERVER['FULL_URL'],'step',7);
+		echo('<p id="edit_secteurs"><a href="'.$edit_link.'">7. recommencer la sélection des secteurs...</a></p>');
+		echo('</div>');
+		// on a depasse cette etape, on affiche le resume textuel
+		break;
+	}
+}
+
+function afficheCampagnes() {
+	
+}
+
+function afficheEngins() {
+	
+}
+
+function afficheAgglomerations() {
+	
+}
+
+function affichePeriodeEnquetes() {
+	
+}
+
+function afficheGrandsTypesEngins() {
+	
+}
 ?>

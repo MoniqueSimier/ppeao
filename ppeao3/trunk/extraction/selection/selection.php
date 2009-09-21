@@ -6,6 +6,11 @@ include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 $section="consulter";
 $subsection="";
 
+// on recupere les parametres de la selection precedente eventuellement stockes dans la session
+$_GET=array_merge($_SESSION["selection_1"],$_GET);
+//debug echo('<pre>');print_r($_GET);echo('</pre>');
+
+
 $zone=0; // zone libre (voir table admin_zones)
 
 ?>
@@ -51,13 +56,16 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 echo('<div id="ex_selection">');
 
 // on calcule les élements du compteur
-$compteur=afficheCompteur();
+$compteur=prepareCompteur();
 // on en extrait la liste des campagnes et enquetes correspondant a la selection courante
 $campagnes_ids=$compteur["campagnes_ids"];
 $coups_ids=$compteur["coups_ids"];
 $enquetes_ids=$compteur["enquetes_ids"];
 
+
 //debug echo('<pre>');print_r($compteur);echo('</pre>');
+
+
 
 
 
@@ -75,9 +83,65 @@ afficheTaxonomie();
 afficheGeographie();
 // on affiche le selecteur de periode
 affichePeriode();
-// on affiche le choix du type d'exploitation
-afficheTypeExploitation();
+// on affiche le choix du type d'exploitation si il reste des campagnes ou des enquetes
+if ($compteur["campagnes_total"]!=0 || $compteur["enquetes_total"]!=0) {
+afficheTypeExploitation();} 
 
+// on agit poursuit la selection en fonction du type d'exploitation choisi
+switch($_GET["exploit"]) {
+	// extraction de donnees
+	case "donnees":
+		// on doit poursuivre la selection par le type de donnees
+		afficheTypeDonnees();
+		// maintenant on travaille selon les peches exp ou art (parametre &donnee=)
+		switch ($_GET["donnees"]) {
+			// peche experimentale : on continue la selection par secteurs>campagnes>engins de peche
+			case "exp":
+			// secteurs
+			afficheSecteurs("exp");
+			// campagnes
+			afficheCampagnes();
+			// engins de peche 
+			afficheEngins();
+			break;
+			
+			// peche artisanale : on continue la selection par
+			// secteurs>agglomerations>periodes d'enquete> grands types d'engins de peche
+			case "art":
+			//secteurs
+			afficheSecteurs("art");
+			// agglomerations 
+			afficheAgglomerations();
+			// periodes d'enquetes
+			affichePeriodeEnquetes();
+			// grands types d'engins
+			afficheGrandsTypesEngins();
+			break;
+		}
+		
+		
+	break; // end case "donnees"
+	
+	// statistiques de peche
+	case "stats":
+	break; // end case "stats"
+	
+	//fonds cartographiques
+	case "cartes":
+	break; // end case "cartes"
+	
+	// graphes
+	case "graphes":
+	break;
+	
+	//indicateurs ecologiques
+	case "indics":
+	break;
+	
+	// si aucun type n'est passe, on e fait rien
+	default:
+	break;
+}
 
 echo('</div>'); // find div id=selection
 

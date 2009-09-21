@@ -7,12 +7,15 @@ function replaceQueryString(url,param,value) {
 }
 
 
-function goToNextStep(step,url) {
-	// step: le numero de l'etape ACTUELLE
+function goToNextStep(current_step,url) {
+	// current_step: le numero de l'etape ACTUELLE
 	// url: l'url qui doit servir de base pour l'etape suivante
-	url=replaceQueryString(url,'step',step+1)+"&"
-	var theStepForm=document.getElementById("step_"+step+"_form");
+	url=replaceQueryString(url,'step',current_step+1)+"&"
+	var theStepForm=document.getElementById("step_"+current_step+"_form");
 	url+=theStepForm.toQueryString();
+	
+	//debug	alert(url);
+	
 	document.location=url;
 }
 
@@ -81,6 +84,7 @@ function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
 	if (selection=='d_a') {d_a=theValue;}
 	if (selection=='d_m') {d_a=$("d_a").value;d_m=theValue}
 	if (selection=='f_a') {d_a=$("d_a").value; d_m=$("d_m").value;f_a=theValue;}
+	if (selection=='f_m') {d_a=$("d_a").value; d_m=$("d_m").value;f_a=$("f_a").value;f_m=theValue;}
 
 
 		//debug			alert('valeur sélectionnée');
@@ -120,6 +124,8 @@ function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
 	
 	// on passe les valeurs sélectionnées des SELECT dans l'URL
 	var theString="&"+$('step_4_form').toQueryString();
+	
+	//debug	alert(theString);
 
 	// using GET to send the request
 	xhr.open("GET","/extraction/selection/refresh_periode_ajax.php?selection="+selection+"&d_a="+d_a+"&d_m="+d_m+"&f_a="+f_a+"&debut_annee="+debut_annee+"&debut_mois="+debut_mois+"&fin_annee="+fin_annee+"&fin_mois="+fin_mois,true);

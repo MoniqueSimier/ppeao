@@ -105,6 +105,12 @@ h4 {
 	font-weight:bold;
 }
 
+pre {
+	font-size:11px;
+	font-family: Courier, "Courrier New", sans-serif;
+	color:red;
+}
+
 /* ***************************** */
 /* styles personnalisés globaux */
 .clear {
@@ -136,7 +142,7 @@ a.link_button {
 }
 
 .grey {
-	color:grey;
+	color:#B9C8CE;
 }
 
 /* *********************** */

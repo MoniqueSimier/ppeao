@@ -4,10 +4,10 @@
 
 
 //***************************************************************************************************
-// stocke l'URL complète de la page courante dans le tableau de variables superglobales
+// stocke l'URL complète de la page courante dans le tableau de variables superglobales et dans la session
 function storeUrl() {
 	
-	$_SERVER['FULL_URL'] = 'http';
+	$url = 'http';
 	$script_name = '';
 	if(isset($_SERVER['REQUEST_URI'])) {
 	    $script_name = $_SERVER['REQUEST_URI'];
@@ -18,13 +18,15 @@ function storeUrl() {
 	    }
 	}
 	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on') {
-	    $_SERVER['FULL_URL'] .=  's';
+	   $url .=  's';
 	}
-	$_SERVER['FULL_URL'] .=  '://';
+	$url .=  '://';
 	
 	if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {$theHost=$_SERVER['HTTP_X_FORWARDED_HOST'];} else {$theHost=$_SERVER['HTTP_HOST'];}
 	
-	$_SERVER['FULL_URL'] .=  $theHost.$script_name;
+	$url .=  $theHost.$script_name;
+	$_SERVER['FULL_URL']=$url;
+	$_SESSION['FULL_URL']=$url;
 	
 }
 

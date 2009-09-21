@@ -6,9 +6,14 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/selection/selection_functions.php';
 
+// démarrage de la session
+session_start();
+
 $selection=$_GET["selection"];
 $debut=array("annee"=>$_GET["debut_annee"],"mois"=>$_GET["debut_mois"]);
 $fin=array("annee"=>$_GET["fin_annee"],"mois"=>$_GET["fin_mois"]);
+
+
 
 //debug echo('<pre>');print_r($debut);echo('</pre>');
 //debug echo('<pre>');print_r($fin);echo('</pre>');
@@ -79,7 +84,7 @@ break;
 case "f_m":
 // si la selection de periode est terminee (i.e. une valeur de f_m est choisie)
 	// on affiche le lien permettant de passer a la suite
-	$url=$_SERVER["FULL_URL"];
+	$url=$_SESSION["FULL_URL"];
 	$url=removeQueryStringParam($url,'d_a');
 	$url=removeQueryStringParam($url,'d_m');
 	$url=removeQueryStringParam($url,'f_a');
