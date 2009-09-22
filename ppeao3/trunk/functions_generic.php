@@ -201,10 +201,13 @@ function arrayToList($listarray,$separator,$end)
 // turns the values of an array into a list of values separated by a $separator and ending with a $end
 {
 $list='';
+// on initialise le compteur
+$i=0;
 foreach ($listarray as $value)
 			{
 			$list.=stripslashes($value);
-			if (next($listarray)) {$list.=$separator.'';} else {$list.=$end;}
+			if ($i<count($listarray)-1) {$list.=$separator.'';} else {$list.=$end;}
+			$i++;
 			}
 return $list;
 }
