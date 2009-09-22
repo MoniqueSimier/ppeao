@@ -71,6 +71,8 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 	// si des valeurs de campagnes ont ete passees dans l'url
 	if (!empty($_GET["camp"]) && $_GET["step"]>8) {
 		$sql.='AND exp_campagne.id IN (\''.arrayToList($_GET["camp"],'\',\'','\'').')';
+		
+	// *************** ENGINS ****************//
 	}
 } // fin de if ($domaine=='exp') 
 
@@ -182,17 +184,20 @@ if (!empty($_GET["familles"]) && $_GET["step"]>2) {
 		$fin_date=$fin_annee.'-'.$fin_mois.'-'.days_in_month($fin_annee,$fin_mois);
 		$sql.=' AND art_periode_enquete.date_debut<=\''.$fin_date.'\' ';
 		}
+		
+	// si des valeurs de periodes d'enquete ont ete passees dans l'url
+	if (!empty($_GET["enq"]) && $_GET["step"]>9) {
+		$sql.='AND art_periode_enquete.id IN (\''.arrayToList($_GET["enq"],'\',\'','\'').')';
+	}
 	
+	// ************* GRANDS TYPES ENGINS ***************
 	
 } // fin de if ($domaine=='art')
 
 // debug echo($sql);
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 	$totalArray=pg_fetch_all($result);
-	pg_free_result($result);
-	
-	//debug 	echo('<pre>xxxx');print_r($totalArray);echo('yyyy</pre>');
-	
+	pg_free_result($result);	
 
 if (empty($totalArray)) {$total=0;$ids=array();} 
 	else {
@@ -251,6 +256,10 @@ if ($domaine=='art') {
 		AND art_debarquement.annee=(SELECT annee  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.') 
 		AND art_debarquement.mois=(SELECT mois  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.')
 		';
+	
+		// ****** GRANDS TYPES D'ENGINS *********
+
+	
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 	$array=pg_fetch_all($result);
 	if (!empty($array)) {foreach($array as $row) {$debarquements_array[]=$row["id"];}}
@@ -265,6 +274,7 @@ if (empty($debarquements_array)) {$debarquements_total=0;$debarquements_ids=arra
 	$debarquements=array("debarquements_total"=>$debarquements_total,"debarquements_ids"=>$debarquements_ids);
 	}
 	
+	
 	// art : on cherche les activites
 	$activites_array=array();
 	foreach($unites["ids"] as $enquete) {
@@ -275,6 +285,10 @@ if (empty($debarquements_array)) {$debarquements_total=0;$debarquements_ids=arra
 		AND art_activite.annee=(SELECT annee  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.') 
 		AND art_activite.mois=(SELECT mois  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.')
 		';
+		
+	// ****** GRANDS TYPES D'ENGINS *********
+
+		
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 	$array=pg_fetch_all($result);
 	if (!empty($array)) {foreach($array as $row) {$activites_array[]=$row["id"];}}
@@ -327,10 +341,6 @@ switch ($_GET['donnees']) {
 				"campagnes_total"=>$total_campagnes,
 				"coups_ids"=>$campagnes["coups"]["coups_ids"],
 				"coups_total"=>$campagnes["coups"]["coups_total"],
-				"enquetes_ids"=>$enquetes["ids"],
-				"enquetes_total"=>$total_enquetes,
-				"debarquements_total"=>$campagnes["debarquements"]["debarquements_total"],
-				"debarquements_ids"=>$campagnes["debarquements"]["debarquements_ids"],
 				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><p>'.$total_campagnes.' campagne(s)'.$texte_coups.'</p></div>');
 	break;
 	case "art":
@@ -339,14 +349,12 @@ switch ($_GET['donnees']) {
 	$total_enquetes=$enquetes["total"];
 	if ($total_enquetes>0) {$texte_deb_act=' &ndash;'.$enquetes["debarquements"]["debarquements_total"].' d&eacute;barquement(s) et '.$enquetes["activites"]["activites_total"].' activit&eacute;(s).'; } 
 	else {$texte_deb_act='';}
-	$compteur=array("campagnes_ids"=>$campagnes["ids"],
-				"campagnes_total"=>$total_campagnes,
-				"coups_ids"=>$campagnes["coups"]["coups_ids"],
-				"coups_total"=>$campagnes["coups"]["coups_total"],
-				"enquetes_ids"=>$enquetes["ids"],
+	$compteur=array("enquetes_ids"=>$enquetes["ids"],
 				"enquetes_total"=>$total_enquetes,
-				"debarquements_total"=>$campagnes["debarquements"]["debarquements_total"],
-				"debarquements_ids"=>$campagnes["debarquements"]["debarquements_ids"],
+				"debarquements_total"=>$enquetes["debarquements"]["debarquements_total"],
+				"debarquements_ids"=>$enquetes["debarquements"]["debarquements_ids"],
+				"activites_total"=>$enquetes["activites"]["activites_total"],
+				"activites_ids"=>$enquetes["activites"]["activites_ids"],
 				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><p>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></p></div>');
 	break;
 	default:
@@ -366,8 +374,10 @@ switch ($_GET['donnees']) {
 				"coups_total"=>$campagnes["coups"]["coups_total"],
 				"enquetes_ids"=>$enquetes["ids"],
 				"enquetes_total"=>$total_enquetes,
-				"debarquements_total"=>$campagnes["debarquements"]["debarquements_total"],
-				"debarquements_ids"=>$campagnes["debarquements"]["debarquements_ids"],
+				"debarquements_total"=>$enquetes["debarquements"]["debarquements_total"],
+				"debarquements_ids"=>$enquetes["debarquements"]["debarquements_ids"],
+				"activites_total"=>$enquetes["activites"]["activites_total"],
+				"activites_ids"=>$enquetes["activites"]["activites_ids"],
 				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><ul><li>'.$total_campagnes.' campagne(s)'.$texte_coups.'</li><li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></ul></div>');
 	break;
 				
@@ -1215,7 +1225,7 @@ function afficheSecteurs($donnees) {
 		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 		$array=pg_fetch_all($result);
 		pg_free_result($result);
-		foreach ($array as $secteur) {$secteurs_noms[]=$secteur["secteur"].' ('.$secteur["pays"].'/'.$secteur["systeme"].') ';}
+		foreach ($array as $secteur) {$secteurs_noms[]=$secteur["secteur"].' ('.$secteur["pays"].'/'.$secteur["systeme"].')';}
 		$liste_secteurs=arrayToList($secteurs_noms,', ','.');}
 		else {
 			$liste_secteurs="tous";
@@ -1438,10 +1448,141 @@ global $connectPPEAO;
 }
 
 function affichePeriodeEnquetes() {
-	
+global $compteur;
+global $connectPPEAO;
+	switch ($_GET["step"]) {
+		// on n'est pas encore la, on n'affiche rien
+		case ($_GET["step"]<9):
+		break;
+		// on en est a cette etape on affiche le selecteur de campagnes
+		case 9:
+		echo('<div id="step_9">');
+			echo('<form id="step_9_form" name="step_9_form" target="/extraction/selection/selection.php" method="GET">');
+				echo('<h2>9. s&eacute;lectionner des p&eacute;riodes d&#x27;enqu&ecirc;te</h2>');
+				//debug 				echo('<pre>');print_r($compteur["enquetes_ids"]);echo('</pre>');
+				// on selectionne les enquetes disponibles
+				$sql='SELECT DISTINCT e.id, e.description, e.annee, e.mois, a.nom as agglo, lower(a.nom) as lower_agglo, s.nom as secteur, lower(s.nom) as lower_secteur, sy.libelle as systeme, lower(sy.libelle) as lower_systeme, p.nom as pays, lower(p.nom) as lower_pays FROM art_periode_enquete e, ref_pays p, ref_systeme sy, ref_secteur s, art_agglomeration a 
+				WHERE e.id IN (\''.arrayToList($compteur["enquetes_ids"],'\',\'','\'').') 
+				AND e.art_agglomeration_id=a.id AND a.ref_secteur_id=s.id 
+				AND s.ref_systeme_id=sy.id AND sy.ref_pays_id=p.id  
+				ORDER BY lower_pays,lower_systeme, lower_secteur, annee, mois';
+				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+				$array=pg_fetch_all($result);
+				pg_free_result($result);
+				//debug 				echo('<pre>');print_r($array);echo('</pre>');
+				// on affiche le select
+			if (count($array)>15) {$size=15;} else {$size=10;}
+			echo('<select id="enquetes" name="enq[]" size="'.$size.'" multiple="multiple" class="level_select">');
+			foreach($array as $enquete) {
+				// si la valeur est dans l'url, on la selectionne
+				if (in_array($enquete["id"],$_GET["enq"])) {$selected='selected="selected" ';} else {$selected='';}
+				echo('<option value="'.$enquete["id"].'" '.$selected.'>'.$enquete["pays"].':'.$enquete["systeme"].':'.$enquete["secteur"].':'.$enquete["agglo"].':'.$enquete["annee"].'-'.$enquete["mois"].'</option>');
+			} // end foreach
+			echo('</select>');
+			// on affiche le lien permettant de passer a la selection des grands types d'engins de peche
+			// on prepare l'url pour construire le lien : on enleve les enquetes eventuellement selectionnees
+			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'enq\[\]');
+			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(9,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins de p&ecirc;che...</a></p>');
+			echo('</form>');
+		echo('</div>'); // end div step_8
+		break;
+		// on a depasse cette etape, on affiche le resume textuel
+		default:
+		echo('<div id="step_9">');
+			echo('<h2>9. p&eacute;riodes d&#x27;enqu&ecirc;te</h2>');
+			if (!empty($_GET["enq"])) {
+				// on selectionne les enquetes disponibles
+				$sql='SELECT DISTINCT e.id, e.description, e.annee, e.mois, a.nom as agglo, lower(a.nom) as lower_agglo, s.nom as secteur, lower(s.nom) as lower_secteur, sy.libelle as systeme, lower(sy.libelle) as lower_systeme, p.nom as pays, lower(p.nom) as lower_pays FROM art_periode_enquete e, ref_pays p, ref_systeme sy, ref_secteur s, art_agglomeration a 
+				WHERE e.id IN (\''.arrayToList($_GET["enq"],'\',\'','\'').') 
+				AND e.art_agglomeration_id=a.id AND a.ref_secteur_id=s.id 
+				AND s.ref_systeme_id=sy.id AND sy.ref_pays_id=p.id  
+				ORDER BY lower_pays,lower_systeme, lower_secteur, annee, mois';
+				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+				$array=pg_fetch_all($result);
+				pg_free_result($result);
+				foreach ($array as $enquete) {$enquetes_noms[]=$enquete["pays"].':'.$enquete["systeme"].':'.$enquete["secteur"].':'.$enquete["agglo"].':'.$enquete["annee"].'-'.$enquete["mois"];}
+				$liste_enquetes=arrayToList($enquetes_noms,', ','.');
+			}
+			else {
+			$liste_enquetes="toutes";
+			}
+		echo('<p>'.$liste_enquetes.'</p>');
+			// le lien permettant d'éditer la selection des enquetes
+		$edit_link=prepareSelectionEditLink(9);
+		echo('<p id="edit_enquetes"><a href="'.$edit_link.'">recommencer la s&eacute;lection des p&eacute;riodes d&#x27;enqu&ecirc;te...</a></p>');
+		echo('</div>'); // end div step_9
+		break;
+	} // end switch $_GET
 }
 
 function afficheGrandsTypesEngins() {
+
+global $compteur;
+global $connectPPEAO;
+	switch ($_GET["step"]) {
+		// on n'est pas encore la, on n'affiche rien
+		case ($_GET["step"]<10):
+		break;
+		// on en est a cette etape on affiche le selecteur de campagnes
+		case 10:
+		echo('<div id="step_10">');
+			echo('<form id="step_10_form" name="step_10_form" target="/extraction/selection/selection.php" method="GET">');
+				echo('<h2>10. s&eacute;lectionner des grands types d&#x27;engins</h2>');
+				// on recupere la liste des grands types d'engins correspondants aux periodes d'enquete
+				$sql='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_activite a, art_debarquement d WHERE 
+				a.id IN (\''.arrayToList($compteur["activites_ids"],'\',\'','\'').') 
+				AND d.id IN (\''.arrayToList($compteur["debarquements_ids"],'\',\'','\'').') 
+				AND a.art_grand_type_engin_id=g.id AND d.art_grand_type_engin_id=g.id
+				ORDER BY g.libelle
+				';
+				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+				$array=pg_fetch_all($result);
+				pg_free_result($result);
+				//debug 				echo('<pre>');print_r($array);echo('</pre>');
+				echo('<select id="gteng" name="gteng[]" size="10" multiple="multiple" class="level_select">');
+			foreach($array as $gteng) {
+				// si la valeur est dans l'url, on la selectionne
+				if (in_array($gteng["id"],$_GET["gteng"])) {$selected='selected="selected" ';} else {$selected='';}
+				echo('<option value="'.$gteng["id"].'" '.$selected.'>'.$gteng["libelle"].'</option>');
+			} // end foreach
+			echo('</select>');
+			// on affiche le lien permettant de passer au choix des filieres
+			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
+			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'gteng\[\]');
+			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(10,\''.$url.'\');">ajouter et passer au choix des fili&egrave;res d&#x27;exploitation...</a></p>');
+				
+			echo('</form>');
+		echo('</div>'); // end div step_10
+		break;
+		// on a depasse cette etape, on affiche le resume textuel
+		default:
+		echo('<div id="step_10">');
+			echo('<h2>10. grands types d&#x27;engins de p&ecirc;che</h2>');
+			if (!empty($_GET["gteng"])) {
+			$sql='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_activite a, art_debarquement d WHERE 
+				a.id IN (\''.arrayToList($compteur["activites_ids"],'\',\'','\'').') 
+				AND d.id IN (\''.arrayToList($compteur["debarquements_ids"],'\',\'','\'').') 
+				AND a.art_grand_type_engin_id=g.id AND d.art_grand_type_engin_id=g.id
+				ORDER BY g.libelle
+				';
+				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+				$array=pg_fetch_all($result);
+				pg_free_result($result);
+				
+				foreach($array as $row) {$gtengins[]=$row["libelle"];}
+				$gtengins_liste=arrayToList($gtengins,', ','.');}
+			else {
+				$gtengins_liste="tous";
+			}
+				echo('<p>'.$gtengins_liste.'</p>');
+		echo('</div>'); // end div step_9
+		break;
+		
+		
+	} // end switch $_GET
+	
 	
 }
 ?>
