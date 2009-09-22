@@ -314,26 +314,15 @@ return $unites;
 // prepare le compteur indiquant le nombre de campagnes/periodes d'enquete correspondant a la selection en cours
 function prepareCompteur() {
 
-
-
-// on compte les campagnes
-$campagnes=countMatchingUnits2('exp');
-$total_campagnes=$campagnes["total"];
-// on compte les periodes d'enquete
-$enquetes=countMatchingUnits2('art');
-$total_enquetes=$enquetes["total"];
-
-//debug echo('<pre>');print_r($enquetes);echo('</pre>');
-
-
 // on prepare le compteur
-
-if ($total_campagnes>0) {$texte_coups=' &ndash; '.$campagnes["coups"]["coups_total"].' coup(s) de p&ecirc;che)'; } else {$texte_coups='';}
-if ($total_enquetes>0) {$texte_deb_act=' &ndash;'.$enquetes["debarquements"]["debarquements_total"].' d&eacute;barquement(s) et '.$enquetes["activites"]["activites_total"].' activit&eacute;(s).'; } else {$texte_deb_act='';}
-
 switch ($_GET['donnees']) {
 	case "exp":
 	// Peches experimentales
+	// on compte les campagnes
+	$campagnes=countMatchingUnits2('exp');
+	$total_campagnes=$campagnes["total"];
+	if ($total_campagnes>0) {$texte_coups=' &ndash; '.$campagnes["coups"]["coups_total"].' coup(s) de p&ecirc;che)'; } 
+	else {$texte_coups='';}
 	$compteur=array("campagnes_ids"=>$campagnes["ids"],
 				"campagnes_total"=>$total_campagnes,
 				"coups_ids"=>$campagnes["coups"]["coups_ids"],
@@ -345,6 +334,11 @@ switch ($_GET['donnees']) {
 				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><p>'.$total_campagnes.' campagne(s)'.$texte_coups.'</p></div>');
 	break;
 	case "art":
+	// on compte les periodes d'enquete
+	$enquetes=countMatchingUnits2('art');
+	$total_enquetes=$enquetes["total"];
+	if ($total_enquetes>0) {$texte_deb_act=' &ndash;'.$enquetes["debarquements"]["debarquements_total"].' d&eacute;barquement(s) et '.$enquetes["activites"]["activites_total"].' activit&eacute;(s).'; } 
+	else {$texte_deb_act='';}
 	$compteur=array("campagnes_ids"=>$campagnes["ids"],
 				"campagnes_total"=>$total_campagnes,
 				"coups_ids"=>$campagnes["coups"]["coups_ids"],
@@ -356,6 +350,16 @@ switch ($_GET['donnees']) {
 				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><p>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></p></div>');
 	break;
 	default:
+	// avant le choix de exp ou art : 
+	// on compte les campagnes et les enquetes
+		$campagnes=countMatchingUnits2('exp');
+	$total_campagnes=$campagnes["total"];
+	if ($total_campagnes>0) {$texte_coups=' &ndash; '.$campagnes["coups"]["coups_total"].' coup(s) de p&ecirc;che)'; } 
+	else {$texte_coups='';}
+		$enquetes=countMatchingUnits2('art');
+	$total_enquetes=$enquetes["total"];
+	if ($total_enquetes>0) {$texte_deb_act=' &ndash;'.$enquetes["debarquements"]["debarquements_total"].' d&eacute;barquement(s) et '.$enquetes["activites"]["activites_total"].' activit&eacute;(s).'; } 
+	else {$texte_deb_act='';}
 	$compteur=array("campagnes_ids"=>$campagnes["ids"],
 				"campagnes_total"=>$total_campagnes,
 				"coups_ids"=>$campagnes["coups"]["coups_ids"],
@@ -454,11 +458,11 @@ if ($step<7) {
 	$edit_link=removeQueryStringParam($edit_link,'secteurs\[\]');
 }
 
-if ($step<6) {
+if ($step<=6) {
 	$edit_link=removeQueryStringParam($edit_link,'donnees');
 }
 
-if ($step<5) {
+if ($step<=5) {
 	$edit_link=removeQueryStringParam($edit_link,'exploit');
 }
 
@@ -1089,6 +1093,9 @@ global $enquetes_ids; // la liste des enquetes deja selectionnees
 global $compteur;
 
 	switch($_GET["step"]) {
+		// on n'est pas encore a cette etape, on n'affiche rien
+		case ($_GET["step"]<6):
+		break;
 		case 6:
 		// on en est a cette etape, on affiche le selecteur
 		echo('<div id="step_6">');
@@ -1194,7 +1201,7 @@ function afficheSecteurs($donnees) {
 		echo('</form>');
 		echo('</div>');
 		break; // end case step=7
-		
+		// on a depasse cette etape, on affiche le resume textuel
 		case ($_GET["step"]>7):
 		echo('<div id="step_7">');
 		echo('<h2>7. secteurs</h2>');
@@ -1357,7 +1364,77 @@ global $connectPPEAO;
 }
 
 function afficheAgglomerations() {
-	
+global $compteur;
+global $connectPPEAO;
+	switch($_GET["step"]) {
+	// on n'est pas encore la, on n'affiche rien
+		case ($_GET["step"]<8):
+		break;
+		// on en est a cette etape, on affiche le selecteur d'agglomerations
+		case 8:
+		echo('<div id="step_8">');
+			echo('<form id="step_8_form" name="step_8_form" target="/extraction/selection/selection.php" method="GET">');
+				echo('<h2>8. s&eacute;lectionner des agglom&eacute;rations</h2>');
+				$sql='SELECT DISTINCT a.nom as agglo, a.id, p.nom as pays, s.nom as secteur, sy.libelle as systeme
+				FROM art_agglomeration a, ref_pays p, ref_secteur s, ref_systeme sy
+				WHERE a.id IN (
+					SELECT art_agglomeration_id FROM art_periode_enquete 
+					WHERE art_periode_enquete.id IN (\''.arrayToList($compteur["enquetes_ids"],'\',\'','\'').')
+				)
+				AND a.ref_secteur_id=s.id AND s.ref_systeme_id=sy.id AND sy.ref_pays_id=p.id 
+				';
+				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+				$array=pg_fetch_all($result);
+				pg_free_result($result);
+				//debug 	echo('<pre>');print_r($array);echo('</pre>');
+				echo('<select id="agglo" name="agglo[]" size="10" multiple="multiple" class="level_select">');
+			foreach($array as $agglo) {
+				// si la valeur est dans l'url, on la selectionne
+				if (in_array($agglo["id"],$_GET["agglo"])) {$selected='selected="selected" ';} else {$selected='';}
+				echo('<option value="'.$agglo["id"].'" '.$selected.'>('.$agglo["pays"].'/'.$agglo["systeme"].'/'.$agglo["secteur"].') '.$agglo["agglo"].'</option>');
+			} // end foreach
+			echo('</select>');
+			// on affiche le lien permettant de passer au choix des filieres
+			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
+			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'agglo\[\]');
+			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(8,\''.$url.'\');">ajouter et passer au choix des p&eacute;riodes d&#x27;enqu&ecirc;te...</a></p>');
+			echo('</form>');
+		echo('</div>'); // end div step_8
+		break;
+		// on a depasse cette etape, on affiche le resume textuel
+		default:
+		echo('<div id="step_8">');
+			echo('<h2>8. agglom&eacute;rations</h2>');
+			if (!empty($_GET["agglo"])) {
+			$sql='SELECT DISTINCT a.nom as agglo, a.id, p.nom as pays, s.nom as secteur, sy.libelle as systeme
+				FROM art_agglomeration a, ref_pays p, ref_secteur s, ref_systeme sy
+				WHERE a.id IN (
+					SELECT art_agglomeration_id FROM art_periode_enquete 
+					WHERE art_periode_enquete.id IN (\''.arrayToList($compteur["enquetes_ids"],'\',\'','\'').')
+				)
+				AND a.ref_secteur_id=s.id AND s.ref_systeme_id=sy.id AND sy.ref_pays_id=p.id 
+				';
+				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+				$array=pg_fetch_all($result);
+				pg_free_result($result);
+				//debug echo('<pre>');print_r($array);echo('</pre>');
+				;
+				foreach ($array as $agglo) 
+					{$agglo_noms[]=$agglo["agglo"].' ('.$agglo["pays"].'/'.$agglo["systeme"].'/'.$agglo["secteur"].')';}
+				$liste_agglos=arrayToList($agglo_noms,', ','.');
+			}
+			else {
+			$liste_agglos="toutes";
+			}
+		echo('<p>'.$liste_agglos.'</p>');
+			// le lien permettant d'éditer la selection des agglos
+		$edit_link=prepareSelectionEditLink(8);
+		echo('<p id="edit_agglos"><a href="'.$edit_link.'">recommencer la sélection des agglom&eacute;rations...</a></p>');
+		echo('</div>'); // end div step_8
+		break;
+		
+	}
 }
 
 function affichePeriodeEnquetes() {
