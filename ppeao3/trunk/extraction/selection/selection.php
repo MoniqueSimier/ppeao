@@ -6,11 +6,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 $section="consulter";
 $subsection="";
 
-// on recupere les parametres de la selection precedente eventuellement stockes dans la session
-$_GET=array_merge($_SESSION["selection_1"],$_GET);
-//debug echo('<pre>');print_r($_GET);echo('</pre>');
-
-
 $zone=0; // zone libre (voir table admin_zones)
 
 ?>
