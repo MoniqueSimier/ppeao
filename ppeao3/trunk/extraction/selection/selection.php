@@ -8,6 +8,11 @@ $subsection="";
 
 $zone=0; // zone libre (voir table admin_zones)
 
+
+// on réinitialise la selection stockee dans des variables de session
+ unset ($_SESSION["selection_url"]);
+ unset ($_SESSION["selection_xml"]);
+
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">

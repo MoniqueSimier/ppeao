@@ -70,9 +70,14 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 		}
 	// si des valeurs de campagnes ont ete passees dans l'url
 	if (!empty($_GET["camp"]) && $_GET["step"]>8) {
-		$sql.='AND exp_campagne.id IN (\''.arrayToList($_GET["camp"],'\',\'','\'').')';
-		
-	// *************** ENGINS ****************//
+		$sql.=' AND exp_campagne.id IN (\''.arrayToList($_GET["camp"],'\',\'','\'').')';
+	}
+	// si des valeurs d'engins ont ete passees dans l'url
+	if (!empty($_GET["eng"])) {
+		$sql.=' AND exp_campagne.id IN (
+			SELECT exp_coup_peche.exp_campagne_id FROM exp_coup_peche WHERE exp_coup_peche.exp_engin_id IN
+				(\''.arrayToList($_GET["eng"],'\',\'','\'').')
+			)';
 	}
 } // fin de if ($domaine=='exp') 
 
@@ -187,10 +192,29 @@ if (!empty($_GET["familles"]) && $_GET["step"]>2) {
 		
 	// si des valeurs de periodes d'enquete ont ete passees dans l'url
 	if (!empty($_GET["enq"]) && $_GET["step"]>9) {
-		$sql.='AND art_periode_enquete.id IN (\''.arrayToList($_GET["enq"],'\',\'','\'').')';
+		$sql.=' AND art_periode_enquete.id IN (\''.arrayToList($_GET["enq"],'\',\'','\'').')';
 	}
 	
-	// ************* GRANDS TYPES ENGINS ***************
+	// si des valeurs de grands types d'engins ont ete passees dans l'url
+	if (!empty($_GET["gteng"])) {
+		$sql.=' 
+		 AND art_periode_enquete.id IN (
+			SELECT DISTINCT pe.id  
+			FROM art_periode_enquete pe WHERE 
+				pe.art_agglomeration_id IN (
+					SELECT DISTINCT d.art_agglomeration_id FROM art_debarquement d WHERE d.art_grand_type_engin_id IN (
+						\''.arrayToList($_GET["gteng"],'\',\'','\'').')
+				) 
+				AND pe.annee IN (
+					SELECT DISTINCT d.annee FROM art_debarquement d WHERE d.art_grand_type_engin_id IN (
+						\''.arrayToList($_GET["gteng"],'\',\'','\'').')
+				) AND pe.mois IN (
+					SELECT DISTINCT d.mois FROM art_debarquement d WHERE d.art_grand_type_engin_id IN (
+						\''.arrayToList($_GET["gteng"],'\',\'','\'').')
+				)
+			)
+		';
+	}
 	
 } // fin de if ($domaine=='art')
 
@@ -256,10 +280,10 @@ if ($domaine=='art') {
 		AND art_debarquement.annee=(SELECT annee  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.') 
 		AND art_debarquement.mois=(SELECT mois  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.')
 		';
-	
-		// ****** GRANDS TYPES D'ENGINS *********
-
-	
+	// si on a passe des grands types d'engins dans l'url
+	if (!empty($_GET["gteng"])) {
+		$sql.=' AND art_grand_type_engin_id IN (\''.arrayToList($_GET["gteng"],'\',\'','\'').') ';
+	}
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 	$array=pg_fetch_all($result);
 	if (!empty($array)) {foreach($array as $row) {$debarquements_array[]=$row["id"];}}
@@ -284,11 +308,11 @@ if (empty($debarquements_array)) {$debarquements_total=0;$debarquements_ids=arra
 		(SELECT art_agglomeration_id FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.') 
 		AND art_activite.annee=(SELECT annee  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.') 
 		AND art_activite.mois=(SELECT mois  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.')
-		';
-		
-	// ****** GRANDS TYPES D'ENGINS *********
-
-		
+		';	
+	// si on a passe des grands types d'engins dans l'url
+	if (!empty($_GET["gteng"])) {
+		$sql.=' AND art_grand_type_engin_id IN (\''.arrayToList($_GET["gteng"],'\',\'','\'').') ';	
+	}
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 	$array=pg_fetch_all($result);
 	if (!empty($array)) {foreach($array as $row) {$activites_array[]=$row["id"];}}
@@ -661,7 +685,7 @@ switch ($_GET["step"]) {
 		}
 	// le lien permettant d'éditer la selection des especes
 	$edit_link=prepareSelectionEditLink(2);
-	echo('<p id="edit_especes"><a href="'.$edit_link.'">recommencer la sélection des esp&egrave;ces...</a></p>');	
+	echo('<p id="edit_especes"><a href="'.$edit_link.'">modifier la sélection des esp&egrave;ces...</a></p>');	
 	echo('</div>');
 	break;
 		
@@ -821,7 +845,7 @@ switch ($_GET["step"]) {
 		}
 	// le lien permettant d'éditer la selection des systemes
 	$edit_link=prepareSelectionEditLink(3);
-	echo('<p id="edit_systemes"><a href="'.$edit_link.'">recommencer la sélection des syst&egrave;mes...</a></p>');	
+	echo('<p id="edit_systemes"><a href="'.$edit_link.'">modifier la sélection des syst&egrave;mes...</a></p>');	
 	echo('</div>');
 	break;
 
@@ -1000,7 +1024,7 @@ switch ($_GET["step"]) {
 	echo('de '.number_pad($_GET["d_m"],2).'/'.$_GET["d_a"].' &agrave; '.number_pad($_GET["f_m"],2).'/'.$_GET["f_a"]);
 	// le lien permettant d'éditer la selection de la periode
 	$edit_link=prepareSelectionEditLink(4);
-	echo('<p id="edit_periode"><a href="'.$edit_link.'">recommencer la sélection de la p&eacute;riode...</a></p>');	
+	echo('<p id="edit_periode"><a href="'.$edit_link.'">modifier la sélection de la p&eacute;riode...</a></p>');	
 	echo('</div>');
 	break;
 
@@ -1080,7 +1104,7 @@ switch ($_GET["step"]) {
 	}
 	// le lien permettant d'éditer la selection du type d'exploitation
 	$edit_link=prepareSelectionEditLink(5);
-	echo('<p id="edit_exploit"><a href="'.$edit_link.'">recommencer la s&eacute;lection du type d&#x27;exploitation...</a></p>');	
+	echo('<p id="edit_exploit"><a href="'.$edit_link.'">modifier la s&eacute;lection du type d&#x27;exploitation...</a></p>');	
 	echo('</div>');
 } // end switch
 }
@@ -1139,7 +1163,7 @@ global $compteur;
 		}
 		// le lien permettant d'éditer la selection du type de donnees a extraire
 		$edit_link=prepareSelectionEditLink(6);
-		echo('<p id="edit_donnees"><a href="'.$edit_link.'">recommencer la s&eacute;lection du type de donn&eacute;es &agrave; extraire...</a></p>');	
+		echo('<p id="edit_donnees"><a href="'.$edit_link.'">modifier la s&eacute;lection du type de donn&eacute;es &agrave; extraire...</a></p>');	
 		echo('</div>');
 		break;
 	}
@@ -1233,7 +1257,7 @@ function afficheSecteurs($donnees) {
 		echo("<p>$liste_secteurs</p>");
 		// le lien permettant d'éditer la selection des secteurs
 		$edit_link=prepareSelectionEditLink(7);
-		echo('<p id="edit_secteurs"><a href="'.$edit_link.'">recommencer la sélection des secteurs...</a></p>');
+		echo('<p id="edit_secteurs"><a href="'.$edit_link.'">modifier la sélection des secteurs...</a></p>');
 		echo('</div>');
 		break;
 	}
@@ -1306,7 +1330,7 @@ global $connectPPEAO;
 			}
 		// le lien permettant d'éditer la selection des campagnes
 		$edit_link=prepareSelectionEditLink(8);
-		echo('<p id="edit_campagnes"><a href="'.$edit_link.'">recommencer la sélection des campagnes...</a></p>');
+		echo('<p id="edit_campagnes"><a href="'.$edit_link.'">modifier la sélection des campagnes...</a></p>');
 		echo('</div>');
 		echo('</div>'); // end div step_8
 		break;
@@ -1347,7 +1371,7 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'eng\[\]');
-			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(9,\''.$url.'\');">ajouter et passer au choix des fili&egrave;res d&#x27;exploitation...</a></p>');
+			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(9,\''.$url.'\');">valider la s&eacute;lection...</a></p>');
 			echo('</form>');
 		echo('</div>'); // end div step_9
 		break;
@@ -1368,6 +1392,9 @@ global $connectPPEAO;
 				$engins_liste=arrayToList($engins,', ','.');
 				echo('<p>'.$engins_liste.'</p>');
 		echo('</div>'); // end div step_9
+				echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;exploitation...</a>');
+		// on stocke l'URL de la selection dans une variable de session
+		$_SESSION["selection_url"]=$_SERVER["FULL_URL"];
 		break;
 	} // end switch step
 	
@@ -1440,7 +1467,7 @@ global $connectPPEAO;
 		echo('<p>'.$liste_agglos.'</p>');
 			// le lien permettant d'éditer la selection des agglos
 		$edit_link=prepareSelectionEditLink(8);
-		echo('<p id="edit_agglos"><a href="'.$edit_link.'">recommencer la sélection des agglom&eacute;rations...</a></p>');
+		echo('<p id="edit_agglos"><a href="'.$edit_link.'">modifier la sélection des agglom&eacute;rations...</a></p>');
 		echo('</div>'); // end div step_8
 		break;
 		
@@ -1476,7 +1503,7 @@ global $connectPPEAO;
 			foreach($array as $enquete) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($enquete["id"],$_GET["enq"])) {$selected='selected="selected" ';} else {$selected='';}
-				echo('<option value="'.$enquete["id"].'" '.$selected.'>'.$enquete["pays"].':'.$enquete["systeme"].':'.$enquete["secteur"].':'.$enquete["agglo"].':'.$enquete["annee"].'-'.$enquete["mois"].'</option>');
+				echo('<option value="'.$enquete["id"].'" '.$selected.'>'.$enquete["pays"].':'.$enquete["systeme"].':'.$enquete["secteur"].':'.$enquete["agglo"].':'.$enquete["annee"].'-'.number_pad($enquete["mois"],2).'</option>');
 			} // end foreach
 			echo('</select>');
 			// on affiche le lien permettant de passer a la selection des grands types d'engins de peche
@@ -1501,7 +1528,7 @@ global $connectPPEAO;
 				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 				$array=pg_fetch_all($result);
 				pg_free_result($result);
-				foreach ($array as $enquete) {$enquetes_noms[]=$enquete["pays"].':'.$enquete["systeme"].':'.$enquete["secteur"].':'.$enquete["agglo"].':'.$enquete["annee"].'-'.$enquete["mois"];}
+				foreach ($array as $enquete) {$enquetes_noms[]=$enquete["pays"].':'.$enquete["systeme"].':'.$enquete["secteur"].':'.$enquete["agglo"].':'.$enquete["annee"].'-'.number_pad($enquete["mois"],2);}
 				$liste_enquetes=arrayToList($enquetes_noms,', ','.');
 			}
 			else {
@@ -1510,7 +1537,7 @@ global $connectPPEAO;
 		echo('<p>'.$liste_enquetes.'</p>');
 			// le lien permettant d'éditer la selection des enquetes
 		$edit_link=prepareSelectionEditLink(9);
-		echo('<p id="edit_enquetes"><a href="'.$edit_link.'">recommencer la s&eacute;lection des p&eacute;riodes d&#x27;enqu&ecirc;te...</a></p>');
+		echo('<p id="edit_enquetes"><a href="'.$edit_link.'">modifier la s&eacute;lection des p&eacute;riodes d&#x27;enqu&ecirc;te...</a></p>');
 		echo('</div>'); // end div step_9
 		break;
 	} // end switch $_GET
@@ -1551,7 +1578,7 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'gteng\[\]');
-			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(10,\''.$url.'\');">ajouter et passer au choix des fili&egrave;res d&#x27;exploitation...</a></p>');
+			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(10,\''.$url.'\');">valider la s&eacute;lection...</a></p>');
 				
 			echo('</form>');
 		echo('</div>'); // end div step_10
@@ -1577,7 +1604,12 @@ global $connectPPEAO;
 				$gtengins_liste="tous";
 			}
 				echo('<p>'.$gtengins_liste.'</p>');
-		echo('</div>'); // end div step_9
+		echo('</div>'); // end div step_10
+		echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;exploitation...</a>');
+		
+		// on stocke l'URL de la selection dans une variable de session
+		$_SESSION["selection_url"]=$_SERVER["FULL_URL"];
+				
 		break;
 		
 		
