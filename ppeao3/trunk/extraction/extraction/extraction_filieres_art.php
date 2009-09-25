@@ -87,7 +87,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 			<?php 
 				// On recupere les paramètres
 				if (isset($_GET['logsupp'])) {
-					if ($_GET['logsupp'] == "false") {
+					if (!$_GET['logsupp']) {
 						$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
 						echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" />";
 					} else {
