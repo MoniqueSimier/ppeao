@@ -93,10 +93,10 @@ function startElement($parser, $name, $attrs){
 		$listeSelection .="<br/><b>Liste des agglom&eacute;rations</b> = ";
 		break;
 	case "INTERVALLE":
-		$listeSelection .="<br/><b>Liste des interveaux</b> = ";
+		$listeSelection .="<br/><b>P&eacute;riode d&#x27;int&eacute;r&ecirc;t</b> = ";
 		break;
 	case "GRANDTYPEENGINLISTE":
-		$listeSelection .="<br/><b>Liste des GT engin</b> = ";
+		$listeSelection .="<br/><b>Liste des grands types d&#x27;engin</b> = ";
 		break;
 	case "ENGINLISTE":
 		$listeSelection .="<br/><b>Liste des engins</b> = ";
