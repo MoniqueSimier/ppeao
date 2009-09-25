@@ -44,7 +44,24 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 
 // Fichier à analyser
-$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionArt.xml";
+//
+// modification par Olivier le 25/09/09 pour utiliser directement la selection passee par selection.php
+//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionArt.xml";
+// on cree un fichier temporaire pour y stocker le contenu de la selection au format XML
+// si on a passe un fichier dans l'url on l'utilise
+// passer le fichier comme suit dans l'url: &xml=fichier.xml sachant que le fichier doit etre dans le dossier "temp"
+// a la racine du site 
+if (@fopen($_SERVER["DOCUMENT_ROOT"].'/temp/'.$_GET["xml"])) {
+	$file=$_SERVER["DOCUMENT_ROOT"].'/temp/'.$_GET["xml"];
+}
+// sinon on cree un fichier avec la variable de session
+else{
+$file = tempnam(sys_get_temp_dir(), 'xmlfile');
+$fileopen=fopen($file,'w');
+fwrite($fileopen,$_SESSION["selection_xml"]);
+rewind($fileopen);}
+// fin de modification par Olivier
+
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
