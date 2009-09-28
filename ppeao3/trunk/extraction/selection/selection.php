@@ -115,7 +115,7 @@ switch($_GET["exploit"]) {
 			// periodes d'enquetes
 			affichePeriodeEnquetes();
 			// grands types d'engins
-			afficheGrandsTypesEngins();
+			afficheGrandsTypesEngins($_GET["exploit"]);
 			break;
 		}
 		
@@ -124,6 +124,24 @@ switch($_GET["exploit"]) {
 	
 	// statistiques de peche
 	case "stats":
+		// on doit poursuivre la selection par le type de stats
+		afficheTypeStats();
+		switch ($_GET["stats"]) {
+			// statistiques par agglomerations
+			case "agglo":
+				//secteurs
+				afficheSecteurs("art");
+				// agglomerations 
+				afficheAgglomerations();
+				// periodes d'enquetes
+				affichePeriodeEnquetes();
+				// grands types d'engins
+				afficheGrandsTypesEngins($_GET["exploit"]);
+			break;
+			//statistiques generales
+			case "gen":
+			break;
+		}
 	break; // end case "stats"
 	
 	//fonds cartographiques

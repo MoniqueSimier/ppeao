@@ -353,7 +353,16 @@ return $unites;
 function prepareCompteur() {
 
 // on prepare le compteur
-switch ($_GET['donnees']) {
+
+// on commence par savoir si on se base sur un modele de peches exp ou art
+if ($_GET["donnees"]=="exp") {$peches='exp';}
+if ($_GET["donnees"]=="art") {$peches='art';}
+// les statistiques ne sont realisees que sur les peches artisan ales
+if ($_GET["exploit"]=="stats") {$peches='art';}
+
+
+
+switch ($peches) {
 	case "exp":
 	// Peches experimentales
 	// on compte les campagnes
@@ -490,10 +499,12 @@ if ($step<8) {
 
 if ($step<7) {
 	$edit_link=removeQueryStringParam($edit_link,'secteurs\[\]');
+	$edit_link=removeQueryStringParam($edit_link,'systemes2\[\]');
 }
 
 if ($step<=6) {
 	$edit_link=removeQueryStringParam($edit_link,'donnees');
+	$edit_link=removeQueryStringParam($edit_link,'stats');
 }
 
 if ($step<=5) {
@@ -1410,6 +1421,8 @@ global $connectPPEAO;
 		// on en est a cette etape, on affiche le selecteur d'agglomerations
 		case 8:
 		echo('<div id="step_8">');
+			
+			if (!empty($compteur["enquetes_ids"])) {
 			echo('<form id="step_8_form" name="step_8_form" target="/extraction/selection/selection.php" method="GET">');
 				echo('<h2>8. s&eacute;lectionner des agglom&eacute;rations</h2>');
 				$sql='SELECT DISTINCT a.nom as agglo, a.id, p.nom as pays, s.nom as secteur, sy.libelle as systeme
@@ -1436,7 +1449,12 @@ global $connectPPEAO;
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'agglo\[\]');
 			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(8,\''.$url.'\');">ajouter et passer au choix des p&eacute;riodes d&#x27;enqu&ecirc;te...</a></p>');
-			echo('</form>');
+			echo('</form>');}
+			// sinon on demande a l'utilisateur de modifier sa selection
+			else {
+				echo('<p>aucune p&eacute;riode d&#x27;enqu&ecirc;te ne correspond, veuillez modifier votre s&eacute;lection.</p>');
+			}
+			
 		echo('</div>'); // end div step_8
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
@@ -1543,15 +1561,15 @@ global $connectPPEAO;
 	} // end switch $_GET
 }
 
-function afficheGrandsTypesEngins() {
-
+function afficheGrandsTypesEngins($exploit) {
+// $ exploit : le type d'exploitation choisi (donnees, stats, cartes)
 global $compteur;
 global $connectPPEAO;
 	switch ($_GET["step"]) {
 		// on n'est pas encore la, on n'affiche rien
 		case ($_GET["step"]<10):
 		break;
-		// on en est a cette etape on affiche le selecteur de campagnes
+		// on en est a cette etape on affiche le selecteur de grands types d'engins
 		case 10:
 		echo('<div id="step_10">');
 			echo('<form id="step_10_form" name="step_10_form" target="/extraction/selection/selection.php" method="GET">');
@@ -1579,7 +1597,6 @@ global $connectPPEAO;
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'gteng\[\]');
 			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(10,\''.$url.'\');">valider la s&eacute;lection...</a></p>');
-				
 			echo('</form>');
 		echo('</div>'); // end div step_10
 		break;
@@ -1605,16 +1622,75 @@ global $connectPPEAO;
 			}
 				echo('<p>'.$gtengins_liste.'</p>');
 		echo('</div>'); // end div step_10
-		echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;exploitation...</a>');
 		
+		switch ($exploit) {
+			case "donnees" : 
+			echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;exploitation...</a>');
+			break;
+			case "stats":
+			echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir les tables de statistiques...</a>');
+			break;
+		}
 		// on stocke l'URL de la selection dans une variable de session
-		$_SESSION["selection_url"]=$_SERVER["FULL_URL"];
-				
-		break;
-		
-		
+		$_SESSION["selection_url"]=$_SERVER["FULL_URL"];	
+		break; 
 	} // end switch $_GET
+}
 	
+// on affiche le choix du type de statistiques
+function afficheTypeStats() {
 	
+/* on numerote les etapes :
+1 = selectionner ou non des especes
+2 = selection des especes
+3 = selection pays/systemes
+4= selection periode
+5= selection type exploitation
+6= selection type de stats (par agglomerations ou generales)
+*/	
+
+global $connectPPEAO; // la connexion a la base
+global $campagnes_ids; // la liste des campagnes deja selectionnees
+global $enquetes_ids; // la liste des enquetes deja selectionnees
+global $compteur;
+
+	switch($_GET["step"]) {
+		// on n'est pas encore a cette etape, on n'affiche rien
+		case ($_GET["step"]<6):
+		break;
+		case 6:
+		// on en est a cette etape, on affiche le selecteur
+		echo('<div id="step_6">');
+		echo('<h2>6. s&eacute;lectionner le type de statistiques &agrave; extraire</h2>');
+		// si il reste des enquetes
+		if ($compteur["enquetes_total"]!=0) {
+			$stats_link=replaceQueryParam($_SERVER["FULL_URL"],'step',7);
+			$stats_gen_link=$stats_link.'&stats=gen';
+			$stats_agglo_link=$stats_link.'&stats=agglo';
+			echo('<ul>');
+				echo('<li><a href="'.$stats_agglo_link.'">statistiques par agglom&eacute;rations</a></li>');
+				echo('<li><a href="'.$stats_gen_link.'">statistiques générales</a></li>');
+			echo('</ul>');
+		} else {echo('<p>aucune p&eacute;riode d&#x27;enqu&ecirc;te disponible, veuillez modifier votre s&eacute;lection.</p>');} 
+		break;
+		// on a depasse cette etape, on affiche le resume textuel
+		default:
+		echo('<div id="step_6">');
+		echo('<h2>6. type de statistiques &agrave; extraire</h2>');
+		switch($_GET["stats"]) {
+			case "gen":
+			echo('<p>statistiques g&eacute;n&eacute;rales</p>');
+			break;
+			case "agglo":
+			echo('<p>statistiques par agglom&eacute;rations</p>');
+			break;
+		}
+		// le lien permettant d'éditer la selection du type de donnees a extraire
+		$edit_link=prepareSelectionEditLink(6);
+		echo('<p id="edit_stats"><a href="'.$edit_link.'">modifier la s&eacute;lection du type de statistiques &agrave; extraire...</a></p>');	
+		echo('</div>');
+		break;
+
+}
 }
 ?>

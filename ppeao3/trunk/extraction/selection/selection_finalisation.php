@@ -58,6 +58,36 @@ switch ($selection["exploit"]) {
 	break;
 	// statistiques de peche
 	case "stats":
+		$xml.='<exploitation type="statistiques" />';
+		// le type de statistiques
+		switch ($selection["stats"]) {
+			//stats par agglomerations
+			case "agglo":
+			$xml.='<statistiques type="agglomeration" />';
+			$xml.=xmlFamilles($selection);
+			$xml.=xmlEspeces($selection);
+			$xml.=xmlPays($selection);
+			$xml.=xmlSystemes($selection);
+			$xml.=xmlSecteurs($selection);
+			$xml.=xmlAgglomerations($selection);
+			$xml.=xmlPeriode($selection);
+			$xml.=xmlEnquetes($selection);
+			$xml.=xmlGrandTypeEngins($selection);
+			break;
+			// stats generales
+			case "gen":
+			$xml.='<statistiques type="generales" />';
+			$xml.=xmlFamilles($selection);
+			$xml.=xmlEspeces($selection);
+			$xml.=xmlPays($selection);
+			$xml.=xmlSystemes2($selection);
+			$xml.=xmlSecteurs($selection);
+			$xml.=xmlPeriode($selection);
+			$xml.=xmlGrandTypeEngins($selection);
+			// le script a utiliser pour l'extraction des stats
+			break;
+		$script="extraction_filieres_stats.php?logsupp=0";
+		}
 	break;
 	// fonds de cartes
 	case "cartes":
@@ -89,6 +119,9 @@ $url.=$theHost;
 
 
 $url.='/extraction/extraction/'.$script;
+
+//debug header('Content-Type: text/xml');echo($xml);
+
 
 header('location: ' . $url);
 
