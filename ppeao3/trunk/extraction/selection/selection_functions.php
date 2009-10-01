@@ -196,7 +196,9 @@ if (!empty($_GET["familles"]) && $_GET["step"]>2) {
 	}
 	
 	// si des valeurs de grands types d'engins ont ete passees dans l'url
-	if (!empty($_GET["gteng"])) {
+	// le step differe selon que l'on a affaire aux stats par agglo (10) ou generales (8)
+	if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
+	if (!empty($_GET["gteng"]) && $_GET["step"]>$theStep) {
 		$sql.=' 
 		 AND art_periode_enquete.id IN (
 			SELECT DISTINCT pe.id  
@@ -281,7 +283,10 @@ if ($domaine=='art') {
 		AND art_debarquement.mois=(SELECT mois  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.')
 		';
 	// si on a passe des grands types d'engins dans l'url
-	if (!empty($_GET["gteng"])) {
+		// le step differe selon que l'on a affaire aux stats par agglo (10) ou generales (8)
+	if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
+	if (!empty($_GET["gteng"]) && $_GET["step"]>$theStep)
+ 		{
 		$sql.=' AND art_grand_type_engin_id IN (\''.arrayToList($_GET["gteng"],'\',\'','\'').') ';
 	}
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
@@ -310,7 +315,9 @@ if (empty($debarquements_array)) {$debarquements_total=0;$debarquements_ids=arra
 		AND art_activite.mois=(SELECT mois  FROM art_periode_enquete WHERE art_periode_enquete.id='.$enquete.')
 		';	
 	// si on a passe des grands types d'engins dans l'url
-	if (!empty($_GET["gteng"])) {
+		// le step differe selon que l'on a affaire aux stats par agglo (10) ou generales (8)
+	if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
+	if (!empty($_GET["gteng"]) && $_GET["step"]>$theStep) {
 		$sql.=' AND art_grand_type_engin_id IN (\''.arrayToList($_GET["gteng"],'\',\'','\'').') ';	
 	}
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
@@ -434,7 +441,7 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 
 	
 
-// on recupere la liste des pays correspondant aux campagnes et enquetes correspondant a la selection precedente
+// on recupere la liste des systemes correspondant aux campagnes et enquetes correspondant a la selection precedente
 	$sql_systemes='	SELECT DISTINCT ref_systeme.id, ref_systeme.libelle 
 				FROM ref_systeme
 				WHERE TRUE';
@@ -458,10 +465,10 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 			SELECT DISTINCT art_periode_enquete.art_agglomeration_id 
 			FROM art_periode_enquete 
 			WHERE TRUE ';
-		// si on a deja filtre les enquetes (par especes ou familles
+		// si on a deja filtre les enquetes (par especes ou familles)
 			if (!empty($enquetes_ids[0])) {$sql_systemes.=' AND art_periode_enquete.id IN( 
 												\''.arrayToList($enquetes_ids,'\',\'','\'').')';}
-	$sql_systemes.=('))');
+	$sql_systemes.='))';
 	
 	//debug	echo($sql_systemes);
 	
@@ -470,8 +477,44 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 	pg_free_result($result_systemes);
 	
 		return $array_systemes;
-	} // end function displaySelectSystemes()
+	} // end function listSelectSystemes()
 
+
+
+//******************************************************************************
+// recupere la liste des id des secteurs correspondant aux enquetes et systemes
+function listSelectSecteurs($systemes,$enquetes_ids) {
+	// la connextion a la base
+	global $connectPPEAO;
+	//$enquetes_ids (array): la liste des id des enquetes filtrees
+	//$systemes (array): les systemes selectionnes
+	
+	$sql='SELECT rs.id, rs.nom as secteur, rsy.libelle as systeme FROM ref_secteur rs, ref_systeme as  rsy
+			WHERE rs.id IN (
+				SELECT aa.ref_secteur_id FROM art_agglomeration aa 
+				WHERE aa.id IN (
+					SELECT DISTINCT art_agglomeration_id FROM art_periode_enquete ape 
+					WHERE ape.id IN (\''.arrayToList($enquetes_ids,'\',\'','\'').')
+					)
+			)';
+	if (!empty($systemes)) {
+	$sql.=' AND rs.ref_systeme_id IN (\''.arrayToList($systemes,'\',\'','\'').'
+		)';
+	}
+	
+	$sql.='AND rs.ref_systeme_id=rsy.id';
+	
+	
+	
+	//debug 	echo('<pre>');print_r($sql);echo('</pre>');
+	
+	
+	$result_secteurs=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+	$array_secteurs=pg_fetch_all($result_secteurs);
+	pg_free_result($result_secteurs);
+	
+		return $array_secteurs;
+} // end function listSelectSecteurs()
 
 //******************************************************************************
 // affiche le bloc permettant d'indiquer si l'on veut choisir ou non des especes
@@ -500,6 +543,8 @@ if ($step<8) {
 if ($step<7) {
 	$edit_link=removeQueryStringParam($edit_link,'secteurs\[\]');
 	$edit_link=removeQueryStringParam($edit_link,'systemes2\[\]');
+	$edit_link=removeQueryStringParam($edit_link,'g_t_eng\[\]');
+
 }
 
 if ($step<=6) {
@@ -643,7 +688,7 @@ switch ($_GET["step"]) {
 			}
 		echo('</select>');
 		echo('</div>');
-		echo('<div class="level_div"> ou </div>');
+		echo('<div class="level_div"> et/ou </div>');
 		// on affiche le selecteur d'especes
 		echo('<div id="step_2_especes" class="level_div">');
 		echo('<p>esp&egrave;ces</p>');
@@ -656,7 +701,7 @@ switch ($_GET["step"]) {
 		echo('</select>');
 		echo('</div>');
 	echo('</form>');
-		// on affiche le lien permettant de passer a la selection geographique
+	// on affiche le lien permettant de passer a la selection geographique
 	// on prepare l'url pour construire le lien : on enleve les familles et especes eventuellement selectionnees
 	$url=$_SERVER["FULL_URL"];
 	$url=removeQueryStringParam($url,'familles\[\]');
@@ -789,9 +834,6 @@ switch ($_GET["step"]) {
 			if (!empty($_GET["pays"])) {
 			
 			$array_systemes=listSelectSystemes($_GET["pays"],$campagnes_ids,$enquetes_ids);
-			
-			
-			
 			foreach($array_systemes as $systeme) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($systeme["id"],$_GET["systemes"])) {$selected='selected="selected" ';} else {$selected='';}
@@ -1208,8 +1250,8 @@ function afficheSecteurs($donnees) {
 			$nextSelectionStep='campagnes';
 			break; // end case exp
 			case "art":
-			$sql='SELECT DISTINCT ref_secteur.id, ref_secteur.nom as secteur, ref_systeme.libelle as systeme, ref_pays.nom as pays FROM ref_secteur, ref_systeme,ref_pays WHERE ref_secteur.ref_systeme_id IN 
-				(SELECT DISTINCT ref_systeme_id FROM art_agglomeration WHERE art_agglomeration.id IN (
+			$sql='SELECT DISTINCT ref_secteur.id, ref_secteur.nom as secteur, ref_systeme.libelle as systeme, ref_pays.nom as pays FROM ref_secteur, ref_systeme,ref_pays WHERE ref_secteur.id IN 
+				(SELECT DISTINCT ref_secteur_id FROM art_agglomeration WHERE art_agglomeration.id IN (
 					SELECT DISTINCT art_periode_enquete.art_agglomeration_id FROM art_periode_enquete WHERE art_periode_enquete.id IN (
 					\''.arrayToList($enquetes_ids,'\',\'','\'').'
 						)
@@ -1565,15 +1607,19 @@ function afficheGrandsTypesEngins($exploit) {
 // $ exploit : le type d'exploitation choisi (donnees, stats, cartes)
 global $compteur;
 global $connectPPEAO;
+
+// le step differe selon que l'on a affaire aux stats par agglo (10) ou generales (8)
+if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
+
 	switch ($_GET["step"]) {
 		// on n'est pas encore la, on n'affiche rien
-		case ($_GET["step"]<10):
+		case ($_GET["step"]<$theStep):
 		break;
 		// on en est a cette etape on affiche le selecteur de grands types d'engins
-		case 10:
-		echo('<div id="step_10">');
-			echo('<form id="step_10_form" name="step_10_form" target="/extraction/selection/selection.php" method="GET">');
-				echo('<h2>10. s&eacute;lectionner des grands types d&#x27;engins</h2>');
+		case $theStep:
+		echo('<div id="step_'.$theStep.'">');
+			echo('<form id="step_'.$theStep.'_form" name="step_'.$theStep.'_form" target="/extraction/selection/selection.php" method="GET">');
+				echo('<h2>'.$theStep.'. s&eacute;lectionner des grands types d&#x27;engins</h2>');
 				// on recupere la liste des grands types d'engins correspondants aux periodes d'enquete
 				$sql='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_activite a, art_debarquement d WHERE 
 				a.id IN (\''.arrayToList($compteur["activites_ids"],'\',\'','\'').') 
@@ -1596,14 +1642,14 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'gteng\[\]');
-			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(10,\''.$url.'\');">valider la s&eacute;lection...</a></p>');
+			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep('.$theStep.',\''.$url.'\');">valider la s&eacute;lection...</a></p>');
 			echo('</form>');
-		echo('</div>'); // end div step_10
+		echo('</div>'); // end div step_'.$theStep.'
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
 		default:
-		echo('<div id="step_10">');
-			echo('<h2>10. grands types d&#x27;engins de p&ecirc;che</h2>');
+		echo('<div id="step_'.$theStep.'">');
+			echo('<h2>'.$theStep.'. grands types d&#x27;engins de p&ecirc;che</h2>');
 			if (!empty($_GET["gteng"])) {
 			$sql='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_activite a, art_debarquement d WHERE 
 				a.id IN (\''.arrayToList($compteur["activites_ids"],'\',\'','\'').') 
@@ -1621,8 +1667,12 @@ global $connectPPEAO;
 				$gtengins_liste="tous";
 			}
 				echo('<p>'.$gtengins_liste.'</p>');
-		echo('</div>'); // end div step_10
+		// le lien permettant d'éditer la selection des grands types d'engins
+		$edit_link=prepareSelectionEditLink($theStep);
+		echo('<p id="edit_gteng"><a href="'.$edit_link.'">modifier la s&eacute;lection des grands types d&#x27;engins...</a></p>');	
+		echo('</div>'); // end div step_'.$theStep.'
 		
+		echo('<div id="choix_tables_stats"><p>');
 		switch ($exploit) {
 			case "donnees" : 
 			echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;exploitation...</a>');
@@ -1630,7 +1680,8 @@ global $connectPPEAO;
 			case "stats":
 			echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir les tables de statistiques...</a>');
 			break;
-		}
+		} // end switch $exploit
+		echo('</p></div>');
 		// on stocke l'URL de la selection dans une variable de session
 		$_SESSION["selection_url"]=$_SERVER["FULL_URL"];	
 		break; 
@@ -1691,6 +1742,137 @@ global $compteur;
 		echo('</div>');
 		break;
 
+	}
 }
+
+
+function afficheSecteurs2() {
+	
+	global $connectPPEAO;
+	global $enquetes_ids;
+	
+	switch($_GET["step"]) {
+		case 7: 
+		// on en est a cette etape, on affiche le selecteur
+		echo('<div id="step_7">');
+			echo('<form id="step_7_form" name="step_7_form" target="/extraction/selection/selection.php" method="GET">');
+		echo('<h2>7. s&eacute;lectionner des syst&egrave;mes ou des secteurs</h2>');
+		
+		// on recupere la liste des systemes selectionnes
+			$sql='SELECT DISTINCT ref_systeme.id, ref_systeme.libelle as systeme, ref_pays.nom as pays FROM ref_systeme, ref_pays WHERE TRUE
+				';
+			if (!empty($_GET["systemes"])) {
+				$sql.=' AND ref_systeme.id IN (\''.arrayToList($_GET["systemes"],'\',\'','\'').')';
+				}
+			// on filtre la liste des systemes selectionnes en fonction des enquetes selectionnees
+			if (!empty($enquetes_ids)) {
+				$sql.=' AND ref_systeme.id IN 
+				(SELECT DISTINCT ref_systeme_id FROM ref_secteur rs 
+				WHERE rs.id IN (
+					SELECT DISTINCT ref_secteur_id FROM art_agglomeration aa 
+						WHERE aa.id IN (
+							SELECT DISTINCT art_agglomeration_id FROM art_periode_enquete ape 
+							WHERE ape.id IN (\''.arrayToList($enquetes_ids,'\',\'','\'').')
+							)
+				)
+				)
+';
+			}
+			$sql.=' AND ref_systeme.ref_pays_id=ref_pays.id 
+				';
+			//debug 				echo('<pre>');print_r($sql);echo('</pre>');				exit;
+			$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+			$systemes2=pg_fetch_all($result);
+			pg_free_result($result);
+			
+			//debug 			echo('<pre>');print_r($systemes2);echo('</pre>');
+			// on affiche le selecteur de systemes
+			echo('<div id="step_7_systemes" class="level_div">');
+			echo('<p>syst&egrave;mes</p>');
+			echo('<select id="systemes2" name="systemes2[]" size="10" multiple="multiple" class="level_select" style="min-width:10em" onchange="javascript:refreshSecteurs([\''.arrayToList($enquetes_ids,'\',\'','').'\']);">');
+			foreach($systemes2 as $systeme2) {
+				// si la valeur est dans l'url, on la selectionne
+				if (in_array($systeme2["id"],$_GET["systemes2"])) {$selected='selected="selected" ';} else {$selected='';}
+				echo('<option value="'.$systeme2["id"].'" '.$selected.'>('.$systeme2["pays"].') '.$systeme2["systeme"].'</option>');
+			} // end foreach
+			echo('</select>');
+			echo('</div>');
+			echo('<div class="level_div"> &gt; </div>');
+			
+			// on affiche le selecteur de secteurs
+			echo('<div id="step_7_secteurs" class="level_div">');
+			echo('<p>secteurs</p>');
+			// si aucun secteur n'est selectionne on affiche un select vide
+			echo('<select id="secteurs" name="secteurs[]" size="10" multiple="multiple" class="level_select" style="min-width:10em">');
+			// on n'affiche le contenu de ce select que si des valeurs de systemes2 ont ete passees dans l'url
+			if (!empty($_GET["systemes2"])) {
+				$array_secteurs=listSelectSecteurs($_GET["systemes2"],$enquetes_ids);
+				//debug 								echo('<option>xx');print_r($array_secteurs);echo('</option>');
+				
+				foreach($array_secteurs as $secteur) {
+				// si la valeur est dans l'url, on la selectionne
+				if (in_array($secteur["id"],$_GET["secteurs"])) {$selected='selected="selected" ';} else {$selected='';}
+				echo('<option value="'.$secteur["id"].'" '.$selected.'>('.$secteur["systeme"].') '.$secteur["secteur"].'</option>');
+			} // end foreach
+			}
+			
+			echo('</select>');
+			
+			echo('</div>');
+			// on affiche le lien permettant de passer a la selection temporelle
+			// on prepare l'url pour construire le lien : on enleve les systèmes et secteurs eventuellement selectionnes
+			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'systemes2\[\]');
+			$url=removeQueryStringParam($url,'secteurs\[\]');
+			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(7,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins...</a></p>');
+		echo('</form>');
+		echo('</div>');
+		break; // end case step=7
+		
+		// on a depasse cette etape, on affiche le resume textuel
+		case ($_GET["step"]>7):
+		echo('<div id="step_7">');
+		echo('<h2>7. syst&egrave;mes ou secteurs</h2>');
+		
+		if (!empty($_GET["systemes2"])) {
+		$systemes2_id='\''.arrayToList($_GET["systemes2"],'\',\'','\'');
+		$sql='SELECT DISTINCT ref_systeme.libelle as systeme, ref_pays.nom as pays 
+				FROM ref_systeme, ref_pays
+				WHERE ref_systeme.id IN ('.$systemes2_id.') 
+				  AND ref_pays.id=ref_systeme.ref_pays_id 
+				 ORDER BY ref_pays.nom, ref_systeme.libelle';
+		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+		$array=pg_fetch_all($result);
+		pg_free_result($result);
+		foreach ($array as $systeme2) {$systemes2_noms[]=$systeme2["systeme"].' ('.$systeme2["pays"].')';}
+		$liste_systemes2=arrayToList($systemes2_noms,', ','.');}
+		else {
+			$liste_systemes2="tous";
+		}
+		echo("<p>syst&egrave;mes : $liste_systemes2</p>");
+		
+		if (!empty($_GET["secteurs"])) {
+		$secteurs_id='\''.arrayToList($_GET["secteurs"],'\',\'','\'');
+		$sql='SELECT DISTINCT ref_secteur.nom as secteur, ref_systeme.libelle as systeme, ref_pays.nom as pays 
+				FROM ref_secteur , ref_systeme, ref_pays
+				WHERE ref_secteur.id IN ('.$secteurs_id.') 
+				 AND ref_systeme.id=ref_secteur.ref_systeme_id AND ref_pays.id=ref_systeme.ref_pays_id 
+				 ORDER BY ref_pays.nom, ref_systeme.libelle, ref_secteur.nom';
+		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+		$array=pg_fetch_all($result);
+		pg_free_result($result);
+		foreach ($array as $secteur) {$secteurs_noms[]=$secteur["secteur"].' ('.$secteur["pays"].'/'.$secteur["systeme"].')';}
+		$liste_secteurs=arrayToList($secteurs_noms,', ','.');}
+		else {
+			$liste_secteurs="tous";
+		}
+		echo("<p>secteurs : $liste_secteurs</p>");
+		// le lien permettant d'éditer la selection des systemes et secteurs
+		$edit_link=prepareSelectionEditLink(7);
+		echo('<p id="edit_secteurs"><a href="'.$edit_link.'">modifier la sélection des systèmes et des secteurs...</a></p>');
+		echo('</div>');
+		break;
+	}
 }
+
 ?>

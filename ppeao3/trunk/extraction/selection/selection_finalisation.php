@@ -86,8 +86,9 @@ switch ($selection["exploit"]) {
 			$xml.=xmlGrandTypeEngins($selection);
 			// le script a utiliser pour l'extraction des stats
 			break;
-		$script="extraction_filieres_stats.php?logsupp=0";
+		
 		}
+	$script="extraction_filieres_stat.php?logsupp=0";
 	break;
 	// fonds de cartes
 	case "cartes":
@@ -100,7 +101,6 @@ switch ($selection["exploit"]) {
 
 $xml.='</selection>';
 
-//debug header("Content-Type: text/xml; charset=iso-8859-15"); print_r($xml);
 // on stocke le XML dans la variable de session
 $_SESSION["selection_xml"]=$xml;
 
@@ -120,9 +120,14 @@ $url.=$theHost;
 
 $url.='/extraction/extraction/'.$script;
 
-//debug header('Content-Type: text/xml');echo($xml);
 
+// si l'utilisateur passe le parametre &xml=1 dans l'url, on affiche le fichier XML au lieu de poursuivre l'extraction
+switch ($_GET["xml"]) {
+	case 1:
+	header('Content-Type: text/xml');echo($xml);
+	break;
+	default:
+		header('location: ' . $url);
+	break;
 
-header('location: ' . $url);
-
-?>
+}?>

@@ -140,6 +140,10 @@ switch($_GET["exploit"]) {
 			break;
 			//statistiques generales
 			case "gen":
+				// systemes ou secteurs
+				afficheSecteurs2();
+				//grands types d'engins
+				afficheGrandsTypesEngins($_GET["exploit"]);
 			break;
 		}
 	break; // end case "stats"

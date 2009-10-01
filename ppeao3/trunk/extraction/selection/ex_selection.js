@@ -59,6 +59,44 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 		;}
 }
 
+// fonction qui effectue une requete AJAX pour mettre a jour le selecteur de secteurs quand on change le systeme selectionne
+function refreshSecteurs(liste_enquetes) {
+// liste_enquetes: un tableau contenant la liste des id des enquetes deja filtrees
+	var systemes2Select=$("systemes2");
+	var secteursSelect=$("secteurs");
+	// si une valeur est sélectionnée
+	if ((systemes2Select.selectedIndex!=-1)) {
+			//debug			alert('valeur sélectionnée');
+		var xhr = getXhr();
+		// what to do when the response is received
+		xhr.onreadystatechange = function(){
+			// only do something if the whole response has been received and the server says OK
+			if(xhr.readyState == 4 && xhr.status == 200){
+				//on récupère la réponse du serveur (les <options> du select)
+				theNewOptions = xhr.responseText;
+				// debug 	alert(theNewOptions);
+				// on remplace le contenu du <select id=systemes>  :
+				secteursSelect.innerHTML=theNewOptions;
+			;} // end if xhr.readyState == 4
+		} // end xhr.onreadystatechange
+	
+	// on passe les valeurs sélectionnées des SELECT dans l'URL
+	var theString="&"+$('step_7_form').toQueryString();
+
+	// using GET to send the request
+	xhr.open("GET","/extraction/selection/refresh_secteurs_ajax.php?&enquetes="+liste_enquetes+theString,true);
+	xhr.send(null);
+
+	}// end if ((currentSelect.selectedIndex!=-1)
+	
+	// else if no value is selected, we remove the next criteria select and update the edit link
+	else {
+		//debug		alert("plus de valeurs");
+		secteursSelect.innerHTML='';
+		
+		;}
+}
+
 // fonction qui effectue une requete AJAX pour mettre a jour le selecteur de periode quand on change une des selections
 function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
 

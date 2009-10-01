@@ -115,6 +115,34 @@ $tmpXml.='</systemeListe>';
 	
 	return $tmpXml;
 }
+
+// **************************************************
+// element systemeListe : utilisee si l'on doit passer une sous selection de systemes pour les stats generales
+function xmlSystemes2($selection) {
+// $selection: tableau equivalent au $_GET de la requete de selection
+global $connectPPEAO;
+
+if (!empty($selection["systemes2"])) {
+	$tmpXml='<systemeListe selection="selection">';
+	// on construit le contenu de la balise paysListe
+		$sql='SELECT id, libelle FROM ref_systeme WHERE id IN(
+			\''.arrayToList($selection["systemes2"],'\',\'','\'').'
+			)';
+		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+		$array=pg_fetch_all($result);
+		pg_free_result($result);
+		//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
+	foreach($array as $systeme) {
+		$tmpXml.='<systeme id="'.$systeme["id"].'">'.$systeme["libelle"].'</systeme>';
+		}
+	}
+else {
+	$tmpXml='<systemeListe selection="aucune">';
+	}
+$tmpXml.='</systemeListe>';
+	
+	return $tmpXml;
+}
 // **************************************************
 // element secteurListe
 function xmlSecteurs($selection) {

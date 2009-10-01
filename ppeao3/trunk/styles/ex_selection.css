@@ -12,3 +12,8 @@
 	margin-top: 50px;
 	clear:both;
 }
+
+#choix_tables_stats {
+	display:block;
+	margin-top:15px;
+}
