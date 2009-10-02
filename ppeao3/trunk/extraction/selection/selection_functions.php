@@ -579,13 +579,6 @@ return $edit_link;
 //******************************************************************************
 // affiche le bloc permettant d'indiquer si l'on veut choisir ou non des especes
 function afficheChoixEspeces() {
-/* on numerote les etapes :
-1 = selectionner ou non des especes
-2 = selection des especes
-3 = selection pays/systemes
-4= selection periode
-5= selection type exploitation
-*/
 
 // on determine a quelle etape on en est (si step est vide on suppose que on est au step 1)
 if (empty($_GET["step"])) {$step=1;} else {$step=$_GET["step"];}
@@ -599,7 +592,7 @@ if ($step==1) {
 // on reinitialise les parametres de selection stockes dans la session
 $_SESSION["selection_1"]=array();
 
-}
+echo('</div></div>');}
 
 else {
 	echo('<div id="step_1">');
@@ -607,20 +600,16 @@ else {
 	echo('</div>');
 }
 
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==2) {
+echo('</div></div>');}
+
 }
 
 
 //******************************************************************************
 // affiche le bloc permettant de selectionner des famille et/ou des especes
 function afficheTaxonomie() {
-/* on numerote les etapes :
-1 = selectionner ou non des especes
-2 = selection des especes
-3 = selection pays/systemes
-4= selection periode
-5= selection type exploitation
-*/
-
 // la connexion a la base
 global $connectPPEAO;
 
@@ -736,19 +725,23 @@ switch ($_GET["step"]) {
 			pg_free_result($result);
 			foreach ($array as $espece) {$especes_noms[]=$espece["libelle"];}
 			$liste_especes=arrayToList($especes_noms,', ','.');
-			
 			echo("<p>esp&egrave;ces : $liste_especes</p>");
 		}
-	// le lien permettant d'éditer la selection des especes
+	// le lien permettant d'editer la selection des especes
 	$edit_link=prepareSelectionEditLink(2);
-	echo('<p id="edit_especes"><a href="'.$edit_link.'">modifier la sélection des esp&egrave;ces...</a></p>');	
+	echo('<p id="edit_especes"><a href="'.$edit_link.'">modifier la s&eacute;lection des esp&egrave;ces...</a></p>');	
 	echo('</div>');
+	
 	break;
 		
 	} // fin de switch $_GET[step]
 
-
 } // fin de if ($_GET["choix_especes"]==1)
+
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==3) {
+echo('</div></div>');}
+
 }
 
 
@@ -756,13 +749,6 @@ switch ($_GET["step"]) {
 //******************************************************************************
 // affiche le bloc permettant de selectionner des systemes
 function afficheGeographie() {
-/* on numerote les etapes :
-1 = selectionner ou non des especes
-2 = selection des especes
-3 = selection pays/systemes
-4= selection periode
-5= selection type exploitation
-*/
 
 global $connectPPEAO; // la connexion a la base
 global $campagnes_ids; // la liste des campagnes deja selectionnees
@@ -896,24 +882,22 @@ switch ($_GET["step"]) {
 						
 			echo("<p>syst&egrave;mes : $liste_systemes</p>");
 		}
-	// le lien permettant d'éditer la selection des systemes
+	// le lien permettant d'editer la selection des systemes
 	$edit_link=prepareSelectionEditLink(3);
-	echo('<p id="edit_systemes"><a href="'.$edit_link.'">modifier la sélection des syst&egrave;mes...</a></p>');	
+	echo('<p id="edit_systemes"><a href="'.$edit_link.'">modifier la s&eacute;lection des syst&egrave;mes...</a></p>');	
 	echo('</div>');
 	break;
 
-} // end switch($_GET["step"])
-
+	} // end switch($_GET["step"])
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==4) {
+echo('</div></div>');}
 }
+
+
 // on affiche le selecteur de periode
 function affichePeriode() {
-/* on numerote les etapes :
-1 = selectionner ou non des especes
-2 = selection des especes
-3 = selection pays/systemes
-4= selection periode
-5= selection type exploitation
-*/
+
 global $connectPPEAO; // la connexion a la base
 global $campagnes_ids; // la liste des campagnes deja selectionnees
 global $enquetes_ids; // la liste des enquetes deja selectionnees	
@@ -1075,25 +1059,23 @@ switch ($_GET["step"]) {
 	echo('<div id="step_4">');
 	echo("<h2>4. p&eacute;riode d&#x27;int&eacute;r&ecirc;t</h2>");
 	echo('de '.number_pad($_GET["d_m"],2).'/'.$_GET["d_a"].' &agrave; '.number_pad($_GET["f_m"],2).'/'.$_GET["f_a"]);
-	// le lien permettant d'éditer la selection de la periode
+	// le lien permettant d'editer la selection de la periode
 	$edit_link=prepareSelectionEditLink(4);
-	echo('<p id="edit_periode"><a href="'.$edit_link.'">modifier la sélection de la p&eacute;riode...</a></p>');	
+	echo('<p id="edit_periode"><a href="'.$edit_link.'">modifier la s&eacute;lection de la p&eacute;riode...</a></p>');	
 	echo('</div>');
 	break;
 
-} // end switch $_GET["step"]
+	} // end switch $_GET["step"]
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==5) {
+echo('</div></div>');}
 }
+
+
+
 // on affiche le choix du type d'exploitation
 function afficheTypeExploitation() {
-	
-/* on numerote les etapes :
-1 = selectionner ou non des especes
-2 = selection des especes
-3 = selection pays/systemes
-4= selection periode
-5= selection type exploitation
-6= selection type de donnees (exp ou art)
-*/	
+
 
 global $connectPPEAO; // la connexion a la base
 global $campagnes_ids; // la liste des campagnes deja selectionnees
@@ -1155,25 +1137,20 @@ switch ($_GET["step"]) {
 			echo("<p>indicateurs &eacute;cologiques</p>");
 		break;
 	}
-	// le lien permettant d'éditer la selection du type d'exploitation
+	// le lien permettant d'editer la selection du type d'exploitation
 	$edit_link=prepareSelectionEditLink(5);
 	echo('<p id="edit_exploit"><a href="'.$edit_link.'">modifier la s&eacute;lection du type d&#x27;exploitation...</a></p>');	
 	echo('</div>');
-} // end switch
+	} // end switch
+
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==6) {
+echo('</div></div>');}
 }
 
-
+// on affiche le choix du type de donnees
 function afficheTypeDonnees() {
 	
-/* on numerote les etapes :
-1 = selectionner ou non des especes
-2 = selection des especes
-3 = selection pays/systemes
-4= selection periode
-5= selection type exploitation
-6= selection type de donnees (exp ou art)
-*/	
-
 global $connectPPEAO; // la connexion a la base
 global $campagnes_ids; // la liste des campagnes deja selectionnees
 global $enquetes_ids; // la liste des enquetes deja selectionnees
@@ -1214,15 +1191,19 @@ global $compteur;
 			echo('<p>donn&eacute;es de p&ecirc;che artisanale</p>');
 			break;
 		}
-		// le lien permettant d'éditer la selection du type de donnees a extraire
+		// le lien permettant d'editer la selection du type de donnees a extraire
 		$edit_link=prepareSelectionEditLink(6);
 		echo('<p id="edit_donnees"><a href="'.$edit_link.'">modifier la s&eacute;lection du type de donn&eacute;es &agrave; extraire...</a></p>');	
 		echo('</div>');
 		break;
 	}
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==7) {
+echo('</div></div>');}	
+	
 }
 
-
+// on affiche le choix des secteurs, en fonction du type de donnees a extraire (exp ou art)
 function afficheSecteurs($donnees) {
 	
 	global $connectPPEAO;
@@ -1308,15 +1289,20 @@ function afficheSecteurs($donnees) {
 			$liste_secteurs="tous";
 		}
 		echo("<p>$liste_secteurs</p>");
-		// le lien permettant d'éditer la selection des secteurs
+		// le lien permettant d'editer la selection des secteurs
 		$edit_link=prepareSelectionEditLink(7);
-		echo('<p id="edit_secteurs"><a href="'.$edit_link.'">modifier la sélection des secteurs...</a></p>');
+		echo('<p id="edit_secteurs"><a href="'.$edit_link.'">modifier la s&eacute;lection des secteurs...</a></p>');
 		echo('</div>');
 		break;
 	}
+	
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==8) {
+echo('</div></div>');}	
+	
 }
 
-
+// on affiche le choix des campagnes
 function afficheCampagnes() {
 
 global $compteur;
@@ -1381,17 +1367,22 @@ global $connectPPEAO;
 			else {
 				echo('<p>toutes</p>');
 			}
-		// le lien permettant d'éditer la selection des campagnes
+		// le lien permettant d'editer la selection des campagnes
 		$edit_link=prepareSelectionEditLink(8);
-		echo('<p id="edit_campagnes"><a href="'.$edit_link.'">modifier la sélection des campagnes...</a></p>');
-		echo('</div>');
+		echo('<p id="edit_campagnes"><a href="'.$edit_link.'">modifier la s&eacute;lection des campagnes...</a></p>');
 		echo('</div>'); // end div step_8
 		break;
 		
 		
 	} // end switch $step
+	
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==9) {
+echo('</div></div>');}
+
 }
 
+// on affiche le choix des engins
 function afficheEngins() {
 global $compteur;
 global $connectPPEAO;
@@ -1445,12 +1436,18 @@ global $connectPPEAO;
 				$engins_liste=arrayToList($engins,', ','.');
 				echo('<p>'.$engins_liste.'</p>');
 		echo('</div>'); // end div step_9
-				echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;exploitation...</a>');
 		// on stocke l'URL de la selection dans une variable de session
 		$_SESSION["selection_url"]=$_SERVER["FULL_URL"];
+		// le lien permettant d'editer la selection des campagnes
+		$edit_link=prepareSelectionEditLink(9);
+		echo('<p id="edit_campagnes"><a href="'.$edit_link.'">modifier la s&eacute;lection des engins de p&ecirc;che...</a></p>');
 		break;
 	} // end switch step
 	
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==10) {
+echo('</div></div>');}
+if ($_GET["step"]>9) {echo('<div id="choix_filiere"><a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;exploitation...</a></div>');}
 }
 
 function afficheAgglomerations() {
@@ -1525,13 +1522,16 @@ global $connectPPEAO;
 			$liste_agglos="toutes";
 			}
 		echo('<p>'.$liste_agglos.'</p>');
-			// le lien permettant d'éditer la selection des agglos
+			// le lien permettant d'editer la selection des agglos
 		$edit_link=prepareSelectionEditLink(8);
-		echo('<p id="edit_agglos"><a href="'.$edit_link.'">modifier la sélection des agglom&eacute;rations...</a></p>');
+		echo('<p id="edit_agglos"><a href="'.$edit_link.'">modifier la s&eacute;lection des agglom&eacute;rations...</a></p>');
 		echo('</div>'); // end div step_8
 		break;
 		
 	}
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==9) {
+echo('</div></div>');}
 }
 
 function affichePeriodeEnquetes() {
@@ -1595,12 +1595,16 @@ global $connectPPEAO;
 			$liste_enquetes="toutes";
 			}
 		echo('<p>'.$liste_enquetes.'</p>');
-			// le lien permettant d'éditer la selection des enquetes
+			// le lien permettant d'editer la selection des enquetes
 		$edit_link=prepareSelectionEditLink(9);
 		echo('<p id="edit_enquetes"><a href="'.$edit_link.'">modifier la s&eacute;lection des p&eacute;riodes d&#x27;enqu&ecirc;te...</a></p>');
 		echo('</div>'); // end div step_9
 		break;
 	} // end switch $_GET
+
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==10) {
+echo('</div></div>');}
 }
 
 function afficheGrandsTypesEngins($exploit) {
@@ -1667,12 +1671,24 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 				$gtengins_liste="tous";
 			}
 				echo('<p>'.$gtengins_liste.'</p>');
-		// le lien permettant d'éditer la selection des grands types d'engins
+		// le lien permettant d'editer la selection des grands types d'engins
 		$edit_link=prepareSelectionEditLink($theStep);
 		echo('<p id="edit_gteng"><a href="'.$edit_link.'">modifier la s&eacute;lection des grands types d&#x27;engins...</a></p>');	
 		echo('</div>'); // end div step_'.$theStep.'
 		
-		echo('<div id="choix_tables_stats"><p>');
+
+		echo('</p></div>');
+		// on stocke l'URL de la selection dans une variable de session
+		$_SESSION["selection_url"]=$_SERVER["FULL_URL"];	
+		break; 
+	} // end switch $_GET
+
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+$theNextStep=$theStep+1;
+if ($_GET["step"]==$theNextStep) {
+echo('</div></div>');}
+if ($_GET["step"]>$theStep) {
+echo('<div id="choix_tables_stats"><p>');
 		switch ($exploit) {
 			case "donnees" : 
 			echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;exploitation...</a>');
@@ -1681,11 +1697,7 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 			echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir les tables de statistiques...</a>');
 			break;
 		} // end switch $exploit
-		echo('</p></div>');
-		// on stocke l'URL de la selection dans une variable de session
-		$_SESSION["selection_url"]=$_SERVER["FULL_URL"];	
-		break; 
-	} // end switch $_GET
+}
 }
 	
 // on affiche le choix du type de statistiques
@@ -1720,7 +1732,7 @@ global $compteur;
 			$stats_agglo_link=$stats_link.'&stats=agglo';
 			echo('<ul>');
 				echo('<li><a href="'.$stats_agglo_link.'">statistiques par agglom&eacute;rations</a></li>');
-				echo('<li><a href="'.$stats_gen_link.'">statistiques générales</a></li>');
+				echo('<li><a href="'.$stats_gen_link.'">statistiques g&eacute;n&eacute;rales</a></li>');
 			echo('</ul>');
 		} else {echo('<p>aucune p&eacute;riode d&#x27;enqu&ecirc;te disponible, veuillez modifier votre s&eacute;lection.</p>');} 
 		break;
@@ -1736,13 +1748,16 @@ global $compteur;
 			echo('<p>statistiques par agglom&eacute;rations</p>');
 			break;
 		}
-		// le lien permettant d'éditer la selection du type de donnees a extraire
+		// le lien permettant d'editer la selection du type de donnees a extraire
 		$edit_link=prepareSelectionEditLink(6);
 		echo('<p id="edit_stats"><a href="'.$edit_link.'">modifier la s&eacute;lection du type de statistiques &agrave; extraire...</a></p>');	
 		echo('</div>');
 		break;
-
 	}
+
+// si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
+if ($_GET["step"]==7) {
+echo('</div></div>');}
 }
 
 
@@ -1867,9 +1882,9 @@ function afficheSecteurs2() {
 			$liste_secteurs="tous";
 		}
 		echo("<p>secteurs : $liste_secteurs</p>");
-		// le lien permettant d'éditer la selection des systemes et secteurs
+		// le lien permettant d'editer la selection des systemes et secteurs
 		$edit_link=prepareSelectionEditLink(7);
-		echo('<p id="edit_secteurs"><a href="'.$edit_link.'">modifier la sélection des systèmes et des secteurs...</a></p>');
+		echo('<p id="edit_secteurs"><a href="'.$edit_link.'">modifier la s&eacute;lection des syst&egrave;mes et des secteurs...</a></p>');
 		echo('</div>');
 		break;
 	}

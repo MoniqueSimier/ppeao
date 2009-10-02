@@ -10,9 +10,11 @@ function replaceQueryString(url,param,value) {
 function goToNextStep(current_step,url) {
 	// current_step: le numero de l'etape ACTUELLE
 	// url: l'url qui doit servir de base pour l'etape suivante
-	url=replaceQueryString(url,'step',current_step+1)+"&"
+	url=replaceQueryString(url,'step',current_step+1);
 	var theStepForm=document.getElementById("step_"+current_step+"_form");
-	url+=theStepForm.toQueryString();
+	var formValues=theStepForm.toQueryString();
+	if (formValues=='') {var separator='';} else {var separator='&';}
+	url=url+separator+formValues;
 	
 	//debug	alert(url);
 	

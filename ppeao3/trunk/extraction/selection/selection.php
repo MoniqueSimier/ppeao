@@ -40,7 +40,14 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 ?>
 
 <div id="main_container" class="edition">
-<h1>consulter des donn&eacute;es : s&eacute;lection</h1>
+<h1>consulter des donn&eacute;es : s&eacute;lection
+<?php 
+// si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
+if ($_GET["step"]>1) {
+	echo('<span class="showHide"><a id="selection_precedente_toggle" onclick="toggleSelection();">[masquer la s&eacute;lection]</a></span>');
+}
+?>
+</h1>
 <!-- édition des tables de référence -->
 <?php
 
@@ -62,19 +69,13 @@ $campagnes_ids=$compteur["campagnes_ids"];
 $coups_ids=$compteur["coups_ids"];
 $enquetes_ids=$compteur["enquetes_ids"];
 
-
-//debug echo('<pre>');print_r($compteur);echo('</pre>');
-
-
-
-
-
-/* on numerote les etapes :
-1 = selectionner ou non des especes
-2 = selection des especes
-3 = selection pays/systemes
-4= selection periode
-*/
+// si on a depasse le step 1, on encapsule les selecteurs precedents dans un DIV id="selection_precedente"
+// pour pouvoir les masquer
+// le DIV est ferme dans l'une des fonctions afficheXXXXX(), selon le step
+if ($_GET["step"]>1) {
+	echo('<div id="selection_precedente">');
+	echo('<div id="selection_precedente_contenu">');
+	}
 // on demande si l'utilisateur veut choisir des especes ou pas
 afficheChoixEspeces();
 // on affiche le selecteur de taxonomie
@@ -87,7 +88,7 @@ affichePeriode();
 if ($compteur["campagnes_total"]!=0 || $compteur["enquetes_total"]!=0) {
 afficheTypeExploitation();} 
 
-// on agit poursuit la selection en fonction du type d'exploitation choisi
+// on poursuit la selection en fonction du type d'exploitation choisi
 switch($_GET["exploit"]) {
 	// extraction de donnees
 	case "donnees":
@@ -160,7 +161,7 @@ switch($_GET["exploit"]) {
 	case "indics":
 	break;
 	
-	// si aucun type n'est passe, on e fait rien
+	// si aucun type n'est passe, on ne fait rien
 	default:
 	break;
 }
