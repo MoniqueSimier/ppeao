@@ -13,7 +13,23 @@
 	clear:both;
 }
 
-#choix_tables_stats {
+#choix_tables_stats, #choix_filiere {
 	display:block;
 	margin-top:15px;
 }
+
+
+#selection_precedente {
+	background-color: transparent;
+	padding: 10px 5px;
+	border: 1px solid gray;
+	width:800px;
+}
+
+#selection_precedente_toggle {
+}
+
+#selection_precedente_contenu {
+		display:none;
+}
+
