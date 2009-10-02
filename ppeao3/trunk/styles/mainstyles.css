@@ -286,6 +286,10 @@ width:800px;
 width:90%;
 }
 
+#main_container.edition h1 {
+	width:800px;
+}
+
 
 /* ************************ */
 /* the login block      */

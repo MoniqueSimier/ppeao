@@ -145,6 +145,7 @@ function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
 					{$("div_f_m").innerHTML=theResponseText;}
 				// cas particulier: si on vient de choisir un mois de fin, on affiche le lien pour passer a la suite
 				if (selection=='f_m') {
+					if ($("step_4_link")==false) {
 					var link= new Element('p', {
 						'events': {
 							'change':function() {
@@ -158,6 +159,7 @@ function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
 					
 					link.injectInside($("step_4"));
 					link.innerHTML=theResponseText;
+					}
 				}
 			;} // end if xhr.readyState == 4
 		} // end xhr.onreadystatechange

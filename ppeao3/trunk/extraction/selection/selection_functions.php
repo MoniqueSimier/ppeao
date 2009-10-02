@@ -367,7 +367,15 @@ if ($_GET["donnees"]=="art") {$peches='art';}
 // les statistiques ne sont realisees que sur les peches artisan ales
 if ($_GET["exploit"]=="stats") {$peches='art';}
 
-
+// si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
+// et on affiche "votre selection correspond a :"
+if ($_GET["step"]>1) {
+	$link='<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();" title="afficher ou masquer la selection" href="#">[afficher/modifier/masquer la s&eacute;lection]</a></span>';
+	$text='votre s&eacute;lection correspond &agrave; :';
+} else {
+	$link='';
+	$text='donn&eacute;es disponibles :';
+	}
 
 switch ($peches) {
 	case "exp":
@@ -381,7 +389,7 @@ switch ($peches) {
 				"campagnes_total"=>$total_campagnes,
 				"coups_ids"=>$campagnes["coups"]["coups_ids"],
 				"coups_total"=>$campagnes["coups"]["coups_total"],
-				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><p>'.$total_campagnes.' campagne(s)'.$texte_coups.'</p></div>');
+				"texte"=>'<div id="ex_compteur"><p>'.$text.$link.'</p><ul><li>'.$total_campagnes.' campagne(s)'.$texte_coups.'</li></ul></div>');
 	break;
 	case "art":
 	// on compte les periodes d'enquete
@@ -395,7 +403,7 @@ switch ($peches) {
 				"debarquements_ids"=>$enquetes["debarquements"]["debarquements_ids"],
 				"activites_total"=>$enquetes["activites"]["activites_total"],
 				"activites_ids"=>$enquetes["activites"]["activites_ids"],
-				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><p>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></p></div>');
+				"texte"=>'<div id="ex_compteur"><p>'.$text.$link.'</p><ul><li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></ul></div>');
 	break;
 	default:
 	// avant le choix de exp ou art : 
@@ -418,7 +426,7 @@ switch ($peches) {
 				"debarquements_ids"=>$enquetes["debarquements"]["debarquements_ids"],
 				"activites_total"=>$enquetes["activites"]["activites_total"],
 				"activites_ids"=>$enquetes["activites"]["activites_ids"],
-				"texte"=>'<div id="ex_compteur"><p>Votre s&eacute;lection correspond &agrave; :</p><ul><li>'.$total_campagnes.' campagne(s)'.$texte_coups.'</li><li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></ul></div>');
+				"texte"=>'<div id="ex_compteur"><p>'.$text.$link.'</p><ul><li>'.$total_campagnes.' campagne(s)'.$texte_coups.'</li><li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></ul></div>');
 	break;
 				
 	} // end switch $exploit
@@ -585,18 +593,18 @@ if (empty($_GET["step"])) {$step=1;} else {$step=$_GET["step"];}
 // si l'on en est a la premiere etape, on affiche le choix
 if ($step==1) {
 	echo('<div id="step_1">');
-	echo("<h2>1. voulez-vous commencer par s&eacute;lectionner des esp&egrave;ces?</h2>");
+	echo("<h2>voulez-vous commencer par s&eacute;lectionner des esp&egrave;ces?</h2>");
 	echo('<p><a href="/extraction/selection/selection.php?choix_especes=1&step=2" class="">oui</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/extraction/selection/selection.php?choix_especes=0&step=3" class="">non</a></p>');
 	echo('</div>');
 
 // on reinitialise les parametres de selection stockes dans la session
 $_SESSION["selection_1"]=array();
 
-echo('</div></div>');}
+}
 
 else {
 	echo('<div id="step_1">');
-	echo('<p><a href="/extraction/selection/selection.php">1. recommencer la s&eacute;lection du d&eacute;but</a></p>');
+	echo('<h2><a href="/extraction/selection/selection.php">recommencer la s&eacute;lection du d&eacute;but</a></h2>');
 	echo('</div>');
 }
 
@@ -626,7 +634,7 @@ switch ($_GET["step"]) {
 	// on est a cette etape, on affiche le selecteur 
 	echo('<div id="step_2">');
 	echo('<form id="step_2_form" name="step_2_form" target="/extraction/selection/selection.php?choix_especes=1" method="GET">');
-		echo("<h2>2. s&eacute;lectionner des familles et/ou des esp&egrave;ces</h2>");
+		echo("<h2>s&eacute;lectionner des familles et/ou des esp&egrave;ces</h2>");
 		
 		// on recupere la liste des especes qui sont presentes dans les campagnes ou les enquetes
 		$sql_especes='	SELECT DISTINCT id, libelle 
@@ -695,7 +703,7 @@ switch ($_GET["step"]) {
 	$url=$_SERVER["FULL_URL"];
 	$url=removeQueryStringParam($url,'familles\[\]');
 	$url=removeQueryStringParam($url,'especes\[\]');
-	echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(2,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection spatiale...</a></p>');
+	echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(2,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection spatiale...</a></p>');
 	echo('</div>');// end div id="step_2"
 	// on met a jour les parametres de selection stockes dans la session
 	$_SESSION["selection_1"]=array();
@@ -703,7 +711,7 @@ switch ($_GET["step"]) {
 	default:
 	// on en est a une etape ulterieure, on affiche le resume textuel
 	echo('<div id="step_2">');
-		echo("<h2>2. familles et/ou esp&egrave;ces</h2>");
+		echo("<h2>familles et/ou esp&egrave;ces</h2>");
 		if (!empty($_GET["familles"])) {
 			// on recupere la liste des noms des familles selectionnees
 			$familles_id='\''.arrayToList($_GET["familles"],'\',\'','\'');
@@ -729,7 +737,7 @@ switch ($_GET["step"]) {
 		}
 	// le lien permettant d'editer la selection des especes
 	$edit_link=prepareSelectionEditLink(2);
-	echo('<p id="edit_especes"><a href="'.$edit_link.'">modifier la s&eacute;lection des esp&egrave;ces...</a></p>');	
+	echo('<p id="edit_especes" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection des esp&egrave;ces...</a></p>');	
 	echo('</div>');
 	
 	break;
@@ -768,7 +776,7 @@ switch ($_GET["step"]) {
 	// on est a cette etape, on affiche le selecteur 
 	echo('<div id="step_3">');
 	echo('<form id="step_3_form" name="step_3_form" target="/extraction/selection/selection.php?choix_especes='.$choix.'" method="GET">');
-	echo("<h2>3. s&eacute;lectionner des syst&egrave;mes</h2>");
+	echo("<h2>s&eacute;lectionner des syst&egrave;mes</h2>");
 	
 	// on recupere la liste des pays correspondant aux campagnes et enquetes correspondant a la selection precedente
 	$sql_pays='	SELECT DISTINCT ref_pays.id, ref_pays.nom 
@@ -835,7 +843,7 @@ switch ($_GET["step"]) {
 	$url=$_SERVER["FULL_URL"];
 	$url=removeQueryStringParam($url,'pays\[\]');
 	$url=removeQueryStringParam($url,'systemes\[\]');
-	echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(3,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection temporelle...</a></p>');
+	echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(3,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection temporelle...</a></p>');
 	echo('</div>'); // end div id=step_3
 	// on reinitialise les parametres de selection stockes dans la session
 	$_SESSION["selection_1"]=array();
@@ -843,7 +851,7 @@ switch ($_GET["step"]) {
 	default:
 	// on en est a une etape ulterieure, on affiche le resume textuel
 	echo('<div id="step_3">');
-		echo("<h2>3. syst&egrave;mes</h2>");
+		echo("<h2>syst&egrave;mes</h2>");
 		if (!empty($_GET["systemes"])) {
 			// on recupere la liste des systemes selectionnes
 			$systeme_id='\''.arrayToList($_GET["systemes"],'\',\'','\'');
@@ -884,7 +892,7 @@ switch ($_GET["step"]) {
 		}
 	// le lien permettant d'editer la selection des systemes
 	$edit_link=prepareSelectionEditLink(3);
-	echo('<p id="edit_systemes"><a href="'.$edit_link.'">modifier la s&eacute;lection des syst&egrave;mes...</a></p>');	
+	echo('<p id="edit_systemes" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection des syst&egrave;mes...</a></p>');	
 	echo('</div>');
 	break;
 
@@ -915,7 +923,7 @@ switch ($_GET["step"]) {
 	// on est arrive a cette etape, on affiche le formulaire
 	echo('<div id="step_4">');	
 	echo('<form id="step_4_form" name="step_4_form" target="/extraction/selection/selection.php?choix_especes='.$choix.'" method="GET">');
-	echo("<h2>4. s&eacute;lectionner une periode d&#x27;int&eacute;r&ecirc;t</h2>");
+	echo("<h2>s&eacute;lectionner une periode d&#x27;int&eacute;r&ecirc;t</h2>");
 	// on determine les periodes couvertes par les campagnes filtrees
 	if (!empty($campagnes_ids[0])) {
 	$sql_c='SELECT MIN(c.date_debut) as campagne_debut, MAX(c.date_fin) as campagne_fin 
@@ -1051,17 +1059,18 @@ switch ($_GET["step"]) {
 	$url=removeQueryStringParam($url,'f_m');
 
 	if (!empty($_GET["f_m"])) {
-	echo('<p id="step_4_link"  class="clear"><a href="#" onclick="javascript:goToNextStep(4,\''.$url.'\');">ajouter et choisir un type d&#x27;exploitation ...</a></p>');}
+	echo('<p id="step_4_link"  class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(4,\''.$url.'\');">ajouter et choisir un type d&#x27;exploitation ...</a></p>');}
 	echo('</div>'); // fin de div id="step_4"
+	echo('<br class="clear" />');
 	break;
 	default:
 	// on a depasse cette etape, on affiche le resume textuel
 	echo('<div id="step_4">');
-	echo("<h2>4. p&eacute;riode d&#x27;int&eacute;r&ecirc;t</h2>");
-	echo('de '.number_pad($_GET["d_m"],2).'/'.$_GET["d_a"].' &agrave; '.number_pad($_GET["f_m"],2).'/'.$_GET["f_a"]);
+	echo("<h2>p&eacute;riode d&#x27;int&eacute;r&ecirc;t</h2>");
+	echo('<p>de '.number_pad($_GET["d_m"],2).'/'.$_GET["d_a"].' &agrave; '.number_pad($_GET["f_m"],2).'/'.$_GET["f_a"].'</p>');
 	// le lien permettant d'editer la selection de la periode
 	$edit_link=prepareSelectionEditLink(4);
-	echo('<p id="edit_periode"><a href="'.$edit_link.'">modifier la s&eacute;lection de la p&eacute;riode...</a></p>');	
+	echo('<p id="edit_periode" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection de la p&eacute;riode...</a></p>');	
 	echo('</div>');
 	break;
 
@@ -1094,7 +1103,7 @@ switch ($_GET["step"]) {
 	case 5:
 	// on en est a cette etape, on affiche le selecteur
 	echo('<div id="step_5">');
-	echo('<h2>5. s&eacute;lectionner un type d&#x27;exploitation</h2>');
+	echo('<h2>s&eacute;lectionner un type d&#x27;exploitation</h2>');
 	echo('<ul>');
 	$donnees_link=replaceQueryParam($_SERVER["FULL_URL"],'step',6);
 	$donnees_link.='&exploit=donnees';
@@ -1119,7 +1128,7 @@ switch ($_GET["step"]) {
 	default:
 	// on en est a une etape ulterieure, on affiche le resume textuel
 	echo('<div id="step_5">');
-	echo('<h2>5. type d&#x27;exploitation</h2>');
+	echo('<h2>type d&#x27;exploitation</h2>');
 	switch ($_GET["exploit"]) {
 		case "donnees":
 			echo("<p>extraction de donn&eacute;es</p>");
@@ -1139,7 +1148,7 @@ switch ($_GET["step"]) {
 	}
 	// le lien permettant d'editer la selection du type d'exploitation
 	$edit_link=prepareSelectionEditLink(5);
-	echo('<p id="edit_exploit"><a href="'.$edit_link.'">modifier la s&eacute;lection du type d&#x27;exploitation...</a></p>');	
+	echo('<p id="edit_exploit" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection du type d&#x27;exploitation...</a></p>');	
 	echo('</div>');
 	} // end switch
 
@@ -1163,7 +1172,7 @@ global $compteur;
 		case 6:
 		// on en est a cette etape, on affiche le selecteur
 		echo('<div id="step_6">');
-		echo('<h2>6. s&eacute;lectionner le type de donn&eacute;es &agrave; extraire</h2>');
+		echo('<h2>s&eacute;lectionner le type de donn&eacute;es &agrave; extraire</h2>');
 		if ($compteur["campagnes_total"]!=0 && $compteur["enquetes_total"]!=0) {
 		echo('<ul>');
 		//si il reste des campagnes
@@ -1182,7 +1191,7 @@ global $compteur;
 		// on a depasse cette etape, on affiche le resume textuel
 		default:
 		echo('<div id="step_6">');
-		echo('<h2>6. type de donn&eacute;es &agrave; extraire</h2>');
+		echo('<h2>type de donn&eacute;es &agrave; extraire</h2>');
 		switch($_GET["donnees"]) {
 			case "exp":
 			echo('<p>donn&eacute;es de p&ecirc;che exp&eacute;rimentale</p>');
@@ -1193,7 +1202,7 @@ global $compteur;
 		}
 		// le lien permettant d'editer la selection du type de donnees a extraire
 		$edit_link=prepareSelectionEditLink(6);
-		echo('<p id="edit_donnees"><a href="'.$edit_link.'">modifier la s&eacute;lection du type de donn&eacute;es &agrave; extraire...</a></p>');	
+		echo('<p id="edit_donnees" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection du type de donn&eacute;es &agrave; extraire...</a></p>');	
 		echo('</div>');
 		break;
 	}
@@ -1215,7 +1224,7 @@ function afficheSecteurs($donnees) {
 		// on en est a cette etape, on affiche le selecteur
 		echo('<div id="step_7">');
 			echo('<form id="step_7_form" name="step_7_form" target="/extraction/selection/selection.php" method="GET">');
-		echo('<h2>7. s&eacute;lectionner des secteurs</h2>');
+		echo('<h2>s&eacute;lectionner des secteurs</h2>');
 		
 		// on recupere la liste des secteurs pour les campagnes ou periodes d'enquetes selectionnees
 		switch($donnees) {
@@ -1265,14 +1274,14 @@ function afficheSecteurs($donnees) {
 			// on prepare l'url pour construire le lien : on enleve les secteurs eventuellement selectionnes
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'secteurs\[\]');
-			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(7,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des '.$nextSelectionStep.'...</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des '.$nextSelectionStep.'...</a></p>');
 		echo('</form>');
 		echo('</div>');
 		break; // end case step=7
 		// on a depasse cette etape, on affiche le resume textuel
 		case ($_GET["step"]>7):
 		echo('<div id="step_7">');
-		echo('<h2>7. secteurs</h2>');
+		echo('<h2>secteurs</h2>');
 		if (!empty($_GET["secteurs"])) {
 		$secteurs_id='\''.arrayToList($_GET["secteurs"],'\',\'','\'');
 		$sql='SELECT DISTINCT ref_secteur.nom as secteur, ref_systeme.libelle as systeme, ref_pays.nom as pays 
@@ -1291,7 +1300,7 @@ function afficheSecteurs($donnees) {
 		echo("<p>$liste_secteurs</p>");
 		// le lien permettant d'editer la selection des secteurs
 		$edit_link=prepareSelectionEditLink(7);
-		echo('<p id="edit_secteurs"><a href="'.$edit_link.'">modifier la s&eacute;lection des secteurs...</a></p>');
+		echo('<p id="edit_secteurs" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection des secteurs...</a></p>');
 		echo('</div>');
 		break;
 	}
@@ -1315,7 +1324,7 @@ global $connectPPEAO;
 		case 8:
 		echo('<div id="step_8">');
 			echo('<form id="step_8_form" name="step_8_form" target="/extraction/selection/selection.php" method="GET">');
-				echo('<h2>8. s&eacute;lectionner des campagnes</h2>');
+				echo('<h2>s&eacute;lectionner des campagnes</h2>');
 				//debug 				echo('<pre>');print_r($compteur["campagnes_ids"]);echo('</pre>');
 				// on selectionne les campagnes disponibles
 				$sql='SELECT DISTINCT c.id, c.numero_campagne, c.date_debut, c.date_fin, c.libelle as campagne, s.libelle as systeme, lower(s.libelle) as lower_systeme, p.nom as pays, lower(p.nom) as lower_pays 
@@ -1340,14 +1349,14 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'camp\[\]');
-			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(8,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des engins de p&ecirc;che...</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des engins de p&ecirc;che...</a></p>');
 			echo('</form>');
 		echo('</div>'); // end div step_8
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
 		default:
 		echo('<div id="step_8">');
-			echo('<h2>8. campagnes</h2>');
+			echo('<h2>campagnes</h2>');
 			if (!empty($_GET["camp"])) {
 				$sql='SELECT DISTINCT c.id, c.numero_campagne, c.date_debut, c.date_fin, c.libelle as campagne, s.libelle as systeme, lower(s.libelle) as lower_systeme, p.nom as pays, lower(p.nom) as lower_pays 
 				FROM exp_campagne c, ref_systeme s, ref_pays p 
@@ -1394,7 +1403,7 @@ global $connectPPEAO;
 		case 9:
 		echo('<div id="step_9">');
 			echo('<form id="step_9_form" name="step_9_form" target="/extraction/selection/selection.php" method="GET">');
-				echo('<h2>9. s&eacute;lectionner des engins de p&ecirc;che</h2>');
+				echo('<h2>s&eacute;lectionner des engins de p&ecirc;che</h2>');
 				$sql='SELECT e.id, e.libelle FROM exp_engin e 
 				WHERE e.id IN (
 					SELECT exp_engin_id FROM exp_coup_peche 
@@ -1415,14 +1424,14 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'eng\[\]');
-			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(9,\''.$url.'\');">valider la s&eacute;lection...</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(9,\''.$url.'\');">finaliser la s&eacute;lection...</a></p>');
 			echo('</form>');
 		echo('</div>'); // end div step_9
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
 		default:
 		echo('<div id="step_9">');
-			echo('<h2>9. engins de p&ecirc;che</h2>');
+			echo('<h2>engins de p&ecirc;che</h2>');
 			$sql='SELECT e.id, e.libelle FROM exp_engin e 
 				WHERE e.id IN (
 					SELECT exp_engin_id FROM exp_coup_peche 
@@ -1440,7 +1449,7 @@ global $connectPPEAO;
 		$_SESSION["selection_url"]=$_SERVER["FULL_URL"];
 		// le lien permettant d'editer la selection des campagnes
 		$edit_link=prepareSelectionEditLink(9);
-		echo('<p id="edit_campagnes"><a href="'.$edit_link.'">modifier la s&eacute;lection des engins de p&ecirc;che...</a></p>');
+		echo('<p id="edit_campagnes" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection des engins de p&ecirc;che...</a></p>');
 		break;
 	} // end switch step
 	
@@ -1463,7 +1472,7 @@ global $connectPPEAO;
 			
 			if (!empty($compteur["enquetes_ids"])) {
 			echo('<form id="step_8_form" name="step_8_form" target="/extraction/selection/selection.php" method="GET">');
-				echo('<h2>8. s&eacute;lectionner des agglom&eacute;rations</h2>');
+				echo('<h2>s&eacute;lectionner des agglom&eacute;rations</h2>');
 				$sql='SELECT DISTINCT a.nom as agglo, a.id, p.nom as pays, s.nom as secteur, sy.libelle as systeme
 				FROM art_agglomeration a, ref_pays p, ref_secteur s, ref_systeme sy
 				WHERE a.id IN (
@@ -1487,7 +1496,7 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'agglo\[\]');
-			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(8,\''.$url.'\');">ajouter et passer au choix des p&eacute;riodes d&#x27;enqu&ecirc;te...</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');">ajouter et passer au choix des p&eacute;riodes d&#x27;enqu&ecirc;te...</a></p>');
 			echo('</form>');}
 			// sinon on demande a l'utilisateur de modifier sa selection
 			else {
@@ -1499,7 +1508,7 @@ global $connectPPEAO;
 		// on a depasse cette etape, on affiche le resume textuel
 		default:
 		echo('<div id="step_8">');
-			echo('<h2>8. agglom&eacute;rations</h2>');
+			echo('<h2>agglom&eacute;rations</h2>');
 			if (!empty($_GET["agglo"])) {
 			$sql='SELECT DISTINCT a.nom as agglo, a.id, p.nom as pays, s.nom as secteur, sy.libelle as systeme
 				FROM art_agglomeration a, ref_pays p, ref_secteur s, ref_systeme sy
@@ -1524,7 +1533,7 @@ global $connectPPEAO;
 		echo('<p>'.$liste_agglos.'</p>');
 			// le lien permettant d'editer la selection des agglos
 		$edit_link=prepareSelectionEditLink(8);
-		echo('<p id="edit_agglos"><a href="'.$edit_link.'">modifier la s&eacute;lection des agglom&eacute;rations...</a></p>');
+		echo('<p id="edit_agglos" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection des agglom&eacute;rations...</a></p>');
 		echo('</div>'); // end div step_8
 		break;
 		
@@ -1545,7 +1554,7 @@ global $connectPPEAO;
 		case 9:
 		echo('<div id="step_9">');
 			echo('<form id="step_9_form" name="step_9_form" target="/extraction/selection/selection.php" method="GET">');
-				echo('<h2>9. s&eacute;lectionner des p&eacute;riodes d&#x27;enqu&ecirc;te</h2>');
+				echo('<h2>s&eacute;lectionner des p&eacute;riodes d&#x27;enqu&ecirc;te</h2>');
 				//debug 				echo('<pre>');print_r($compteur["enquetes_ids"]);echo('</pre>');
 				// on selectionne les enquetes disponibles
 				$sql='SELECT DISTINCT e.id, e.description, e.annee, e.mois, a.nom as agglo, lower(a.nom) as lower_agglo, s.nom as secteur, lower(s.nom) as lower_secteur, sy.libelle as systeme, lower(sy.libelle) as lower_systeme, p.nom as pays, lower(p.nom) as lower_pays FROM art_periode_enquete e, ref_pays p, ref_systeme sy, ref_secteur s, art_agglomeration a 
@@ -1570,14 +1579,14 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les enquetes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'enq\[\]');
-			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(9,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins de p&ecirc;che...</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(9,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins de p&ecirc;che...</a></p>');
 			echo('</form>');
 		echo('</div>'); // end div step_8
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
 		default:
 		echo('<div id="step_9">');
-			echo('<h2>9. p&eacute;riodes d&#x27;enqu&ecirc;te</h2>');
+			echo('<h2>p&eacute;riodes d&#x27;enqu&ecirc;te</h2>');
 			if (!empty($_GET["enq"])) {
 				// on selectionne les enquetes disponibles
 				$sql='SELECT DISTINCT e.id, e.description, e.annee, e.mois, a.nom as agglo, lower(a.nom) as lower_agglo, s.nom as secteur, lower(s.nom) as lower_secteur, sy.libelle as systeme, lower(sy.libelle) as lower_systeme, p.nom as pays, lower(p.nom) as lower_pays FROM art_periode_enquete e, ref_pays p, ref_systeme sy, ref_secteur s, art_agglomeration a 
@@ -1646,7 +1655,7 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'gteng\[\]');
-			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep('.$theStep.',\''.$url.'\');">valider la s&eacute;lection...</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep('.$theStep.',\''.$url.'\');">finaliser la s&eacute;lection...</a></p>');
 			echo('</form>');
 		echo('</div>'); // end div step_'.$theStep.'
 		break;
@@ -1673,7 +1682,7 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 				echo('<p>'.$gtengins_liste.'</p>');
 		// le lien permettant d'editer la selection des grands types d'engins
 		$edit_link=prepareSelectionEditLink($theStep);
-		echo('<p id="edit_gteng"><a href="'.$edit_link.'">modifier la s&eacute;lection des grands types d&#x27;engins...</a></p>');	
+		echo('<p id="edit_gteng" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection des grands types d&#x27;engins...</a></p>');	
 		echo('</div>'); // end div step_'.$theStep.'
 		
 
@@ -1724,7 +1733,7 @@ global $compteur;
 		case 6:
 		// on en est a cette etape, on affiche le selecteur
 		echo('<div id="step_6">');
-		echo('<h2>6. s&eacute;lectionner le type de statistiques &agrave; extraire</h2>');
+		echo('<h2>s&eacute;lectionner le type de statistiques &agrave; extraire</h2>');
 		// si il reste des enquetes
 		if ($compteur["enquetes_total"]!=0) {
 			$stats_link=replaceQueryParam($_SERVER["FULL_URL"],'step',7);
@@ -1739,7 +1748,7 @@ global $compteur;
 		// on a depasse cette etape, on affiche le resume textuel
 		default:
 		echo('<div id="step_6">');
-		echo('<h2>6. type de statistiques &agrave; extraire</h2>');
+		echo('<h2>type de statistiques &agrave; extraire</h2>');
 		switch($_GET["stats"]) {
 			case "gen":
 			echo('<p>statistiques g&eacute;n&eacute;rales</p>');
@@ -1750,7 +1759,7 @@ global $compteur;
 		}
 		// le lien permettant d'editer la selection du type de donnees a extraire
 		$edit_link=prepareSelectionEditLink(6);
-		echo('<p id="edit_stats"><a href="'.$edit_link.'">modifier la s&eacute;lection du type de statistiques &agrave; extraire...</a></p>');	
+		echo('<p id="edit_stats" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection du type de statistiques &agrave; extraire...</a></p>');	
 		echo('</div>');
 		break;
 	}
@@ -1771,7 +1780,7 @@ function afficheSecteurs2() {
 		// on en est a cette etape, on affiche le selecteur
 		echo('<div id="step_7">');
 			echo('<form id="step_7_form" name="step_7_form" target="/extraction/selection/selection.php" method="GET">');
-		echo('<h2>7. s&eacute;lectionner des syst&egrave;mes ou des secteurs</h2>');
+		echo('<h2>s&eacute;lectionner des syst&egrave;mes ou des secteurs</h2>');
 		
 		// on recupere la liste des systemes selectionnes
 			$sql='SELECT DISTINCT ref_systeme.id, ref_systeme.libelle as systeme, ref_pays.nom as pays FROM ref_systeme, ref_pays WHERE TRUE
@@ -1839,7 +1848,7 @@ function afficheSecteurs2() {
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'systemes2\[\]');
 			$url=removeQueryStringParam($url,'secteurs\[\]');
-			echo('<p class="clear"><a href="#" onclick="javascript:goToNextStep(7,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins...</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins...</a></p>');
 		echo('</form>');
 		echo('</div>');
 		break; // end case step=7
@@ -1847,7 +1856,7 @@ function afficheSecteurs2() {
 		// on a depasse cette etape, on affiche le resume textuel
 		case ($_GET["step"]>7):
 		echo('<div id="step_7">');
-		echo('<h2>7. syst&egrave;mes ou secteurs</h2>');
+		echo('<h2>syst&egrave;mes ou secteurs</h2>');
 		
 		if (!empty($_GET["systemes2"])) {
 		$systemes2_id='\''.arrayToList($_GET["systemes2"],'\',\'','\'');
@@ -1884,7 +1893,7 @@ function afficheSecteurs2() {
 		echo("<p>secteurs : $liste_secteurs</p>");
 		// le lien permettant d'editer la selection des systemes et secteurs
 		$edit_link=prepareSelectionEditLink(7);
-		echo('<p id="edit_secteurs"><a href="'.$edit_link.'">modifier la s&eacute;lection des syst&egrave;mes et des secteurs...</a></p>');
+		echo('<p id="edit_secteurs" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection des syst&egrave;mes et des secteurs...</a></p>');
 		echo('</div>');
 		break;
 	}

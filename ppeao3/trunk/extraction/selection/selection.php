@@ -39,12 +39,12 @@ $zone=0; // zone libre (voir table admin_zones)
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 ?>
 
-<div id="main_container" class="edition">
+<div id="main_container" class="selection">
 <h1>consulter des donn&eacute;es : s&eacute;lection
 <?php 
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
 if ($_GET["step"]>1) {
-	echo('<span class="showHide"><a id="selection_precedente_toggle" onclick="toggleSelection();">[masquer la s&eacute;lection]</a></span>');
+	echo('<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();" title="afficher ou masquer la selection" href="#">[afficher/modifier/masquer la s&eacute;lection]</a></span>');
 }
 ?>
 </h1>
@@ -54,9 +54,6 @@ if ($_GET["step"]>1) {
 // on teste à quelle zone l'utilisateur a accès
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 ?>
-
-
-
 
 
 <?php
@@ -166,11 +163,22 @@ switch($_GET["exploit"]) {
 	break;
 }
 
-echo('</div>'); // find div id=selection
+echo('</div>'); // find div id=ex_selection
+
+// le script pour afficher ou masquer la selection
+?> 
+<script type="text/javascript" charset="utf-8">
+	var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
+	mySlider.hide();
+	// affiche ou masque le DIV contenant la selection precedente
+	function toggleSelection() {
+		mySlider.toggle() //toggle the slider up and down.
+	}
+</script>
+<?php
 
 // on affiche le compteur de campagnes / enquetes
 echo($compteur["texte"]);
-
 ?>
 
 	

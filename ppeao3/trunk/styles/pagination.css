@@ -6,7 +6,7 @@ text-align:center
 
 .pagination a {
 /*background:#fff;*/
-border:1px solid grey;
+border:1px solid gray;
 margin:2px;
 padding:.2em .4em;
 text-decoration:none
@@ -14,12 +14,12 @@ text-decoration:none
 
 .pagination a:hover {
 /*background:#fff;*/
-border:1px solid grey;
+border:1px solid gray;
 }
 
 .pagination span.inactive_page {
 /*background:#fff;*/
-border:1px solid grey;
+border:1px solid gray;
 margin:2px;
 padding:.2em .4em
 }

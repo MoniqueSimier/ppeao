@@ -3,33 +3,83 @@
 /* Creee par O. Roux */
 /*************************/
 
+#main_container.selection {
+	min-height:0;
+}
+
+#ex_selection {
+	font-size:12px;
+}
 
 #step_2 {
 	display:block;
 }
 
-#ex_compteur {
-	margin-top: 50px;
-	clear:both;
-}
 
 #choix_tables_stats, #choix_filiere {
 	display:block;
-	margin-top:15px;
+	margin-top:12px;
 }
 
 
 #selection_precedente {
 	background-color: transparent;
-	padding: 10px 5px;
+	padding: 12px 6px;
 	border: 1px solid gray;
 	width:800px;
 }
 
 #selection_precedente_toggle {
+	float:right;
 }
 
-#selection_precedente_contenu {
-		display:none;
+#selection_precedente_contenu p {
+	font-size:10px;
 }
+
+#selection_precedente_contenu p a {
+	font-weight: bold;
+	display:inline;
+	padding:0 3px;
+}
+
+#ex_selection p.clear {
+	display:block;
+	padding:6px 0;
+}
+
+#ex_selection a.next_step {
+	font-size:12px;
+	display:inline;
+}
+
+
+
+#debut, #fin {
+	float:left;
+}
+
+#fin {
+	margin-left:12px;
+}
+
+
+
+#ex_compteur {
+	margin-top: 50px;
+	clear:both;
+	background-color:#FFF8A7;
+	padding: 12px 6px;
+	border: none;
+	width:800px;
+	font-size:12px;
+}
+#ex_compteur p {
+	font-weight:bold;
+}
+#ex_compteur ul {
+	margin:0;
+}
+
+
 
