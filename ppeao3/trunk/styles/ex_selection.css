@@ -26,14 +26,13 @@
 	background-color: transparent;
 	padding: 12px 6px;
 	border: 1px solid gray;
-	width:800px;
 }
 
 #selection_precedente_toggle {
 	float:right;
 }
 
-#selection_precedente_contenu p {
+#selection_precedente_contenu p, #selection_precedente_contenu ul {
 	font-size:10px;
 }
 
@@ -53,6 +52,12 @@
 	display:inline;
 }
 
+a.last_step {
+	font-size:14px;
+	font-weight:bold;
+	display:inline;
+}
+
 
 
 #debut, #fin {
@@ -66,7 +71,8 @@
 
 
 #ex_compteur {
-	margin-top: 50px;
+	margin-top: 24px;
+	margin-bottom:60px;
 	clear:both;
 	background-color:#FFF8A7;
 	padding: 12px 6px;

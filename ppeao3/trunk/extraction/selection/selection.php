@@ -48,7 +48,10 @@ if ($_GET["step"]>1) {
 }
 ?>
 </h1>
-<!-- édition des tables de référence -->
+<?php if ($_GET["step"]<1) { ?>
+<p>pour extraire des donn&eacute;es ou des statistiques de p&ecirc;ches exp&eacute;rimentales ou artisanales, suivez le processus de s&eacute;lection ci-dessous. vous pourrez &agrave; tout moment modifier les valeurs choisies lors d&#x27;une des &eacute;tapes de votre s&eacute;lection.</p>
+<?php } ?>
+<!-- extraction de donnees et de stats -->
 <?php
 
 // on teste à quelle zone l'utilisateur a accès

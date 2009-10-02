@@ -583,6 +583,77 @@ return $edit_link;
 }
 
 
+//******************************************************************************
+// affiche le texte d'aide a la selection selon l'etape actuelle
+function afficheAide($topic) {
+//$topic: le "theme" de l'etape de selection ("taxonomie", "geographie", "periode", "type_exploitation", "type_donnees", "exp", "art", "campagnes", "engins", "secteurs", "agglomerations", "periodes_enquete", "grands_types_engins", "type_stats", "stats_agglo", "stats_gen", "secteurs2", "filieres")
+$hint='<div class="hint clear small"><span class="hint_label">aide : </span><span class="hint_text">';
+$hint_multiple='vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e';
+$hint_empty='si vous ne choisissez aucune valeur, ce crit&egrave;re ne sera pas pris en compte dans la s&eacute;lection<br />';
+	switch ($topic) {
+	case "taxonomie":
+		$hint.="s&eacute;lectionnez les familles et/ou esp&egrave;ces qui vous int&eacute;ressent<br />";
+		$hint.=$hint_empty;
+		$hint.=$hint_multiple;
+	break;
+	case "geographie":
+		$hint.="pour s&eacute;lectionner les syst&egrave;mes qui vous int&eacute;ressent, commencez par s&eacute;lectionner un ou plusieurs pays<br />";
+		$hint.=$hint_empty;
+		$hint.=$hint_multiple;
+	break;
+	case "periode":
+		$hint.="s&eacute;lectionnez les ann&eacute;es et mois de d&eacute;but et de fin de la p&eacute;riode qui vous int&eacute;resse";
+	break;
+	case "type_exploitation":
+		$hint.="choisissez le type d&#x27;exploitation que vous voulez appliquer aux donn&eacute;es s&eacute;lectionn&eacute;es";
+	break;
+	case "type_donnees":
+		$hint.="choisissez le type de donn&eacute;es &agrave; extraire";
+	break;
+	case "secteurs":
+		$hint.="s&eacute;lectionnez les secteurs qui vous int&eacute;ressent<br />";
+		$hint.=$hint_empty;
+		$hint.=$hint_multiple;
+	break;
+	case "campagnes":
+		$hint.="s&eacute;lectionnez les campagnes de p&ecirc;che exp&eacute;rimentale qui vous int&eacute;ressent<br />";
+		$hint.=$hint_empty;
+		$hint.=$hint_multiple;
+	break;
+	case "engins":
+		$hint.="s&eacute;lectionnez les engins de p&ecirc;che qui vous int&eacute;ressent<br />";
+		$hint.=$hint_empty;
+		$hint.=$hint_multiple;
+	break;
+	case "filieres":
+		$hint.="votre s&eacute;lection est termin&eacute;e, vous allez maintenant choisir une fili&egrave;re d&#x27;extraction";
+	break;
+	case "agglomerations":
+		$hint.="s&eacute;lectionnez les agglomérations qui vous int&eacute;ressent<br />";
+		$hint.=$hint_empty;
+		$hint.=$hint_multiple;
+	break;
+	case "periodes_enquete":
+		$hint.="s&eacute;lectionnez les p&eacute;riodes d&#x27;enqu&ecirc;te qui vous int&eacute;ressent<br />";
+		$hint.=$hint_empty;
+		$hint.=$hint_multiple;
+	break;
+	case "grands_types_engins":
+		$hint.="s&eacute;lectionnez les grands types d&#x27;engins qui vous int&eacute;ressent<br />";
+		$hint.=$hint_empty;
+		$hint.=$hint_multiple;
+	break;
+	case "type_stats":
+		$hint.="choisissez le type de statistiques qui vous int&eacute;ressent";
+	break;
+	
+	default:
+		$hint.='';
+	break;
+	}
+$hint.='</span></div>';
+echo $hint;
+}
 
 //******************************************************************************
 // affiche le bloc permettant d'indiquer si l'on veut choisir ou non des especes
@@ -704,6 +775,8 @@ switch ($_GET["step"]) {
 	$url=removeQueryStringParam($url,'familles\[\]');
 	$url=removeQueryStringParam($url,'especes\[\]');
 	echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(2,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection spatiale...</a></p>');
+	// on affiche le texte d'aide
+	afficheAide("taxonomie");
 	echo('</div>');// end div id="step_2"
 	// on met a jour les parametres de selection stockes dans la session
 	$_SESSION["selection_1"]=array();
@@ -844,6 +917,8 @@ switch ($_GET["step"]) {
 	$url=removeQueryStringParam($url,'pays\[\]');
 	$url=removeQueryStringParam($url,'systemes\[\]');
 	echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(3,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection temporelle...</a></p>');
+		// on affiche le texte d'aide
+	afficheAide("geographie");
 	echo('</div>'); // end div id=step_3
 	// on reinitialise les parametres de selection stockes dans la session
 	$_SESSION["selection_1"]=array();
@@ -1060,6 +1135,8 @@ switch ($_GET["step"]) {
 
 	if (!empty($_GET["f_m"])) {
 	echo('<p id="step_4_link"  class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(4,\''.$url.'\');">ajouter et choisir un type d&#x27;exploitation ...</a></p>');}
+	// on affiche le texte d'aide
+	afficheAide("periode");
 	echo('</div>'); // fin de div id="step_4"
 	echo('<br class="clear" />');
 	break;
@@ -1117,6 +1194,8 @@ switch ($_GET["step"]) {
 		/*echo('<li>graphiques</li>');
 		echo('<li>indicateurs &eacute;cologiques</li>');*/
 	echo('</ul>');
+	// on affiche le texte d'aide
+	afficheAide("type_exploitation");
 	echo('</div>');
 	// et on stocke les paramètres de l'URL actuelle dans une variable de session pour les passer au script suivant
 	$_SESSION["selection_1"]=$_GET;
@@ -1187,6 +1266,8 @@ global $compteur;
 		echo('<li><a href="'.$art_link.'">donn&eacute;es de p&ecirc;che artisanale</a></li>');}
 		echo('</ul>');
 		} else {echo('<p>aucune campagne ou p&eacute;riode d&#x27;enqu&ecirc;te disponible, veuillez modifier votre s&eacute;lection.</p>');} 
+		// on affiche le texte d'aide
+		afficheAide("type_donnees");
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
 		default:
@@ -1276,6 +1357,8 @@ function afficheSecteurs($donnees) {
 			$url=removeQueryStringParam($url,'secteurs\[\]');
 			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des '.$nextSelectionStep.'...</a></p>');
 		echo('</form>');
+		// on affiche le texte d'aide
+		afficheAide("secteurs");
 		echo('</div>');
 		break; // end case step=7
 		// on a depasse cette etape, on affiche le resume textuel
@@ -1351,6 +1434,8 @@ global $connectPPEAO;
 			$url=removeQueryStringParam($url,'camp\[\]');
 			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des engins de p&ecirc;che...</a></p>');
 			echo('</form>');
+		// on affiche le texte d'aide
+		afficheAide("campagnes");
 		echo('</div>'); // end div step_8
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
@@ -1424,8 +1509,10 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'eng\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(9,\''.$url.'\');">finaliser la s&eacute;lection...</a></p>');
+			echo('<p class="clear"><a href="#" class="last_step" onclick="javascript:goToNextStep(9,\''.$url.'\');">finaliser la s&eacute;lection...</a></p>');
 			echo('</form>');
+		// on affiche le texte d'aide
+		afficheAide("engins");
 		echo('</div>'); // end div step_9
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
@@ -1456,7 +1543,11 @@ global $connectPPEAO;
 // si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
 if ($_GET["step"]==10) {
 echo('</div></div>');}
-if ($_GET["step"]>9) {echo('<div id="choix_filiere"><a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;exploitation...</a></div>');}
+if ($_GET["step"]>9) {echo('<div id="choix_filiere"><a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'" class="last_step">choisir une fili&egrave;re d&#x27;exploitation...</a>');
+// on affiche le texte d'aide
+afficheAide("filieres");
+echo('</div>');}
+
 }
 
 function afficheAgglomerations() {
@@ -1502,7 +1593,8 @@ global $connectPPEAO;
 			else {
 				echo('<p>aucune p&eacute;riode d&#x27;enqu&ecirc;te ne correspond, veuillez modifier votre s&eacute;lection.</p>');
 			}
-			
+			// on affiche le texte d'aide
+		afficheAide("agglomerations");
 		echo('</div>'); // end div step_8
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
@@ -1581,6 +1673,8 @@ global $connectPPEAO;
 			$url=removeQueryStringParam($url,'enq\[\]');
 			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(9,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins de p&ecirc;che...</a></p>');
 			echo('</form>');
+			// on affiche le texte d'aide
+		afficheAide("periodes_enquete");
 		echo('</div>'); // end div step_8
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
@@ -1655,8 +1749,10 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'gteng\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep('.$theStep.',\''.$url.'\');">finaliser la s&eacute;lection...</a></p>');
+			echo('<p class="clear"><a href="#" class="last_step" onclick="javascript:goToNextStep('.$theStep.',\''.$url.'\');">finaliser la s&eacute;lection...</a></p>');
 			echo('</form>');
+			// on affiche le texte d'aide
+		afficheAide("grands_types_engins");
 		echo('</div>'); // end div step_'.$theStep.'
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
@@ -1700,26 +1796,19 @@ if ($_GET["step"]>$theStep) {
 echo('<div id="choix_tables_stats"><p>');
 		switch ($exploit) {
 			case "donnees" : 
-			echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;exploitation...</a>');
+			echo('<a id="link_filieres" class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;extraction...</a>');
 			break;
 			case "stats":
-			echo('<a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir les tables de statistiques...</a>');
+			echo('<a id="link_filieres"  class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir les tables de statistiques...</a>');
 			break;
 		} // end switch $exploit
+		// on affiche le texte d'aide
+		afficheAide("filieres");
 }
 }
 	
 // on affiche le choix du type de statistiques
 function afficheTypeStats() {
-	
-/* on numerote les etapes :
-1 = selectionner ou non des especes
-2 = selection des especes
-3 = selection pays/systemes
-4= selection periode
-5= selection type exploitation
-6= selection type de stats (par agglomerations ou generales)
-*/	
 
 global $connectPPEAO; // la connexion a la base
 global $campagnes_ids; // la liste des campagnes deja selectionnees
@@ -1744,6 +1833,8 @@ global $compteur;
 				echo('<li><a href="'.$stats_gen_link.'">statistiques g&eacute;n&eacute;rales</a></li>');
 			echo('</ul>');
 		} else {echo('<p>aucune p&eacute;riode d&#x27;enqu&ecirc;te disponible, veuillez modifier votre s&eacute;lection.</p>');} 
+		// on affiche le texte d'aide
+		afficheAide("type_stats");
 		break;
 		// on a depasse cette etape, on affiche le resume textuel
 		default:
