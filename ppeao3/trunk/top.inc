@@ -1,4 +1,10 @@
 <?php 
+
+// on force l'affichage des erreurs (mais on ignore les avertissements)
+// a supprimer lors de la mise en production du site
+ini_set('display_errors',1);
+error_reporting(E_ALL & ~E_NOTICE);
+
 // Mis à jour par Olivier ROUX, 29-07-2008
 header("Content-Type: text/html; charset=iso-8859-15");
 // démarrage de la session
