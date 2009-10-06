@@ -995,7 +995,7 @@ switch ($_GET["step"]) {
 	// on n'est pas encore arrive a cette etape, on n'affiche rien 
 	break;
 	case 4:
-	// on est arrive a cette etape, on affiche le formulaire
+	// on est arrive a cette etape, on affiche le formulaire	
 	echo('<div id="step_4">');	
 	echo('<form id="step_4_form" name="step_4_form" target="/extraction/selection/selection.php?choix_especes='.$choix.'" method="GET">');
 	echo("<h2>s&eacute;lectionner une periode d&#x27;int&eacute;r&ecirc;t</h2>");
@@ -1019,23 +1019,23 @@ switch ($_GET["step"]) {
 	pg_free_result($result_e);} else {$array_e[]=array("enquete_debut"=>'9999-99-99',"enquete_fin"=>'0000-00-00');}
 	//debug 	echo('<pre>');print_r($array_e);echo('</pre>');
 	// on choisit la date de debut la plus ancienne et la date de fin la plus recente
-	$from='';
-	$to='';
-	if ($array_c[0]["campagne_debut"]<$array_e[0]["enquete_debut"]) {$from=date_parse($array_c[0]["campagne_debut"]);} else {$from=date_parse($array_c[0]["enquete_debut"]);}
-	if ($array_c[0]["campagne_fin"]>$array_e[0]["enquete_fin"]) {$to=date_parse($array_c[0]["campagne_fin"]);} else {$to=date_parse($array_c[0]["enquete_fin"]);}
+	$from=array();
+	$to=array();
+	/*if ($array_c[0]["campagne_debut"]<$array_e[0]["enquete_debut"]) {$from=date_parse($array_c[0]["campagne_debut"]);} else {$from=date_parse($array_c[0]["enquete_debut"]);}
+	if ($array_c[0]["campagne_fin"]>$array_e[0]["enquete_fin"]) {$to=date_parse($array_c[0]["campagne_fin"]);} else {$to=date_parse($array_c[0]["enquete_fin"]);}*/
+	if ($array_c[0]["campagne_debut"]<$array_e[0]["enquete_debut"]) {$from=getdate(strtotime($array_c[0]["campagne_debut"]));} else {$from=getdate(strtotime($array_c[0]["enquete_debut"]));}
+	if ($array_c[0]["campagne_fin"]>$array_e[0]["enquete_fin"]) {$to=getdate(strtotime($array_c[0]["campagne_fin"]));} else {$to=getdate(strtotime($array_c[0]["enquete_fin"]));}
 
 	
 
 	$debut["annee"]=$from["year"];
-	$debut["mois"]=$from["month"];
-	$debut["jour"]=$from["day"];
+	$debut["mois"]=$from["mon"];
+	$debut["jour"]=$from["mday"];
 	$fin["annee"]=$to["year"];
-	$fin["mois"]=$to["month"];
-	$fin["jour"]=$to["day"];
+	$fin["mois"]=$to["mon"];
+	$fin["jour"]=$to["mday"];
 
-	//debug 	echo('<pre>');print_r($debut);echo('</pre>');
-	//debug 		echo('<pre>');print_r($fin);echo('</pre>');
-	echo('<p>(p&eacute;riode couverte : de '.$debut["annee"].'-'.$debut["mois"].'-'.$debut["jour"].' &agrave; '.$fin["annee"].'-'.$fin["mois"].'-'.$fin["jour"].')</p>');
+	echo('<p>(p&eacute;riode couverte : de '.$debut["annee"].'-'.number_pad($debut["mois"],2).'-'.$debut["jour"].' &agrave; '.$fin["annee"].'-'.number_pad($fin["mois"],2).'-'.$fin["jour"].')</p>');
 
 	
 	// la ligne pour la date de debut
@@ -1244,6 +1244,7 @@ global $campagnes_ids; // la liste des campagnes deja selectionnees
 global $enquetes_ids; // la liste des enquetes deja selectionnees
 global $compteur;
 
+	
 	switch($_GET["step"]) {
 		// on n'est pas encore a cette etape, on n'affiche rien
 		case ($_GET["step"]<6):
@@ -1252,7 +1253,7 @@ global $compteur;
 		// on en est a cette etape, on affiche le selecteur
 		echo('<div id="step_6">');
 		echo('<h2>s&eacute;lectionner le type de donn&eacute;es &agrave; extraire</h2>');
-		if ($compteur["campagnes_total"]!=0 && $compteur["enquetes_total"]!=0) {
+		if ($compteur["campagnes_total"]!=0 || $compteur["enquetes_total"]!=0) {
 		echo('<ul>');
 		//si il reste des campagnes
 		if ($compteur["campagnes_total"]!=0) {
