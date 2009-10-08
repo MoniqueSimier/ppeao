@@ -580,6 +580,7 @@ CREATE SEQUENCE art_stat_effort_effort_id_seq
 
 ALTER TABLE public.art_stat_effort_effort_id_seq OWNER TO devppeao;
 
+ALTER TABLE art_stat_effort ALTER COLUMN effort_id SET DEFAULT nextval('art_stat_effort_effort_id_seq'::regclass);
 
 --
 -- Name: art_stat_effort_effort_id_key; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
@@ -588,6 +589,8 @@ ALTER TABLE public.art_stat_effort_effort_id_seq OWNER TO devppeao;
 ALTER TABLE ONLY art_stat_effort
     ADD CONSTRAINT art_stat_effort_effort_id_key UNIQUE (effort_id);
 
+ALTER TABLE ONLY art_stat_effort
+    ADD CONSTRAINT art_stat_effort_pkey PRIMARY KEY (effort_id);
 
 
 -- ---------------------------------------------------------------------------
@@ -1363,12 +1366,18 @@ ALTER TABLE ONLY art_poisson_mesure
 
 
 --
+-- Name: art_stat_effort_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY art_stat_effort
+    ADD CONSTRAINT art_stat_effort_pkey PRIMARY KEY (effort_id);
+
+--
 -- Name: art_stat_effort_art_grand_type_engin_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
 --
 
 ALTER TABLE ONLY art_stat_effort
     ADD CONSTRAINT art_stat_effort_art_grand_type_engin_id_fkey FOREIGN KEY (art_grand_type_engin_id) REFERENCES art_grand_type_engin(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
 
 --
 -- Name: art_stat_effort_ref_mois_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
@@ -1377,14 +1386,12 @@ ALTER TABLE ONLY art_stat_effort
 ALTER TABLE ONLY art_stat_effort
     ADD CONSTRAINT art_stat_effort_ref_mois_id_fkey FOREIGN KEY (ref_mois_id) REFERENCES admin_config_mois(mois_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
-
 --
 -- Name: art_stat_effort_ref_secteur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
 --
 
 ALTER TABLE ONLY art_stat_effort
     ADD CONSTRAINT art_stat_effort_ref_secteur_id_fkey FOREIGN KEY (ref_secteur_id) REFERENCES ref_secteur(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
 
 --
 -- Name: art_stat_effort_ref_systeme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
@@ -1400,6 +1407,7 @@ ALTER TABLE ONLY art_stat_effort
 
 ALTER TABLE ONLY art_stat_effort
     ADD CONSTRAINT art_stat_effort_ref_type_effort_id_fkey FOREIGN KEY (art_param_type_effort_id) REFERENCES art_param_type_effort(type_effort_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
 
 
 
