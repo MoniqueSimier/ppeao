@@ -693,7 +693,7 @@ function modalDialogDeleteRecord(theLevel,theTable,theRecord) {
 			    'class': 'small link_button',
 			    'href': '#',
 				'id': "overlay_"+theLevel+"_delete",
-				'onclick': 'sendRecordToDelete('+theLevel+',\''+theTable+'\',\''+theRecord+'\')',
+				'onclick': 'sendRecordToDelete('+theLevel+',\''+theTable+'\',\''+theRecord+'\')'
 			});
 			theDeleteButton.innerHTML="supprimer";
 			theDeleteButton.injectBefore("overlay_"+theLevel+"_close");
