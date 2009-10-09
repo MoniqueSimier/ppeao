@@ -405,31 +405,31 @@ function modalDialogAddRecord(theLevel,theTable) {
 	var theOverlay=new Element ('div', {
 		'id': "overlay_"+theLevel,
 		'class': "overlay",
-		'style': "z-index:"+theLevel*1000,
+		'style': "z-index:"+theLevel*1000
 	}
 	);
 	
 	var theOverlayWindow= new  Element ('div', {
 		'id': "overlay_"+theLevel+"_window",
-		'class': "overlay_window",
+		'class': "overlay_window"
 	}
 	);
 	
 	var theOverlayContent= new  Element ('div', {
 		'id': "overlay_"+theLevel+"_content",
-		'class': "overlay_content",
+		'class': "overlay_content"
 	}
 	);
 		
 	var theOverlayButtons= new  Element ('div', {
 		'id': "overlay_"+theLevel+"_buttons",
-		'class': "overlay_buttons",
+		'class': "overlay_buttons"
 	}
 	);
 	
 	var theOverlayLoaderDiv =new  Element ('div', {
 		'id': "overlay_"+theLevel+"_loader",
-		'class': "overlay_loader",
+		'class': "overlay_loader"
 	}
 	); 
 	
@@ -464,7 +464,7 @@ function modalDialogAddRecord(theLevel,theTable) {
 			    'class': 'small link_button',
 			    'href': '#',
 				'id': "overlay_"+theLevel+"_save",
-				'onclick': 'sendRecordToSave(\'add_record_'+theLevel+'_form\',\'add_field\','+theLevel+',\''+theTable+'\')',
+				'onclick': 'sendRecordToSave(\'add_record_'+theLevel+'_form\',\'add_field\','+theLevel+',\''+theTable+'\')'
 			});
 			theSaveButton.innerHTML="enregistrer";
 			theSaveButton.injectBefore("overlay_"+theLevel+"_close");
@@ -543,7 +543,7 @@ xhr.onreadystatechange = function(){
 				// si la valeur n'est pas valide et que on a un message d'erreur
 				if (theValidity==0 && theMessage!='') {
 					//debug alert(theMessage);
-					if (theError=$('add_record_'+theLevel+'_'+theKey+'_error')) {
+					if (theError==$('add_record_'+theLevel+'_'+theKey+'_error')) {
 						theError.innerHTML=theMessage;
 						} 
 					else {
@@ -583,7 +583,7 @@ xhr.onreadystatechange = function(){
 					// on crée un nouvel élément contenant seulement la valeur à afficher
 					var theNewElement=new Element('div',{
 						'class' : 'small',
-						'id' : 'add_record_'+theLevel+'_'+theKey,
+						'id' : 'add_record_'+theLevel+'_'+theKey
 					}
 					);
 					theNewElement.innerHTML=theValue;
@@ -634,32 +634,32 @@ function modalDialogDeleteRecord(theLevel,theTable,theRecord) {
 	var theOverlay=new Element ('div', {
 		'id': "overlay_"+theLevel,
 		'class': "overlay",
-		'style': "z-index:"+theLevel*1000,
+		'style': "z-index:"+theLevel*1000
 	}
 	);
 	
 	var theOverlayWindow= new  Element ('div', {
 		'id': "overlay_"+theLevel+"_window",
-		'class': "overlay_window",
+		'class': "overlay_window"
 	}
 	);
 	
 	var theOverlayContent= new  Element ('div', {
 		'id': "overlay_"+theLevel+"_content",
-		'class': "overlay_content",
+		'class': "overlay_content"
 	}
 	);
 	theOverlayContent.innerHTML='<div align="center"><h1>supprimer l&#x27;enregistrement &quot;'+theRecord+'&quot;</h1><h2>recherche des enregistrements utilisant l&#x27;enregistrement &agrave; supprimer comme cl&eacute; &eacute;trang&egrave;re</h2></div>';
 		
 	var theOverlayButtons= new  Element ('div', {
 		'id': "overlay_"+theLevel+"_buttons",
-		'class': "overlay_buttons",
+		'class': "overlay_buttons"
 	}
 	);
 	
 	var theOverlayLoaderDiv =new  Element ('div', {
 		'id': "overlay_"+theLevel+"_loader",
-		'class': "overlay_loader",
+		'class': "overlay_loader"
 	}
 	); 
 	
@@ -837,4 +837,25 @@ xhr.open("GET","/edition/edition_rafraichir_cascade_ajax.php?theId="+theId+"&the
 xhr.send(null);
 
 }
+
+
+function replaceQueryString(url,param,value) {
+    var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
+    if (url.match(re))
+        return url.replace(re,'$1' + param + "=" + value + '$2');
+    else
+        return url + '&' + param + "=" + value;
+}
+
+/**
+* Fonction pour afficher le formulaire d'affectation des droits suite au choix d'un acteur
+*/
+function choixActeur() {
+	var theActor=$("acteur").value;
+	var theUrl=document.location;
+	theUrl=theUrl.toString();
+	theNewUrl=replaceQueryString(theUrl,'acteur',theActor);
+	document.location=theNewUrl;
+}
+
 

@@ -230,5 +230,14 @@ function formToUrl(theFormId,theClass) {
 		return theUrl;			
 }
 
-
-
+/**
+* Fonction qui permet de remplacer la valeur d'un parametre dans une url
+* ex. : &param=valeur1 -> &param=valeur2
+*/
+function replaceQueryString(url,param,value) {
+	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
+    if (url.match(re))
+        return url.replace(re,'$1' + param + "=" + value + '$2');
+    else
+        return url + '&' + param + "=" + value;
+}

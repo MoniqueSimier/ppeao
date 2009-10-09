@@ -29,31 +29,31 @@ function modalDialogManagedoc(theLevel,theDocument,theAction) {
 	var theOverlay=new Element ('div', {
 		'id': "overlay_"+theLevel,
 		'class': "overlay",
-		'style': "z-index:"+theLevel*1000,
+		'style': "z-index:"+theLevel*1000
 	}
 	);
 	
 	var theOverlayWindow= new  Element ('div', {
 		'id': "overlay_"+theLevel+"_window",
-		'class': "overlay_window",
+		'class': "overlay_window"
 	}
 	);
 	
 	var theOverlayContent= new  Element ('div', {
 		'id': "overlay_"+theLevel+"_content",
-		'class': "overlay_content",
+		'class': "overlay_content"
 	}
 	);
 		
 	var theOverlayButtons= new  Element ('div', {
 		'id': "overlay_"+theLevel+"_buttons",
-		'class': "overlay_buttons",
+		'class': "overlay_buttons"
 	}
 	);
 	
 	var theOverlayLoaderDiv =new  Element ('div', {
 		'id': "overlay_"+theLevel+"_loader",
-		'class': "overlay_loader",
+		'class': "overlay_loader"
 	}
 	); 
 	
@@ -86,7 +86,7 @@ function modalDialogManagedoc(theLevel,theDocument,theAction) {
 			    'class': 'small link_button',
 			    'href': '#',
 				'id': "overlay_"+theLevel+"_save",
-				'onclick': 'sendRecordToSave(\'add_record_'+theLevel+'_form\',\'add_field\','+theLevel+',\''+theTable+'\')',
+				'onclick': 'sendRecordToSave(\'add_record_'+theLevel+'_form\',\'add_field\','+theLevel+',\''+theTable+'\')'
 			});
 			theSaveButton.innerHTML="enregistrer";
 			theSaveButton.injectBefore("overlay_"+theLevel+"_close");
@@ -164,7 +164,7 @@ xhr.onreadystatechange = function(){
 				// si la valeur n'est pas valide et que on a un message d'erreur
 				if (theValidity==0 && theMessage!='') {
 					//debug alert(theMessage);
-					if (theError=$('add_record_'+theLevel+'_'+theKey+'_error')) {
+					if (theError==$('add_record_'+theLevel+'_'+theKey+'_error')) {
 						theError.innerHTML=theMessage;
 						} 
 					else {
@@ -204,7 +204,7 @@ xhr.onreadystatechange = function(){
 					// on crée un nouvel élément contenant seulement la valeur à afficher
 					var theNewElement=new Element('div',{
 						'class' : 'small',
-						'id' : 'add_record_'+theLevel+'_'+theKey,
+						'id' : 'add_record_'+theLevel+'_'+theKey
 					}
 					);
 					theNewElement.innerHTML=theValue;
