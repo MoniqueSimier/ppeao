@@ -109,20 +109,21 @@ list-style:none;
 }
 
 #resumeChoix{
-	margin-left:0px;
-	margin-bottom:5px;
+	margin-top: 24px;
+	clear:both;
 	width:800px;
-	background:#EDD7B7;
-	border:1px thick #666666;
+	background:#FFF8A7;
+	padding: 12px 6px;
+	border: none;
+	font-size:12px;
 
 }
 #runProcess{
-	background:#CCCCCC;
+	background:#FFF;
 }
 #resultfiliere{
 	width:1024 px;
-	background:#CCCCCC;
-	border:1px dotted #666666;
+	background:#FFF;
 }
 #menuTab{
 	font-size:80%;
@@ -130,7 +131,7 @@ list-style:none;
 	top:410px;
 	left:5px;
 	width:800px;
-	background:#D1C0A9;
+	background:#f8ea47;
 	color:#FFFFFF;
 	font-weight:bold;
 	border:1px dotted #666666;
@@ -143,7 +144,7 @@ list-style:none;
 	position:absolute;
 	top:460px;
 	left:5px;
-	background-color:#f8e19a;
+	background-color:#FFF8A7;
 	visibility:hidden;
 	width:800px;
 }
@@ -154,7 +155,7 @@ list-style:none;
 	position:absolute;
 	top:480px;
 	left:5px;
-	background-color:#f8e19a;
+	background-color:#FFF8A7;
 	visibility:hidden;
 	width:800px;
 }
@@ -162,7 +163,7 @@ list-style:none;
 	position:absolute;
 	top:480px;
 	left:5px;
-	background-color:#f8e19a;
+	background-color:#FFF8A7;
 	visibility:hidden;
 	width:800px;
 }
@@ -170,7 +171,7 @@ list-style:none;
 	position:absolute;
 	top:480px;
 	left:5px;
-	background-color:#f8e19a ;
+	background-color:#FFF8A7 ;
 	visibility:hidden;
 	width:800px;
 }
@@ -178,7 +179,7 @@ list-style:none;
 	position:absolute;
 	top:480px;
 	left:5px;
-	background-color:#f8e19a ;
+	background-color:#FFF8A7 ;
 	visibility:hidden;
 	width:800px;
 }
@@ -187,7 +188,7 @@ list-style:none;
 	position:absolute;
 	top:480px;
 	left:5px;
-	background-color:#f8e19a ;
+	background-color:#FFF8A7 ;
 	visibility:hidden;
 	width:800px;
 }
@@ -195,7 +196,7 @@ list-style:none;
 	position:absolute;
 	top:480px;
 	left:5px;
-	background-color:#f8e19a ;
+	background-color:#FFF8A7 ;
 	visibility:hidden;
 	width:800px;
 }
@@ -209,7 +210,7 @@ list-style:none;
 }
 .ChoixChampComp {
 	width:800px;
-	background-color:#f8e19a;
+	background-color:#FFF8A7;
 }
 .CCCTable{
 	vertical-align:text-top;
@@ -246,7 +247,7 @@ list-style:none;
 	vertical-align:top;
 }
 #affresultat{
-	background-color: #f8e19a;
+	background-color: #f9f5cc;
 }
 .edit_row_even {
 	font-size:75%;
@@ -270,4 +271,18 @@ list-style:none;
 	font-size:75%;
 	vertical-align:top;
 	text-align:left;
+}
+#changeSel{
+	text-align:right;
+	width:200px;
+	padding-left:50px;
+}
+#filEncours{
+	width:800px;
+	font-size:13px;
+}
+#filEncoursTit {
+	font-weight:bold;
+}
+#filEncoursText {
 }

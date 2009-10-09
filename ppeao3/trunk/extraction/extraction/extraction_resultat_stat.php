@@ -31,7 +31,7 @@ Global $debugLog;
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
 	<script src="/js/ajaxExtraction.js" type="text/javascript" charset="iso-8859-15"></script>
-	<title>ppeao::extraire des donn&eacute;es</title>
+	<title>ppeao::statistiques::fili&egrave;res</title>
 
 </head>
 
@@ -44,6 +44,22 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 
 // Fichier à analyser
+
+if (isset($_GET["xml"])) {
+	$filename =  $_GET["xml"].".xml";
+	$inputXML = "?xml=".$_GET["xml"];
+}else {
+	$inputXML = "";
+	$filename = "ER";
+}
+$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$_GET["xml"].".xml";
+if (!(file_exists($file)) ) {
+	//$file = tempnam(sys_get_temp_dir(), 'xmlfile');
+	$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionExp.xml";
+	$fileopen=fopen($file,'w');
+	fwrite($fileopen,$_SESSION["selection_xml"]);
+	rewind($fileopen);
+}
 $file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionStat.xml";
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
@@ -52,9 +68,12 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 	if (isset($_GET['log'])) {
 		if ($_GET['log'] == "false") {
 			$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
-			$InputLog = "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" />";
 		} else {
-			$InputLog = "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
+			if ($inputXML =="") {
+				$InputLog = "?log=true";
+			}else {
+				$InputLog = "&log=true";
+			}
 			$EcrireLogComp = true;
 		}
 	} else {
@@ -79,10 +98,10 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 ?>
 
 <div id="main_container" class="home">
-	<h1>Extraction : resultat pour <?php echo $typeAction;?></h1>
-	<br/>
-	<p>Cette section affiche les resultats de la selection</p>
-	<br/>
+	<h1>consulter des données : statistiques de p&ecirc;ches</h1>
+	<h2>affichage du r&eacute;sultat</h2>
+	<p class="hint_text">cette section affiche les r&eacute;sultats pour la s&eacute;lection sous forme de tableaux pagin&eacute;s ou de fichiers exportables</p>
+    <br/>
     <?php
 	if (isset($_SESSION['s_ppeao_user_id'])){ 
 		$userID = $_SESSION['s_ppeao_user_id'];
@@ -106,12 +125,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 ?>
 		
 		<div id="resumeChoix">
-			<?php echo "<b>Statistiques en cours</b> = ".$typeAction.""; ?>
-			<form id="navigation" action="/extraction/extraction/extraction_filieres_art.php">
-			<input type ="submit" value="changer de filiere" />
-			<?php echo $InputLog; ?>
-			</form>
-			<br/>
 			<?php
 				// Phase préliminaire : on verifie que par hasard, des nouvelles selections n'ont pas
 				// ete faires par l'utilisateur juste avant de cliquer sur resultat.
@@ -188,10 +201,16 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				$resultatLecture = "";
 				$labelSelection = "";
 				$locSelection = AfficherSelection($file); 
-				echo $locSelection."<br/>";
+				echo "<b>votre s&eacute;lection correspond &agrave; :</b> ".$locSelection."<br/>";
+				if (!($_SESSION["selection_url"] =="")) {
+					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la sélection</a></span>";
+				}
+				echo"<br/>"; 
+				echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$typeAction."</span>"; 
+				echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."\" >changer de fili&egrave;re</a></span></div>";
 				AfficherDonnees($file,$typeAction);
-				echo "<br/><b>Restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp."<br/>";
-				echo "<b>".$labelSelection."(s) s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;								
+				echo "<br/><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp."<br/>";
+				echo "<b>".$labelSelection." s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;								
 				?>
 
 		<br/>

@@ -75,34 +75,34 @@ function startElement($parser, $name, $attrs){
 		$typeStatistiques =  $attrs["TYPE"]; // un seul attribut type
 		break;
 	case "FAMILLELISTE":
-		$listeSelection .="<br/><b>Liste des familles</b> = ";
+		$listeSelection .="<br/><b>familles</b> : ";
 		break;
 	case "ESPECELISTE":
-		$listeSelection .="<br/><b>Liste des esp&egrave;ces</b> = ";
+		$listeSelection .="<br/><b>esp&egrave;ces</b> : ";
 		break;
 	case "PAYSLISTE":
-		$listeSelection .="<br/><b>Liste des pays</b> = ";
+		$listeSelection .="<br/><b>pays</b> : ";
 		break;
 	case "SYSTEMELISTE":
-		$listeSelection .="<br/><b>Liste des systemes</b> = ";
+		$listeSelection .="<br/><b>syst&egrave;mes</b> : ";
 		break;
 	case "SECTEURLISTE":
-		$listeSelection .="<br/><b>Liste des secteurs</b> = ";
+		$listeSelection .="<br/><b>secteurs</b> : ";
 		break;
 	case "AGGLOMERATIONLISTE":
-		$listeSelection .="<br/><b>Liste des agglom&eacute;rations</b> = ";
+		$listeSelection .="<br/><b>agglom&eacute;rations</b> : ";
 		break;
 	case "INTERVALLE":
-		$listeSelection .="<br/><b>P&eacute;riode d&#x27;int&eacute;r&ecirc;t</b> = ";
+		$listeSelection .="<br/><b>p&eacute;riode d&#x27;int&eacute;r&ecirc;t</b> : ";
 		break;
 	case "GRANDTYPEENGINLISTE":
-		$listeSelection .="<br/><b>Liste des grands types d&#x27;engin</b> = ";
+		$listeSelection .="<br/><b>grands types d&#x27;engin</b> : ";
 		break;
 	case "ENGINLISTE":
-		$listeSelection .="<br/><b>Liste des engins</b> = ";
+		$listeSelection .="<br/><b>engins</b> : ";
 		break;
 	case "ENQUETELISTE":
-		$listeSelection .="<br/><b>Liste des enqu&ecirc;tes</b> = ";
+		$listeSelection .="<br/><b>enqu&ecirc;tes</b> : ";
 		break;		
 	case "DATEDEBUT":
 		$listeSelection .="de  ".$attrs["MOIS"]."/".$attrs["ANNEE"]." ";

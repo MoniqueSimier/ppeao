@@ -160,12 +160,12 @@ function AfficherSelection($file) {
 		
 		pg_free_result($SQLfamResult);		
 	} else  {
-		$listeSelection = str_replace("<b>Liste des familles</b> =","<b>Liste des familles</b> = toutes",$listeSelection);
+		$listeSelection = str_replace("<b>familles</b> :","<b>familles</b> : toutes",$listeSelection);
 	}	
 	if ($_SESSION['SQLEspeces'] == "") {$_SESSION['SQLEspeces'] = $SQLEspeces;}
 	
 	if ($SQLEspeces=="") {
-		$listeSelection = str_replace("<b>Liste des especes</b> =","<b>Liste des especes</b> = toutes",$listeSelection);
+		$listeSelection = str_replace("<b>especes</b> :","<b>especes</b> : toutes",$listeSelection);
 		// On va reconstruire cette liste plus tard dans la fonction afficherdonnees
 	}
 	
@@ -429,7 +429,7 @@ function AfficherDonnees($file,$typeAction){
 			$compSQL = "";
 			if 	(!($_SESSION['listeQualite'] =="")) {
 				$compSQL =" cph.exp_qualite_id in (".$_SESSION['listeQualite'].") ";
-				$restSupp = " Qualit&eacute; limit&eacute;e à =".$_SESSION['listeQualite'];
+				$restSupp = " qualit&eacute; limit&eacute;e à =".$_SESSION['listeQualite'];
 			}
 			if (!($_SESSION['listeProtocole'] == "")) {
 				switch ($_SESSION['listeProtocole']) {
@@ -622,7 +622,7 @@ function AfficherDonnees($file,$typeAction){
 			// ********** CONSTRUCTION DES SQL DEFINITIFS PAR FILIERE
 			switch ($typeAction) {
 				case "peuplement" :
-						$labelSelection = "Donn&eacute;es de peuplement ";	
+						$labelSelection = "donn&eacute;es de peuplement ";	
 						// On n'extrait que des donnéees de fraction
 						// Il n'y aucune selection de colonnes supplémentaires
 						// On prend tous les poissons (pas de différence poisson/non poisson
@@ -635,7 +635,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;					
 					break;
 				case "environnement" :
-						$labelSelection = "Donn&eacute;es d'environnement ";
+						$labelSelection = "donn&eacute;es d'environnement ";
 						// On n'extrait que des donnéees environnements
 						// Pas de données poisson
 						$listeChampsSpec = ",env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond";
@@ -645,7 +645,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;
 				case "NtPt" :
-						$labelSelection = "Donn&eacute;es NtPt ";
+						$labelSelection = "donn&eacute;es NtPt ";
 						// C'est un mixte entre les données peuplements et environnement + des selections de colonnes
 						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond";
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,ref_espece as esp";// attention a l'ordre pour les left outer join
@@ -656,7 +656,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;
 				case "biologie" :
-						$labelSelection = "Donn&eacute;es biologiques ";
+						$labelSelection = "donn&eacute;es biologiques ";
 						// Construction de la liste d'individus
 						// ATTENTION !!!!!! Si la liste ci-dessous est modifiée, il faut imperativement modifié la requete pour calculer le 
 						// le coefficient d'extrapolation apres l'execution de la requete 
@@ -672,7 +672,7 @@ function AfficherDonnees($file,$typeAction){
 					break;	
 				case "trophique" :
 					// Construction de la liste d'individus
-						$labelSelection = "Donn&eacute;es trophiques ";
+						$labelSelection = "donn&eacute;es trophiques ";
 						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond,bio.longueur,bio.id,trop.exp_contenu_id,bio.exp_remplissage_id,cont.libelle";
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,exp_biologie as bio,exp_trophique as trop, exp_contenu as cont,ref_espece as esp";// attention a l'ordre pour les left outer join
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."  
@@ -685,7 +685,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;	
 					break;
 					default	:	
-					$labelSelection = "Coups de p&ecirc;ches ";
+					$labelSelection = "coups de p&ecirc;ches ";
 					$SQLfinal = "select * from ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph
 							where cpg.id = cph.exp_campagne_id and
 							stat.id = cph.exp_station_id and
@@ -976,7 +976,7 @@ function AfficherDonnees($file,$typeAction){
 						$ListeTableCom = $ListeTableArt ;
 						$WhereCom = $WhereArt ;
 						$OrderCom = $OrderArt ;
-						$labelSelection = "Donn&eacute;es d'activit&eacute;";	
+						$labelSelection = "donn&eacute;es d'activit&eacute;";	
 						$listeChampsSpec = ",act.art_type_activite_id,act.nbre_unite_recencee ";
 						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
 						$WhereSpec = "";	
@@ -986,7 +986,7 @@ function AfficherDonnees($file,$typeAction){
 					break;			
 				case "capture" :
 				// Liste des debarquements.
-						$labelSelection = "Donn&eacute;es de capture";	
+						$labelSelection = "donn&eacute;es de capture";	
 						$listeChampsCom = $listeChampsDeb;
 						$ListeTableCom = $ListeTableDeb ;
 						$WhereCom = $WhereDeb ;
@@ -994,11 +994,12 @@ function AfficherDonnees($file,$typeAction){
 						$listeChampsSpec = ", deb.poids_total";
 						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
 						$WhereSpec = "";
-						$ConstIDunique = "DEB-##-11";						
+						$ConstIDunique = "DEB-##-11";
+						$valueCount = "deb.id" ; // pour gerer la pagination	
 						$builQuery = true;
 					break;
 				case "NtPt" :
-						$labelSelection = "Donn&eacute;es NtPt";				
+						$labelSelection = "donn&eacute;es NtPt";				
 						$listeChampsCom = $listeChampsDeb;
 						$ListeTableCom = $ListeTableDeb ;
 						$WhereCom = $WhereDeb ;
@@ -1012,7 +1013,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;
 				case "taille" :
-						$labelSelection = "Donn&eacute;es de tailles";	
+						$labelSelection = "donn&eacute;es de tailles";	
 						$listeChampsCom = $listeChampsDeb;
 						$ListeTableCom = $ListeTableDeb ;
 						$WhereCom = $WhereDeb ;
@@ -1027,7 +1028,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;
 				case "engin" :
-						$labelSelection = "Donn&eacute;es d'engin";	
+						$labelSelection = "donn&eacute;es d'engin";	
 						$listeChampsCom = $listeChampsDeb;
 						$ListeTableCom = $ListeTableDeb ;
 						$WhereCom = $WhereDeb ;
@@ -1040,7 +1041,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;															
 				default	:	
-					$labelSelection = "Periode d'enquete";
+					$labelSelection = "p&eacute;eriode d'enqu&ecirc;te";
 					$SQLfinal = "select * from art_periode_enquete as penq
 									where penq.id in (".$SQLPeEnquete.")";
 					$SQLcountfinal = "select count(*) from art_periode_enquete as penq
@@ -1530,9 +1531,9 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction,$ty
 			$construitSelection .="<table id=\"".$nomInput."\"><tr><td class=\"catitem\">"; 
 			// A faire : formater le resultat avec une table
 			if (strpos($ListeCE,"tout") === false) {
-				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','tout-".$nomInput."','')\"/>&nbsp;<b>Tout</b></td><td class=\"catitem\">";
+				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','tout-".$nomInput."','')\"/>&nbsp;<b>tout</b></td><td class=\"catitem\">";
 			} else {
-				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','aucun-".$nomInput."','')\"/>&nbsp;<b>Tout</b></td><td class=\"catitem\">";
+				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','aucun-".$nomInput."','')\"/>&nbsp;<b>tout</b></td><td class=\"catitem\">";
 			}
 			// Analyse des categories disponibles pour l'espèce considérée
 			while ($CERow = pg_fetch_row($SQLCEcoResult) ) {
@@ -1653,9 +1654,9 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 			$cptInput = 1;
 			$construitSelection .="<table id=\"espece\"><tr><td>"; 
 			if (strpos($ListeEsp,"XtoutX") === false) {
-				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"XtoutX\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','tout')\"/>&nbsp;<b>Tout</b></td><td>";
+				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"XtoutX\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','tout')\"/>&nbsp;<b>tout</b></td><td>";
 			} else {
-				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"XtoutX\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','aucun')\"/>&nbsp;<b>Tout</b></td><td>";
+				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"XtoutX\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','aucun')\"/>&nbsp;<b>tout</b></td><td>";
 			}
 			while ($CERow = pg_fetch_row($SQLCEcoResult) ) {
 				if (!($CERow[0] =="" || $CERow[0] == null)) {
@@ -1788,7 +1789,7 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	if ($ListeChampTableFac == "") {
 		$ContenuChampTableFac = "";
 	} else {
-		$ContenuChampTableFac = "Colonnes facultatives<br/>".$ListeChampTableFac."<br/>";
+		$ContenuChampTableFac = "colonnes facultatives<br/>".$ListeChampTableFac."<br/>";
 	}
 
 	$inputTableEC = "<input type=\"hidden\" id=\"tableEC\" value=\"".$TableEnCours."\"/>";
@@ -1796,12 +1797,12 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	$inputNumFac = "<input type=\"hidden\" id=\"numFac\" value=\"".$NumChampFac."\"/>";
 	$InputTout = "";
 	if (strpos($ListeColonnes,"XtoutX") === false) {
-		$InputTout = "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','tout','','')\" />&nbsp;Tout<br/>";
+		$InputTout = "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','tout','','')\" />&nbsp;tout<br/>";
 	} else {
-		$InputTout = "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','aucun','','')\" checked=\"checked\" />&nbsp;Tout<br/>";
+		$InputTout = "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','aucun','','')\" checked=\"checked\" />&nbsp;tout<br/>";
 	}
 	
-	$tableau = $InputTout."<table class=\"ChoixChampComp\"><tr><td class=\"CCCTable\">&nbsp;".$ListeTable." </td><td class=\"CCCChamp\">Colonnes par d&eacute;faut : <br/>".$ListeChampTableDef."<br/>".$ContenuChampTableFac."</td></tr></table>".$inputTableEC.$inputNumFac.$inputNumDef;
+	$tableau = $InputTout."<table class=\"ChoixChampComp\"><tr><td class=\"CCCTable\">&nbsp;".$ListeTable." </td><td class=\"CCCChamp\">colonnes par d&eacute;faut : <br/>".$ListeChampTableDef."<br/>".$ContenuChampTableFac."</td></tr></table>".$inputTableEC.$inputNumFac.$inputNumDef;
 	return $tableau; 
 }
 

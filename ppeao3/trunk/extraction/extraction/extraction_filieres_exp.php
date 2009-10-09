@@ -30,8 +30,7 @@ $zone=6; // zone extraction (voir table admin_zones)
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
 	<script src="/js/ajaxExtraction.js" type="text/javascript" charset="iso-8859-15"></script>
-	<title>ppeao::extraire des donn&eacute;es</title>
-
+	<title>ppeao::extraire des donn&eacute;es::fili&egrave;res</title>
 </head>
 
 <body>
@@ -48,15 +47,20 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 // si on a passe un fichier dans l'url on l'utilise
 // passer le fichier comme suit dans l'url: &xml=fichier.xml sachant que le fichier doit etre dans le dossier "temp"
 // a la racine du site 
-if (@fopen($_SERVER["DOCUMENT_ROOT"].'/temp/'.$_GET["xml"])) {
-	$file=$_SERVER["DOCUMENT_ROOT"].'/temp/'.$_GET["xml"];
+if (isset($_GET["xml"])) {
+	$filename =  $_GET["xml"].".xml";
+}else {
+	$filename = "ER";
 }
-// sinon on cree un fichier avec la variable de session
-else{
-$file = tempnam(sys_get_temp_dir(), 'xmlfile');
-$fileopen=fopen($file,'w');
-fwrite($fileopen,$_SESSION["selection_xml"]);
-rewind($fileopen);}
+$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$_GET["xml"].".xml";
+if (!(file_exists($file)) ) {
+	$file = tempnam(sys_get_temp_dir(), 'xmlfile');
+	$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionArt.xml";
+	$fileopen=fopen($file,'w');
+	fwrite($fileopen,$_SESSION["selection_xml"]);
+	rewind($fileopen);
+}
+
 // fin de modification par Olivier
 
 
@@ -65,9 +69,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 ?>
 
 <div id="main_container" class="home">
-	<h1>Extraction p&ecirc;che exp&egrave;rimentale : choix fili&egrave;res</h1>
-	<br/>
-	<p>Cette section permet de tester l'export des donn&eacute;es apr&egrave;s la s&eacute;lection.</p>
+	<h1>consulter des données : extraction des p&ecirc;ches exp&eacute;rimentales</h1>
+    <h2>choix des fili&egrave;res</h2>
     <?php
 	if (isset($_SESSION['s_ppeao_user_id'])){ 
 		$userID = $_SESSION['s_ppeao_user_id'];
@@ -78,11 +81,12 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 	if (userHasAccess($userID,$zone)) {
 
 ?>
-		<br/>
-		<p>Vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p><br/>
+
+		<p class="hint_text">vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p>
+        <span id="affLog">
 			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
-			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/><br/>
-			</form>
+			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
+			</form></span>
 		<div id="resumeChoix">
 			<?php 
 			
@@ -116,9 +120,12 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				$resultatLecture = "";
 				$labelSelection = "";
 				$locSelection = AfficherSelection($file,""); 
-				echo $locSelection."<br/>";
+				echo "<b>votre s&eacute;lection correspond &agrave; :</b> ".$locSelection."<br/>";
 				AfficherDonnees($file,"");
-				echo "<b>".$labelSelection." selectionnes</b> = ".$compteurItem;
+				echo "<b>".$labelSelection." s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;
+				if (!($_SESSION["selection_url"] =="")) {
+					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la sélection</a></span>";
+				}				
 				if (!( $typePeche == "experimentale")) {
 					echo "<br/><br/><b>Erreur dans le fichier XML en entr&eacute;e. Il ne s'agit pas d'une s&eacute;lection de donn&eacute;es de p&ecirc;che exp&eacute;rimentale.</b><br/>.";
 					exit;
@@ -126,7 +133,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 			?>
 		</div>
 		<br/>
-		<div id="runProcess"><b>Choix de la fili&egrave;re :</b>&nbsp;
+		<div id="runProcess"><b>choix de la fili&egrave;re :</b>&nbsp;
 			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','peuplement','1','','n','','','')">peuplement</a>&nbsp;-&nbsp;
 			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','environnement','1','','n','','','')">environnement</a>&nbsp;-&nbsp;
 			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','NtPt','1','','n','','','')">Nt/Pt</a>&nbsp;-&nbsp;

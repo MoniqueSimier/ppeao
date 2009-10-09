@@ -99,7 +99,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 		</div>
 			<br/>
 		<div id="versionTemp">
-		Pour acc&eacute;der &agrave; la nouvelle version de l'extraction, cliquez <a href="./extraction/extraction.php" >ici</a>.
+        <h3>Nouvelle version de l'extraction</h3>
+		Pour acc&eacute;der &agrave; la version de test de l'extraction seule , cliquez <a href="./extraction/extraction.php" >ici</a>.<br/><br/>
+        Pour acc&eacute;der &agrave; la nouvelle version de l'extraction en commencant par la s&eacute;lection, cliquez <a href="./selection/selection.php" >ici</a>.
 		</div>		
 		<br/>
 			<?php

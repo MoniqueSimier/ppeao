@@ -30,7 +30,7 @@ $zone=6; // zone extraction (voir table admin_zones)
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
 	<script src="/js/ajaxExtraction.js" type="text/javascript" charset="iso-8859-15"></script>
-	<title>ppeao::extraire des donn&eacute;es</title>
+	<title>ppeao::statistiques::afficher r&eacute;sultats</title>
 
 </head>
 
@@ -50,9 +50,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 ?>
 
 <div id="main_container" class="home">
-	<h1>Statistiques de peches</h1>
-	<br/>
-	<p>Cette section permet de tester le calcul des statistiques de peches</p>
+	<h1>consulter des données : statistiques de p&ecirc;ches</h1>
+    <h2>choix compl&eacute;mentaires</h2>
     <?php
 	if (isset($_SESSION['s_ppeao_user_id'])){ 
 		$userID = $_SESSION['s_ppeao_user_id'];
@@ -64,7 +63,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 
 ?>
 		<br/>
-		<p>Vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p><br/>
+		<p class="hint_text">Vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p><br/>
 			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
 			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/><br/>
 			</form>
@@ -98,9 +97,12 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				$resultatLecture = "";
 				$labelSelection = "";
 				$locSelection = AfficherSelection($file,""); 
-				echo $locSelection."<br/>";
+				echo "<b>votre s&eacute;lection correspond &agrave; :</b> ".$locSelection."<br/>";
 				AfficherDonnees($file,"");
-				echo "<b>".$labelSelection." selectionnes</b> = ".$compteurItem;
+				echo "<b>".$labelSelection." s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;
+				if (!($_SESSION["selection_url"] =="")) {
+					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la sélection</a></span>";
+				}
 				if (!( $typeSelection == "statistiques")) {
 					echo "<br/><br/><b>Erreur dans le fichier XML en entr&eacute;e. Il ne s'agit pas d'une s&eacute;lection de donn&eacute;es de p&ecirc;che artisanale.</b><br/>.";
 					exit;

@@ -291,16 +291,16 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <?php // construit les differentes onglets du tableau ?>
 <div id="menuTab">
 <?php if (!($typeAction == "peuplement")) { ?>
-<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','')">Crit&egrave;res g&eacute;n&eacute;raux</a>|
+<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','')">crit&egrave;res g&eacute;n&eacute;raux</a>|
 <?php } 
 	if (!($typeAction == "environnement") && !($typeAction == "peuplement")) { ?>
-<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n','','','')">Cat&eacute;gories &eacute;cologiques</a>|
-<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','')">Cat&eacute;gories trophiques</a>|
+<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n','','','')">cat&eacute;gories &eacute;cologiques</a>|
+<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','')">cat&eacute;gories trophiques</a>|
 <?php } ?>
 
-<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','')">Colonnes</a>
+<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','')">colonnes</a>
 <?php if (!($typeAction == "peuplement")) { ?> |
-<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n','','','')">Esp&egrave;ces</a>
+<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n','','','')">esp&egrave;ces</a>
 <?php } ?>
 </div>
 <?php // Les differents div correspondant aux choix disponibles par onglet ?>
@@ -316,11 +316,11 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 	<input id="restreindre1" type="radio" name="restreindre" value="1"  <?php echo $valProt1;?>/> oui
 	<input id="restreindre2" type="radio" name="restreindre" value="0"  <?php echo $valProt2;?>/> non
 	<br/>
-	<span class="sscriteresgen<?php echo $ClassEnv;?>">Choisir les poissons / non poissons :<br/></span>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson1" type="radio" name="poissons" value="0"  <?php echo $valPois1;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">Inclure les poissons</span>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson2" type="radio" name="poissons" value="pp"  <?php echo $valPois2;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">Ne pas inclure les poissons<br/></span>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson3" type="radio" name="poissons1" value="1"  <?php echo $valPois3;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">Inclure les non poissons</span>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson4" type="radio" name="poissons1" value="np"  <?php echo $valPois4;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">Ne pas inclure les non poissons</span>
+	<span class="sscriteresgen<?php echo $ClassEnv;?>">choisir les poissons / non poissons :<br/></span>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson1" type="radio" name="poissons" value="0"  <?php echo $valPois1;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">inclure les poissons</span>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson2" type="radio" name="poissons" value="pp"  <?php echo $valPois2;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">ne pas inclure les poissons<br/></span>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson3" type="radio" name="poissons1" value="1"  <?php echo $valPois3;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">inclure les non poissons</span>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson4" type="radio" name="poissons1" value="np"  <?php echo $valPois4;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">ne pas inclure les non poissons</span>
 </div>
 <?php // l'onglet qui gere la selection des categories ecologiques ?>
 <div id="cateco" class="cateco<?php echo $ceActive;?>">

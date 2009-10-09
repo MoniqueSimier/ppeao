@@ -93,19 +93,19 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		<div id="runProcess">
 			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
 			<input id="startProcess" type="submit" value="Test peche exp"/>
-
+            <input type="hidden" id="xml" name="xml" value="testExtractionExp"/>
 			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
 			<br/>
 			</form>
 			<form id="formExtraction" method="get" action="extraction_filieres_art.php">
 			<input id="startProcess" type="submit" value="Test peche art"/>
-
+			<input type="hidden" id="xml" name="xml" value="testExtractionArt"/>
 			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
 			<br/>
 			</form>
 			<form id="formExtraction" method="get" action="extraction_filieres_stat.php">
 			<input id="startProcess" type="submit" value="Test statistiques"/>
-
+	<input type="hidden" id="xml" name="xml" value="testExtractionStat"/>
 			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
 			<br/>
 			</form>			
