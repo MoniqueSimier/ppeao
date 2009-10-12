@@ -1,12 +1,3 @@
-function replaceQueryString(url,param,value) {
-    var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
-    if (url.match(re))
-        return url.replace(re,'$1' + param + "=" + value + '$2');
-    else
-        return url + '&' + param + "=" + value;
-}
-
-
 function goToNextStep(current_step,url) {
 	// current_step: le numero de l'etape ACTUELLE
 	// url: l'url qui doit servir de base pour l'etape suivante

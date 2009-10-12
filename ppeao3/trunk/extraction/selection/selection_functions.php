@@ -646,7 +646,7 @@ $hint_empty='si vous ne choisissez aucune valeur, ce crit&egrave;re ne sera pas 
 	case "type_stats":
 		$hint.="choisissez le type de statistiques qui vous int&eacute;ressent";
 	break;
-	
+		
 	default:
 		$hint.='';
 	break;

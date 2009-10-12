@@ -197,3 +197,23 @@ padding:6px;
 .overlay_window input, .overlay_window select, .overlay_window textarea  {
 	font-size:9px;
 }
+
+#droits_table {
+	padding:0;
+	margin:18px 0;
+}
+
+#droits_table td {
+border-right:1px solid grey;
+margin:0;
+padding: 6px;
+}
+
+.the_headers td {
+	font-weight: bold;
+}
+
+#droits_enregistrer {
+	margin-bottom:18px;
+}
+

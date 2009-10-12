@@ -1125,4 +1125,113 @@ return $validityCheck;
 
 }
 
+//******************************************************************************
+// recupere la liste des id des systemes correspondant au pays selectionne
+function listSystemes($pays) {
+// $pays : l'id du pays selectionne (ref_pays.id)
+// la connexion a la base
+global $connectPPEAO;
+
+// on recupere la liste des systemes correspondant au pays selectionne
+	$sql_systemes='	SELECT DISTINCT ref_systeme.id, ref_systeme.libelle, lower(libelle) as lower_systeme 
+				FROM ref_systeme
+				WHERE TRUE';
+			// si on a choisi des valeurs de pays
+			if ($pays!='') {
+				$sql_systemes.=' AND ref_systeme.ref_pays_id=\''.$pays.'\'';
+			}
+			$sql_systemes.=' ORDER BY lower_systeme';
+			$result_systemes=pg_query($connectPPEAO,$sql_systemes) 
+			or die('erreur dans la requete : '.$sql_systemes. pg_last_error());
+			$array_systemes=pg_fetch_all($result_systemes);
+			pg_free_result($result_systemes);
+	
+	return $array_systemes;
+}
+
+
+//******************************************************************************
+// construit la table affichant les droits d'acces d'un acteur a des systemes
+function displayAccessRightsTable($acteur,$type_acteur, $systemes_supp) {
+//$acteur : l'id de l'acteur concerne
+//$type : le type d'acteur : u (utilisateur) ou g (groupe)
+//$systemes_supp : une liste d'id de systemes a ajouter aux droits
+// la connextion a la base
+global $connectPPEAO;
+
+	// on recupere les eventuels droits d'acces deja definis pour cet acteur
+				$sql='SELECT DISTINCT a.ref_systeme_id, p.nom as pays, lower(p.nom) as lower_pays, s.libelle as systeme, lower(s.libelle) as lower_systeme
+				FROM admin_acces_donnees_acteurs a, ref_pays p, ref_systeme s 
+				WHERE a.ref_acteur_id='.$acteur.' AND a.acteur_type=\''.$type_acteur.'\'
+				 AND s.ref_pays_id=p.id AND a.ref_systeme_id=s.id 
+				ORDER by lower_pays, lower_systeme';
+				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+				$array_droits=pg_fetch_all($result);
+				pg_free_result($result);
+				//debug 						echo('<pre>');print_r($array_droits);echo('</pre>');
+				
+				// si on a passe des systemes supplementaires, on les ajoute dans le tableau des droits
+				if (!empty($systemes_supp)) {
+				$sql='SELECT s.id as ref_systeme_id, p.nom as pays, lower(p.nom) as lower_pays,  s.libelle as systeme, lower(s.libelle) as lower_systeme
+				FROM ref_systeme s, ref_pays p 
+				WHERE s.id IN ('.$systemes_supp.') 
+				AND s.ref_pays_id=p.id
+				';
+				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+				$array_supp=pg_fetch_all($result);
+				pg_free_result($result);
+				if (empty($array_droits)) {$array_droits=array();}
+				$array_droits=array_merge($array_droits,$array_supp);
+				// on elimine les valeurs dupliquees
+				$array_droits=array_unique($array_droits);
+				array_csort($array_droits, "lower_pays", 'SORT_ASC');
+				}
+				//debug 	echo('<pre>');print_r($array_droits);echo('</pre>');
+//debug echo('<pre>');print_r($_POST);echo('</pre>');
+
+		if (!empty($array_droits)) {
+			echo('<table id="droits_table" cellspacing="0" cellpadding="0" border="0">');
+			$i=1;
+			echo('<tr class="the_headers small"><td>syst&egrave;me</td><td>PE</td><td>PA</td><td>ST</td></tr>');
+			foreach ($array_droits as $droit) {
+				// on recupere les droits separes pour PE, PA et ST pour cet enregistrement
+				$sql='SELECT type_donnees FROM admin_acces_donnees_acteurs 
+				WHERE ref_systeme_id=\''.$droit["ref_systeme_id"].'\' AND ref_acteur_id='.$acteur.' AND acteur_type=\''.$type_acteur.'\'';
+				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+				$array_types=pg_fetch_all($result);
+				pg_free_result($result);
+				$types=array();
+				//debug				echo($sql);
+				if (!empty($array_types)) {
+				foreach($array_types as $type) {
+					$types[]=$type["type_donnees"];
+				}
+				}
+				//on recupere les valeurs eventuellement cochees a la main
+				$sys_id=$droit["ref_systeme_id"];
+				if ($_POST["PE_$sys_id"]=='on') {;$types[]='PE';}
+				if ($_POST["PA_$sys_id"]=='on') {$types[]='PA';}
+				if ($_POST["ST_$sys_id"]=='on') {$types[]='ST';}
+				
+				// on elimine les valeurs dupliquees
+				$types=array_unique($types);
+				// pour chaque type de donnees, on precoche la case si le type est autorise
+				if (in_array('PE',$types)) {$pe_checked=' checked="checked"';} else {$pe_checked='';}
+				if (in_array('PA',$types)) {$pa_checked=' checked="checked"';} else {$pa_checked='';}
+				if (in_array('ST',$types)) {$st_checked=' checked="checked"';} else {$st_checked='';}
+				
+				// affiche la ligne avec un style différent si c'est un rang pair ou impair 
+				if ( $i&1 ) {$rowStyle='edit_row_odd';} else {$rowStyle='edit_row_even';}
+				echo('<tr class="'.$rowStyle.'">');
+				echo('<td>('.$droit["pays"].') '.$droit["systeme"].'<input type="hidden" name="systemes[]" id="systeme_'.$droit["ref_systeme_id"].'" value="'.$droit["ref_systeme_id"].'"></td><td><input type="checkbox" id="PE_'.$droit["ref_systeme_id"].'" name="PE_'.$droit["ref_systeme_id"].'" '.$pe_checked.'/></td><td><input type="checkbox" id="PA_'.$droit["ref_systeme_id"].'" name="PA_'.$droit["ref_systeme_id"].'" '.$pa_checked.'/></td><td><input type="checkbox" id="ST_'.$droit["ref_systeme_id"].'" name="ST_'.$droit["ref_systeme_id"].'" '.$st_checked.'/></td>');
+				echo('</tr>');
+			$i++;
+			}
+			echo('</table>');
+
+		} else {
+			echo('<p>aucun droit d&eacute;fini pour le moment.</p>');
+		}
+}
+
 ?>

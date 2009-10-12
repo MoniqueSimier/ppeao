@@ -553,4 +553,106 @@ if ( !function_exists('sys_get_temp_dir')) {
 
 }
 
+
+//***************************************************************************************************
+function selectDistinctEXalpha (
+			$connection,
+			$tableName,
+			$columnNameText,
+			$columnNameValue,
+			$selectName,
+			$additionalOption,
+			$selected,
+			$list,
+			$multiple,
+			$order,
+			$where,
+			$onChange,
+			$style)
+// builds a an HTML SELECT form item listing all the values in a table
+//$connection : the sql connection 
+//$tableName: the table to browse for getting the SELECT values
+//$columnNameText: the column to get the SELECT items label from
+//$columnNameValue: the column to get the SELECT items values from
+//$selectName : the NAME attribute of the SELECT
+//$additionalOption : the value of any additional option not in the DB (like '-all-' for example)
+//$selected : the value(s) of the item to be SELECTED in the SELECT (multiple values should be separated by semi-colons ";")
+//$list : if any value greater than 0, adds a SIZE attribute
+//$multiple : if "1", allows multiple selection
+//$order : if a:ascending, d:descending, other value: not sorted
+//$where : WHERE clause (no AND)
+//$onChange: if not blank, what to do onChange
+//$style: if not blank, can be used to insert a style= or class= statement (or any other attribute...)
+ {
+   $defaultWithinResultSet = FALSE;
+	 switch ($order)
+	 {
+	 case 'a': $orderby=' ORDER BY '.$columnNameText;
+	 break;
+	 case 'd': $orderby=' ORDER BY '.$columnNameText.' DESC';
+	 break;
+	 default : $orderby='';
+	 }
+   // Query to find distinct values of $columnName
+   // in $tableName
+   	 if ($where!='') {$whereclause=' WHERE '.$where;} else {$whereclause='';}
+		 $distinctQuery = "SELECT DISTINCT $columnNameText, $columnNameValue
+            FROM $tableName $whereclause $orderby
+					  ";
+		$req=pg_query($distinctQuery) or die('Erreur SQL dans la requ&ecirc;te :<br>'.$distinctQuery.'<br>'.mysql_error());
+		$table = array();
+		while($data = pg_fetch_array($req))
+		{$table[] = $data;}
+		pg_free_result($req);
+
+	// Start the select widget
+	//echo($distinctQuery);
+   echo '<select name="'.$selectName;
+		 if ($multiple==1) {echo '[]" id="'.$selectName.'" multiple="multiple" ';} else {echo '" id="'.$selectName.'" ';}
+		 if ($list>0)
+		 	{
+			echo 'size="'.$list.'"';
+
+			}
+	 		if ($onChange!='') {echo(' onchange="'.$onChange.'"');}
+			if ($style!='') {echo(' '.$style);}
+	 echo '>';
+		
+		// is there an additionnal option (like "-All-" for example)?
+		if (isset($additionalOption) && $additionalOption!='')
+			{
+			echo '<option value="'.$additionalOption.'"';
+			// if the value is set as the default value, inserts the SELECTED attribute
+			if ($additionalOption==$selected) {echo ' selected="selected"';}
+			echo '>'.$additionalOption.'</option>';
+			}
+
+		 // builds the list of OPTION from the values
+	 foreach ($table as $row)
+    {$selectValue = $row[substringAfter($columnNameValue,'.')];
+		$selectLabel = $row[substringAfter($columnNameText,'.')];
+			echo '<option value="'.$selectValue.'"';
+			// if the value is set as the default value, inserts the SELECTED attribute
+		
+			if ($multiple==1) {
+				$selectedValues=explode(";",$selected);
+				if (in_array($selectValue,$selectedValues)) {echo ' selected="selected"';};
+			}
+			else {if ($selectValue==$selected) {echo ' selected="selected"';};}
+			echo '>'.$selectLabel.'</option>';
+			}
+		echo '</select>';
+	
+ } // end of function
+
+//***************************************************************************************************
+// sorts any multidensionnal associative array on $column column and in $order (SORT_ASC or SORT_DESC) 
+function array_csort(&$results, $column=0, $order=SORT_ASC) {
+ //$keys = array_keys($arr[0]);
+ foreach ($results as $row)
+   $sortarr[] = $row[$column];
+if ($order=='SORT_DESC') {$order=SORT_DESC;} else {$order=SORT_ASC;}
+array_multisort($sortarr, $order, $results, $order);
+}
+
 ?>

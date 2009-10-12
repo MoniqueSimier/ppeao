@@ -847,15 +847,72 @@ function replaceQueryString(url,param,value) {
         return url + '&' + param + "=" + value;
 }
 
-/**
-* Fonction pour afficher le formulaire d'affectation des droits suite au choix d'un acteur
-*/
-function choixActeur() {
-	var theActor=$("acteur").value;
-	var theUrl=document.location;
-	theUrl=theUrl.toString();
-	theNewUrl=replaceQueryString(theUrl,'acteur',theActor);
-	document.location=theNewUrl;
+
+// fonction qui effectue une requete AJAX pour mettre a jour le selecteur de systemes quand on change le pays selectionne
+function updateSystemes() {
+	var paysSelect=$("pays");
+	var systemesSelect=$("systemes");
+	// si une valeur est sélectionnée
+	if ((paysSelect.selectedIndex!=-1)) {
+			//debug			alert('valeur sélectionnée');
+		var xhr = getXhr();
+		// what to do when the response is received
+		xhr.onreadystatechange = function(){
+			// only do something if the whole response has been received and the server says OK
+			if(xhr.readyState == 4 && xhr.status == 200){
+				//on récupère la réponse du serveur (les <options> du select)
+				var theNewOptions = xhr.responseText;
+				// debug 	alert(theNewOptions);
+				// on remplace le contenu du <select id=systemes>  :
+				systemesSelect.innerHTML=theNewOptions;
+			;} // end if xhr.readyState == 4
+		} // end xhr.onreadystatechange
+	
+	// on passe les valeurs sélectionnées des SELECT dans l'URL
+	var theString="&"+$('droits_acces').toQueryString();
+
+	// using GET to send the request
+	xhr.open("GET","/edition/edition_droits_acces_reload_systemes_ajax.php?"+theString,true);
+	xhr.send(null);
+
+	}// end if ((currentSelect.selectedIndex!=-1)
+	
+	// else if no value is selected, we remove the next criteria select and update the edit link
+	else {
+		//debug		alert("plus de valeurs");
+		systemesSelect.innerHTML='';
+		
+		;}
+}
+
+// fonction qui met a jour le lien d'ajout de droits sur des systemes quand on change les systemes selectionnes
+function refreshAddSystemLink(type) {
+	// type: u pour utilisateur ou g pour groupe
+	if (type=='u') {var typeString='cet utilisateur';} else {var typeString='ce groupe';}
+	var systemesSelect=$("systemes");
+	var thePtag=$('add_systemes');
+		if ((systemesSelect.selectedIndex!=-1)) {
+		var theUrl='#';
+	var theLink='<a href="'+theUrl+'" onclick="javascript:droits_acces.submit();">autoriser '+typeString+' &agrave; consulter les donn&eacute;es de ce(s) syst&egrave;me(s) </a>';
+	// on met a jour le lien
+	thePtag.innerHTML=theLink;
+
+
+	}// end if ((currentSelect.selectedIndex!=-1)
+	
+	// else if no value is selected, we remove the next criteria select and update the edit link
+	else {
+		//debug		alert("plus de valeurs");
+		thePtag.innerHTML='';
+		
+		;}
 }
 
 
+// fonction qui permet d'enregistrer les changements de droits d'acces d'un acteur
+function enregistrerDroits() {
+	$("enregistrer").setProperty('value','oui');
+	//debug alert($("droits_acces").innerHTML);
+	$("droits_acces").submit();
+	
+}
