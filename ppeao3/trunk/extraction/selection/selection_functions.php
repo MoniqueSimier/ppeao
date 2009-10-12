@@ -1244,7 +1244,6 @@ global $campagnes_ids; // la liste des campagnes deja selectionnees
 global $enquetes_ids; // la liste des enquetes deja selectionnees
 global $compteur;
 
-	
 	switch($_GET["step"]) {
 		// on n'est pas encore a cette etape, on n'affiche rien
 		case ($_GET["step"]<6):
