@@ -44,23 +44,22 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 
 // Fichier à analyser
-
-if (isset($_GET["xml"])) {
-	$filename =  $_GET["xml"].".xml";
-	$inputXML = "?xml=".$_GET["xml"];
-}else {
+if ($_SESSION['fichier_xml'] == "" ) {
 	$inputXML = "";
-	$filename = "ER";
+	$filename = "ER";	
+}else {
+	$inputXML = "?xml=".$_SESSION['fichier_xml'];
+	$filename =  $_SESSION['fichier_xml'].".xml";
 }
-$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$_GET["xml"].".xml";
+$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
 if (!(file_exists($file)) ) {
-	//$file = tempnam(sys_get_temp_dir(), 'xmlfile');
-	$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionExp.xml";
+	$file = tempnam(sys_get_temp_dir(), 'xmlfile');
+	//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionExp.xml";
 	$fileopen=fopen($file,'w');
 	fwrite($fileopen,$_SESSION["selection_xml"]);
 	rewind($fileopen);
 }
-$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionExp.xml";
+//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionExp.xml";
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
@@ -69,10 +68,10 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 		if ($_GET['log'] == "false") {
 			$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
 		} else {
-			if ($inputXML =="") {
-				$InputLog = "?log=true";
-			}else {
-				$InputLog = "&log=true";
+			if ($inputXML == "") {
+				$InputLog = "?logsupp=true";
+			} else {
+				$InputLog = "&logsupp=true";
 			}
 			$EcrireLogComp = true;
 		}
@@ -197,7 +196,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 					if ($_GET['exf'] =="y") {
 						$exportFichier = true;
 					} 	
-				}	
+				}
 				$SQLPays 	= "";
 				$SQLSysteme	= "";
 				$SQLSecteur	= "";

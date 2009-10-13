@@ -20,6 +20,7 @@ $subsection="";
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 
 $zone=6; // zone extraction (voir table admin_zones)
+Global $debugLog;
 ?>
 
 
@@ -41,6 +42,8 @@ $zone=6; // zone extraction (voir table admin_zones)
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 
+// Fichier à analyser
+//
 // modification par Olivier le 25/09/09 pour utiliser directement la selection passee par selection.php
 //$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionArt.xml";
 // on cree un fichier temporaire pour y stocker le contenu de la selection au format XML
@@ -49,21 +52,22 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 // a la racine du site 
 if (isset($_GET["xml"])) {
 	$filename =  $_GET["xml"].".xml";
+	$_SESSION['fichier_xml']=$_GET["xml"];
 }else {
 	$filename = "ER";
+	$_SESSION['fichier_xml'] = "";
 }
-$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$_GET["xml"].".xml";
+$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
 if (!(file_exists($file)) ) {
 	$file = tempnam(sys_get_temp_dir(), 'xmlfile');
-	$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionArt.xml";
+	echo "fic temp = ".$file."<br/>";
+	//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionExp.xml";
 	$fileopen=fopen($file,'w');
 	fwrite($fileopen,$_SESSION["selection_xml"]);
 	rewind($fileopen);
 }
-
 // fin de modification par Olivier
-
-
+include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 ?>
@@ -89,6 +93,36 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 			</form></span>
 		<div id="resumeChoix">
 			<?php 
+				// On recupere les paramètres
+				if (isset($_GET['logsupp'])) {
+					if ($_GET['logsupp'] == "false") {
+						$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
+						echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" />";
+					} else {
+						echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
+						$EcrireLogComp = true;
+					}
+				} else {
+					echo "erreur, il manque le parametre log <br/>";
+					exit;
+				}
+				// On récupère les valeurs des paramètres pour les fichiers log
+				$dirLog = GetParam("repLogExtr",$PathFicConf);
+				$nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
+				$dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
+				$fileLogComp = GetParam("nomFicLogExtr",$PathFicConf);
+				$logComp="";
+				$nomLogLien="";
+				ouvreFichierLog($dirLog,$fileLogComp);
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp, "#",$pasdefichier);
+					WriteCompLog ($logComp, "#",$pasdefichier);
+					WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
+					WriteCompLog ($logComp, "*- DEBUT EXTRACTION PECHES EXPERIMENTALES ".date('y\-m\-d\-His'),$pasdefichier);
+					WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
+					WriteCompLog ($logComp, "#",$pasdefichier);
+					WriteCompLog ($logComp, "#",$pasdefichier);
+				}
 			
 				// Si on change de filière, on remet tous à blanc
 				$_SESSION['listeQualite'] = '';

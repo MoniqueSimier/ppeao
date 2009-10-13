@@ -101,12 +101,11 @@ function AfficherSelection($file) {
 	// Libération de la ressource associée au parser
 	xml_parser_free($xml_parser);
 	// On colle tous en variable de session, comme ca, pas de pb...
-	if ($_SESSION['typeSelection'] == "") {$_SESSION['typeSelection'] = $typeSelection;}	
-	if ($_SESSION['typePeche'] == "") {$_SESSION['typePeche'] = $typePeche;}	
-	if ($_SESSION['typeStatistiques'] == "") {$_SESSION['typeStatistiques'] = $typeStatistiques;}
-		
-	if ($_SESSION['SQLdateDebut'] == "") {$_SESSION['SQLdateDebut'] = $SQLdateDebut;}
-	if ($_SESSION['SQLdateFin'] == "") {$_SESSION['SQLdateFin'] = $SQLdateFin;}
+	$_SESSION['typeSelection'] = $typeSelection;
+	$_SESSION['typePeche'] = $typePeche;
+	$_SESSION['typeStatistiques'] = $typeStatistiques;
+	$_SESSION['SQLdateDebut'] = $SQLdateDebut;
+	$_SESSION['SQLdateFin'] = $SQLdateFin;
 	$SQLPays 	= substr($SQLPays,0,- 1); // pour enlever la virgule surnumeraire;
 	$SQLSysteme	= substr($SQLSysteme,0,- 1); // pour enlever la virgule surnumeraire;
 	$SQLSecteur	= substr($SQLSecteur,0,- 1); // pour enlever la virgule surnumeraire;
@@ -118,15 +117,15 @@ function AfficherSelection($file) {
 	$SQLFamille = substr($SQLFamille,0,- 1); // pour enlever la virgule surnumeraire;
 	$SQLPeEnquete = substr($SQLPeEnquete,0,- 1); // pour enlever la virgule surnumeraire;
 	
-	if ($_SESSION['SQLPays'] == "") {$_SESSION['SQLPays'] = $SQLPays;}
-	if ($_SESSION['SQLSysteme'] == "") {$_SESSION['SQLSysteme'] = $SQLSysteme;}
-	if ($_SESSION['SQLSecteur'] == "") {$_SESSION['SQLSecteur'] = $SQLSecteur;}
-	if ($_SESSION['SQLAgg'] == "") {$_SESSION['SQLAgg'] = $SQLAgg;}
-	if ($_SESSION['SQLEngin'] == "") {$_SESSION['SQLEngin'] = $SQLEngin;}
-	if ($_SESSION['SQLGTEngin'] == "") {$_SESSION['SQLGTEngin'] = $SQLGTEngin;}
-	if ($_SESSION['SQLCampagne'] == "") {$_SESSION['SQLCampagne'] = $SQLCampagne;}
-	if ($_SESSION['SQLFamille'] == "") {$_SESSION['SQLFamille'] = $SQLFamille;}
-	if ($_SESSION['SQLPeEnquete'] == "") {$_SESSION['SQLPeEnquete'] = $SQLPeEnquete;}
+	$_SESSION['SQLPays'] = $SQLPays;
+	$_SESSION['SQLSysteme'] = $SQLSysteme;
+	$_SESSION['SQLSecteur'] = $SQLSecteur;
+	$_SESSION['SQLAgg'] = $SQLAgg;
+	$_SESSION['SQLEngin'] = $SQLEngin;
+	$_SESSION['SQLGTEngin'] = $SQLGTEngin;
+	$_SESSION['SQLCampagne'] = $SQLCampagne;
+	$_SESSION['SQLFamille'] = $SQLFamille;
+	$_SESSION['SQLPeEnquete'] = $SQLPeEnquete;
 	// On ajoute dans la liste des especes les ID venant des especes selectionnees.
 	// Au moins c'est fait ici, on n'a plus a se poser de questions et le faire 100 fois apres
 	$listEspFamille = "";
@@ -162,7 +161,7 @@ function AfficherSelection($file) {
 	} else  {
 		$listeSelection = str_replace("<b>familles</b> :","<b>familles</b> : toutes",$listeSelection);
 	}	
-	if ($_SESSION['SQLEspeces'] == "") {$_SESSION['SQLEspeces'] = $SQLEspeces;}
+	$_SESSION['SQLEspeces'] = $SQLEspeces;
 	
 	if ($SQLEspeces=="") {
 		$listeSelection = str_replace("<b>especes</b> :","<b>especes</b> : toutes",$listeSelection);
@@ -187,7 +186,7 @@ function AfficherDonnees($file,$typeAction){
 // La fonction ne renvoie rien. Mais la variable $resultatLecture est mise à jour pour un affichage dans le script qui appelle
 // cette fonction. 
 //*********************************************************************
-	$debugLog = false;
+	$debugLog = true;
 
 	// Il faut s'assurer qu'au moins une fois la fonction qui remplit ces variables de session a été lancée 
 	$typeSelection 	= $_SESSION['typeSelection'];
@@ -396,6 +395,7 @@ function AfficherDonnees($file,$typeAction){
 	} // fin du if (!($_SESSION['listePoisson'] == ""))
 	// DEBUG
 	if ($EcrireLogComp && $debugLog) {
+		WriteCompLog ($logComp, "INFO : type peche: ".$typePeche,$pasdefichier);
 		WriteCompLog ($logComp, "INFO : Liste variable session: ",$pasdefichier);
 		WriteCompLog ($logComp, "INFO : CatTrop 	= ".$_SESSION['listeCatTrop'],$pasdefichier);
 		WriteCompLog ($logComp, "INFO : CatEco 		= ".$_SESSION['listeCatEco'],$pasdefichier);
@@ -548,9 +548,10 @@ function AfficherDonnees($file,$typeAction){
 						fra.exp_coup_peche_id = cph.id and
 						esp.id = fra.ref_espece_id and
 						".$WhereSect."
-						cpg.date_debut >='".$SQLdateDebut."/01' and 
-						cpg.date_fin <='".$SQLdateFin."/28'".$WhereSel;
-						
+						cpg.id in (".$SQLCampagne.") ";
+				if ((!$WhereSel =="")) {
+					$SQLEsp .= " and ".$WhereSel;
+				}		
 				$SQLEspResult = pg_query($connectPPEAO,$SQLEsp);
 				$erreurSQL = pg_last_error($connectPPEAO);
 				if ( !$SQLEspResult ) { 
@@ -598,9 +599,7 @@ function AfficherDonnees($file,$typeAction){
 					}
 				} 
 				$WhereEsp = "fra.ref_espece_id in (".$SQLEspeces.") and";
-				
 			}
-			
 			// ********** PREPARATION DU SQL
 			// Definition de tout ce qui est commun aux peches expérimentales
 			$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom, stat.id, stat.nom, cpg.date_debut, cpg.id, cph.date_cp, cph.id, cph.protocole, cph.exp_qualite_id, cph.exp_engin_id, xeng.libelle";
@@ -613,8 +612,7 @@ function AfficherDonnees($file,$typeAction){
 							py.id = sy.ref_pays_id and
 							se.id = stat.ref_secteur_id and
 							".$WhereSect."
-							cpg.date_debut >='".$SQLdateDebut."/01' and 
-							cpg.date_fin <='".$SQLdateFin."/28' and
+							cpg.id in (".$SQLCampagne.") and
 							xqua.id = cph.exp_qualite_id and
 							".$WhereEngin."
 							xeng.id = cph.exp_engin_id ";
@@ -694,8 +692,7 @@ function AfficherDonnees($file,$typeAction){
 							py.id = sy.ref_pays_id and
 							se.id = stat.ref_secteur_id and
 							".$WhereSect."
-							cpg.date_debut >='".$SQLdateDebut."/01' and 
-							cpg.date_fin <='".$SQLdateFin."/28'".$WhereSel;
+							cpg.id in (".$SQLCampagne.") ".$WhereSel;
 					$SQLcountfinal = "select count(cpg.id) from ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph
 							where cpg.id = cph.exp_campagne_id and
 							stat.id = cph.exp_station_id and
@@ -704,8 +701,7 @@ function AfficherDonnees($file,$typeAction){
 							py.id = sy.ref_pays_id and
 							se.id = stat.ref_secteur_id and
 							".$WhereSect."
-							cpg.date_debut >='".$SQLdateDebut."/01' and 
-							cpg.date_fin <='".$SQLdateFin."/28'".$WhereSel; // Pour gerer la pagination
+							cpg.id in (".$SQLCampagne.") ".$WhereSel; // Pour gerer la pagination
 							break;
 			}
 
@@ -1041,7 +1037,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;															
 				default	:	
-					$labelSelection = "p&eacute;eriode d'enqu&ecirc;te";
+					$labelSelection = "p&eacute;riode d'enqu&ecirc;te";
 					$SQLfinal = "select * from art_periode_enquete as penq
 									where penq.id in (".$SQLPeEnquete.")";
 					$SQLcountfinal = "select count(*) from art_periode_enquete as penq
@@ -1190,6 +1186,7 @@ function AfficherDonnees($file,$typeAction){
 	}
 	// Gestion de la pagination
 	$countTotal=0; // Contient le resultat total de la requete
+	//echo $SQLfinal."<br/>";
 	//echo $SQLcountfinal."<br/>";
 	// On recupere le nombre total de resultat.
 	// On doit executer la requete

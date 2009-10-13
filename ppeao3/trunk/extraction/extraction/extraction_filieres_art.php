@@ -32,7 +32,6 @@ Global $debugLog;
 	?>
 	<script src="/js/ajaxExtraction.js" type="text/javascript" charset="iso-8859-15"></script>
 	<title>ppeao::extraire des donn&eacute;es::fili&egrave;res</title>
-
 </head>
 
 <body>
@@ -53,13 +52,15 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 // a la racine du site 
 if (isset($_GET["xml"])) {
 	$filename =  $_GET["xml"].".xml";
+	$_SESSION['fichier_xml']=$_GET["xml"];
 }else {
 	$filename = "ER";
+	$_SESSION['fichier_xml'] = "";
 }
-$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$_GET["xml"].".xml";
+$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
 if (!(file_exists($file)) ) {
-	//$file = tempnam(sys_get_temp_dir(), 'xmlfile');
-	$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionArt.xml";
+	$file = tempnam(sys_get_temp_dir(), 'xmlfile');
+	//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionArt.xml";
 	$fileopen=fopen($file,'w');
 	fwrite($fileopen,$_SESSION["selection_xml"]);
 	rewind($fileopen);
@@ -83,8 +84,12 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 	if (userHasAccess($userID,$zone)) {
 
 ?>
-		<br/>
-		<p class="hint_text">vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p><br/>
+
+		<p class="hint_text">vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p>
+        <span id="affLog">
+			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
+			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
+			</form></span>
 		<div id="resumeChoix">
 			<?php 
 				// On recupere les paramètres

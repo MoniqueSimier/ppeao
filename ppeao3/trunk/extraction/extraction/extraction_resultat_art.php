@@ -45,17 +45,17 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 // Fichier à analyser
 
-if (isset($_GET["xml"])) {
-	$filename =  $_GET["xml"].".xml";
-	$inputXML = "?xml=".$_GET["xml"];
-}else {
+if ($_SESSION['fichier_xml'] == "" ) {
 	$inputXML = "";
-	$filename = "ER";
+	$filename = "ER";	
+}else {
+	$inputXML = "?xml=".$_SESSION['fichier_xml'];
+	$filename =  $_SESSION['fichier_xml'].".xml";
 }
 $file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$_GET["xml"].".xml";
 if (!(file_exists($file)) ) {
-	//$file = tempnam(sys_get_temp_dir(), 'xmlfile');
-	$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionExp.xml";
+	$file = tempnam(sys_get_temp_dir(), 'xmlfile');
+	//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionExp.xml";
 	$fileopen=fopen($file,'w');
 	fwrite($fileopen,$_SESSION["selection_xml"]);
 	rewind($fileopen);
@@ -70,9 +70,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 			$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
 		} else {
 			if ($inputXML =="") {
-				$InputLog = "?log=true";
+				$InputLog = "?logsupp=true";
 			}else {
-				$InputLog = "&log=true";
+				$InputLog = "&logsupp=true";
 			}
 			$EcrireLogComp = true;
 		}
@@ -229,7 +229,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				}
 				echo"<br/>"; 
 				echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$typeAction."</span>"; 
-				echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."\" >changer de fili&egrave;re</a></span></div>";
+				echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."\" >changer de fili&egrave;re</a></span></div>";
 				AfficherDonnees($file,$typeAction);
 				echo "<br/><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp."<br/>";
 				echo "<b>".$labelSelection." s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;								
