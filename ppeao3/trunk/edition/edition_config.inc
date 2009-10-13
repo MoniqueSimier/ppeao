@@ -24,7 +24,7 @@ $tablesDefinitions='';
 
 foreach ($tables as $table) {
 	// truc bizarre : une valeur TRUE/FALSE retournée de pgsql est stockée comme t/f... on compense...
-	if ($table["selector"]==t) {$table["selector"]=true;} else {$table["selector"]=false;}
+	if ($table["selector"]=="t") {$table["selector"]=true;} else {$table["selector"]=false;}
 	
 	$tablesDefinitions[$table["handle"]]=
 	array("label"=>$table["label"],

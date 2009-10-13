@@ -362,9 +362,10 @@ function prepareCompteur() {
 // on prepare le compteur
 
 // on commence par savoir si on se base sur un modele de peches exp ou art
+$peches='';
 if ($_GET["donnees"]=="exp") {$peches='exp';}
 if ($_GET["donnees"]=="art") {$peches='art';}
-// les statistiques ne sont realisees que sur les peches artisan ales
+// les statistiques ne sont realisees que sur les peches artisanales
 if ($_GET["exploit"]=="stats") {$peches='art';}
 
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
@@ -1243,7 +1244,6 @@ global $connectPPEAO; // la connexion a la base
 global $campagnes_ids; // la liste des campagnes deja selectionnees
 global $enquetes_ids; // la liste des enquetes deja selectionnees
 global $compteur;
-
 	switch($_GET["step"]) {
 		// on n'est pas encore a cette etape, on n'affiche rien
 		case ($_GET["step"]<6):

@@ -43,12 +43,13 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 <h1>consulter des donn&eacute;es : s&eacute;lection
 <?php 
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
-if ($_GET["step"]>1) {
+if (isset($_GET["step"])) {$step=$_GET["step"];} else {$step=0;}
+if ($step>1) {
 	echo('<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();" title="afficher ou masquer la selection" href="#">[afficher/modifier/masquer la s&eacute;lection]</a></span>');
 }
 ?>
 </h1>
-<?php if ($_GET["step"]<1) { ?>
+<?php if ($step<1) { ?>
 <p>pour extraire des donn&eacute;es ou des statistiques de p&ecirc;ches exp&eacute;rimentales ou artisanales, suivez le processus de s&eacute;lection ci-dessous. vous pourrez &agrave; tout moment modifier les valeurs choisies lors d&#x27;une des &eacute;tapes de votre s&eacute;lection.</p>
 <?php } ?>
 <!-- extraction de donnees et de stats -->

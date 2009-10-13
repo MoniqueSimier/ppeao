@@ -296,7 +296,7 @@ return $stringOut;
 // and replaces the old queryParam value with the $newValue
 
 function replaceQueryParam ($queryString,$queryParam,$newValue) {
-
+$found=0;
 $queryParam2=$queryParam.'=';
 $newQueryString='';
 $string=split('&',$queryString);

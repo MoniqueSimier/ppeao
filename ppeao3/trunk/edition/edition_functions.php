@@ -47,6 +47,8 @@ function buildTableList($typeTableNom)
 	
 	$tableList='';
 	$previousDomain='';
+	$domain='';
+	$list='';
 	foreach ($tablesDefinitions as $handle=>$table) {
 		if ($table["type_table_nom"]==$typeTableNom && $table["editable"]=='t') {
 		//debug
@@ -87,7 +89,7 @@ function createSelector($page) {
 	// (par exemple, sur la page "edition_table.php" on peut afficher le lien pour afficher/masquer le sélecteur)
 
 	global $tablesDefinitions;	
-		
+	
 	// la table sélectionnée dans la liste de la page précédente
 	$targetTable=$_GET["targetTable"];
 	// la table réellement éditée
@@ -182,7 +184,6 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 	
 	global $tablesDefinitions;
 	global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases : BD_PECHE et BD_PPEAO)
-	//global $debug;
 	
 	//debug	print_r($selectedValues);
 	// le nom de la table
@@ -205,9 +206,6 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 							ORDER BY '.$tablesDefinitions[$theTable]["noms_col"].'
 						';
 
-			//debug 	
-			if($debug) {
-			echo($valuesSql);}
 
 			$valuesResult=pg_query($connectPPEAO,$valuesSql) or die('erreur dans la requete : '.$valuesSql. pg_last_error());
 			$valuesTable=pg_fetch_all($valuesResult);
@@ -588,7 +586,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 
 						
 						// on commence par compter le nombre de valeurs de la cle etrangere
-						// pour eviter les problemes de depassement de memmoire
+						// pour eviter les problemes de depassement de memoire
 						$sqlCountFkey='SELECT count('.$theFKeys.')
 									FROM '.$theFtable.'
 									WHERE TRUE';
@@ -628,7 +626,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 						$theField='<div class="filter"><select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" '.$onAction.'>';
 						// on ajoute une valeur "vide" si on est en édition ou ajout (clé secondaire JAMAIS NULL)
 						//if ($action=='filter') {$theField.='<option value="" '.$selected.'>-</option>';}
-						$theField.='<option value="NULL" '.$selected.'>-</option>';
+						$theField.='<option value="NULL">-</option>';
 						foreach ($fKeys as $fKey) {
 							if ($fKey[$theFKeys]==$value) {$selected='selected="selected"';} else {$selected='';}
 							// selon que l'on a passé la valeur directement ou depuis la base
@@ -946,7 +944,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 					$theField.='</select></div>';
 				break;
 				default:
-			$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input></div>';
+			$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input></div>';
 				break;
 				}
 			break;

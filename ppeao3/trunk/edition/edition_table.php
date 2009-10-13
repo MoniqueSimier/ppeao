@@ -301,7 +301,7 @@ foreach ($theHeads as $oneHead) {
 		$sortIcon='';
 	} 
 	$sortUrl=replaceQueryParam ($sortUrl,"s_dir",$newSortDir);
-	echo('<td class="small"><a href="'.$sortUrl.'" id="'.$c_sort_id.'" name="'.$c_sort_id.'" class="'.$c_sort_class.'" title="cliquer pour trier sur cette colonne">'.$oneHead.' '.$sortIcon.'</a></td>');
+	echo('<td class="small"><a href="'.$sortUrl.'"  class="'.$c_sort_class.'" title="cliquer pour trier sur cette colonne">'.$oneHead.' '.$sortIcon.'</a></td>');
 } // end foreach $theHeads
 echo('</tr>');
 
@@ -357,7 +357,7 @@ if ($countTotal!=0) {
 				// on encode la chaine pour la passer au javascript
 				//$value=htmlentities($value, ENT_QUOTES,  'ISO-8859-15', FALSE );
 
-				echo(makeField($cDetails,$editTable,$key,$value,'display='.$theRow[$id],$theUrl,''));
+				echo(makeField($cDetails,$editTable,$key,$value,'display='.$theRow[$id],'',''));
 				
 				//echo($theColumn);
 				echo('</td>');
