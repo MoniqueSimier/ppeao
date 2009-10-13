@@ -169,6 +169,7 @@ function getTableConstraintDetails ($connection,$table) {
 // on liste les contraintes sur la table
 $constraints=getTableConstraints ($connection,$table);
 
+//debug echo('<pre>');print_r($constraints);echo('</pre>');
 
 // on récupere les détails sur chaque contrainte
 $allConstraintDetails=array();
@@ -190,11 +191,16 @@ foreach ($constraints as $constraint) {
 			$clause=str_replace(" ", "", $clause);
 			$theClauses=explode("OR",$clause);
 			$theColumn=substringBefore($theClauses[0],'=');
+			// on supprime les eventuels ::text si on a affaire a un champ char
+			$theColumn=str_replace('::text','',$theColumn);
 			foreach ($theClauses as $theClause) {
 				$theValues[]=substringAfter($theClause,'=');
 			}
 			$newClause.=arrayToList($theValues,',','');
-			;
+			// on supprime les eventuels ::text si on a affaire a un champ char
+			$newClause=str_replace('::text','',$newClause);
+			// on supprime les eventuels ' si on a affaire a un champ char
+			$newClause=str_replace('\'','',$newClause);
 			
 			// on ajoute ces informations dans les détails sur la contrainte
 			$allConstraintDetails[$constraint["constraint_name"]]["constraint_type"]='ENUM';
@@ -240,6 +246,8 @@ function getTableColumnsDetails($connection,$table) {
 $meta=getTableColumnsMetadata($connection,$table);
 // on collecte la liste des contraintes
 $details=getTableConstraintDetails ($connection,$table);
+//debug echo('<pre>');print_r($details);echo('</pre>');
+
 // on collecte le detail de chaque contrainte
 $columnDetails=getColumnConstraintDetails ($details,$column);
 

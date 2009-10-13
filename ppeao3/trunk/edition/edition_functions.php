@@ -429,6 +429,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 			
 			// cas d'une énumération : on construit un <SELECT> avec les valeurs de l'énumération
 			case 'ENUM':
+							
 				$theOptions=explode(",", $theConstraint["check_clause"]);
 				
 				switch ($action) {
@@ -1088,10 +1089,14 @@ else {
 		// on ne traite que le cas où la valeur n'est pas vide
 		if (!is_null($value) && $value!='') {
 	// on teste la compatibilité entre les types de données
+	//debug 	echo('<pre>');print_r($cDetail);echo('</pre>');
+	
 	switch ($cDetail["data_type"]) {
 
 		// entier (on n'utilise pas is_int() car même si le script retourne "7", PHP considère que c'est une variable string)
-		case 'integer': if (intval($value)!=$value) {$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur doit &ecirc;tre un entier',"valeur"=>$value);}
+		case 'integer': 
+		$intvalue=intval($value);
+		if ($value!=$intvalue || !is_numeric($value)) {$validityCheck=array("validity"=>0, "errorMessage"=>'cette valeur doit &ecirc;tre un entier',"valeur"=>$value);}
 		break;
 
 		// réel

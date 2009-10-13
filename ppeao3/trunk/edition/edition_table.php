@@ -115,6 +115,10 @@ echo('</div> <!-- end div selector_container -->')
 
 // on compile les informations sur les colonnes de la table $editTable
 $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["table"]);
+
+//debug echo('<pre>');print_r($cDetails);echo('</pre>');
+
+
 // la liste des colonnes concernées
 $theHeads=array_keys($cDetails);
 // et leur nombre
