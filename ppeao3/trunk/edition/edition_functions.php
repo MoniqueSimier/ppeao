@@ -54,7 +54,7 @@ function buildTableList($typeTableNom)
 		//debug
 		if ($table["domaine_nom"]!=$previousDomain) {
 			if ($previousDomain!='') {$domain.='</ul>';}
-			$domain.='<h3>'.$table["domaine_description"].'</h3>';
+			$domain.='<h2>'.$table["domaine_description"].'</h2>';
 			$domain.='<ul>';
 			$previousDomain=$table["domaine_nom"];
 			} 
