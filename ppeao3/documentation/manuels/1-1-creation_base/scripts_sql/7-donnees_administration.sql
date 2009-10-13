@@ -131,6 +131,7 @@ INSERT INTO admin_dictionary_tables VALUES (60, 'stat_effort', 'effort de pêche'
 INSERT INTO admin_dictionary_tables VALUES (53, 'environnement', 'environnement', 'exp_environnement', 'id', 'id', 4, 2, 'pays,systeme,campagne,coup_peche,environnement', false, 2, false, true);
 INSERT INTO admin_dictionary_tables VALUES (42, 'zones', 'zones d''accès', 'admin_zones', 'zone_id', 'zone_name', 1, 5, '', false, 1, false, false);
 INSERT INTO admin_dictionary_tables VALUES (63, 'sequences', 'séquences', 'admin_sequences', 'sequence_id', 'sequence_name', 1, 5, '', false, 1, false, false);
+INSERT INTO admin_dictionary_tables VALUES (64, 'acces_systemes', 'dates butoir pour les systèmes', 'admin_acces_donnees_systemes', 'id', 'id', 1, 5, NULL, false, 1, true, true);
 
 
 

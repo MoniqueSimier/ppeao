@@ -7,6 +7,187 @@ SET client_encoding = 'LATIN9';
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 
+
+--
+-- Name: admin_acces_donnees_acteurs; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE TABLE admin_acces_donnees_acteurs (
+    id integer NOT NULL,
+    ref_acteur_id integer NOT NULL,
+    acteur_type character(1) NOT NULL,
+    ref_systeme_id integer NOT NULL,
+    type_donnees character varying NOT NULL,
+    CONSTRAINT admin_acces_donnees_acteurs_type_donnees_check CHECK (((((type_donnees)::text = 'PE'::text) OR ((type_donnees)::text = 'PA'::text)) OR ((type_donnees)::text = 'ST'::text)))
+);
+
+
+ALTER TABLE public.admin_acces_donnees_acteurs OWNER TO devppeao;
+
+--
+-- Name: TABLE admin_acces_donnees_acteurs; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON TABLE admin_acces_donnees_acteurs IS 'table qui stocke les droits d''acces particuliers accordés à certains groupes ou utilisateurs';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_acteurs.id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_acteurs.id IS 'id unique de l''enregistrement';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_acteurs.ref_acteur_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_acteurs.ref_acteur_id IS 'id de l''utilisateur ou du groupe concerné';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_acteurs.acteur_type; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_acteurs.acteur_type IS 'u pour utilisateur, g pour groupe';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_acteurs.ref_systeme_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_acteurs.ref_systeme_id IS 'id du systeme concerné';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_acteurs.type_donnees; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_acteurs.type_donnees IS 'PE, PA ou ST';
+
+
+--
+-- Name: admin_acces_donnees_acteurs_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE admin_acces_donnees_acteurs_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.admin_acces_donnees_acteurs_id_seq OWNER TO devppeao;
+
+--
+-- Name: admin_acces_donnees_acteurs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
+--
+
+ALTER SEQUENCE admin_acces_donnees_acteurs_id_seq OWNED BY admin_acces_donnees_acteurs.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_acces_donnees_acteurs ALTER COLUMN id SET DEFAULT nextval('admin_acces_donnees_acteurs_id_seq'::regclass);
+
+
+--
+-- Name: admin_acces_donnees_acteurs_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_acces_donnees_acteurs
+    ADD CONSTRAINT admin_acces_donnees_acteurs_pkey PRIMARY KEY (id);
+
+
+
+--
+-- Name: admin_acces_donnees_systemes; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE TABLE admin_acces_donnees_systemes (
+    id integer NOT NULL,
+    ref_systeme_id integer NOT NULL,
+    date_butoir integer,
+    type_donnees character varying(4),
+    CONSTRAINT admin_acces_donnees_systemes_type_donnees_check CHECK (((((type_donnees)::text = 'PE'::text) OR ((type_donnees)::text = 'PA'::text)) OR ((type_donnees)::text = 'ST'::text)))
+);
+
+
+ALTER TABLE public.admin_acces_donnees_systemes OWNER TO devppeao;
+
+--
+-- Name: TABLE admin_acces_donnees_systemes; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON TABLE admin_acces_donnees_systemes IS 'table permettant de definir une date butoir spécifique pour un systeme et un type de donnees';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_systemes.id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_systemes.id IS 'id unique de l''enregistrement';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_systemes.ref_systeme_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_systemes.ref_systeme_id IS 'id du systeme (ref_systeme.id)';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_systemes.date_butoir; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_systemes.date_butoir IS 'nombre d''années avant lesquelles les données ne sont pas "publiques"';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_systemes.type_donnees; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_systemes.type_donnees IS 'le type de données : PE, PA ou ST (pêche exp, pêche art ou statistiques)';
+
+
+--
+-- Name: admin_acces_donnees_systemes_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE admin_acces_donnees_systemes_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.admin_acces_donnees_systemes_id_seq OWNER TO devppeao;
+
+--
+-- Name: admin_acces_donnees_systemes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
+--
+
+ALTER SEQUENCE admin_acces_donnees_systemes_id_seq OWNED BY admin_acces_donnees_systemes.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_acces_donnees_systemes ALTER COLUMN id SET DEFAULT nextval('admin_acces_donnees_systemes_id_seq'::regclass);
+
+
+--
+-- Name: admin_acces_donnees_systemes_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_acces_donnees_systemes
+    ADD CONSTRAINT admin_acces_donnees_systemes_pkey PRIMARY KEY (id);
+
+
+
 --
 -- Name: admin_config_mois; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
 --
@@ -1261,6 +1442,28 @@ ALTER TABLE ONLY admin_zones
     ADD CONSTRAINT admin_zones_zone_name_key UNIQUE (zone_name);
 
 
+
+-- LES CONTRAINTES DE CLE ETRANGERES, AJOUTEES A LA FIN POUR NE PAS GENER LE PROCESSUS
+
+
+
+--
+-- Name: admin_acces_donnees_acteurs_ref_systeme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_acces_donnees_acteurs
+    ADD CONSTRAINT admin_acces_donnees_acteurs_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id);
+
+
+--
+-- Name: admin_acces_donnees_systemes_ref_systeme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_acces_donnees_systemes
+    ADD CONSTRAINT admin_acces_donnees_systemes_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id);
+
+
+
 --
 -- Name: admin_dictionary_tables_domain_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
 --
@@ -1359,5 +1562,112 @@ ALTER TABLE ONLY admin_log
 
 ALTER TABLE ONLY admin_sequences
     ADD CONSTRAINT admin_sequences_table_id_fkey FOREIGN KEY (table_db) REFERENCES admin_dictionary_tables(table_db) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--
+-- Name: admin_acces_donnees_systemes; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE TABLE admin_acces_donnees_systemes (
+    id integer NOT NULL,
+    ref_systeme_id integer NOT NULL,
+    date_butoir integer,
+    type_donnees character varying(4),
+    CONSTRAINT admin_acces_donnees_systemes_type_donnees_check CHECK (((((type_donnees)::text = 'PE'::text) OR ((type_donnees)::text = 'PA'::text)) OR ((type_donnees)::text = 'ST'::text)))
+);
+
+
+ALTER TABLE public.admin_acces_donnees_systemes OWNER TO devppeao;
+
+--
+-- Name: TABLE admin_acces_donnees_systemes; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON TABLE admin_acces_donnees_systemes IS 'table permettant de definir une date butoir spécifique pour un systeme et un type de donnees';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_systemes.id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_systemes.id IS 'id unique de l''enregistrement';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_systemes.ref_systeme_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_systemes.ref_systeme_id IS 'id du systeme (ref_systeme.id)';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_systemes.date_butoir; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_systemes.date_butoir IS 'nombre d''années avant lesquelles les données ne sont pas "publiques"';
+
+
+--
+-- Name: COLUMN admin_acces_donnees_systemes.type_donnees; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN admin_acces_donnees_systemes.type_donnees IS 'le type de données : PE, PA ou ST (pêche exp, pêche art ou statistiques)';
+
+
+--
+-- Name: admin_acces_donnees_systemes_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE admin_acces_donnees_systemes_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.admin_acces_donnees_systemes_id_seq OWNER TO devppeao;
+
+--
+-- Name: admin_acces_donnees_systemes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
+--
+
+ALTER SEQUENCE admin_acces_donnees_systemes_id_seq OWNED BY admin_acces_donnees_systemes.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_acces_donnees_systemes ALTER COLUMN id SET DEFAULT nextval('admin_acces_donnees_systemes_id_seq'::regclass);
+
+
+--
+-- Name: admin_acces_donnees_systemes_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY admin_acces_donnees_systemes
+    ADD CONSTRAINT admin_acces_donnees_systemes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admin_acces_donnees_systemes_ref_systeme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_acces_donnees_systemes
+    ADD CONSTRAINT admin_acces_donnees_systemes_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id);
+
+
 
 
