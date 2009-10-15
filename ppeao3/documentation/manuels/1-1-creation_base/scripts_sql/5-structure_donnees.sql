@@ -589,8 +589,6 @@ ALTER TABLE art_stat_effort ALTER COLUMN effort_id SET DEFAULT nextval('art_stat
 ALTER TABLE ONLY art_stat_effort
     ADD CONSTRAINT art_stat_effort_effort_id_key UNIQUE (effort_id);
 
-ALTER TABLE ONLY art_stat_effort
-    ADD CONSTRAINT art_stat_effort_pkey PRIMARY KEY (effort_id);
 
 
 -- ---------------------------------------------------------------------------
