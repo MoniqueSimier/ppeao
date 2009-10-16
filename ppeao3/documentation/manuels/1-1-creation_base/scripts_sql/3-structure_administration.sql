@@ -17,7 +17,7 @@ CREATE TABLE admin_acces_donnees_acteurs (
     ref_acteur_id integer NOT NULL,
     acteur_type character(1) NOT NULL,
     ref_systeme_id integer NOT NULL,
-    type_donnees character varying NOT NULL,
+    type_donnees character(2) NOT NULL,
     CONSTRAINT admin_acces_donnees_acteurs_type_donnees_check CHECK (((((type_donnees)::text = 'PE'::text) OR ((type_donnees)::text = 'PA'::text)) OR ((type_donnees)::text = 'ST'::text)))
 );
 
@@ -110,7 +110,7 @@ CREATE TABLE admin_acces_donnees_systemes (
     id integer NOT NULL,
     ref_systeme_id integer NOT NULL,
     date_butoir integer,
-    type_donnees character varying(4),
+    type_donnees character(2) NOT NULL,
     CONSTRAINT admin_acces_donnees_systemes_type_donnees_check CHECK (((((type_donnees)::text = 'PE'::text) OR ((type_donnees)::text = 'PA'::text)) OR ((type_donnees)::text = 'ST'::text)))
 );
 
