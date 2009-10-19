@@ -53,7 +53,11 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 <?php
 // on affiche la liste des tables
 echo('<div id="tables_liste">');	
-
+echo('<h2>contr&ocirc;le de l&#x27;extraction des donn&eacute;es</h2>');
+echo('<ul>');
+echo('<li><a href="/edition/edition_droits_acces.php">autoriser un utilisateur ou un groupe &agrave; acc&eacute;der &agrave; toutes les donn&eacute;es</a></li>');
+echo('<li><a href="/edition/edition_table.php?selector=no&editTable=acces_systemes">d&eacute;finir une date butoir particuli&egrave;re pour un syst&egrave;me</a></li>');
+echo('</ul>');
 buildTableList("admin");
 
 echo('</div>');
