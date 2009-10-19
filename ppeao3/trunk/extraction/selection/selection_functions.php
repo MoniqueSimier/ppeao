@@ -7,8 +7,9 @@
 
 //******************************************************************************
 // compte le nombre de campagnes ou enquetes a supprimer - evolution de countMatchingUnits()
-function countMatchingUnits2($domaine) {
-
+function countMatchingUnits2($domaine,$exploit) {
+// $domaine : "exp" ou "art" selon le type de peches
+// $exploit : vide ou "stats"
 global $connectPPEAO;
 
 if ($domaine=='exp') {
@@ -79,6 +80,9 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 				(\''.arrayToList($_GET["eng"],'\',\'','\'').')
 			)';
 	}
+	
+
+	
 } // fin de if ($domaine=='exp') 
 
 if ($domaine=='art') {
@@ -220,6 +224,7 @@ if (!empty($_GET["familles"]) && $_GET["step"]>2) {
 	
 } // fin de if ($domaine=='art')
 
+// on fait la requete
 // debug echo($sql);
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 	$totalArray=pg_fetch_all($result);
@@ -233,6 +238,84 @@ if (empty($totalArray)) {$total=0;$ids=array();}
 		}
 	}
 $unites=array("total"=>$total,"ids"=>$ids);
+
+
+
+// si on a depasse le step 4 (donc on en est au moins au choix du type d'exploitation)
+// on filtre selon les droits d'acces de l'utilisateur
+// sauf si l'utilisateur fait partie du groupe ADMIN ou du groupe GESTIONNAIRE DONNEES qui ont acces a toutes les donnees
+$user_admin='';
+if (isset($_SESSION["s_ppeao_user_id"])) {$user_groups=userGetGroups($_SESSION["s_ppeao_user_id"]);
+
+//debug echo('<pre>');print_r($user_groups);echo('</pre>');
+
+
+if (in_array(1,$user_groups) || in_array(2,$user_groups)) {$user_admin=TRUE;} else {$user_admin=FALSE;}
+
+}
+if ($_GET["step"]>4 && $user_admin!=TRUE) {
+	// on commence par stocker les donnees "avant" filtrage
+	$unites["total_avant"]=$total;
+	$unites["ids_avant"]=$ids;
+	// on reinitialise total et ids pour les remplacer par les valeurs filtrees
+	$unites["total"]='';
+	$unites["ids"]=array();
+	
+	// on recupere les droits d'acces de l'utilisateur (les siens et ceux des groupes auxquels il appartient)
+	$user_droits=getUserSystemRights($_SESSION["s_ppeao_user_id"]);
+	//debug 		echo('<pre>');print_r($user_droits);echo('</pre>');
+	
+	
+	// puis on filtre
+	// pour chaque unite, on verifie si l'utilisateur y a acces ou pas
+	// si oui, on garde l'unite, sinon on ne l'inclut que si elle fait partie des donnees "historiques"
+	foreach ($unites["ids_avant"] as $unite) {
+		$acces=userHasAccessToUnit($unite,$domaine,$exploit,$user_droits);
+		// si l'utilisateur a acces a la totalite des donnees du systeme
+		if ($acces["acces_complet"]) {
+			$unites["ids"][]=$unite;
+			;}
+			//sinon, on doit tester si l'unite peut etre qualifiee de donnees historiques
+			else {
+				// on recupere les donnees de delai_butoir du systeme concerne
+				$systeme_id=$acces["ref_systeme_id"];
+				$utilisation=$acces["utilisation"];
+				//debug 				echo('<pre>');print_r("pas acces complet a $systeme_id pour $utilisation dans $unite, on filtre sur les dates");echo('</pre>');
+				$systeme_butoirs=getSystemAccessDate($systeme_id);
+				//debug 				echo('<pre>');print_r($systeme_butoirs);echo('</pre>');
+				
+				// on compare la date de debut de la campagne ou periode d'enquete avec la date butoir
+				$annee_courante=date('Y');
+				switch ($utilisation) {
+					case "exp":
+					// on calcule l'annee butoir :
+					$annee_butoir=$annee_courante-$systeme_butoirs["PE"]["delai_butoir"];
+					break;
+					case "art":
+					// on calcule l'annee butoir :
+					$annee_butoir=$annee_courante-$systeme_butoirs["PA"]["delai_butoir"];
+					break;
+					case "stats":
+					// on calcule l'annee butoir :
+					$annee_butoir=$annee_courante-$systeme_butoirs["ST"]["delai_butoir"];
+					break;
+				}
+				//debug echo($acces["annee"].'/'.$annee_butoir.'<br />');
+				// on autorise toutes les donnees dont annee_debut est AVANT $annee butoir
+				if ($acces["annee"]<$annee_butoir) {$unites["ids"][]=$unite;}
+				
+			}
+	}
+	
+	if (!empty($unites["ids"])) {$unites["total"]=count($unites["ids"]);} else {$unites["total"]=0;}
+		
+}
+
+// si des donnees ont ete exclues, on en stocke la liste
+if (isset($unites["total_avant"]) && $unites["total_avant"]!=$unites["total"]) {
+	$unites["ids_exclues"]=array_diff($unites["ids_avant"],$unites["ids"]);
+	$unites["total_exclues"]=$unites["total_avant"]-$unites["total"];
+} 
 
 // maintenant on calcule le nombre de coups de peche (exp) ou de periodes d'enquete/activites
 $coups=array();$debarquements=array();$activites=array();
@@ -358,7 +441,8 @@ return $unites;
 //******************************************************************************
 // prepare le compteur indiquant le nombre de campagnes/periodes d'enquete correspondant a la selection en cours
 function prepareCompteur() {
-
+// la connexion a la base
+global $connectPPEAO;
 // on prepare le compteur
 
 // on commence par savoir si on se base sur un modele de peches exp ou art
@@ -366,23 +450,36 @@ $peches='';
 if ($_GET["donnees"]=="exp") {$peches='exp';}
 if ($_GET["donnees"]=="art") {$peches='art';}
 // les statistiques ne sont realisees que sur les peches artisanales
-if ($_GET["exploit"]=="stats") {$peches='art';}
+$exploit='';
+if ($_GET["exploit"]=="stats") {$peches='art';$exploit='stats';}
 
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
 // et on affiche "votre selection correspond a :"
 if ($_GET["step"]>1) {
 	$link='<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();" title="afficher ou masquer la selection" href="#">[afficher/modifier/masquer la s&eacute;lection]</a></span>';
+	
 	$text='votre s&eacute;lection correspond &agrave; :';
 } else {
 	$link='';
 	$text='donn&eacute;es disponibles :';
 	}
 
+$filtrees["campagnes"]=FALSE;
+$filtrees["enquetes"]=FALSE;
+
 switch ($peches) {
 	case "exp":
 	// Peches experimentales
 	// on compte les campagnes
-	$campagnes=countMatchingUnits2('exp');
+	$campagnes=countMatchingUnits2('exp','');
+	// si on a des campagnes qui ne sont pas consultables par l'utilisateur, on change le texte du compteur
+	$sur_campagnes='';
+	if (isset($campagnes["total_avant"]) && $campagnes["total_avant"]!=$campagnes["total"]) {
+		$text='votre compte utilisateur vous permet de consulter :';
+		$sur_campagnes=' sur '.$campagnes["total_avant"].' disponibles ';
+		$filtrees["campagnes"]=TRUE;
+		$filtrees["enquetes"]=FALSE;
+	}
 	$total_campagnes=$campagnes["total"];
 	if ($total_campagnes>0) {$texte_coups=' &ndash; '.$campagnes["coups"]["coups_total"].' coup(s) de p&ecirc;che)'; } 
 	else {$texte_coups='';}
@@ -390,11 +487,20 @@ switch ($peches) {
 				"campagnes_total"=>$total_campagnes,
 				"coups_ids"=>$campagnes["coups"]["coups_ids"],
 				"coups_total"=>$campagnes["coups"]["coups_total"],
-				"texte"=>'<div id="ex_compteur"><p>'.$text.$link.'</p><ul><li>'.$total_campagnes.' campagne(s)'.$texte_coups.'</li></ul></div>');
+				"texte"=>'<p>'.$text.$link.'</p><ul><li>'.$total_campagnes.' campagne(s)'.$sur_campagnes.$texte_coups.'</li></ul>');
 	break;
 	case "art":
 	// on compte les periodes d'enquete
-	$enquetes=countMatchingUnits2('art');
+	$enquetes=countMatchingUnits2('art',$exploit);
+	// si on a des enquetes qui ne sont pas consultables par l'utilisateur, on change le texte du compteur
+	$sur_enquetes='';
+	if (isset($enquetes["total_avant"]) && $enquetes["total_avant"]!=$enquetes["total"]) {
+		$text='votre compte utilisateur vous permet de consulter :';
+		$sur_enquetes=' sur '.$enquetes["total_avant"].' disponibles ';
+		$filtrees["campagnes"]=FALSE;
+		$filtrees["enquetes"]=TRUE;
+	}	
+	
 	$total_enquetes=$enquetes["total"];
 	if ($total_enquetes>0) {$texte_deb_act=' &ndash;'.$enquetes["debarquements"]["debarquements_total"].' d&eacute;barquement(s) et '.$enquetes["activites"]["activites_total"].' activit&eacute;(s).'; } 
 	else {$texte_deb_act='';}
@@ -404,18 +510,39 @@ switch ($peches) {
 				"debarquements_ids"=>$enquetes["debarquements"]["debarquements_ids"],
 				"activites_total"=>$enquetes["activites"]["activites_total"],
 				"activites_ids"=>$enquetes["activites"]["activites_ids"],
-				"texte"=>'<div id="ex_compteur"><p>'.$text.$link.'</p><ul><li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></ul></div>');
+				"texte"=>'<p>'.$text.$link.'</p><ul><li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$sur_enquetes.$texte_deb_act.'</li></ul>');
 	break;
 	default:
 	// avant le choix de exp ou art : 
 	// on compte les campagnes et les enquetes
-		$campagnes=countMatchingUnits2('exp');
+		$campagnes=countMatchingUnits2('exp','');
+		$enquetes=countMatchingUnits2('art','');
+		//debug 		echo('<pre>');print_r($campagnes);echo('</pre>');
+		
+	// si on a des campagnes ou des enquetes qui ne sont pas consultables par l'utilisateur, on change le texte du compteur
+	$sur_campagnes='';
+	$sur_enquetes='';
+	if (isset($campagnes["total_avant"]) && $campagnes["total_avant"]!=$campagnes["total"]) {
+		$text='votre compte utilisateur vous permet de consulter :';
+		$sur_campagnes=' sur '.$campagnes["total_avant"].' disponibles ';
+		$filtrees["campagnes"]=TRUE;
+	}
+	if (isset($enquetes["total_avant"]) && $enquetes["total_avant"]!=$enquetes["total"]) {
+		$text='votre compte utilisateur vous permet de consulter :';
+		$sur_enquetes=' sur '.$enquetes["total_avant"].' disponibles ';
+		$filtrees["enquetes"]=TRUE;
+
+	}
+	
 	$total_campagnes=$campagnes["total"];
-	if ($total_campagnes>0) {$texte_coups=' &ndash; '.$campagnes["coups"]["coups_total"].' coup(s) de p&ecirc;che)'; } 
+	if ($total_campagnes>0) {$texte_coups=' &ndash; '.$campagnes["coups"]["coups_total"].' coup(s) de p&ecirc;che'; } 
 	else {$texte_coups='';}
-		$enquetes=countMatchingUnits2('art');
+
 	$total_enquetes=$enquetes["total"];
-	if ($total_enquetes>0) {$texte_deb_act=' &ndash;'.$enquetes["debarquements"]["debarquements_total"].' d&eacute;barquement(s) et '.$enquetes["activites"]["activites_total"].' activit&eacute;(s).'; } 
+	//debug 		echo('<pre>');print_r($enquetes);echo('</pre>');
+	
+	
+	if ($total_enquetes>0) {$texte_deb_act=' &ndash;'.$enquetes["debarquements"]["debarquements_total"].' d&eacute;barquement(s) et '.$enquetes["activites"]["activites_total"].' activit&eacute;(s)'; } 
 	else {$texte_deb_act='';}
 	$compteur=array("campagnes_ids"=>$campagnes["ids"],
 				"campagnes_total"=>$total_campagnes,
@@ -426,13 +553,63 @@ switch ($peches) {
 				"debarquements_total"=>$enquetes["debarquements"]["debarquements_total"],
 				"debarquements_ids"=>$enquetes["debarquements"]["debarquements_ids"],
 				"activites_total"=>$enquetes["activites"]["activites_total"],
-				"activites_ids"=>$enquetes["activites"]["activites_ids"],
-				"texte"=>'<div id="ex_compteur"><p>'.$text.$link.'</p><ul><li>'.$total_campagnes.' campagne(s)'.$texte_coups.'</li><li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$texte_deb_act.'</li></ul></div>');
+				"activites_ids"=>$enquetes["activites"]["activites_ids"]
+				);
+				
+	$texte='<p>'.$text.$link.'</p>
+				<ul>
+				<li>'.$total_campagnes.' campagne(s)'.$sur_campagnes.$texte_coups.'</li>
+				<li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$sur_enquetes.$texte_deb_act.'</li>
+				</ul>';
 	break;
 				
 	} // end switch $exploit
 				
-
+// si on a eu des campagnes ou enquetes filtrees, on affiche plus d'informations en dessous du compteur
+if ($filtrees["campagnes"] || $filtrees["enquetes"]) {
+		$compteur["filtrees"]=TRUE;
+		$texte.='<div id="infos_filtre">';
+		$texte.='<span class="showHide"><a href="#" onclick="javascript:toggleInfosFiltre();">[informations sur les donn&eacute;es auxquelles vous n&#x27;avez pas acc&egrave;s]</a></span>';
+		$texte.='<div id="infos_filtre_contenu">';
+		$texte.='<p>vous n&#x27;avez pas acc&egrave;s aux donn&eacute;es suivantes pour la p&eacute;riode choisie :</p>';
+		$texte.='<ul>';
+		// si on a filtre des campagnes
+		if ($filtrees["campagnes"]) {
+			// on recupere les systemes qui ont ete exclus
+			$sql='SELECT DISTINCT s.libelle 
+					FROM ref_systeme s, exp_campagne c 
+					WHERE c.ref_systeme_id=s.id AND c.id IN ('.arrayToList($campagnes["ids_exclues"],',','').')';
+			$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+			$array=pg_fetch_all($result);
+			pg_free_result($result);
+			//debug 			echo('<pre>');print_r($array);echo('</pre>');
+			$systemes_exclus=array();
+			foreach($array as $row) {$systemes_exclus[]=$row["libelle"];}
+			if (count($systemes_exclus)>1) {$fin='des syst&egrave;mes';} else {$fin='du syst&egrave;me';}
+			$texte.='<li>p&ecirc;ches exp&eacute;rimentales, donn&eacute;es '.$fin.' : '.arrayToList($systemes_exclus,', ','').'.</li>';
+			;}
+			// si on a filtre des enquetes
+		if ($filtrees["enquetes"]) {
+			// on recupere les systemes qui ont ete exclus
+			$sql='SELECT DISTINCT sy.libelle 
+			FROM art_periode_enquete pe, ref_secteur s, art_agglomeration a, ref_systeme sy
+			WHERE pe.id IN ('.arrayToList($enquetes["ids_exclues"],',','').') 
+			AND a.id=pe.art_agglomeration_id AND a.ref_secteur_id=s.id AND sy.id=s.ref_systeme_id';
+			$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+			$array=pg_fetch_all($result);
+			pg_free_result($result);
+			//debug 			echo('<pre>');print_r($array);echo('</pre>');
+			$systemes_exclus=array();
+			foreach($array as $row) {$systemes_exclus[]=$row["libelle"];}
+			if (count($systemes_exclus)>1) {$fin='des syst&egrave;mes';} else {$fin='du syst&egrave;me';}
+			$texte.='<li>p&ecirc;ches artisanales, donn&eacute;es '.$fin.' : '.arrayToList($systemes_exclus,', ','').'.</li>';
+			;}
+		$texte.='</ul>';
+		$texte.='si vous d&eacute;sirez obtenir l&#x27;acc&egrave;s &agrave; ces donn&eacute;es, <a href="/contact.php">contactez-nous</a> en indiquant le type de donn&eacute;es et la liste des syst&egrave;mes qui vous int&eacute;ressent.';
+		$texte.='</div>';
+		$texte.='</div>';
+	}
+	$compteur["texte"].=$texte;
 
 return $compteur;
 
@@ -527,7 +704,6 @@ function listSelectSecteurs($systemes,$enquetes_ids) {
 
 //******************************************************************************
 // affiche le bloc permettant d'indiquer si l'on veut choisir ou non des especes
-
 function prepareSelectionEditLink($step) {
 //$step: l'etape a laquelle on veut revenir
 
@@ -978,7 +1154,7 @@ if ($_GET["step"]==4) {
 echo('</div></div>');}
 }
 
-
+//******************************************************************************
 // on affiche le selecteur de periode
 function affichePeriode() {
 
@@ -1159,7 +1335,7 @@ echo('</div></div>');}
 }
 
 
-
+//******************************************************************************
 // on affiche le choix du type d'exploitation
 function afficheTypeExploitation() {
 
@@ -1188,7 +1364,7 @@ switch ($_GET["step"]) {
 	$stats_link=replaceQueryParam($_SERVER["FULL_URL"],'step',6);
 	$stats_link.='&exploit=stats';
 	$cartes_link=replaceQueryParam($_SERVER["FULL_URL"],'step',6);
-	$cartes_link.='&exploit=cartes';
+	$cartes_link.='#';
 		echo('<li><a href="'.$donnees_link.'">extraction de donn&eacute;es</a></li>');
 		echo('<li><a href="'.$stats_link.'">statistiques de p&ecirc;che</a></li>');
 		echo('<li><a href="'.$cartes_link.'">fonds de cartes</a></li>');
@@ -1237,6 +1413,7 @@ if ($_GET["step"]==6) {
 echo('</div></div>');}
 }
 
+//******************************************************************************
 // on affiche le choix du type de donnees
 function afficheTypeDonnees() {
 	
@@ -1293,6 +1470,8 @@ echo('</div></div>');}
 	
 }
 
+
+//******************************************************************************
 // on affiche le choix des secteurs, en fonction du type de donnees a extraire (exp ou art)
 function afficheSecteurs($donnees) {
 	
@@ -1394,6 +1573,9 @@ echo('</div></div>');}
 	
 }
 
+
+
+//******************************************************************************
 // on affiche le choix des campagnes
 function afficheCampagnes() {
 
@@ -1476,6 +1658,9 @@ echo('</div></div>');}
 
 }
 
+
+
+//******************************************************************************
 // on affiche le choix des engins
 function afficheEngins() {
 global $compteur;
@@ -1550,6 +1735,9 @@ echo('</div>');}
 
 }
 
+
+
+//******************************************************************************
 function afficheAgglomerations() {
 global $compteur;
 global $connectPPEAO;
@@ -1635,6 +1823,8 @@ if ($_GET["step"]==9) {
 echo('</div></div>');}
 }
 
+//******************************************************************************
+// affiche le selecteur de mois-annee de debut/fin
 function affichePeriodeEnquetes() {
 global $compteur;
 global $connectPPEAO;
@@ -1710,6 +1900,9 @@ if ($_GET["step"]==10) {
 echo('</div></div>');}
 }
 
+
+//******************************************************************************
+// affiche le selecteur de grands types d'engins
 function afficheGrandsTypesEngins($exploit) {
 // $ exploit : le type d'exploitation choisi (donnees, stats, cartes)
 global $compteur;
@@ -1806,7 +1999,10 @@ echo('<div id="choix_tables_stats"><p>');
 		afficheAide("filieres");
 }
 }
-	
+
+
+
+//******************************************************************************
 // on affiche le choix du type de statistiques
 function afficheTypeStats() {
 
@@ -1861,6 +2057,8 @@ echo('</div></div>');}
 }
 
 
+//******************************************************************************
+// affiche le second selecteur de secteurs (pour les statistiques de peche)
 function afficheSecteurs2() {
 	
 	global $connectPPEAO;
@@ -1988,6 +2186,233 @@ function afficheSecteurs2() {
 		echo('</div>');
 		break;
 	}
+}
+
+
+//******************************************************************************
+// permet de recuperer les droits particuliers associes a un systeme donne
+function getSystemAccessDate($systeme_id) {
+// la connexion a la base
+global $connectPPEAO;
+// la date butoir par defaut definie dans variable.inc
+global $delai_butoir;
+// $systeme_id : l'id du systeme concerne
+// on cherche les entrees de la table admin_acces_donnees_systemes pour $systeme_id
+$sql='SELECT ref_systeme_id, date_butoir as delai_butoir, type_donnees 
+		FROM admin_acces_donnees_systemes 
+		WHERE ref_systeme_id='.$systeme_id;
+$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$array=pg_fetch_all($result);
+pg_free_result($result);
+$array2=array();
+if (!empty($array)) {
+foreach ($array as $row) {
+	$array2[$row["type_donnees"]]=$row;
+}
+}
+
+$system_dates=array();
+
+//debug echo('<pre>');print_r($array2);echo('</pre>');
+
+if (!empty($array2)) {
+	if (!empty($array2["PE"])) {$system_dates["PE"]=array("ref_systeme_id"=>$systeme_id, "delai_butoir"=>$array2["PE"]["delai_butoir"],"type_donnees"=>"PE");}
+		if (!empty($array2["PA"])) {$system_dates["PA"]=array("ref_systeme_id"=>$systeme_id, "delai_butoir"=>$array2["PA"]["delai_butoir"],"type_donnees"=>"PA");} 
+			if (!empty($array["ST"])) {$system_dates["ST"]=array("ref_systeme_id"=>$systeme_id, "delai_butoir"=>$array2["ST"]["delai_butoir"],"type_donnees"=>"ST");}
+	
+	if (!array_key_exists('PE',$system_dates)) {$system_dates["PE"]=array("ref_systeme_id"=>$systeme_id, "delai_butoir"=>$delai_butoir,"type_donnees"=>'PE');}
+	if (!array_key_exists('PA',$system_dates)) {$system_dates["PA"]=array("ref_systeme_id"=>$systeme_id, "delai_butoir"=>$delai_butoir,"type_donnees"=>'PA');}
+	if (!array_key_exists('ST',$system_dates)) {$system_dates["ST"]=array("ref_systeme_id"=>$systeme_id, "delai_butoir"=>$delai_butoir,"type_donnees"=>'ST');}
+
+	} 
+	// si on n'a aucun resultat, on retourne la date butoir par defaut
+	else {
+		$system_dates["PE"]=array("ref_systeme_id"=>$systeme_id, "delai_butoir"=>$delai_butoir,"type_donnees"=>'PE');
+		$system_dates["PA"]=array("ref_systeme_id"=>$systeme_id, "delai_butoir"=>$delai_butoir,"type_donnees"=>'PA');
+		$system_dates["ST"]=array("ref_systeme_id"=>$systeme_id, "delai_butoir"=>$delai_butoir,"type_donnees"=>'ST');
+		}
+
+//debug echo('<pre>');print_r($system_dates);echo('</pre>');
+
+
+// $system_dates=array("ref_systeme_id","delai_butoir","type_donnees")
+return $system_dates;
+
+}
+
+
+//******************************************************************************
+// permet de recuperer la liste des systemes pour lesquels un acteur (utilisateur ou groupe) a acces a toutes les donnees
+function getActorSystemRights($acteur_id, $acteur_type) {
+// $acteur_id : id unique de l'acteur
+// $acteur_type: u (utilisateur) ou g (groupe)
+
+// la connexion a la base
+global $connectPPEAO;
+// on cherche les entrees de la table admin_acces_donnees_acteurs pour $acteur_id et $acteur_type
+$sql='SELECT ref_systeme_id, type_donnees 
+		FROM admin_acces_donnees_acteurs 
+		WHERE ref_acteur_id='.$acteur_id.' AND acteur_type=\''.$acteur_type.'\'';
+$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$array=pg_fetch_all($result);
+pg_free_result($result);
+
+$acteur_droits=array();
+
+if (!empty($array)) {
+	$acteur_droits=$array;
+	;
+} else {
+	$acteur_droits=array("ref_systeme_id"=>"","type_donnees"=>"");
+}
+
+// $acteur_droits
+return $acteur_droits;
+
+}
+
+//******************************************************************************
+// permet de recuperer la liste des systemes pour lesquels un utilisateur a acces a toutes les donnees
+// combine les droits de l'utilisateur et du/des groupe(s) au(x)quel(s) il appartient
+function getUserSystemRights($user_id) {
+// $ user_id : id unique de l'utilisateur
+
+// la connexion a la base
+global $connectPPEAO;
+
+// on commence par recuperer les droits de l'utilisateur
+$user_droits=getActorSystemRights($user_id, 'u');
+
+
+
+// puis on recupere les droits des groupes auxquels appartient cet utilisateur
+$sql='SELECT DISTINCT group_id FROM admin_j_user_group WHERE user_id='.$user_id;
+$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$array=pg_fetch_all($result);
+pg_free_result($result);
+
+if (!empty($array)) {
+// pour chaque groupe, on determine les droits d'acces
+$groupes_droits=array();
+foreach ($array as $groupe) {
+	$groupe_droits=getActorSystemRights($groupe["group_id"], 'g');
+	array_push($groupes_droits,$groupe_droits[0]);
+} 
+
+// ensuite on fusionne les deux listes de droits
+$user_droits=array_merge($user_droits,$groupes_droits);
+
+// et enfin on elimine les valeurs en double
+$user_droits=array_unique_multidimensionnal($user_droits);
+
+// on trie le tableau pour faire plus propre
+array_csort($user_droits, "ref_systeme_id","SORT_ASC");
+
+
+return $user_droits;
+
+}
+	
+}
+
+//******************************************************************************
+// permet de savoir si un utilisateur a acces ou pas a une campagne ou periode d'enquete
+function userHasAccessToUnit($unit_id, $domaine, $exploit,$user_droits) {
+// $domaine : "exp" pour les pechex experimentales ou "art" pour les peches artisanales
+// $exploit : vide ou "stats" pour les statistiques de peche
+// $unit_id l'id unique de la campagne (si $domaine=exp) ou de la periode d'enquete (si $domaine=art)
+// $user_droits : le tableau contenant les droits d'acces particuliers de l'utilisateur connecte
+
+// la connexion a la base
+global $connectPPEAO;
+
+	//debug 	echo('<pre>');print_r($user_droits);echo('</pre>');
+
+// que veut-on faire des donnees?
+$utilisation='';
+if ($domaine=='exp') {$utilisation='exp';}
+if ($domaine=='art' && $exploit=='stats') {$utilisation='stats';}
+if ($domaine=='art' && $exploit!='stats') {$utilisation='art';}
+
+
+// pour l'unite en cours, on recupere la date et le systeme, 
+// de facon differente selon que l'on a affaire a une campagne ou une periode d'enquete
+switch($utilisation) {
+	// peche experimentale
+	case "exp":
+	$sql='SELECT ref_systeme_id as systeme, date_debut FROM exp_campagne WHERE id='.$unit_id;
+	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+	$array=pg_fetch_all($result);
+	pg_free_result($result);
+	
+	$unit_details=$array[0];
+	$date=getdate(strtotime($unit_details["date_debut"]));
+	$unit_details["annee"]=$date["year"];
+	// on initialise la variable qui stocke si le user a acces a toutes les donnees ou pas	
+	$acces_complet=FALSE;
+	// on recupere les droits de l'utilisateur sur le systeme concerne
+	// on s'interesse aux donnees de PE
+	$ce_systeme=array("ref_systeme_id"=>$unit_details["systeme"],"type_donnees"=>"PE");
+
+	
+	if (in_array($ce_systeme,$user_droits)) {$acces_complet=TRUE;} 
+	else {$acces_complet=FALSE;}
+	break;
+
+	// peche artisanale
+	case "art":
+	$sql='SELECT DISTINCT s.ref_systeme_id as systeme, pe.annee, pe.mois 
+			FROM art_periode_enquete pe, ref_secteur s, art_agglomeration a
+			WHERE pe.id='.$unit_id.' AND a.id=pe.art_agglomeration_id AND a.ref_secteur_id=s.id
+		';
+	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+	$array=pg_fetch_all($result);
+	pg_free_result($result);
+	
+	$unit_details=$array[0];
+	
+	//debug 	echo('<pre>');print_r($unit_details);echo('</pre>');
+	
+	// on initialise la variable qui stocke si le user a acces a toutes les donnees ou pas	
+	$acces_complet=FALSE;
+	// on recupere les droits de l'utilisateur sur le systeme concerne
+	// on s'interesse aux donnees de PA
+	$ce_systeme=array("ref_systeme_id"=>$unit_details["systeme"],"type_donnees"=>"PA");
+	if (in_array($ce_systeme,$user_droits)) {$acces_complet=TRUE;} 
+	else {$acces_complet=FALSE;}
+	break;
+	
+	// peche artisanale
+	case "stats":
+	$sql='SELECT DISTINCT s.ref_systeme_id  as systeme, pe.annee, pe.mois 
+			FROM art_periode_enquete pe, ref_secteur s, art_agglomeration a
+			WHERE pe.id='.$unit_id.' AND a.id=pe.art_agglomeration_id AND a.ref_secteur_id=s.id
+		';
+	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+	$array=pg_fetch_all($result);
+	pg_free_result($result);
+		
+	$unit_details=$array[0];
+	// on initialise la variable qui stocke si le user a acces a toutes les donnees ou pas	
+	$acces_complet=FALSE;
+	// on recupere les droits de l'utilisateur sur le systeme concerne
+	// on s'interesse aux donnees de ST
+	$ce_systeme=array("ref_systeme_id"=>$unit_details["systeme"],"type_donnees"=>"ST");
+	if (in_array($ce_systeme,$user_droits)) {$acces_complet=TRUE;} 
+	else {$acces_complet=FALSE;}
+	break;
+}
+
+$acces_array=$ce_systeme;
+$acces_array["acces_complet"]=$acces_complet;
+$acces_array["utilisation"]=$utilisation;
+$acces_array["annee"]=$unit_details["annee"];
+
+//debug echo('<pre>');print_r($acces_array);echo('</pre>');
+
+
+return $acces_array;
+
 }
 
 ?>

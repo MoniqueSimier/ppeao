@@ -65,10 +65,14 @@ echo('<div id="ex_selection">');
 
 // on calcule les élements du compteur
 $compteur=prepareCompteur();
+
 // on en extrait la liste des campagnes et enquetes correspondant a la selection courante
 $campagnes_ids=$compteur["campagnes_ids"];
 $coups_ids=$compteur["coups_ids"];
 $enquetes_ids=$compteur["enquetes_ids"];
+
+//debug echo('<pre>');print_r($compteur);echo('</pre>');
+
 
 // si on a depasse le step 1, on encapsule les selecteurs precedents dans un DIV id="selection_precedente"
 // pour pouvoir les masquer
@@ -85,6 +89,13 @@ afficheTaxonomie();
 afficheGeographie();
 // on affiche le selecteur de periode
 affichePeriode();
+
+
+// on n'affiche la suite que si l'utilisateur est connecté
+if (isset($_SESSION['s_ppeao_login_status']) && $_SESSION['s_ppeao_login_status']=='good') {
+
+
+
 // on affiche le choix du type d'exploitation si il reste des campagnes ou des enquetes
 if ($compteur["campagnes_total"]!=0 || $compteur["enquetes_total"]!=0) {
 afficheTypeExploitation();} 
@@ -169,6 +180,17 @@ switch($_GET["exploit"]) {
 
 echo('</div>'); // find div id=ex_selection
 
+
+} // end if isset($_SESSION['s_ppeao_login_status']) && $_SESSION['s_ppeao_login_status']=='good'
+// si l'utilisateur n'est pas connecte, on le lui signale et on affiche le formulaire de login
+else {
+	if ($_GET["step"]!='' && $_GET["step"]>4) {
+	echo('<p>vous devez &ecirc;tre connect&eacute; pour pouvoir poursuivre l&#x27;extraction des donn&eacute;es.<br /> si vous avez un compte, connectez-vous en utilisant le formulaire ci-dessus.</p>');
+		
+	echo('<p>si vous n&#x27;avez pas de compte, vous pouvez en demander un en <a href="/contact.php">contactant les responsables du site</a
+	">.</p>');}
+}
+
 // le script pour afficher ou masquer la selection
 ?> 
 <script type="text/javascript" charset="utf-8">
@@ -179,13 +201,30 @@ echo('</div>'); // find div id=ex_selection
 		mySlider.toggle() //toggle the slider up and down.
 	}
 </script>
-<?php
+<?php 
 
 // on affiche le compteur de campagnes / enquetes
+echo('<div id="ex_compteur">');
 echo($compteur["texte"]);
+echo('</div>');
 ?>
 
-	
+<?php
+
+// si on a exlus des campagnes ou enquetes, on ajoute le script pour afficher ou masquer les infos correspondantes
+if (isset($compteur["filtrees"])) {
+	?>
+	<script type="text/javascript" charset="utf-8">
+	var mySlider2 = new Fx.Slide('infos_filtre_contenu', {duration: 500});
+	mySlider2.hide();
+	// affiche ou masque le DIV contenant la selection precedente
+	function toggleInfosFiltre() {
+		mySlider2.toggle() //toggle the slider up and down.
+	}
+</script>
+	<?php 
+}
+?>
 
 <?php 
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
