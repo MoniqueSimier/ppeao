@@ -655,4 +655,18 @@ if ($order=='SORT_DESC') {$order=SORT_DESC;} else {$order=SORT_ASC;}
 array_multisort($sortarr, $order, $results, $order);
 }
 
+//***************************************************************************************************
+// implementation of array_unique for multidimensionnal non-associative arrays
+function array_unique_multidimensionnal($data) {
+	$values = array(); 
+
+foreach($data as $d) { 
+    $values[md5(serialize($d))] = $d; 
+} 
+
+sort($values);
+return $values;
+}
+
+
 ?>
