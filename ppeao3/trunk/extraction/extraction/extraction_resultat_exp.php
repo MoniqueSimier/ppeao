@@ -59,7 +59,6 @@ if (!(file_exists($file)) ) {
 	fwrite($fileopen,$_SESSION["selection_xml"]);
 	rewind($fileopen);
 }
-//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionExp.xml";
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
@@ -242,7 +241,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				</div>
 				<?php if (!($exportFichier)) {	?>
 				<div id="exportFic2">
-					<input type="button" id="validation" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','','y','','')" value="Exporter en fichier"/>
+					<input type="button" id="validation" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','','y','','','')" value="Exporter en fichier"/>
 					<input type="hidden" id="ExpFic" checked="checked"/></div>			
 				</div>
 				<?php } else {

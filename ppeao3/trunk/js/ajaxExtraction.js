@@ -1,4 +1,4 @@
-// Fonctions javascript pour la gestion de l'extraction, pahse II (lecture des données apres la selection
+// Fonctions javascript pour la gestion de l'extraction, phase II (lecture des données apres la selection)
 // creation : Y. Laurent le 30/06/2009
 // 
 
@@ -94,7 +94,7 @@ function recupereSelection(limSel,Selection){
 }
 
 
-function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selToutesCol,selToutescat,selToutEsp) {
+function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selToutesCol,selToutescat,selToutEsp,urlComp) {
 // fonction runFilieresExp : permet de gerer l'affichage des différents tabs des differentes filieres pour les peches exp
 // Y compris de recuperer toutes les valeurs saisies
 
@@ -309,13 +309,13 @@ function stateChanged2() {
 		if (globalAction=="trophique") {trophActif=" active";}
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
-		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','peuplement','1','"+globalTableEnCours+"','n','','','')\" class=\"peuplement"+peuActif+"\">peuplement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','environnement','1','"+globalTableEnCours+"','n','','','')\" class=\"environnement"+envActif+"\">environnement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n','','','')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','biologie','1','"+globalTableEnCours+"','n','','','')\" class=\"biologie"+bioActif+"\">biologie</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','trophique','1','"+globalTableEnCours+"','n','','','')\" class=\"trophique"+trophActif+"\">trophique</a>";
-		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresExp('"+globaltypepeche+"','"+globalAction+"','1','','y','','','')\" value=\"Afficher le resultat\"/><br/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>exporter en fichier";
+		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','peuplement','1','"+globalTableEnCours+"','n','','','','')\" class=\"peuplement"+peuActif+"\">peuplement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','environnement','1','"+globalTableEnCours+"','n','','','','')\" class=\"environnement"+envActif+"\">environnement</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n','','','','')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','biologie','1','"+globalTableEnCours+"','n','','','','')\" class=\"biologie"+bioActif+"\">biologie</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresExp('"+globaltypepeche+"','trophique','1','"+globalTableEnCours+"','n','','','','')\" class=\"trophique"+trophActif+"\">trophique</a>";
+		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresExp('"+globaltypepeche+"','"+globalAction+"','1','','y','','','','')\" value=\"Afficher le resultat\"/><br/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>exporter en fichier";
 	}
 }
 
 
-function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selToutesCol,selToutescat,selToutEsp) {
+function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selToutesCol,selToutescat,selToutEsp,urlComp) {
 // fonction runFilieresArt : permet de gerer l'affichage des différents tabs des differentes filieres pour les peches art
 // Y compris de recuperer toutes les valeurs saisies
 
@@ -386,17 +386,9 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		DeselCol = false;
 		if (!(selToutesCol == '')) {
 			if 	(selToutesCol == 'tout') {
-//				if (listCol=="") {
 					listCol = 'XtoutX';
-//				} else {
-//					listCol = listCol+',XtoutX'
-//				}
 			} 	else {
-//				if (listCol=="") {
 					listCol = 'XpasttX'
-//				} else {
-//					listCol = listCol+',XpasttX'
-//				}
 			}
 		} else {
 			for (i=1;i<=limFac;i++) {
@@ -439,7 +431,58 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		} else {
 			addEsp = "&Esp="+ListEsp;
 		}
-		addURL = "&pois="+poiss+addCE+addCT+TEC+addCol+addEsp;
+
+		if (urlComp=="&nvReg=f") {
+			ValNomReg = document.getElementById("nomReg").value;
+			urlComp =urlComp+"&nomReg="+ValNomReg;
+		}
+		EspSelec = "";
+		if (urlComp=="&affEsp=y") {
+			// On recupere le numero du regroupement selectionné + la liste des especes selectionnées
+			var EspDispo = document.getElementById("especesDispo");
+			for (i=0;i<EspDispo.options.length;i++) {
+				if (EspDispo.options[i].selected) {
+					if (EspSelec == "") {
+						EspSelec = EspDispo.options[i].value;
+					} else {
+						EspSelec = EspSelec+","+EspDispo.options[i].value;
+					}
+				}
+			}
+			if (EspSelec=="") {
+				alert('Merci de sélectionner au moins une espèce');
+			} else {
+				urlComp = urlComp + "&espAff="+	EspSelec;
+			}
+		}
+		EspaSupp= "";
+		if (urlComp=="&suppEsp=EC") {
+			// On recupere le numero du regroupement selectionné + la liste des especes selectionnées
+			var EspSelReg = document.getElementById("Regroupcontenu");
+			for (i=0;i<EspSelReg.options.length;i++) {
+				if (EspSelReg.options[i].selected) {
+					if (EspaSupp == "") {
+						EspaSupp = EspSelReg.options[i].value;
+					} else {
+						EspaSupp = EspaSupp+","+EspSelReg.options[i].value;
+					}
+				}
+			}
+			if (EspaSupp=="") {
+				alert('Merci de sélectionner au moins une espèce');
+			} else {
+				urlComp = urlComp + "&espasup="+EspaSupp;
+			}				
+		}
+		regEC="";
+		if (!(urlComp=="")) { // Ca veut dire qu'on est en gestion des regroupements
+			try{
+				regEC = "&RegEC="+document.getElementById("Regroupement").selectedIndex;
+			}
+			catch (e) { }
+		  
+		}
+		addURL = "&pois="+poiss+addCE+addCT+TEC+addCol+addEsp+urlComp+regEC;
 	} else {
 		globalAction = typeAction;
 		changementAction = '&chgA=y';
@@ -511,7 +554,16 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 							document.getElementById("footer").style.position = 'absolute';
 							document.getElementById("footer").style.top = '800px';
 							break;
-			}
+				case '6' :
+							try{
+							document.getElementById("exportFic").style.position = 'absolute';
+							document.getElementById("exportFic").style.top = '870px';
+							}
+							catch (e) { }
+							document.getElementById("footer").style.position = 'absolute';
+							document.getElementById("footer").style.top = '900px';
+							break;
+}
 			fenID = "resultfiliere";
 			var url="/extraction/extraction/extraction_gestion_filieres_art.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+"&tab="+numtab+changementAction+addURL;
 			xmlHttp.onreadystatechange=stateChanged3;
@@ -521,43 +573,65 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 	}
 } 
 
-function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selToutesCol,selToutescat,selToutEsp) {
+function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selToutesCol,selToutescat,selToutEsp,urlComp) {
 // fonction runFilieresStat : permet de gerer l'affichage des différents tabs des differentes filieres pour les statistiques
 // C'est moins complique pour les peches, on ne gere que 2 tabs.
 // Y compris de recuperer toutes les valeurs saisies
 
 	// On récupère les valeurs des différents paramètres entrée
-		
-	document.getElementById("resultfiliere").innerHTML="<img src='/assets/ajax-loader_32px.gif' alt=''/>";
+
+	//document.getElementById("resultfiliere").innerHTML="<img src='/assets/ajax-loader_32px.gif' alt=''/>";
 	checkLog = document.getElementById("logsupp").checked;
 	globaltypestat = typeStat;
 	listCol = "";
+	
 	if  (globalAction == typeAction) {
 		changementAction = ''
 		// On charge les données modifiées
+		// Recuperation de la table a extraire 
+		tablesynt  = recupereSelection(6,"synthese");
 		// Recuperation des selections sur choix des especes
 		// Recuperation des especes
 		limEsp = document.getElementById("numEsp").value;
-		ListEsp  = recupereSelection(limEsp,"Esp");
+		if (!(selToutEsp == '')) {
+			if 	(selToutEsp == 'tout') {
+				ListEsp = 'XtoutX';
+			} 	else {
+				ListEsp = 'XpasttX';
+			}
+		} else {
+			ListEsp  = recupereSelection(limEsp,"Esp");
+		}
 		// Recuperation des colonnes en plus selectionnees
 		TEC = "&TEC="+tableEnCours;
 		TPEC = document.getElementById("tableEC").value;
 		// Recuperation des colonnes
 		limFac = document.getElementById("numFac").value;
+		DeselCol = false;
 		if (!(selToutesCol == '')) {
 			if 	(selToutesCol == 'tout') {
-				listCol = 'XtoutX'
+					listCol = 'XtoutX';
 			} 	else {
-				listCol = 'XpasttX'
+					listCol = 'XpasttX'
 			}
-		}
-		for (i=1;i<=limFac;i++) {
-			IDEnCours = TPEC+"fac"+i
-			if 	(document.getElementById(IDEnCours).checked) {
-				if (listCol=="") {
-					listCol = document.getElementById(IDEnCours).value
-				} else {
-					listCol = listCol+","+document.getElementById(IDEnCours).value
+		} else {
+			for (i=1;i<=limFac;i++) {
+				IDEnCours = TPEC+"fac"+i
+				if 	(document.getElementById(IDEnCours).checked) {
+					if (listCol=="") {
+						listCol = document.getElementById(IDEnCours).value+"-X"
+					} else {
+						listCol = listCol+","+document.getElementById(IDEnCours).value+"-X"
+					}
+				} 	else {
+					if (listCol=="") {
+						listCol = document.getElementById(IDEnCours).value+"-N"
+					} else {
+						listCol = listCol+","+document.getElementById(IDEnCours).value+"-N"
+					}
+					// On déselectionne la case a cocher tout
+					document.getElementById('facTout').checked = false
+					DeselCol = true
 				}
 			}
 		}
@@ -572,7 +646,12 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 		} else {
 			addEsp = "&Esp="+ListEsp;
 		}
-		addURL = TEC+addCol+addEsp;
+		if (tablesynt == "") {
+			addSynth = "" ;
+		} else {
+			addSynth = "&synth="+tablesynt;
+		}
+		addURL = TEC+addCol+addEsp+addSynth;
 	} else {
 		globalAction = typeAction;
 		changementAction = '&chgA=y';
@@ -602,47 +681,29 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 				case '1' :
 							try{
 							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '530px';
+							document.getElementById("exportFic").style.top = '700px';
 	  						}
 							catch (e) { }
 							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '550px';
+							document.getElementById("footer").style.top = '700px';
 							break;
 				case '2' :
 							try{
 							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '570px';
+							document.getElementById("exportFic").style.top = '770px';
 							}
 							catch (e) { }
 							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '600px';
+							document.getElementById("footer").style.top = '770px';
 							break;
 				case '3' :
 							try{
 							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '570px';
-							}
-							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '600px';
-							break;
-				case '4' :
-							try{
-							document.getElementById("exportFic").style.position = 'absolute';
 							document.getElementById("exportFic").style.top = '770px';
 							}
 							catch (e) { }
 							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '800px';
-							break;		
-				case '5' :
-							try{
-							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '770px';
-							}
-							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '800px';
+							document.getElementById("footer").style.top = '770px';
 							break;
 			}
 			fenID = "resultfiliere";
@@ -679,8 +740,8 @@ function stateChanged3() {
 		if (globalAction=="engin") {engActif=" active";}
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
-		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','activite','1','"+globalTableEnCours+"','n','','','')\" class=\"activite"+actActif+"\">activit&eacute</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','capture','1','"+globalTableEnCours+"','n','','','')\" class=\"capture"+capActif+"\">captures totales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n','','','')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','taille','1','"+globalTableEnCours+"','n','','','')\" class=\"structure"+strActif+"\">structure de taille</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','engin','1','"+globalTableEnCours+"','n','','','')\" class=\"engin"+engActif+"\">engin de p&ecirc;che</a>";
-		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('"+globaltypepeche+"','"+globalAction+"','1','','y','','','')\" value=\"afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>exporter en fichier";
+		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','activite','1','"+globalTableEnCours+"','n','','','','')\" class=\"activite"+actActif+"\">activit&eacute</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','capture','1','"+globalTableEnCours+"','n','','','','')\" class=\"capture"+capActif+"\">captures totales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n','','','','')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','taille','1','"+globalTableEnCours+"','n','','','','')\" class=\"structure"+strActif+"\">structure de taille</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','engin','1','"+globalTableEnCours+"','n','','','','')\" class=\"engin"+engActif+"\">engin de p&ecirc;che</a>";
+		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('"+globaltypepeche+"','"+globalAction+"','1','','y','','','','')\" value=\"afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>exporter en fichier";
 		
 	}
 }
@@ -696,8 +757,8 @@ function stateChanged4() {
 		if (globalAction=="GT") {gtActif=" active";}
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
-		document.getElementById("runProcess").innerHTML="<b>Choix type statistique &agrave; extraire :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','globale;','1','"+globalTableEnCours+"','n','','','')\" class=\"globale"+gloActif+"\">statistiques globales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','GT','1','"+globalTableEnCours+"','n','')\" class=\"GT"+gtActif+"\">statistiques par Grand Type</a>";
-		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('"+globaltypepeche+"','"+globalAction+"','1','','y','','','')\" value=\"afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
+		document.getElementById("runProcess").innerHTML="<b>Choix type statistique &agrave; extraire :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','globale;','1','"+globalTableEnCours+"','n','','','')\" class=\"globale"+gloActif+"\">statistiques globales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','GT','1','"+globalTableEnCours+"','n','','','','')\" class=\"GT"+gtActif+"\">statistiques par Grand Type</a>";
+		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresStat('"+globaltypepeche+"','"+globalAction+"','1','','y','','','','','','')\" value=\"afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
 		
 	}
 }

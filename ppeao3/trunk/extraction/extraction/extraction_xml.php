@@ -463,9 +463,9 @@ function endElementCol($parser, $name){
 			}
 			if ($TableAAjouter && $filiereOK) {
 				if ($RecupDonneesOK) {
-					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','')\" class = \"active\">".$globaldata."</a><br/>";
+					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','','')\" class = \"active\">".$globaldata."</a><br/>";
 				} else {
-					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','')\" class = \"\">".$globaldata."</a><br/>";
+					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','','')\" class = \"\">".$globaldata."</a><br/>";
 				}
 			}	
 			if ($RecupDonneesOK == true ) {

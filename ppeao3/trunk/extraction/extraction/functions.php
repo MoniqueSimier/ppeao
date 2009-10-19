@@ -255,9 +255,9 @@ function AfficherDonnees($file,$typeAction){
 				exit;
 			}
 		}
-	//	Controle fichiers
-		$nomFicExport = $dirLog."/".date('y\-m\-d')."_".$typePeche."_".$typeAction.".txt";
-		$nomFicExpLien = $nomLogLien."/".date('y\-m\-d')."_".$typePeche."_".$typeAction.".txt";
+		//	Controle fichiers
+		$nomFicExport = $dirLog."/".date('y\-m\-d')."_".$typeSelection."_".$typeAction.".txt";
+		$nomFicExpLien = $nomLogLien."/".date('y\-m\-d')."_".$typeSelection."_".$typeAction.".txt";
 		$resultatLecture = "Le fichier de r&eacute;sultat peut &ecirc;tre consult&eacute; : <a href=\"".$nomFicExpLien."\" target=\"export\"/>".$nomFicExpLien."</a><br/><br/>";
 		// On ne cree le fichier que si il n'a pas deja ete rempli !
 		if (!($fichierDejaCree)) {
@@ -1092,8 +1092,59 @@ function AfficherDonnees($file,$typeAction){
 				$compGTESQL = "";
 				$LabGTE = " - toutes les grands types engin ";
 			}
-
+			// Cas particulier d'aucun sélection des espèces : 
+			// On reconstruit cette liste pour l'ensemble de la sélection car on va en avoir besoin
+			// pour les catégories trophiques/ecologiques
+			$ajouteTable ="";
+			if ($SQLEspeces == "") {
+				if (!($compGTESQL == "")) {
+					$ajouteTable =",art_grand_type_engin as gte";
+			}
+			$SQLEsp = "select distinct(afra.ref_espece_id) from art_debarquement as deb,art_fraction as afra,art_agglomeration as agg,			
+				art_periode_enquete as penq".$ajouteTable."
+				where ".$WhereAgg." ".$WherePeEnq." ".$compGTESQL."
+				deb.art_agglomeration_id = agg.id and
+				deb.mois = penq.mois and 
+				deb.annee = penq.annee and
+				deb.art_agglomeration_id = penq.art_agglomeration_id and 
+				afra.art_debarquement_id = deb.id ";
+				$SQLEspeces = RecupereEspeces($SQLEsp);
+				$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite..
+	
+			}
+			// Si malgré tout, toujours pas d'especes dispo, ben tant pis....
+			if ($SQLEspeces == "") {
+				$WhereEsp = "";
+			} else {
+				// Enfin on verifie qu'il n'y a pas eu de restriction supplémentaires
+				if (!($_SESSION['listeEspeces'] == "")) {
+					$TempSQLEspeces = $SQLEspeces;
+					$SQLEspeces = "";
+					$EspecesSele = explode (",",$_SESSION['listeEspeces']);
+					$NumEsp = count($EspecesSele) - 1;
+					for ($cptES=0 ; $cptES<=$NumEsp;$cptES++) {
+						
+						if (strpos($TempSQLEspeces,$EspecesSele[$cptES]) === false ){
 			
+						} else {
+							// La valeur est disponible, on la met à jour
+							if ($SQLEspeces == "" ) {
+								$SQLEspeces = "'".$EspecesSele[$cptES]."'";
+							} else {
+								$SQLEspeces .= ",'".$EspecesSele[$cptES]."'";
+							}
+						}
+					}
+				} 
+				$WhereEsp = "afra.ref_espece_id in (".$SQLEspeces.") and ";
+
+			}
+			$choixSynthese = ""; // recupere le choix de la synthèse à extraire
+			if (isset($_GET['synth'])) {
+				$choixSynthese  = $_GET['synth'];
+			} else {
+				$choixSynthese  = "cap_tot"; // Par defaut le premier
+			}
 			switch ($typeStatistiques) {
 				// *********************************************************************************
 				// STATISTIQUES PAR AGGLOMERATION
@@ -1104,35 +1155,101 @@ function AfficherDonnees($file,$typeAction){
 					switch ($typeAction) {
 						// Statistiques globales
 						case "globale" :
-							// Cas particulier d'aucun sélection des espèces : 
-							// On reconstruit cette liste pour l'ensemble de la sélection car on va en avoir besoin
-							// pour les catégories trophiques/ecologiques
-							$ajouteTable ="";
-							if ($SQLEspeces == "") {
-								if (!($compGTESQL == "")) {
-									$ajouteTable =",art_grand_type_engin as gte";
+						
+							// On analyse le choix et on cree la requete en focntion
+							switch ($choixSynthese) {
+								case "cap_tot";
+									$labelSelection = "captures totales";	
+									$listeChampsSpec = "ast.fm,ast.cap,ast.pue,ast.id";
+									$ListeTableSpec = "art_periode_enquete as penq, art_stat_totale as ast"; // attention a l'ordre pour les left outer join
+									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
+													ast.mois = penq.mois and
+													ast.annee = penq.annee and 
+													ast.art_agglomeration_id = penq.art_agglomeration_id
+													";						
+									$ConstIDunique = "AST-##-1";
+									$valueCount = "ast.id" ; // pour gerer la pagination
+									$builQuery = true;
+									break;
+								case "cap_sp";
+									$labelSelection = "r&eacute;sultats par esp&egrave;ces";	
+									$listeChampsSpec = "asp.ref_espece_id,asp.pue_sp,asp.cap_sp,ast.fm,ast.cap,ast.pue,asp.id,ast.id";
+									$ListeTableSpec = "art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp"; // attention a l'ordre pour les left outer join
+									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
+													asp.art_stat_totale_id = ast.id and 
+													ast.mois = penq.mois and
+													ast.annee = penq.annee and 
+													ast.art_agglomeration_id = penq.art_agglomeration_id
+													";						
+									$ConstIDunique = "ASP-##-6";
+									$valueCount = "asp.id" ; // pour gerer la pagination
+									$builQuery = true;
+									break;
+								case "dft_sp";
+									$labelSelection = "structure en taille des esp&egrave;ces";	
+									$listeChampsSpec = "asp.ref_espece_id,asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id";
+									$ListeTableSpec = "art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats"; // attention a l'ordre pour les left outer join
+									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
+													ats.art_stat_sp_id = asp.id and
+													asp.art_stat_totale_id = ast.id and 
+													ast.mois = penq.mois and
+													ast.annee = penq.annee and 
+													ast.art_agglomeration_id = penq.art_agglomeration_id
+													";						
+									$ConstIDunique = "ATS-##-7";
+									$valueCount = "ats.id" ; // pour gerer la pagination
+									$builQuery = true;
+									break;
+								case "cap_GT";
+									$labelSelection = "r&eacute;sultats globaux par GT";	
+									$listeChampsSpec = "asgt.fm_gt,asgt.cap_gt,asgt.pue_gt,asgt.id,ast.id,ast.id";
+									$ListeTableSpec = "art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast"; // attention a l'ordre pour les left outer join
+									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
+													asgt.art_stat_totale_id = ast.id and 
+													ast.mois = penq.mois and
+													ast.annee = penq.annee and 
+													ast.art_agglomeration_id = penq.art_agglomeration_id
+													";						
+									$ConstIDunique = "AGT-##-3";
+									$valueCount = "asgt.id" ; // pour gerer la pagination
+									$builQuery = true;
+									break;
+								case "cap_GT_sp";
+									$labelSelection = "r&eacute;sultats par esp&egrave;ces et par GT";	
+									$listeChampsSpec = "asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, asgts.id, asgt.id, ast.id, ast.id";
+									$ListeTableSpec = "art_periode_enquete as penq, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast"; // attention a l'ordre pour les left outer join
+									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
+													asgts.art_stat_gt_id = asgt.id and 
+													asgt.art_stat_totale_id = ast.id and 
+													ast.mois = penq.mois and
+													ast.annee = penq.annee and 
+													ast.art_agglomeration_id = penq.art_agglomeration_id
+													";						
+									$ConstIDunique = "ATS-##-3";
+									$valueCount = "asgts.id" ; // pour gerer la pagination
+									$builQuery = true;
+									break;
+								case "dft_sp_sp";
+									$labelSelection = "structure en taille des esp&egrave;ces par GT";	
+									$listeChampsSpec = "asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, atgts.li,atgts.xi,atgts.id, asgts.id, asgt.id, ast.id, ast.id";
+									$ListeTableSpec = "art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast"; // attention a l'ordre pour les left outer join
+									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
+													atgts.art_stat_gt_sp_id = asgts.id and 
+													asgts.art_stat_gt_id = asgt.id and 
+													asgt.art_stat_totale_id = ast.id and 
+													ast.mois = penq.mois and
+													ast.annee = penq.annee and 
+													ast.art_agglomeration_id = penq.art_agglomeration_id
+													";						
+									$ConstIDunique = "ATG-##-5";
+									$valueCount = "atgts.id" ; // pour gerer la pagination
+									$builQuery = true;
+									break;
+									break;
+								default:
+									echo "erreur pas de selection synthese<br/>";
 							}
-							$SQLEsp = "select distinct(afra.ref_espece_id) from art_debarquement as deb,art_fraction as afra,art_agglomeration as agg,			
-								art_periode_enquete as penq".$ajouteTable."
-								where ".$WhereAgg." ".$WherePeEnq." ".$compGTESQL."
-								deb.art_agglomeration_id = agg.id and
-								deb.mois = penq.mois and 
-								deb.annee = penq.annee and
-								deb.art_agglomeration_id = penq.art_agglomeration_id and 
-								afra.art_debarquement_id = deb.id ";
-								$SQLEspeces = RecupereEspeces($SQLEsp);
-							}
-							// Si malgré tout, toujours pas d'especes dispo, ben tant pis....
-							if ($SQLEspeces == "") {
-								$WhereEsp = "";
-								echo "pas d'especess <br/>";
-							} else {
-								$WhereEsp = "afra.ref_espece_id in (".$SQLEspeces.") and ";
-								$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite....
-							}
-							$labelSelection = "Periode d'enquete";
-							$SQLfinal = "select * from art_periode_enquete as penq
-											where penq.id in (".$SQLPeEnquete.")";						
+						
 						break;	
 						// Statistiques par Grand type
 						case "GT" :	
@@ -1144,6 +1261,8 @@ function AfficherDonnees($file,$typeAction){
 							$labelSelection = "Periode d'enquete";
 							$SQLfinal = "select * from art_periode_enquete as penq
 											where penq.id in (".$SQLPeEnquete.")";
+							$SQLcountfinal = "select count(*) from art_periode_enquete as penq
+									where penq.id in (".$SQLPeEnquete.")";; // pour gerer la pagination	
 					}									
 					break; 
 				// ********** FIN STATISTIQUES PAR AGGLOMERATION
@@ -1384,7 +1503,7 @@ function AfficherDonnees($file,$typeAction){
 						// On garde le prefixe DEB et on extrait l'index du champ a recuperer de la ligne du resultat de la requete. ici 11
 						$IDunique = "";
 						if (!($ConstIDunique =="")) {
-							$Locprefixe = substr($ConstIDunique,0,3); // Attention, pour des raisons de simplicité, le sufffixe n'est que sur 3 caractères.
+							$Locprefixe = substr($ConstIDunique,0,3); // Attention, pour des raisons de simplicité, le suffixe n'est que sur 3 caractères.
 							$locIndex = substr(strrchr($ConstIDunique, "-##-"),1);
 							$IDunique = $Locprefixe.$finalRow[$locIndex];
 							$resultatFichier .= $IDunique."\t";
@@ -1420,10 +1539,18 @@ function AfficherDonnees($file,$typeAction){
 								break;	
 							default	:
 								$nbrRow = count($finalRow)-1;
-								// Transcription du resultat de la requete globale pour un affichage écran et un export sous forme de fichier
-								for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
-									$resultatFichier .=$finalRow[$cptRow]."\t";
-								}	
+								//if ($_SESSION['listeRegroup'] == "") {
+									// Transcription du resultat de la requete globale pour un affichage écran et un export sous forme de fichier
+									for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
+										$resultatFichier .=$finalRow[$cptRow]."\t";
+									}									
+								//} else {
+									// Gestion des regroupements.
+									// Si le code unique est identique, on aggrege selon le regroupement.
+									// Toute espece qui n'est pas definie dans un regroupement part dans la catégorie DIV
+									
+									
+								//}
 						}
 						$resultatFichier .="\n";
 						if (! fwrite($ExpComp,$resultatFichier) ) {
@@ -1528,9 +1655,9 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction,$ty
 			$construitSelection .="<table id=\"".$nomInput."\"><tr><td class=\"catitem\">"; 
 			// A faire : formater le resultat avec une table
 			if (strpos($ListeCE,"tout") === false) {
-				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','tout-".$nomInput."','')\"/>&nbsp;<b>tout</b></td><td class=\"catitem\">";
+				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','tout-".$nomInput."','','')\"/>&nbsp;<b>tout</b></td><td class=\"catitem\">";
 			} else {
-				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','aucun-".$nomInput."','')\"/>&nbsp;<b>tout</b></td><td class=\"catitem\">";
+				$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"tout\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','aucun-".$nomInput."','','')\"/>&nbsp;<b>tout</b></td><td class=\"catitem\">";
 			}
 			// Analyse des categories disponibles pour l'espèce considérée
 			while ($CERow = pg_fetch_row($SQLCEcoResult) ) {
@@ -1634,6 +1761,8 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 		break;
 		case "experimentale":
 		$runfilieres = "runFilieresExp";
+		case "agglomeration":
+		$runfilieres = "runFilieresStat";
 		break;
 	 }
 // Gere l'affichage des différentes espèces
@@ -1651,9 +1780,9 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 			$cptInput = 1;
 			$construitSelection .="<table id=\"espece\"><tr><td>"; 
 			if (strpos($ListeEsp,"XtoutX") === false) {
-				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"XtoutX\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','tout')\"/>&nbsp;<b>tout</b></td><td>";
+				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"XtoutX\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','tout','')\"/>&nbsp;<b>tout</b></td><td>";
 			} else {
-				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"XtoutX\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','aucun')\"/>&nbsp;<b>tout</b></td><td>";
+				$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"XtoutX\" checked=\"checked\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','aucun','')\"/>&nbsp;<b>tout</b></td><td>";
 			}
 			while ($CERow = pg_fetch_row($SQLCEcoResult) ) {
 				if (!($CERow[0] =="" || $CERow[0] == null)) {
@@ -1695,7 +1824,7 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 
 //*********************************************************************
 // AfficheColonnes : Fonction pour afficher les tables / colonnes a selectionner par type de peche
-function AfficheRegroupEsp($SQLespeces,$RegroupEsp) {
+function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEsp,$RegEncours,$CreeReg) {
 // Cette fonction permet de gerer les regroupements d'especes
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -1704,16 +1833,256 @@ function AfficheRegroupEsp($SQLespeces,$RegroupEsp) {
 // En sortie : 
 // La fonction renvoie $tableau
 //*********************************************************************
-$construitSelection = "";
-$construitSelection .= "<table id=\"regroupement\"><tr id=\"titreReg\"><td>Regroupement esp&egrave;ces</td></tr>";
+	global $connectPPEAO;
+	global $EcrireLogComp;
+	global $logComp;
+	global $pasdefichier;
+if (!(isset($_SESSION['listeRegroup']))) {
+	$_SESSION['listeRegroup'] = "";					  
+}
+//echo "Reg en cours = ".$RegEncours." creer reg = ".$CreeReg." nbr Reg = ".count($_SESSION['listeRegroup'])."<br/>";
+$ulrComp="";
+$info = "";
+// Reinitialisation des variables d'affichage
+$OptionRegroup = "";
+$labelRegroup = "";
+$OptionEspDispo = "";
+$nouveauRegroupement = "";
+$OptionRegroupCont = "";
+$labelListeRegroupt = "";
+$construitSelection = "<b>g&eacute;rez les regroupements d'esp&egrave;ces</b><br/>";
+if ($RegEncours == "" && (!($_SESSION['listeRegroup'] ==""))) {
+	$RegEncours = 1;					  
+}
+// *******************************
+// Gestion des différentes actions
+// *******************************
+//echo count($_SESSION['listeRegroup'])." ".$RegEncours."<br/>";
+// Reinitialisation des regroupements
+// Ou suppression d'un regroupement
+if (isset($_GET['suppReg'])) {
+	switch ($_GET['suppReg']) {
+		case "tout":
+			$_SESSION['listeRegroup'] = "";
+			$info ="tous les regroupements ont &eacute;t&eacute; supprim&eacute;s";	
+			break;
+		case "EC":
+			$nomRegSupp = $_SESSION['listeRegroup'][$RegEncours][1];
+			unset($_SESSION['listeRegroup'][$RegEncours]);
+			$info ="regroupement ".$nomRegSupp." supprim&eacute;";
+			$RegEncours = $RegEncours - 1;
+			if (count($_SESSION['listeRegroup']) ==  0) {
+				$_SESSION['listeRegroup'] = ""; // Necessaire pour retrouver un affichage normal, la variable n'est pas completement vidée
+			}
+			break;
+	}
+	if( $_GET['suppReg']=="tout") {
 
-
-$construitSelection .= "</table>";
-return $construitSelection;
-
+	}
+}
+// Reinitialisation des especes pour un regroupement
+// Ou suppression d'une espece pour un regroupement
+if (isset($_GET['suppEsp'])) {
+	switch ($_GET['suppEsp']) {
+		case "tout":
+			$info ="tous les espèces ont &eacute;t&eacute; supprim&eacute;s pour le regroupement ";		
+			break;
+		case "EC":
+			if (isset($_GET['espasup'])) {
+				$espVraimentSup = "";
+				$EspAsupp = $_GET['espasup'];
+				//echo "liste a supp = ".$EspAsupp."<br/>";
+				$nbListEsp = count($_SESSION['listeRegroup'][$RegEncours]);
+				for ($cptEsp=2 ; $cptEsp<=$nbListEsp;$cptEsp++) {
+				//echo $nbListEsp." ".$cptEsp." ".$EspAsupp." ".$_SESSION['listeRegroup'][$RegEncours][$cptEsp]."<br/>";					
+					if (strpos($EspAsupp,$_SESSION['listeRegroup'][$RegEncours][$cptEsp]) === false) {
+					
+					} else {
+						$_SESSION['listeRegroup'][$RegEncours][$cptEsp]="";
+						$espVraimentSup .= ",".$_SESSION['listeRegroup'][$RegEncours][$cptEsp];
+					}
+				}
+				// On reindexe le tableau.
+				reset($_SESSION['listeRegroup'][$RegEncours]);
+				$info ="les esp&egrave;ces ".$espVraimentSup." ont &eacute;t&eacute; sppruimé&eacute;es du regroupement ".$_SESSION['listeRegroup'][$RegEncours][1];			
+			} 
+			break;
+	}
+}
+// Gestion de l'ajout d'espèces dans un groupe
+if (isset($_GET['affEsp'])) {
+	if( $_GET['affEsp']=="y") {
+		if (isset($_GET['espAff'])) {
+			$EspAAffecter = $_GET['espAff'];
+			echo "liste a ajouter = ".$EspAAffecter."<br/>";
+			$ListeEsp = explode(",",$EspAAffecter);
+			$nbListEsp = count($ListeEsp);
+			$derEsp = intval(count($_SESSION['listeRegroup'][$RegEncours]))-1;
+			for ($cptEsp=0 ; $cptEsp<$nbListEsp;$cptEsp++) {
+				$rangEsp = intval($cptEsp+2+$derEsp); // le + 2 indique qu'on commence au rang 1 et que le rang 1 est déjà pris par le nom du regroupement
+				$_SESSION['listeRegroup'][$RegEncours][$rangEsp] = $ListeEsp[$cptEsp];
+				$info ="les esp&egrave;ces ".$EspAAffecter." ont &eacute;t&eacute; ajout&eacute;es au regroupement ".$_SESSION['listeRegroup'][$RegEncours][1];
+			}
+		} 
+	}
 }
 
+// Gestion de la création d'un nouveau regroupement
+switch ($CreeReg) {
+	case "y" : 
+		$ulrComp="&nvReg=f";
+		$nouveauRegroupement = "<br/><input id=\"nomReg\" type=\"textbox\" />nom du nouveau regroupement<br/>";
+		$nouveauRegroupement .= "<a href=\"#\" onClick=\"runFilieresArt('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','".$ulrComp."')\">ajouter regroupement</a>"; 
+		break;
+	case "f" : 
+		// Creation effective du nouveau regroupement
+		if (isset($_GET['nomReg'])) {
+			$nvNomReg = $_GET['nomReg'];
+			if (!($_SESSION['listeRegroup'] =="" )) {
+				$rangNvReg = count($_SESSION['listeRegroup']) + 1;
+				$_SESSION['listeRegroup'][$rangNvReg][1]=$nvNomReg;
+				$info .="Regroupement numero ".$rangNvReg." ".$nvNomReg." ajout&eacute;<br/>";
+				$RegEncours = $rangNvReg;
+		} else {
+				$_SESSION['listeRegroup'][1][1]=$nvNomReg;
+				$RegEncours = 1;
+				$info .="Regroupement numero 1 ".$nvNomReg." ajout&eacute;<br/>";
+			}
+		} else {
+			$info .= "erreur saisie nom <br/>";
+		}
+		break;
+}
+// Fin des différentes actions
 
+// On construit les différentes options
+// Especes disponibles
+
+$labelEspDispo = "esp&egrave;ces disponible &agrave; la s&eacute;lection";
+$SQLReg = "select id,libelle from ref_espece where id in (".$SQLEspeces.") order by id";	
+$SQLRegResult = pg_query($connectPPEAO,$SQLReg);
+$erreurSQL = pg_last_error($connectPPEAO);
+if ( !$SQLRegResult ) {
+	echo "erreur execution SQL pour ".$SQLReg." erreur complete = ".$erreurSQL."<br/>";
+//erreur
+} else { 
+	if (pg_num_rows($SQLRegResult) == 0) {
+		// Erreur
+		echo "pas d'especes trouvees dont le id est ".$SQLEspeces."<br/>" ;
+	} else { 
+		$cptEsp = 0;
+		while ($RegRow = pg_fetch_row($SQLRegResult) ) {
+			if ($_SESSION['listeRegroup'] == "" ) {
+				if (!($RegRow[0] =="" || $RegRow[0] == null)) {
+					$OptionEspDispo .= "<option value=\"".$RegRow[0]."\">".$RegRow[1]."</option>";
+					$cptEsp ++;
+				} 
+			} else {
+				$pasAjoutEsp = false;
+				// On regarde si l'espece est déja dans un groupe. Si oui, on le l'affiche pas.
+				$NbReg = count($_SESSION['listeRegroup']);
+				for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
+					$NbReg2 = count($_SESSION['listeRegroup'][$cptR]);
+					for ($cptR2=2 ; $cptR2<=$NbReg2;$cptR2++) {
+						//echo $cptR.$cptR."-".$_SESSION['listeRegroup'][$cptR][$cptR]." ";
+						if ($_SESSION['listeRegroup'][$cptR][$cptR2] == $RegRow[0]) {
+							$pasAjoutEsp = true;
+						}
+					}
+				}
+				if (!($pasAjoutEsp)) {
+					$OptionEspDispo .= "<option value=\"".$RegRow[0]."\">".$RegRow[1]."</option>";
+					$cptEsp ++;
+				}
+			}
+		}
+	}
+}
+
+pg_free_result($SQLRegResult);
+// Regroupement
+if ($_SESSION['listeRegroup'] =="" ) {
+	$labelRegroup = "pas de regroupement";
+	$OptionRegroup = "cliquez sur \"ajouter regroupement\" ci-dessous pour cr&eacute;er le premier regroupement<br/>";
+	$ulrComp="&nvReg=y";
+	$OptionRegroup .="<a href=\"#\" onclick=\"runFilieresArt('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','".$ulrComp."')\">ajouter regroupement</a>";
+} else {
+	$labelRegroup = "regroupements disponibles";
+	// Le onlclick sur le regroupement permet d'afficher les especes de ce regroupement
+	$OptionRegroup ="<select id=\"Regroupement\" class=\"level_select\" size=\"10\" name=\"Regroupement\"> \">";
+	// Remplissage de la liste des regroupements
+	$NbReg = count($_SESSION['listeRegroup']);
+	for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
+		if ($RegEncours == $cptR) {
+			$selected = "selected =\"selected\"";
+		} else {
+			$selected = "";
+		}
+		$OptionRegroup .= "<option value=\"".$cptR."\" ".$selected." onClick=\"runFilieresArt('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&regRec=change') \">".$_SESSION['listeRegroup'][$cptR][1]."</option>";
+	}
+	
+	$OptionRegroup .="</select>";
+	$OptionRegroup .="<br/><a href=\"#\" onclick=\"runFilieresArt('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=y')\">ajouter regroupement</a><br/><a href=\"#\" onclick=\"runFilieresArt('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppReg=EC')\">supprimer le regroupement</a> <br/><a href=\"#\" onclick=\"runFilieresArt('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppReg=tout')\">supprimer tous les regroupements</a> <br/>";
+	
+}
+
+// contenu du regroupement
+$selectionComp="";
+if ($_SESSION['listeRegroup'] =="" ) {
+	$labelListeRegroupt=$nouveauRegroupement;//nouveauRegroupement = la zone de saisie pour le nouveau groupement
+} else {
+	$labelListeRegroupt="esp&egrave;ces pour le regroupement s&eacute;lectionn&eacute";
+	$OptionRegroupCont ="<select id=\"Regroupcontenu\" class=\"level_select\" multiple=\"multiple\" size=\"10\" name=\"Regroupcontenu\">";
+	
+	// Remplissage des especes pour ce groupement
+	$NbReg = count($_SESSION['listeRegroup']);
+	for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
+		if ($RegEncours == $cptR) {
+			$NbReg2 = count($_SESSION['listeRegroup'][$cptR]);
+			if ($NbReg2 >=3) {
+				for ($cptR2=2 ; $cptR2<=$NbReg2;$cptR2++) {
+					$OptionRegroupCont .= "<option value=\"".$_SESSION['listeRegroup'][$cptR][$cptR2]."\">".$_SESSION['listeRegroup'][$cptR][$cptR2]."</option>";
+					$selectionComp = "<br/><a href=\"#\" onclick=\"runFilieresArt('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=EC')\">supprimer l'esp&egrave;ce</a> <br/><a href=\"#\" onclick=\"runFilieresArt('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=tout')\">supprimer toutes les esp&egrave;ces</a> <br/>";
+				}
+				break;
+			} else {
+				$OptionRegroupCont .= "<option disabled=\"disabled\">pas d'esp&egrave;ces associ&eacute;es</option>";
+				$selectionComp = "<br/>s&eacute;lectionnez une esp&egrave;ce dans la <br/>premi&egrave;re colonne et cliquez sur --> pour l'affecter <br/>&agrave; ce regroupement";
+				break;
+			}
+		}
+	}	
+	$OptionRegroupCont .="</select>".$selectionComp.$nouveauRegroupement;
+}
+// Gestion des affectations
+if (!($info == "")) { 
+	$info = "<span id=\"infoSuppReg\">".$info."</span>";
+}
+if ($_SESSION['listeRegroup'] =="" ) {
+	$AffAffection="";
+} else {
+	$AffAffection="<div id=\"gereAffectation\" class=\"level_div\"><br/><br/><br/><a href=\"#\" onclick=\"runFilieresArt('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&affEsp=y')  \">--></a><br/><br/><br/><a href=\"#\" onclick=\"runFilieresArt('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=EC')  \"><--</a> </div>";
+}
+
+	
+// On construit l'affichage
+$AffListeEspecesDispo = "<div id=\"listeEspece\" class=\"level_div\">".$labelEspDispo."<br/>
+						<select id=\"especesDispo\" class=\"level_select\" multiple=\"multiple\" size=\"10\" name=\"especesDispo\">
+						".$OptionEspDispo."</select><br/>".$cptEsp." esp&egrave;ces disponibles</div>" ;
+
+$AffListeRegroup = "<div id=\"Regroupt\" class=\"level_div\">".$labelRegroup."<br/>".$OptionRegroup."</div>" ;
+$AffListeRegroupCont = "<div id=\"listeRegroupt\" class=\"level_div\">".$labelListeRegroupt."<br/>".$OptionRegroupCont."</div>" ;						
+$construitSelection .= $info."<br/>".$AffListeEspecesDispo.$AffAffection.$AffListeRegroup.$AffListeRegroupCont;
+$construitSelection .="<div class=\"hint clear small\">
+<span class=\"hint_label\">aide : </span>
+<span class=\"hint_text\">
+vous pouvez cr&eacute;er des regroupements et leur affecter des esp&egrave;ces ou g&eacute;rer les regroupements existants<br/>
+vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche \"CTRL\" (Windows, Linux) ou \"CMD\" (Mac) enfonc&eacute;e
+</span>
+</div>
+</div>";
+return $construitSelection;
+}
 
 //*********************************************************************
 // AfficheColonnes : Fonction pour afficher les tables / colonnes a selectionner par type de peche
@@ -1763,6 +2132,9 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 		case "experimentale":
 		$runfilieres = "runFilieresExp";
 		break;
+		case "agglomeration":
+		$runfilieres = "runFilieresStat";
+		break;
 	 }
 	$TabEnCours = $numTab;
 	$fichiercolonne = $_SERVER["DOCUMENT_ROOT"]."/conf/ExtractionDefColonnes.xml";
@@ -1794,9 +2166,9 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	$inputNumFac = "<input type=\"hidden\" id=\"numFac\" value=\"".$NumChampFac."\"/>";
 	$InputTout = "";
 	if (strpos($ListeColonnes,"XtoutX") === false) {
-		$InputTout = "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','tout','','')\" />&nbsp;tout<br/>";
+		$InputTout = "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','tout','','','')\" />&nbsp;tout<br/>";
 	} else {
-		$InputTout = "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','aucun','','')\" checked=\"checked\" />&nbsp;tout<br/>";
+		$InputTout = "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','aucun','','','')\" checked=\"checked\" />&nbsp;tout<br/>";
 	}
 	
 	$tableau = $InputTout."<table class=\"ChoixChampComp\"><tr><td class=\"CCCTable\">&nbsp;".$ListeTable." </td><td class=\"CCCChamp\">colonnes par d&eacute;faut : <br/>".$ListeChampTableDef."<br/>".$ContenuChampTableFac."</td></tr></table>".$inputTableEC.$inputNumFac.$inputNumDef;
@@ -1866,6 +2238,7 @@ function ouvreFichierLog($dirLog,$fileLogComp) {
 		}
 	}
 }
+
 //*********************************************************************
 // RecupereEspeces : Fonction pour ouvrir le fichier log
 function RecupereEspeces($SQLAexec){
@@ -1919,6 +2292,7 @@ function RecupereEspeces($SQLAexec){
 	$SQLEspeces	= substr($SQLEspeces,0,- 1); // pour enlever la virgule surnumeraire;
 	return $SQLEspeces;
 }
+
 //*********************************************************************
 // remplaceAlias : Fonction pour remplacer les alias par le nom de la table
 function remplaceAlias($listeDesChamps) {

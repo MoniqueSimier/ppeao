@@ -105,7 +105,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 			</form>
 			<form id="formExtraction" method="get" action="extraction_filieres_stat.php">
 			<input id="startProcess" type="submit" value="Test statistiques"/>
-	<input type="hidden" id="xml" name="xml" value="testExtractionStat"/>
+			<input type="hidden" id="xml" name="xml" value="testExtractionStat"/>
 			G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
 			<br/>
 			</form>			

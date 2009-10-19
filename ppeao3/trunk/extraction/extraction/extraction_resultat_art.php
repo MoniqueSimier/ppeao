@@ -44,7 +44,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 
 // Fichier à analyser
-
 if ($_SESSION['fichier_xml'] == "" ) {
 	$inputXML = "";
 	$filename = "ER";	
@@ -52,7 +51,7 @@ if ($_SESSION['fichier_xml'] == "" ) {
 	$inputXML = "?xml=".$_SESSION['fichier_xml'];
 	$filename =  $_SESSION['fichier_xml'].".xml";
 }
-$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$_GET["xml"].".xml";
+$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
 if (!(file_exists($file)) ) {
 	$file = tempnam(sys_get_temp_dir(), 'xmlfile');
 	//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionExp.xml";
@@ -60,7 +59,6 @@ if (!(file_exists($file)) ) {
 	fwrite($fileopen,$_SESSION["selection_xml"]);
 	rewind($fileopen);
 }
-$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionArt.xml";
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
@@ -248,7 +246,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 		</div>
 		<?php if (!($exportFichier)) {	?>
 		<div id="exportFic2">
-			<input type="button" id="validation" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','','y','','')" value="Exporter en fichier"/>
+			<input type="button" id="validation" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','','y','','','')" value="Exporter en fichier"/>
 			<input type="hidden" id="ExpFic" checked="checked"/></div>			
 		</div>
 		<?php } else {

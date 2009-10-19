@@ -31,7 +31,7 @@ Global $debugLog;
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
 	<script src="/js/ajaxExtraction.js" type="text/javascript" charset="iso-8859-15"></script>
-	<title>ppeao::statistiques::fili&egrave;res</title>
+	<title>ppeao::statistiques::afficher r&eacute;sultats</title>
 
 </head>
 
@@ -44,23 +44,21 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 
 // Fichier à analyser
-
-if (isset($_GET["xml"])) {
-	$filename =  $_GET["xml"].".xml";
-	$inputXML = "?xml=".$_GET["xml"];
-}else {
+if ($_SESSION['fichier_xml'] == "" ) {
 	$inputXML = "";
-	$filename = "ER";
+	$filename = "ER";	
+}else {
+	$inputXML = "?xml=".$_SESSION['fichier_xml'];
+	$filename =  $_SESSION['fichier_xml'].".xml";
 }
-$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$_GET["xml"].".xml";
+$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
 if (!(file_exists($file)) ) {
-	//$file = tempnam(sys_get_temp_dir(), 'xmlfile');
-	$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionExp.xml";
+	$file = tempnam(sys_get_temp_dir(), 'xmlfile');
+	//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionExp.xml";
 	$fileopen=fopen($file,'w');
 	fwrite($fileopen,$_SESSION["selection_xml"]);
 	rewind($fileopen);
 }
-$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionStat.xml";
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
@@ -70,9 +68,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 			$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
 		} else {
 			if ($inputXML =="") {
-				$InputLog = "?log=true";
+				$InputLog = "?logsupp=true";
 			}else {
-				$InputLog = "&log=true";
+				$InputLog = "&logsupp=true";
 			}
 			$EcrireLogComp = true;
 		}
@@ -111,16 +109,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 // on teste à quelle zone l'utilisateur a accès
 	if (userHasAccess($userID,$zone)) {
 		if ($EcrireLogComp ) {
-			WriteCompLog ($logComp, "Debut du traitement Resultat de l'extraction des peches artisanales pour filiere ".$typeAction,$pasdefichier);
+			WriteCompLog ($logComp, "Debut du traitement Resultat de l'extraction des statistiques pour filiere ".$typeAction,$pasdefichier);
 		}
-
-	if ($typeAction == "peuplement") {
-		// On precharge les valeurs par défaut :
-		$_SESSION['listeQualite'] = '1,3,5';
-		$_SESSION['listeProtocole'] = '1'; // Oui / non
-		
-	}
-	// Dans tous les autres cas, toutes les autres valeurs auront été validés avant.
 	
 ?>
 		
@@ -130,7 +120,10 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				// ete faires par l'utilisateur juste avant de cliquer sur resultat.
 				// Si c'est le cas, les variables de sessions ne seront pas a jour.
 
-				
+				if (isset($_GET['Esp'])) {
+					$valeurAMJ = AnaylseVarSession($_GET['Esp']);
+					$_SESSION['listeEspeces'] = $valeurAMJ;
+				} 					
 				if (isset($_GET['Col'])) {
 					$ListeColRecues = $_GET['Col'];
 				} else {
@@ -170,15 +163,18 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 							//$valTest = $colRecues[$cptCR];
 							$_SESSION['listeColonne'] = $colRecues[$cptCR];
 						}
+				
 					}
 				}
-
 				$exportFichier = false;
 				if (isset($_GET['exf'])) {
 					if ($_GET['exf'] =="y") {
 						$exportFichier = true;
 					} 	
 				}	
+				if (isset($_GET['synth'])) {
+					$_SESSION['listetablesynth'] = $_GET['synth'];
+				}
 				$SQLPays 	= "";
 				$SQLSysteme	= "";
 				$SQLSecteur	= "";
@@ -207,9 +203,19 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				}
 				echo"<br/>"; 
 				echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$typeAction."</span>"; 
-				echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."\" >changer de fili&egrave;re</a></span></div>";
+				echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."\" >changer de fili&egrave;re</a></span></div>";
 				AfficherDonnees($file,$typeAction);
 				echo "<br/><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp."<br/>";
+				switch ($_SESSION['listetablesynth']) {
+					case "cap_tot" : 	$labelSynthese = "r&eacute;sultats globaux"; break;
+					case "cap_sp" : 	$labelSynthese = "r&eacute;sultats par esp&egrave;ces"; break;
+					case "dft_sp" : 	$labelSynthese = "structure en taille des esp&egrave;ces"; break;
+					case "cap_GT" : 	$labelSynthese = "r&eacute;sultats globaux par GT"; break;
+					case "cap_GT_sp" : 	$labelSynthese = "r&eacute;sultats par esp&egrave;ces et par GT"; break;
+					case "dft_sp_sp" : 	$labelSynthese = "structure en taille des esp&egrave;ces par GT"; break;
+					default: $labelSynthese = "inconnu";break;
+				}
+				echo "<b>table de synthèse en cours </b> : ".$labelSynthese." (".$_SESSION['listetablesynth'].")<br/>";
 				echo "<b>".$labelSelection." s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;								
 				?>
 
@@ -219,7 +225,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 			echo $resultatLecture; 
 			if ($EcrireLogComp ) {
 				WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
-				WriteCompLog ($logComp, "Fin Calcul  ".$typeAction,$pasdefichier);
+				WriteCompLog ($logComp, "Fin statistiques  ".$typeAction,$pasdefichier);
 				WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
 			}
 		?>

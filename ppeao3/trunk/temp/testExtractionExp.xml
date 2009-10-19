@@ -18,11 +18,11 @@
 		<secteur id="25">Gambie Amont</secteur>
 	</secteurListe>
 	<intervalle>	<!-- annee = valeur complète sur 4 chiffres, mois = valeur numérique de 1 à 12, 1 = janvier, 12 = décembre, libellé du mois dans admin_config_mois -->
-		<dateDebut annee="2000" mois="1"></dateDebut>
-		<dateFin annee="2000" mois="12"></dateFin>
+		<dateDebut annee="2000" mois="11"></dateDebut>
+		<dateFin annee="2000" mois="11"></dateFin>
 	</intervalle>
 	<campagneListe selection="selection">	<!-- Table de référence = exp_campagne - id, libelle-->
-		<campagne id="138">campagne du 2000-11-24 00:00:00.0 au 2000-12-03 00:00:00.0</campagne>
+		<campagne id="13">campagne du 2000-11-24 00:00:00.0 au 2000-12-03 00:00:00.0</campagne>
 	</campagneListe>
 	<enginListe selection="selection">	<!-- Table de référence = exp_engin - id, libelle-->
 		<engin id="t">t- senne tournante 250m</engin>

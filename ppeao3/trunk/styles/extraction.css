@@ -128,7 +128,7 @@ list-style:none;
 #menuTab{
 	font-size:80%;
 	position:absolute;
-	top:410px;
+	top:430px;
 	left:5px;
 	width:800px;
 	background:#f8ea47;
@@ -246,6 +246,16 @@ list-style:none;
 	text-align:left;
 	vertical-align:top;
 }
+#Regroupt{
+	font-size:75%;
+	text-align:left;
+	vertical-align:top;
+}
+#listeRegroupt{
+	font-size:75%;
+	text-align:left;
+	vertical-align:top;
+}
 #affresultat{
 	background-color: #f9f5cc;
 }
@@ -285,4 +295,8 @@ list-style:none;
 	font-weight:bold;
 }
 #filEncoursText {
+}
+#infoSuppReg{
+	font-size:70%;
+	font-style:italic;
 }

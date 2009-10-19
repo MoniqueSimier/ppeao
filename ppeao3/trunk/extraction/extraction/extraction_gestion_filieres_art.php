@@ -37,8 +37,6 @@ if (isset($_GET['log'])) {
 	echo "erreur, il manque le parametre log <br/>";
 	exit;
 }
-// Gestion du fichier
-// a faire
 // On récupère les valeurs des paramètres pour les fichiers log
 $dirLog = GetParam("repLogExtr",$PathFicConf);
 $nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
@@ -100,6 +98,18 @@ if (isset($_GET['Esp'])) {
 } else {
 	$listeEsp = "";
 }
+// Gestion des regroupements
+if (isset($_GET['RegEC'])) {
+	$RegEncours = intval($_GET['RegEC']) + 1;
+} else {
+	$RegEncours = "";
+}
+if (isset($_GET['nvReg'])) {
+	$CreerReg = $_GET['nvReg'];
+} else {
+	$CreerReg = "";
+}
+
 if (!($ListeColRecues =="")) {
 	$colRecues = explode (",",$ListeColRecues);
 	$NumColR = count($colRecues) - 1;
@@ -195,6 +205,7 @@ $ctActive="";
 $colActive="";
 $ClassEnv = "";
 $espActive="";
+$regActive = "";
 switch ($numTab) {
 	case "1":
 		if ($typeAction == "activite" || $typeAction == "capture" || $typeAction == "engin" ) {
@@ -228,11 +239,11 @@ switch ($numTab) {
 		}
 		$tab5 = " active";
 		break;
-	case "5":
+	case "6":
 		if (!($typeAction == "activite") && !($typeAction == "capture") && !($typeAction == "engin") ) {
 			$regActive=" visible";
 		}
-		$tab5 = " active";
+		$tab6 = " active";
 		break;
 }
 // Gestion des valeurs déjà saisies ou valeurs par défaut
@@ -250,14 +261,14 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <?php // construit les differentes onglets du tableau ?>
 <div id="menuTab">
 <?php if (!($typeAction == "activite") && !($typeAction == "capture") && !($typeAction == "engin")) { ?>
-<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','')">crit&egrave;res g&eacute;n&eacute;raux</a>|
-<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n','','','')">cat&eacute;gories &eacute;cologiques</a>|
-<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','')">cat&eacute;gories trophiques</a>|
+<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','','')">crit&egrave;res g&eacute;n&eacute;raux</a>|
+<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n','','','','')">cat&eacute;gories &eacute;cologiques</a>|
+<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','','')">cat&eacute;gories trophiques</a>|
 
 <?php } ?>
-<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','')">colonnes</a>
+<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','','')">colonnes</a>
 <?php if (!($typeAction == "activite") && !($typeAction == "capture") && !($typeAction == "engin")) { ?>
-|<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n','','','')">esp&egrave;ces</a> | <a href="#" class="<?php echo $tab6;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','6','<?php echo $codeTableEnCours;?>','n','','','')">regroupement Esp&egrave;ces</a>
+|<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n','','','','')">esp&egrave;ces</a> | <a href="#" class="<?php echo $tab6;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','6','<?php echo $codeTableEnCours;?>','n','','','','')">regroupement Esp&egrave;ces</a>
 <?php } ?>
 </div>
 <?php // Les differents div correspondant aux choix disponibles par onglet ?>
@@ -289,7 +300,7 @@ echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typePeche,$
 <?php // l'onglet qui gere les espèces ?>
 <div id="regroupesp" class="regroupesp<?php echo $regActive;?>">
 <?php 
-echo AfficheRegroupEsp($_SESSION['SQLEspeces'],$_SESSION['ListeRegroupEsp']); ?>
+echo AfficheRegroupEsp($typePeche,$typeAction,$numTab,$_SESSION['SQLEspeces'],$_SESSION['ListeRegroupEsp'],$RegEncours,$CreerReg); ?>
 </div>
 </form>
 
