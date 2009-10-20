@@ -247,8 +247,6 @@ $unites=array("total"=>$total,"ids"=>$ids);
 $user_admin='';
 if (isset($_SESSION["s_ppeao_user_id"])) {$user_groups=userGetGroups($_SESSION["s_ppeao_user_id"]);
 
-//debug echo('<pre>');print_r($user_groups);echo('</pre>');
-
 
 if (in_array(1,$user_groups) || in_array(2,$user_groups)) {$user_admin=TRUE;} else {$user_admin=FALSE;}
 
@@ -270,7 +268,9 @@ if ($_GET["step"]>4 && $user_admin!=TRUE) {
 	// pour chaque unite, on verifie si l'utilisateur y a acces ou pas
 	// si oui, on garde l'unite, sinon on ne l'inclut que si elle fait partie des donnees "historiques"
 	foreach ($unites["ids_avant"] as $unite) {
+		
 		$acces=userHasAccessToUnit($unite,$domaine,$exploit,$user_droits);
+		
 		// si l'utilisateur a acces a la totalite des donnees du systeme
 		if ($acces["acces_complet"]) {
 			$unites["ids"][]=$unite;
@@ -280,9 +280,12 @@ if ($_GET["step"]>4 && $user_admin!=TRUE) {
 				// on recupere les donnees de delai_butoir du systeme concerne
 				$systeme_id=$acces["ref_systeme_id"];
 				$utilisation=$acces["utilisation"];
-				//debug 				echo('<pre>');print_r("pas acces complet a $systeme_id pour $utilisation dans $unite, on filtre sur les dates");echo('</pre>');
+				
+				// cas particulier : on n'a pas encore choisi de type d'exploitation
+				// donc on doit compter les enquetes auxquelles l'utilisateur peut accéder pour PA et pour STATS
+				if ($_GET["step"]==5 && $domaine=='art') {$utilisation='art_plus_stats';}
+				
 				$systeme_butoirs=getSystemAccessDate($systeme_id);
-				//debug 				echo('<pre>');print_r($systeme_butoirs);echo('</pre>');
 				
 				// on compare la date de debut de la campagne ou periode d'enquete avec la date butoir
 				$annee_courante=date('Y');
@@ -298,6 +301,12 @@ if ($_GET["step"]>4 && $user_admin!=TRUE) {
 					case "stats":
 					// on calcule l'annee butoir :
 					$annee_butoir=$annee_courante-$systeme_butoirs["ST"]["delai_butoir"];
+					break;
+					case "art_plus_stats":
+					// on calcule l'annee butoir : on prend la plus recente de PA et ST
+					$annee_butoir_art=$annee_courante-$systeme_butoirs["PA"]["delai_butoir"];
+					$annee_butoir_stats=$annee_courante-$systeme_butoirs["ST"]["delai_butoir"];
+					$annee_butoir=max($annee_butoir_art,$annee_butoir_stats);
 					break;
 				}
 				//debug echo($acces["annee"].'/'.$annee_butoir.'<br />');
@@ -316,6 +325,9 @@ if (isset($unites["total_avant"]) && $unites["total_avant"]!=$unites["total"]) {
 	$unites["ids_exclues"]=array_diff($unites["ids_avant"],$unites["ids"]);
 	$unites["total_exclues"]=$unites["total_avant"]-$unites["total"];
 } 
+
+//debug echo('<pre>');print_r($unites);echo('</pre>');
+
 
 // maintenant on calcule le nombre de coups de peche (exp) ou de periodes d'enquete/activites
 $coups=array();$debarquements=array();$activites=array();
@@ -467,6 +479,7 @@ if ($_GET["step"]>1) {
 $filtrees["campagnes"]=FALSE;
 $filtrees["enquetes"]=FALSE;
 
+
 switch ($peches) {
 	case "exp":
 	// Peches experimentales
@@ -489,6 +502,7 @@ switch ($peches) {
 				"coups_total"=>$campagnes["coups"]["coups_total"],
 				"texte"=>'<p>'.$text.$link.'</p><ul><li>'.$total_campagnes.' campagne(s)'.$sur_campagnes.$texte_coups.'</li></ul>');
 	break;
+	
 	case "art":
 	// on compte les periodes d'enquete
 	$enquetes=countMatchingUnits2('art',$exploit);
@@ -512,6 +526,7 @@ switch ($peches) {
 				"activites_ids"=>$enquetes["activites"]["activites_ids"],
 				"texte"=>'<p>'.$text.$link.'</p><ul><li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$sur_enquetes.$texte_deb_act.'</li></ul>');
 	break;
+	
 	default:
 	// avant le choix de exp ou art : 
 	// on compte les campagnes et les enquetes
@@ -2334,7 +2349,6 @@ if ($domaine=='exp') {$utilisation='exp';}
 if ($domaine=='art' && $exploit=='stats') {$utilisation='stats';}
 if ($domaine=='art' && $exploit!='stats') {$utilisation='art';}
 
-
 // pour l'unite en cours, on recupere la date et le systeme, 
 // de facon differente selon que l'on a affaire a une campagne ou une periode d'enquete
 switch($utilisation) {
@@ -2382,7 +2396,7 @@ switch($utilisation) {
 	else {$acces_complet=FALSE;}
 	break;
 	
-	// peche artisanale
+	// statistiques de peche
 	case "stats":
 	$sql='SELECT DISTINCT s.ref_systeme_id  as systeme, pe.annee, pe.mois 
 			FROM art_periode_enquete pe, ref_secteur s, art_agglomeration a
