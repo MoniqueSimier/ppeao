@@ -625,7 +625,7 @@ function AfficherDonnees($file,$typeAction){
 						// Il n'y aucune selection de colonnes supplémentaires
 						// On prend tous les poissons (pas de différence poisson/non poisson
 						$listeChampsSpec = ",esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id";
-						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,ref_espece as esp"; // attention a l'ordre pour les left outer join
+						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,ref_espece as esp"; 
 						$WhereSpec = " and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
 							esp.id = fra.ref_espece_id and
 							fam.id = esp.ref_famille_id ";
@@ -637,7 +637,7 @@ function AfficherDonnees($file,$typeAction){
 						// On n'extrait que des donnéees environnements
 						// Pas de données poisson
 						$listeChampsSpec = ",env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond";
-						$ListeTableSpec = ",exp_environnement as env"; // attention a l'ordre pour les left outer join
+						$ListeTableSpec = ",exp_environnement as env"; 
 						$WhereSpec = " 	and env.id = cph.exp_environnement_id ";
 						$valueCount = "cph.id" ; // pour gerer la pagination						
 						$builQuery = true;
@@ -646,7 +646,7 @@ function AfficherDonnees($file,$typeAction){
 						$labelSelection = "donn&eacute;es NtPt ";
 						// C'est un mixte entre les données peuplements et environnement + des selections de colonnes
 						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond";
-						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,ref_espece as esp";// attention a l'ordre pour les left outer join
+						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,ref_espece as esp";
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
 							esp.id = fra.ref_espece_id and
 							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and ".$compPoisSQL;
@@ -659,7 +659,7 @@ function AfficherDonnees($file,$typeAction){
 						// ATTENTION !!!!!! Si la liste ci-dessous est modifiée, il faut imperativement modifié la requete pour calculer le 
 						// le coefficient d'extrapolation apres l'execution de la requete 
 						$listeChampsSpec = ",fra.id, fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond,bio.longueur";
-						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,exp_biologie as bio,ref_espece as esp";// attention a l'ordre pour les left outer join
+						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,exp_biologie as bio,ref_espece as esp";
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp." 
 							esp.id = fra.ref_espece_id and
 							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
@@ -672,7 +672,7 @@ function AfficherDonnees($file,$typeAction){
 					// Construction de la liste d'individus
 						$labelSelection = "donn&eacute;es trophiques ";
 						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond,bio.longueur,bio.id,trop.exp_contenu_id,bio.exp_remplissage_id,cont.libelle";
-						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,exp_biologie as bio,exp_trophique as trop, exp_contenu as cont,ref_espece as esp";// attention a l'ordre pour les left outer join
+						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,exp_biologie as bio,exp_trophique as trop, exp_contenu as cont,ref_espece as esp";
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."  
 							esp.id = fra.ref_espece_id and
 							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
@@ -974,7 +974,7 @@ function AfficherDonnees($file,$typeAction){
 						$OrderCom = $OrderArt ;
 						$labelSelection = "donn&eacute;es d'activit&eacute;";	
 						$listeChampsSpec = ",act.art_type_activite_id,act.nbre_unite_recencee ";
-						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
+						$ListeTableSpec = ""; 
 						$WhereSpec = "";	
 						$ConstIDunique = "ART-##-12"; // Ce qui apres le -##-n sera remplacé par la valeur d'index n de la lecture de la requete par exemple, ici, on va recuperer art.id  
 						$valueCount = "act.id" ; // pour gerer la pagination				
@@ -988,7 +988,7 @@ function AfficherDonnees($file,$typeAction){
 						$WhereCom = $WhereDeb ;
 						$OrderCom = $OrderDeb ;
 						$listeChampsSpec = ", deb.poids_total";
-						$ListeTableSpec = ""; // attention a l'ordre pour les left outer join
+						$ListeTableSpec = ""; 
 						$WhereSpec = "";
 						$ConstIDunique = "DEB-##-11";
 						$valueCount = "deb.id" ; // pour gerer la pagination	
@@ -1001,7 +1001,7 @@ function AfficherDonnees($file,$typeAction){
 						$WhereCom = $WhereDeb ;
 						$OrderCom = $OrderDeb ;				
 						$listeChampsSpec = ", deb.poids_total,afra.poids,afra.nbre_poissons ";
-						$ListeTableSpec = ", art_fraction as afra,ref_espece as esp "; // attention a l'ordre pour les left outer join
+						$ListeTableSpec = ", art_fraction as afra,ref_espece as esp "; 
 						$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id 
 										and esp.id = afra.ref_espece_id	";					
 						$ConstIDunique = "DEB-##-11";
@@ -1015,7 +1015,7 @@ function AfficherDonnees($file,$typeAction){
 						$WhereCom = $WhereDeb ;
 						$OrderCom = $OrderDeb ;	
 						$listeChampsSpec = ", deb.poids_total,afra.poids,afra.nbre_poissons,ames.taille,esp.libelle ";
-						$ListeTableSpec = ", art_fraction as afra,ref_espece as esp,art_poisson_mesure as ames"; // attention a l'ordre pour les left outer join
+						$ListeTableSpec = ", art_fraction as afra,ref_espece as esp,art_poisson_mesure as ames"; 
 						$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id 
 										and ames.art_fraction_id = afra.id 
 										and esp.id = afra.ref_espece_id	";						
@@ -1030,7 +1030,7 @@ function AfficherDonnees($file,$typeAction){
 						$WhereCom = $WhereDeb ;
 						$OrderCom = $OrderDeb ;	
 						$listeChampsSpec = ",deb.art_grand_type_engin_id, aeng.art_type_engin_id,teng.libelle";
-						$ListeTableSpec = ", art_engin_peche as aeng, art_type_engin as teng"; // attention a l'ordre pour les left outer join
+						$ListeTableSpec = ", art_engin_peche as aeng, art_type_engin as teng"; 
 						$WhereSpec = " and aeng.art_debarquement_id = deb.id and teng.id = aeng.art_type_engin_id";						
 						$ConstIDunique = "DEB-##-11";
 						$valueCount = "deb.id" ; // pour gerer la pagination
@@ -1155,93 +1155,78 @@ function AfficherDonnees($file,$typeAction){
 					switch ($typeAction) {
 						// Statistiques globales
 						case "globale" :
-						
+							$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom ,agg.id ,agg.nom ,penq.annee ,penq.mois";
+							$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_agglomeration as agg";
+							
+							$WhereCom = 	$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq."	
+											agg.id = penq.art_agglomeration_id and
+											ast.mois = penq.mois and
+											ast.annee = penq.annee and 
+											ast.art_agglomeration_id = penq.art_agglomeration_id and
+											py.id = sy.ref_pays_id and
+											sy.id = se.ref_systeme_id and
+											se.id = agg.ref_secteur_id " ;		
+
+							$OrderCom = "order by py.id asc,sy.id asc,penq.annee asc,penq.mois asc";
+
+
 							// On analyse le choix et on cree la requete en focntion
 							switch ($choixSynthese) {
 								case "cap_tot";
 									$labelSelection = "captures totales";	
-									$listeChampsSpec = "ast.fm,ast.cap,ast.pue,ast.id";
-									$ListeTableSpec = "art_periode_enquete as penq, art_stat_totale as ast"; // attention a l'ordre pour les left outer join
-									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
-													ast.mois = penq.mois and
-													ast.annee = penq.annee and 
-													ast.art_agglomeration_id = penq.art_agglomeration_id
-													";						
-									$ConstIDunique = "AST-##-1";
+									$listeChampsSpec = ",ast.fm,ast.cap,ast.pue,ast.id";
+									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast"; 
+									$WhereSpec = " and ast.art_agglomeration_id = penq.art_agglomeration_id";						
+									$ConstIDunique = "AST-##-13";
 									$valueCount = "ast.id" ; // pour gerer la pagination
 									$builQuery = true;
 									break;
 								case "cap_sp";
 									$labelSelection = "r&eacute;sultats par esp&egrave;ces";	
-									$listeChampsSpec = "asp.ref_espece_id,asp.pue_sp,asp.cap_sp,ast.fm,ast.cap,ast.pue,asp.id,ast.id";
-									$ListeTableSpec = "art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp"; // attention a l'ordre pour les left outer join
-									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
-													asp.art_stat_totale_id = ast.id and 
-													ast.mois = penq.mois and
-													ast.annee = penq.annee and 
-													ast.art_agglomeration_id = penq.art_agglomeration_id
-													";						
-									$ConstIDunique = "ASP-##-6";
+									$listeChampsSpec = ",asp.ref_espece_id,asp.pue_sp,asp.cap_sp,ast.fm,ast.cap,ast.pue,asp.id,ast.id";
+									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp"; 
+									$WhereSpec = "	and asp.art_stat_totale_id = ast.id ";					
+									$ConstIDunique = "ASP-##-16";
 									$valueCount = "asp.id" ; // pour gerer la pagination
 									$builQuery = true;
 									break;
 								case "dft_sp";
 									$labelSelection = "structure en taille des esp&egrave;ces";	
-									$listeChampsSpec = "asp.ref_espece_id,asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id";
-									$ListeTableSpec = "art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats"; // attention a l'ordre pour les left outer join
-									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
-													ats.art_stat_sp_id = asp.id and
-													asp.art_stat_totale_id = ast.id and 
-													ast.mois = penq.mois and
-													ast.annee = penq.annee and 
-													ast.art_agglomeration_id = penq.art_agglomeration_id
-													";						
-									$ConstIDunique = "ATS-##-7";
+									$listeChampsSpec = ",asp.ref_espece_id,asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id";
+									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats"; 
+									$WhereSpec = " 	and ats.art_stat_sp_id = asp.id and
+													asp.art_stat_totale_id = ast.id ";						
+									$ConstIDunique = "ATS-##-13";
 									$valueCount = "ats.id" ; // pour gerer la pagination
 									$builQuery = true;
 									break;
 								case "cap_GT";
 									$labelSelection = "r&eacute;sultats globaux par GT";	
-									$listeChampsSpec = "asgt.fm_gt,asgt.cap_gt,asgt.pue_gt,asgt.id,ast.id,ast.id";
-									$ListeTableSpec = "art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast"; // attention a l'ordre pour les left outer join
-									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
-													asgt.art_stat_totale_id = ast.id and 
-													ast.mois = penq.mois and
-													ast.annee = penq.annee and 
-													ast.art_agglomeration_id = penq.art_agglomeration_id
-													";						
-									$ConstIDunique = "AGT-##-3";
+									$listeChampsSpec = ",asgt.fm_gt,asgt.cap_gt,asgt.pue_gt,asgt.id,ast.id,ast.id";
+									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast"; 
+									$WhereSpec = "	and asgt.art_stat_totale_id = ast.id ";						
+									$ConstIDunique = "AGT-##-13";
 									$valueCount = "asgt.id" ; // pour gerer la pagination
 									$builQuery = true;
 									break;
 								case "cap_GT_sp";
 									$labelSelection = "r&eacute;sultats par esp&egrave;ces et par GT";	
-									$listeChampsSpec = "asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, asgts.id, asgt.id, ast.id, ast.id";
-									$ListeTableSpec = "art_periode_enquete as penq, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast"; // attention a l'ordre pour les left outer join
-									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
-													asgts.art_stat_gt_id = asgt.id and 
-													asgt.art_stat_totale_id = ast.id and 
-													ast.mois = penq.mois and
-													ast.annee = penq.annee and 
-													ast.art_agglomeration_id = penq.art_agglomeration_id
-													";						
-									$ConstIDunique = "ATS-##-3";
+									$listeChampsSpec = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, asgts.id, asgt.id, ast.id, ast.id";
+									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast"; 
+									$WhereSpec = "	and asgts.art_stat_gt_id = asgt.id and 
+													asgt.art_stat_totale_id = ast.id ";						
+									$ConstIDunique = "ATS-##-13";
 									$valueCount = "asgts.id" ; // pour gerer la pagination
 									$builQuery = true;
 									break;
 								case "dft_sp_sp";
 									$labelSelection = "structure en taille des esp&egrave;ces par GT";	
-									$listeChampsSpec = "asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, atgts.li,atgts.xi,atgts.id, asgts.id, asgt.id, ast.id, ast.id";
-									$ListeTableSpec = "art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast"; // attention a l'ordre pour les left outer join
-									$WhereSpec = " penq.id in (".$SQLPeEnquete.") and
-													atgts.art_stat_gt_sp_id = asgts.id and 
+									$listeChampsSpec = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, atgts.li,atgts.xi,atgts.id, asgts.id, asgt.id, ast.id, ast.id";
+									$ListeTableSpec = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast"; 
+									$WhereSpec = "	and atgts.art_stat_gt_sp_id = asgts.id and 
 													asgts.art_stat_gt_id = asgt.id and 
-													asgt.art_stat_totale_id = ast.id and 
-													ast.mois = penq.mois and
-													ast.annee = penq.annee and 
-													ast.art_agglomeration_id = penq.art_agglomeration_id
-													";						
-									$ConstIDunique = "ATG-##-5";
+													asgt.art_stat_totale_id = ast.id ";						
+									$ConstIDunique = "ATG-##-16";
 									$valueCount = "atgts.id" ; // pour gerer la pagination
 									$builQuery = true;
 									break;
