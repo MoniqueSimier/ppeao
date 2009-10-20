@@ -984,8 +984,31 @@ ALTER TABLE ONLY ref_systeme
     ADD CONSTRAINT ref_systeme_pkey PRIMARY KEY (id);
 
 
--- --------------------------------------------------------------------
--- AJOUT DES CONTRAINTES DE CLES SECONDAIRES
+
+-- ****************************************************************************************
+-- LES CONTRAINTES DE CLE ETRANGERES, AJOUTEES A LA FIN POUR NE PAS GENER LE PROCESSUS
+-- ****************************************************************************************
+
+
+-- note : les tables admin_acces_donnees_acteurs et admin_acces_donnees_systemes sont des tables d'administration mais qui 
+-- utilisent des clés étrangères issues de la table ref_systeme, ce qui oblige a déclarer les deux contraintes
+-- suivantes dans ce fichier
+--
+-- Name: admin_acces_donnees_acteurs_ref_systeme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_acces_donnees_acteurs
+    ADD CONSTRAINT admin_acces_donnees_acteurs_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id);
+
+
+--
+-- Name: admin_acces_donnees_systemes_ref_systeme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY admin_acces_donnees_systemes
+    ADD CONSTRAINT admin_acces_donnees_systemes_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id);
+
+
 
 --
 -- Name: art_agglomeration_art_type_agglomeration_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
@@ -1114,3 +1137,4 @@ ALTER TABLE ONLY ref_secteur
 
 ALTER TABLE ONLY ref_systeme
     ADD CONSTRAINT ref_systeme_ref_pays_id_fkey FOREIGN KEY (ref_pays_id) REFERENCES ref_pays(id) ON UPDATE CASCADE ON DELETE CASCADE;
+

@@ -1442,26 +1442,9 @@ ALTER TABLE ONLY admin_zones
     ADD CONSTRAINT admin_zones_zone_name_key UNIQUE (zone_name);
 
 
-
+-- ****************************************************************************************
 -- LES CONTRAINTES DE CLE ETRANGERES, AJOUTEES A LA FIN POUR NE PAS GENER LE PROCESSUS
-
-
-
---
--- Name: admin_acces_donnees_acteurs_ref_systeme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
---
-
-ALTER TABLE ONLY admin_acces_donnees_acteurs
-    ADD CONSTRAINT admin_acces_donnees_acteurs_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id);
-
-
---
--- Name: admin_acces_donnees_systemes_ref_systeme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
---
-
-ALTER TABLE ONLY admin_acces_donnees_systemes
-    ADD CONSTRAINT admin_acces_donnees_systemes_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id);
-
+-- ****************************************************************************************
 
 
 --
@@ -1562,14 +1545,3 @@ ALTER TABLE ONLY admin_log
 
 ALTER TABLE ONLY admin_sequences
     ADD CONSTRAINT admin_sequences_table_id_fkey FOREIGN KEY (table_db) REFERENCES admin_dictionary_tables(table_db) ON UPDATE CASCADE ON DELETE CASCADE;
-
---
--- Name: admin_acces_donnees_systemes_ref_systeme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
---
-
-ALTER TABLE ONLY admin_acces_donnees_systemes
-    ADD CONSTRAINT admin_acces_donnees_systemes_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id);
-
-
-
-
