@@ -19,7 +19,7 @@ $subsection="";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 
-$zone=6; // zone extraction (voir table admin_zones)
+$zone=0; // zone libre (voir table admin_zones)
 Global $debugLog;
 ?>
 
@@ -165,7 +165,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 		<br/>
 		<div id="runProcess"><b>Choix type statistique &agrave; extraire :</b>&nbsp;
 			<a href="#" onClick="runFilieresStat('<?php echo $typeStatistiques ?>','globale','1','','n','','','')">statistiques globales</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieresStat('<?php echo $typeStatistiques ?>','GT','1','','n','','','')">statistiques par Grand Type</a>&nbsp;
+			<a href="#" onClick="runFilieresStat('<?php echo $typeStatistiques ?>','GT','1','','n','','','')">statistiques par grand type</a>&nbsp;
 		</ul>
 		</div>
 		<div id="resultfiliere"></div>

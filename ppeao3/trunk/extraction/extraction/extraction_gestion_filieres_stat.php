@@ -194,12 +194,15 @@ switch ($_SESSION['listetablesynth']) {
 <?php // l'onglet qui gere la selection des categories ecologiques ?>
 <div id="general" class="cateco<?php echo $genActive;?>" >
 	<span class="sscriteresgen<?php echo $ClassEnv;?>">choisir la table de synth&egrave;se :<br/></span>
+ 	<?php if ($typeAction == "globale") { ?>   
 	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese1" type="radio" name="synthese" value="cap_tot"  <?php echo $valsynth1;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats globaux</span><br/>
 	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese2" type="radio" name="synthese" value="cap_sp"  <?php echo $valsynth2;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats par esp&egrave;ces</span><br/>
 	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese3" type="radio" name="synthese" value="dft_sp"  <?php echo $valsynth3;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">structure en taille des esp&egrave;ces</span><br/>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese4" type="radio" name="synthese" value="cap_GT"  <?php echo $valsynth4;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats globaux par GT</span><br/>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese5" type="radio" name="synthese" value="cap_GT_sp"  <?php echo $valsynth5;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats par esp&egrave;ces et par GT</span><br/>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese6" type="radio" name="synthese" value="dft_sp_sp"  <?php echo $valsynth6;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">structure en taille des esp&egrave;ces par GT</span>
+    <?php } else { ?>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese1" type="radio" name="synthese" value="cap_GT"  <?php echo $valsynth4;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats globaux par GT</span><br/>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese2" type="radio" name="synthese" value="cap_GT_sp"  <?php echo $valsynth5;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats par esp&egrave;ces et par GT</span><br/>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese3" type="radio" name="synthese" value="dft_sp_sp"  <?php echo $valsynth6;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">structure en taille des esp&egrave;ces par GT</span>
+    <?php } ?>
     
 </div>
 <?php // l'onglet qui gere la selection des colonnes complémentaires ?>

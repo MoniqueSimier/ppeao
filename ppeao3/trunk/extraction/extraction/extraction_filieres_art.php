@@ -19,7 +19,7 @@ $subsection="";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 
-$zone=6; // zone extraction (voir table admin_zones)
+$zone=0; // zone libre (voir table admin_zones)
 Global $debugLog;
 ?>
 

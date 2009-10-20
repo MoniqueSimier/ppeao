@@ -589,7 +589,7 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 		changementAction = ''
 		// On charge les données modifiées
 		// Recuperation de la table a extraire 
-		tablesynt  = recupereSelection(6,"synthese");
+		tablesynt  = recupereSelection(3,"synthese");
 		// Recuperation des selections sur choix des especes
 		// Recuperation des especes
 		limEsp = document.getElementById("numEsp").value;
@@ -757,7 +757,7 @@ function stateChanged4() {
 		if (globalAction=="GT") {gtActif=" active";}
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
-		document.getElementById("runProcess").innerHTML="<b>Choix type statistique &agrave; extraire :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','globale;','1','"+globalTableEnCours+"','n','','','')\" class=\"globale"+gloActif+"\">statistiques globales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','GT','1','"+globalTableEnCours+"','n','','','','')\" class=\"GT"+gtActif+"\">statistiques par Grand Type</a>";
+		document.getElementById("runProcess").innerHTML="<b>Choix type statistique &agrave; extraire :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','globale;','1','"+globalTableEnCours+"','n','','','')\" class=\"globale"+gloActif+"\">statistiques globales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','GT','1','"+globalTableEnCours+"','n','','','','')\" class=\"GT"+gtActif+"\">statistiques par grand type</a>";
 		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresStat('"+globaltypepeche+"','"+globalAction+"','1','','y','','','','','','')\" value=\"afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
 		
 	}

@@ -1152,24 +1152,23 @@ function AfficherDonnees($file,$typeAction){
 				case "agglomeration" :
 					// ********** DEBUT STATISTIQUES PAR AGGLOMERATION
 					// ********** CONSTRUCTION DES SQL DEFINITIFS PAR TYPE DE STATISTIQUES CHOISIS
-					switch ($typeAction) {
+						$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom ,agg.id ,agg.nom ,penq.annee ,penq.mois";
+						$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_agglomeration as agg";
+						
+						$WhereCom = 	$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq."	
+										agg.id = penq.art_agglomeration_id and
+										ast.mois = penq.mois and
+										ast.annee = penq.annee and 
+										ast.art_agglomeration_id = penq.art_agglomeration_id and
+										py.id = sy.ref_pays_id and
+										sy.id = se.ref_systeme_id and
+										se.id = agg.ref_secteur_id " ;		
+
+						$OrderCom = "order by py.id asc,sy.id asc,penq.annee asc,penq.mois asc";
+						switch ($typeAction) {
+				
 						// Statistiques globales
 						case "globale" :
-							$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom ,agg.id ,agg.nom ,penq.annee ,penq.mois";
-							$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_agglomeration as agg";
-							
-							$WhereCom = 	$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq."	
-											agg.id = penq.art_agglomeration_id and
-											ast.mois = penq.mois and
-											ast.annee = penq.annee and 
-											ast.art_agglomeration_id = penq.art_agglomeration_id and
-											py.id = sy.ref_pays_id and
-											sy.id = se.ref_systeme_id and
-											se.id = agg.ref_secteur_id " ;		
-
-							$OrderCom = "order by py.id asc,sy.id asc,penq.annee asc,penq.mois asc";
-
-
 							// On analyse le choix et on cree la requete en focntion
 							switch ($choixSynthese) {
 								case "cap_tot";
@@ -1200,6 +1199,14 @@ function AfficherDonnees($file,$typeAction){
 									$valueCount = "ats.id" ; // pour gerer la pagination
 									$builQuery = true;
 									break;
+								default:
+									echo "erreur pas de selection synthese<br/>";
+							}
+						break;	
+						// Statistiques par Grand type
+						case "GT" :	
+							// On analyse le choix et on cree la requete en focntion
+							switch ($choixSynthese) {
 								case "cap_GT";
 									$labelSelection = "r&eacute;sultats globaux par GT";	
 									$listeChampsSpec = ",asgt.fm_gt,asgt.cap_gt,asgt.pue_gt,asgt.id,ast.id,ast.id";
@@ -1230,18 +1237,9 @@ function AfficherDonnees($file,$typeAction){
 									$valueCount = "atgts.id" ; // pour gerer la pagination
 									$builQuery = true;
 									break;
-									break;
 								default:
 									echo "erreur pas de selection synthese<br/>";
 							}
-						
-						break;	
-						// Statistiques par Grand type
-						case "GT" :	
-							$labelSelection = "Periode d'enquete";
-							$SQLfinal = "select * from art_periode_enquete as penq
-											where penq.id in (".$SQLPeEnquete.")";
-						break;			
 						default	:	
 							$labelSelection = "Periode d'enquete";
 							$SQLfinal = "select * from art_periode_enquete as penq
