@@ -60,7 +60,6 @@ if (isset($_GET["xml"])) {
 $file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
 if (!(file_exists($file)) ) {
 	$file = tempnam(sys_get_temp_dir(), 'xmlfile');
-	echo "fic temp = ".$file."<br/>";
 	//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionExp.xml";
 	$fileopen=fopen($file,'w');
 	fwrite($fileopen,$_SESSION["selection_xml"]);
