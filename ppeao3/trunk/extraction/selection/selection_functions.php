@@ -2368,8 +2368,8 @@ switch($utilisation) {
 	// on s'interesse aux donnees de PE
 	$ce_systeme=array("ref_systeme_id"=>$unit_details["systeme"],"type_donnees"=>"PE");
 
-	
-	if (in_array($ce_systeme,$user_droits)) {$acces_complet=TRUE;} 
+	if (!empty($user_droits)) {
+	if (in_array($ce_systeme,$user_droits)) {$acces_complet=TRUE;} }
 	else {$acces_complet=FALSE;}
 	break;
 
@@ -2392,7 +2392,8 @@ switch($utilisation) {
 	// on recupere les droits de l'utilisateur sur le systeme concerne
 	// on s'interesse aux donnees de PA
 	$ce_systeme=array("ref_systeme_id"=>$unit_details["systeme"],"type_donnees"=>"PA");
-	if (in_array($ce_systeme,$user_droits)) {$acces_complet=TRUE;} 
+	if (!empty($user_droits)) {
+	if (in_array($ce_systeme,$user_droits)) {$acces_complet=TRUE;} }
 	else {$acces_complet=FALSE;}
 	break;
 	
@@ -2412,7 +2413,8 @@ switch($utilisation) {
 	// on recupere les droits de l'utilisateur sur le systeme concerne
 	// on s'interesse aux donnees de ST
 	$ce_systeme=array("ref_systeme_id"=>$unit_details["systeme"],"type_donnees"=>"ST");
-	if (in_array($ce_systeme,$user_droits)) {$acces_complet=TRUE;} 
+	if (!empty($user_droits)) {
+	if (in_array($ce_systeme,$user_droits)) {$acces_complet=TRUE;} }
 	else {$acces_complet=FALSE;}
 	break;
 }
