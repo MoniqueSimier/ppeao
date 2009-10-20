@@ -8,6 +8,33 @@ SET client_min_messages = warning;
 SET search_path = public, pg_catalog;
 
 
+
+--
+-- Data for Name: admin_acces_donnees_acteurs; Type: TABLE DATA; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_acces_donnees_acteurs DISABLE TRIGGER ALL;
+
+INSERT INTO admin_acces_donnees_acteurs VALUES (1, 10, 'u', 10, 'PA');
+INSERT INTO admin_acces_donnees_acteurs VALUES (2, 3, 'g', 10, 'ST');
+
+ALTER TABLE admin_acces_donnees_acteurs ENABLE TRIGGER ALL;
+
+
+--
+-- Data for Name: admin_acces_donnees_systemes; Type: TABLE DATA; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE admin_acces_donnees_systemes DISABLE TRIGGER ALL;
+
+INSERT INTO admin_acces_donnees_systemes VALUES (1, 6, 20, 'PA');
+INSERT INTO admin_acces_donnees_systemes VALUES (2, 6, 5, 'ST');
+INSERT INTO admin_acces_donnees_systemes VALUES (3, 10, 1, 'PE');
+INSERT INTO admin_acces_donnees_systemes VALUES (4, 10, 6, 'PA');
+INSERT INTO admin_acces_donnees_systemes VALUES (5, 10, 4, 'ST');
+
+ALTER TABLE admin_acces_donnees_systemes ENABLE TRIGGER ALL;
+
 --
 -- Data for Name: admin_config_mois; Type: TABLE DATA; Schema: public; Owner: devppeao
 --
@@ -131,7 +158,7 @@ INSERT INTO admin_dictionary_tables VALUES (60, 'stat_effort', 'effort de pêche'
 INSERT INTO admin_dictionary_tables VALUES (53, 'environnement', 'environnement', 'exp_environnement', 'id', 'id', 4, 2, 'pays,systeme,campagne,coup_peche,environnement', false, 2, false, true);
 INSERT INTO admin_dictionary_tables VALUES (42, 'zones', 'zones d''accès', 'admin_zones', 'zone_id', 'zone_name', 1, 5, '', false, 1, false, false);
 INSERT INTO admin_dictionary_tables VALUES (63, 'sequences', 'séquences', 'admin_sequences', 'sequence_id', 'sequence_name', 1, 5, '', false, 1, false, false);
-INSERT INTO admin_dictionary_tables VALUES (64, 'acces_systemes', 'dates butoir pour les systèmes', 'admin_acces_donnees_systemes', 'id', 'id', 1, 5, NULL, false, 1, true, true);
+INSERT INTO admin_dictionary_tables VALUES (64, 'acces_systemes', 'délais butoir pour les systèmes', 'admin_acces_donnees_systemes', 'id', 'id', 1, 5, NULL, false, 1, true, true);
 
 
 
@@ -194,6 +221,8 @@ INSERT INTO admin_j_user_group VALUES (5, 1, 3);
 INSERT INTO admin_j_user_group VALUES (4, 1, 4);
 INSERT INTO admin_j_user_group VALUES (6, 1, 5);
 INSERT INTO admin_j_user_group VALUES (7, 1, 6);
+INSERT INTO admin_j_user_group VALUES (10, 3, 7);
+
 
 ALTER TABLE admin_j_user_group ENABLE TRIGGER ALL;
 
@@ -312,6 +341,7 @@ ALTER TABLE admin_usergroups DISABLE TRIGGER ALL;
 INSERT INTO admin_usergroups VALUES (0, 'visiteurs', 'visiteurs non enregistrés, sans aucun privilèges', true);
 INSERT INTO admin_usergroups VALUES (1, 'administrateurs', 'administrateurs du site, avec accès total à  l''ensemble des zones et des données', true);
 INSERT INTO admin_usergroups VALUES (2, 'gestionnaires des données', 'accès à  l''ensemble des données et aux interfaces de gestion et de portage des données, mais pas à la gestion des utilisateurs', true);
+INSERT INTO admin_usergroups VALUES (3, 'testeurs', 'testeurs pour la sélection/extraction des données, avec des droits particuliers', true);
 
 ALTER TABLE admin_usergroups ENABLE TRIGGER ALL;
 
@@ -334,6 +364,7 @@ INSERT INTO admin_users VALUES (4, 'ylaurent', 'Yann Laurent', true, '', 'yann.l
 INSERT INTO admin_users VALUES (5, 'bgranouillac', 'Bruno Granouillac', true, '', 'bruno.granouillac@ird.fr', 'bg7iz6cjbcx5k', '2008-11-14');
 INSERT INTO admin_users VALUES (6, 'jmecoutin', 'Jean-Marc Écoutin', true, '', 'Jean.Marc.Ecoutin@ifremer.fr', 'jmWVdB1tKciFg', NULL);
 INSERT INTO admin_users VALUES (7, 'msimier', 'monique simier', true, '', 'Monique.Simier@ifremer.fr', 'msjsg8dorm7/U', NULL);
+INSERT INTO admin_users VALUES (10, 'testeur', 'testeur données', true, 'utilisateur pour tester la sélection/extraction de données, avec des droits particuliers', '', 'te7VqHM1Jawp2', '2009-10-20');
 
 ALTER TABLE admin_users ENABLE TRIGGER ALL;
 
