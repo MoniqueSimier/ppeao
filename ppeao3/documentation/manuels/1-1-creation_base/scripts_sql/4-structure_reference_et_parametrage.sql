@@ -970,6 +970,40 @@ CREATE SEQUENCE ref_systeme_id_seq
 ALTER TABLE public.ref_systeme_id_seq OWNER TO devppeao;
 
 
+-- Table: temp_extraction
+
+CREATE TABLE temp_extraction
+(
+  id char(20), -- clé unique
+  key1 char(20), -- détail clé unique 1
+  key2 char(20), -- détail clé unique 2
+  key3 char(20), -- détail clé unique 3
+  key4 char(20), -- détail clé unique 4
+  key5 char(20), -- détail clé unique 5
+  key6 char(20), -- détail clé unique 6
+  key7 char(20), -- détail clé unique 7
+  valeur_ligne varchar, -- contenu de la ligne pour la valeur unique
+  date_creation date, -- date de création de l'enreg
+  "user" char(20), -- nom de l'utilisateur qui a créé la ligne
+  CONSTRAINT temp_extraction_id_key UNIQUE (id)
+) 
+WITHOUT OIDS;
+ALTER TABLE temp_extraction OWNER TO postgres;
+COMMENT ON TABLE temp_extraction IS 'Table temporaire pour gérer des calculs complémentaires lors des extractions';
+COMMENT ON COLUMN temp_extraction.id IS 'clé unique';
+COMMENT ON COLUMN temp_extraction.key1 IS 'détail clé unique 1';
+COMMENT ON COLUMN temp_extraction.key2 IS 'détail clé unique 2';
+COMMENT ON COLUMN temp_extraction.key3 IS 'détail clé unique 3';
+COMMENT ON COLUMN temp_extraction.key4 IS 'détail clé unique 4';
+COMMENT ON COLUMN temp_extraction.key5 IS 'détail clé unique 5';
+COMMENT ON COLUMN temp_extraction.key6 IS 'détail clé unique 6';
+COMMENT ON COLUMN temp_extraction.key7 IS 'détail clé unique 7';
+COMMENT ON COLUMN temp_extraction.valeur_ligne IS 'contenu de la ligne pour la valeur unique';
+COMMENT ON COLUMN temp_extraction.date_creation IS 'date de création de l''enreg';
+COMMENT ON COLUMN temp_extraction."user" IS 'nom de l''utilisateur qui a créé la ligne';
+
+
+
 --
 -- Name: ref_systeme; Type: DEFAULT; Schema: public; Owner: devppeao
 --
