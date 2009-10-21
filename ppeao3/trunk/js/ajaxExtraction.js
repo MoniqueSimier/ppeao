@@ -434,7 +434,8 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 
 		if (urlComp=="&nvReg=f") {
 			ValNomReg = document.getElementById("nomReg").value;
-			urlComp =urlComp+"&nomReg="+ValNomReg;
+			ValCodeReg = document.getElementById("codeReg").value;
+			urlComp =urlComp+"&nomReg="+ValNomReg+"&codeReg="+ValCodeReg;
 		}
 		EspSelec = "";
 		if (urlComp=="&affEsp=y") {

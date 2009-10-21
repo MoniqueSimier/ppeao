@@ -223,11 +223,10 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				if (!($_SESSION["selection_url"] =="")) {
 					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la sélection</a></span>";
 				}
-				echo"<br/>"; 
 				echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$typeAction."</span>"; 
 				echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."\" >changer de fili&egrave;re</a></span></div>";
 				AfficherDonnees($file,$typeAction);
-				echo "<br/><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp."<br/>";
+				echo "<b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp."<br/>";
 				echo "<b>".$labelSelection." s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;								
 	
 				?>

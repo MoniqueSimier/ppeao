@@ -130,6 +130,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 				$_SESSION['listeCatEco'] = ''; 	// Liste des categories ecologiques selectionnées
 				$_SESSION['listeCatTrop'] = ''; // Liste des categories trophiques selectionnées
 				$_SESSION['listeColonne'] = ''; // tableau nomTable / NomChamp des champs comple à afficher
+
 				// Variables pour construire les SQL	
 				$SQLPays 	= "";
 				$SQLSysteme	= "";
