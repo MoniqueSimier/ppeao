@@ -18,12 +18,9 @@ $section="consulter";
 $subsection="";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
-
 $zone=0; // zone libre (voir table admin_zones)
 Global $debugLog;
 ?>
-
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <?php 
@@ -32,18 +29,22 @@ Global $debugLog;
 	?>
 	<script src="/js/ajaxExtraction.js" type="text/javascript" charset="iso-8859-15"></script>
 	<title>ppeao::extraire des donn&eacute;es::afficher r&eacute;sultats</title>
-
 </head>
-
 <body>
-
-
 <?php 
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
-
-
-// Fichier à analyser
+include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
+include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
+include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
+if (isset($_SESSION['s_ppeao_user_id'])){ 
+	$userID = $_SESSION['s_ppeao_user_id'];
+} else {
+	$userID=null;
+}
+// Fichier de sélection à analyser
+// Soit un fichier issu d'ubne variable de session envoyé par la selection
+// Soit depuis un fichier présent dans le repertoire /temp présent dans une autre variable de session issu d'un paramètre &xml=
 if ($_SESSION['fichier_xml'] == "" ) {
 	$inputXML = "";
 	$filename = "ER";	
@@ -53,46 +54,50 @@ if ($_SESSION['fichier_xml'] == "" ) {
 }
 $file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
 if (!(file_exists($file)) ) {
-	$file = tempnam(sys_get_temp_dir(), 'xmlfile');
-	//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionExp.xml";
+	$dirTemp = $_SERVER["DOCUMENT_ROOT"]."/temp/".$userID;
+	$resultatDir = creeDirTemp($dirTemp);
+	if (strpos("erreur",$resultatDir) === false ){
+		$file = $dirTemp."/tempExp.xml";
+	} else {
+		echo "erreur a la creation du repertoire temporaire ".$dirTemp." arret du traitement.<br/>";
+		exit;
+	}
+	//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionArt.xml";
 	$fileopen=fopen($file,'w');
 	fwrite($fileopen,$_SESSION["selection_xml"]);
 	rewind($fileopen);
 }
-include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
-	// On recupere les paramètres
-	if (isset($_GET['log'])) {
-		if ($_GET['log'] == "false") {
-			$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
+// On recupere les paramètres
+if (isset($_GET['log'])) {
+	if ($_GET['log'] == "false") {
+		$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
+	} else {
+		if ($inputXML == "") {
+			$InputLog = "?logsupp=true";
 		} else {
-			if ($inputXML == "") {
-				$InputLog = "?logsupp=true";
-			} else {
-				$InputLog = "&logsupp=true";
-			}
-			$EcrireLogComp = true;
+			$InputLog = "&logsupp=true";
 		}
-	} else {
-		echo "erreur, il manque le parametre log <br/>";
-		exit;
+		$EcrireLogComp = true;
 	}
-	// On récupère les valeurs des paramètres pour les fichiers log
-	$dirLog = GetParam("repLogExtr",$PathFicConf);
-	$nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
-	$dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
-	$fileLogComp = GetParam("nomFicLogExtr",$PathFicConf);
-	$logComp="";
-	$nomLogLien="";
-	ouvreFichierLog($dirLog,$fileLogComp);
+} else {
+	echo "erreur, il manque le parametre log <br/>";
+	exit;
+}
+// On récupère les valeurs des paramètres pour les fichiers log
+$dirLog = GetParam("repLogExtr",$PathFicConf);
+$nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
+$dirLog = $_SERVER["DOCUMENT_ROOT"]."/".$dirLog;
+$fileLogComp = GetParam("nomFicLogExtr",$PathFicConf);
+$logComp="";
+$nomLogLien="";
+ouvreFichierLog($dirLog,$fileLogComp);
 
-	if (isset($_GET['action'])) {
-		$typeAction = $_GET['action'];
-	} else {
-		echo "erreur, il manque le parametre action <br/>";
-		exit;
-	}	
+if (isset($_GET['action'])) {
+	$typeAction = $_GET['action'];
+} else {
+	echo "erreur, il manque le parametre action <br/>";
+	exit;
+}	
 ?>
 
 <div id="main_container" class="home">
@@ -100,11 +105,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 	<h2>affichage du r&eacute;sultat</h2>
 	<p class="hint_text">cette section affiche les r&eacute;sultats pour la s&eacute;lection sous forme de tableaux pagin&eacute;s ou de fichiers exportables</p>
     <?php
-	if (isset($_SESSION['s_ppeao_user_id'])){ 
-		$userID = $_SESSION['s_ppeao_user_id'];
-	} else {
-		$userID=null;
-	}
 // on teste à quelle zone l'utilisateur a accès
 	if (userHasAccess($userID,$zone)) {
 		if ($EcrireLogComp ) {

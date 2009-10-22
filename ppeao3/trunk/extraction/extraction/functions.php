@@ -2607,4 +2607,19 @@ function remplaceAlias($listeDesChamps) {
 	return $listeDesChamps;
 }
 
+//*********************************************************************
+// creeDirTemp : Fonction pour creer le repertoire temporaire
+function creeDirTemp($dir){
+if (! file_exists($dir)) {
+	if (! mkdir($dir) ) {
+		$resultat = " erreur,repertoire ne peut etre cree";
+	} else {
+		$resultat = "ok,repertoire cree";
+	}
+} else {
+$resultat = "ok,repertoire deja existant";
+}
+return $resultat;
+	
+}
 ?>

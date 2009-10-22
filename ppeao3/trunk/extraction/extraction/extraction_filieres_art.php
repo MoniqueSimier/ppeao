@@ -18,12 +18,9 @@ $section="consulter";
 $subsection="";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
-
 $zone=0; // zone libre (voir table admin_zones)
 Global $debugLog;
 ?>
-
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <?php 
@@ -33,23 +30,21 @@ Global $debugLog;
 	<script src="/js/ajaxExtraction.js" type="text/javascript" charset="iso-8859-15"></script>
 	<title>ppeao::extraire des donn&eacute;es::fili&egrave;res</title>
 </head>
-
 <body>
-
-
 <?php 
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
-
-
-// Fichier à analyser
-//
-// modification par Olivier le 25/09/09 pour utiliser directement la selection passee par selection.php
-//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/testExtractionArt.xml";
-// on cree un fichier temporaire pour y stocker le contenu de la selection au format XML
-// si on a passe un fichier dans l'url on l'utilise
-// passer le fichier comme suit dans l'url: &xml=fichier.xml sachant que le fichier doit etre dans le dossier "temp"
-// a la racine du site 
+include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
+include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
+include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
+if (isset($_SESSION['s_ppeao_user_id'])){ 
+	$userID = $_SESSION['s_ppeao_user_id'];
+} else {
+	$userID=null;
+}
+// Fichier de sélection à analyser
+// Soit un fichier issu d'ubne variable de session envoyé par la selection
+// Soit depuis un fichier présent dans le repertoire /temp passé en paramètre &xml=
 if (isset($_GET["xml"])) {
 	$filename =  $_GET["xml"].".xml";
 	$_SESSION['fichier_xml']=$_GET["xml"];
@@ -59,27 +54,28 @@ if (isset($_GET["xml"])) {
 }
 $file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
 if (!(file_exists($file)) ) {
-	$file = tempnam(sys_get_temp_dir(), 'xmlfile');
+	$dirTemp = $_SERVER["DOCUMENT_ROOT"]."/temp/".$userID;
+	$resultatDir = creeDirTemp($dirTemp);
+	if (strpos("erreur",$resultatDir) === false ){
+		$file = $dirTemp."/tempArt.xml";
+	} else {
+		echo "erreur a la creation du repertoire temporaire ".$dirTemp." arret du traitement.<br/>";
+		exit;
+	}
 	//$file = $_SERVER["DOCUMENT_ROOT"]."/temp/tempExtractionArt.xml";
 	$fileopen=fopen($file,'w');
 	fwrite($fileopen,$_SESSION["selection_xml"]);
 	rewind($fileopen);
 }
 // fin de modification par Olivier
-include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
+
 ?>
 
 <div id="main_container" class="home">
 	<h1>consulter des données : extraction des p&ecirc;ches artisanales</h1>
     <h2>choix des fili&egrave;res</h2>
     <?php
-	if (isset($_SESSION['s_ppeao_user_id'])){ 
-		$userID = $_SESSION['s_ppeao_user_id'];
-	} else {
-		$userID=null;
-	}
+
 	// on teste à quelle zone l'utilisateur a accès
 	if (userHasAccess($userID,$zone)) {
 
