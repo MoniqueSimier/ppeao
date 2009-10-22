@@ -99,8 +99,11 @@ else {
 		$typeCode='g';
 		$type="groupe";
 		echo('<h2>g&eacute;rer les droits pour un groupe (changer pour un <a href="?type=u">utilisateur</a>).</h2>');
+		echo('<p>vous pouvez &eacute;galement <a href="/edition/edition_table.php?selector=no&editTable=usergroups" alt="cr&eacute;er un groupe">cr&eacute;er un nouveau groupe</a></p>');
 		// choix de l'acteur pour lequel on veut definir des droits
-		$sql='SELECT group_id as id, group_name as name FROM admin_usergroups WHERE group_active AND group_id!=0 ORDER BY group_name';
+		// on ne propose pas les groupes "visiteurs" (aucun droit, 0) ni les groupes admin (1), gestionnaires 
+		// des donnees (2) et exploitants des donnees (3) qui ont eux acces a toutes les donnees
+		$sql='SELECT group_id as id, group_name as name FROM admin_usergroups WHERE group_active AND group_id!=0 AND group_id!=1 AND group_id!=2 AND group_id!=3 ORDER BY group_name';
 		break;
 		// par defaut, utilisateur
 		default:
@@ -108,7 +111,7 @@ else {
 		$type="utilisateur";
 		$choix_type_acteur_texte='<h2>g&eacute;rer les droits pour un utilisateur (changer pour un <a href="?type=g">groupe</a>).</h2>';
 			// choix de l'acteur pour lequel on veut definir des droits
-			$sql='SELECT user_id as id, user_longname as name FROM admin_users WHERE user_active AND user_id!=0 ORDER BY user_longname';
+			$sql='SELECT DISTINCT user_id as id, user_longname as name FROM admin_users WHERE user_active AND user_id!=0  ORDER BY user_longname';
 		break;
 	} // end switch $type
 	
@@ -129,7 +132,10 @@ else {
 			
 			if (empty($array)) {echo('<p>aucun '.$type.' dans la base.</p>');} 
 			else {
-				echo('<select id="acteur" name="acteur" onchange="javascript:droits_acces.submit();">');
+									
+			echo('<select id="acteur" name="acteur" onchange="javascript:changeActeur();">');
+			//echo('<select id="acteur" name="acteur" onchange="javascript:alert($(acteur).value);">');
+
 				echo('<option value="-1">-choisir un '.$type.'-</option>');
 				$lActeur='';
 				foreach ($array as $acteur) {
@@ -137,6 +143,17 @@ else {
 					echo('<option value='.$acteur["id"].' '.$selected.'>'.$acteur["name"].'</option>');
 				}
 				echo('</select>');
+				?>
+			<script type="text/javascript" charset="utf-8">
+				function changeActeur() {
+				var url='/edition/edition_droits_acces.php?type=';
+				url+=gup('type');
+				url+='&acteur='+$("acteur").value;
+				//alert(url)
+				document.location=url;
+				}
+			</script>
+			<?php
 			}
 			echo($message);
 			echo('</div>');
@@ -181,8 +198,15 @@ else {
 		echo('<div id="droits_acces">');
 		echo('<h2>syst&egrave;mes pour lesquels "'.$lActeur.'" peut consulter la totalit&eacute; des donn&eacute;es</h2>');
 		// on passe l'id de l'acteur et son type
-		echo('<input type="hidden" id="acteur" name="acteur" value="'.$acteur_id.'"/>');
+		//echo('<input type="hidden" id="acteur" name="acteur" value="'.$acteur_id.'"/>');
 		echo('<input type="hidden" id="type" name="type" value="'.$acteur_type.'"/>');
+		
+		// si l'utilisateur fait aprtie des groupes ayant acces a toutes les donnees, on le signale
+		
+		/*$sql='SELECT column FROM table WHERE condition';
+		$result=pg_query(connection,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+		$array=pg_fetch_all($result);
+		pg_free_result($result);*/
 		
 		//on compile les eventuels systemes supplementaires
 		if (!empty($_POST["systemes"])) {
