@@ -248,19 +248,24 @@ $user_admin='';
 if (isset($_SESSION["s_ppeao_user_id"])) {$user_groups=userGetGroups($_SESSION["s_ppeao_user_id"]);
 
 
-if (in_array(1,$user_groups) || in_array(2,$user_groups)) {$user_admin=TRUE;} else {$user_admin=FALSE;}
+if (in_array(1,$user_groups) || in_array(2,$user_groups) || in_array(3,$user_groups)) {$user_admin=TRUE;} else {$user_admin=FALSE;}
 
 }
 if ($_GET["step"]>4 && $user_admin!=TRUE) {
 	// on commence par stocker les donnees "avant" filtrage
+	
 	$unites["total_avant"]=$total;
 	$unites["ids_avant"]=$ids;
+
 	// on reinitialise total et ids pour les remplacer par les valeurs filtrees
 	$unites["total"]='';
 	$unites["ids"]=array();
 	
 	// on recupere les droits d'acces de l'utilisateur (les siens et ceux des groupes auxquels il appartient)
-	$user_droits=getUserSystemRights($_SESSION["s_ppeao_user_id"]);
+	$user_droits=array();
+	// si il est connecte
+	if (isset($_SESSION["s_ppeao_user_id"])) {
+	$user_droits=getUserSystemRights($_SESSION["s_ppeao_user_id"]);}
 	//debug 		echo('<pre>');print_r($user_droits);echo('</pre>');
 	
 	
@@ -1382,7 +1387,6 @@ switch ($_GET["step"]) {
 	$cartes_link.='#';
 		echo('<li><a href="'.$donnees_link.'">extraction de donn&eacute;es</a></li>');
 		echo('<li><a href="'.$stats_link.'">statistiques de p&ecirc;che</a></li>');
-		echo('<li><a href="'.$cartes_link.'">fonds de cartes</a></li>');
 		/*echo('<li>graphiques</li>');
 		echo('<li>indicateurs &eacute;cologiques</li>');*/
 	echo('</ul>');
