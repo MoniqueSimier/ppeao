@@ -297,7 +297,7 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 //echo "session = ".$_SESSION['SQLEspeces']." - liste espe = ".$listeEsp."<br/>";
 echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typePeche,$typeAction,$numTab,"y"); ?>
 </div>
-<?php // l'onglet qui gere les espèces ?>
+<?php // l'onglet qui gere les regroupements ?>
 <div id="regroupesp" class="regroupesp<?php echo $regActive;?>">
 <?php 
 echo AfficheRegroupEsp($typePeche,$typeAction,$numTab,$_SESSION['SQLEspeces'],$_SESSION['ListeRegroupEsp'],$RegEncours,$CreerReg); ?>

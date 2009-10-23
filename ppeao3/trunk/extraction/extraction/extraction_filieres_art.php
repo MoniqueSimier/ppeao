@@ -126,6 +126,7 @@ if (!(file_exists($file)) ) {
 				$_SESSION['listeCatEco'] = ''; 	// Liste des categories ecologiques selectionnées
 				$_SESSION['listeCatTrop'] = ''; // Liste des categories trophiques selectionnées
 				$_SESSION['listeColonne'] = ''; // tableau nomTable / NomChamp des champs comple à afficher
+				$_SESSION['pasderesultat'] = false; // indicateur global si pas de resultat
 				unset($_SESSION['listeRegroup']); // Liste des regroupements
 				// Variables pour construire les SQL	
 				$SQLPays 	= "";
@@ -164,7 +165,13 @@ if (!(file_exists($file)) ) {
 			?>
 		</div>
 		<br/>
-		<div id="runProcess"><b>choix de la fili&egrave;re :</b>&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','activite','1','','n','','','','')">activit&eacute;</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','capture','1','','n','','','','')">captures totales</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','NtPt','1','','n','','','','')">Nt/Pt</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','taille','1','','n','','','','')">structure de taille</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','engin','1','','n','','','','')">engins de p&ecirc;che</a></div>
+		<div id="runProcess">
+        <?php if ($_SESSION['pasderesultat']) {
+			echo "La s&eacute;lection n'a pas retourn&eacute; de r&eacute;sultats.<br/>";
+		} else { ?>
+        <b>choix de la fili&egrave;re :</b>&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','activite','1','','n','','','','')">activit&eacute;</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','capture','1','','n','','','','')">captures totales</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','NtPt','1','','n','','','','')">Nt/Pt</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','taille','1','','n','','','','')">structure de taille</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','engin','1','','n','','','','')">engins de p&ecirc;che</a>
+                <?php } ?>
+        </div>
 		<br/>
 		<div id="resultfiliere"></div>
 		<div id="exportFic"></div>

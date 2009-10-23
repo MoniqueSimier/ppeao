@@ -126,7 +126,7 @@ if (!(file_exists($file)) ) {
 				$_SESSION['listeCatEco'] = ''; 	// Liste des categories ecologiques selectionnées
 				$_SESSION['listeCatTrop'] = ''; // Liste des categories trophiques selectionnées
 				$_SESSION['listeColonne'] = ''; // tableau nomTable / NomChamp des champs comple à afficher
-
+				$_SESSION['pasderesultat'] = false; // indicateur global si pas de resultat
 				// Variables pour construire les SQL	
 				$SQLPays 	= "";
 				$SQLSysteme	= "";
@@ -163,13 +163,18 @@ if (!(file_exists($file)) ) {
 			?>
 		</div>
 		<br/>
-		<div id="runProcess"><b>choix de la fili&egrave;re :</b>&nbsp;
+		<div id="runProcess">        
+        <?php if ($_SESSION['pasderesultat']) {
+			echo "La s&eacute;lection n'a pas retourn&eacute; de r&eacute;sultats.<br/>";
+		} else { ?>
+			<b>choix de la fili&egrave;re :</b>&nbsp;
 			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','peuplement','1','','n','','','','')">peuplement</a>&nbsp;-&nbsp;
 			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','environnement','1','','n','','','','')">environnement</a>&nbsp;-&nbsp;
 			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','NtPt','1','','n','','','','')">Nt/Pt</a>&nbsp;-&nbsp;
 			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','biologie','1','','n','','','','')">biologie</a>&nbsp;-&nbsp;
 			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','trophique','1','','n','','','','')">trophique</a>
 		</ul>
+        <?php } ?>
 		</div>
 		<br/>
 		<div id="resultfiliere"></div>

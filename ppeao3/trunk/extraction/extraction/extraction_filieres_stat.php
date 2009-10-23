@@ -117,6 +117,8 @@ if (!(file_exists($file)) ) {
 
 				$_SESSION['listeColonne'] = ""; // tableau nomTable / NomChamp des champs comple à afficher
 				$_SESSION['listetablesynth'] = ""; // Gestion de la table de synthèse a extraire
+				$_SESSION['pasderesultat'] = false; // indicateur global si pas de resultat
+				unset($_SESSION['listeRegroup']); // Liste des regroupements
 				// Variables pour construire les SQL	
 				$SQLPays 	= "";
 				$SQLSysteme	= "";
@@ -154,10 +156,15 @@ if (!(file_exists($file)) ) {
 			?>
 		</div>
 		<br/>
-		<div id="runProcess"><b>Choix type statistique &agrave; extraire :</b>&nbsp;
+		<div id="runProcess">
+        <?php if ($_SESSION['pasderesultat']) {
+			echo "La s&eacute;lection n'a pas retourn&eacute; de r&eacute;sultats.<br/>";
+		} else { ?>
+        <b>Choix type statistique &agrave; extraire :</b>&nbsp;
 			<a href="#" onClick="runFilieresStat('<?php echo $typeStatistiques ?>','globale','1','','n','','','')">statistiques globales</a>&nbsp;-&nbsp;
 			<a href="#" onClick="runFilieresStat('<?php echo $typeStatistiques ?>','GT','1','','n','','','')">statistiques par grand type</a>&nbsp;
 		</ul>
+        <?php } ?>
 		</div>
 		<div id="resultfiliere"></div>
 		<div id="exportFic"></div>

@@ -88,6 +88,17 @@ if (isset($_GET['synth'])) {
 } else {
 	$listeSynth = "";
 }
+// Gestion des regroupements
+if (isset($_GET['RegEC'])) {
+	$RegEncours = intval($_GET['RegEC']) + 1;
+} else {
+	$RegEncours = "";
+}
+if (isset($_GET['nvReg'])) {
+	$CreerReg = $_GET['nvReg'];
+} else {
+	$CreerReg = "";
+}
 // On analyse les nouvelles colonnes recues si on vient du tab 4
 if (!($ListeColRecues =="")) {
 	$colRecues = explode (",",$ListeColRecues);
@@ -148,9 +159,11 @@ if ($EcrireLogComp ) {
 $tab1 = "";
 $tab2 = "";
 $tab3 = "";
+$tab4 = "";
 $genActive="";
 $colActive="";
 $espActive="";
+$regActive="";
 switch ($numTab) {
 	case "1":
 		$genActive=" visible";
@@ -163,6 +176,10 @@ switch ($numTab) {
 	case "3":
 		$espActive=" visible";
 		$tab3 = " active";
+		break;
+	case "4":
+		$regActive=" visible";
+		$tab4 = " active";
 		break;
 }
 $valsynth1 = "";
@@ -186,16 +203,17 @@ switch ($_SESSION['listetablesynth']) {
 <form id="filiere" >
 <?php // construit les differentes onglets du tableau ?>
 <div id="menuTab">
-<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','')">choix tables synth&egrave;ses</a>|
-<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','2','<?php echo $codeTableEnCours;?>','n','','','')">colonnes</a>|
-<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','')">esp&egrave;ces</a>
+<a href="#" class="<?php echo $tab1;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','','')">choix tables synth&egrave;ses</a>|
+<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','2','<?php echo $codeTableEnCours;?>','n','','','','')">colonnes</a>|
+<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','','')">esp&egrave;ces</a>|
+<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','','')">regroupement Esp&egrave;ces</a>
 </div>
 <?php // Les differents div correspondant aux choix disponibles par onglet ?>
 <?php // l'onglet qui gere la selection des categories ecologiques ?>
 <div id="general" class="cateco<?php echo $genActive;?>" >
 	<span class="sscriteresgen<?php echo $ClassEnv;?>">choisir la table de synth&egrave;se :<br/></span>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese1" type="radio" name="synthese" value="cap_tot"  <?php echo $valsynth1;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats globaux</span><br/>    
  	<?php if ($typeAction == "globale") { ?>   
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese1" type="radio" name="synthese" value="cap_tot"  <?php echo $valsynth1;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats globaux</span><br/>
 	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese2" type="radio" name="synthese" value="cap_sp"  <?php echo $valsynth2;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats par esp&egrave;ces</span><br/>
 	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese3" type="radio" name="synthese" value="dft_sp"  <?php echo $valsynth3;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">structure en taille des esp&egrave;ces</span><br/>
     <?php } else { ?>
@@ -212,6 +230,11 @@ switch ($_SESSION['listetablesynth']) {
 <?php // l'onglet qui gere les espèces ?>
 <div id="especes" class="especes<?php echo $espActive;?>">
 <?php echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typeStatistiques,$typeAction,$numTab,""); ?>
+</div>
+<?php // l'onglet qui gere les regroupements ?>
+<div id="regroupesp" class="regroupesp<?php echo $regActive;?>">
+<?php 
+echo AfficheRegroupEsp($typeStatistiques,$typeAction,$numTab,$_SESSION['SQLEspeces'],$_SESSION['ListeRegroupEsp'],$RegEncours,$CreerReg); ?>
 </div>
 </form>
 

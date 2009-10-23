@@ -431,7 +431,7 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		} else {
 			addEsp = "&Esp="+ListEsp;
 		}
-
+		// Gestion des regroupements
 		if (urlComp=="&nvReg=f") {
 			ValNomReg = document.getElementById("nomReg").value;
 			ValCodeReg = document.getElementById("codeReg").value;
@@ -590,7 +590,12 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 		changementAction = ''
 		// On charge les données modifiées
 		// Recuperation de la table a extraire 
-		tablesynt  = recupereSelection(3,"synthese");
+
+		if (typeAction == "globale") {
+			tablesynt  = recupereSelection(3,"synthese");
+		} else {
+			tablesynt  = recupereSelection(4,"synthese");
+		}
 		// Recuperation des selections sur choix des especes
 		// Recuperation des especes
 		limEsp = document.getElementById("numEsp").value;
@@ -652,7 +657,59 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 		} else {
 			addSynth = "&synth="+tablesynt;
 		}
-		addURL = TEC+addCol+addEsp+addSynth;
+		// Gestion des regroupements
+		if (urlComp=="&nvReg=f") {
+			ValNomReg = document.getElementById("nomReg").value;
+			ValCodeReg = document.getElementById("codeReg").value;
+			urlComp =urlComp+"&nomReg="+ValNomReg+"&codeReg="+ValCodeReg;
+		}
+		EspSelec = "";
+		if (urlComp=="&affEsp=y") {
+			// On recupere le numero du regroupement selectionné + la liste des especes selectionnées
+			var EspDispo = document.getElementById("especesDispo");
+			for (i=0;i<EspDispo.options.length;i++) {
+				if (EspDispo.options[i].selected) {
+					if (EspSelec == "") {
+						EspSelec = EspDispo.options[i].value;
+					} else {
+						EspSelec = EspSelec+","+EspDispo.options[i].value;
+					}
+				}
+			}
+			if (EspSelec=="") {
+				alert('Merci de sélectionner au moins une espèce');
+			} else {
+				urlComp = urlComp + "&espAff="+	EspSelec;
+			}
+		}
+		EspaSupp= "";
+		if (urlComp=="&suppEsp=EC") {
+			// On recupere le numero du regroupement selectionné + la liste des especes selectionnées
+			var EspSelReg = document.getElementById("Regroupcontenu");
+			for (i=0;i<EspSelReg.options.length;i++) {
+				if (EspSelReg.options[i].selected) {
+					if (EspaSupp == "") {
+						EspaSupp = EspSelReg.options[i].value;
+					} else {
+						EspaSupp = EspaSupp+","+EspSelReg.options[i].value;
+					}
+				}
+			}
+			if (EspaSupp=="") {
+				alert('Merci de sélectionner au moins une espèce');
+			} else {
+				urlComp = urlComp + "&espasup="+EspaSupp;
+			}				
+		}
+		regEC="";
+		if (!(urlComp=="")) { // Ca veut dire qu'on est en gestion des regroupements
+			try{
+				regEC = "&RegEC="+document.getElementById("Regroupement").selectedIndex;
+			}
+			catch (e) { }
+		  
+		}
+		addURL = TEC+addCol+addEsp+addSynth+urlComp+regEC;;
 	} else {
 		globalAction = typeAction;
 		changementAction = '&chgA=y';
@@ -698,6 +755,15 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 							document.getElementById("footer").style.top = '770px';
 							break;
 				case '3' :
+							try{
+							document.getElementById("exportFic").style.position = 'absolute';
+							document.getElementById("exportFic").style.top = '770px';
+							}
+							catch (e) { }
+							document.getElementById("footer").style.position = 'absolute';
+							document.getElementById("footer").style.top = '770px';
+							break;
+				case '4' :
 							try{
 							document.getElementById("exportFic").style.position = 'absolute';
 							document.getElementById("exportFic").style.top = '770px';

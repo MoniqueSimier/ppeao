@@ -216,6 +216,7 @@ if (isset($_GET['action'])) {
 				$resultatLecture = "";
 				$labelSelection = "";
 				$locSelection = AfficherSelection($file); 
+				$SelectionPourFic = $locSelection;
 				echo "<b>votre s&eacute;lection correspond &agrave; :</b> ".$locSelection;
 				if (!($_SESSION["selection_url"] =="")) {
 					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la sélection</a></span>";
