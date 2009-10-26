@@ -52,6 +52,11 @@ if (isset($_GET["xml"])) {
 	$filename = "ER";
 	$_SESSION['fichier_xml'] = "";
 }
+if (isset($_GET["gselec"])) {
+	$gardeSelection =  $_GET["gselec"];
+}else {
+	$gardeSelection = "";
+}
 $file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
 if (!(file_exists($file)) ) {
 	$dirTemp = $_SERVER["DOCUMENT_ROOT"]."/temp/".$userID;
@@ -86,7 +91,7 @@ if (!(file_exists($file)) ) {
 			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
 			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
 			</form></span>
-		<div id="resumeChoix">
+
 			<?php 
 				// On recupere les paramètres
 				if (isset($_GET['logsupp'])) {
@@ -120,14 +125,16 @@ if (!(file_exists($file)) ) {
 				}
 
 				// Si on change de filière, on remet tous à blanc
-				$_SESSION['listeQualite'] = '';
-				$_SESSION['listeProtocole'] = ''; // Oui / non
-				$_SESSION['listeEspeces'] = '';	// Liste des espèces selectionnées
-				$_SESSION['listeCatEco'] = ''; 	// Liste des categories ecologiques selectionnées
-				$_SESSION['listeCatTrop'] = ''; // Liste des categories trophiques selectionnées
-				$_SESSION['listeColonne'] = ''; // tableau nomTable / NomChamp des champs comple à afficher
-				$_SESSION['pasderesultat'] = false; // indicateur global si pas de resultat
-				unset($_SESSION['listeRegroup']); // Liste des regroupements
+				if (!($gardeSelection == "y")) { 
+					$_SESSION['listeQualite'] = '';
+					$_SESSION['listeProtocole'] = ''; // Oui / non
+					$_SESSION['listeEspeces'] = '';	// Liste des espèces selectionnées
+					$_SESSION['listeCatEco'] = ''; 	// Liste des categories ecologiques selectionnées
+					$_SESSION['listeCatTrop'] = ''; // Liste des categories trophiques selectionnées
+					$_SESSION['listeColonne'] = ''; // tableau nomTable / NomChamp des champs comple à afficher
+					$_SESSION['pasderesultat'] = false; // indicateur global si pas de resultat
+					unset($_SESSION['listeRegroup']); // Liste des regroupements
+				}
 				// Variables pour construire les SQL	
 				$SQLPays 	= "";
 				$SQLSysteme	= "";
@@ -151,19 +158,21 @@ if (!(file_exists($file)) ) {
 				$listeSelection ="";
 				$resultatLecture = "";
 				$labelSelection = "";
-				$locSelection = AfficherSelection($file,""); 
-				echo "<b>votre s&eacute;lection correspond &agrave; :</b> ".$locSelection."<br/>";
-				AfficherDonnees($file,"");
-				echo "<b>".$labelSelection." s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;
+				$locSelection = AfficherSelection($file,"");
+				echo "<span class=\"showHide\">
+<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier/masquer la s&eacute;lection]</a></span>";
+				echo "<div id=\"selection_precedente\">".$locSelection."<br/>";
 				if (!($_SESSION["selection_url"] =="")) {
-					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la sélection</a></span>";
+					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la s&eacute;lection</a></span>";
 				}
+				echo "</div>";
+				AfficherDonnees($file,"");
+				echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>";
 				if (!( $typePeche == "artisanale")) {
-					echo "<br/><br/><b>Erreur dans le fichier XML en entr&eacute;e. Il ne s'agit pas d'une s&eacute;lection de donn&eacute;es de p&ecirc;che artisanale.</b><br/>.";
+					echo "<b>Erreur dans le fichier XML en entr&eacute;e. Il ne s'agit pas d'une s&eacute;lection de donn&eacute;es de p&ecirc;che artisanale.</b><br/>.";
 					exit;
 				}				
 			?>
-		</div>
 		<br/>
 		<div id="runProcess">
         <?php if ($_SESSION['pasderesultat']) {
@@ -175,6 +184,14 @@ if (!(file_exists($file)) ) {
 		<br/>
 		<div id="resultfiliere"></div>
 		<div id="exportFic"></div>
+        <script type="text/javascript" charset="utf-8">
+			var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
+			mySlider.hide();
+			// affiche ou masque le DIV contenant la selection precedente
+			function toggleSelection() {
+				mySlider.toggle() //toggle the slider up and down.
+		}
+</script>
 		
 <?php
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée

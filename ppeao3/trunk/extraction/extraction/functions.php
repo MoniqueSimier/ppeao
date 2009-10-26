@@ -742,7 +742,7 @@ function AfficherDonnees($file,$typeAction){
 			// ********** CONSTRUCTION DES SQL DEFINITIFS PAR FILIERE
 			switch ($typeAction) {
 				case "peuplement" :
-						$labelSelection = "donn&eacute;es de peuplement ";	
+						$labelSelection = "donn&eacute;e(s) de peuplement ";	
 						// On n'extrait que des donnéees de fraction
 						// Il n'y aucune selection de colonnes supplémentaires
 						// On prend tous les poissons (pas de différence poisson/non poisson
@@ -755,7 +755,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;					
 					break;
 				case "environnement" :
-						$labelSelection = "donn&eacute;es d'environnement ";
+						$labelSelection = "donn&eacute;e(s) d'environnement ";
 						// On n'extrait que des donnéees environnements
 						// Pas de données poisson
 						$listeChampsSpec = ",env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond";
@@ -765,7 +765,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;
 				case "NtPt" :
-						$labelSelection = "donn&eacute;es NtPt ";
+						$labelSelection = "donn&eacute;e(s) NtPt ";
 						// C'est un mixte entre les données peuplements et environnement + des selections de colonnes
 						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond";
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,ref_espece as esp";
@@ -776,7 +776,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;
 				case "biologie" :
-						$labelSelection = "donn&eacute;es biologiques ";
+						$labelSelection = "donn&eacute;e(s) biologique(s) ";
 						// Construction de la liste d'individus
 						// ATTENTION !!!!!! Si la liste ci-dessous est modifiée, il faut imperativement modifié la requete pour calculer le 
 						// le coefficient d'extrapolation apres l'execution de la requete 
@@ -792,7 +792,7 @@ function AfficherDonnees($file,$typeAction){
 					break;	
 				case "trophique" :
 					// Construction de la liste d'individus
-						$labelSelection = "donn&eacute;es trophiques ";
+						$labelSelection = "donn&eacute;e(s) trophique(s) ";
 						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond,bio.longueur,bio.id,trop.exp_contenu_id,bio.exp_remplissage_id,cont.libelle";
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,exp_biologie as bio,exp_trophique as trop, exp_contenu as cont,ref_espece as esp";
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."  
@@ -805,7 +805,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;	
 					break;
 					default	:	
-					$labelSelection = "coups de p&ecirc;ches ";
+					$labelSelection = "coup(s) de p&ecirc;ches ";
 					$SQLfinal = "select * from ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph
 							where cpg.id = cph.exp_campagne_id and
 							stat.id = cph.exp_station_id and
@@ -1100,7 +1100,7 @@ function AfficherDonnees($file,$typeAction){
 						$ListeTableCom = $ListeTableArt ;
 						$WhereCom = $WhereArt ;
 						$OrderCom = $OrderArt ;
-						$labelSelection = "donn&eacute;es d'activit&eacute;";	
+						$labelSelection = "donn&eacute;e(s) d'activit&eacute;";	
 						$listeChampsSpec = ",act.art_type_activite_id,act.nbre_unite_recencee ";
 						$ListeTableSpec = ""; 
 						$WhereSpec = "";	
@@ -1110,7 +1110,7 @@ function AfficherDonnees($file,$typeAction){
 					break;			
 				case "capture" :
 				// Liste des debarquements.
-						$labelSelection = "donn&eacute;es de capture";	
+						$labelSelection = "donn&eacute;e(s) de capture";	
 						$listeChampsCom = $listeChampsDeb;
 						$ListeTableCom = $ListeTableDeb ;
 						$WhereCom = $WhereDeb ;
@@ -1123,7 +1123,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;
 				case "NtPt" :
-						$labelSelection = "donn&eacute;es NtPt";				
+						$labelSelection = "donn&eacute;e(s) NtPt";				
 						$listeChampsCom = $listeChampsDeb;
 						$ListeTableCom = $ListeTableDeb ;
 						$WhereCom = $WhereDeb ;
@@ -1147,7 +1147,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;
 				case "taille" :
-						$labelSelection = "donn&eacute;es de tailles";	
+						$labelSelection = "donn&eacute;e(s) de tailles";	
 						$listeChampsCom = $listeChampsDeb;
 						$ListeTableCom = $ListeTableDeb ;
 						$WhereCom = $WhereDeb ;
@@ -1172,7 +1172,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;
 				case "engin" :
-						$labelSelection = "donn&eacute;es d'engin";	
+						$labelSelection = "donn&eacute;e(s) d'engin";	
 						$listeChampsCom = $listeChampsDeb;
 						$ListeTableCom = $ListeTableDeb ;
 						$WhereCom = $WhereDeb ;
@@ -1185,7 +1185,7 @@ function AfficherDonnees($file,$typeAction){
 						$builQuery = true;
 					break;															
 				default	:	
-					$labelSelection = "p&eacute;riode d'enqu&ecirc;te";
+					$labelSelection = "p&eacute;riode(s) d'enqu&ecirc;te";
 					$SQLfinal = "select * from art_periode_enquete as penq
 									where penq.id in (".$SQLPeEnquete.")";
 					$SQLcountfinal = "select count(*) from art_periode_enquete as penq
@@ -1320,7 +1320,7 @@ function AfficherDonnees($file,$typeAction){
 							// On analyse le choix et on cree la requete en focntion
 							switch ($choixSynthese) {
 								case "cap_tot";
-									$labelSelection = "captures totales";	
+									$labelSelection = "capture(s) totale(s)";	
 									$listeChampsSpec = ",ast.fm,ast.cap,ast.pue,ast.id";
 									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast"; 
 									$WhereSpec = " and ast.art_agglomeration_id = penq.art_agglomeration_id";						
@@ -1330,7 +1330,7 @@ function AfficherDonnees($file,$typeAction){
 									unset($_SESSION['listeRegroup']); // Pas de regroupement
 									break;
 								case "cap_sp";
-									$labelSelection = "r&eacute;sultats par esp&egrave;ces";	
+									$labelSelection = "r&eacute;sultat(s) par esp&egrave;ce";	
 									$listeChampsSpec = ",asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,ast.fm,ast.cap,ast.pue ,asp.id ,ast.id";
 									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp"; 
 									$WhereSpec = "	and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
@@ -1346,7 +1346,7 @@ function AfficherDonnees($file,$typeAction){
 									$posStat2 = 14 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
 									break;
 								case "dft_sp";
-									$labelSelection = "structure en taille des esp&egrave;ces";	
+									$labelSelection = "structure(s) en taille des esp&egrave;ces";	
 									$listeChampsSpec = ",asp.ref_espece_id,asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id";
 									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats"; 
 									$WhereSpec = " 	and ats.art_stat_sp_id = asp.id and
@@ -1364,7 +1364,7 @@ function AfficherDonnees($file,$typeAction){
 							// On analyse le choix et on cree la requete en focntion
 							switch ($choixSynthese) {
 								case "cap_tot";
-									$labelSelection = "captures totales";	
+									$labelSelection = "capture(s) totale(s)";	
 									$listeChampsSpec = ",ast.fm,ast.cap,ast.pue,ast.id";
 									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast"; 
 									$WhereSpec = " and ast.art_agglomeration_id = penq.art_agglomeration_id";						
@@ -1374,7 +1374,7 @@ function AfficherDonnees($file,$typeAction){
 									unset($_SESSION['listeRegroup']); // Pas de regroupement
 									break;
 								case "cap_GT";
-									$labelSelection = "r&eacute;sultats globaux par GT";	
+									$labelSelection = "r&eacute;sultat(s) global(ux) par GT";	
 									$listeChampsSpec = ",asgt.fm_gt,asgt.cap_gt,asgt.pue_gt,asgt.id,ast.id,ast.id";
 									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast"; 
 									$WhereSpec = "	and asgt.art_stat_totale_id = ast.id ";						
@@ -1384,7 +1384,7 @@ function AfficherDonnees($file,$typeAction){
 									unset($_SESSION['listeRegroup']); // Pas de regroupement
 									break;
 								case "cap_GT_sp";
-									$labelSelection = "r&eacute;sultats par esp&egrave;ces et par GT";	
+									$labelSelection = "r&eacute;sultat(s) par esp&egrave;ce et par GT";	
 									$listeChampsSpec = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, asgts.id, asgt.id, ast.id, ast.id";
 									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast"; 
 									$WhereSpec = "	and asgts.art_stat_gt_id = asgt.id and 
@@ -1394,7 +1394,7 @@ function AfficherDonnees($file,$typeAction){
 									$builQuery = true;
 									break;
 								case "dft_sp_sp";
-									$labelSelection = "structure en taille des esp&egrave;ces par GT";	
+									$labelSelection = "structure(s) en taille des esp&egrave;ces par GT";	
 									$listeChampsSpec = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, atgts.li,atgts.xi,atgts.id, asgts.id, asgt.id, ast.id, ast.id";
 									$ListeTableSpec = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast"; 
 									$WhereSpec = "	and atgts.art_stat_gt_sp_id = asgts.id and 
@@ -1408,7 +1408,7 @@ function AfficherDonnees($file,$typeAction){
 									echo "erreur pas de selection synthese<br/>";
 							}
 						default	:	
-							$labelSelection = "Periode d'enquete";
+							$labelSelection = "Periode(s) d'enquete";
 							$SQLfinal = "select * from art_periode_enquete as penq
 											where penq.id in (".$SQLPeEnquete.")";
 							$SQLcountfinal = "select count(*) from art_periode_enquete as penq

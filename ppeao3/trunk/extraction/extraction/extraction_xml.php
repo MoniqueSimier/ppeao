@@ -75,37 +75,37 @@ function startElement($parser, $name, $attrs){
 		$typeStatistiques =  $attrs["TYPE"]; // un seul attribut type
 		break;
 	case "FAMILLELISTE":
-		$listeSelection .="<br/><b>familles</b> : ";
+		$listeSelection .="<br/><b>familles</b> <br/> ";
 		break;
 	case "ESPECELISTE":
-		$listeSelection .="<br/><b>esp&egrave;ces</b> : ";
+		$listeSelection .="<br/><b>esp&egrave;ces</b> <br/>";
 		break;
 	case "PAYSLISTE":
-		$listeSelection .="<br/><b>pays</b> : ";
+		$listeSelection .="<br/><b>pays</b><br/>";
 		break;
 	case "SYSTEMELISTE":
-		$listeSelection .="<br/><b>syst&egrave;mes</b> : ";
+		$listeSelection .="<br/><b>syst&egrave;mes</b><br/>";
 		break;
 	case "SECTEURLISTE":
-		$listeSelection .="<br/><b>secteurs</b> : ";
+		$listeSelection .="<br/><b>secteurs</b> <br/>";
 		break;
 	case "AGGLOMERATIONLISTE":
-		$listeSelection .="<br/><b>agglom&eacute;rations</b> : ";
+		$listeSelection .="<br/><b>agglom&eacute;rations</b><br/>";
 		break;
 	case "INTERVALLE":
-		$listeSelection .="<br/><b>p&eacute;riode d&#x27;int&eacute;r&ecirc;t</b> : ";
+		$listeSelection .="<br/><b>p&eacute;riode d&#x27;int&eacute;r&ecirc;t</b><br/>";
 		break;
 	case "GRANDTYPEENGINLISTE":
-		$listeSelection .="<br/><b>grands types d&#x27;engin</b> : ";
+		$listeSelection .="<br/><b>grands types d&#x27;engin</b><br/>";
 		break;
 	case "ENGINLISTE":
-		$listeSelection .="<br/><b>engins</b> : ";
+		$listeSelection .="<br/><b>engins</b><br/>";
 		break;
 	case "ENQUETELISTE":
-		$listeSelection .="<br/><b>enqu&ecirc;tes</b> : ";
+		$listeSelection .="<br/><b>enqu&ecirc;tes</b><br/>";
 		break;		
 	case "DATEDEBUT":
-		$listeSelection .="de  ".$attrs["MOIS"]."/".$attrs["ANNEE"]." ";
+		$listeSelection .="du  ".$attrs["MOIS"]."/".$attrs["ANNEE"]." ";
 		$SQLdateDebut = $attrs["ANNEE"]."/".$attrs["MOIS"];
 		break;	
 	case "DATEFIN":
@@ -184,31 +184,31 @@ function endElement($parser, $name){
 	
 	switch(strtoupper($name)) {
 		case "FAMILLE" :
-			$listeSelection .= $globaldata.", ";
+			$listeSelection .= $globaldata."; ";
 			break;	
 		case "ESPECE" :
-			$listeSelection .= $globaldata.", ";
+			$listeSelection .= $globaldata."; ";
 			break;
 		case "PAYS" :
-			$listeSelection .= $globaldata.", ";
+			$listeSelection .= $globaldata."; ";
 			break;
 		case "SYSTEME":
-			$listeSelection .= $globaldata.", ";
+			$listeSelection .= $globaldata."; ";
 			break;
 		case "SECTEUR" :
-			$listeSelection .= $globaldata.", ";
+			$listeSelection .= $globaldata."; ";
 			break;
 		case "AGGLOMERATION" :
-			$listeSelection .= $globaldata.", ";
+			$listeSelection .= $globaldata."; ";
 			break;
 		case "GRANDTYPEENGIN":
-			$listeSelection .= $globaldata.", ";
+			$listeSelection .= $globaldata."; ";
 			break;
 		case "ENGIN":
-			$listeSelection .= $globaldata.", ";
+			$listeSelection .= $globaldata."; ";
 			break;
 		case "ENQUETE":
-			$listeSelection .= $globaldata.", ";
+			$listeSelection .= $globaldata."; ";
 			break;	
 		default :
 

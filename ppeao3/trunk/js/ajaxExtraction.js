@@ -223,7 +223,7 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		} else {
 			ExpFic = '';
 		}
-		var url="/extraction/extraction/extraction_resultat_exp.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+ExpFic+addURL;
+		var url="/extraction/extraction/extraction_resultat_exp.php?log="+checkLog+"&action="+typeAction+"&tab="+numtab+"&tp="+typePeche+ExpFic+addURL;
 		window.location.replace(url);
 	} else {
 		//if (typeAction =='peuplement') {
@@ -235,53 +235,56 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		if (xmlHttp==null){
 			alert ("votre navigateur n'est pas compatible avec AJAX !!");
 			return;
-		} 	
+		} 
+		testpos = false;
+		if (testpos) {
 		switch (numtab) {
 			case '1' :
 						try{
-						document.getElementById("exportFic").style.position = 'absolute';
+						//document.getElementById("exportFic").style.position = 'absolute';
 						document.getElementById("exportFic").style.top = '550px';
 						}
 						catch (e) { }
-						document.getElementById("footer").style.position = 'absolute';
+						//document.getElementById("footer").style.position = 'absolute';
 						document.getElementById("footer").style.top = '550px';
 						break;
 			case '2' :
 						try{
-						document.getElementById("exportFic").style.position = 'absolute';
+						//document.getElementById("exportFic").style.position = 'absolute';
 						document.getElementById("exportFic").style.top = '530px';
 						}
 						catch (e) { }
-						document.getElementById("footer").style.position = 'absolute';
+						//document.getElementById("footer").style.position = 'absolute';
 						document.getElementById("footer").style.top = '600px';
 						break;
 			case '3' :
 						try{
-						document.getElementById("exportFic").style.position = 'absolute';
+						//document.getElementById("exportFic").style.position = 'absolute';
 						document.getElementById("exportFic").style.top = '530px';
 						}
 						catch (e) { }
-						document.getElementById("footer").style.position = 'absolute';
+						//document.getElementById("footer").style.position = 'absolute';
 						document.getElementById("footer").style.top = '600px';
 						break;
 			case '4' :
 						try{
-						document.getElementById("exportFic").style.position = 'absolute';
+						//document.getElementById("exportFic").style.position = 'absolute';
 						document.getElementById("exportFic").style.top = '750px';
 						}
 						catch (e) { }
-						document.getElementById("footer").style.position = 'absolute';
+						//document.getElementById("footer").style.position = 'absolute';
 						document.getElementById("footer").style.top = '750px';
 						break;
 			case '5' :
 						try{
-						document.getElementById("exportFic").style.position = 'absolute';
+						//document.getElementById("exportFic").style.position = 'absolute';
 						document.getElementById("exportFic").style.top = '760px';
 						}
 						catch (e) { }
-						document.getElementById("footer").style.position = 'absolute';
+						//document.getElementById("footer").style.position = 'absolute';
 						document.getElementById("footer").style.top = '760px';
 						break;	
+		}
 		}
 		fenID = "resultfiliere";
 		var url="/extraction/extraction/extraction_gestion_filieres_exp.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+"&tab="+numtab+changementAction+addURL;
@@ -490,87 +493,84 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		addURL = "";
 	}
 	if (validation == 'y') {
-			if 	(document.getElementById("ExpFic").checked) {
-				ExpFic ="&exf=y" ;
+		if 	(document.getElementById("ExpFic").checked) {
+			ExpFic ="&exf=y" ;
 
-			} else {
-				ExpFic ="";
-			}
-			var url="/extraction/extraction/extraction_resultat_art.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+ExpFic+addURL;
-			window.location.replace(url);
 		} else {
-		if (typeAction =='peuplement') {
-			// Demander si on veut exporter sous forme de fichier.
-			var url="/extraction/extraction/extraction_resultat_art.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche;
-			window.location.replace(url);
-		} else {
-			xmlHttp=GetXmlHttpObject();
-			if (xmlHttp==null){
-				alert ("votre navigateur n'est pas compatible avec AJAX !!");
-				return;
-			} 	
+			ExpFic ="";
+		}
+		var url="/extraction/extraction/extraction_resultat_art.php?log="+checkLog+"&action="+typeAction+"&tab="+numtab+"&tp="+typePeche+ExpFic+addURL;
+		window.location.replace(url);
+	} else {
+		xmlHttp=GetXmlHttpObject();
+		if (xmlHttp==null){
+			alert ("votre navigateur n'est pas compatible avec AJAX !!");
+			return;
+		} 
+		testpos = false;
+		if (testpos) {
 			switch (numtab) {
 				case '1' :
 							try{
-							document.getElementById("exportFic").style.position = 'absolute';
+							//document.getElementById("exportFic").style.position = 'absolute';
 							document.getElementById("exportFic").style.top = '530px';
-	  						}
+							}
 							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
+							//document.getElementById("footer").style.position = 'absolute';
 							document.getElementById("footer").style.top = '550px';
 							break;
 				case '2' :
 							try{
-							document.getElementById("exportFic").style.position = 'absolute';
+							//document.getElementById("exportFic").style.position = 'absolute';
 							document.getElementById("exportFic").style.top = '570px';
 							}
 							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
+							//document.getElementById("footer").style.position = 'absolute';
 							document.getElementById("footer").style.top = '600px';
 							break;
 				case '3' :
 							try{
-							document.getElementById("exportFic").style.position = 'absolute';
+							//document.getElementById("exportFic").style.position = 'absolute';
 							document.getElementById("exportFic").style.top = '600px';
 							}
 							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
+							//document.getElementById("footer").style.position = 'absolute';
 							document.getElementById("footer").style.top = '600px';
 							break;
 				case '4' :
 							try{
-							document.getElementById("exportFic").style.position = 'absolute';
+							//document.getElementById("exportFic").style.position = 'absolute';
 							document.getElementById("exportFic").style.top = '770px';
 							}
 							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
+							//document.getElementById("footer").style.position = 'absolute';
 							document.getElementById("footer").style.top = '800px';
 							break;		
 				case '5' :
 							try{
-							document.getElementById("exportFic").style.position = 'absolute';
+							//document.getElementById("exportFic").style.position = 'absolute';
 							document.getElementById("exportFic").style.top = '770px';
 							}
 							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
+							//document.getElementById("footer").style.position = 'absolute';
 							document.getElementById("footer").style.top = '800px';
 							break;
 				case '6' :
 							try{
-							document.getElementById("exportFic").style.position = 'absolute';
+							//document.getElementById("exportFic").style.position = 'absolute';
 							document.getElementById("exportFic").style.top = '870px';
 							}
 							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
+							//document.getElementById("footer").style.position = 'absolute';
 							document.getElementById("footer").style.top = '900px';
 							break;
-}
-			fenID = "resultfiliere";
-			var url="/extraction/extraction/extraction_gestion_filieres_art.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+"&tab="+numtab+changementAction+addURL;
-			xmlHttp.onreadystatechange=stateChanged3;
-			xmlHttp.open("GET",url,true);
-			xmlHttp.send(null);
+			}
 		}
+		fenID = "resultfiliere";
+		var url="/extraction/extraction/extraction_gestion_filieres_art.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+"&tab="+numtab+changementAction+addURL;
+		xmlHttp.onreadystatechange=stateChanged3;
+		xmlHttp.open("GET",url,true);
+		xmlHttp.send(null);
 	}
 } 
 
@@ -716,69 +716,63 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 		addURL = "";
 	}
 	if (validation == 'y') {
-			if 	(document.getElementById("ExpFic").checked) {
-				ExpFic ="&exf=y" ;
+		if 	(document.getElementById("ExpFic").checked) {
+			ExpFic ="&exf=y" ;
 
-			} else {
-				ExpFic ="";
-			}
-			var url="/extraction/extraction/extraction_resultat_stat.php?log="+checkLog+"&action="+typeAction+"&ts="+typeStat+ExpFic+addURL;
-			window.location.replace(url);
 		} else {
-		if (typeAction =='peuplement') {
-			// Demander si on veut exporter sous forme de fichier.
-			var url="/extraction/extraction/extraction_resultat_stat.php?log="+checkLog+"&action="+typeAction+"&ts="+typeStat;
-			window.location.replace(url);
-		} else {
-			xmlHttp=GetXmlHttpObject();
-			if (xmlHttp==null){
-				alert ("votre navigateur n'est pas compatible avec AJAX !!");
-				return;
-			} 	
-			switch (numtab) {
-				case '1' :
-							try{
-							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '700px';
-	  						}
-							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '700px';
-							break;
-				case '2' :
-							try{
-							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '770px';
-							}
-							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '770px';
-							break;
-				case '3' :
-							try{
-							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '770px';
-							}
-							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '770px';
-							break;
-				case '4' :
-							try{
-							document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '770px';
-							}
-							catch (e) { }
-							document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '770px';
-							break;
-			}
-			fenID = "resultfiliere";
-			var url="/extraction/extraction/extraction_gestion_filieres_stat.php?log="+checkLog+"&action="+typeAction+"&ts="+typeStat+"&tab="+numtab+changementAction+addURL;
-			xmlHttp.onreadystatechange=stateChanged4;
-			xmlHttp.open("GET",url,true);
-			xmlHttp.send(null);
+			ExpFic ="";
 		}
+		var url="/extraction/extraction/extraction_resultat_stat.php?log="+checkLog+"&action="+typeAction+"&tab="+numtab+"&ts="+typeStat+ExpFic+addURL;
+		window.location.replace(url);
+	} else {
+		xmlHttp=GetXmlHttpObject();
+		if (xmlHttp==null){
+			alert ("votre navigateur n'est pas compatible avec AJAX !!");
+			return;
+		} 	
+		switch (numtab) {
+			case '1' :
+						try{
+						//document.getElementById("exportFic").style.position = 'absolute';
+						document.getElementById("exportFic").style.top = '700px';
+						}
+						catch (e) { }
+						//document.getElementById("footer").style.position = 'absolute';
+						document.getElementById("footer").style.top = '700px';
+						break;
+			case '2' :
+						try{
+						//document.getElementById("exportFic").style.position = 'absolute';
+						document.getElementById("exportFic").style.top = '770px';
+						}
+						catch (e) { }
+						//document.getElementById("footer").style.position = 'absolute';
+						document.getElementById("footer").style.top = '770px';
+						break;
+			case '3' :
+						try{
+						//document.getElementById("exportFic").style.position = 'absolute';
+						document.getElementById("exportFic").style.top = '770px';
+						}
+						catch (e) { }
+						//document.getElementById("footer").style.position = 'absolute';
+						document.getElementById("footer").style.top = '770px';
+						break;
+			case '4' :
+						try{
+						//document.getElementById("exportFic").style.position = 'absolute';
+						document.getElementById("exportFic").style.top = '770px';
+						}
+						catch (e) { }
+						//document.getElementById("footer").style.position = 'absolute';
+						document.getElementById("footer").style.top = '770px';
+						break;
+		}
+		fenID = "resultfiliere";
+		var url="/extraction/extraction/extraction_gestion_filieres_stat.php?log="+checkLog+"&action="+typeAction+"&ts="+typeStat+"&tab="+numtab+changementAction+addURL;
+		xmlHttp.onreadystatechange=stateChanged4;
+		xmlHttp.open("GET",url,true);
+		xmlHttp.send(null);
 	}
 } 
 

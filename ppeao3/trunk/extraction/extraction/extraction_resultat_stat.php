@@ -111,135 +111,144 @@ if (isset($_GET['action'])) {
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "Debut du traitement Resultat de l'extraction des statistiques pour filiere ".$typeAction,$pasdefichier);
 		}
-	
 ?>
-		
-		<div id="resumeChoix">
-			<?php
-				// Phase préliminaire : on verifie que par hasard, des nouvelles selections n'ont pas
-				// ete faires par l'utilisateur juste avant de cliquer sur resultat.
-				// Si c'est le cas, les variables de sessions ne seront pas a jour.
+<?php
+	// Phase préliminaire : on verifie que par hasard, des nouvelles selections n'ont pas
+	// ete faires par l'utilisateur juste avant de cliquer sur resultat.
+	// Si c'est le cas, les variables de sessions ne seront pas a jour.
 
-				if (isset($_GET['Esp'])) {
-					$valeurAMJ = AnaylseVarSession($_GET['Esp']);
-					$_SESSION['listeEspeces'] = $valeurAMJ;
-				} 					
-				if (isset($_GET['Col'])) {
-					$ListeColRecues = $_GET['Col'];
+	if (isset($_GET['Esp'])) {
+		$valeurAMJ = AnaylseVarSession($_GET['Esp']);
+		$_SESSION['listeEspeces'] = $valeurAMJ;
+	} 					
+	if (isset($_GET['Col'])) {
+		$ListeColRecues = $_GET['Col'];
+	} else {
+		$ListeColRecues = "";
+	}			
+	if (!($ListeColRecues =="")) {
+		$colRecues = explode (",",$ListeColRecues);
+		$NumColR = count($colRecues) - 1;
+		for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
+			// On extrait la valeur brute table.champ sauf dans le cas ou on la valeur XtoutX ou XpasttX
+			if (!($colRecues[$cptCR] == "XtoutX") && !($colRecues[$cptCR] == "XpasttX")) { 
+				$valTest = substr($colRecues[$cptCR],0,-2);
+				// Deux cas de figures : soit le champ a déjà été séléectionné : on le met à jour
+				// Sinon on l'ajoute avec sa valeur complete (table.nom-X ou -N)
+				// On a besoin de cette info pour cocher ou décocher le champ
+				if (strpos($_SESSION['listeColonne'],$valTest) === false ){
+					// Cette valeur n'est pas disponible dans la liste : on l'ajoute
+					if ($_SESSION['listeColonne'] == "") {
+						$_SESSION['listeColonne'] = $colRecues[$cptCR] ;
+					} else {
+						$_SESSION['listeColonne'] .= ",".$colRecues[$cptCR];
+					}		
 				} else {
-					$ListeColRecues = "";
-				}			
-				if (!($ListeColRecues =="")) {
-					$colRecues = explode (",",$ListeColRecues);
-					$NumColR = count($colRecues) - 1;
-					for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
-						// On extrait la valeur brute table.champ sauf dans le cas ou on la valeur XtoutX ou XpasttX
-						if (!($colRecues[$cptCR] == "XtoutX") && !($colRecues[$cptCR] == "XpasttX")) { 
-							$valTest = substr($colRecues[$cptCR],0,-2);
-							// Deux cas de figures : soit le champ a déjà été séléectionné : on le met à jour
-							// Sinon on l'ajoute avec sa valeur complete (table.nom-X ou -N)
-							// On a besoin de cette info pour cocher ou décocher le champ
-							if (strpos($_SESSION['listeColonne'],$valTest) === false ){
-								// Cette valeur n'est pas disponible dans la liste : on l'ajoute
-								if ($_SESSION['listeColonne'] == "") {
-									$_SESSION['listeColonne'] = $colRecues[$cptCR] ;
-								} else {
-									$_SESSION['listeColonne'] .= ",".$colRecues[$cptCR];
-								}		
-							} else {
-								// La valeur est disponible, on la met à jour
-								if (strpos($_SESSION['listeColonne'],$colRecues[$cptCR]) === false) {
-									// on doit mettre à jour la valeur
-									if (strpos($colRecues[$cptCR],"-X") === false) {
-										$oldVal = $valTest."-X";
-									} else {
-										$oldVal = $valTest."-N";
-									}
-									$newVal = $colRecues[$cptCR];
-									$_SESSION['listeColonne'] = str_replace($oldVal,$newVal,$_SESSION['listeColonne']);
-								}
-							}					
+					// La valeur est disponible, on la met à jour
+					if (strpos($_SESSION['listeColonne'],$colRecues[$cptCR]) === false) {
+						// on doit mettre à jour la valeur
+						if (strpos($colRecues[$cptCR],"-X") === false) {
+							$oldVal = $valTest."-X";
 						} else {
-							//$valTest = $colRecues[$cptCR];
-							$_SESSION['listeColonne'] = $colRecues[$cptCR];
+							$oldVal = $valTest."-N";
 						}
-				
+						$newVal = $colRecues[$cptCR];
+						$_SESSION['listeColonne'] = str_replace($oldVal,$newVal,$_SESSION['listeColonne']);
 					}
-				}
-				$exportFichier = false;
-				if (isset($_GET['exf'])) {
-					if ($_GET['exf'] =="y") {
-						$exportFichier = true;
-					} 	
-				}	
-				if (isset($_GET['synth'])) {
-					$_SESSION['listetablesynth'] = $_GET['synth'];
-				}
-				$SQLPays 	= "";
-				$SQLSysteme	= "";
-				$SQLSecteur	= "";
-				$SQLEngin	= "";
-				$SQLGTEngin = "";
-				$SQLPeEnquete = "";;
-				$SQLEspeces	= "";
-				$SQLFamille = "";
-				$SQLdateDebut = ""; // format annee/mois
-				$SQLdateFin = ""; // format annee/mois
-				// Données pour la selection 
-				$typeSelection = "";
-				$typePeche = "";
-				$typeStatistiques = "";
-				$listeGTEngin = "";
-				$compteurItem = 0;
-				$restSupp = "";
-				// Pour construire le bandeau avec la sélection
-				$listeSelection ="";
-				$resultatLecture = "";
-				$labelSelection = "";
-				$locSelection = AfficherSelection($file); 
-				$SelectionPourFic = $locSelection;
-				echo "<b>votre s&eacute;lection correspond &agrave; :</b> ".$locSelection;
-				if (!($_SESSION["selection_url"] =="")) {
-					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la sélection</a></span>";
-				} 
-				echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$typeAction."</span>"; 
-				echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."\" >changer de fili&egrave;re</a></span></div>";
-				AfficherDonnees($file,$typeAction);
-				echo "<b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp."<br/>";
-				switch ($_SESSION['listetablesynth']) {
-					case "cap_tot" : 	$labelSynthese = "r&eacute;sultats globaux"; break;
-					case "cap_sp" : 	$labelSynthese = "r&eacute;sultats par esp&egrave;ces"; break;
-					case "dft_sp" : 	$labelSynthese = "structure en taille des esp&egrave;ces"; break;
-					case "cap_GT" : 	$labelSynthese = "r&eacute;sultats globaux par GT"; break;
-					case "cap_GT_sp" : 	$labelSynthese = "r&eacute;sultats par esp&egrave;ces et par GT"; break;
-					case "dft_sp_sp" : 	$labelSynthese = "structure en taille des esp&egrave;ces par GT"; break;
-					default: $labelSynthese = "inconnu";break;
-				}
-				echo "<b>table de synthèse en cours </b> : ".$labelSynthese." (".$_SESSION['listetablesynth'].")<br/>";
-				echo "<b>".$labelSelection." s&eacute;lectionn&eacute;(e)s</b> = ".$compteurItem;								
-				?>
-
-		<br/>
-		<div id="resultfiliere"> 
-		<?php 
-			echo $resultatLecture; 
-			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
-				WriteCompLog ($logComp, "Fin statistiques  ".$typeAction,$pasdefichier);
-				WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
+				}					
+			} else {
+				//$valTest = $colRecues[$cptCR];
+				$_SESSION['listeColonne'] = $colRecues[$cptCR];
 			}
-		?>
-		</div>
-		<?php if (!($exportFichier)) {	?>
-		<div id="exportFic2">
-			<input type="button" id="validation" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','','y','','')" value="Exporter en fichier"/>
-			<input type="hidden" id="ExpFic" checked="checked"/></div>			
-		</div>
-		<?php } else {
+	
+		}
+	}
+	$exportFichier = false;
+	if (isset($_GET['exf'])) {
+		if ($_GET['exf'] =="y") {
+			$exportFichier = true;
+		} 	
+	}	
+	if (isset($_GET['synth'])) {
+		$_SESSION['listetablesynth'] = $_GET['synth'];
+	}
+	$SQLPays 	= "";
+	$SQLSysteme	= "";
+	$SQLSecteur	= "";
+	$SQLEngin	= "";
+	$SQLGTEngin = "";
+	$SQLPeEnquete = "";;
+	$SQLEspeces	= "";
+	$SQLFamille = "";
+	$SQLdateDebut = ""; // format annee/mois
+	$SQLdateFin = ""; // format annee/mois
+	// Données pour la selection 
+	$typeSelection = "";
+	$typePeche = "";
+	$typeStatistiques = "";
+	$listeGTEngin = "";
+	$compteurItem = 0;
+	$restSupp = "";
+	// Pour construire le bandeau avec la sélection
+	$listeSelection ="";
+	$resultatLecture = "";
+	$labelSelection = "";
+	$locSelection = AfficherSelection($file); 
+	$SelectionPourFic = $locSelection;
+	echo "<span class=\"showHide\">
+<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier/masquer la s&eacute;lection]</a></span>";
+	echo "<div id=\"selection_precedente\">".$locSelection."<br/>";
+	if (!($_SESSION["selection_url"] =="")) {
+		echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la s&eacute;lection</a></span>";
+	}
+	echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$typeAction."</span>"; 
+	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."\" >changer de fili&egrave;re</a></span></div>";
+	echo "</div>";
+	AfficherDonnees($file,$typeAction);
+	switch ($_SESSION['listetablesynth']) {
+		case "cap_tot" : 	$labelSynthese = "r&eacute;sultats globaux"; break;
+		case "cap_sp" : 	$labelSynthese = "r&eacute;sultats par esp&egrave;ces"; break;
+		case "dft_sp" : 	$labelSynthese = "structure en taille des esp&egrave;ces"; break;
+		case "cap_GT" : 	$labelSynthese = "r&eacute;sultats globaux par GT"; break;
+		case "cap_GT_sp" : 	$labelSynthese = "r&eacute;sultats par esp&egrave;ces et par GT"; break;
+		case "dft_sp_sp" : 	$labelSynthese = "structure en taille des esp&egrave;ces par GT"; break;
+		default: $labelSynthese = "inconnu";break;
+	}
+	echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li><b>".$compteurItem."</b> ".$labelSelection."</li>";
+	echo "<li>".$compteurItem." ".$labelSelection."</li><li><b>table de synthèse en cours </b> : ".$labelSynthese." (".$_SESSION['listetablesynth'].")</li><li><b/>fili&egrave;re en cours<b/> : <span id=\"filEncoursText\">".$typeAction."</span>"; 
+	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></li><li><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp; 
+	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li></ul></div>";
+							
+?>
 
-		echo "<br/>";
-		}	?>
+<br/>
+<div id="resultfiliere"> 
+<?php 
+	echo $resultatLecture; 
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
+		WriteCompLog ($logComp, "Fin statistiques  ".$typeAction,$pasdefichier);
+		WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
+	}
+?>
+</div>
+<?php if (!($exportFichier)) {	?>
+    <div id="exportFic2">
+    <input type="button" id="validation" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','','y','','')" value="Exporter en fichier"/>
+    <input type="hidden" id="ExpFic" checked="checked"/></div>			
+    </div>
+<?php } else {
 
+	echo "<br/>";
+}	?>
+<script type="text/javascript" charset="utf-8">
+var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
+mySlider.hide();
+// affiche ou masque le DIV contenant la selection precedente
+function toggleSelection() {
+	mySlider.toggle() //toggle the slider up and down.
+}
+</script>
 		
 <?php
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
