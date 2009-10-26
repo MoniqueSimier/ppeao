@@ -79,12 +79,6 @@ CREATE SEQUENCE admin_acces_donnees_acteurs_id_seq
 
 ALTER TABLE public.admin_acces_donnees_acteurs_id_seq OWNER TO devppeao;
 
---
--- Name: admin_acces_donnees_acteurs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_acces_donnees_acteurs_id_seq OWNED BY admin_acces_donnees_acteurs.id;
-
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: devppeao
@@ -164,13 +158,6 @@ CREATE SEQUENCE admin_acces_donnees_systemes_id_seq
 
 
 ALTER TABLE public.admin_acces_donnees_systemes_id_seq OWNER TO devppeao;
-
---
--- Name: admin_acces_donnees_systemes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE admin_acces_donnees_systemes_id_seq OWNED BY admin_acces_donnees_systemes.id;
-
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: devppeao
