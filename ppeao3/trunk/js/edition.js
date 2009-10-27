@@ -286,6 +286,17 @@ xhr.onreadystatechange = function(){
 		else {
 			theRow.removeClass("edit_field_row");
 		}
+		
+		
+		// on evalue eventuellement les <script> retournes par le PHP
+		var AllScripts=theCell.getElementsByTagName("script") 
+		for (var i=0; i<AllScripts.length; i++) { 
+			var s=AllScripts[i];  
+				eval(s.innerHTML); 
+		}
+
+		
+		
 	}  
 } // end xhr.onreadystatechange
 
@@ -915,4 +926,24 @@ function enregistrerDroits() {
 	//debug alert($("droits_acces").innerHTML);
 	$("droits_acces").submit();
 	
+}
+
+
+				
+function BrowseServer(inputId)
+				{
+					// You can use the "CKFinder" class to render CKFinder in a page:
+					var finder = new CKFinder() ;
+					finder.BasePath = '/ckfinder/' ;
+					finder.Width = 640 ;
+					finder.Height = 480;
+					finder.SelectFunction = SetFileField ;
+					finder.SelectFunctionData = inputId
+					finder.Popup() ;
+				}
+function SetFileField( fileUrl,data )
+{
+	var filePath=fileUrl.replace('/documentation/metadata/','');
+	
+	document.getElementById(data["selectFunctionData"] ).value = filePath ;
 }

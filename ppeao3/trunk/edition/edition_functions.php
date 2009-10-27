@@ -347,6 +347,10 @@ $theDetails=$cDetails[$column];
 if ($theDetails["column_name"]=="user_password") {
 	$theDetails["data_type"]="password";
 }
+// cas d'une colonne stockant un chemin de fichier
+if ($theDetails["column_name"]=="file_path") {
+	$theDetails["data_type"]="filepath";
+}
 
 // on teste si la colonne concernée a une contrainte de type clé primaire, clé étrangère ou énumération (ou plusieurs...)
 $keyConstraint=FALSE;
@@ -385,7 +389,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 							$length=$defaultTextInputLength;
 							$maxLength=$defaultTextInputLength;
 							}
-						$theField='<div class="filter"><input type="text"  title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\')"></input></div>';
+						$theField='<div class="filter"><input type="text"  title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="'.$length.'" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\')" /></div>';
 					break;
 
 					case 'display':
@@ -400,7 +404,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 					$ifSequence=getTableColumnSequence($connectPPEAO,$tablesDefinitions[$table]["table"],$column);
 					if ($ifSequence) {
 						$theClass='non_editable_field';
-						$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="valeur déterminée par une s&eacute;quence automatique">(auto)</div>';
+						$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="valeur d&eacute;termin&eacute;e par une s&eacute;quence automatique">(auto)</div>';
 					}
 					else {
 					// sinon, on insère un champ input
@@ -440,7 +444,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 							foreach($theOptions as $theOption) {
 								// on selectionne eventuellement l'option correspondant à la valeur courante du champ
 								if ($theOption==$value) {$selected='selected="selected"';} else {$selected='';}
-								$theField.='<option value='.$theOption.' '.$selected.'>'.$theOption.'</option>';
+								$theField.='<option value="'.$theOption.'" '.$selected.'>'.$theOption.'</option>';
 								}
 						$theField.='</select></div>';
 					break;
@@ -453,7 +457,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 						foreach($theOptions as $theOption) {
 							// on selectionne eventuellement l'option correspondant à la valeur courante du champ
 							if ($theOption==$value) {$selected='selected="selected"';} else {$selected='';}
-							$theField.='<option value='.$theOption.' '.$selected.'>'.$theOption.'</option>';
+							$theField.='<option value="'.$theOption.'" '.$selected.'>'.$theOption.'</option>';
 							}
 					$theField.='</select></div>';
 					break;
@@ -898,7 +902,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 
 			case 'display' : 
 								
-				// il faut tenir compte de deux cas particuliers : les BOOLEAN et les DATE
+				// il faut tenir compte des cas particuliers
 				switch ($theDetails["data_type"]) {
 				// les booleens
 				case 'boolean':
@@ -918,13 +922,19 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour d&eacute;finir un nouveau mot de passe" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
 				break;
 				
+				// cas d'un champ stockant un chemin de fichier
+				case 'filepath':
+				if (my_empty($value)) {$value="";} 
+				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour choisir un nouveau fichier" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
+				break;
+				
 				// le cas générique : on ne fait rien à la valeur
 				default:
 				// on encode d'éventuels sauts de ligne pour javascript
 				$valueJS=preg_replace("/\r?\n/", "\\n", addslashes($value));
 				$valueJS=htmlspecialchars($valueJS);
-				//debug 
-				if (my_empty($value)) {$value="";} $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
+				if (my_empty($value)) {$value="";} 
+				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
 				
 				// end debug
 				
@@ -945,7 +955,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 					$theField.='</select></div>';
 				break;
 				default:
-			$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');"> </input></div>';
+			$theField='<div class="filter"><input type="text" title="saisissez une valeur puis appuyez sur la touche ENTR&Eacute;E" id="'.$theId.'" name="'.$theId.'" value="'.$value.'" class="'.$theClass.'" size="" maxlength="'.$maxLength.'" onchange="javascript:filterTable(\''.$theUrl.'\');" /></div>';
 				break;
 				}
 			break;
@@ -953,7 +963,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 			case 'add':
 			case 'edit' :
 				
-				// il faut tenir compte de deux cas particuliers : les BOOLEAN et les DATE
+				// il faut tenir compte des cas particuliers
 				switch ($theDetails["data_type"]) {
 				// les booleens
 				case 'boolean':
@@ -973,7 +983,14 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 				
 				// les dates
 				case 'date':
-					$theField='<input  '.$tabIndex.' title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="10" maxlength="10"  '.$onAction.'></input>';
+					$theField='<input  '.$tabIndex.' title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="10" maxlength="10"  '.$onAction.' />';
+				break;
+				
+				// chemin de fichier
+				case 'filepath':
+				if (my_empty($value)) {$value="";} 			
+				$theField='';
+				$theField.='<input  '.$tabIndex.' title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" '.$onAction.' size="50" disabled="disabled"/><a href="javascript:BrowseServer(\''.$theId.'\');">choisir un fichier...</a>';
 				break;
 				
 				default:				
@@ -1009,7 +1026,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 
 							// on affiche un <input>
 							if ($theType=='input') {
-							$theField='<input  '.$tabIndex.' title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.'></input>';
+							$theField='<input '.$tabIndex.' title="XXX" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.' />';
 							} // end if input
 				break; // end default:
 				} //end switch 'data_type'

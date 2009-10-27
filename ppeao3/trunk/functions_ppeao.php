@@ -589,10 +589,7 @@ $access=false;
 if (isset($_SESSION['s_ppeao_login_status']) && $_SESSION['s_ppeao_login_status']=='good') {
 	// on récupère la liste des zones auxquelles l'utilisateur a accès
 	$lesZones=userGetAuthorizedZones($user_id);
-	
-	
-	//debug 	echo('$lesZones=');	echo('<pre>');	print_r($lesZones);	echo('</pre>');
-	
+	$_SESSION["zones_autorisees"]=$lesZones;	
 	
 	// on teste si la zone de la page appelée fait partie de la liste des zones autorisées pour l'utilisateur
 	// si la zone est 0 (publique) ou si l'utilisateur a accès à la zone 9999 ("toutes zones"), on donne l'accès

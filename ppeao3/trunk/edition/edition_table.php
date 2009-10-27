@@ -46,6 +46,7 @@ switch ($tablesDefinitions[$editTable]["type_table_nom"]) {
 	<title>ppeao::g&eacute;rer::<?php echo($tablesDefinitions[$editTable]["type_table_description"]); ?>::&quot;<?php echo($tablesDefinitions[$editTable]["label"]); ?>&quot;</title>
 
 <script src="/js/edition.js" type="text/javascript"  charset="iso-8859-15"></script>
+<script type="text/javascript" src="/ckfinder/ckfinder.js"></script>
 
 <?php
 

@@ -166,3 +166,19 @@ function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
 
 	}
 }
+
+
+// fonction qui permet de passer de la derniere etape de la selection au choix des filieres d'extraction
+function goToChoixFilieres(url) {
+	// url: l'url qui doit servir de base pour l'etape suivante
+	if (document.getElementById("metadataForm")) {
+		theForm=document.getElementById("metadataForm")
+	var formValues=theForm.toQueryString();}
+	if (formValues=='') {var separator='';} else {var separator='&';}
+	url=url+separator+formValues;
+	
+	//debug			alert(url);
+	
+	document.location=url;
+}
+

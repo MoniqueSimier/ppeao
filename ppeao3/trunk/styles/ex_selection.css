@@ -88,4 +88,33 @@ a.last_step {
 }
 
 
+/* les listes de documents */
+
+#meta_docs, #meta_maps, #meta_figs {
+	font-size:10px;
+}
+
+#meta_docs ul, #meta_maps ul , #meta_figs ul {
+	list-style:none;
+}
+
+/* les styles des tooltips */
+.tool-tip {
+	font-size: 10px;
+	padding:0;
+	width:300px;
+	background-color:#DADADA;
+
+}
+
+.tool-title {
+	font-weight:bold;
+	padding:6px;
+	background-color:#C2C2C2;
+
+}
+
+.tool-text {
+	padding:6px;
+}
 

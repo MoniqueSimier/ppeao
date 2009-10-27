@@ -1747,9 +1747,17 @@ global $connectPPEAO;
 // si on est au step suivant, on ferme le div id=selection_precedente, ouvert dans selection.php
 if ($_GET["step"]==10) {
 echo('</div></div>');}
-if ($_GET["step"]>9) {echo('<div id="choix_filiere"><a id="link_filieres" href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'" class="last_step">choisir une fili&egrave;re d&#x27;exploitation...</a>');
+if ($_GET["step"]>9) {
+	
+	$url='/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"];
+	
+	echo('<div id="choix_filiere"><a id="link_filieres" href="#" class="last_step" onclick="javascript:goToChoixFilieres(\''.$url.'\');">choisir une fili&egrave;re d&#x27;exploitation...</a>');
 // on affiche le texte d'aide
 afficheAide("filieres");
+
+// on affiche la liste des documents disponibles relatifs a la selection geographique de l'utilisateur
+afficheMetadonnees();
+
 echo('</div>');}
 
 }
@@ -2433,6 +2441,224 @@ $acces_array["annee"]=$unit_details["annee"];
 
 return $acces_array;
 
+}
+
+
+//******************************************************************************
+// affiche la liste des documents disponibles pour la selection geographique faite par l'utilisateur
+function afficheMetadonnees() {
+// la connexion à la base
+global $connectPPEAO;
+// on n'affiche le div que si des documents sont effectivement disponibles
+$documents=FALSE;
+
+// on cherche les documents disponibles selon les diverses unites geographiques
+$meta_files=array();
+// on recupere la liste des documents pour les pays selectionnes
+$pays=array();
+if (isset($_GET["pays"])) {$pays=$_GET["pays"];}
+if (!empty($pays)) {
+$sql='SELECT DISTINCT meta_id, ref_pays_id, doc_type,file_path,doc_titre,doc_description FROM meta_pays WHERE ref_pays_id IN (\''.arrayToList($pays,'\',\'','\'').')';
+$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$array_pays=pg_fetch_all($result);
+pg_free_result($result);
+if (count($array_pays)>0) {
+	$documents=TRUE;
+	foreach($array_pays as $unpays) {
+		$unpays["meta_table"]="meta_pays";
+		$meta_files[]=array(
+			"pays"=>$unpays["ref_pays_id"],
+			"systeme"=>'',
+			"secteur"=>'',
+			"document"=>$unpays
+			);
+		}
+	}
+}
+
+// on recupere la liste des documents pour les systemes selectionnes
+$systemes=array();
+if (isset($_GET["systemes"])) {$systemes=$_GET["systemes"];}
+if (!empty($pays)) {
+// on doit aussi recuperer tous les systemes appartenant aux pays selectionnes
+if (isset($_GET["pays"])) {
+	$sql='SELECT DISTINCT id, ref_pays_id FROM ref_systeme WHERE ref_pays_id IN (\''.arrayToList($pays,'\',\'','\'').')';
+	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+	$array=pg_fetch_all($result);
+	pg_free_result($result);
+	if (!empty($array)) {
+		foreach ($array as $systeme) {
+			if (!in_array($systeme["id"],$systemes)) {
+			$systemes[]=$systeme["id"];
+			}
+		}
+	}
+}
+
+$sql='SELECT DISTINCT  meta_id, ref_systeme_id, doc_type,file_path,doc_titre,doc_description, ref_pays_id FROM meta_systemes, ref_systeme 
+	WHERE ref_systeme_id IN ('.arrayToList($systemes,',','').') 
+		AND ref_systeme_id=ref_systeme.id
+	';
+$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$array_systemes=pg_fetch_all($result);
+pg_free_result($result);
+
+if (count($array_systemes)>0) {
+	$documents=TRUE;
+	foreach($array_systemes as $unsysteme) {
+		$unsysteme["meta_table"]="meta_systemes";
+		$meta_files[]=array(
+			"pays"=>$unsysteme["ref_pays_id"],
+			"systeme"=>$unsysteme["ref_systeme_id"],
+			"secteur"=>'',
+			"document"=>$unsysteme
+			);
+		}
+}
+
+// on recupere la liste des documents pour les secteurs selectionnes
+$secteurs=array();
+if (isset($_GET["secteurs"])) {$secteurs=$_GET["secteurs"];}
+if (!empty($systemes)) {
+// on doit aussi recuperer tous les secteurs appartenant aux pays>systemes selectionnes
+$sql='SELECT s.id,ref_systeme_id,ref_pays_id 
+	FROM ref_secteur s, ref_systeme sy, ref_pays p 
+	WHERE ref_systeme_id IN ('.arrayToList($systemes,",","").')';
+$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$array=pg_fetch_all($result);
+pg_free_result($result);
+if (!empty($array)) {
+		foreach ($array as $secteur) {
+			if (!in_array($secteur["id"],$secteurs)) {
+			$secteurs[]=$secteur["id"];
+			}
+		}
+	}
+
+$sql='SELECT DISTINCT meta_id, ref_secteur_id,doc_type,file_path,doc_titre,doc_description, ref_pays_id, ref_systeme_id, ref_secteur.id FROM ref_systeme, ref_secteur, meta_secteurs WHERE meta_secteurs.ref_secteur_id IN ('.arrayToList($secteur,',','').') AND ref_systeme.id=ref_secteur.ref_systeme_id AND ref_secteur.id=meta_secteurs.ref_secteur_id
+	';
+$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
+$array_secteurs=pg_fetch_all($result);
+pg_free_result($result);
+
+if (count($array_secteurs)>0) {
+	$documents=TRUE;
+	foreach($array_secteurs as $unsecteur) {
+		$unsecteur["meta_table"]="meta_secteurs";
+		$meta_files[]=array(
+			"pays"=>$unsecteur["ref_pays_id"],
+			"systeme"=>$unsecteur["ref_systeme_id"],
+			"secteur"=>$unsecteur["ref_secteur_id"],
+			"document"=>$unsecteur
+			);
+		}
+}
+
+}
+
+} // if !empty $pays
+
+
+
+
+
+if ($documents) {
+	// on trie le tableau des documents par pays, systeme et secteur
+	$meta_files=array_msort($meta_files,array('pays'=>array(SORT_ASC,SORT_REGULAR),'systeme'=>array(SORT_ASC,SORT_REGULAR),'secteur'=>array(SORT_ASC,SORT_REGULAR)));
+	// on eclate le tableau en trois : documents, cartes et figures
+	$meta_docs=array();
+	$meta_maps=array();
+	$meta_figs=array();
+	foreach ($meta_files as $file) {
+		switch($file["document"]["doc_type"]) {
+			case 'carte':
+				$meta_maps[]=$file;
+			break;
+			case 'doc':
+				$meta_docs[]=$file;
+			break;
+			case 'figure':
+				$meta_figs[]=$file;
+			break;
+		}		
+	}
+	echo('<div id="metadata">');
+		echo('<h2>des documents descriptifs sont disponibles pour les donn&eacute;es que vous avez s&eacute;lectionn&eacute;es</h2>');
+		echo('<span class="showHide"><a href="#" onclick="javascript:toggleMetadataList();">[afficher les documents disponibles]</a></span>');
+		echo('<div id="metadataList">');
+		echo('<form id="metadataForm">');
+			echo('<p>cochez les cases en regard des documents qui vous int&eacute;ressent : ceux-ci seront ajout&eacute;s &agrave; l&#x27;archive t&eacute;l&eacute;chargeable contenant vos donn&eacute;es</p>');
+			
+			// les documents
+			if (!empty($meta_docs)) {
+				echo('<div id="meta_docs">');
+				echo('<h3>documents :</h3>');
+				echo('<ul>');
+				foreach ($meta_docs as $doc) {
+					echo('<li>');
+					$tip='';
+					if (!empty($doc["document"]["doc_description"])) {$tip='class="toolTipSpan" title="description de ce document&nbsp;: ::'.$doc["document"]["doc_description"].'"';}
+					echo('<input type="checkbox" name="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" /> <span id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'_titre" '.$tip.' >'.$doc["document"]["doc_titre"]).'</span>';
+					echo('</li>');
+				}
+				echo('</ul>');
+				echo('</div>');
+			}
+			
+			// les cartes
+			if (!empty($meta_maps)) {
+				echo('<div id="meta_maps">');
+				echo('<h3>cartes :</h3>');
+				echo('<ul>');
+				foreach ($meta_maps as $doc) {
+					echo('<li>');
+					$tip='';
+					if (!empty($doc["document"]["doc_description"])) {$tip='class="toolTipSpan" title="description de ce document&nbsp;: ::'.$doc["document"]["doc_description"].'"';}
+					echo('<input type="checkbox" name="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" /> <span id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'_titre" '.$tip.' >'.$doc["document"]["doc_titre"]).'</span>';
+					echo('</li>');
+				}
+				echo('</ul>');
+				echo('</div>');
+			}
+			
+			// les figures
+			if (!empty($meta_figs)) {
+				echo('<div id="meta_figs">');
+				echo('<h3>figures :</h3>');
+				echo('<ul>');
+				foreach ($meta_figs as $doc) {
+					echo('<li>');
+					$tip='';
+					if (!empty($doc["document"]["doc_description"])) {$tip='class="toolTipSpan" title="description de ce document&nbsp;: ::'.$doc["document"]["doc_description"].'"';}
+					echo('<input type="checkbox" name="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" /> <span id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'_titre" '.$tip.' >'.$doc["document"]["doc_titre"]).'</span>';
+					echo('</li>');
+				}
+				echo('</ul>');
+				echo('</div>');
+			}
+			
+		echo('</form>');
+		//debug 				echo('<pre>');print_r($meta_docs);echo('</pre>');
+		
+		echo('</div>'); // div metadataList
+		echo('<script type="text/javascript" charset="utf-8">
+	var mySlider3 = new Fx.Slide(\'metadataList\', {duration: 500});
+	mySlider3.hide();
+	// affiche ou masque le DIV contenant la selection precedente
+	function toggleMetadataList() {
+		mySlider3.toggle() //toggle the slider up and down.
+	}
+</script>');
+	echo('<script>
+    var myTips = new Tips($$(\'.toolTipSpan\'), {
+        maxTitleChars: 30,   //I like my captions a little long
+		fixed: true
+    });
+</script>
+');
+	echo('</div>'); // div metadata
+	
+}
 }
 
 ?>

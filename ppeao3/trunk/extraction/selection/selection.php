@@ -211,7 +211,7 @@ echo('</div>');
 
 <?php
 
-// si on a exlus des campagnes ou enquetes, on ajoute le script pour afficher ou masquer les infos correspondantes
+// si on a exclu des campagnes ou enquetes, on ajoute le script pour afficher ou masquer les infos correspondantes
 if (isset($compteur["filtrees"])) {
 	?>
 	<script type="text/javascript" charset="utf-8">

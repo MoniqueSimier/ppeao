@@ -8,11 +8,11 @@ include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/selection/selection_xml_functions.php';
 
+
+// on stocke l'URL courante dans le tableau des variables superglobales sous la forme $_SERVER['FULL_URL']
+storeUrl();
 $parsed=parse_url($_SESSION["selection_url"]);
 parse_str($parsed["query"],$selection);
-
-//debug echo('<pre>');print_r($selection);echo('</pre>');
-
 
 // on commence a produire le contenu de la selection en XML
 $xml='<?xml version="1.0" encoding="UTF-8"?>';
@@ -90,14 +90,30 @@ switch ($selection["exploit"]) {
 		}
 	$script="extraction_filieres_stat.php?logsupp=0";
 	break;
-	// fonds de cartes
-	case "cartes":
-	break;
 	
 	
 }
 
+//debug echo('<pre>');print_r($_GET);echo('</pre>');
 
+
+// on recupere la liste des eventuels documents selectionnes
+$sel='aucune';
+if (true) {$sel='selection';} 
+$xml.='<documentsListe selection="'.$sel.'">';
+	foreach ($_GET as $key=>$value) {
+		if (substr($key,0,9)=='meta_pays') {
+			$id=substr($key,10);
+			$xml.='<document id="'.$id.'" type="meta_pays"/>';
+			}
+		if (substr($key,0,13)=='meta_systemes') {
+			$id=substr($key,14);
+			$xml.='<document id="'.$id.'" type="meta_systeme"/>';}
+		if (substr($key,0,13)=='meta_secteurs') {
+			$id=substr($key,14);
+			$xml.='<document id="'.$id.'" type="meta_secteur"/>';}
+	}
+$xml.='</documentsListe>';
 
 $xml.='</selection>';
 
