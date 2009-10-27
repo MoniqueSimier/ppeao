@@ -656,6 +656,41 @@ array_multisort($sortarr, $order, $results, $order);
 }
 
 //***************************************************************************************************
+// sorts any multidensionnal associative array on a list of columns 
+function array_msort($array, $cols)
+// $array : le tableau a trier
+// $cols les colonnes sur lesquelles trier et dans quel ordre
+// 		exemple : array('name'=>array(SORT_DESC,SORT_REGULAR), 'cat'=>SORT_ASC)
+{
+    $colarr = array();
+    foreach ($cols as $col => $order) {
+        $colarr[$col] = array();
+        foreach ($array as $k => $row) { $colarr[$col]['_'.$k] = strtolower($row[$col]); }
+    }
+    $params = array();
+    foreach ($cols as $col => $order) {
+        $params[] =& $colarr[$col];
+        $params = array_merge($params, (array)$order);
+    }
+    call_user_func_array('array_multisort', $params);
+    $ret = array();
+    $keys = array();
+    $first = true;
+    foreach ($colarr as $col => $arr) {
+        foreach ($arr as $k => $v) {
+            if ($first) { $keys[$k] = substr($k,1); }
+            $k = $keys[$k];
+            if (!isset($ret[$k])) $ret[$k] = $array[$k];
+            $ret[$k][$col] = $array[$k][$col];
+        }
+        $first = false;
+    }
+    return $ret;
+
+}
+
+
+//***************************************************************************************************
 // implementation of array_unique for multidimensionnal non-associative arrays
 function array_unique_multidimensionnal($data) {
 	$values = array(); 
