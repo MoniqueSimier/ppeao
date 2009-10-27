@@ -1008,6 +1008,300 @@ ALTER TABLE ONLY exp_trophique
 
 
 
+
+--
+-- Name: meta_pays; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE TABLE meta_pays (
+    meta_id integer NOT NULL,
+    ref_pays_id character varying NOT NULL,
+    doc_type character varying NOT NULL,
+    file_path character varying NOT NULL,
+    doc_titre character varying NOT NULL,
+    doc_description text,
+    CONSTRAINT meta_pays_doc_type_check CHECK (((((doc_type)::text = 'doc'::text) OR ((doc_type)::text = 'carte'::text)) OR ((doc_type)::text = 'figure'::text)))
+);
+
+
+ALTER TABLE public.meta_pays OWNER TO devppeao;
+
+--
+-- Name: TABLE meta_pays; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON TABLE meta_pays IS 'table contenant la liste des documents associés à des pays';
+
+
+--
+-- Name: COLUMN meta_pays.meta_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_pays.meta_id IS 'id unique du document';
+
+
+--
+-- Name: COLUMN meta_pays.ref_pays_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_pays.ref_pays_id IS 'id du pays (ref_pays.id)';
+
+
+--
+-- Name: COLUMN meta_pays.doc_type; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_pays.doc_type IS 'type de document (document, figure, carte)';
+
+
+--
+-- Name: COLUMN meta_pays.file_path; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_pays.file_path IS 'le chemin du fichier par rapport au dossier /documentation/metadata/';
+
+
+--
+-- Name: COLUMN meta_pays.doc_titre; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_pays.doc_titre IS 'le titre du document';
+
+
+--
+-- Name: COLUMN meta_pays.doc_description; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_pays.doc_description IS 'la description du document';
+
+
+--
+-- Name: meta_pays_meta_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE meta_pays_meta_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.meta_pays_meta_id_seq OWNER TO devppeao;
+
+
+--
+-- Name: meta_id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE meta_pays ALTER COLUMN meta_id SET DEFAULT nextval('meta_pays_meta_id_seq'::regclass);
+
+
+--
+-- Name: meta_pays_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY meta_pays
+    ADD CONSTRAINT meta_pays_pkey PRIMARY KEY (meta_id);
+
+
+
+--
+-- Name: meta_secteurs; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE TABLE meta_secteurs (
+    meta_id integer NOT NULL,
+    ref_secteur_id integer NOT NULL,
+    doc_type character varying NOT NULL,
+    file_path character varying NOT NULL,
+    doc_titre character varying NOT NULL,
+    doc_description text,
+    CONSTRAINT meta_secteurs_doc_type_check CHECK (((((doc_type)::text = 'doc'::text) OR ((doc_type)::text = 'carte'::text)) OR ((doc_type)::text = 'figure'::text)))
+);
+
+
+ALTER TABLE public.meta_secteurs OWNER TO devppeao;
+
+--
+-- Name: TABLE meta_secteurs; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON TABLE meta_secteurs IS 'table contenant la liste des documents associés à des secteurs';
+
+
+--
+-- Name: COLUMN meta_secteurs.meta_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_secteurs.meta_id IS 'id unique du document';
+
+
+--
+-- Name: COLUMN meta_secteurs.ref_secteur_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_secteurs.ref_secteur_id IS 'id du secteur (ref_secteur.id)';
+
+
+--
+-- Name: COLUMN meta_secteurs.doc_type; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_secteurs.doc_type IS 'type de document (document, figure, carte)';
+
+
+--
+-- Name: COLUMN meta_secteurs.file_path; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_secteurs.file_path IS 'le chemin du fichier par rapport au dossier /documentation/metadata/';
+
+
+--
+-- Name: COLUMN meta_secteurs.doc_titre; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_secteurs.doc_titre IS 'le titre du document';
+
+
+--
+-- Name: COLUMN meta_secteurs.doc_description; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_secteurs.doc_description IS 'la description du document';
+
+
+--
+-- Name: meta_secteurs_meta_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE meta_secteurs_meta_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.meta_secteurs_meta_id_seq OWNER TO devppeao;
+
+
+--
+-- Name: meta_id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE meta_secteurs ALTER COLUMN meta_id SET DEFAULT nextval('meta_secteurs_meta_id_seq'::regclass);
+
+
+--
+-- Name: meta_secteurs_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY meta_secteurs
+    ADD CONSTRAINT meta_secteurs_pkey PRIMARY KEY (meta_id);
+
+
+
+--
+-- Name: meta_systemes; Type: TABLE; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+CREATE TABLE meta_systemes (
+    meta_id integer NOT NULL,
+    ref_systeme_id integer NOT NULL,
+    doc_type character varying NOT NULL,
+    file_path character varying NOT NULL,
+    doc_titre character varying NOT NULL,
+    doc_description text,
+    CONSTRAINT meta_systemes_doc_type_check CHECK (((((doc_type)::text = 'doc'::text) OR ((doc_type)::text = 'carte'::text)) OR ((doc_type)::text = 'figure'::text)))
+);
+
+
+ALTER TABLE public.meta_systemes OWNER TO devppeao;
+
+--
+-- Name: TABLE meta_systemes; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON TABLE meta_systemes IS 'table contenant la liste des documents associés à des systèmes';
+
+
+--
+-- Name: COLUMN meta_systemes.meta_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_systemes.meta_id IS 'id unique du document';
+
+
+--
+-- Name: COLUMN meta_systemes.ref_systeme_id; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_systemes.ref_systeme_id IS 'id du système (ref_systeme.id)';
+
+
+--
+-- Name: COLUMN meta_systemes.doc_type; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_systemes.doc_type IS 'type de document (document, figure, carte)';
+
+
+--
+-- Name: COLUMN meta_systemes.file_path; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_systemes.file_path IS 'le chemin du fichier par rapport au dossier /documentation/metadata/';
+
+
+--
+-- Name: COLUMN meta_systemes.doc_titre; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_systemes.doc_titre IS 'le titre du document';
+
+
+--
+-- Name: COLUMN meta_systemes.doc_description; Type: COMMENT; Schema: public; Owner: devppeao
+--
+
+COMMENT ON COLUMN meta_systemes.doc_description IS 'la description du document';
+
+
+--
+-- Name: meta_systemes_meta_id_seq; Type: SEQUENCE; Schema: public; Owner: devppeao
+--
+
+CREATE SEQUENCE meta_systemes_meta_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.meta_systemes_meta_id_seq OWNER TO devppeao;
+
+--
+-- Name: meta_systemes_meta_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
+--
+
+ALTER SEQUENCE meta_systemes_meta_id_seq OWNED BY meta_systemes.meta_id;
+
+
+--
+-- Name: meta_id; Type: DEFAULT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE meta_systemes ALTER COLUMN meta_id SET DEFAULT nextval('meta_systemes_meta_id_seq'::regclass);
+
+
+--
+-- Name: meta_systemes_pkey; Type: CONSTRAINT; Schema: public; Owner: devppeao; Tablespace: 
+--
+
+ALTER TABLE ONLY meta_systemes
+    ADD CONSTRAINT meta_systemes_pkey PRIMARY KEY (meta_id);
+
+
 -- ---------------------------------------------------------------------------
 -- Name: pg_ts_dict; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
@@ -1604,3 +1898,25 @@ ALTER TABLE ONLY exp_trophique
 
 ALTER TABLE ONLY exp_trophique
     ADD CONSTRAINT exp_trophique_exp_contenu_id_fkey FOREIGN KEY (exp_contenu_id) REFERENCES exp_contenu(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: meta_pays_ref_pays_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY meta_pays
+    ADD CONSTRAINT meta_pays_ref_pays_id_fkey FOREIGN KEY (ref_pays_id) REFERENCES ref_pays(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+--
+-- Name: meta_secteurs_ref_secteur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY meta_secteurs
+    ADD CONSTRAINT meta_secteurs_ref_secteur_id_fkey FOREIGN KEY (ref_secteur_id) REFERENCES ref_secteur(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+--
+-- Name: meta_systemes_ref_systeme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY meta_systemes
+    ADD CONSTRAINT meta_systemes_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id) ON UPDATE CASCADE ON DELETE CASCADE;

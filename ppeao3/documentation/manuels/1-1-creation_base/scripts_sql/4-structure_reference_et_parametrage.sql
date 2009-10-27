@@ -1032,7 +1032,7 @@ ALTER TABLE ONLY ref_systeme
 --
 
 ALTER TABLE ONLY admin_acces_donnees_acteurs
-    ADD CONSTRAINT admin_acces_donnees_acteurs_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id);
+    ADD CONSTRAINT admin_acces_donnees_acteurs_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1040,7 +1040,7 @@ ALTER TABLE ONLY admin_acces_donnees_acteurs
 --
 
 ALTER TABLE ONLY admin_acces_donnees_systemes
-    ADD CONSTRAINT admin_acces_donnees_systemes_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id);
+    ADD CONSTRAINT admin_acces_donnees_systemes_ref_systeme_id_fkey FOREIGN KEY (ref_systeme_id) REFERENCES ref_systeme(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
