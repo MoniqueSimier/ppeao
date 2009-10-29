@@ -2541,7 +2541,11 @@ $result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg
 $array_secteurs=pg_fetch_all($result);
 pg_free_result($result);
 
-if (count($array_secteurs)>0) {
+//debug 
+echo('<pre>');print_r($array_secteurs);echo('</pre>');
+
+
+if (!empty($array_secteurs)) {
 	$documents=TRUE;
 	foreach($array_secteurs as $unsecteur) {
 		$unsecteur["meta_table"]="meta_secteurs";
