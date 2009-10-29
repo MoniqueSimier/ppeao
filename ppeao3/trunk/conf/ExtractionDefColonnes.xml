@@ -67,7 +67,6 @@
 		<numOrdre>4</numOrdre>
 		<filieres>
 			<filiere>peuplement</filiere>
-			<filiere>environnement</filiere>
 			<filiere>NtPt</filiere>
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
@@ -94,7 +93,6 @@
 		<numOrdre>4</numOrdre>
 		<filieres>
 			<filiere>peuplement</filiere>
-			<filiere>environnement</filiere>
 			<filiere>NtPt</filiere>
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
@@ -117,7 +115,6 @@
 		<numOrdre>4</numOrdre>
 		<filieres>
 			<filiere>peuplement</filiere>
-			<filiere>environnement</filiere>
 			<filiere>NtPt</filiere>
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
@@ -136,7 +133,6 @@
 		<numOrdre>4</numOrdre>
 		<filieres>
 			<filiere>peuplement</filiere>
-			<filiere>environnement</filiere>
 			<filiere>NtPt</filiere>
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
@@ -155,7 +151,6 @@
 		<numOrdre>4</numOrdre>
 		<filieres>
 			<filiere>peuplement</filiere>
-			<filiere>environnement</filiere>
 			<filiere>NtPt</filiere>
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
@@ -554,22 +549,8 @@
 			<filiere>NtPt</filiere>
 		</filieres>	
 		<testNom>aeng</testNom>
-		<libelle>Agglomeration</libelle>
+		<libelle>Engins de peche</libelle>
 		<champ code="art_type_engin_id" affichage="C" libelle="art_type_engin_id"/>
-	</table>
-
-	<table>	
-		<nom>art_type_agglomeration</nom>	
-		<peches>
-			<peche>artisanale</peche>
-		</peches>
-		<numOrdre>4</numOrdre>
-		<filieres>
-			<filiere>toutes</filiere>
-		</filieres>	
-		<testNom>tagg</testNom>
-		<libelle>Type Agglomeration</libelle>
-		<champ code="libelle" affichage="C" libelle="Libelle"/>
 	</table>
 	<table>	
 		<nom>art_type_agglomeration</nom>	
@@ -591,7 +572,7 @@
 		</peches>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>activite</filiere>
 		</filieres>	
 		<testNom>tact</testNom>
 		<libelle>Type activite</libelle>
@@ -618,7 +599,12 @@
 		</peches>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+		<filieres>
+			<filiere>capture</filiere>
+			<filiere>NtPt</filiere>
+			<filiere>taille</filiere>
+			<filiere>engin</filiere>			
+		</filieres>	
 		</filieres>	
 		<testNom>gte</testNom>
 		<libelle>Grand type engin</libelle>

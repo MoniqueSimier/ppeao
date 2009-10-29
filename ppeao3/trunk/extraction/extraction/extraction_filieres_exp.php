@@ -133,6 +133,7 @@ if (!(file_exists($file)) ) {
 					$_SESSION['listeCatTrop'] = ''; // Liste des categories trophiques selectionnées
 					$_SESSION['listeColonne'] = ''; // tableau nomTable / NomChamp des champs comple à afficher
 					$_SESSION['pasderesultat'] = false; // indicateur global si pas de resultat
+					unset($_SESSION['libelleTable']); // Pour recuperer les noms des tables
 				}
 				// Variables pour construire les SQL	
 				$SQLPays 	= "";

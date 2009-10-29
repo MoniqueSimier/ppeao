@@ -585,9 +585,8 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 	checkLog = document.getElementById("logsupp").checked;
 	globaltypestat = typeStat;
 	listCol = "";
-	
 	if  (globalAction == typeAction) {
-		changementAction = ''
+		changementAction = '';
 		// On charge les données modifiées
 		// Recuperation de la table a extraire 
 

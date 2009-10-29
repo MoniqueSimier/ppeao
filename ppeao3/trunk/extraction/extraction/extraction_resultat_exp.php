@@ -91,7 +91,7 @@ $fileLogComp = GetParam("nomFicLogExtr",$PathFicConf);
 $logComp="";
 $nomLogLien="";
 ouvreFichierLog($dirLog,$fileLogComp);
-
+$debugLog= true;
 if (isset($_GET['action'])) {
 	$typeAction = $_GET['action'];
 } else {
@@ -187,7 +187,9 @@ if (isset($_GET['action'])) {
 			}
 		}
 	}
-
+		if ($EcrireLogComp && $debugLog) {
+			WriteCompLog ($logComp, "DEBUG = liste colonne = ".$_SESSION['listeColonne'],$pasdefichier);
+		}
 	$exportFichier = false;
 	if (isset($_GET['exf'])) {
 		if ($_GET['exf'] =="y") {
@@ -239,7 +241,9 @@ if (isset($_GET['action'])) {
 <?php 
 		echo $resultatLecture; 
 		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
 			WriteCompLog ($logComp, "Fin Extraction des peches experimentales pour filiere ".$typeAction,$pasdefichier);
+			WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
 		}
 ?>
 	</div>

@@ -215,7 +215,7 @@ if (isset($_GET['action'])) {
 		default: $labelSynthese = "inconnu";break;
 	}
 	echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li><b>".$compteurItem."</b> ".$labelSelection."</li>";
-	echo "<li>".$compteurItem." ".$labelSelection."</li><li><b>table de synthèse en cours </b> : ".$labelSynthese." (".$_SESSION['listetablesynth'].")</li><li><b/>fili&egrave;re en cours<b/> : <span id=\"filEncoursText\">".$typeAction."</span>"; 
+	echo "<li><b>table de synthèse en cours </b> : ".$labelSynthese." (".$_SESSION['listetablesynth'].")</li><li><b/>fili&egrave;re en cours<b/> : <span id=\"filEncoursText\">".$typeAction."</span>"; 
 	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></li><li><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp; 
 	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li></ul></div>";
 							

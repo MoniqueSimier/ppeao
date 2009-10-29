@@ -306,6 +306,8 @@ function startElementCol($parser, $name, $attrs){
 	global $TableATester ;
 	global $Filiere ;
 	global $FiliereEnCours ;
+	global $filiereOK ;
+	global $TableAAjouter;
 	global $RecupDonneesOK;
 	global $NumChampDef;
 	global $NumChampFac;
@@ -314,7 +316,8 @@ function startElementCol($parser, $name, $attrs){
 	global $EcrireLogComp;
 	global $pasdefichier;
 	global $logComp;
-	
+	global $typeRecupTable;
+	global $ListeToutesValeurs;
 	array_push($stack,$name);
 	$continueTrait = true;
 	// Analyse de l'element et remplissage des variables
@@ -322,8 +325,8 @@ function startElementCol($parser, $name, $attrs){
 	case "CHAMP":
 			if ($RecupDonneesOK == true ) {
 				if (array_key_exists("FILIERE",$attrs)) {
-				// Cela veut dire qu'au niveau du champs, on a une restriction supplémentaire par rapport à la filière.
-				// On le teste.
+					// Cela veut dire qu'au niveau du champs, on a une restriction supplémentaire par rapport à la filière.
+					// On le teste.
 					if (strpos($attrs["FILIERE"],trim($FiliereEnCours)) === false) {
 					// Si la filiere n'est pas dans la liste, on arrete
 						$continueTrait = false;
@@ -331,36 +334,49 @@ function startElementCol($parser, $name, $attrs){
 				}
 				if ($continueTrait){
 					if ($attrs["AFFICHAGE"] =="X") {
-						$NumChampDef ++;
-						$ListeChampTableDef .= "<input id=\"".$idenTableEnCours."def".$NumChampDef."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" checked=\"checked\" disabled=\"disabled\"/>".$attrs["LIBELLE"]."<br/>";
+						if ($typeRecupTable == "un") {
+							$NumChampDef ++;
+							$ListeChampTableDef .= "<input id=\"".$idenTableEnCours."def".$NumChampDef."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" checked=\"checked\" disabled=\"disabled\"/>".$attrs["LIBELLE"]."<br/>";
+						}
 					} else {
-						$checked = "";
-						$dejaControle = false ;
-						// On vérifie que ce champs n'a pas déjà été coché
-						if (!($_SESSION['listeColonne'] == "") ) {
-							$colRecues = explode (",",$_SESSION['listeColonne']);
-							$NumColR = count($colRecues) - 1;
-							for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
-								$valTest = substr($colRecues[$cptCR],0,-2);
-								// On teste si on a déjà coché cette colonne
-								if ($valTest == $idenTableEnCours."-".$attrs["CODE"]) {
-									if (strpos($colRecues[$cptCR],"-N") === false) {
-										// Soit on vient de la cocher suffixe = -X
-										$checked = "checked=\"checked\"";
-									} else {
-										// Soit on vient de la décocher suffixe = -N
-										$checked = "";
-									}
-									break;
-								} else {
-									// Si on a déjà choisi de tout affiché alors on coh
-									if (strpos($_SESSION['listeColonne'],"toutX") > 0) { // Attention, on ne teste pas XtoutX mais bien toutX car sinon strpos renvoie 0 qui eput aussi vouloir dire false... 
-										$checked = "checked=\"checked\"";
-									} else {
-										if (strpos($_SESSION['listeColonne'],"pasttX") > 0) { // Meme remarque que precedemment sur pastoutX
+						if ($typeRecupTable == "tout" && $TableAAjouter && $filiereOK) {
+							// On recupère toutes les valeurs pour la ou les filieres autorisées
+							if ( $ListeToutesValeurs == "") {
+								 $ListeToutesValeurs = $idenTableEnCours."-".$attrs["CODE"];
+							} else {
+								$ListeToutesValeurs .= ",".$idenTableEnCours."-".$attrs["CODE"];
+							}
+						}
+						if ($typeRecupTable == "un") {
+							// On construite le tableau HTML
+							$checked = "";
+							$dejaControle = false ;
+							// On vérifie que ce champs n'a pas déjà été coché
+							if (!($_SESSION['listeColonne'] == "") ) {
+								$colRecues = explode (",",$_SESSION['listeColonne']);
+								$NumColR = count($colRecues) - 1;
+								for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
+									$valTest = substr($colRecues[$cptCR],0,-2);
+									// On teste si on a déjà coché cette colonne
+									if ($valTest == $idenTableEnCours."-".$attrs["CODE"]) {
+										if (strpos($colRecues[$cptCR],"-N") === false) {
+											// Soit on vient de la cocher suffixe = -X
+											$checked = "checked=\"checked\"";
+										} else {
+											// Soit on vient de la décocher suffixe = -N
 											$checked = "";
-										} 
-									}							
+										}
+										break;
+									} else {
+										// Si on a déjà choisi de tout affiché alors on coh
+										if (strpos($_SESSION['listeColonne'],"toutX") > 0) { // Attention, on ne teste pas XtoutX mais bien toutX car sinon strpos renvoie 0 qui eput aussi vouloir dire false... 
+											$checked = "checked=\"checked\"";
+										} else {
+											if (strpos($_SESSION['listeColonne'],"pasttX") > 0) { // Meme remarque que precedemment sur pastoutX
+												$checked = "";
+											} 
+										}							
+									}
 								}
 							}
 						}
@@ -414,6 +430,8 @@ function endElementCol($parser, $name){
 	global $TabEnCours;
 	global $filiereOK ;
 	global $pecheLue ;
+	global $typeRecupTable;
+	global $ListeToutesValeurs;
 	// pour test
 	$AfficheDebug = false;
 	switch(strtoupper($name)) {
@@ -448,24 +466,45 @@ function endElementCol($parser, $name){
 			}
 			break;
 		case "TESTNOM" :
+			$NbReg = count($_SESSION['libelleTable']);
+			$tableTrouvee = false;
+			for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
+				$tablib = explode(",",$_SESSION['libelleTable'][$cptR]);
+				if($tablib[0] == $NomTableBDEnCours) {
+					$tableTrouvee = true;
+				}
+			}	
+			if (!$tableTrouvee) {
+				$posSuiv = 	intval($NbReg) + 1;
+				$_SESSION['libelleTable'][$posSuiv] = strtolower($NomTableBDEnCours).",".$globaldata;
+
+			}
+
 			$idenTableEnCours = $globaldata;
-			if (strtoupper($globaldata) == strtoupper($TableATester)) {
+			// Soit on teste le nom de la table soit on est dans le cas ou on recupere toutes les cases a cocher
+			if ((strtoupper($globaldata) == strtoupper($TableATester)) || $typeRecupTable == "tout" ) {
 				$RecupDonneesOK = true;
 			} else {
 				$RecupDonneesOK = false;
 			}
 			break;
 		case "LIBELLE" :
-			if ($TypePecheEnCours == "artisanale") {
+			switch ($TypePecheEnCours) {
+				case "artisanale" :
 				$RunFilieres = "runFilieresArt";
-			} else {
+				break;
+				case "experimentale":
 				$RunFilieres = "runFilieresExp";
-			}
-			if ($TableAAjouter && $filiereOK) {
-				if ($RecupDonneesOK) {
-					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','','')\" class = \"active\">".$globaldata."</a><br/>";
+				break;
+				case "agglomeration":
+				$RunFilieres = "runFilieresStat";
+				break;
+			}		
+			if ($TableAAjouter && $filiereOK && $typeRecupTable =="un") {
+				if ($RecupDonneesOK ) {
+					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','','','','')\" class = \"active\">".$globaldata."</a><br/>";
 				} else {
-					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','','')\" class = \"\">".$globaldata."</a><br/>";
+					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','','','','')\" class = \"\">".$globaldata."</a><br/>";
 				}
 			}	
 			if ($RecupDonneesOK == true ) {
@@ -483,18 +522,21 @@ function endElementCol($parser, $name){
 //*********************************************************************
 // new_xml_parser_Colonnes: Fonction de création du parser et d'affectation des fonctions aux gestionnaires d'événements
 // Pour la lecture du fichier XML contenant la definition des tables et des colonnes a afficher
-function new_xml_parser_Colonnes($file) {
+function new_xml_parser_Colonnes($file,$typeRecup) {
 // Cette fonction permet de créer le parser pour le lire le fichier XML (en paramètre) et de créer les evenements avant et apres l'element
 // L'analyse du fichier se fait alors dans ces deux fonctions génant ces événements avant/après
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
 // $file : le nom du fichier XML contenant la definition des tables et des colonnes a afficher
+// $typeRecup : est-ce qu'on recupere un seul tableau ou toutes les données contient soit "un" soit "tout"
 //*********************************************************************
 // En sortie : 
 // une Tableau
 //*********************************************************************
 
 	global $parser_file;
+	global $typeRecupTable;
+	$typeRecupTable = $typeRecup;
 	//création du parseur
 	$xml_parser = xml_parser_create();
 	//Activation du respect de la casse du nom des éléments XML

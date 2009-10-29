@@ -124,6 +124,7 @@ if (!(file_exists($file)) ) {
 					$_SESSION['listetablesynth'] = ""; // Gestion de la table de synthèse a extraire
 					$_SESSION['pasderesultat'] = false; // indicateur global si pas de resultat
 					unset($_SESSION['listeRegroup']); // Liste des regroupements
+					unset($_SESSION['libelleTable']); // Pour recuperer les noms des tables
 				}
 				// Variables pour construire les SQL	
 				$SQLPays 	= "";
