@@ -148,55 +148,65 @@ list-style:none;
 /* Poisitionnement des onglets des filieres */
 .criteresgen{
 /*	position:absolute;*/
-
+	display:none;
+	float:lef;
 	background-color:#FFF8A7;
-	visibility:hidden;
+/*	visibility:hidden; */
 	width:800px;
 }
 .sscriteresgen{
-	visibility:hidden;
+/*	visibility:hidden; */
+	display:none;
 }
 .cateco{
 /*	position:absolute;*/
-
+	display:none;
+	float:lef;	
 	background-color:#FFF8A7;
-	visibility:hidden;
+/*	visibility:hidden; */
 	width:800px;
 }
 .cattroph{
 /*	position:absolute;*/
-
+	display:none;
+	float:lef;
 	background-color:#FFF8A7;
-	visibility:hidden;
+/*	visibility:hidden; */
 	width:800px;
 }
 .colonnes{
 /*	position:absolute; */
-
+	display:none;
+	float:lef;
 	background-color:#FFF8A7 ;
-	visibility:hidden;
+/*	visibility:hidden; */
 	width:800px;
 }
 .especes{
 /*	position:absolute;*/
-
+	display:none;
+	float:lef;
 	background-color:#FFF8A7 ;
-	visibility:hidden;
+/*	visibility:hidden; */
 	width:800px;
 }
 
 .regroupesp{
+	display:none;
+	float:lef;
 /*	position:absolute;*/
 
 	background-color:#FFF8A7 ;
-	visibility:hidden;
+/*	visibility:hidden; */
 	width:800px;
 }
 .general{
+	display:none;
+	float:lef;
 /*	position:absolute;*/
 
 	background-color:#FFF8A7 ;
-	visibility:hidden;
+/*	visibility:hidden; */
 	width:800px;
 }
 #voiresultat{
@@ -204,7 +214,8 @@ list-style:none;
 
 }
 .visible{
-	visibility:visible;
+	display:block;
+/*	visibility:visible;*/
 }
 .ChoixChampComp {
 	width:800px;
