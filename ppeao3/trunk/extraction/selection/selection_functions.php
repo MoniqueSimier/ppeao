@@ -2462,7 +2462,7 @@ $sql='SELECT DISTINCT meta_id, ref_pays_id, doc_type,file_path,doc_titre,doc_des
 $result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 $array_pays=pg_fetch_all($result);
 pg_free_result($result);
-if (count($array_pays)>0) {
+if (!empty($array_pays)) {
 	$documents=TRUE;
 	foreach($array_pays as $unpays) {
 		$unpays["meta_table"]="meta_pays";
@@ -2503,7 +2503,7 @@ $result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg
 $array_systemes=pg_fetch_all($result);
 pg_free_result($result);
 
-if (count($array_systemes)>0) {
+if (!empty($array_systemes)) {
 	$documents=TRUE;
 	foreach($array_systemes as $unsysteme) {
 		$unsysteme["meta_table"]="meta_systemes";
