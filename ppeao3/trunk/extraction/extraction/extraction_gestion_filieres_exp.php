@@ -234,7 +234,7 @@ switch ($numTab) {
 		if ($typeAction == "environnement" ) {
 			$ClassEnv = "";
 		} else {
-			$ClassEnv = " visible";
+			$ClassEnv = " visi";
 		}
 		if ($typeAction == "peuplement") {
 			$cgActive="";

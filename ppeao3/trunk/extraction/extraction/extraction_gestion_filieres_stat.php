@@ -156,32 +156,6 @@ if ($changtAction == "y") {
 if ($EcrireLogComp ) {
 	WriteCompLog ($logComp, "Selection de la filere ".$typeAction,$pasdefichier);
 }	
-$tab1 = "";
-$tab2 = "";
-$tab3 = "";
-$tab4 = "";
-$genActive="";
-$colActive="";
-$espActive="";
-$regActive="";
-switch ($numTab) {
-	case "1":
-		$genActive=" visible";
-		$tab1 = " active";
-		break;
-	case "2":
-		$colActive=" visible";
-		$tab2 = " active";
-		break;
-	case "3":
-		$espActive=" visible";
-		$tab3 = " active";
-		break;
-	case "4":
-		$regActive=" visible";
-		$tab4 = " active";
-		break;
-}
 $valsynth1 = "";
 $valsynth2 = "";
 $valsynth3 = "";
@@ -198,6 +172,38 @@ switch ($_SESSION['listetablesynth']) {
 	default  :  $valsynth1 = "checked=\"checked\""; break;
 }
 
+
+$tab1 = "";
+$tab2 = "";
+$tab3 = "";
+$tab4 = "";
+$genActive="";
+$colActive="";
+$espActive="";
+$regActive="";
+$ClassEnv = " visi";
+switch ($numTab) {
+	case "1":
+		$genActive=" visible";
+		$tab1 = " active";
+		break;
+	case "2":
+		$colActive=" visible";
+		$tab2 = " active";
+		break;
+	case "3":
+		$espActive=" visible";
+		$tab3 = " active";
+		break;
+	case "4":
+		if (!($_SESSION['listetablesynth'] == "cap_tot" || $_SESSION['listetablesynth'] == "cap_GT" || $_SESSION['listetablesynth'] =="" )) {
+			$regActive=" visible";
+		}
+		$tab4 = " active";
+		break;
+}
+
+
 ?>
 
 <form id="filiere" >
@@ -205,21 +211,24 @@ switch ($_SESSION['listetablesynth']) {
 <div id="menuTab">
 <a href="#" class="<?php echo $tab1;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','','')">choix tables synth&egrave;ses</a>|
 <a href="#" class="<?php echo $tab2;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','2','<?php echo $codeTableEnCours;?>','n','','','','')">colonnes</a>|
-<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','','')">esp&egrave;ces</a>|
-<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','','')">regroupement Esp&egrave;ces</a>
+<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','','')">esp&egrave;ces</a>
+<?php		if (!($_SESSION['listetablesynth'] == "cap_tot" || $_SESSION['listetablesynth'] == "cap_GT" || $_SESSION['listetablesynth'] =="" )) { ?>
+|
+<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','','')">regroupement esp&egrave;ces</a>
+<?php } ?>
 </div>
 <?php // Les differents div correspondant aux choix disponibles par onglet ?>
 <?php // l'onglet qui gere la selection des categories ecologiques ?>
 <div id="general" class="cateco<?php echo $genActive;?>" >
 	<span class="sscriteresgen<?php echo $ClassEnv;?>">choisir la table de synth&egrave;se :<br/></span>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese1" type="radio" name="synthese" value="cap_tot"  <?php echo $valsynth1;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats globaux</span><br/>    
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese1" type="radio" name="synthese" value="cap_tot"  onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','','')" <?php echo $valsynth1;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats globaux</span><br/>    
  	<?php if ($typeAction == "globale") { ?>   
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese2" type="radio" name="synthese" value="cap_sp"  <?php echo $valsynth2;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats par esp&egrave;ces</span><br/>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese3" type="radio" name="synthese" value="dft_sp"  <?php echo $valsynth3;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">structure en taille des esp&egrave;ces</span><br/>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese2" type="radio" name="synthese" value="cap_sp"  onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','','')" <?php echo $valsynth2;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats par esp&egrave;ces</span><br/>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese3" type="radio" name="synthese" value="dft_sp"  onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','','')" <?php echo $valsynth3;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">structure en taille des esp&egrave;ces</span><br/>
     <?php } else { ?>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese1" type="radio" name="synthese" value="cap_GT"  <?php echo $valsynth4;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats globaux par GT</span><br/>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese2" type="radio" name="synthese" value="cap_GT_sp"  <?php echo $valsynth5;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats par esp&egrave;ces et par GT</span><br/>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese3" type="radio" name="synthese" value="dft_sp_sp"  <?php echo $valsynth6;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">structure en taille des esp&egrave;ces par GT</span>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese2" type="radio" name="synthese" value="cap_GT"  onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','','')" <?php echo $valsynth4;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats globaux par GT</span><br/>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese3" type="radio" name="synthese" value="cap_GT_sp"  onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','','')" <?php echo $valsynth5;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">r&eacute;sultats par esp&egrave;ces et par GT</span><br/>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="synthese4" type="radio" name="synthese" value="dft_sp_sp"  onClick="runFilieresStat('<?php echo $typeStatistiques;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','','')" <?php echo $valsynth6;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">structure en taille des esp&egrave;ces par GT</span>
     <?php } ?>
     
 </div>
@@ -231,11 +240,13 @@ switch ($_SESSION['listetablesynth']) {
 <div id="especes" class="especes<?php echo $espActive;?>">
 <?php echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typeStatistiques,$typeAction,$numTab,""); ?>
 </div>
+
 <?php // l'onglet qui gere les regroupements ?>
 <div id="regroupesp" class="regroupesp<?php echo $regActive;?>">
 <?php 
 echo AfficheRegroupEsp($typeStatistiques,$typeAction,$numTab,$_SESSION['SQLEspeces'],$_SESSION['ListeRegroupEsp'],$RegEncours,$CreerReg); ?>
 </div>
+
 </form>
 
 

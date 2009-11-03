@@ -213,7 +213,7 @@ switch ($numTab) {
 			$ClassEnv = "";
 		} else {
 			$cgActive=" visible";
-			$ClassEnv = " visible";
+			$ClassEnv = " visi";
 		}
 		$tab1 = " active";
 		break;

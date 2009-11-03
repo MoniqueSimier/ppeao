@@ -1298,7 +1298,7 @@ function AfficherDonnees($file,$typeAction){
 									echo "erreur pas de selection synthese<br/>";
 							}
 						default	:	
-							$labelSelection = "Periode(s) d'enquete";
+							$labelSelection = "p&eacute;riode(s) d'enqu&ecirc;te";
 							$SQLfinal = "select * from art_periode_enquete as penq
 											where penq.id in (".$SQLPeEnquete.")";
 							$SQLcountfinal = "select count(*) from art_periode_enquete as penq
@@ -2229,23 +2229,20 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 		switch ($_GET['suppReg']) {
 			case "tout":
 				unset($_SESSION['listeRegroup']);
+				$_SESSION['listeRegroup'] = "";
 				$info ="tous les regroupements ont &eacute;t&eacute; supprim&eacute;s";	
 				break;
 			case "EC":
-				$infoReg = explode("&#&",$_SESSION['listeRegroup'][$cptR][1]);
+				$infoReg = explode("&#&",$_SESSION['listeRegroup'][$RegEncours][1]);
 				$nomRegSupp = $infoReg[1];
 				unset($_SESSION['listeRegroup'][$RegEncours]);
+				//$_SESSION['listeRegroup'] = "";
 				$info ="regroupement ".$nomRegSupp." supprim&eacute;";
 				$RegEncours = $RegEncours - 1;
-				if (count($_SESSION['listeRegroup']) ==  0) {
-					unset($_SESSION['listeRegroup']) ; // Necessaire pour retrouver un affichage normal, la variable n'est pas completement vidée
-				}
 				break;
 		}
-		if( $_GET['suppReg']=="tout") {
-	
-		}
 	}
+
 	// Reinitialisation des especes pour un regroupement
 	// Ou suppression d'une espece pour un regroupement
 	if (isset($_GET['suppEsp'])) {
@@ -2270,7 +2267,7 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 					}
 					// On reindexe le tableau.
 					reset($_SESSION['listeRegroup'][$RegEncours]);
-					$infoReg = explode("&#&",$_SESSION['listeRegroup'][$cptR][1]);
+					$infoReg = explode("&#&",$_SESSION['listeRegroup'][$RegEncours][1]);
 					$info ="les esp&egrave;ces ".$espVraimentSup." ont &eacute;t&eacute; supprim&eacute;es du regroupement ".$infoReg[1];			
 				} 
 				break;
@@ -2299,23 +2296,119 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 	switch ($CreeReg) {
 		case "y" : 
 			$ulrComp="&nvReg=f";
-			$nouveauRegroupement = "<br/>nouveau regroupement<br/>code&nbsp;<input id=\"codeReg\" type=\"textbox\" size=\"3\"/><br/>nom&nbsp;&nbsp;<input id=\"nomReg\" type=\"textbox\" /><br/>";
+			$gardLib = "";
+			$nvNomReg = "";
+			$nvCodeReg = "";
+			if (isset($_GET['gard'])) {
+				// On a déjà travaillé sur ce regroupement, on a voulu garder le libelle, on le precharge
+				if (isset($_GET['nomReg'])) {
+					$gardLib = $_GET['gard'];
+					$nvNomReg = $_GET['nomReg'];
+				}
+			}
+			
+			if (isset($_GET['codeEC'])) {
+				// On a déjà travaillé sur ce regroupement, le libelle etait vide, on precharge le code deja saisi
+				$nvCodeReg = $_GET['codeEC'];
+			}
+			$nouveauRegroupement = "<br/>nouveau regroupement<br/>code&nbsp;<input id=\"codeReg\" title=\"code du regroupement\" type=\"textbox\" maxlength=\"3\" size=\"3\" value=\"".$nvCodeReg."\"/><br/>nom&nbsp;&nbsp;<input id=\"nomReg\" type=\"textbox\" title=\"nom du regroupement\" value=\"".$nvNomReg."\"/><br/>";
 			$nouveauRegroupement .= "<a href=\"#\" onClick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','".$ulrComp."')\">ajouter regroupement</a>"; 
 			break;
 		case "f" : 
 			// Creation effective du nouveau regroupement
 			if (isset($_GET['nomReg'])) {
+				if (isset($_GET['gard'])) {
+					$gardLib = $_GET['gard'];
+				}else {
+					$gardLib = "";
+				}
+				$ajoutRegOK = true;
 				$nvNomReg = $_GET['nomReg'];
-				$nvCodeReg = $_GET['codeReg'];
+				$nvCodeReg = strtoupper ($_GET['codeReg']);
 				if (!($_SESSION['listeRegroup'] =="" )) {
-					$rangNvReg = count($_SESSION['listeRegroup']) + 1;
-					$_SESSION['listeRegroup'][$rangNvReg][1]=$nvCodeReg."&#&".$nvNomReg;
-					$info .="Regroupement numero ".$rangNvReg." ".$nvNomReg." (".$nvCodeReg.") ajout&eacute;<br/>";
-					$RegEncours = $rangNvReg;
+					// on controle que le groupe n'existe pas deja dans les regroupements déjà saisis.
+					$NbReg = count($_SESSION['listeRegroup']);
+					for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
+						$infoReg = explode("&#&",$_SESSION['listeRegroup'][$cptR][1]);
+						if ($infoReg[0] == $nvCodeReg) {
+							$info .= "<b>Attention !</b> le groupe en cours d'ajout ".$nvNomReg." (code = <b>".$nvCodeReg."</b>) existe d&eacute;j&agrave; ! Merci d'utiliser un autre code<br/>";
+							$ajoutRegOK = false;
+							break;
+						}
+					}
+					if ($ajoutRegOK) {
+						// On contrôle que le regroupement n'existe pas deja dans les especes. Si oui, proposer le meme label.
+						// Si refus d'accepter le meme label, proposer la saisie d'un autre.						
+						$SQLReg = "select id,libelle from ref_espece where id = '".$nvCodeReg."'";	
+						$SQLRegResult = pg_query($connectPPEAO,$SQLReg);
+						$erreurSQL = pg_last_error($connectPPEAO);
+						if ( !$SQLRegResult ) {
+							echo "erreur execution SQL pour ".$SQLReg." erreur complete = ".$erreurSQL."<br/>";
+						//erreur
+						} else { 
+							if (pg_num_rows($SQLRegResult) == 0) {
+
+							} else { 
+							// On n'a qu'une seule ligne en résultat.
+								$RegRow = pg_fetch_row($SQLRegResult);
+								if (!(trim($RegRow[1]) == trim($nvNomReg))) {
+									if (!($gardLib == "y")) {
+										// On controle le libelle
+										$ajoutRegOK = false;
+										$info .= "<b>Attention !</b> un groupe existe dans la base des esp&egrave;ces dont le libell&eacute; est :".$RegRow[1].".<br/>";
+										$info .="Voulez-vous garder ce libell&eacute; ?<input id=\"codeReg\" type=\"hidden\" value=\"".$RegRow[0]."\"/><input id=\"nomReg\" type=\"hidden\" value=\"".$nvNomReg."\"/>(<a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=f&gard=y')\">[Oui]</a>&nbsp;<a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=y&gard=n')\">[Non]</a>)";
+										$info .="Si non, merci de resaisir le regroupement avec un autre code.<br/>";
+									} else {
+										// On garde le libellé
+										$nvNomReg = $RegRow[1];
+									}
+								}
+							}
+						}
+						pg_free_result($SQLRegResult);
+						if ($ajoutRegOK) {
+							$rangNvReg = count($_SESSION['listeRegroup']) + 1;
+							$_SESSION['listeRegroup'][$rangNvReg][1]=$nvCodeReg."&#&".$nvNomReg;
+							$info .="Regroupement numero ".$rangNvReg." ".$nvNomReg." (".$nvCodeReg.") ajout&eacute;<br/>";
+							$RegEncours = $rangNvReg;
+						}
+					}
 				} else {
-					$_SESSION['listeRegroup'][1][1]=$nvCodeReg."&#&".$nvNomReg;
-					$RegEncours = 1;
-					$info .="Regroupement num&eacute;ro 1 ".$nvNomReg." (".$nvCodeReg.") ajout&eacute;<br/>";
+					$ajoutRegOK = true;
+					// On contrôle que le regroupement n'existe pas deja dans les especes. Si oui, proposer le meme label.
+					// Si refus d'accepter le meme label, proposer la saisie d'un autre.						
+					$SQLReg = "select id,libelle from ref_espece where id = '".$nvCodeReg."'";	
+					$SQLRegResult = pg_query($connectPPEAO,$SQLReg);
+					$erreurSQL = pg_last_error($connectPPEAO);
+					if ( !$SQLRegResult ) {
+						echo "erreur execution SQL pour ".$SQLReg." erreur complete = ".$erreurSQL."<br/>";
+					//erreur
+					} else { 
+						if (pg_num_rows($SQLRegResult) == 0) {
+
+						} else { 
+						// On n'a qu'une seule ligne en résultat.
+							$RegRow = pg_fetch_row($SQLRegResult);
+							if (!(trim($RegRow[1]) == trim($nvNomReg))) {
+								if (!($gardLib == "y")) {
+									// On controle le libelle
+									$ajoutRegOK = false;
+									$info .= "<b>Attention !</b> un groupe existe dans la base des esp&egrave;ces dont le libell&eacute; est :".$RegRow[1].".<br/>";
+									$info .="Voulez-vous garder ce libell&eacute; ?<input id=\"codeReg\" type=\"hidden\" value=\"".$RegRow[0]."\"/><input id=\"nomReg\" type=\"hidden\" value=\"".$nvNomReg."\"/>(<a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=f&gard=y')\">[Oui]</a>&nbsp;<a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=y&gard=n')\">[Non]</a>)";
+									$info .="Si non, merci de resaisir le regroupement avec un autre code.<br/>";
+								} else {
+									// On garde le libellé
+									$nvNomReg = $RegRow[1];
+								}
+							}
+						}
+					}
+					pg_free_result($SQLRegResult);
+					if ($ajoutRegOK) {
+						$_SESSION['listeRegroup'][1][1]=$nvCodeReg."&#&".$nvNomReg;
+						$RegEncours = 1;
+						$info .="Regroupement num&eacute;ro 1 ".$nvNomReg." (".$nvCodeReg.") ajout&eacute;<br/>";
+					}
 				}
 			} else {
 				$info .= "erreur saisie nom <br/>";
@@ -2326,7 +2419,6 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 	
 	// On construit les différentes options
 	// Especes disponibles
-	
 	$labelEspDispo = "esp&egrave;ces disponible &agrave; la s&eacute;lection";
 	$SQLReg = "select id,libelle from ref_espece where id in (".$SQLEspeces.") order by libelle";	
 	$SQLRegResult = pg_query($connectPPEAO,$SQLReg);
@@ -2392,7 +2484,7 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 		}
 		
 		$OptionRegroup .="</select>";
-		$OptionRegroup .="<br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=y')\">ajouter regroupement</a><br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppReg=EC')\">supprimer le regroupement</a> <br/><a href=\"#\" onclick=\"runFilieresArt('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppReg=tout')\">supprimer tous les regroupements</a> <br/>";
+		$OptionRegroup .="<br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=y')\">ajouter regroupement</a><br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppReg=EC')\">supprimer le regroupement</a> <br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppReg=tout')\">supprimer tous les regroupements</a> <br/>";
 		
 	}
 	

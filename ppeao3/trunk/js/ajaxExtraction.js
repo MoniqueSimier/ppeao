@@ -236,56 +236,6 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 			alert ("votre navigateur n'est pas compatible avec AJAX !!");
 			return;
 		} 
-		testpos = false;
-		if (testpos) {
-		switch (numtab) {
-			case '1' :
-						try{
-						//document.getElementById("exportFic").style.position = 'absolute';
-						document.getElementById("exportFic").style.top = '550px';
-						}
-						catch (e) { }
-						//document.getElementById("footer").style.position = 'absolute';
-						document.getElementById("footer").style.top = '550px';
-						break;
-			case '2' :
-						try{
-						//document.getElementById("exportFic").style.position = 'absolute';
-						document.getElementById("exportFic").style.top = '530px';
-						}
-						catch (e) { }
-						//document.getElementById("footer").style.position = 'absolute';
-						document.getElementById("footer").style.top = '600px';
-						break;
-			case '3' :
-						try{
-						//document.getElementById("exportFic").style.position = 'absolute';
-						document.getElementById("exportFic").style.top = '530px';
-						}
-						catch (e) { }
-						//document.getElementById("footer").style.position = 'absolute';
-						document.getElementById("footer").style.top = '600px';
-						break;
-			case '4' :
-						try{
-						//document.getElementById("exportFic").style.position = 'absolute';
-						document.getElementById("exportFic").style.top = '750px';
-						}
-						catch (e) { }
-						//document.getElementById("footer").style.position = 'absolute';
-						document.getElementById("footer").style.top = '750px';
-						break;
-			case '5' :
-						try{
-						//document.getElementById("exportFic").style.position = 'absolute';
-						document.getElementById("exportFic").style.top = '760px';
-						}
-						catch (e) { }
-						//document.getElementById("footer").style.position = 'absolute';
-						document.getElementById("footer").style.top = '760px';
-						break;	
-		}
-		}
 		fenID = "resultfiliere";
 		var url="/extraction/extraction/extraction_gestion_filieres_exp.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+"&tab="+numtab+changementAction+addURL;
 		xmlHttp.onreadystatechange=stateChanged2;
@@ -435,10 +385,34 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 			addEsp = "&Esp="+ListEsp;
 		}
 		// Gestion des regroupements
-		if (urlComp=="&nvReg=f") {
+		if (urlComp=="&nvReg=f" || urlComp=="&nvReg=f&gard=y") {
 			ValNomReg = document.getElementById("nomReg").value;
 			ValCodeReg = document.getElementById("codeReg").value;
-			urlComp =urlComp+"&nomReg="+ValNomReg+"&codeReg="+ValCodeReg;
+			if (ValCodeReg=="") {
+				alert('Merci de saisir le code du regroupement');
+					urlComp = "&nvReg=y&gard=n&nomReg="+ValNomReg;
+			} else {
+				if (ValNomReg=="") {
+					alert('Merci de saisir le libellé du regroupement');
+					urlComp = "&nvReg=y&codeEC="+ValCodeReg;
+				} else {
+					urlComp =urlComp+"&nomReg="+ValNomReg+"&codeReg="+ValCodeReg;
+				}
+			}
+		}
+		if (urlComp=="&nvReg=y&gard=n") {
+			// On ne garde pas le code en cours, on va proposer de garder le meme libellé
+			ValNomReg = document.getElementById("nomReg").value;
+			if (!(ValNomReg=="")) {
+				urlComp =urlComp+"&nomReg="+ValNomReg;
+			}
+		}
+		if (urlComp=="&nvReg=y&gard=n") {
+			// On ne garde pas le code en cours, on va proposer de garder le meme libellé
+			ValNomReg = document.getElementById("nomReg").value;
+			if (!(ValNomReg=="")) {
+				urlComp =urlComp+"&nomReg="+ValNomReg;
+			}
 		}
 		EspSelec = "";
 		if (urlComp=="&affEsp=y") {
@@ -507,65 +481,6 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 			alert ("votre navigateur n'est pas compatible avec AJAX !!");
 			return;
 		} 
-		testpos = false;
-		if (testpos) {
-			switch (numtab) {
-				case '1' :
-							try{
-							//document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '530px';
-							}
-							catch (e) { }
-							//document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '550px';
-							break;
-				case '2' :
-							try{
-							//document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '570px';
-							}
-							catch (e) { }
-							//document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '600px';
-							break;
-				case '3' :
-							try{
-							//document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '600px';
-							}
-							catch (e) { }
-							//document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '600px';
-							break;
-				case '4' :
-							try{
-							//document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '770px';
-							}
-							catch (e) { }
-							//document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '800px';
-							break;		
-				case '5' :
-							try{
-							//document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '770px';
-							}
-							catch (e) { }
-							//document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '800px';
-							break;
-				case '6' :
-							try{
-							//document.getElementById("exportFic").style.position = 'absolute';
-							document.getElementById("exportFic").style.top = '870px';
-							}
-							catch (e) { }
-							//document.getElementById("footer").style.position = 'absolute';
-							document.getElementById("footer").style.top = '900px';
-							break;
-			}
-		}
 		fenID = "resultfiliere";
 		var url="/extraction/extraction/extraction_gestion_filieres_art.php?log="+checkLog+"&action="+typeAction+"&tp="+typePeche+"&tab="+numtab+changementAction+addURL;
 		xmlHttp.onreadystatechange=stateChanged3;
@@ -589,7 +504,6 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 		changementAction = '';
 		// On charge les données modifiées
 		// Recuperation de la table a extraire 
-
 		if (typeAction == "globale") {
 			tablesynt  = recupereSelection(3,"synthese");
 		} else {
@@ -657,10 +571,27 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 			addSynth = "&synth="+tablesynt;
 		}
 		// Gestion des regroupements
-		if (urlComp=="&nvReg=f") {
+		if (urlComp=="&nvReg=f" || urlComp=="&nvReg=f&gard=y") {
 			ValNomReg = document.getElementById("nomReg").value;
 			ValCodeReg = document.getElementById("codeReg").value;
-			urlComp =urlComp+"&nomReg="+ValNomReg+"&codeReg="+ValCodeReg;
+			if (ValCodeReg=="") {
+				alert('Merci de saisir le code du regroupement');
+					urlComp = "&nvReg=y&gard=n&nomReg="+ValNomReg;
+			} else {
+				if (ValNomReg=="") {
+					alert('Merci de saisir le libellé du regroupement');
+					urlComp = "&nvReg=y&codeEC="+ValCodeReg;
+				} else {
+					urlComp =urlComp+"&nomReg="+ValNomReg+"&codeReg="+ValCodeReg;
+				}
+			}
+		}
+		if (urlComp=="&nvReg=y&gard=n") {
+			// On ne garde pas le code en cours, on va proposer de garder le meme libellé
+			ValNomReg = document.getElementById("nomReg").value;
+			if (!(ValNomReg=="")) {
+				urlComp =urlComp+"&nomReg="+ValNomReg;
+			}
 		}
 		EspSelec = "";
 		if (urlComp=="&affEsp=y") {
@@ -729,44 +660,6 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 			alert ("votre navigateur n'est pas compatible avec AJAX !!");
 			return;
 		} 	
-		switch (numtab) {
-			case '1' :
-						try{
-						//document.getElementById("exportFic").style.position = 'absolute';
-						document.getElementById("exportFic").style.top = '700px';
-						}
-						catch (e) { }
-						//document.getElementById("footer").style.position = 'absolute';
-						document.getElementById("footer").style.top = '700px';
-						break;
-			case '2' :
-						try{
-						//document.getElementById("exportFic").style.position = 'absolute';
-						document.getElementById("exportFic").style.top = '770px';
-						}
-						catch (e) { }
-						//document.getElementById("footer").style.position = 'absolute';
-						document.getElementById("footer").style.top = '770px';
-						break;
-			case '3' :
-						try{
-						//document.getElementById("exportFic").style.position = 'absolute';
-						document.getElementById("exportFic").style.top = '770px';
-						}
-						catch (e) { }
-						//document.getElementById("footer").style.position = 'absolute';
-						document.getElementById("footer").style.top = '770px';
-						break;
-			case '4' :
-						try{
-						//document.getElementById("exportFic").style.position = 'absolute';
-						document.getElementById("exportFic").style.top = '770px';
-						}
-						catch (e) { }
-						//document.getElementById("footer").style.position = 'absolute';
-						document.getElementById("footer").style.top = '770px';
-						break;
-		}
 		fenID = "resultfiliere";
 		var url="/extraction/extraction/extraction_gestion_filieres_stat.php?log="+checkLog+"&action="+typeAction+"&ts="+typeStat+"&tab="+numtab+changementAction+addURL;
 		xmlHttp.onreadystatechange=stateChanged4;
@@ -817,8 +710,8 @@ function stateChanged4() {
 		if (globalAction=="GT") {gtActif=" active";}
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
-		document.getElementById("runProcess").innerHTML="<b>Choix type statistique &agrave; extraire :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','globale;','1','"+globalTableEnCours+"','n','','','')\" class=\"globale"+gloActif+"\">statistiques globales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','GT','1','"+globalTableEnCours+"','n','','','','')\" class=\"GT"+gtActif+"\">statistiques par grand type</a>";
-		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresStat('"+globaltypepeche+"','"+globalAction+"','1','','y','','','','','','')\" value=\"afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
+		document.getElementById("runProcess").innerHTML="<b>Choix type statistique &agrave; extraire :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','globale;','1','"+globalTableEnCours+"','n','','','','')\" class=\"globale"+gloActif+"\">statistiques globales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','GT','1','"+globalTableEnCours+"','n','','','','')\" class=\"GT"+gtActif+"\">statistiques par grand type</a>";
+		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresStat('"+globaltypepeche+"','"+globalAction+"','1','','y','','','','')\" value=\"afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
 		
 	}
 }

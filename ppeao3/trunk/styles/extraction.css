@@ -155,8 +155,12 @@ list-style:none;
 	width:800px;
 }
 .sscriteresgen{
-/*	visibility:hidden; */
-	display:none;
+visibility:hidden;
+/*	display:none; */
+}
+.visi{
+/* 	display:block; */
+	visibility:visible;
 }
 .cateco{
 /*	position:absolute;*/
