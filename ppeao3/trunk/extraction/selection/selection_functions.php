@@ -2535,14 +2535,13 @@ if (!empty($array)) {
 		}
 	}
 
-$sql='SELECT DISTINCT meta_id, ref_secteur_id,doc_type,file_path,doc_titre,doc_description, ref_pays_id, ref_systeme_id, ref_secteur.id FROM ref_systeme, ref_secteur, meta_secteurs WHERE meta_secteurs.ref_secteur_id IN ('.arrayToList($secteur,',','').') AND ref_systeme.id=ref_secteur.ref_systeme_id AND ref_secteur.id=meta_secteurs.ref_secteur_id
+$sql='SELECT DISTINCT meta_id, ref_secteur_id,doc_type,file_path,doc_titre,doc_description, ref_pays_id, ref_systeme_id, ref_secteur.id FROM ref_systeme, ref_secteur, meta_secteurs WHERE meta_secteurs.ref_secteur_id IN ('.arrayToList($secteurs,',','').') AND ref_systeme.id=ref_secteur.ref_systeme_id AND ref_secteur.id=meta_secteurs.ref_secteur_id
 	';
 $result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 $array_secteurs=pg_fetch_all($result);
 pg_free_result($result);
 
-//debug 
-echo('<pre>');print_r($array_secteurs);echo('</pre>');
+//debug echo('<pre>');print_r($array_secteurs);echo('</pre>');
 
 
 if (!empty($array_secteurs)) {
