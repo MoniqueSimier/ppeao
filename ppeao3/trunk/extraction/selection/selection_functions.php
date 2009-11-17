@@ -664,7 +664,7 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 		$sql_systemes.=' AND exp_campagne.id IN (\''.arrayToList($campagnes_ids,'\',\'','\'').')';
 		}
 	$sql_systemes.=') ';
-		$sql_systemes.=' OR ref_systeme.id IN (
+		$sql_systemes.=' OR ref_systeme.id IN (SELECT DISTINCT ref_secteur.ref_systeme_id FROM ref_secteur WHERE ref_secteur.id IN (
 		SELECT DISTINCT art_agglomeration.ref_secteur_id 
 		FROM art_agglomeration 
 		WHERE art_agglomeration.id IN (
@@ -672,11 +672,12 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 			FROM art_periode_enquete 
 			WHERE TRUE ';
 		// si on a deja filtre les enquetes (par especes ou familles)
-			if (!empty($enquetes_ids[0])) {$sql_systemes.=' AND art_periode_enquete.id IN( 
+			if (!empty($enquetes_ids[0])) {$sql_systemes.=' AND art_periode_enquete.id IN ( 
 												\''.arrayToList($enquetes_ids,'\',\'','\'').')';}
-	$sql_systemes.='))';
+	$sql_systemes.=')))';
 	
-	//debug	echo($sql_systemes);
+	//debug	
+	echo($sql_systemes);
 	
 	$result_systemes=pg_query($connectPPEAO,$sql_systemes) or die('erreur dans la requete : '.$sql_systemes. pg_last_error());
 	$array_systemes=pg_fetch_all($result_systemes);
@@ -1051,7 +1052,7 @@ switch ($_GET["step"]) {
 	// on recupere la liste des pays correspondant aux campagnes et enquetes correspondant a la selection precedente
 	$sql_pays='	SELECT DISTINCT ref_pays.id, ref_pays.nom 
 				FROM ref_pays, ref_systeme 
-				WHERE ref_systeme.ref_pays_id=ref_pays.id AND ref_systeme.id IN ';
+				WHERE ref_systeme.ref_pays_id=ref_pays.id AND (ref_systeme.id IN ';
 	$sql_pays.=' (SELECT DISTINCT exp_campagne.ref_systeme_id FROM exp_campagne WHERE TRUE ';
 		// si on a deja filtre les campagnes (par especes ou familles)
 		if (!empty($campagnes_ids)) {
@@ -1068,7 +1069,7 @@ switch ($_GET["step"]) {
 		// si on a deja filtre les enquetes (par especes ou familles)
 			if (!empty($enquetes_ids)) {$sql_pays.=' AND art_periode_enquete.id IN( 
 												\''.arrayToList($enquetes_ids,'\',\'','\'').')';}
-	$sql_pays.=('))');
+	$sql_pays.=(')))');
 	
 	$result_pays=pg_query($connectPPEAO,$sql_pays) or die('erreur dans la requete : '.$sql_pays. pg_last_error());
 	$array_pays=pg_fetch_all($result_pays);
