@@ -1214,14 +1214,13 @@ switch ($_GET["step"]) {
 	$result_e=pg_query($connectPPEAO,$sql_e) or die('erreur dans la requete : '.$sql_e. pg_last_error());
 	$array_e=pg_fetch_all($result_e);
 	pg_free_result($result_e);} else {$array_e[]=array("enquete_debut"=>'9999-99-99',"enquete_fin"=>'0000-00-00');}
-	//debug 	echo('<pre>');print_r($array_e);echo('</pre>');
+	//debug 		echo('<pre>');print_r($array_e);echo('</pre>');
 	// on choisit la date de debut la plus ancienne et la date de fin la plus recente
 	$from=array();
 	$to=array();
-	/*if ($array_c[0]["campagne_debut"]<$array_e[0]["enquete_debut"]) {$from=date_parse($array_c[0]["campagne_debut"]);} else {$from=date_parse($array_c[0]["enquete_debut"]);}
-	if ($array_c[0]["campagne_fin"]>$array_e[0]["enquete_fin"]) {$to=date_parse($array_c[0]["campagne_fin"]);} else {$to=date_parse($array_c[0]["enquete_fin"]);}*/
-	if ($array_c[0]["campagne_debut"]<$array_e[0]["enquete_debut"]) {$from=getdate(strtotime($array_c[0]["campagne_debut"]));} else {$from=getdate(strtotime($array_c[0]["enquete_debut"]));}
-	if ($array_c[0]["campagne_fin"]>$array_e[0]["enquete_fin"]) {$to=getdate(strtotime($array_c[0]["campagne_fin"]));} else {$to=getdate(strtotime($array_c[0]["enquete_fin"]));}
+
+	if ($array_c[0]["campagne_debut"]<$array_e[0]["enquete_debut"]) {$from=getdate(strtotime($array_c[0]["campagne_debut"]));} else {$from=getdate(strtotime($array_e[0]["enquete_debut"]));}
+	if ($array_c[0]["campagne_fin"]>$array_e[0]["enquete_fin"]) {$to=getdate(strtotime($array_c[0]["campagne_fin"]));} else {$to=getdate(strtotime($array_e[0]["enquete_fin"]));}
 
 	
 
@@ -1233,6 +1232,9 @@ switch ($_GET["step"]) {
 	$fin["jour"]=$to["mday"];
 
 	echo('<p>(p&eacute;riode couverte : de '.$debut["annee"].'-'.number_pad($debut["mois"],2).'-'.$debut["jour"].' &agrave; '.$fin["annee"].'-'.number_pad($fin["mois"],2).'-'.$fin["jour"].')</p>');
+
+//debug echo('<pre>');print_r($from);echo('</pre>');echo('<pre>');print_r($to);echo('</pre>');
+
 
 	
 	// la ligne pour la date de debut
