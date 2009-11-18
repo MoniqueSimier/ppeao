@@ -28,10 +28,12 @@ $ListeTableInput = "";
 //*********************************************************************
 // ajouterAuWhere : test et ajoute
 function  ajouterAuWhere($WhereEncours,$CodeAajouter) {
-	if ($WhereEncours == "" ) {
-		$WhereEncours = $CodeAajouter;
-	} else {
-		$WhereEncours .= " and ".$CodeAajouter;
+	if (strpos($WhereEncours,$CodeAajouter) === false ) {
+		if ($WhereEncours == "" ) {
+			$WhereEncours = $CodeAajouter;
+		} else {
+			$WhereEncours .= " and ".$CodeAajouter;
+		}
 	}
 	return $WhereEncours;
 }
@@ -88,6 +90,9 @@ function AfficherSelection($file) {
 	global $SQLFamille ;
 	global $SQLdateDebut ; // format annee/mois
 	global $SQLdateFin ; // format annee/mois
+	global $listeDocPays; // liste des docs pour le pays
+	global $listeDocSyst; // liste des docs pour le systeme
+	global $listeDocSect; // liste des docs pour le secteur
 	global $connectPPEAO;	
 
 	
@@ -124,7 +129,9 @@ function AfficherSelection($file) {
 	$SQLEspeces 	= TestSQLAucun($SQLEspeces);
 	$SQLFamille 	= TestSQLAucun($SQLFamille);
 	$SQLPeEnquete 	= TestSQLAucun($SQLPeEnquete);
-	
+	$listeDocPays 	= TestSQLAucun($listeDocPays); 
+	$listeDocSyst	= TestSQLAucun($listeDocSyst); 
+	$listeDocSect	= TestSQLAucun($listeDocSect); 	
 	$_SESSION['SQLPays'] = $SQLPays;
 	$_SESSION['SQLSysteme'] = $SQLSysteme;
 	$_SESSION['SQLSecteur'] = $SQLSecteur;
@@ -134,6 +141,10 @@ function AfficherSelection($file) {
 	$_SESSION['SQLCampagne'] = $SQLCampagne;
 	$_SESSION['SQLFamille'] = $SQLFamille;
 	$_SESSION['SQLPeEnquete'] = $SQLPeEnquete;
+	$_SESSION['listeDocPays'] = $listeDocPays; //liste contenant les ID des documents pays a mettre en zip
+	$_SESSION['listeDocSys'] = $listeDocSyst; //liste contenant les ID des documents systeme a mettre en zip
+	$_SESSION['listeDocSect'] = $listeDocSect; //liste contenant les ID des documents secteur a mettre en zip
+
 	// On ajoute dans la liste des especes les ID venant des especes selectionnees.
 	// Au moins c'est fait ici, on n'a plus a se poser de questions et le faire 100 fois apres
 	$listEspFamille = "";
@@ -252,7 +263,7 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 			$erreurSQL = pg_last_error($connectPPEAO);
 			if ( !$SQLInsertresult ) { 
 				if ($EcrireLogComp ) {
-					WriteCompLog ($logComp, "ERREUR : Erreur insert temp_extraction sql = ".SQLInsertresult."(erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+					WriteCompLog ($logComp, "ERREUR : Erreur insert temp_extraction sql = ".SQLInsertresult."(erreur complete = ".$erreurSQL.")",$pasdefichier);
 				}
 				$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur Erreur insertion dans temp_extraction - sql = ".$SQLInsertresult." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 				$LocPasErreur = false;
@@ -292,19 +303,21 @@ function AfficherDonnees($file,$typeAction){
 	$typeSelection 	= $_SESSION['typeSelection'];
 	$typePeche		= $_SESSION['typePeche'];
 	$typeStatistiques = $_SESSION['typeStatistiques'];
-	$SQLPays 	= $_SESSION['SQLPays'];
-	$SQLSysteme	= $_SESSION['SQLSysteme'];
-	$SQLSecteur	= $_SESSION['SQLSecteur'];
-	$SQLAgg		= $_SESSION['SQLAgg'];
-	$SQLEngin	= $_SESSION['SQLEngin'];
-	$SQLGTEngin = $_SESSION['SQLGTEngin'];
-	$SQLCampagne = $_SESSION['SQLCampagne'];
-	$SQLPeEnquete = $_SESSION['SQLPeEnquete']; // liste des enquetes	
-	$SQLEspeces	= $_SESSION['SQLEspeces'];
-	$SQLFamille = $_SESSION['SQLFamille'];
-	$SQLdateDebut = $_SESSION['SQLdateDebut']; // format annee/mois
-	$SQLdateFin = $_SESSION['SQLdateFin']; // format annee/mois
-
+	$SQLPays 		= $_SESSION['SQLPays'];
+	$SQLSysteme		= $_SESSION['SQLSysteme'];
+	$SQLSecteur		= $_SESSION['SQLSecteur'];
+	$SQLAgg			= $_SESSION['SQLAgg'];
+	$SQLEngin		= $_SESSION['SQLEngin'];
+	$SQLGTEngin 	= $_SESSION['SQLGTEngin'];
+	$SQLCampagne 	= $_SESSION['SQLCampagne'];
+	$SQLPeEnquete 	= $_SESSION['SQLPeEnquete']; // liste des enquetes	
+	$SQLEspeces		= $_SESSION['SQLEspeces'];
+	$SQLFamille 	= $_SESSION['SQLFamille'];
+	$SQLdateDebut 	= $_SESSION['SQLdateDebut']; // format annee/mois
+	$SQLdateFin 	= $_SESSION['SQLdateFin']; // format annee/mois
+	$listeDocPays 	= $_SESSION['listeDocPays']; // liste des docs pour le pays
+	$listeDocSyst 	= $_SESSION['listeDocSys'] ; // liste des docs pour le systeme
+	$listeDocSect 	= $_SESSION['listeDocSect']; // liste des docs pour le secteur
 
 	// Attention, le cas des especes est un peu particulier.
 	// On utilise 2 variables de session : 
@@ -331,7 +344,7 @@ function AfficherDonnees($file,$typeAction){
 	global $listeChampsSel;
 	global $ListeTableSel;
 	global $AjoutWhere;
-	
+	global $listeDocURL;
 	if (!($typeAction == "")) {
 	$divExportFic = "<div id=\"exportFic\"><input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('".$typePeche."?>','".$typeAction."','1','".$codeTableEnCours."','y',,'','')\" value=\"Voir les r&eacute;sultats\"/>
 <input type=\"checkbox\" id=\"ExpFic\" />Exporter sous forme de fichier</div>";
@@ -367,7 +380,7 @@ function AfficherDonnees($file,$typeAction){
 			$nomFicExportReg = $dirLog."/".date('y\-m\-d')."_".$typeSelection."_".$typeAction."-Regroupement.txt";
 		}
 		$nomFicExpLien = $nomLogLien."/".date('y\-m\-d')."_".$typeSelection."_".$typeAction.".txt";
-		$resultatLecture = "Le fichier de r&eacute;sultat peut &ecirc;tre consult&eacute; : <a href=\"".$nomFicExpLien."\" target=\"export\"/>".$nomFicExpLien."</a><br/><br/>";
+		$resultatLecture = "Fichier de donn&eacute;es : <a href=\"".$nomFicExpLien."\" target=\"export\"/>".$nomFicExpLien."</a><br/>";
 		// On ne cree le fichier que si il n'a pas deja ete rempli !
 		if (!($fichierDejaCree)) {
 			$ExpComp = fopen($nomFicExport , "w+");
@@ -388,7 +401,20 @@ function AfficherDonnees($file,$typeAction){
 				}
 			}
 		}
+		// Gestion du fichier d'archive
+		$zipFilename = $_SERVER["DOCUMENT_ROOT"]."/extraction/extraction/fichier/extraction_du_".date('y\-m\-d').".zip";
+		$zipFilelien = "/extraction/extraction/fichier/extraction_du_".date('y\-m\-d').".zip";
+		if (!($fichierDejaCree)) {
+			if (file_exists($zipFilename)) {
+				// pas forcement necessaire, verifier que le x+ vide le fichier
+				unlink($zipFilename);
+			}
+			$theZipFile=new zip_file($zipFilename);	
+			//setting the zip options: write to disk, do not recurse directories, do not store path and do not compress
+			$theZipFile->set_options(array('inmemory' => 0, 'recurse' => 0, 'storepaths' => 0, 'method'=>0));			
+		}
 
+		$resultatLecture .= "Fichier d'archive : <a href=\"".$zipFilelien."\" target=\"export\"/>".$zipFilelien."</a>.<br/>";
 	} 	
 	// Analyse des paramètres communs
 	if ($SQLSecteur == "") {
@@ -573,13 +599,16 @@ function AfficherDonnees($file,$typeAction){
 				}
 			}
 			// Les selections ci-dessous ne sont valables que pour les filieres autres que l'environnement
-			if (!($typeAction =="environnement")){
-				// Maj du libelle de la selection en tete avec les restriction CatEco CatTroph et poisson
-				$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois." ";
-			} 	else {
+			if ($typeAction =="environnement" ||  $typeAction =="peuplement"){
 				$compCatEcoSQL = "";
 				$compCatTropSQL ="";
-				$compPoisSQL ="";
+				if ($typeAction =="environnement") {
+					$compPoisSQL ="";				
+				}
+			} 	else {
+				// Maj du libelle de la selection en tete avec les restriction CatEco CatTroph et poisson
+				$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois." ";
+
 			}
 			// ********** Gestion de l'affichage des colonnes sélectionnées 
 			$listeChampsSel = "";
@@ -639,7 +668,7 @@ function AfficherDonnees($file,$typeAction){
 				if ( !$SQLEspResult ) { 
 					$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query ".$SQLEsp." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 					if ($EcrireLogComp) {
-						WriteCompLog ($logComp, "ERREUR : echec construction liste espece query sql = ".$SQLEsp." (erreur compl&egrave;te = ".$erreurSQL,$pasdefichier);
+						WriteCompLog ($logComp, "ERREUR : echec construction liste espece query sql = ".$SQLEsp." (erreur complete = ".$erreurSQL,$pasdefichier);
 					}
 					$erreurProcess = true;
 					return ("erreur SQL especes");
@@ -723,7 +752,7 @@ function AfficherDonnees($file,$typeAction){
 						$WhereSpec = " and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
 							esp.id = fra.ref_espece_id and
 							fam.id = esp.ref_famille_id ";
-						$valueCount = "cph.id" ; // pour gerer la pagination	
+						$valueCount = "fra.id" ; // pour gerer la pagination	
 						$builQuery = true;					
 					break;
 				case "environnement" :
@@ -786,7 +815,7 @@ function AfficherDonnees($file,$typeAction){
 							py.id = sy.ref_pays_id and
 							se.id = stat.ref_secteur_id and
 							".$WhereSect."
-							cpg.id in (".$SQLCampagne.") ".$WhereSel;
+							cpg.id in (".$SQLCampagne.") ";
 					$SQLcountfinal = "select count(cpg.id) from ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph
 							where cpg.id = cph.exp_campagne_id and
 							stat.id = cph.exp_station_id and
@@ -795,7 +824,7 @@ function AfficherDonnees($file,$typeAction){
 							py.id = sy.ref_pays_id and
 							se.id = stat.ref_secteur_id and
 							".$WhereSect."
-							cpg.id in (".$SQLCampagne.") ".$WhereSel; // Pour gerer la pagination
+							cpg.id in (".$SQLCampagne.") "; // Pour gerer la pagination
 							break;
 			}
 
@@ -1314,9 +1343,12 @@ function AfficherDonnees($file,$typeAction){
 					// ********** DEBUT STATISTIQUES GENERALES
 				break; 
 				// ********** FIN STATISTIQUES GENERALES	
-			default:
-				echo "Erreur pas d'action selectionnee. Ca ne devrait pas arriver....<br/>";
-				exit;
+		// #
+		// ********** FIN TRAITEMENT STATISTIQUES
+		// #
+		default:
+			echo "Erreur pas d'action selectionnee. Ca ne devrait pas arriver....<br/>";
+			exit;
 		} // fin du switch ($typeStatistiques) 
 	} // fin du switch ($typeSelection) 
 
@@ -1343,6 +1375,9 @@ function AfficherDonnees($file,$typeAction){
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "INFO SQL en cours :".$SQLfinal,$pasdefichier);
 		}
+		if ($EcrireLogComp && $debugLog) {
+			WriteCompLog ($logComp, "DEBUG :  select countfinal = ".$SQLcountfinal,$pasdefichier);
+	}
 	}
 	// Gestion des regroupements
 	// A ce niveau, pour gérer les regroupements, il faut passer par une étape intermédiaire d'agrégation
@@ -1355,7 +1390,7 @@ function AfficherDonnees($file,$typeAction){
 		$erreurSQL = pg_last_error($connectPPEAO);
 		if ( !$SQLDelresult ) { 
 			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp, "ERREUR : Erreur delete temp_extraction (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+				WriteCompLog ($logComp, "ERREUR : Erreur delete temp_extraction (erreur complete = ".$erreurSQL.")",$pasdefichier);
 			}
 			$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur Erreur delete temp_extraction , cette table n'existe peut etre pas dans votre base (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 			$erreurProcess = true;
@@ -1371,7 +1406,7 @@ function AfficherDonnees($file,$typeAction){
 		$cpt1 = 0;
 		if ( !$SQLfinalResult ) { 
 			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp, "ERREUR : Erreur query final regroupements ".$SQLfinal." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+				WriteCompLog ($logComp, "ERREUR : Erreur query final regroupements ".$SQLfinal." (erreur complete = ".$erreurSQL.")",$pasdefichier);
 			}
 			$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query regroupements ".$SQLfinal." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 			$erreurProcess = true;
@@ -1575,7 +1610,7 @@ function AfficherDonnees($file,$typeAction){
 	$cpt1 = 0;
 	if ( !$SQLcountfinalResult ) { 
 		if ($EcrireLogComp ) {
-			WriteCompLog ($logComp, "WARNING : Erreur pagination pour requete ".$SQLcountfinal." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+			WriteCompLog ($logComp, "WARNING : Erreur pagination pour requete ".$SQLcountfinal." (erreur complete = ".$erreurSQL.")",$pasdefichier);
 		}
 		$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Erreur pagination<br/>";
 	} else {
@@ -1623,7 +1658,7 @@ function AfficherDonnees($file,$typeAction){
 		$cpt1 = 0;
 		if ( !$SQLfinalResult ) { 
 			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp, "ERREUR : Erreur query final ".$SQLfinal." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+				WriteCompLog ($logComp, "ERREUR : Erreur query final ".$SQLfinal." (erreur complete = ".$erreurSQL.")",$pasdefichier);
 			}
 			$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query ".$SQLfinal." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 			$erreurProcess = true;
@@ -1717,7 +1752,7 @@ function AfficherDonnees($file,$typeAction){
 								$erreurSQL = pg_last_error($connectPPEAO);
 								if ( !$SQLcomplementResult ) { 
 									if ($EcrireLogComp ) {
-										WriteCompLog ($logComp, "ERREUR : Erreur query complementaire biologie ".$SQLcomplement." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+										WriteCompLog ($logComp, "ERREUR : Erreur query complementaire biologie ".$SQLcomplement." (erreur complete = ".$erreurSQL.")",$pasdefichier);
 									}							
 								} else {
 									$RowComplement = pg_fetch_row($SQLcomplementResult); 
@@ -1764,7 +1799,7 @@ function AfficherDonnees($file,$typeAction){
 			$cpt1 = 0;
 			if ( !$SQLfinalResult ) { 
 				if ($EcrireLogComp ) {
-					WriteCompLog ($logComp, "ERREUR : Erreur creation fichier query final ".$SQLfinalFichier." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+					WriteCompLog ($logComp, "ERREUR : Erreur creation fichier query final ".$SQLfinalFichier." (erreur complete = ".$erreurSQL.")",$pasdefichier);
 				}
 				$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur creation fichier query ".$SQLfinalFichier." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 				$erreurProcess = true;
@@ -1776,14 +1811,6 @@ function AfficherDonnees($file,$typeAction){
 					}
 					$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Pas de resultat disponible pour la sélection (creation fichier)<br/>";
 				} else {
-					// Si on ajoute un identifiant unique en debut de ligne, on l'indique dans la liste des champs.
-					//if (!($ConstIDunique =="")) {
-					//	$listeChamps ="ID UNIQUE,".$listeChamps;
-					//}
-					if ($typeAction == "biologie") {
-						// On ajoute le libelle pour le coefficient
-						$listeChamps .=",Coeff_extrapolation";
-					}
 					// Ici, remplacer les noms des alias par le nom des tables...		
 					//$listeChamps = remplaceAlias($listeChamps);
 					$resultatFichier = str_replace(",","\t",$listeChamps);
@@ -1830,7 +1857,7 @@ function AfficherDonnees($file,$typeAction){
 									$erreurSQL = pg_last_error($connectPPEAO);
 									if ( !$SQLcomplementResult ) { 
 										if ($EcrireLogComp ) {
-											WriteCompLog ($logComp, "ERREUR : Erreur query complementaire biologie ".$SQLcomplement." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+											WriteCompLog ($logComp, "ERREUR : Erreur query complementaire biologie ".$SQLcomplement." (erreur complete = ".$erreurSQL.")",$pasdefichier);
 										}							
 									} else {
 										$RowComplement = pg_fetch_row($SQLcomplementResult); 
@@ -1917,10 +1944,50 @@ function AfficherDonnees($file,$typeAction){
 				}
 			}
 			}
-			// On zippe tout !
-			
+			// ********* Fin creation fichier ==> Zip
+			// On contrôle si il existe des documents sélectionnés, si oui, on les extrait
+			// Doc pays
+			$listeDocURL = array();		
+			if (!($_SESSION['listeDocPays'] == "")) {
+				// Appel de la fonction litTableDocument qui renvoie une variable partagée avec les chemins des fichiers à ajouter
+				// Elle renvoie un message d'erreur en cas de probleme, sinon vide.
+				 $resultatLecture .=litTableDocument("meta_pays",$_SESSION['listeDocPays']);
+			}
+			if (!($_SESSION['listeDocSys'] == "")) {
+				// Appel de la fonction litTableDocument qui renvoie une variable partagée avec les chemins des fichiers à ajouter
+				// Elle renvoie un message d'erreur en cas de probleme, sinon vide.
+				$resultatLecture .= litTableDocument("meta_systemes",$_SESSION['listeDocSys']);
+			}
+			if (!($_SESSION['listeDocSect'] == "")) {
+				// Appel de la fonction litTableDocument qui renvoie une variable partagée avec les chemins des fichiers à ajouter
+				// Elle renvoie un message d'erreur en cas de probleme, sinon vide.
+				$resultatLecture .= litTableDocument("meta_secteurs",$_SESSION['listeDocSect']);
+			}		
+			$NbrDoc = count($listeDocURL);
+			if ($NbrDoc>0) {
+				for ($cpt = 1; $cpt <= $NbrDoc; $cpt++) {
+					$FileFullPath = $_SERVER["DOCUMENT_ROOT"]."/".$listeDocURL[$cpt];
+					if ($EcrireLogComp ) {
+						WriteCompLog ($logComp, "Ajout de fichiers sup ".$FileFullPath." dans l'archive ".$zipFilename ,$pasdefichier);
+					}
+					$theZipFile->add_files($FileFullPath);
+				}
+			}
+			// Ajout des autres fichiers dans l'archive
+			// Fichier de données
+			$theZipFile->add_files($nomFicExport);
+			// Fichier de selection
+			$theZipFile->add_files($nomFicExportSel);
+			// Si regroupement, le fichier de definition des regroupements
+			if (!($_SESSION['listeRegroup'] == "")) {
+				$theZipFile->add_files($nomFicExportReg);
+			}		
+			// Creation effective de l'archive
+			$theZipFile->create_archive();
+
 		} // fin if ($exportFichier && (!($fichierDejaCree))
-		// ********* Fin creation fichier
+
+		
 	}// fin du if ($countTotal!=0) 
 	if ($fichierDejaCree)  {
 		$addURLPag = "&dejf=y";
@@ -1937,6 +2004,52 @@ function AfficherDonnees($file,$typeAction){
 		WriteCompLog ($logComp, "Les donnees ont ete ecrites dans le fichier ".$nomFicExpLien." pour la filiere ".$typeAction,$pasdefichier);
 	}
 
+}
+
+//*********************************************************************
+// AfficheCategories : Fonction pour afficher les catégories troph / ecologiques a selectionner
+function litTableDocument($nomTable,$ListeID) {
+// Cette fonction permet de construire la liste des checkboxes pour la selection des especes à selectionner
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $nomTable : nom de la table a lire
+// $ListeID : liste des ID sur lesquels faire la requete
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie $messageErreur
+// La fonction met aussi à jour la variable partagée listeDocURL
+//*********************************************************************
+	global $connectPPEAO;
+	global $EcrireLogComp;
+	global $logComp;
+	global $pasdefichier;
+	global $listeDocURL;
+	$messageErreur = "";
+
+	$SQLDoc = "select * from ".$nomTable." where meta_id in (".$ListeID.") order by meta_id asc";
+	$SQLDocResult = pg_query($connectPPEAO,$SQLDoc);
+	$erreurSQL = pg_last_error($connectPPEAO);
+	if ( !$SQLDocResult ) { 
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "ERREUR : Erreur lecture table doc pays ".$SQLDoc." (erreur complete = ".$erreurSQL.")",$pasdefichier);
+		}
+		$messageErreur .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;Erreur lecture table doc pays ".$SQLDoc." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+
+	} else {
+		if (pg_num_rows($SQLDocResult) == 0) {
+			$messageErreur .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>la requ&ecirc;te ".$SQLDoc." ne renvoie rien alors qu'un document a &eacute;t&eacute; s&eacute;lectionn&eacute;.<br/>";
+
+		} else {
+			// pour debug 
+			$messageErreur .="<br/>Document trouv&eacute; !!<br/>";
+			$cptURL = count($listeDocURL);
+			while ($docRow = pg_fetch_row($SQLDocResult) ) {
+				$cptURL ++;
+				$listeDocURL[$cptURL] = "documentation/metadata/".$docRow[3];
+			}
+		}
+	}
+	return $messageErreur;
 }
 
 //*********************************************************************
@@ -2618,7 +2731,7 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	if ($ListeChampTableFac == "") {
 		$ContenuChampTableFac = "";
 	} else {
-		$ContenuChampTableFac = "colonnes facultatives<br/>".$ListeChampTableFac."<br/>";
+		$ContenuChampTableFac = "colonnes facultatives :<br/>".$ListeChampTableFac."<br/>";
 	}
 	$inputTableEC = "<input type=\"hidden\" id=\"tableEC\" value=\"".$TableEnCours."\"/>";
 	$inputNumDef = "<input type=\"hidden\" id=\"numDef\" value=\"".$NumChampDef."\"/>";
@@ -2629,7 +2742,13 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	} else {
 		$InputTout = "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','aucun','','','')\" checked=\"checked\" />&nbsp;tout<br/>";
 	}
-	$tableau = $InputTout."<table class=\"ChoixChampComp\"><tr><td class=\"CCCTable\">&nbsp;".$ListeTable." </td><td class=\"CCCChamp\">colonnes par d&eacute;faut : <br/>".$ListeChampTableDef."<br/>".$ContenuChampTableFac."</td></tr></table>".$inputTableEC.$inputNumFac.$inputNumDef;
+	
+	$tableau = $InputTout."<table class=\"ChoixChampComp\"><tr><td class=\"CCCTable\">&nbsp;".$ListeTable." </td><td class=\"CCCChamp\">";
+	if($ListeChampTableDef =="") {
+		$tableau .=	$ContenuChampTableFac."</td></tr></table>".$inputTableEC.$inputNumFac.$inputNumDef;
+	} else {
+		$tableau .=	"colonnes par d&eacute;faut : <br/>".$ListeChampTableDef."<br/>".$ContenuChampTableFac."</td></tr></table>".$inputTableEC.$inputNumFac.$inputNumDef;	
+	}
 	return $tableau; 
 }
 
@@ -2671,10 +2790,10 @@ function recupereTouteColonnes ($typePeche,$typeAction) {
 }
 
 //*********************************************************************
-// recupereTouteColonnes : Fonction qui recupère l'ensemble de colonnes
+// recupereTouteColonnes : Fonction qui analyse la colonne en cours et complete le SQL si besoin
 function 	analyseColonne($typePeche,$typeAction){
-// Cette fonction permet de recupérer l'ensemble des colonnes pour toutes les tables quand l'option tout a été cochée
-// Pour cela, elle va lire le fichier de definition (XML)
+// Cette fonction permet de recupérer controler si la colonne en cours necessite une requete SQL supplementaire et l'ajoute 
+// cas echeant
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
 // $typePeche : le type de peche ou de stats(artisanale/experimentale)
@@ -2683,6 +2802,7 @@ function 	analyseColonne($typePeche,$typeAction){
 //*********************************************************************
 // En sortie : 
 // La fonction renvoie un message d'erreur ou non
+// La fonction met a jour les variables globales :	$listeChampsSel, $ListeTableSel, $AjoutWhere;
 //*********************************************************************	
 	global $EcrireLogComp;
 	global $logComp;
@@ -2692,7 +2812,6 @@ function 	analyseColonne($typePeche,$typeAction){
 	global $AjoutWhere;
 	
 	$CR="ok";
-
 	if (!($_SESSION['listeColonne'] =="")){
 		$champSel = explode(",",$_SESSION['listeColonne']);
 		// On va completer les champs si on a tout selectionné.
@@ -2709,7 +2828,6 @@ function 	analyseColonne($typePeche,$typeAction){
 			if (($champSel[$cptSel] == "XtoutX") || ($champSel[$cptSel] == "XpasttX")) {
 				continue ;
 			}
-			
 			if (strpos($champSel[$cptSel],"-N") === false  ) { // On ne traite pas les colonnes décochées, ni le choix tout / pas tout
 				if ( strpos($champSel[$cptSel],"-X") === false ) {
 					$valTest = $champSel[$cptSel];
@@ -2745,7 +2863,42 @@ function 	analyseColonne($typePeche,$typeAction){
 								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = stat.".$TNomLongTable."_id "); 		
 								break;	
-						} // fin du switch ($TNomTable) 
+							case "efc" :
+								$TNomLongTable = "exp_force_courant";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = env.".$TNomLongTable."_id "); 		
+								break;
+							case "xremp" :
+								$TNomLongTable = "exp_remplissage";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = bio.".$TNomLongTable."_id "); 		
+								break;
+							case "xpos" :
+								$TNomLongTable = "exp_position";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = stat.".$TNomLongTable."_id "); 		
+								break;
+							case "xsta" :
+								$TNomLongTable = "exp_stade";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = bio.".$TNomLongTable."_id "); 		
+								break;
+							case "xssc" :
+								$TNomLongTable = "exp_sens_courant";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = env.".$TNomLongTable."_id "); 		
+								break;
+							case "xsex" :
+								$TNomLongTable = "exp_sexe";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = bio.".$TNomLongTable."_id "); 		
+								break;								
+							case "xveg" :
+								$TNomLongTable = "exp_vegetation";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = stat.".$TNomLongTable."_id "); 		
+								break;
+					} // fin du switch ($TNomTable) 
 						break;
 					case "artisanale" :	
 						switch ($TNomTable) {
@@ -2786,15 +2939,67 @@ function 	analyseColonne($typePeche,$typeAction){
 								}
 								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id "); 		
 								break;
-							case "aeng" :
+							case "acsp" :
+								$TNomLongTable = "art_categorie_socio_professionnelle";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = upec.".$TNomLongTable."_id ");
+								break;
+							case "aengp" :
 								$TNomLongTable = "art_engin_peche";	
 								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".art_debarquement_id = deb.id"); 		
 								break;
-							case "teng" :
-								$TNomLongTable = "art_type_engin";	
+							case "aenga" :
+								$TNomLongTable = "art_engin_activite";	
 								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".art_grand_type_engin_id = gte.id "); 		
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".art_activite_id = act.id "); 		
+								break;
+							case "aetatc" :
+								$TNomLongTable = "art_etat_ciel";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = deb.".$TNomLongTable."_id ");
+								break;								
+							case "amil" :
+								$TNomLongTable = "art_millieu";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								if ($typeAction=="activite") {
+									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = act.".$TNomLongTable."_id "); 		
+								} else {
+									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = deb.".$TNomLongTable."_id ");
+								}
+								break;
+							case "alieup" :
+								$TNomLongTable = "art_lieu_de_peche";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = deb.".$TNomLongTable."_id ");
+								break;
+							case "atsor" :
+								$TNomLongTable = "art_type_sortie";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								if ($typeAction=="activite") {
+									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = act.".$TNomLongTable."_id "); 		
+								} else {
+									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = deb.".$TNomLongTable."_id ");
+								}
+								break;
+							case "avent" :
+								$TNomLongTable = "art_vent";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = deb.".$TNomLongTable."_id ");
+								break;									
+							case "gte" :
+								if ($typeAction=="activite") {
+									$TNomLongTable = "art_grand_type_engin";	
+									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = act.".$TNomLongTable."_id "); 
+								}
+								break;
+							case "teng" :
+								if (!($typeAction=="engin")) {
+									$TNomLongTable = "art_type_engin";	
+									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".art_grand_type_engin_id = gte.id "); 		
+								}
 								break;
 							case "tagg" :
 								$TNomLongTable = "art_type_agglomeration";	
@@ -2973,7 +3178,7 @@ function remplaceAlias($listeDesChamps) {
 	$listeTitre = explode(",",$listeDesChamps);
 	$nbrTitre = count($listeTitre)-1;
 	for ($cptT=0 ; $cptT<=$nbrTitre;$cptT++) {
-		if ( $listeTitre[$cptT]=="ID UNIQUE") {
+		if ( $listeTitre[$cptT]=="ID UNIQUE" || $listeTitre[$cptT]=="Coeff_extrapolation") {
 			if ($listeDesTitres == "") {
 				$listeDesTitres = $listeTitre[$cptT];
 			} else {
@@ -3014,16 +3219,16 @@ function recupeNomTableAlias($tableAlias){
 //*********************************************************************
 // creeDirTemp : Fonction pour creer le repertoire temporaire
 function creeDirTemp($dir){
-if (! file_exists($dir)) {
-	if (! mkdir($dir) ) {
-		$resultat = " erreur,repertoire ne peut etre cree";
+	if (! file_exists($dir)) {
+		if (! mkdir($dir) ) {
+			$resultat = " erreur,repertoire ne peut etre cree";
+		} else {
+			$resultat = "ok,repertoire cree";
+		}
 	} else {
-		$resultat = "ok,repertoire cree";
+	$resultat = "ok,repertoire deja existant";
 	}
-} else {
-$resultat = "ok,repertoire deja existant";
-}
-return $resultat;
+	return $resultat;
 	
 }
 ?>

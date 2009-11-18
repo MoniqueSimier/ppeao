@@ -126,13 +126,17 @@ if (!(file_exists($file)) ) {
 
 				// Si on change de filière, on remet tous à blanc
 				if (!($gardeSelection == "y")) { 
-					$_SESSION['listeQualite'] = '';
-					$_SESSION['listeProtocole'] = ''; // Oui / non
-					$_SESSION['listeEspeces'] = '';	// Liste des espèces selectionnées
-					$_SESSION['listeCatEco'] = ''; 	// Liste des categories ecologiques selectionnées
-					$_SESSION['listeCatTrop'] = ''; // Liste des categories trophiques selectionnées
-					$_SESSION['listeColonne'] = ''; // tableau nomTable / NomChamp des champs comple à afficher
-					$_SESSION['pasderesultat'] = false; // indicateur global si pas de resultat
+					$_SESSION['listeQualite'] 	= "";
+					$_SESSION['listeProtocole'] = ""; // Oui / non
+					$_SESSION['listeEspeces'] 	= "";	// Liste des espèces selectionnées
+					$_SESSION['listeCatEco'] 	= ""; 	// Liste des categories ecologiques selectionnées
+					$_SESSION['listeCatTrop'] 	= ""; // Liste des categories trophiques selectionnées
+					$_SESSION['listePoisson']	= ""; // liste des selections poissons / non poissons
+					$_SESSION['listeColonne']	= ""; // tableau nomTable / NomChamp des champs comple à afficher
+					$_SESSION['listeDocPays'] 	= ""; //liste contenant les ID des documents pays a mettre en zip
+					$_SESSION['listeDocSys'] 	= ""; //liste contenant les ID des documents systeme a mettre en zip
+					$_SESSION['listeDocSect'] 	= ""; //liste contenant les ID des documents secteur a mettre en zip
+					$_SESSION['pasderesultat']	 = false; // indicateur global si pas de resultat
 					unset($_SESSION['listeRegroup']); // Liste des regroupements
 					unset($_SESSION['libelleTable']); // Pour recuperer les noms des tables
 				}
@@ -162,9 +166,9 @@ if (!(file_exists($file)) ) {
 				$locSelection = AfficherSelection($file,"");
 				echo "<span class=\"showHide\">
 <a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier/masquer la s&eacute;lection]</a></span>";
-				echo "<div id=\"selection_precedente\">".$locSelection."<br/>";
+				echo "<div id=\"selection_precedente\">".$locSelection;
 				if (!($_SESSION["selection_url"] =="")) {
-					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la s&eacute;lection</a></span>";
+					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >modifier la s&eacute;lection en cours...</a></span>";
 				}
 				echo "</div>";
 				AfficherDonnees($file,"");

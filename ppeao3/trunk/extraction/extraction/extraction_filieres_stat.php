@@ -123,6 +123,9 @@ if (!(file_exists($file)) ) {
 					$_SESSION['listeColonne'] = ""; // tableau nomTable / NomChamp des champs comple à afficher
 					$_SESSION['listetablesynth'] = ""; // Gestion de la table de synthèse a extraire
 					$_SESSION['pasderesultat'] = false; // indicateur global si pas de resultat
+					$_SESSION['listeDocPays'] = ""; //liste contenant les ID des documents pays a mettre en zip
+					$_SESSION['listeDocSys'] = ""; //liste contenant les ID des documents systeme a mettre en zip
+					$_SESSION['listeDocSect'] = ""; //liste contenant les ID des documents secteur a mettre en zip
 					unset($_SESSION['listeRegroup']); // Liste des regroupements
 					unset($_SESSION['libelleTable']); // Pour recuperer les noms des tables
 				}
@@ -153,9 +156,9 @@ if (!(file_exists($file)) ) {
 
 				echo "<span class=\"showHide\">
 <a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier/masquer la s&eacute;lection]</a></span>";
-				echo "<div id=\"selection_precedente\">".$locSelection."<br/>";
+				echo "<div id=\"selection_precedente\">".$locSelection;
 				if (!($_SESSION["selection_url"] =="")) {
-					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la s&eacute;lection</a></span>";
+					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >modifier la s&eacute;lection en cours...</a></span>";
 				}
 				echo "</div>";
 				AfficherDonnees($file,"");

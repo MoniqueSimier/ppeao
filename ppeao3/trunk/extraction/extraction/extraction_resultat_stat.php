@@ -37,6 +37,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
+include $_SERVER["DOCUMENT_ROOT"].'/zip/archive.php';
 if (isset($_SESSION['s_ppeao_user_id'])){ 
 	$userID = $_SESSION['s_ppeao_user_id'];
 } else {
@@ -202,7 +203,7 @@ if (isset($_GET['action'])) {
 		echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la s&eacute;lection</a></span>";
 	}
 	echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$typeAction."</span>"; 
-	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."\" >changer de fili&egrave;re</a></span></div>";
+	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."\" >modifier la fili&egrave;re</a></span></div>";
 	echo "</div>";
 	AfficherDonnees($file,$typeAction);
 	switch ($_SESSION['listetablesynth']) {
@@ -220,8 +221,6 @@ if (isset($_GET['action'])) {
 	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li></ul></div>";
 							
 ?>
-
-<br/>
 <div id="resultfiliere"> 
 <?php 
 	echo $resultatLecture; 

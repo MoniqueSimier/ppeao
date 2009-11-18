@@ -60,7 +60,9 @@ function startElement($parser, $name, $attrs){
 	global $SQLPeEnquete ;
 	global $SQLdateDebut ; // format annee/mois
 	global $SQLdateFin ; // format annee/mois
-	
+	global $listeDocPays; // liste des docs pour le pays
+	global $listeDocSyst; // liste des docs pour le systeme
+	global $listeDocSect; // liste des docs pour le secteur
 	array_push($stack,$name);
 
 	// Analyse de l'element et remplissage des variables
@@ -141,6 +143,19 @@ function startElement($parser, $name, $attrs){
 		break;
 	case "AGGLOMERATION":
 		$SQLAgg .= $attrs["ID"].",";
+		break;
+	case "DOCUMENT":
+		switch ($attrs["TYPE"]) {
+			case "meta_pays":
+				$listeDocPays .= $attrs["ID"].",";
+				break;
+			case "meta_systeme":
+				$listeDocSyst .= $attrs["ID"].",";
+				break;
+			case "meta_secteur":
+				$listeDocSect .= $attrs["ID"].",";
+				break;
+		}
 		break;
 	default :
 		break;
@@ -340,11 +355,31 @@ function startElementCol($parser, $name, $attrs){
 						}
 					} else {
 						if ($typeRecupTable == "tout" && $TableAAjouter && $filiereOK) {
+							$majOk = true;
 							// On recupère toutes les valeurs pour la ou les filieres autorisées
-							if ( $ListeToutesValeurs == "") {
-								 $ListeToutesValeurs = $idenTableEnCours."-".$attrs["CODE"];
-							} else {
-								$ListeToutesValeurs .= ",".$idenTableEnCours."-".$attrs["CODE"];
+							// On doit tester quand meme si une valeur a été décochée
+							if (!($_SESSION['listeColonne'] == "") ) {
+								$colRecues = explode (",",$_SESSION['listeColonne']);
+								$NumColR = count($colRecues) - 1;
+								for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
+									$valTest = substr($colRecues[$cptCR],0,-2);
+									// On teste si on a déjà coché cette colonne
+									if ($valTest == $idenTableEnCours."-".$attrs["CODE"]) {
+										if (strpos($colRecues[$cptCR],"-N") === false) {
+										} else {
+											// Soit on vient de la décocher suffixe = -N
+											$majOk = false;
+										}
+										break;
+									} 
+								}
+							} 
+							if ($majOk) {
+								if ( $ListeToutesValeurs == "") {
+									 $ListeToutesValeurs = $idenTableEnCours."-".$attrs["CODE"];
+								} else {
+									$ListeToutesValeurs .= ",".$idenTableEnCours."-".$attrs["CODE"];
+								}	
 							}
 						}
 						if ($typeRecupTable == "un") {
@@ -368,7 +403,7 @@ function startElementCol($parser, $name, $attrs){
 										}
 										break;
 									} else {
-										// Si on a déjà choisi de tout affiché alors on coh
+										// Si on a déjà choisi de tout affiché alors on coche
 										if (strpos($_SESSION['listeColonne'],"toutX") > 0) { // Attention, on ne teste pas XtoutX mais bien toutX car sinon strpos renvoie 0 qui eput aussi vouloir dire false... 
 											$checked = "checked=\"checked\"";
 										} else {
@@ -465,7 +500,7 @@ function endElementCol($parser, $name){
 				}
 			}
 			break;
-		case "TESTNOM" :
+		case "ALIAS" :
 			$NbReg = count($_SESSION['libelleTable']);
 			$tableTrouvee = false;
 			for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
@@ -489,6 +524,7 @@ function endElementCol($parser, $name){
 			}
 			break;
 		case "LIBELLE" :
+		
 			switch ($TypePecheEnCours) {
 				case "artisanale" :
 				$RunFilieres = "runFilieresArt";
