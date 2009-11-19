@@ -1294,9 +1294,10 @@ function AfficherDonnees($file,$typeAction){
 									break;
 								case "cap_GT";
 									$labelSelection = "r&eacute;sultat(s) global(ux) par GT";	
-									$listeChampsSpec = ",asgt.fm_gt,asgt.cap_gt,asgt.pue_gt,asgt.id,ast.id,ast.id";
-									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast"; 
-									$WhereSpec = "	and asgt.art_stat_totale_id = ast.id ";						
+									$listeChampsSpec = ",asgt.fm_gt,asgt.cap_gt,asgt.pue_gt,asgt.id,ast.id,ast.id,asgt.art_grand_type_engin_id,gte.libelle";
+									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
+									$WhereSpec = "	and asgt.art_stat_totale_id = ast.id 
+													and gte.id = 	asgt.art_grand_type_engin_id";						
 									$ConstIDunique = "AGT-##-13";
 									$valueCount = "asgt.id" ; // pour gerer la pagination
 									$builQuery = true;
@@ -1304,21 +1305,23 @@ function AfficherDonnees($file,$typeAction){
 									break;
 								case "cap_GT_sp";
 									$labelSelection = "r&eacute;sultat(s) par esp&egrave;ce et par GT";	
-									$listeChampsSpec = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, asgts.id, asgt.id, ast.id, ast.id";
-									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast"; 
-									$WhereSpec = "	and asgts.art_stat_gt_id = asgt.id and 
-													asgt.art_stat_totale_id = ast.id ";						
+									$listeChampsSpec = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, asgts.id, asgt.id, ast.id, ast.id,asgt.art_grand_type_engin_id,gte.libelle";
+									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
+									$WhereSpec = "	and asgts.art_stat_gt_id = asgt.id  
+													and asgt.art_stat_totale_id = ast.id 
+													and gte.id = 	asgt.art_grand_type_engin_id";						
 									$ConstIDunique = "ATS-##-13";
 									$valueCount = "asgts.id" ; // pour gerer la pagination
 									$builQuery = true;
 									break;
 								case "dft_sp_sp";
 									$labelSelection = "structure(s) en taille des esp&egrave;ces par GT";	
-									$listeChampsSpec = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, atgts.li,atgts.xi,atgts.id, asgts.id, asgt.id, ast.id, ast.id";
-									$ListeTableSpec = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast"; 
-									$WhereSpec = "	and atgts.art_stat_gt_sp_id = asgts.id and 
-													asgts.art_stat_gt_id = asgt.id and 
-													asgt.art_stat_totale_id = ast.id ";						
+									$listeChampsSpec = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, atgts.li,atgts.xi,atgts.id, asgts.id, asgt.id, ast.id, ast.id,asgt.art_grand_type_engin_id,gte.libelle";
+									$ListeTableSpec = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
+									$WhereSpec = "	and atgts.art_stat_gt_sp_id = asgts.id  
+													and asgts.art_stat_gt_id = asgt.id  
+													and asgt.art_stat_totale_id = ast.id 
+													and gte.id = 	asgt.art_grand_type_engin_id";						
 									$ConstIDunique = "ATG-##-16";
 									$valueCount = "atgts.id" ; // pour gerer la pagination
 									$builQuery = true;

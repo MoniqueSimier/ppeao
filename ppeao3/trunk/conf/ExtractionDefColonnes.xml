@@ -775,5 +775,95 @@
 		<Alias>avent</Alias>
 		<libelle>Vent</libelle>
 		<champ code="libelle" affichage="C" libelle="Libelle"/>
-	</table>		
+	</table>
+	<table>	
+		<nom>art_periode_enquete</nom>	
+		<peches>
+			<peche>artisanale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+		</filieres>	
+		<Alias>penq</Alias>
+		<libelle>Periode enquete</libelle>
+	</table>
+	<!-- Statistiques -->	
+	<table>	
+		<nom>art_stat_totale</nom>	
+		<statistiques>
+			<statistique>toutes</statistique>
+		</statistiques>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<Alias>ast</Alias>
+		<libelle>Stats totales</libelle>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>
+	</table>
+	<table>	
+		<nom>art_stat_sp</nom>	
+		<statistiques>
+			<statistique>toutes</statistique>
+		</statistiques>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<Alias>asp</Alias>
+		<libelle>Stats par especes</libelle>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>
+	</table>
+	<table>	
+		<nom>art_taille_sp</nom>	
+		<statistiques>
+			<statistique>toutes</statistique>
+		</statistiques>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<Alias>ats</Alias>
+		<libelle>Stat par especes et par taille</libelle>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>
+	</table>
+	<table>	
+		<nom>art_stat_gt</nom>	
+		<statistiques>
+			<statistique>toutes</statistique>
+		</statistiques>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<Alias>asgt</Alias>
+		<libelle>Stats totales par GT</libelle>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>
+	</table>
+	<table>	
+		<nom>art_stat_gt_sp</nom>	
+		<statistiques>
+			<statistique>toutes</statistique>
+		</statistiques>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<Alias>asgts</Alias>
+		<libelle>Stats totales par GT et par espece</libelle>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>
+	</table>
+	<table>	
+		<nom>art_taille_gt_sp</nom>	
+		<statistiques>
+			<statistique>toutes</statistique>
+		</statistiques>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<Alias>atgts</Alias>
+		<libelle>Stats par taille, par GT et par espece</libelle>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>
+	</table>							
 </tables>
