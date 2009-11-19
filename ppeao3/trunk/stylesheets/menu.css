@@ -1,0 +1,57 @@
+.navcontainer 
+{
+	width: 200px; 
+}
+
+.navcontainer ul
+{
+	margin-left: 0;
+	margin-top: 0;
+	padding-left: 0;
+	list-style-type: none;
+	line-height: 200%;
+}
+
+.navcontainer a
+{
+	display: block;
+	padding: 3px 20px 0px;
+	width: 160px;
+	background-color: #555;
+	border-bottom: 1px dashed #999;
+}
+
+.navcontainer h1
+{
+	display: block;
+	padding: 0px 10px 0px;
+	width: 180px;
+	background-color: #555;
+	border-bottom: 1px dashed #999;
+	color: #999;
+	font-size: 12px;
+	margin-bottom: 0px;
+}
+
+.navcontainer a:link, .navlist a:visited
+{
+	color: #EEE;
+	text-decoration: none;
+}
+
+.navcontainer a:hover
+{
+	background-color: #444;
+	color: #fff;
+}
+
+.navcontainer input
+{
+	margin-left: 20px;
+	width: 120px;
+}
+
+#topmenu
+{
+	border-top: 1px dashed #999;
+}
