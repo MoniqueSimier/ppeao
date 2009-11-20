@@ -71,6 +71,8 @@
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
 			<filiere>taille</filiere>
+			<filiere>globale</filiere>
+			<filiere>GT</filiere>						
 		</filieres>	
 		<Alias>esp</Alias>
 		<libelle>Especes</libelle>
@@ -97,6 +99,8 @@
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
 			<filiere>taille</filiere>
+			<filiere>globale</filiere>
+			<filiere>GT</filiere>
 		</filieres>	
 		<Alias>fam</Alias>
 		<libelle>Famille</libelle>
@@ -119,6 +123,8 @@
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
 			<filiere>taille</filiere>
+			<filiere>globale</filiere>
+			<filiere>GT</filiere>
 		</filieres>	
 		<Alias>ord</Alias>
 		<libelle>Ordre</libelle>
@@ -137,6 +143,8 @@
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
 			<filiere>taille</filiere>
+			<filiere>globale</filiere>
+			<filiere>GT</filiere>
 		</filieres>	
 		<Alias>cate</Alias>		
 		<libelle>Categorie ecologique</libelle>
@@ -155,6 +163,8 @@
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
 			<filiere>taille</filiere>
+			<filiere>globale</filiere>
+			<filiere>GT</filiere>
 		</filieres>	
 		<Alias>catt</Alias>		
 		<libelle>Categorie trophique</libelle>
@@ -799,7 +809,14 @@
 		</filieres>	
 		<Alias>ast</Alias>
 		<libelle>Stats totales</libelle>
-		<champ code="libelle" affichage="C" libelle="Libelle"/>
+		<champ code="pue" affichage="X" libelle="Pue"/>
+		<champ code="fm" affichage="X" libelle="Effort pêche pour le mois"/>
+		<champ code="cap" affichage="X" libelle="Capture pour le mois"/>
+		<champ code="nbre_obs" affichage="C" libelle="Nombre observation"/>
+		<champ code="obs_min" affichage="C" libelle="Observation minimale"/>
+		<champ code="obs_max" affichage="C" libelle="Observation maximale"/>
+		<champ code="pue_ecart_type" affichage="C" libelle="Ecart type pue"/>
+		<champ code="fpe" affichage="C" libelle="Effort pêche période enquête"/>
 	</table>
 	<table>	
 		<nom>art_stat_sp</nom>	
@@ -808,11 +825,16 @@
 		</statistiques>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>globale</filiere>
 		</filieres>	
 		<Alias>asp</Alias>
 		<libelle>Stats par especes</libelle>
-		<champ code="libelle" affichage="C" libelle="Libelle"/>
+		<champ code="pue_sp" affichage="X" libelle="Pue par espece"/>
+		<champ code="cap_sp" affichage="X" libelle="Capture pour le mois par espece"/>
+		<champ code="nbre_enquete_sp" affichage="C" libelle="Nombre enquete par espece " />
+		<champ code="obs_sp_min" affichage="C" libelle="Observation minimale par espece" />
+		<champ code="obs_sp_max" affichage="C" libelle="Observation maximale par espece" />
+		<champ code="pue_sp_ecart_type" affichage="C" libelle="Ecart type pue par espece"/>
 	</table>
 	<table>	
 		<nom>art_taille_sp</nom>	
@@ -821,11 +843,12 @@
 		</statistiques>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>globale</filiere>
 		</filieres>	
 		<Alias>ats</Alias>
-		<libelle>Stat par especes et par taille</libelle>
-		<champ code="libelle" affichage="C" libelle="Libelle"/>
+		<libelle>Stats par especes et par taille</libelle>
+		<champ code="li" affichage="X" libelle="Classe Lf"/>
+		<champ code="xi" affichage="X" libelle="Effectif Lf"/>
 	</table>
 	<table>	
 		<nom>art_stat_gt</nom>	
@@ -834,11 +857,18 @@
 		</statistiques>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>GT</filiere>
 		</filieres>	
 		<Alias>asgt</Alias>
 		<libelle>Stats totales par GT</libelle>
-		<champ code="libelle" affichage="C" libelle="Libelle"/>
+		<champ code="pue_gt" affichage="X" libelle="Pue GT"/>
+		<champ code="fm_gt" affichage="X" libelle="Effort pêche GT pour le mois "/>
+		<champ code="cap_gt" affichage="X" libelle="Capture GT pour le mois"/>
+		<champ code="nbre_enquete_gt" affichage="C" libelle="Nombre enquete GT" />
+		<champ code="obs_gt_min" affichage="C" libelle="Observation minimale GT" />
+		<champ code="obs_gt_max" affichage="C" libelle="Observation maximale GT" />
+		<champ code="pue_gt_ecart_type" affichage="C" libelle="Ecart type pue GT"/>		
+		<champ code="fpe_gt" affichage="C" libelle="Effort pêche période enquête GT" />
 	</table>
 	<table>	
 		<nom>art_stat_gt_sp</nom>	
@@ -847,11 +877,16 @@
 		</statistiques>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>GT</filiere>
 		</filieres>	
 		<Alias>asgts</Alias>
-		<libelle>Stats totales par GT et par espece</libelle>
-		<champ code="libelle" affichage="C" libelle="Libelle"/>
+		<libelle>Stats par GT et par espece</libelle>
+		<champ code="pue_gt_sp" affichage="X" libelle="Pue GT par espece"/>
+		<champ code="cap_gt_sp" affichage="X" libelle="Capture pGT our le mois par espece"/>
+		<champ code="nbre_enquete_gt_sp" affichage="C" libelle="Nombre enquete GT par espece " />
+		<champ code="obs_gt_sp_min" affichage="C" libelle="Observation minimale GT par espece" />
+		<champ code="obs_gt_sp_max" affichage="C" libelle="Observation maximale GT par espece" />
+		<champ code="pue_gt_sp_ecart_type" affichage="C" libelle="Ecart type pue GT par espece"/>		
 	</table>
 	<table>	
 		<nom>art_taille_gt_sp</nom>	
@@ -860,10 +895,12 @@
 		</statistiques>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>GT</filiere>
 		</filieres>	
 		<Alias>atgts</Alias>
 		<libelle>Stats par taille, par GT et par espece</libelle>
 		<champ code="libelle" affichage="C" libelle="Libelle"/>
+		<champ code="li" affichage="X" libelle="Classe Lf GT"/>
+		<champ code="xi" affichage="X" libelle="Effectif Lf GT"/>		
 	</table>							
 </tables>

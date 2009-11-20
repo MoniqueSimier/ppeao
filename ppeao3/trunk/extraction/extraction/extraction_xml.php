@@ -501,6 +501,7 @@ function endElementCol($parser, $name){
 			}
 			break;
 		case "ALIAS" :
+			// Gestion de la variable pour recuperer les noms de table a partir des alias
 			$NbReg = count($_SESSION['libelleTable']);
 			$tableTrouvee = false;
 			for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
@@ -514,14 +515,54 @@ function endElementCol($parser, $name){
 				$_SESSION['libelleTable'][$posSuiv] = strtolower($NomTableBDEnCours).",".$globaldata;
 
 			}
-
 			$idenTableEnCours = $globaldata;
+			//echo strtoupper($globaldata)."-".strtoupper($TableATester)."<br/>";
+			// Controle supplementaire pour les statistiques...
+			// On exclure ou non des tables supplémentaires...
+			if ($TableAAjouter && $filiereOK && ($TypePecheEnCours == "agglomeration" || $TypePecheEnCours == "generales")) {
+				$tablesAIgnorer = "PY,SYS,SE"; // pour l'instant comme ca, a paramètrer
+				$upperTableATester = strtoupper($idenTableEnCours);				
+				if (strpos($tablesAIgnorer,$upperTableATester) === false) {
+					// La table doit etre testée								 
+					if (isset($_GET['synth'])) {
+						$SynthEC = $_GET['synth'];
+					} else {
+						$SynthEC = "cap_tot";
+					}	
+					$tablesEspeces="ESP,FAM,ORD,CATE,CATT";
+					$nomTabSynth = "";
+					$gereEsp = false;
+					// Clé de décision pour la table et le choix d'afficher les especes ou non...
+					switch ($SynthEC) {
+						case "cap_tot" : 	$nomTabSynth = "ast"; break;
+						case "cap_sp" : 	$nomTabSynth = "asp"; $gereEsp = true;  break;
+						case "dft_sp" : 	$nomTabSynth = "ats"; $gereEsp = true;  break;
+						case "cap_GT" : 	$nomTabSynth = "asgt"; break;
+						case "cap_GT_sp" : 	$nomTabSynth = "asgts"; $gereEsp = true;  break;
+						case "dft_sp_sp" : 	$nomTabSynth = "atgts"; $gereEsp = true;  break;
+					}	
+					if (strpos($tablesEspeces,$upperTableATester) === false){
+						// C'est une table de stat
+						if (strtoupper($idenTableEnCours) == strtoupper($nomTabSynth)) {
+							$TableAAjouter = true;
+						} else {
+							$TableAAjouter = false;
+						}
+														 
+					} else {
+						// C'est une table d'espece: elles sont autorises pour toutes les stats. 
+						// On la filtre selon la clé de decision ci-dessus.
+						$TableAAjouter = $gereEsp;
+					}
+				} 
+			} 
 			// Soit on teste le nom de la table soit on est dans le cas ou on recupere toutes les cases a cocher
 			if ((strtoupper($globaldata) == strtoupper($TableATester)) || $typeRecupTable == "tout" ) {
 				$RecupDonneesOK = true;
 			} else {
 				$RecupDonneesOK = false;
 			}
+
 			break;
 		case "LIBELLE" :
 		
