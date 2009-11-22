@@ -750,7 +750,7 @@ function AfficherDonnees($file,$typeAction){
 						// On n'extrait que des donnéees de fraction
 						// Il n'y aucune selection de colonnes supplémentaires
 						// On prend tous les poissons (pas de différence poisson/non poisson
-						$listeChampsSpec = ",esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id";
+						$listeChampsSpec = ",esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,fra.nombre_total ,fra.poids_total";
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,ref_espece as esp"; 
 						$WhereSpec = " and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
 							esp.id = fra.ref_espece_id and
@@ -2941,6 +2941,11 @@ function analyseColonne($typePeche,$typeAction){
 								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = stat.".$TNomLongTable."_id "); 		
 								break;
+							case "xdeb" :
+								$TNomLongTable = "exp_debris";	
+								$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
+								$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = stat.".$TNomLongTable."_id "); 		
+								break;								
 					} // fin du switch ($TNomTable) 
 						break;
 					case "artisanale" :	

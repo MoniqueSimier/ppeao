@@ -176,7 +176,7 @@ if ($changtAction == "y") {
 				// On précharge les valeurs par defaut
 				$_SESSION['listeQualite'] = '1,3,5';
 				$_SESSION['listeProtocole'] = '1';
-				$_SESSION['listePoisson'] = "";;
+				$_SESSION['listePoisson'] = "0";
 			break;
 		case "NtPt":
 				// On précharge les valeurs par defaut

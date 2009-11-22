@@ -228,6 +228,24 @@
 		<Alias>env</Alias>
 		<libelle>Environnement</libelle>
 		<champ code="id" affichage="X" libelle="Id"/>		
+		<champ code="chlorophylle_fond" affichage="C" libelle="chlorophylle_fond" />
+		<champ code="chlorophylle_surface" affichage="C" libelle="chlorophylle_surface" />
+		<champ code="conductivite_fond" affichage="C" libelle="conductivite_fond" />
+		<champ code="conductivite_surface" affichage="C" libelle="conductivite_surface" />
+		<champ code="exp_force_courant_id" affichage="C" libelle="exp_force_courant_id" />
+		<champ code="memo" affichage="C" libelle="memo" />
+		<champ code="mop_fond" affichage="C" libelle="mop_fond" />
+		<champ code="mop_surface" affichage="C" libelle="mop_surface" />
+		<champ code="mot_fond" affichage="C" libelle="mot_fond" />
+		<champ code="mot_surface" affichage="C" libelle="mot_surface" />
+		<champ code="oxygene_fond" affichage="C" libelle="oxygene_fond" />
+		<champ code="oxygene_surface" affichage="C" libelle="oxygene_surface" />				
+		<champ code="salinite_fond" affichage="C" libelle="salinite_fond" />
+		<champ code="salinite_surface" affichage="C" libelle="salinite_surface" />
+		<champ code="temperature_fond" affichage="C" libelle="temperature_fond" />
+		<champ code="oxygene_surface" affichage="C" libelle="oxygene_surface" />
+		<champ code="temperature_surface" affichage="C" libelle="temperature_surface" />
+		<champ code="transparence" affichage="C" libelle="transparence" />
 	</table>
 	<table>
 		<nom>exp_biologie</nom>	
@@ -241,7 +259,13 @@
 		</filieres>	
 		<Alias>bio</Alias>
 		<libelle>Biologie</libelle>
-		<champ code="id" affichage="X" libelle="Id"/>		
+		<champ code="id" affichage="X" libelle="Id"/>
+		<champ code="exp_remplissage_id" affichage="C" libelle="exp_remplissage_id" />
+		<champ code="exp_sexe_id" affichage="C" libelle="exp_sexe_id" />
+		<champ code="exp_stade_id" affichage="C" libelle="exp_stade_id" />
+		<champ code="longueur_totale" affichage="C" libelle="longueur_totale" />
+		<champ code="memo" affichage="C" libelle="memo" />
+		<champ code="poids" affichage="C" libelle="poids" />
 	</table>
 	<table>
 		<nom>exp_trophique</nom>	
@@ -290,6 +314,19 @@
 	</table>
 <!-- TABLES PARAMETRAGE PECHES EXPERIMENTALES -->
 	<table>
+		<nom>exp_debris</nom>	
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<numOrdre>4</numOrdre>
+		<filieres>
+			<filiere>toutes</filiere>
+		</filieres>	
+		<Alias>xdeb</Alias>
+		<libelle>Debris</libelle>
+		<champ code="libelle" affichage="C" libelle="Libelle"/>	
+	</table>
+	<table>
 		<nom>exp_engin</nom>	
 		<peches>
 			<peche>experimentale</peche>
@@ -313,6 +350,7 @@
 		</peches>
 		<numOrdre>4</numOrdre>
 		<filieres>
+			<filiere>environnement</filiere>
 			<filiere>NtPt</filiere>
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
@@ -328,6 +366,7 @@
 		</peches>
 		<numOrdre>4</numOrdre>
 		<filieres>
+			<filiere>environnement</filiere>		
 			<filiere>NtPt</filiere>
 			<filiere>biologie</filiere>
 			<filiere>trophique</filiere>
@@ -459,7 +498,7 @@
 			<filiere>trophique</filiere>
 		</filieres>	
 		<Alias>xveg</Alias>		
-		<libelle>Type de vegetation</libelle>
+		<libelle>Vegetation</libelle>
 		<champ code="id" affichage="X" libelle="Id"/>
 		<champ code="libelle" affichage="C" libelle="Libelle"/>
 	</table>
