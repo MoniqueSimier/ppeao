@@ -762,7 +762,7 @@ function AfficherDonnees($file,$typeAction){
 						$labelSelection = "donn&eacute;e(s) d'environnement ";
 						// On n'extrait que des donnéees environnements
 						// Pas de données poisson
-						$listeChampsSpec = ",env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond";
+						$listeChampsSpec = "";
 						$ListeTableSpec = ",exp_environnement as env"; 
 						$WhereSpec = " 	and env.id = cph.exp_environnement_id ";
 						$valueCount = "cph.id" ; // pour gerer la pagination						
