@@ -57,6 +57,16 @@ if (isset($_GET["gselec"])) {
 }else {
 	$gardeSelection = "";
 }
+if (isset($_GET["modiffil"])) {
+	$modifFiliere =  $_GET["modiffil"];
+}else {
+	$modifFiliere = "";
+}
+if (isset($_GET["action"])) {
+	$typeAction =  $_GET["action"];
+}else {
+	$typeAction = "";
+}
 $file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
 if (!(file_exists($file)) ) {
 	$dirTemp = $_SERVER["DOCUMENT_ROOT"]."/temp/".$userID;
@@ -161,7 +171,7 @@ if (!(file_exists($file)) ) {
 				$listeSelection ="";
 				$resultatLecture = "";
 				$labelSelection = "";
-				$locSelection = AfficherSelection($file,""); 
+				$locSelection = AfficherSelection($file,$typeAction); 
 				echo "<span class=\"showHide\">
 <a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier/masquer la s&eacute;lection]</a></span>";
 				echo "<div id=\"selection_precedente\">".$locSelection;
@@ -169,7 +179,7 @@ if (!(file_exists($file)) ) {
 					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >modifier la s&eacute;lection en cours...</a></span>";
 				}
 				echo "</div>";
-				AfficherDonnees($file,"");
+				AfficherDonnees($file,$typeAction);
 				echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>";
 				
 				if (!( $typePeche == "experimentale")) {
@@ -195,6 +205,9 @@ if (!(file_exists($file)) ) {
 		<br/>
         <div id="resultfiliere"></div>
 		<div id="exportFic"></div>
+        <?php if ($modifFiliere=="y") { ?>
+                   <script type="text/javascript" charset="utf-8">runFilieresExp('<?php echo $typePeche ?>','<?php echo $typeAction ?>','1','','n','','','','')</script>
+        <?php }           ?>
         <script type="text/javascript" charset="utf-8">
 			var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
 			mySlider.hide();

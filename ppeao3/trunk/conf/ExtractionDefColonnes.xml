@@ -805,7 +805,8 @@
 		</statistiques>
 		<numOrdre>4</numOrdre>
 		<filieres>
-			<filiere>toutes</filiere>
+			<filiere>globale</filiere>
+			<filiere>GT</filiere>
 		</filieres>	
 		<Alias>ast</Alias>
 		<libelle>Stats totales</libelle>

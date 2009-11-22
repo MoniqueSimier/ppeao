@@ -170,9 +170,7 @@ if (isset($_GET['action'])) {
 			$exportFichier = true;
 		} 	
 	}	
-	if (isset($_GET['synth'])) {
-		$_SESSION['listetablesynth'] = $_GET['synth'];
-	}
+
 	$SQLPays 	= "";
 	$SQLSysteme	= "";
 	$SQLSecteur	= "";
@@ -206,19 +204,10 @@ if (isset($_GET['action'])) {
 	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."\" >modifier la fili&egrave;re</a></span></div>";
 	echo "</div>";
 	AfficherDonnees($file,$typeAction);
-	switch ($_SESSION['listetablesynth']) {
-		case "cap_tot" : 	$labelSynthese = "r&eacute;sultats globaux"; break;
-		case "cap_sp" : 	$labelSynthese = "r&eacute;sultats par esp&egrave;ces"; break;
-		case "dft_sp" : 	$labelSynthese = "structure en taille des esp&egrave;ces"; break;
-		case "cap_GT" : 	$labelSynthese = "r&eacute;sultats globaux par GT"; break;
-		case "cap_GT_sp" : 	$labelSynthese = "r&eacute;sultats par esp&egrave;ces et par GT"; break;
-		case "dft_sp_sp" : 	$labelSynthese = "structure en taille des esp&egrave;ces par GT"; break;
-		default: $labelSynthese = "inconnu";break;
-	}
+
 	echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li><b>".$compteurItem."</b> ".$labelSelection."</li>";
-	echo "<li><b>table de synthèse en cours </b> : ".$labelSynthese." (".$_SESSION['listetablesynth'].")</li><li><b/>fili&egrave;re en cours<b/> : <span id=\"filEncoursText\">".$typeAction."</span>"; 
-	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></li><li><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp; 
-	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li></ul></div>";
+	echo "<li><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp; 
+	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."&modiffil=y&action=".$typeAction."\" >[modifier la s&eacute;lection en cours]</a></span></li></ul></div>";
 							
 ?>
 <div id="resultfiliere"> 

@@ -28,6 +28,7 @@ Global $debugLog;
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
 	<script src="/js/ajaxExtraction.js" type="text/javascript" charset="iso-8859-15"></script>
+ 
 	<title>ppeao::statistiques::afficher r&eacute;sultats</title>
 </head>
 <body>
@@ -56,6 +57,16 @@ if (isset($_GET["gselec"])) {
 	$gardeSelection =  $_GET["gselec"];
 }else {
 	$gardeSelection = "";
+}
+if (isset($_GET["modiffil"])) {
+	$modifFiliere =  $_GET["modiffil"];
+}else {
+	$modifFiliere = "";
+}
+if (isset($_GET["action"])) {
+	$typeAction =  $_GET["action"];
+}else {
+	$typeAction = "";
 }
 $file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
 if (!(file_exists($file)) ) {
@@ -152,7 +163,7 @@ if (!(file_exists($file)) ) {
 				$listeSelection ="";
 				$resultatLecture = "";
 				$labelSelection = "";
-				$locSelection = AfficherSelection($file,""); 
+				$locSelection = AfficherSelection($file,$typeAction); 
 
 				echo "<span class=\"showHide\">
 <a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier/masquer la s&eacute;lection]</a></span>";
@@ -161,7 +172,7 @@ if (!(file_exists($file)) ) {
 					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >modifier la s&eacute;lection en cours...</a></span>";
 				}
 				echo "</div>";
-				AfficherDonnees($file,"");
+				AfficherDonnees($file,$typeAction);
 				echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>";
 				
 				if (!( $typeSelection == "statistiques")) {
@@ -175,14 +186,14 @@ if (!(file_exists($file)) ) {
         <?php if ($_SESSION['pasderesultat']) {
 			echo "La s&eacute;lection n'a pas retourn&eacute; de r&eacute;sultats.<br/>";
 		} else { ?>
-        <b>Choix type statistique &agrave; extraire :</b>&nbsp;
-			<a href="#" onClick="runFilieresStat('<?php echo $typeStatistiques ?>','globale','1','','n','','','')">statistiques globales</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieresStat('<?php echo $typeStatistiques ?>','GT','1','','n','','','')">statistiques par grand type</a>&nbsp;
+        	<a href="#" onClick="runFilieresStat('<?php echo $typeStatistiques ?>','globale','1','','n','','','','')">statistiques globales</a>
 		</ul>
         <?php } ?>
 		</div>
 		<div id="resultfiliere"></div>
 		<div id="exportFic"></div>
+        <?php // On lance systematiquement l'affichage de la filiere statistiques vu qu'on exporte toutes les tables ?>
+           <script type="text/javascript" charset="utf-8">runFilieresStat('<?php echo $typeStatistiques ?>','globale','1','','n','','','','');</script>
         <script type="text/javascript" charset="utf-8">
 			var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
 			mySlider.hide();

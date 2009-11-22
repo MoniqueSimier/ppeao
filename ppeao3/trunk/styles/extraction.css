@@ -132,8 +132,9 @@ list-style:none;
 	background:#FFF;
 }
 #menuTab{
+	padding-top:2px;
+	padding-bottom:2px;
 	font-size:80%;
-/*	position:absolute; */
 	top:430px;
 	left:5px;
 	width:800px;
@@ -312,4 +313,10 @@ visibility:hidden;
 #infoSuppReg{
 	font-size:70%;
 	font-style:italic;
+}
+#exportFic{
+padding-top:20px;	
+}
+.colitem{
+	vertical-align:top;
 }

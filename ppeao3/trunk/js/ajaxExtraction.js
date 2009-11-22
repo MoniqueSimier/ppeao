@@ -504,11 +504,6 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 		changementAction = '';
 		// On charge les données modifiées
 		// Recuperation de la table a extraire 
-		if (typeAction == "globale") {
-			tablesynt  = recupereSelection(3,"synthese");
-		} else {
-			tablesynt  = recupereSelection(4,"synthese");
-		}
 		// Recuperation des selections sur choix des especes
 		// Recuperation des especes
 		limEsp = document.getElementById("numEsp").value;
@@ -565,11 +560,7 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 		} else {
 			addEsp = "&Esp="+ListEsp;
 		}
-		if (tablesynt == "") {
-			addSynth = "" ;
-		} else {
-			addSynth = "&synth="+tablesynt;
-		}
+
 		// Gestion des regroupements
 		if (urlComp=="&nvReg=f" || urlComp=="&nvReg=f&gard=y") {
 			ValNomReg = document.getElementById("nomReg").value;
@@ -639,7 +630,7 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 			catch (e) { }
 		  
 		}
-		addURL = TEC+addCol+addEsp+addSynth+urlComp+regEC;;
+		addURL = TEC+addCol+addEsp+urlComp+regEC;;
 	} else {
 		globalAction = typeAction;
 		changementAction = '&chgA=y';
@@ -710,7 +701,8 @@ function stateChanged4() {
 		if (globalAction=="GT") {gtActif=" active";}
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
-		document.getElementById("runProcess").innerHTML="<b>Choix type statistique &agrave; extraire :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','globale;','1','"+globalTableEnCours+"','n','','','','')\" class=\"globale"+gloActif+"\">statistiques globales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','GT','1','"+globalTableEnCours+"','n','','','','')\" class=\"GT"+gtActif+"\">statistiques par grand type</a>";
+		//document.getElementById("runProcess").innerHTML="<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','globale;','1','"+globalTableEnCours+"','n','','','','')\" class=\"globale"+gloActif+"\">statistiques</a>";
+		document.getElementById("runProcess").innerHTML="statistiques";
 		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresStat('"+globaltypepeche+"','"+globalAction+"','1','','y','','','','')\" value=\"afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
 		
 	}

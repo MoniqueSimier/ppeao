@@ -262,11 +262,11 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <div id="menuTab">
 <?php if (!($typeAction == "activite") && !($typeAction == "capture") && !($typeAction == "engin")) { ?>
 <a href="#" class="<?php echo $tab1;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','<?php echo $codeTableEnCours;?>','n','','','','')">crit&egrave;res g&eacute;n&eacute;raux</a>|
-<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n','','','','')">cat&eacute;gories &eacute;cologiques</a>|
-<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','','')">cat&eacute;gories trophiques</a>|
+<a href="#" class="<?php echo $tab2;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction; ?>','2','<?php echo $codeTableEnCours;?>','n','','','','')">cat. &eacute;cologiques</a>|
+<a href="#" class="<?php echo $tab3;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','3','<?php echo $codeTableEnCours;?>','n','','','','')">cat. trophiques</a>|
 
 <?php } ?>
-<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','','')">colonnes</a>
+<a href="#" class="<?php echo $tab4;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','','')">s&eacute;lection de variables optionnelles</a>
 <?php if (!($typeAction == "activite") && !($typeAction == "capture") && !($typeAction == "engin")) { ?>
 |<a href="#" class="<?php echo $tab5;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n','','','','')">esp&egrave;ces</a> | <a href="#" class="<?php echo $tab6;?>" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','6','<?php echo $codeTableEnCours;?>','n','','','','')">regroupement Esp&egrave;ces</a>
 <?php } ?>

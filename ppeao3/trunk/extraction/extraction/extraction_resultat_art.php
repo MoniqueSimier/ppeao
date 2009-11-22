@@ -239,7 +239,7 @@ if (isset($_GET['action'])) {
 	if (!($restSupp=="")) {
 		echo "<b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp;
 	} 
-	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li></ul></div>";				
+	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."&modiffil=y&action=".$typeAction."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li></ul></div>";				
 	
 ?>
 <div id="resultfiliere"> 

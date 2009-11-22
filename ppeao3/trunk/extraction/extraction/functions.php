@@ -13,11 +13,8 @@ $PathFicConf = $_SERVER["DOCUMENT_ROOT"]."/conf/extraction.txt" ;//*
 $pasdefichier = false; // residu du portage que j'aurai du virer depuis longtemps
 // Variables qui seront globales dans les fonctions
 $ListeTable = "";
-$ListeChampTableDef = "";
-$ListeChampTableFac = "";
 $TableATester = "";
 $Filiere = "";
-$FiliereEnCours = "";
 $TypePecheEnCours="";
 $StatEnCours="";
 $NomTableEnCours="";
@@ -346,8 +343,8 @@ function AfficherDonnees($file,$typeAction){
 	global $AjoutWhere;
 	global $listeDocURL;
 	if (!($typeAction == "")) {
-	$divExportFic = "<div id=\"exportFic\"><input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('".$typePeche."?>','".$typeAction."','1','".$codeTableEnCours."','y',,'','')\" value=\"Voir les r&eacute;sultats\"/>
-<input type=\"checkbox\" id=\"ExpFic\" />Exporter sous forme de fichier</div>";
+		$divExportFic = "<div id=\"exportFic\"><input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('".$typePeche."?>','".$typeAction."','1','".$codeTableEnCours."','y',,'','')\" value=\"Voir les r&eacute;sultats\"/>
+	<input type=\"checkbox\" id=\"ExpFic\" />Exporter sous forme de fichier</div>";
 	}
 	// Cas de la navigation a l'interieur d'une pagination :
 	// On ne regenere pas le fichier...	
@@ -374,19 +371,25 @@ function AfficherDonnees($file,$typeAction){
 			}
 		}
 		//	Controle fichiers
+		// Pour les statistiques, il n'y a pas un seul fichier de données mais 6
+		// On cree directement le zip avec tous les fichiers.
 		$nomFicExport = $dirLog."/".date('y\-m\-d')."_".$typeSelection."_".$typeAction.".txt";
 		$nomFicExportSel = $dirLog."/".date('y\-m\-d')."_".$typeSelection."_".$typeAction."-Selection.txt";
 		if (!($_SESSION['listeRegroup'] == "")) {
 			$nomFicExportReg = $dirLog."/".date('y\-m\-d')."_".$typeSelection."_".$typeAction."-Regroupement.txt";
 		}
 		$nomFicExpLien = $nomLogLien."/".date('y\-m\-d')."_".$typeSelection."_".$typeAction.".txt";
-		$resultatLecture = "Fichier de donn&eacute;es : <a href=\"".$nomFicExpLien."\" target=\"export\"/>".$nomFicExpLien."</a><br/>";
+		if (!($typeSelection == "statistiques")) {
+			$resultatLecture = "Fichier de donn&eacute;es : <a href=\"".$nomFicExpLien."\" target=\"export\"/>".$nomFicExpLien."</a><br/>";
+		}
 		// On ne cree le fichier que si il n'a pas deja ete rempli !
 		if (!($fichierDejaCree)) {
-			$ExpComp = fopen($nomFicExport , "w+");
-			if (! $ExpComp ) {
-				$resultatLecture .= " erreur de cr&eacute;ation du fichier export ".$nomFicExpLien;
-				exit;		
+			if (!($typeSelection == "statistiques")) {
+				$ExpComp = fopen($nomFicExport , "w+");
+				if (! $ExpComp ) {
+					$resultatLecture .= " erreur de cr&eacute;ation du fichier export ".$nomFicExpLien;
+					exit;		
+				}
 			}
 			$ExpCompSel = fopen($nomFicExportSel , "w+");
 			if (! $ExpCompSel ) {
@@ -1122,6 +1125,8 @@ function AfficherDonnees($file,$typeAction){
 		case "statistiques" :
 			// ********** DEBUT TRAITEMENTDES STATISTIQUES
 			// ********** Gestion de l'affichage des colonnes sélectionnées 
+			// Le traitement est different des deux premiers cas : on va construire plusieurs requetes a executer a la suite
+			//
 			$listeChampsSel = "";
 			$ListeTableSel = "";
 			$WhereSel = "";
@@ -1232,103 +1237,61 @@ function AfficherDonnees($file,$typeAction){
 										se.id = agg.ref_secteur_id " ;		
 
 						$OrderCom = "order by py.id asc,sy.id asc,penq.annee asc,penq.mois asc";
+						echo $typeAction."<br/>";
 						switch ($typeAction) {
 				
 						// Statistiques globales
 						case "globale" :
-							// On analyse le choix et on cree la requete en focntion
-							switch ($choixSynthese) {
-								case "cap_tot";
-									$labelSelection = "capture(s) totale(s)";	
-									$listeChampsSpec = ",ast.fm,ast.cap,ast.pue,ast.id";
-									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast"; 
-									$WhereSpec = " and ast.art_agglomeration_id = penq.art_agglomeration_id";						
-									$ConstIDunique = "AST-##-13";
-									$valueCount = "ast.id" ; // pour gerer la pagination
-									$builQuery = true;
-									unset($_SESSION['listeRegroup']); // Pas de regroupement
-									break;
-								case "cap_sp";
-									$labelSelection = "r&eacute;sultat(s) par esp&egrave;ce";	
-									$listeChampsSpec = ",asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,ast.fm,ast.cap,ast.pue ,asp.id ,ast.id";
-									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp"; 
-									$WhereSpec = "	and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
-									$OrderCom .= ",asp.id asc";
-									$ConstIDunique = "AST-##-18";
-									$valueCount = "asp.id" ; // pour gerer la pagination
-									$builQuery = true;
-									$posDEBID = 18 ; //position asp.id - 1 / Pour gestion regroupement
-									$posESPID = 10 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
-									$posESPNom = 11 ; //position esp.libelle - 1 / Pour gestion regroupement
-									$posStat1 = 12 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
-									$posStat2 = 13 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
-									$posStat2 = 14 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
-									break;
-								case "dft_sp";
-									$labelSelection = "structure(s) en taille des esp&egrave;ces";	
-									$listeChampsSpec = ",asp.ref_espece_id,asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id";
-									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats"; 
-									$WhereSpec = " 	and ats.art_stat_sp_id = asp.id and
-													asp.art_stat_totale_id = ast.id ";						
-									$ConstIDunique = "AST-##-16";
-									$valueCount = "ats.id" ; // pour gerer la pagination
-									$builQuery = true;
-									break;
-								default:
-									echo "erreur pas de selection synthese<br/>";
-							}
-						break;	
-						// Statistiques par Grand type
-						case "GT" :	
-							// On analyse le choix et on cree la requete en focntion
-							switch ($choixSynthese) {
-								case "cap_tot";
-									$labelSelection = "capture(s) totale(s)";	
-									$listeChampsSpec = ",ast.fm,ast.cap,ast.pue,ast.id";
-									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast"; 
-									$WhereSpec = " and ast.art_agglomeration_id = penq.art_agglomeration_id";						
-									$ConstIDunique = "AST-##-13";
-									$valueCount = "ast.id" ; // pour gerer la pagination
-									$builQuery = true;
-									unset($_SESSION['listeRegroup']); // Pas de regroupement
-									break;
-								case "cap_GT";
-									$labelSelection = "r&eacute;sultat(s) global(ux) par GT";	
-									$listeChampsSpec = ",asgt.fm_gt,asgt.cap_gt,asgt.pue_gt,asgt.id,ast.id,ast.id,asgt.art_grand_type_engin_id,gte.libelle";
-									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
-									$WhereSpec = "	and asgt.art_stat_totale_id = ast.id 
-													and gte.id = 	asgt.art_grand_type_engin_id";						
-									$ConstIDunique = "AGT-##-13";
-									$valueCount = "asgt.id" ; // pour gerer la pagination
-									$builQuery = true;
-									unset($_SESSION['listeRegroup']); // Pas de regroupement
-									break;
-								case "cap_GT_sp";
-									$labelSelection = "r&eacute;sultat(s) par esp&egrave;ce et par GT";	
-									$listeChampsSpec = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, asgts.id, asgt.id, ast.id, ast.id,asgt.art_grand_type_engin_id,gte.libelle";
-									$ListeTableSpec = ",art_periode_enquete as penq, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
-									$WhereSpec = "	and asgts.art_stat_gt_id = asgt.id  
+							// On construit les differentes requetes a executer a la suite:
+							// Les variables pour l'affichage a l'ecran :
+							$labelSelection = "Statistiques totales";	
+							$listeChampsSpec = ",ast.fm,ast.cap,ast.pue,ast.id";
+							$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast"; 
+							$WhereSpec = " and ast.art_agglomeration_id = penq.art_agglomeration_id";						
+							$ConstIDunique = "AST-##-13";
+							$valueCount = "ast.id" ; // pour gerer la pagination
+							$builQuery = true;
+	
+							//art_stat_totale
+							$listeChampsSpecast = ",ast.fm,ast.cap,ast.pue,ast.id";
+							$ListeTableSpecast = ",art_periode_enquete as penq, art_stat_totale as ast"; 
+							$WhereSpecast = " and ast.art_agglomeration_id = penq.art_agglomeration_id";						
+							//art_stat_sp
+							$listeChampsSpecasp = ",asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,ast.fm,ast.cap,ast.pue ,asp.id ,ast.id";
+							$ListeTableSpecasp = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp"; 
+							$WhereSpecasp = "	and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
+							$OrderComasp = ",asp.id asc";
+							//art_taille_sp
+							$listeChampsSpecats = ",asp.ref_espece_id,asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id";
+							$ListeTableSpecats = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats"; 
+							$WhereSpecats = " 	and ats.art_stat_sp_id = asp.id and
+													asp.art_stat_totale_id = ast.id ";
+							//art_stat_gt	
+							$listeChampsSpecasgt = ",asgt.fm_gt,asgt.cap_gt,asgt.pue_gt,asgt.id,ast.id,ast.id,asgt.art_grand_type_engin_id,gte.libelle";
+							$ListeTableSpecasgt = ",art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
+							$WhereSpecasgt = "	and asgt.art_stat_totale_id = ast.id 
+													and gte.id = 	asgt.art_grand_type_engin_id";	
+							//art_stat_gt_sp
+							$listeChampsSpecasgts = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, asgts.id, asgt.id, ast.id, ast.id,asgt.art_grand_type_engin_id,gte.libelle";
+							$ListeTableSpecasgts = ",art_periode_enquete as penq, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
+							$WhereSpecasgts = "	and asgts.art_stat_gt_id = asgt.id  
 													and asgt.art_stat_totale_id = ast.id 
-													and gte.id = 	asgt.art_grand_type_engin_id";						
-									$ConstIDunique = "ATS-##-13";
-									$valueCount = "asgts.id" ; // pour gerer la pagination
-									$builQuery = true;
-									break;
-								case "dft_sp_sp";
-									$labelSelection = "structure(s) en taille des esp&egrave;ces par GT";	
-									$listeChampsSpec = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, atgts.li,atgts.xi,atgts.id, asgts.id, asgt.id, ast.id, ast.id,asgt.art_grand_type_engin_id,gte.libelle";
-									$ListeTableSpec = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
-									$WhereSpec = "	and atgts.art_stat_gt_sp_id = asgts.id  
+													and gte.id = 	asgt.art_grand_type_engin_id";
+							//art_stat_gt_sp
+							$listeChampsSpecatgts = ",asgts.ref_espece_id, asgts.cap_gt_sp, asgts.pue_gt_sp, atgts.li,atgts.xi,atgts.id, asgts.id, asgt.id, ast.id, ast.id,asgt.art_grand_type_engin_id,gte.libelle";
+							$ListeTableSpecatgts = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as asgts,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
+							$WhereSpecatgts = "	and atgts.art_stat_gt_sp_id = asgts.id  
 													and asgts.art_stat_gt_id = asgt.id  
 													and asgt.art_stat_totale_id = ast.id 
-													and gte.id = 	asgt.art_grand_type_engin_id";						
-									$ConstIDunique = "ATG-##-16";
-									$valueCount = "atgts.id" ; // pour gerer la pagination
-									$builQuery = true;
-									break;
-								default:
-									echo "erreur pas de selection synthese<br/>";
-							}
+													and gte.id = 	asgt.art_grand_type_engin_id";
+							// Gestion des positionnements pour les regroupements
+							$posDEBID = 18 ; //position asp.id - 1 / Pour gestion regroupement
+							$posESPID = 10 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
+							$posESPNom = 11 ; //position esp.libelle - 1 / Pour gestion regroupement
+							$posStat1 = 12 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
+							$posStat2 = 13 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
+							$posStat2 = 14 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
+							break;
 						default	:	
 							$labelSelection = "p&eacute;riode(s) d'enqu&ecirc;te";
 							$SQLfinal = "select * from art_periode_enquete as penq
@@ -1653,7 +1616,9 @@ function AfficherDonnees($file,$typeAction){
 		// Pour pouvoir gérer la pagination, on doit séparer la requete d'affichage de la requete de creation du fichier.
 		// On ne creera le fichier qu'une seule fois!
 		$SQLfinalFichier = $SQLfinal; // On stocke la requete pour le fichier
-		// Gestion de l'affichage
+		// ********************************
+		// Gestion de l'affichage ecran
+		// ********************************
 		$SQLfinal .= " LIMIT ".$rowsPerPage." OFFSET ".$startRow;
 		// Execution de la requete
 		$SQLfinalResult = pg_query($connectPPEAO,$SQLfinal);
@@ -1789,117 +1754,53 @@ function AfficherDonnees($file,$typeAction){
 				$resultatLecture .="</table>";
 			}
 		} // fin du !$SQLfinalResult
-		// *** Fin gestion affichage ecran
+		// ********************************
+		// Fin gestion affichage ecran
+		// ********************************
 		pg_free_result($SQLfinalResult);
 		// ********************************
 		// Gestion de creation du fichier
 		// ********************************
 		if ($exportFichier && (!($fichierDejaCree))) {
-			$fichierDejaCree = true;
-			// Execution de la requete
-			$SQLfinalResult = pg_query($connectPPEAO,$SQLfinalFichier);
-			$erreurSQL = pg_last_error($connectPPEAO);
-			$cpt1 = 0;
-			if ( !$SQLfinalResult ) { 
-				if ($EcrireLogComp ) {
-					WriteCompLog ($logComp, "ERREUR : Erreur creation fichier query final ".$SQLfinalFichier." (erreur complete = ".$erreurSQL.")",$pasdefichier);
-				}
-				$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur creation fichier query ".$SQLfinalFichier." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
-				$erreurProcess = true;
-			} else {
-				if (pg_num_rows($SQLfinalResult) == 0) {
-					// Avertissement
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp, "Pas de resultat disponible pour la selection ".$SQLfinalFichier,$pasdefichier);
-					}
-					$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Pas de resultat disponible pour la sélection (creation fichier)<br/>";
-				} else {
-					// Ici, remplacer les noms des alias par le nom des tables...		
-					//$listeChamps = remplaceAlias($listeChamps);
-					$resultatFichier = str_replace(",","\t",$listeChamps);
-					if (! fwrite($ExpComp,$resultatFichier."\r\n") ) {
-						if ($EcrireLogComp ) {
-							WriteCompLog ($logComp, "ERREUR : erreur ecriture dans fichier export.",$pasdefichier);
-						} else {
-							$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Erreur ecriture dans fichier export" ;
-						}
-						exit;
-					}	
-					while ($finalRow = pg_fetch_row($SQLfinalResult) ) {
-						$resultatFichier = "";
-						// Construction de la liste des résultat
-						// Tout d'abord, construction de l'ID unique
-						// Ex $ConstIDunique = "DEB-##-11";
-						// On garde le prefixe DEB et on extrait l'index du champ a recuperer de la ligne du resultat de la requete. ici 11
-						$IDunique = "";
-						if (!($ConstIDunique =="")) {
-							$Locprefixe = substr($ConstIDunique,0,3); // Attention, pour des raisons de simplicité, le suffixe n'est que sur 3 caractères.
-							$locIndex = substr(strrchr($ConstIDunique, "-##-"),1);
-							$IDunique = $Locprefixe.$finalRow[$locIndex];
-							$resultatFichier .= $IDunique."\t";
-						}
-						if (!($_SESSION['listeRegroup'] == "")) {
-							// Gestion des regroupements
-							// On doit récupérer la liste dans le champ valeur_ligne de la table temp_extraction
-							// et construire la ligne de resultat avec
-							$ligne_resultat = $finalRow[8];
-							$tabResultat = explode("&#&",$ligne_resultat);
-							$NbResultat = count($tabResultat);
-							for ($cptResult = 1;$cptResult <= $NbResultat;$cptResult++) {
-								$resultatFichier .= $tabResultat[$cptResult]."\t";
-							}
-						} else {
-							switch ($typeAction) {
-								case "biologie" :
-									// On doit calculer un coefficient d'extrapolation 
-									// On execute une requete supplémentaire pour recuperer le nombre d'individu dans exp_biologie pour la fraction et l'espece considerée
-									// On recupere le nombre de poissons reellement mesures pour une fraction donnée (qui elle meme correspond à 
-									// une seule espece.
-									$SQLcomplement = "Select count(id) from exp_biologie where exp_fraction_id =  ".$finalRow[16] ;
-									$SQLcomplementResult = pg_query($connectPPEAO,$SQLcomplement);
-									$erreurSQL = pg_last_error($connectPPEAO);
-									if ( !$SQLcomplementResult ) { 
-										if ($EcrireLogComp ) {
-											WriteCompLog ($logComp, "ERREUR : Erreur query complementaire biologie ".$SQLcomplement." (erreur complete = ".$erreurSQL.")",$pasdefichier);
-										}							
-									} else {
-										$RowComplement = pg_fetch_row($SQLcomplementResult); 
-										$totalBio = $RowComplement[0];
-										pg_free_result($SQLcomplementResult);
-									}
-									// Calcul du coefficient = nombre de poisson peches / nombre de poissons mesures
-									$coefficient =floatval( intval($finalRow[17]) / intval($totalBio));	
-									$coefficient = round($coefficient,2);						
-									$nbrRow = count($finalRow)-1;
-									// Transcription du resultat de la requete globale pour un affichage écran et un export sous forme de fichier
-									for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
-										$resultatFichier .=$finalRow[$cptRow]."\t";
-									}
-									// Ajout du coefficient tout a la fin du fichier
-									$resultatFichier .= $coefficient;
-									break;	
-								default	:
-									$nbrRow = count($finalRow)-1;
-										for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
-											$resultatFichier .=$finalRow[$cptRow]."\t";
-										}									
-							}
-						}
-						$resultatFichier .="\n";
-						if (! fwrite($ExpComp,$resultatFichier) ) {
-							if ($EcrireLogComp ) {
-								WriteCompLog ($logComp, "ERREUR : erreur ecriture dans fichier export.",$pasdefichier);
-							} else {
-								$resultatLecture .= "erreur ecriture dans fichier export" ;
-							}
-							exit;
-						}
-					// Compteur
-					$cpt1++;							
-					}
 
+			// Creation du fichier d'apres le SQL
+			if ($typeSelection == "statistiques") {
+				$listeTableStat = "ast,asp,ats,asgt,asgts,atgts";
+				$tableStat = explode(",",$listeTableStat);
+				$nbrTS = count($tableStat);
+				// On boucle sur toutes les tables pour extraire les donnees
+				for ($cptTS = 0;$cptTS <= $nbrTS;$cptTS++) {
+					$nomValLChampsSpec = "listeChampsSpec".$tableStat[$cptTS];
+					$nomValLTableSpec = "ListeTableSpec".$tableStat[$cptTS];
+					$nomValWhereSpec = "WhereSpec".$tableStat[$cptTS];
+					//echo $nomValWhereSpec. " - ".${$nomValWhereSpec}."<br/>";
+					// Construction du SQL pour chacun des tables
+					$listeChamps = $listeChampsCom.${$nomValLChampsSpec}.$listeChampsSel;
+					$listeTable = $ListeTableCom.${$nomValLTableSpec}.$ListeTableSel; // L'ordre est important pour les join
+					if ($WhereSel == "") {
+						$WhereTotal = $WhereCom.${$nomValWhereSpec};
+					} else {
+						$WhereTotal = $WhereCom.${$nomValWhereSpec}." and ".$WhereSel;
+					}
+					$SQLfinal = "select ".$listeChamps." from ".$listeTable." ".$joinSel." where ".$WhereTotal ." ".$OrderCom;					
+					//echo $SQLfinal."<br/>";
+					// Creation du fichier par stat.
+					$ficSuffixe = getSuffixeFicStat($tableStat[$cptTS]);
+					$nomFicExport = $dirLog."/".date('y\-m\-d')."_".$ficSuffixe.".txt";
+					//echo $nomFicExport."<br/>";
+					// On ne cree le fichier que si il n'a pas deja ete rempli !
+					if (!($fichierDejaCree)) {
+						$ExpCompStat = fopen($nomFicExport , "w+");
+						if (! $ExpCompStat ) {
+							$resultatLecture .= " erreur de cr&eacute;ation du fichier export ".$nomFicExpLien;
+							exit;		
+						}
+					}
+					creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat);				
 				}
-			} // fin du !$SQLfinalResult
+			} else {
+				creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpComp);
+			}
 			// Export des selections et regroupements dans des fichiers separes
 			
 			$SelectionPourFic = str_replace("<br/>","\n",$SelectionPourFic);
@@ -1976,9 +1877,19 @@ function AfficherDonnees($file,$typeAction){
 					$theZipFile->add_files($FileFullPath);
 				}
 			}
-			// Ajout des autres fichiers dans l'archive
-			// Fichier de données
-			$theZipFile->add_files($nomFicExport);
+			// Ajout des fichiers de stats dans l'archive
+			if ($typeSelection == "statistiques") {
+								// On boucle sur toutes les tables pour extraire les donnees
+				for ($cptTS = 0;$cptTS <= $nbrTS;$cptTS++) {
+					$ficSuffixe = getSuffixeFicStat($tableStat[$cptTS]);
+					$nomFicExport = $dirLog."/".date('y\-m\-d')."_".$ficSuffixe.".txt";
+					$theZipFile->add_files($nomFicExport);
+				}
+			} else {
+				// Ajout des autres fichiers dans l'archive
+				// Fichier de données
+				$theZipFile->add_files($nomFicExport);
+			}
 			// Fichier de selection
 			$theZipFile->add_files($nomFicExportSel);
 			// Si regroupement, le fichier de definition des regroupements
@@ -1987,7 +1898,7 @@ function AfficherDonnees($file,$typeAction){
 			}		
 			// Creation effective de l'archive
 			$theZipFile->create_archive();
-
+			$fichierDejaCree = true;
 		} // fin if ($exportFichier && (!($fichierDejaCree))
 
 		
@@ -2007,6 +1918,131 @@ function AfficherDonnees($file,$typeAction){
 		WriteCompLog ($logComp, "Les donnees ont ete ecrites dans le fichier ".$nomFicExpLien." pour la filiere ".$typeAction,$pasdefichier);
 	}
 
+}
+//*********************************************************************
+// creeFichier : Fonction de creation d'un fichier a partir d'un SQL
+function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpComp) {
+// Cette fonction permet de creer un fichier a exporter a partir d'un SQL
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $listeDesChamps : la liste des champs avec les alias
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie $listeDesChamps, la liste mise à jour avec les noms des tables
+//*********************************************************************
+// On reconstruit le titre en recuperant les noms de tables depuis le fichier XML
+	global $connectPPEAO;
+	global $EcrireLogComp;
+	global $logComp;
+	global $pasdefichier;
+	global $erreurProcess;
+	global $resultatLecture;
+
+	// Execution de la requete
+	$SQLfinalResult = pg_query($connectPPEAO,$SQLaExecuter);
+	$erreurSQL = pg_last_error($connectPPEAO);
+	$cpt1 = 0;
+	if ( !$SQLfinalResult ) { 
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "ERREUR : Erreur creation fichier query final ".$SQLaExecuter." (erreur complete = ".$erreurSQL.")",$pasdefichier);
+		}
+		$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur creation fichier query ".$SQLaExecuter." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+		$erreurProcess = true;
+	} else {
+		if (pg_num_rows($SQLfinalResult) == 0) {
+			// Avertissement
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "Pas de resultat disponible pour la selection ".$SQLaExecuter,$pasdefichier);
+			}
+			$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Pas de resultat disponible pour la sélection (creation fichier)<br/>";
+		} else {
+			// Ici, remplacer les noms des alias par le nom des tables...		
+			//$listeChamps = remplaceAlias($listeChamps);
+			$resultatFichier = str_replace(",","\t",$listeChamps);
+			if (! fwrite($ExpComp,$resultatFichier."\r\n") ) {
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp, "ERREUR : erreur ecriture dans fichier export.",$pasdefichier);
+				} else {
+					$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Erreur ecriture dans fichier export" ;
+				}
+				exit;
+			}	
+			while ($finalRow = pg_fetch_row($SQLfinalResult) ) {
+				$resultatFichier = "";
+				// Construction de la liste des résultat
+				// Tout d'abord, construction de l'ID unique
+				// Ex $ConstIDunique = "DEB-##-11";
+				// On garde le prefixe DEB et on extrait l'index du champ a recuperer de la ligne du resultat de la requete. ici 11
+				$IDunique = "";
+				if (!($ConstIDunique =="")) {
+					$Locprefixe = substr($ConstIDunique,0,3); // Attention, pour des raisons de simplicité, le suffixe n'est que sur 3 caractères.
+					$locIndex = substr(strrchr($ConstIDunique, "-##-"),1);
+					$IDunique = $Locprefixe.$finalRow[$locIndex];
+					$resultatFichier .= $IDunique."\t";
+				}
+				if (!($_SESSION['listeRegroup'] == "")) {
+					// Gestion des regroupements
+					// On doit récupérer la liste dans le champ valeur_ligne de la table temp_extraction
+					// et construire la ligne de resultat avec
+					$ligne_resultat = $finalRow[8];
+					$tabResultat = explode("&#&",$ligne_resultat);
+					$NbResultat = count($tabResultat);
+					for ($cptResult = 1;$cptResult <= $NbResultat;$cptResult++) {
+						$resultatFichier .= $tabResultat[$cptResult]."\t";
+					}
+				} else {
+					switch ($typeAction) {
+						case "biologie" :
+							// On doit calculer un coefficient d'extrapolation 
+							// On execute une requete supplémentaire pour recuperer le nombre d'individu dans exp_biologie pour la fraction et l'espece considerée
+							// On recupere le nombre de poissons reellement mesures pour une fraction donnée (qui elle meme correspond à 
+							// une seule espece.
+							$SQLcomplement = "Select count(id) from exp_biologie where exp_fraction_id =  ".$finalRow[16] ;
+							$SQLcomplementResult = pg_query($connectPPEAO,$SQLcomplement);
+							$erreurSQL = pg_last_error($connectPPEAO);
+							if ( !$SQLcomplementResult ) { 
+								if ($EcrireLogComp ) {
+									WriteCompLog ($logComp, "ERREUR : Erreur query complementaire biologie ".$SQLcomplement." (erreur complete = ".$erreurSQL.")",$pasdefichier);
+								}							
+							} else {
+								$RowComplement = pg_fetch_row($SQLcomplementResult); 
+								$totalBio = $RowComplement[0];
+								pg_free_result($SQLcomplementResult);
+							}
+							// Calcul du coefficient = nombre de poisson peches / nombre de poissons mesures
+							$coefficient =floatval( intval($finalRow[17]) / intval($totalBio));	
+							$coefficient = round($coefficient,2);						
+							$nbrRow = count($finalRow)-1;
+							// Transcription du resultat de la requete globale pour un affichage écran et un export sous forme de fichier
+							for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
+								$resultatFichier .=$finalRow[$cptRow]."\t";
+							}
+							// Ajout du coefficient tout a la fin du fichier
+							$resultatFichier .= $coefficient;
+							break;	
+						default	:
+							$nbrRow = count($finalRow)-1;
+								for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
+									$resultatFichier .=$finalRow[$cptRow]."\t";
+								}									
+					}
+				}
+				$resultatFichier .="\n";
+				if (! fwrite($ExpComp,$resultatFichier) ) {
+					if ($EcrireLogComp ) {
+						WriteCompLog ($logComp, "ERREUR : erreur ecriture dans fichier export.",$pasdefichier);
+					} else {
+						$resultatLecture .= "erreur ecriture dans fichier export" ;
+					}
+					exit;
+				}
+			// Compteur
+			$cpt1++;							
+			}
+
+		}
+		pg_free_result($SQLfinalResult);	
+	} // fin du !$SQLfinalResult
 }
 
 //*********************************************************************
@@ -2181,7 +2217,8 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction,$ty
 					}
 					$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"".$valCont."\" ".$checked."/>&nbsp;".$libelleCE;
 					// C'est super moche c'est juste pour tester la validiter de la chose, a modifier pour faire quelque chose de mieux
-					if ($cptInput/3 == 1 || $cptInput/3 == 2 || $cptInput/3 == 3 || $cptInput/3 == 4 || $cptInput/3 == 5 || $cptInput/3 == 6 || $cptInput/3 == 7 || $cptInput/3 == 8 || $cptInput/3 == 9 || $cptInput/3 == 10 || $cptInput/3 == 11 ) {
+					$str_cptInput = strval($cptInput);
+					if (bcmod($str_cptInput,'3') == '0') {
 						$construitSelection .= "</td></tr><tr><td class=\"catitem\">";
 					} else {
 						$construitSelection .= "</td><td class=\"catitem\">";
@@ -2273,7 +2310,8 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 					$libelleEsp = $CERow[1];
 					$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"".$CERow[0]."\" ".$checked."/>&nbsp;".$libelleEsp;
 					// C'est super moche c'est juste pour tester la validiter de la chose, a modifier pour faire quelque chose de mieux
-					if ($cptInput/3 == 1 || $cptInput/3 == 2 || $cptInput/3 == 3 || $cptInput/3 == 4 || $cptInput/3 == 5 || $cptInput/3 == 6 || $cptInput/3 == 7 || $cptInput/3 == 8 || $cptInput/3 == 9 || $cptInput/3 == 10 || $cptInput/3 == 11 ) {
+					$str_cptInput = strval($cptInput);
+					if (bcmod($str_cptInput,'3') == '0') {
 						$construitSelection .= "</td></tr><tr><td>";
 					} else {
 						$construitSelection .= "</td><td>";
@@ -2471,7 +2509,7 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 									if (!($gardLib == "y")) {
 										// On controle le libelle
 										$ajoutRegOK = false;
-										$info .= "<b>Attention !</b> un groupe existe dans la base des esp&egrave;ces dont le libell&eacute; est :".$RegRow[1].".<br/>";
+										$info .= "<br/><b>Attention !</b> un groupe existe dans la base des esp&egrave;ces dont le libell&eacute; est :<b>".$RegRow[1]."</b>.<br/>";
 										$info .="Voulez-vous garder ce libell&eacute; ?<input id=\"codeReg\" type=\"hidden\" value=\"".$RegRow[0]."\"/><input id=\"nomReg\" type=\"hidden\" value=\"".$nvNomReg."\"/>(<a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=f&gard=y')\">[Oui]</a>&nbsp;<a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=y&gard=n')\">[Non]</a>)";
 										$info .="Si non, merci de resaisir le regroupement avec un autre code.<br/>";
 									} else {
@@ -2509,7 +2547,7 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 								if (!($gardLib == "y")) {
 									// On controle le libelle
 									$ajoutRegOK = false;
-									$info .= "<b>Attention !</b> un groupe existe dans la base des esp&egrave;ces dont le libell&eacute; est :".$RegRow[1].".<br/>";
+									$info .= "<br/><b>Attention !</b> un groupe existe dans la base des esp&egrave;ces dont le libell&eacute; est :<b>".$RegRow[1]."</b>.<br/>";
 									$info .="Voulez-vous garder ce libell&eacute; ?<input id=\"codeReg\" type=\"hidden\" value=\"".$RegRow[0]."\"/><input id=\"nomReg\" type=\"hidden\" value=\"".$nvNomReg."\"/>(<a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=f&gard=y')\">[Oui]</a>&nbsp;<a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=y&gard=n')\">[Non]</a>)";
 									$info .="Si non, merci de resaisir le regroupement avec un autre code.<br/>";
 								} else {
@@ -2692,9 +2730,9 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	global $EcrireLogComp;
 	global $logComp;
 	global $pasdefichier;
-	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "DEBUG : liste colonnes dans  affichescolonnees = ".$ListeColonnes,$pasdefichier);
-	}	
+	//if ($EcrireLogComp ) {
+	//	WriteCompLog ($logComp, "DEBUG : liste colonnes dans  affichescolonnees = ".$ListeColonnes,$pasdefichier);
+	//}	
 	$inputNumFac = "";
 	$inputNumDef = "";
 	$inputListeTable = "";
@@ -2703,6 +2741,8 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	$TableATester = $TableEnCours;
 	$FiliereEnCours = $typeAction;
 	$TypePecheEnCours = $typePeche;
+	$ListeChampTableDef = "";
+	$ListeChampTableFac = "";
 	// Selon le type de peches, la fonction Js n'est pas la meme.
 	switch ($typePeche) {
 		case "artisanale" :
@@ -2732,9 +2772,9 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	// Libération de la ressource associée au parser
 	xml_parser_free($xml_parser_col);
 	if ($ListeChampTableFac == "") {
-		$ContenuChampTableFac = "";
+		$ContenuChampTableFac = ""; // ca ne devrait plus etre le cas !!! 
 	} else {
-		$ContenuChampTableFac = "colonnes facultatives :<br/>".$ListeChampTableFac."<br/>";
+		$ContenuChampTableFac = "liste des colonnes export&eacute;es. <br/><span class=\"hints_small\">Vous pouvez les s&eacute;lectionner en les cochant quand elles ne sont pas gris&eacute;es </span><br/><br/><table id=\"colonneSel\"><tr><td class=\"colitem\">".$ListeChampTableFac."</td></tr></table><br/>";
 	}
 	$inputTableEC = "<input type=\"hidden\" id=\"tableEC\" value=\"".$TableEnCours."\"/>";
 	$inputNumDef = "<input type=\"hidden\" id=\"numDef\" value=\"".$NumChampDef."\"/>";
@@ -2747,11 +2787,11 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	}
 	
 	$tableau = $InputTout."<table class=\"ChoixChampComp\"><tr><td class=\"CCCTable\">&nbsp;".$ListeTable." </td><td class=\"CCCChamp\">";
-	if($ListeChampTableDef =="") {
+	//if($ListeChampTableDef =="") {
 		$tableau .=	$ContenuChampTableFac."</td></tr></table>".$inputTableEC.$inputNumFac.$inputNumDef;
-	} else {
-		$tableau .=	"colonnes par d&eacute;faut : <br/>".$ListeChampTableDef."<br/>".$ContenuChampTableFac."</td></tr></table>".$inputTableEC.$inputNumFac.$inputNumDef;	
-	}
+	//} else {
+	//	$tableau .=	"colonnes par d&eacute;faut : <br/>".$ListeChampTableDef."<br/>".$ContenuChampTableFac."</td></tr></table>".$inputTableEC.$inputNumFac.$inputNumDef;	
+	//}
 	return $tableau; 
 }
 
@@ -2794,7 +2834,7 @@ function recupereTouteColonnes ($typePeche,$typeAction) {
 
 //*********************************************************************
 // recupereTouteColonnes : Fonction qui analyse la colonne en cours et complete le SQL si besoin
-function 	analyseColonne($typePeche,$typeAction){
+function analyseColonne($typePeche,$typeAction){
 // Cette fonction permet de recupérer controler si la colonne en cours necessite une requete SQL supplementaire et l'ajoute 
 // cas echeant
 //*********************************************************************
@@ -3232,6 +3272,22 @@ function creeDirTemp($dir){
 	$resultat = "ok,repertoire deja existant";
 	}
 	return $resultat;
-	
 }
+
+//*********************************************************************
+// creeDirTemp : Fonction pour creer le repertoire temporaire
+function getSuffixeFicStat($ValATester) {
+	$ValARetourner = "";
+	Switch ($ValATester) {
+		case "ast": $ValARetourner = "stat_totale";  break;
+		case "asp": $ValARetourner = "stat_sp";  break;
+		case "ats": $ValARetourner = "stat_sp_dft";  break;
+		case "asgt": $ValARetourner = "stat_GT";  break;
+		case "asgts": $ValARetourner = "stat_GT_sp";  break;
+		case "atgts": $ValARetourner = "stat_Gt_sp_dft";  break;
+	
+	}
+	return $ValARetourner;
+}
+
 ?>
