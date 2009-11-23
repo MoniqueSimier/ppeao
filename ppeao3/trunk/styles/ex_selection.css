@@ -50,6 +50,9 @@
 #ex_selection a.next_step {
 	font-size:12px;
 	display:inline;
+	background:#F7BA02;
+	padding: 3px 6px;
+	font-weight:bold;
 }
 
 a.last_step {
@@ -87,6 +90,13 @@ a.last_step {
 	margin:0;
 }
 
+
+.alerte {
+	background: #FFF8A7;
+	border:1px solid #C2C2C2;
+	padding:3px;
+	margin:24px 0;
+}
 
 /* les listes de documents */
 

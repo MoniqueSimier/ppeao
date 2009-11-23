@@ -185,10 +185,10 @@ echo('</div>'); // find div id=ex_selection
 // si l'utilisateur n'est pas connecte, on le lui signale et on affiche le formulaire de login
 else {
 	if ($_GET["step"]!='' && $_GET["step"]>4) {
-	echo('<p>vous devez &ecirc;tre connect&eacute; pour pouvoir poursuivre l&#x27;extraction des donn&eacute;es.<br /> si vous avez un compte, connectez-vous en utilisant le formulaire ci-dessus.</p>');
+	echo('<div  class="alerte"><p class="error">vous devez &ecirc;tre connect&eacute; pour pouvoir poursuivre l&#x27;extraction des donn&eacute;es.<br /> si vous avez un compte, connectez-vous en utilisant le formulaire ci-dessus.</p>');
 		
 	echo('<p>si vous n&#x27;avez pas de compte, vous pouvez en demander un en <a href="/contact.php">contactant les responsables du site</a
-	">.</p>');}
+	">.</p></div>');}
 }
 
 // le script pour afficher ou masquer la selection
