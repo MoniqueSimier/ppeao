@@ -728,7 +728,7 @@ function AfficherDonnees($file,$typeAction){
 			}
 			// ********** PREPARATION DU SQL
 			// Definition de tout ce qui est commun aux peches expérimentales
-			$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom, stat.id, stat.nom, cpg.date_debut, cpg.id, cph.date_cp, cph.id, cph.protocole, cph.exp_qualite_id, cph.exp_engin_id, xeng.libelle";
+			$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom, stat.id, stat.nom, cpg.date_debut, cpg.id, cph.date_cp, cph.id, cph.protocole, cph.exp_qualite_id, cph.exp_engin_id, cph.heure_debut, xeng.libelle,xqua.libelle";
 			$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph,exp_qualite as xqua,exp_engin as xeng";
 			
 			$WhereCom = "cpg.id = cph.exp_campagne_id and
