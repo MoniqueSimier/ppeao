@@ -2218,7 +2218,7 @@ function AfficheCategories($typeCategorie,$typeAction,$ListeCE,$changtAction,$ty
 					$construitSelection .= "&nbsp;<input id=\"".$nomInput.$cptInput."\" type=\"checkbox\"  name=\"".$nomInput."\" value=\"".$valCont."\" ".$checked."/>&nbsp;".$libelleCE;
 					// C'est super moche c'est juste pour tester la validiter de la chose, a modifier pour faire quelque chose de mieux
 					$str_cptInput = strval($cptInput);
-					if (bcmod($str_cptInput,'3') == '0') {
+					if (fmod($str_cptInput,'3') == '0') {
 						$construitSelection .= "</td></tr><tr><td class=\"catitem\">";
 					} else {
 						$construitSelection .= "</td><td class=\"catitem\">";
@@ -2311,7 +2311,7 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 					$construitSelection .= "&nbsp;<input id=\"Esp".$cptInput."\" type=\"checkbox\"  name=\"Esp\" value=\"".$CERow[0]."\" ".$checked."/>&nbsp;".$libelleEsp;
 					// C'est super moche c'est juste pour tester la validiter de la chose, a modifier pour faire quelque chose de mieux
 					$str_cptInput = strval($cptInput);
-					if (bcmod($str_cptInput,'3') == '0') {
+					if (fmod($str_cptInput,'3') == '0') {
 						$construitSelection .= "</td></tr><tr><td>";
 					} else {
 						$construitSelection .= "</td><td>";

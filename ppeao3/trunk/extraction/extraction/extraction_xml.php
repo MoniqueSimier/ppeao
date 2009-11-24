@@ -392,7 +392,7 @@ function startElementCol($parser, $name, $attrs){
 								$NumChampDef ++;
 								$testVal = $NumChampDef + $NumChampFac;
 								$str_testVal = strval ($testVal);
-								if (bcmod($str_testVal,'7') == '0') {
+								if (fmod($str_testVal,'7') == '0') {
 									$ListeChampTableFac .="</td><td class=\"colitem\">";
 								}
 								$ListeChampTableFac .= "<input id=\"".$idenTableEnCours."def".$NumChampDef."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" checked=\"checked\" disabled=\"disabled\"/>".$attrs["LIBELLE"]."<br/>";
@@ -431,7 +431,7 @@ function startElementCol($parser, $name, $attrs){
 								$NumChampFac ++;
 								$testVal = $NumChampDef + $NumChampFac;
 								$str_testVal = strval ($testVal);
-								if (bcmod($str_testVal,'7') == '0') {
+								if (fmod($str_testVal,'7') == '0') {
 									$ListeChampTableFac .="</td><td class=\"colitem\">";
 								}
 								$ListeChampTableFac .= "<input id=\"".$idenTableEnCours."fac".$NumChampFac."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" ".$checked."/>".$attrs["LIBELLE"]."<br/>";								
