@@ -728,7 +728,7 @@ function AfficherDonnees($file,$typeAction){
 			}
 			// ********** PREPARATION DU SQL
 			// Definition de tout ce qui est commun aux peches expérimentales
-			$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom, stat.id, stat.nom, cpg.date_debut, cpg.id, cph.date_cp, cph.id, cph.protocole, cph.exp_qualite_id, cph.exp_engin_id, cph.heure_debut, xeng.libelle,xqua.libelle";
+			$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom, stat.id, stat.nom, cpg.date_debut, cpg.id, cpg.numero_campagne,cph.date_cp, cph.id, cph.numero_coup,cph.protocole, cph.exp_qualite_id, cph.exp_engin_id, cph.heure_debut, xeng.libelle,xqua.libelle";
 			$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph,exp_qualite as xqua,exp_engin as xeng";
 			
 			$WhereCom = "cpg.id = cph.exp_campagne_id and
@@ -771,7 +771,7 @@ function AfficherDonnees($file,$typeAction){
 				case "NtPt" :
 						$labelSelection = "donn&eacute;e(s) NtPt ";
 						// C'est un mixte entre les données peuplements et environnement + des selections de colonnes
-						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond";
+						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id";
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,ref_espece as esp";
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
 							esp.id = fra.ref_espece_id and
@@ -784,7 +784,7 @@ function AfficherDonnees($file,$typeAction){
 						// Construction de la liste d'individus
 						// ATTENTION !!!!!! Si la liste ci-dessous est modifiée, il faut imperativement modifié la requete pour calculer le 
 						// le coefficient d'extrapolation apres l'execution de la requete 
-						$listeChampsSpec = ",fra.id, fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond,bio.longueur";
+						$listeChampsSpec = ",fra.id, fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,bio.longueur";
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,exp_biologie as bio,ref_espece as esp";
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp." 
 							esp.id = fra.ref_espece_id and
@@ -797,7 +797,7 @@ function AfficherDonnees($file,$typeAction){
 				case "trophique" :
 					// Construction de la liste d'individus
 						$labelSelection = "donn&eacute;e(s) trophique(s) ";
-						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,env.chlorophylle_fond,env.chlorophylle_surface,env.conductivite_fond,bio.longueur,bio.id,trop.exp_contenu_id,bio.exp_remplissage_id,cont.libelle";
+						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,bio.longueur,bio.id,trop.exp_contenu_id,bio.exp_remplissage_id,cont.libelle";
 						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,exp_biologie as bio,exp_trophique as trop, exp_contenu as cont,ref_espece as esp";
 						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."  
 							esp.id = fra.ref_espece_id and
