@@ -438,7 +438,7 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 			// On recupere le numero du regroupement selectionné + la liste des especes selectionnées
 			var EspSelReg = document.getElementById("Regroupcontenu");
 			for (i=0;i<EspSelReg.options.length;i++) {
-				if (EspSelReg.options[i].selected) {
+				if (EspSelReg.options[i].selected) { // Probleme sous IE8, ca plante a ce niveau
 					if (EspaSupp == "") {
 						EspaSupp = EspSelReg.options[i].value;
 					} else {

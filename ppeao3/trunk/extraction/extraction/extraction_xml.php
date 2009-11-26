@@ -562,7 +562,7 @@ function endElementCol($parser, $name){
 			//			case "cap_sp" : 	$nomTabSynth = "asp"; $gereEsp = true;  break;
 			//			case "dft_sp" : 	$nomTabSynth = "ats"; $gereEsp = true;  break;
 			//			case "cap_GT" : 	$nomTabSynth = "asgt"; break;
-			//			case "cap_GT_sp" : 	$nomTabSynth = "asgts"; $gereEsp = true;  break;
+			//			case "cap_GT_sp" : 	$nomTabSynth = "attgt"; $gereEsp = true;  break;
 			//			case "dft_sp_sp" : 	$nomTabSynth = "atgts"; $gereEsp = true;  break;
 			//		}	
 			//		if (strpos($tablesEspeces,$upperTableATester) === false){
