@@ -71,7 +71,7 @@ $campagnes_ids=$compteur["campagnes_ids"];
 $coups_ids=$compteur["coups_ids"];
 $enquetes_ids=$compteur["enquetes_ids"];
 
-//debug echo('<pre>');print_r($compteur);echo('</pre>');
+//debug echo(arrayToList($campagnes_ids,'\',\'','\''));
 
 
 // si on a depasse le step 1, on encapsule les selecteurs precedents dans un DIV id="selection_precedente"
@@ -187,7 +187,7 @@ else {
 	if ($_GET["step"]!='' && $_GET["step"]>4) {
 	echo('<div  class="alerte"><p class="error">vous devez &ecirc;tre connect&eacute; pour pouvoir poursuivre l&#x27;extraction des donn&eacute;es.<br /> si vous avez un compte, connectez-vous en utilisant le formulaire ci-dessus.</p>');
 		
-	echo('<p>si vous n&#x27;avez pas de compte, vous pouvez en demander un en <a href="/contact.php">contactant les responsables du site</a
+	echo('<p class="error">si vous n&#x27;avez pas de compte, vous pouvez en demander un en <a href="/contact.php">contactant les responsables du site</a
 	">.</p></div>');}
 }
 
