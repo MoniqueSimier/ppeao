@@ -645,19 +645,23 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 	$sql_systemes.=' AND ref_systeme.ref_pays_id IN (\''.arrayToList($pays,'\',\'','\'').')';
 	}
 	// si il reste des campagnes
+	
+	if(!empty($campagnes_ids[0]) || !empty($enquetes_ids[0])) {
+	$sql_systemes.=' AND (';
+	
 	if (!empty($campagnes_ids[0])) {
-	$sql_systemes.=' AND (ref_systeme.id IN ';
+	$sql_systemes.='ref_systeme.id IN ';
 	$sql_systemes.=' (SELECT DISTINCT exp_campagne.ref_systeme_id FROM exp_campagne WHERE TRUE ';
 		
 		
 		$sql_systemes.=' AND exp_campagne.id IN (\''.arrayToList($campagnes_ids,'\',\'','\'').')';
-		$sql_systemes.=')) ';
-		}
+		$sql_systemes.=') ';
+	}  //end if !empty($campagnes_ids[0])
 
 		// si il reste des enquetes
 		if (!empty($enquetes_ids[0])) {
-			if (!empty($campagnes_ids[0])) {$boo='OR';} else {$boo='AND';}
-		$sql_systemes.=' '.$boo.' ref_systeme.id IN (SELECT DISTINCT ref_secteur.ref_systeme_id FROM ref_secteur WHERE ref_secteur.id IN (
+			if (!empty($campagnes_ids[0])) {$boo=' OR ';} else {$boo='';}
+		$sql_systemes.=$boo.'ref_systeme.id IN (SELECT DISTINCT ref_secteur.ref_systeme_id FROM ref_secteur WHERE ref_secteur.id IN (
 		SELECT DISTINCT art_agglomeration.ref_secteur_id 
 		FROM art_agglomeration 
 		WHERE art_agglomeration.id IN (
@@ -666,11 +670,15 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 			WHERE TRUE ';
 		$sql_systemes.=' AND art_periode_enquete.id IN ( 
 												\''.arrayToList($enquetes_ids,'\',\'','\'').')';
-		$sql_systemes.='))';										
-		}
+		$sql_systemes.=')';										
+	} // end if !empty($enquetes_ids[0])
 	$sql_systemes.=')';
+} // end if(!empty($campagnes_ids[0]) || !empty($enquetes_ids[0]))
+		
+	$sql_systemes.='))';
 	
-	//debug		echo($sql_systemes);
+	//debug		
+	echo($sql_systemes);
 	
 	$result_systemes=pg_query($connectPPEAO,$sql_systemes) or die('erreur dans la requete : '.$sql_systemes. pg_last_error());
 	$array_systemes=pg_fetch_all($result_systemes);
@@ -1591,7 +1599,7 @@ function afficheSecteurs($donnees) {
 				))';}
 				
 				
-				$sql.='ORDER BY ref_pays.nom, ref_systeme.libelle, ref_secteur.nom
+				$sql.=' ORDER BY ref_pays.nom, ref_systeme.libelle, ref_secteur.nom
 				';
 			//debug 			echo('<pre>');print_r($sql);echo('</pre>');
 			$nextSelectionStep='agglom&eacute;rations';
