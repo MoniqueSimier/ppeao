@@ -47,7 +47,7 @@
 	padding:6px 0;
 }
 
-#ex_selection a.next_step {
+#ex_selection a.next_step, #ex_selection a.last_step {
 	font-size:12px;
 	display:inline;
 	background:#F7BA02;
