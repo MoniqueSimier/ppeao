@@ -677,8 +677,7 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 		
 	$sql_systemes.='))';
 	
-	//debug		
-	echo($sql_systemes);
+	//debug		echo($sql_systemes);
 	
 	$result_systemes=pg_query($connectPPEAO,$sql_systemes) or die('erreur dans la requete : '.$sql_systemes. pg_last_error());
 	$array_systemes=pg_fetch_all($result_systemes);
