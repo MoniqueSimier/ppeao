@@ -2,7 +2,9 @@
 Creation 21/09/2008
 Style pour le module d'extraction
 */
-
+#affLog{
+	font-size:70%
+}
 
 #formSel{
 	margin-left:5px;
@@ -125,7 +127,10 @@ list-style:none;
 	font-size:12px;
 }
 #runProcess{
-	background:#FFF;
+	background:#d9d8d8;
+	font-weight:bold;
+	padding-bottom:5px;
+	border-bottom:1px dotted #666666;
 }
 #resultfiliere{
 	width:1024 px;
@@ -141,7 +146,7 @@ list-style:none;
 	background:#f8ea47;
 	color:#FFFFFF;
 	font-weight:bold;
-	border:1px dotted #666666;
+	border-bottom:1px dotted #666666;
 }
 #listeTab{
 

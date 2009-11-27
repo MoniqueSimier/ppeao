@@ -516,45 +516,14 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 		} else {
 			ListEsp  = recupereSelection(limEsp,"Esp");
 		}
-		// Recuperation des colonnes en plus selectionnees
-		TEC = "&TEC="+tableEnCours;
-		TPEC = document.getElementById("tableEC").value;
-		// Recuperation des colonnes
-		limFac = document.getElementById("numFac").value;
-		DeselCol = false;
-		if (!(selToutesCol == '')) {
-			if 	(selToutesCol == 'tout') {
-					listCol = 'XtoutX';
-			} 	else {
-					listCol = 'XpasttX'
-			}
-		} else {
-			for (i=1;i<=limFac;i++) {
-				IDEnCours = TPEC+"fac"+i
-				if 	(document.getElementById(IDEnCours).checked) {
-					if (listCol=="") {
-						listCol = document.getElementById(IDEnCours).value+"-X"
-					} else {
-						listCol = listCol+","+document.getElementById(IDEnCours).value+"-X"
-					}
-				} 	else {
-					if (listCol=="") {
-						listCol = document.getElementById(IDEnCours).value+"-N"
-					} else {
-						listCol = listCol+","+document.getElementById(IDEnCours).value+"-N"
-					}
-					// On déselectionne la case a cocher tout
-					document.getElementById('facTout').checked = false
-					DeselCol = true
-				}
-			}
+		// Pour les colonnes on ne recupere que l'info si on est exporte ou non les colonnes supplémentaires
+		if 	(document.getElementById("facTout").checked) {
+				listCol = 'XtoutX';
+		} 	else {
+				listCol = 'XpasttX'
 		}
+		addCol = "&Col="+listCol;
 
-		if (listCol == "") {
-			addCol = "" ;
-		} else {
-			addCol = "&Col="+listCol;
-		}
 		if (ListEsp == "") {
 			addEsp = "" ;
 		} else {
@@ -630,7 +599,7 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 			catch (e) { }
 		  
 		}
-		addURL = TEC+addCol+addEsp+urlComp+regEC;;
+		addURL = addCol+addEsp+urlComp+regEC;;
 	} else {
 		globalAction = typeAction;
 		changementAction = '&chgA=y';
@@ -702,7 +671,7 @@ function stateChanged4() {
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
 		//document.getElementById("runProcess").innerHTML="<a href=\"#\" onClick=\"runFilieresStat('"+globaltypestat+"','globale;','1','"+globalTableEnCours+"','n','','','','')\" class=\"globale"+gloActif+"\">statistiques</a>";
-		document.getElementById("runProcess").innerHTML="statistiques";
+		document.getElementById("runProcess").innerHTML="";//on ne met rien pour l'instant dedans
 		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresStat('"+globaltypepeche+"','"+globalAction+"','1','','y','','','','')\" value=\"afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>Exporter en fichier";
 		
 	}

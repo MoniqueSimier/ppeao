@@ -934,7 +934,6 @@
 		</filieres>
 		<Alias>atgts</Alias>
 		<libelle>Stats par taille, par GT et par espece</libelle>
-		<champ code="libelle" affichage="C" libelle="Libelle"/>
 		<champ code="li" affichage="X" libelle="Classe Lf GT"/>
 		<champ code="xi" affichage="X" libelle="Effectif Lf GT"/>
 	</table>

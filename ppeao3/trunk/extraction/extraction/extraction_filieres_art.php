@@ -103,10 +103,7 @@ if (!(file_exists($file)) ) {
 ?>
 
 		<p class="hint_text">vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p>
-        <span id="affLog">
-			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
-			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
-			</form></span>
+
 
 			<?php 
 				// On recupere les paramètres
@@ -188,7 +185,7 @@ if (!(file_exists($file)) ) {
 				}
 				echo "</div>";
 				AfficherDonnees($file,$typeAction);
-				echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>";
+
 				if (!( $typePeche == "artisanale")) {
 					echo "<b>Erreur dans le fichier XML en entr&eacute;e. Il ne s'agit pas d'une s&eacute;lection de donn&eacute;es de p&ecirc;che artisanale.</b><br/>.";
 					exit;
@@ -202,10 +199,15 @@ if (!(file_exists($file)) ) {
         <b>choix de la fili&egrave;re :</b>&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','activite','1','','n','','','','')">activit&eacute;</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','capture','1','','n','','','','')">captures totales</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','NtPt','1','','n','','','','')">Nt/Pt</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','taille','1','','n','','','','')">structure de taille</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','engin','1','','n','','','','')">engins de p&ecirc;che</a>
                 <?php } ?>
         </div>
-		<br/>
 		<div id="resultfiliere"></div>
 		<div id="exportFic"></div>
-        <?php if ($modifFiliere=="y") { ?>
+        <?php 
+		echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>";?>
+		        <span id="affLog">
+			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
+			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
+			</form></span>
+		<?php if ($modifFiliere=="y") { ?>
                    <script type="text/javascript" charset="utf-8">runFilieresArt('<?php echo $typePeche ?>','<?php echo $typeAction ?>','1','','n','','','','')</script>
         <?php }           ?>
         <script type="text/javascript" charset="utf-8">

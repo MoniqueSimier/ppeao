@@ -97,10 +97,7 @@ if (!(file_exists($file)) ) {
 ?>
 
 		<p class="hint_text">vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p>
-        <span id="affLog">
-			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
-			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
-			</form></span>
+
 		<div id="resumeChoix">
 			<?php 
 				// On recupere les paramètres
@@ -180,7 +177,7 @@ if (!(file_exists($file)) ) {
 				}
 				echo "</div>";
 				AfficherDonnees($file,$typeAction);
-				echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>";
+
 				
 				if (!( $typePeche == "experimentale")) {
 					echo "<br/><br/><b>Erreur dans le fichier XML en entr&eacute;e. Il ne s'agit pas d'une s&eacute;lection de donn&eacute;es de p&ecirc;che exp&eacute;rimentale.</b><br/>.";
@@ -202,10 +199,15 @@ if (!(file_exists($file)) ) {
 		</ul>
         <?php } ?>
 		</div>
-		<br/>
         <div id="resultfiliere"></div>
 		<div id="exportFic"></div>
-        <?php if ($modifFiliere=="y") { ?>
+        <?php 
+			echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>";?>
+                    <span id="affLog">
+			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
+			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
+			</form></span>
+			<?php if ($modifFiliere=="y") { ?>
                    <script type="text/javascript" charset="utf-8">runFilieresExp('<?php echo $typePeche ?>','<?php echo $typeAction ?>','1','','n','','','','')</script>
         <?php }           ?>
         <script type="text/javascript" charset="utf-8">

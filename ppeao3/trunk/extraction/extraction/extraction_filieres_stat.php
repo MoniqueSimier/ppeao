@@ -93,10 +93,7 @@ if (!(file_exists($file)) ) {
 	if (userHasAccess($userID,$zone)) {
 ?>
 		<p class="hint_text">Vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p>
-        <span id="affLog">
-			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
-			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
-			</form></span>
+
 		<div id="resumeChoix">
 			<?php 
 				// On recupere les paramètres
@@ -173,7 +170,7 @@ if (!(file_exists($file)) ) {
 				}
 				echo "</div>";
 				AfficherDonnees($file,$typeAction);
-				echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>";
+
 				
 				if (!( $typeSelection == "statistiques")) {
 					echo "<br/><br/><b>Erreur dans le fichier XML en entr&eacute;e. Il ne s'agit pas d'une s&eacute;lection de donn&eacute;es de p&ecirc;che artisanale.</b><br/>.";
@@ -181,19 +178,24 @@ if (!(file_exists($file)) ) {
 				}				
 			?>
 		</div>
-		<br/>
 		<div id="runProcess">
         <?php if ($_SESSION['pasderesultat']) {
 			echo "La s&eacute;lection n'a pas retourn&eacute; de r&eacute;sultats.<br/>";
 		} else { ?>
-        	<a href="#" onClick="runFilieresStat('<?php echo $typeStatistiques ?>','globale','1','','n','','','','')">statistiques globales</a>
 		</ul>
         <?php } ?>
 		</div>
 		<div id="resultfiliere"></div>
 		<div id="exportFic"></div>
-        <?php // On lance systematiquement l'affichage de la filiere statistiques vu qu'on exporte toutes les tables ?>
-           <script type="text/javascript" charset="utf-8">runFilieresStat('<?php echo $typeStatistiques ?>','globale','1','','n','','','','');</script>
+        <?php // On lance systematiquement l'affichage de la filiere statistiques vu qu'on exporte toutes les tables 
+              echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>"; ?>   
+                   <span id="affLog">
+			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
+			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
+			</form></span>
+		   
+		   
+		   <script type="text/javascript" charset="utf-8">runFilieresStat('<?php echo $typeStatistiques ?>','globale','1','','n','','','','');</script>
         <script type="text/javascript" charset="utf-8">
 			var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
 			mySlider.hide();
