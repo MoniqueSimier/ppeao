@@ -32,7 +32,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 ?>
 
 <div id="main_container" class="home">
-<h1>Opérations de maintenance de la base : "<?php echo($base_principale) ?>"</h1>
 <!-- édition des tables de référence -->
 <?php
 
@@ -49,6 +48,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 ?>
 
 
+<h1>Opérations de maintenance de la base : "<?php echo($base_principale) ?>"</h1>
+
 <ul>
 	<li><h2><a href="javascript:doMaintenance('sequences_ref_param');">mise &agrave; jour des s&eacute;quences des tables de r&eacute;f&eacute;rence et de param&eacute;trage</a></h2>
 	<p>utilisez cet outil apr&egrave;s avoir import&eacute; en batch des donn&eacute;es de r&eacute;f&eacute;rence et de param&eacute;trage, pour mettre &agrave; jour la prochaine valeur de la s&eacute;quence des tables ayant des identifiants uniques g&eacute;n&eacute;r&eacute;s automatiquement.</p>
@@ -61,7 +62,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 	</li>
 	<li><h2><a href="javascript:doMaintenance('reindex');">REINDEX</a></h2>
 	<p>utilisez cet outil pour recréer les index apr&egrave;s avoir effectu&eacute; un grand nombre d&#x27;insertions ou de suppressions dans la base de donn&eacute;es.</p>
-	</li>
+	</li></ul>
+	<h1>Opérations de maintenance de la base : "BDPeche"</h1>
+	<ul>
 	<li><h2><a href="javascript:doMaintenance('disable_trigger');">D&eacute;sactiver des contraintes sur BDPeche</a></h2>
 	<p>utilisez cet outil pour supprimer temporairement les contraintes sur la base (BDPECHE) contenant les donn&eacute;es &agrave; porter dans la base de r&eacute;f&eacute;rence (PPEAO).</p>
 	</li>
