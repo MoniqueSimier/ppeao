@@ -1698,7 +1698,7 @@ global $connectPPEAO;
 			foreach($array as $campagne) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($campagne["id"],$_GET["camp"])) {$selected='selected="selected" ';} else {$selected='';}
-				echo('<option value="'.$campagne["id"].'" '.$selected.'>'.$campagne["pays"].':'.$campagne["systeme"].':'.$campagne["date_debut"].' au '.$campagne["date_fin"].'</option>');
+				echo('<option value="'.$campagne["id"].'" '.$selected.'>'.$campagne["pays"].':'.$campagne["systeme"].':'.$campagne["date_debut"].' au '.$campagne["date_fin"].'(.'$campagne["numero_campagne"]'.)</option>');
 			} // end foreach
 			echo('</select>');
 			// on affiche le lien permettant de passer a la selection des engins de peche
