@@ -1940,8 +1940,11 @@ global $connectPPEAO;
 				// on selectionne les enquetes disponibles
 				$sql='SELECT DISTINCT e.id, e.description, e.annee, e.mois, a.nom as agglo, lower(a.nom) as lower_agglo, s.nom as secteur, lower(s.nom) as lower_secteur, sy.libelle as systeme, lower(sy.libelle) as lower_systeme, p.nom as pays, lower(p.nom) as lower_pays FROM art_periode_enquete e, ref_pays p, ref_systeme sy, ref_secteur s, art_agglomeration a 
 				WHERE e.id IN (\''.arrayToList($compteur["enquetes_ids"],'\',\'','\'').') 
-				AND e.art_agglomeration_id=a.id AND a.ref_secteur_id=s.id 
-				AND s.ref_systeme_id=sy.id AND sy.ref_pays_id=p.id  
+				AND e.art_agglomeration_id=a.id AND a.ref_secteur_id=s.id ';
+				if (!empty($_GET["agglo"])) {
+				$sql.='AND e.art_agglomeration_id IN (\''.arrayToList($_GET["agglo"],'\',\'','\'').') ';
+				}
+				$sql.='	AND s.ref_systeme_id=sy.id AND sy.ref_pays_id=p.id  
 				ORDER BY lower_pays,lower_systeme, lower_secteur, annee, mois';
 				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 				$array=pg_fetch_all($result);
