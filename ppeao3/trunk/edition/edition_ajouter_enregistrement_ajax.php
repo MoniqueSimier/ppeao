@@ -9,7 +9,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/functions_generic.php';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_SQL.php';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
-
+//debug sleep(30);
 
 global $tablesDefinitions;
 
@@ -36,7 +36,9 @@ $theForm.='<ul id="add_record_'.$level.'_ul">';
 		// on doit saisir un ref_systeme_if OU un ref_secteur_id
 		if ($editTable=='stat_effort' && $oneHead=='ref_systeme_id') {$theForm.='<li class="error small" style="list-style-type: none;">Veuillez saisir un syst&egrave;me OU un secteur.</li>';}
 		$theForm.='<li class="small">';
-		$theForm.='<p>'.$oneHead.': </p>';
+		$theForm.='<p>'.$oneHead;
+		if ($cDetails[$oneHead]["is_nullable"]=='NO') {$theForm.=' (<span class="error">obligatoire</span>)';}
+		$theForm.='</p>';
 		$theForm.=iconv('ISO-8859-15','UTF-8',makeField($cDetails,$editTable,$oneHead,'','add','',$tabIndex));
 		$theForm.='</li>';
 	$tabIndex++;
