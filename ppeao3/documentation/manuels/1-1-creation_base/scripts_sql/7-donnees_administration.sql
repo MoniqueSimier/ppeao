@@ -82,6 +82,8 @@ INSERT INTO admin_dictionary_domains VALUES ('especes', 'systématique', 3);
 INSERT INTO admin_dictionary_domains VALUES ('geo', 'géographie', 4);
 INSERT INTO admin_dictionary_domains VALUES ('access', 'droits d''accès', 5);
 INSERT INTO admin_dictionary_domains VALUES ('config', 'configuration de l''application', 6);
+INSERT INTO admin_dictionary_domains VALUES ('meta', 'métadonnées', 7);
+
 
 ALTER TABLE admin_dictionary_domains ENABLE TRIGGER ALL;
 
@@ -159,6 +161,10 @@ INSERT INTO admin_dictionary_tables VALUES (53, 'environnement', 'environnement'
 INSERT INTO admin_dictionary_tables VALUES (42, 'zones', 'zones d''accès', 'admin_zones', 'zone_id', 'zone_name', 1, 5, '', false, 1, false, false);
 INSERT INTO admin_dictionary_tables VALUES (63, 'sequences', 'séquences', 'admin_sequences', 'sequence_id', 'sequence_name', 1, 5, '', false, 1, false, false);
 INSERT INTO admin_dictionary_tables VALUES (64, 'acces_systemes', 'délais butoir pour les systèmes', 'admin_acces_donnees_systemes', 'id', 'id', 1, 5, NULL, false, 1, true, true);
+INSERT INTO admin_dictionary_tables VALUES (65, 'meta_pays', 'metadonnees sur les pays', 'meta_pays', 'meta_id', 'doc_titre', 5, 7, '', false, 2, true, true);
+INSERT INTO admin_dictionary_tables VALUES (66, 'meta_systemes', 'metadonnées sur les systèmes', 'meta_systemes', 'meta_id', 'doc_titre', 5, 7, '', false, 2, true, true);
+INSERT INTO admin_dictionary_tables VALUES (67, 'meta_secteurs', 'metadonnées sur les secteurs', 'meta_secteurs', 'meta_id', 'doc_titre', 5, 7, '', false, 2, true, true);
+
 
 
 
@@ -181,6 +187,7 @@ INSERT INTO admin_dictionary_type_tables VALUES (1, 'admin', 'tables d''administ
 INSERT INTO admin_dictionary_type_tables VALUES (2, 'ref', 'tables de référence');
 INSERT INTO admin_dictionary_type_tables VALUES (3, 'param', 'tables de paramétrage');
 INSERT INTO admin_dictionary_type_tables VALUES (4, 'data', 'tables de données');
+INSERT INTO admin_dictionary_type_tables VALUES (5, 'meta', 'métadonnées associées à des unités géographiques');
 
 ALTER TABLE admin_dictionary_type_tables ENABLE TRIGGER ALL;
 
