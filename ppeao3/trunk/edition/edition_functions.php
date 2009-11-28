@@ -438,9 +438,10 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 				
 				switch ($action) {
 						case 'filter':
-						$theField='<div class="filter"<select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onchange="javascript:filterTable(\''.$theUrl.'\');">';
+						$theField='<div class="filter"><select id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onchange="javascript:filterTable(\''.$theUrl.'\');">';
+							
 							// on ajoute une valeur "vide"
-								$theField.='<option value="" '.$selected.'>-</option>';
+							$theField.='<option value="NULL" '.$selected.'>-</option>';
 							foreach($theOptions as $theOption) {
 								// on selectionne eventuellement l'option correspondant à la valeur courante du champ
 								if ($theOption==$value) {$selected='selected="selected"';} else {$selected='';}
@@ -451,9 +452,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 					case 'display' : $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
 					break;
 					case 'add':
-					case 'edit': $theField='<select '.$tabIndex.' id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
-						// on ajoute une valeur "vide"
-							$theField.='<option value="" '.$selected.'>-</option>';
+					case 'edit': $theField='<div class="filter"><select '.$tabIndex.' id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
 						foreach($theOptions as $theOption) {
 							// on selectionne eventuellement l'option correspondant à la valeur courante du champ
 							if ($theOption==$value) {$selected='selected="selected"';} else {$selected='';}
@@ -1026,7 +1025,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 
 							// on affiche un <input>
 							if ($theType=='input') {
-							$theField='<input '.$tabIndex.' title="XXX" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.' />';
+							$theField='<input '.$tabIndex.' title="" type="text" id="'.$theId.'" name="'.$theId.'" value="'.stripSlashes($value).'"  class="'.$theClass.'" size="'.$theMaxLength.'" maxlength="'.$theMaxLength.'"  '.$onAction.' />';
 							} // end if input
 				break; // end default:
 				} //end switch 'data_type'
@@ -1035,6 +1034,11 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 		} // end switch $action
 			
 		}
+
+// si le champ a un commentaire descriptif, on l'ajoute dans le formulaire d'ajout d'enregistrement
+if (!my_empty($theDetails["commentaire"]) && $action=='add') {
+	$theField.='<p class="commentaire_colonne">('.$theDetails["commentaire"].')</p>';
+}
 
 return $theField;
 
@@ -1248,10 +1252,18 @@ global $connectPPEAO;
 			$i++;
 			}
 			echo('</table>');
+			// l'aide
+		echo('<div class="hint clear"><span class="hint_label"><a href="#" onclick="toggleAide(\'aide_table_droits\')">aide &gt;&gt;</a></span><div class="hint_text" id="aide_table_droits" style="display:none;">');
+		echo('cocher une ou plusieurs case(s) pour donner acc&egrave;s &agrave; ce type de donn&eacute;es; si vous ne cochez aucune case, l&#x27;acc&egrave;s sera restreint aux donn&eacute;es historiques<br />PE : p&ecirc;ches exp&eacute;rimentales, PA : p&ecirc;ches artisanales, ST : statistiques de p&ecirc;che');
+		echo('</div></div>');
+		// les liens permettant d'enregistrer les droits ou d'annuler
+		echo('<p id ="droits_enregistrer" class="clear"><a href="#" onclick="javascript:enregistrerDroits();" class="next_step">enregistrer</a>&nbsp;&nbsp;<a href="" class="next_step">annuler</a></p>');
 
 		} else {
 			echo('<p>aucun droit d&eacute;fini pour le moment.</p>');
 		}
+
+	
 }
 
 ?>
