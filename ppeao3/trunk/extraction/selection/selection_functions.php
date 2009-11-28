@@ -459,7 +459,7 @@ if ($_GET["exploit"]=="stats") {$peches='art';$exploit='stats';}
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
 // et on affiche "votre selection correspond a :"
 if ($_GET["step"]>1) {
-	$link='<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();" title="afficher ou masquer la selection" href="#">[afficher/modifier/masquer la s&eacute;lection]</a></span>';
+	$link='<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();" title="afficher ou masquer la selection" href="#">[modifier ma s&eacute;lection]</a></span>';
 	
 	$text='votre s&eacute;lection correspond &agrave; :';
 } else {
@@ -786,8 +786,8 @@ return $edit_link;
 // affiche le texte d'aide a la selection selon l'etape actuelle
 function afficheAide($topic) {
 //$topic: le "theme" de l'etape de selection ("taxonomie", "geographie", "periode", "type_exploitation", "type_donnees", "exp", "art", "campagnes", "engins", "secteurs", "agglomerations", "periodes_enquete", "grands_types_engins", "type_stats", "stats_agglo", "stats_gen", "secteurs2", "filieres")
-$hint='<div class="hint clear small"><span class="hint_label">aide : </span><span class="hint_text">';
-$hint_multiple='vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e';
+$hint='<div class="hint clear"><span class="hint_label"><a href="#" onclick="toggleAide(\'aide_'.$topic.'\')">aide &gt;&gt;</a></span><div class="hint_text" id="aide_'.$topic.'" style="display:none;">';
+$hint_multiple='vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e<br />pour effectuer une s&eacute;lection continue, cliquez sur la premi&egrave;re valeur puis sur la derni&egrave;re valeur en maintenant la touche MAJ enfonc&eacute;e.';
 $hint_empty='si vous ne choisissez aucune valeur, ce crit&egrave;re ne sera pas pris en compte dans la s&eacute;lection<br />';
 	switch ($topic) {
 	case "taxonomie":
@@ -850,7 +850,8 @@ $hint_empty='si vous ne choisissez aucune valeur, ce crit&egrave;re ne sera pas 
 		$hint.='';
 	break;
 	}
-$hint.='</span></div>';
+$hint.='</div></div>';
+
 echo $hint;
 }
 
@@ -1823,7 +1824,7 @@ if ($_GET["step"]>9) {
 	
 	$url='/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"];
 	
-	echo('<div id="choix_filiere"><a id="link_filieres" href="#" class="last_step" onclick="javascript:goToChoixFilieres(\''.$url.'\');">choisir une fili&egrave;re d&#x27;exploitation...</a>');
+	echo('<div id="choix_filiere" class="clear"><a id="link_filieres" href="#" class="last_step" onclick="javascript:goToChoixFilieres(\''.$url.'\');">choisir une fili&egrave;re d&#x27;exploitation...</a><br /><br />');
 // on affiche le texte d'aide
 afficheAide("filieres");
 

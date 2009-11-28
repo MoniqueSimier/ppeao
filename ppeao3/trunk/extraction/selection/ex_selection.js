@@ -182,3 +182,7 @@ function goToChoixFilieres(url) {
 	document.location=url;
 }
 
+// fonction qui permet d'aficher et masque les textes d'aide
+function toggleAide(topic) {
+	if ($(topic).getStyle('display')=='none') {$(topic).setStyle('display','block');} else {$(topic).setStyle('display','none');}
+}

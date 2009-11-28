@@ -45,7 +45,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
 if (isset($_GET["step"])) {$step=$_GET["step"];} else {$step=0;}
 if ($step>1) {
-	echo('<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();" title="afficher ou masquer la selection" href="#">[afficher/modifier/masquer la s&eacute;lection]</a></span>');
+	echo('<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();" title="afficher ou masquer la selection" href="#">[modifier ma s&eacute;lection]</a></span>');
 }
 ?>
 </h1>

@@ -53,6 +53,7 @@
 	background:#F7BA02;
 	padding: 3px 6px;
 	font-weight:bold;
+	margin-bottom:18px;
 }
 
 a.last_step {
@@ -128,3 +129,6 @@ a.last_step {
 	padding:6px;
 }
 
+#ex_selection hint {
+	margin-top:18px;
+}
