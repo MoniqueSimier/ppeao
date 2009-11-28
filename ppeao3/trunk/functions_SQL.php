@@ -167,7 +167,7 @@ function getTableConstraintDetails ($connection,$table) {
 // $table : le nom de la table
 
 // on liste les contraintes sur la table
-$constraints=getTableConstraints ($connection,$table);
+$constraints=getTableConstraints($connection,$table);
 
 //debug echo('<pre>');print_r($constraints);echo('</pre>');
 
@@ -252,6 +252,23 @@ $details=getTableConstraintDetails ($connection,$table);
 $columnDetails=getColumnConstraintDetails ($details,$column);
 
 
+// on récupère les commentaires sur les colonnes de la table
+$dbname=pg_dbname($connection);
+$sql_comments='select cols.column_name,
+(select pg_catalog.obj_description(oid) from pg_catalog.pg_class c where c.relname=cols.table_name) as table_comment
+,(select pg_catalog.col_description(oid,cols.ordinal_position::int) from pg_catalog.pg_class c where c.relname=cols.table_name) as column_comment
+from information_schema.columns cols
+where cols.table_catalog=\''.$dbname.'\' and cols.table_name=\''.$table.'\'';
+$result_comments=pg_query($connection,$sql_comments) or die('erreur dans la requete : '.$sql_comments. pg_last_error());
+$array_comments=pg_fetch_all($result_comments);
+pg_free_result($result_comments);
+$comments=array();
+foreach($array_comments as $row) {
+	$comments[$row["column_name"]]=$row["column_comment"];
+}
+//debug echo('<pre>');print_r($comments);echo('</pre>');
+
+
 // on construit un tableau contenant les metadata et les contraintes sur chaque colonne de la table
 $columnsDetails=array();
 foreach($meta as $column) {
@@ -259,8 +276,13 @@ foreach($meta as $column) {
 	$columnsDetails[$column["column_name"]]=$column;
 	//on ajoute au tableau les éventuelles contraintes sur cette colonne
 	$columnsDetails[$column["column_name"]]["constraints"]=getColumnConstraintDetails ($details,$column["column_name"]);
+	// on ajoute au tableau le commentaire sur cette colonne
+	$columnsDetails[$column["column_name"]]["commentaire"]=$comments[$column["column_name"]];
 	
 }
+
+//debug echo('<pre>');print_r($columnsDetails);echo('</pre>');
+
 
 return $columnsDetails;
 }
