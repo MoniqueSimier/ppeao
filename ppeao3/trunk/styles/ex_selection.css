@@ -47,22 +47,19 @@
 	padding:6px 0;
 }
 
-#ex_selection a.next_step, #ex_selection a.last_step, #choix_tables_stats a.last_step {
+a.next_step, a.last_step {
 	font-size:12px;
-	display:inline;
+	display:block;
 	background:#F7BA02;
 	padding: 3px 6px;
 	font-weight:bold;
 	margin-bottom:18px;
+	margin-top:8px;
 }
 
-a.last_step {
-	font-size:14px;
-	font-weight:bold;
+#ex_selection .next_step, #ex_selection .last_step {
 	display:inline;
 }
-
-
 
 #debut, #fin {
 	float:left;

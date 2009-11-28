@@ -133,7 +133,7 @@ margin-left: 10px;
 }
 
 #the_headers a, .filter, .editable_field, .non_editable_field, .edit_field_container  {
-padding:3px 6px;
+padding:0px 6px;
 display:block;
 line-height:2em;
 min-height:20px;
@@ -217,3 +217,22 @@ padding: 6px;
 	margin-bottom:18px;
 }
 
+
+.commentaire_colonne {
+	font-family: Times, 'Times New Roman', Serif;
+	font-style:italic;
+	font-size:1.2em;
+	margin-bottom:4px;
+
+}
+
+#droits_enregistrer, #add_systemes {
+	margin-top:16px;
+}
+
+#droits_enregistrer .next_step {
+	display:inline;
+}
+#add_systemes .next_step {
+	display:inline;
+}
