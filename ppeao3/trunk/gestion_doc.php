@@ -69,6 +69,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 	<li><a href="/edition/edition_table.php?selector=no&editTable=meta_secteurs">des secteurs</a></li>
 </ul>
 <h3><a href="javascript:BrowseFiles();">acc&eacute;der au gestionnaire de fichiers</a></h3>
+<p>vous permet de g&eacute;rer les fichiers pr&eacute;sents sur le serveur, comme avec l&#x27;explorateur de Windows.</p>
 
 
 
