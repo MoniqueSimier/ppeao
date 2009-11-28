@@ -159,7 +159,7 @@ if (isset($_GET['action'])) {
 	$locSelection = AfficherSelection($file); 
 	$SelectionPourFic = $locSelection;
 	echo "<span class=\"showHide\">
-<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier/masquer la s&eacute;lection]</a></span>";
+<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[modifier ma s&eacute;lection]</a></span>";
 	echo "<div id=\"selection_precedente\">".$locSelection."<br/>";
 	if (!($_SESSION["selection_url"] =="")) {
 		echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >changer la s&eacute;lection</a></span>";
