@@ -161,9 +161,6 @@ switch($_GET["exploit"]) {
 		}
 	break; // end case "stats"
 	
-	//fonds cartographiques
-	case "cartes":
-	break; // end case "cartes"
 	
 	// graphes
 	case "graphes":
@@ -195,7 +192,9 @@ else {
 ?> 
 <script type="text/javascript" charset="utf-8">
 	var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
-	mySlider.hide();
+	
+	// si on passe une valeur de 1 du parametre d'url open, on affiche la selection precedente, sinon on la masque
+	if (gup('open')!=1) {mySlider.hide();}
 	// affiche ou masque le DIV contenant la selection precedente
 	function toggleSelection() {
 		mySlider.toggle() //toggle the slider up and down.
