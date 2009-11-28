@@ -29,6 +29,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/selection/selection_functions.php
 
 <script src="/js/edition.js" type="text/javascript"  charset="iso-8859-15"></script>
 <script src="/extraction/selection/ex_selection.js" type="text/javascript" charset="utf-8"></script>
+<link href="/styles/edition.css" title="mainstyles" rel="stylesheet" type="text/css" />
+<link href="/styles/ex_selection.css" title="mainstyles" rel="stylesheet" type="text/css" />
+
 
 
 </head>
@@ -60,6 +63,7 @@ if ($_GET["acteur"]=='') {$acteur_id=$_POST["acteur"];} else {$acteur_id=$_GET["
 
 // si on est en mode enregistrement, on sauvegarde les donnees dans la base et on remet a zero
 if ($_POST["enregistrer"]=='oui') {
+	$enregistrer='oui';
 	// on enregistre les modifications
 	$succes=0;
 	// on commence par supprimer les droits existants (plus simple que de faire une mise a jour)
@@ -84,9 +88,10 @@ $sql="INSERT INTO admin_acces_donnees_acteurs (ref_acteur_id,acteur_type,ref_sys
 	// on genere un message de confirmation ou d'erreur
 	if ($result=@pg_query($connectPPEAO,$sql)) {$succes=1;} else {$succes=0;}
 	
-	if ($succes==1) {$message='<p class="grey small">modifications enregistr&eacute;es.</p>';} else {$message='<p class="small error">une erreur a emp&ecirc;ch&eacute; l&#x27;enregistrement des modifications.</p>';}
+	if ($succes==1 && $enregistrer=='oui') {$message='<p class="error small">modifications enregistr&eacute;es.</p>';} else {$message='<p class="small error">une erreur a emp&ecirc;ch&eacute; l&#x27;enregistrement des modifications.</p>';}
 	//on remet a zero
 	$_POST='';
+	$enregistrer='';
 }
 
 if ($acteur_type=='') {
@@ -189,10 +194,9 @@ else {
 		echo('</div>'); // end div choix_systemes
 
 
-		echo('<div class="hint clear small"><span class="hint_label">aide : </span><span class="hint_text">');
-		echo('pour s&eacute;lectionner les syst&egrave;mes qui vous int&eacute;ressent, commencez par s&eacute;lectionner un  pays<br />');
-		echo('vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs de syst&egrave;mes en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e');
-		echo('</span></div>');
+		echo('<div class="hint clear"><span class="hint_label" style="display:block;padding-top:8px;"><a href="#" onclick="toggleAide(\'aide_systemes\')">aide &gt;&gt;</a></span><div class="hint_text" id="aide_systemes" style="display:none;">');
+		echo('vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e<br />pour effectuer une s&eacute;lection continue, cliquez sur la premi&egrave;re valeur puis sur la derni&egrave;re valeur en maintenant la touche MAJ enfonc&eacute;e');
+		echo('</div></div>');
 		echo('<p class="clear" id="add_systemes"></p>');
 		// on affiche la liste des  droits d'acces accordes a cet acteur
 		echo('<div id="droits_acces">');
@@ -201,7 +205,7 @@ else {
 		//echo('<input type="hidden" id="acteur" name="acteur" value="'.$acteur_id.'"/>');
 		echo('<input type="hidden" id="type" name="type" value="'.$acteur_type.'"/>');
 		
-		// si l'utilisateur fait aprtie des groupes ayant acces a toutes les donnees, on le signale
+		// si l'utilisateur fait partie des groupes ayant acces a toutes les donnees, on le signale
 		
 		/*$sql='SELECT column FROM table WHERE condition';
 		$result=pg_query(connection,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
@@ -214,12 +218,6 @@ else {
 		}
 		displayAccessRightsTable($acteur_id,$acteur_type,$systemes_supp);
 		echo('</form>');
-		// l'aide
-		echo('<div class="hint clear small"><span class="hint_label">aide : </span><span class="hint_text">');
-		echo('cocher une ou plusieurs case(s) pour donner acc&egrave;s &agrave; ce type de donn&eacute;es; si vous ne cochez aucune case, l&#x27;acc&egrave;s sera restreint aux donn&eacute;es historiques<br />PE : p&ecirc;ches exp&eacute;rimentales, PA : p&ecirc;ches artisanales, ST : statistiques de p&ecirc;che');
-		echo('</span></div>');
-		// les liens permettant d'enregistrer les droits ou d'annuler
-		echo('<p id ="droits_enregistrer" class="clear"><a href="#" onclick="javascript:enregistrerDroits();">ENREGISTRER</a>&nbsp;&nbsp;<a href="">ANNULER</a></p>');
 		echo('</div>'); // fin div droits_acces
 		
 ;} // fin de if (!empty($acteur))
