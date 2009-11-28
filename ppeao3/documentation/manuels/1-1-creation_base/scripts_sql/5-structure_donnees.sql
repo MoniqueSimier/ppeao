@@ -1020,7 +1020,7 @@ CREATE TABLE meta_pays (
     file_path character varying NOT NULL,
     doc_titre character varying NOT NULL,
     doc_description text,
-    CONSTRAINT meta_pays_doc_type_check CHECK (((((doc_type)::text = 'doc'::text) OR ((doc_type)::text = 'carte'::text)) OR ((doc_type)::text = 'figure'::text)))
+    CONSTRAINT meta_pays_doc_type_check CHECK (((((doc_type)::text = 'document'::text) OR ((doc_type)::text = 'carte'::text)) OR ((doc_type)::text = 'figure'::text)))
 );
 
 
@@ -1116,7 +1116,7 @@ CREATE TABLE meta_secteurs (
     file_path character varying NOT NULL,
     doc_titre character varying NOT NULL,
     doc_description text,
-    CONSTRAINT meta_secteurs_doc_type_check CHECK (((((doc_type)::text = 'doc'::text) OR ((doc_type)::text = 'carte'::text)) OR ((doc_type)::text = 'figure'::text)))
+    CONSTRAINT meta_secteurs_doc_type_check CHECK (((((doc_type)::text = 'document'::text) OR ((doc_type)::text = 'carte'::text)) OR ((doc_type)::text = 'figure'::text)))
 );
 
 
@@ -1212,7 +1212,7 @@ CREATE TABLE meta_systemes (
     file_path character varying NOT NULL,
     doc_titre character varying NOT NULL,
     doc_description text,
-    CONSTRAINT meta_systemes_doc_type_check CHECK (((((doc_type)::text = 'doc'::text) OR ((doc_type)::text = 'carte'::text)) OR ((doc_type)::text = 'figure'::text)))
+    CONSTRAINT meta_systemes_doc_type_check CHECK (((((doc_type)::text = 'document'::text) OR ((doc_type)::text = 'carte'::text)) OR ((doc_type)::text = 'figure'::text)))
 );
 
 
