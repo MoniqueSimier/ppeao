@@ -787,7 +787,7 @@ return $edit_link;
 function afficheAide($topic) {
 //$topic: le "theme" de l'etape de selection ("taxonomie", "geographie", "periode", "type_exploitation", "type_donnees", "exp", "art", "campagnes", "engins", "secteurs", "agglomerations", "periodes_enquete", "grands_types_engins", "type_stats", "stats_agglo", "stats_gen", "secteurs2", "filieres")
 $hint='<div class="hint clear"><span class="hint_label"><a href="#" onclick="toggleAide(\'aide_'.$topic.'\')">aide &gt;&gt;</a></span><div class="hint_text" id="aide_'.$topic.'" style="display:none;">';
-$hint_multiple='vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e<br />pour effectuer une s&eacute;lection continue, cliquez sur la premi&egrave;re valeur puis sur la derni&egrave;re valeur en maintenant la touche MAJ enfonc&eacute;e.';
+$hint_multiple='vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e<br />pour effectuer une s&eacute;lection continue, cliquez sur la premi&egrave;re valeur puis sur la derni&egrave;re valeur en maintenant la touche MAJ enfonc&eacute;e';
 $hint_empty='si vous ne choisissez aucune valeur, ce crit&egrave;re ne sera pas pris en compte dans la s&eacute;lection<br />';
 	switch ($topic) {
 	case "taxonomie":
@@ -1622,6 +1622,9 @@ function afficheSecteurs($donnees) {
 			} // end foreach
 			echo('</select>');
 			
+			// le bouton permettant de tout/rien selectionner
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'secteurs\',\'all\');" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'secteurs\',\'none\');" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			
 			// on affiche le lien permettant de passer a la selection temporelle
 			// on prepare l'url pour construire le lien : on enleve les secteurs eventuellement selectionnes
 			$url=$_SERVER["FULL_URL"];
@@ -1632,6 +1635,7 @@ function afficheSecteurs($donnees) {
 		afficheAide("secteurs");
 		echo('</div>');
 		break; // end case step=7
+		
 		// on a depasse cette etape, on affiche le resume textuel
 		case ($_GET["step"]>7):
 		echo('<div id="step_7">');
@@ -1702,6 +1706,8 @@ global $connectPPEAO;
 				echo('<option value="'.$campagne["id"].'" '.$selected.'>'.$campagne["pays"].':'.$campagne["systeme"].':'.$campagne["date_debut"].' au '.$campagne["date_fin"].' (n&ordm;'.$campagne["numero_campagne"].')</option>');
 			} // end foreach
 			echo('</select>');
+			// le bouton permettant de tout/rien selectionner
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'campagnes\',\'all\');" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'campagnes\',\'none\');" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			// on affiche le lien permettant de passer a la selection des engins de peche
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
@@ -1871,6 +1877,8 @@ global $connectPPEAO;
 				echo('<option value="'.$agglo["id"].'" '.$selected.'>('.$agglo["pays"].'/'.$agglo["systeme"].'/'.$agglo["secteur"].') '.$agglo["agglo"].'</option>');
 			} // end foreach
 			echo('</select>');
+			// le bouton permettant de tout/rien selectionner
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'agglo\',\'all\');" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'agglo\',\'none\');" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			// on affiche le lien permettant de passer au choix des filieres
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
@@ -1960,6 +1968,8 @@ global $connectPPEAO;
 				echo('<option value="'.$enquete["id"].'" '.$selected.'>'.$enquete["pays"].':'.$enquete["systeme"].':'.$enquete["secteur"].':'.$enquete["agglo"].':'.$enquete["annee"].'-'.number_pad($enquete["mois"],2).'</option>');
 			} // end foreach
 			echo('</select>');
+			// le bouton permettant de tout/rien selectionner
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'enquetes\',\'all\');" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'enquetes\',\'none\');" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			// on affiche le lien permettant de passer a la selection des grands types d'engins de peche
 			// on prepare l'url pour construire le lien : on enleve les enquetes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
@@ -2212,6 +2222,7 @@ function afficheSecteurs2() {
 				echo('<option value="'.$systeme2["id"].'" '.$selected.'>('.$systeme2["pays"].') '.$systeme2["systeme"].'</option>');
 			} // end foreach
 			echo('</select>');
+			
 			echo('</div>');
 			echo('<div class="level_div"> &gt; </div>');
 			
