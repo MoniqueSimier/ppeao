@@ -31,7 +31,7 @@ $labelArray=pg_fetch_all($labelResult);
 $label=$labelArray[0][$labelColumn];
 pg_free_result($labelResult);
 
-$theMessage.='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregistrement &quot;'.$label.'&quot; ('.$key.'="'.$record.'")</h1></div>';
+$theMessage.='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregistrement &quot;'.$label.'&quot; ('.$key.'="'.$record.'")</h1><br /></div>';
 
 	// on prépare le calcul du nombre total d'enregistrements supprimés
 	// d'abord on calcule le nombre total d'enregistrements dans les tables utilisateur
@@ -52,7 +52,7 @@ $theMessage.='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregis
 	
 	if ($success=='yes') {
 	// on renvoie un message positif
-	$theMessage.='<p>enregistrement &quot;'.$label.'&quot; ('.$key.'=&quot;'.$record.'&quot;) supprim&eacute; de la table "'.$table.'".</p>';
+	$theMessage.='<p>enregistrement &quot;'.$label.'&quot; ('.$key.'=&quot;'.$record.'&quot;) supprim&eacute; de la table "'.$table.'".</p><br />';
 	// et on fait un VACUUM ANALYZE de la base
 	$vacuumSql='VACUUM ANALYZE';
 	$vacuumResult=pg_query($connectPPEAO,$vacuumSql);
@@ -70,7 +70,7 @@ $theMessage.='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregis
 	
 	// on le signale si le résultat n'est pas nul ou negatif (bug...)
 	if ($deletedRows>=0) {
-	$theMessage.='<p>'.$deletedRows.' enregistrement(s) d&eacute;pendant(s) supprim&eacute;(s) au total.</p>';}
+	$theMessage.='<br /><p>'.$deletedRows.' enregistrement(s) d&eacute;pendant(s) supprim&eacute;(s) au total.</p>';}
 	
 	// on inscrit la suppression dans le journal
 	logWriteTo(1,'notice','enregistrement &quot;'.$label.'&quot; ('.$key.'=&quot;'.$record.'&quot;) supprim&eacute; de la table "'.$table.'" et '.$deletedRows.' enregistrement(s) d&eacute;pendant(s) supprim&eacute;(s) au total.',$deleteSql,'',0);

@@ -660,7 +660,7 @@ function modalDialogDeleteRecord(theLevel,theTable,theRecord) {
 		'class': "overlay_content"
 	}
 	);
-	theOverlayContent.innerHTML='<div align="center"><h1>supprimer l&#x27;enregistrement &quot;'+theRecord+'&quot;</h1><h2>recherche des enregistrements utilisant l&#x27;enregistrement &agrave; supprimer comme cl&eacute; &eacute;trang&egrave;re</h2></div>';
+	theOverlayContent.innerHTML='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregistrement &quot;'+theRecord+'&quot;</h1><h2>recherche des enregistrements utilisant l&#x27;enregistrement &agrave; supprimer comme cl&eacute; &eacute;trang&egrave;re</h2></div>';
 		
 	var theOverlayButtons= new  Element ('div', {
 		'id': "overlay_"+theLevel+"_buttons",
@@ -746,7 +746,7 @@ xhr.onreadystatechange = function(){
 		theDeleteButton.setStyle("visibility","hidden");
 		theCloseButton.setStyle("visibility","hidden");
 		// en attendant la réponse, on remplace les boutons d'enregistrement/annulation par un loader
-		theLoader.innerHTML='<h1>'+theTitle+'</h1><h2>suppression de l&#x27;enregistrement en cours</h2><img src="/assets/ajax-loader.gif" alt="suppression en cours..." title="suppression en cours..." valign="center"/>';
+		theLoader.innerHTML='<h1>'+theTitle+'</h1><h2>suppression de l&#x27;enregistrement en cours</h2><br /><p>merci de patienter</p><br /><img src="/assets/ajax-loader.gif" alt="suppression en cours..." title="suppression en cours..." valign="center"/>';
 		theOverlayContent.innerHTML='';
 	}
 	// only do something if the whole response has been received and the server says OK

@@ -36,7 +36,7 @@ pg_free_result($labelResult);
 // on détermine les enregistrements affectés par la suppression de l'enregistrement (on se limite au premier niveau de cascade)
 $affectedTables=countPrimaryKeyReferencedRows($connectPPEAO, $table,$key, $record);
 
-$theMessage.='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregistrement &quot;'.$label.'&quot; ('.$key.'=&quot;'.$record.'&quot;)</h1></div>';
+$theMessage.='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregistrement &quot;'.$label.'&quot; ('.$key.'=&quot;'.$record.'&quot;)</h1><br /></div>';
 
 // si on ne trouve aucun enregistrement affecté
 if (my_empty($affectedTables)) {
@@ -54,7 +54,7 @@ else {
 	}
 	$theMessage.='</ul>';
 
-$theMessage.='note : la suppression des enregistrements des tables mentionn&eacute;es ci-dessus pourra entra&icirc;ner &agrave; son tour la suppression d&#x27;autres enregistrements.';
+$theMessage.='<span class="error">note</span> La suppression des enregistrements des tables mentionn&eacute;es ci-dessus pourra entra&icirc;ner &agrave; son tour la suppression d&#x27;autres enregistrements : cela peut prendre un temps assez long si le nombre d&#x27;enregistrements &agrave; supprimer est important &ndash; ne pas fermer cette fen&ecirc;tre avant la fin.';
 }
 
 echo($theMessage);
