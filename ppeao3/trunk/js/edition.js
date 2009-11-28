@@ -466,7 +466,7 @@ function modalDialogAddRecord(theLevel,theTable) {
 			var theResponseText = xhr.responseText;
 			
 			// on affiche les champs de saisie pour le nouvel enregistrement
-			//debug			alert(theResponseText);
+			//debug						alert(theResponseText);
 			
 			theOverlayContent.innerHTML=theResponseText;
 			
@@ -904,7 +904,7 @@ function refreshAddSystemLink(type) {
 	var thePtag=$('add_systemes');
 		if ((systemesSelect.selectedIndex!=-1)) {
 		var theUrl='#';
-	var theLink='<a href="'+theUrl+'" onclick="javascript:droits_acces.submit();">autoriser '+typeString+' &agrave; consulter les donn&eacute;es de ce(s) syst&egrave;me(s) </a>';
+	var theLink='<a href="'+theUrl+'" onclick="javascript:droits_acces.submit();" class="next_step">autoriser '+typeString+' &agrave; consulter les donn&eacute;es de ce(s) syst&egrave;me(s) </a>';
 	// on met a jour le lien
 	thePtag.innerHTML=theLink;
 
