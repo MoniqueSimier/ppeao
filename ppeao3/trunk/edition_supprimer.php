@@ -242,7 +242,7 @@ foreach ($tableArray as $theRow) {
 	
 	
 	echo('<tr class="'.$rowStyle.'">');
-	echo('<td class="small"><a href="#" onclick="javascript:modalDialogDeleteUnite(1,\''.$domaine.'\',\''.$theRow["id"].'\')" class="small link_button">supprimer</a></td><td class="small">'.$theRow["pays"].'</td><td class="small">'.$theRow["systeme"].'</td><td class="small">'.$theRow["campagne"].'</td><td class="small">'.$theRow["numero_campagne"].'</td><td class="small">'.$theRow["date_debut"].'</td><td class="small">'.$theRow["date_fin"].'</td><td class="small">'.$coups.'</td>');
+	echo('<td class="small"><a href="#" onclick="javascript:modalDialogDeleteUnite(1,\''.$domaine.'\',\''.$theRow["id"].'\');return false;" class="small link_button">supprimer</a></td><td class="small">'.$theRow["pays"].'</td><td class="small">'.$theRow["systeme"].'</td><td class="small">'.$theRow["campagne"].'</td><td class="small">'.$theRow["numero_campagne"].'</td><td class="small">'.$theRow["date_debut"].'</td><td class="small">'.$theRow["date_fin"].'</td><td class="small">'.$coups.'</td>');
 	echo('</tr>');
 	$i++;
 	} //fin foreach $tableArray
@@ -302,7 +302,7 @@ if (!empty($landings)) {$landingsNombre=count($landings);} else {$landingsNombre
 	
 	
 	echo('<tr class="'.$rowStyle.'">');
-	echo('<td class="small"><a href="#" onclick="javascript:modalDialogDeleteUnite(1,\''.$domaine.'\',\''.$theRow["id"].'\')" class="small link_button">supprimer</a></td><td class="small">'.$theRow["pays"].'</td><td class="small">'.$theRow["systeme"].'</td><td class="small">'.$theRow["secteur"].'</td><td class="small">'.$theRow["agglomeration"].'</td><td class="small">'.$theRow["enquete"].'</td><td class="small">'.$theRow["annee"].'-'.$theRow["mois"].'</td><td class="small">'.$theRow["date_debut"].'</td><td class="small">'.$theRow["date_fin"].'</td><td class="small">'.$landingsNombre.'</td>');
+	echo('<td class="small"><a href="#" onclick="javascript:modalDialogDeleteUnite(1,\''.$domaine.'\',\''.$theRow["id"].'\');return false;" class="small link_button">supprimer</a></td><td class="small">'.$theRow["pays"].'</td><td class="small">'.$theRow["systeme"].'</td><td class="small">'.$theRow["secteur"].'</td><td class="small">'.$theRow["agglomeration"].'</td><td class="small">'.$theRow["enquete"].'</td><td class="small">'.$theRow["annee"].'-'.$theRow["mois"].'</td><td class="small">'.$theRow["date_debut"].'</td><td class="small">'.$theRow["date_fin"].'</td><td class="small">'.$landingsNombre.'</td>');
 	echo('</tr>');
 	$i++;
 	} //fin foreach $tableArray

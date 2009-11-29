@@ -266,7 +266,7 @@ if ($countTotal>$rowsPerPage) {
 	}
 
 ?>
-<h1>votre s&eacute;lection : <?php echo('"'.$tablesDefinitions[$editTable]["label"].'" '.$countTotal.' sur '.$countAllTotal.' '.$paginationString);?><span class="showHide"><a id="add_new_record" href="#" onclick="modalDialogAddRecord(1,'<?php echo($editTable) ?>');">[ajouter un enregistrement]</a></span></h1>
+<h1>votre s&eacute;lection : <?php echo('"'.$tablesDefinitions[$editTable]["label"].'" '.$countTotal.' sur '.$countAllTotal.' '.$paginationString);?><span class="showHide"><a id="add_new_record" href="#" onclick="modalDialogAddRecord(1,'<?php echo($editTable) ?>');return false;">[ajouter un enregistrement]</a></span></h1>
 <p class="hint small">aide : pour trier la table, cliquer sur un nom de colonne, cliquer &agrave; nouveau pour inverser l'ordre de tri; pour filtrer la table, saisissez ou choisissez une valeur et appuyez sur ENTR&Eacute;E (le filtrage est cumulatif et de type "commence par" : vous pouvez ajouter * au début de la valeur de filtre pour faire un "contient"); pour &eacute;diter une valeur, cliquer dessus.</p>
 <?php 
 // on affiche la table
@@ -323,7 +323,7 @@ echo('<tr id="the_filter">');
 		$unfilterUrl=removeQueryStringParam($unfilterUrl, 'f_'.$oneHead);}
 		
 
-echo('<td class="small tools"><div class="tools"><a href="'.$unfilterUrl.'" class="small link_button" title="cliquez pour remettre le filtre à zéro">effacer</a> <a href="#" onclick="javascript:filterTable(\''.$filterUrl.'\');" class="small link_button" title="cliquez pour filtrer la table">filtrer&nbsp;&gt; </a></div></td>');
+echo('<td class="small tools"><div class="tools"><a href="'.$unfilterUrl.'" class="small link_button" title="cliquez pour remettre le filtre à zéro">effacer</a> <a href="#" onclick="javascript:filterTable(\''.$filterUrl.'\');return false;" class="small link_button" title="cliquez pour filtrer la table">filtrer&nbsp;&gt; </a></div></td>');
 	
 foreach ($theHeads as $oneHead) {
 	// on enlève de l'url le paramètre de filtre correspondant à la colonne courante
@@ -352,7 +352,7 @@ if ($countTotal!=0) {
 		$id=$tablesDefinitions[$editTable]["id_col"];
 		echo('<tr id="row_'.$theRow[$id].'" class="'.$rowStyle.'">');
 			// la colonne d'outils
-			echo('<td class="small tools"><div class="tools"><a href="#" class="small link_button" onclick="javascript:modalDialogDeleteRecord(1,\''.$tablesDefinitions[$editTable]["table"].'\',\''.$theRow[$id].'\')">supprimer</a></div></td>');
+			echo('<td class="small tools"><div class="tools"><a href="#" class="small link_button" onclick="javascript:modalDialogDeleteRecord(1,\''.$tablesDefinitions[$editTable]["table"].'\',\''.$theRow[$id].'\');return false;">supprimer</a></div></td>');
 			
 		
 			foreach ($theRow as $key=>$value) {

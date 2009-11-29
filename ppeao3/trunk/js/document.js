@@ -57,7 +57,7 @@ function modalDialogManagedoc(theLevel,theDocument,theAction) {
 	}
 	); 
 	
-	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\')" class="small link_button">fermer</a>';
+	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\');return false;" class="small link_button">fermer</a>';
 	
 	
 	theOverlay.injectInside($E('body'));

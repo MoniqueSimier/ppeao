@@ -248,7 +248,7 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 			$theSelect.='</p>';
 			// lien pour ajouter un enregistrement
 			$theSelect.='<p id="addlink_'.$level.'" class="edit_link">';
-			$theSelect.='<a id="ajouter_'.$level.'" class="link_button" href="#" onclick="modalDialogAddRecord(1,\''.$theTable.'\')">';
+			$theSelect.='<a id="ajouter_'.$level.'" class="link_button" href="#" onclick="modalDialogAddRecord(1,\''.$theTable.'\');return false">';
 			$theSelect.='ajouter un enregistrement';
 			$theSelect.='</a>';
 			$theSelect.='</p>';
@@ -449,7 +449,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 								}
 						$theField.='</select></div>';
 					break;
-					case 'display' : $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
+					case 'display' : $theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');return false;">'.$value.'</div>';
 					break;
 					case 'add':
 					case 'edit': $theField='<div class="filter"><select '.$tabIndex.' id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'">';
@@ -578,7 +578,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 					else {
 						$theDisplayValue='';
 					}
-					$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquer pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$theDisplayValue.'</div>';
+					$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquer pour &eacute;diter cette valeur" onclick="javascript:makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');return false;">'.$theDisplayValue.'</div>';
 					break;
 
 					case 'filter':
@@ -907,7 +907,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 				case 'boolean':
 				if (my_empty($value)) {$value='f';};
 				if ($value=='t' || $value=='oui' || $value=="true" || $value=="TRUE") {$value='oui';} else {$value='non';};
-				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
+				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');return false;">'.$value.'</div>';
 				break;
 				
 				// cas d'un mot de passe (data_type défini "à la main", n'existe pas sous postgresql)
@@ -918,13 +918,13 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 				else {$value="changer le mot de passe";};
 				// dans tous les cas, on crée un nouveau mot de passe, donc on passe une valeur vide au javascript
 				$valueJS="";
-				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour d&eacute;finir un nouveau mot de passe" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.$value.'</div>';
+				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour d&eacute;finir un nouveau mot de passe" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');return false;">'.$value.'</div>';
 				break;
 				
 				// cas d'un champ stockant un chemin de fichier
 				case 'filepath':
 				if (my_empty($value)) {$value="";} 
-				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour choisir un nouveau fichier" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
+				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour choisir un nouveau fichier" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');return false;">'.nl2br($value).'</div>';
 				break;
 				
 				// le cas générique : on ne fait rien à la valeur
@@ -933,7 +933,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 				$valueJS=preg_replace("/\r?\n/", "\\n", addslashes($value));
 				$valueJS=htmlspecialchars($valueJS);
 				if (my_empty($value)) {$value="";} 
-				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');">'.nl2br($value).'</div>';
+				$theField='<div id="'.$theId.'" name="'.$theId.'" class="'.$theClass.'" title="cliquez pour &eacute;diter cette valeur" onclick="makeEditable(\''.$table.'\',\''.$column.'\',\''.$editRow.'\',\'edit\');return false;">'.nl2br($value).'</div>';
 				
 				// end debug
 				
@@ -1253,11 +1253,11 @@ global $connectPPEAO;
 			}
 			echo('</table>');
 			// l'aide
-		echo('<div class="hint clear"><span class="hint_label"><a href="#" onclick="toggleAide(\'aide_table_droits\')">aide &gt;&gt;</a></span><div class="hint_text" id="aide_table_droits" style="display:none;">');
+		echo('<div class="hint clear"><span class="hint_label"><a href="#" onclick="toggleAide(\'aide_table_droits\');return false;">aide &gt;&gt;</a></span><div class="hint_text" id="aide_table_droits" style="display:none;">');
 		echo('cocher une ou plusieurs case(s) pour donner acc&egrave;s &agrave; ce type de donn&eacute;es; si vous ne cochez aucune case, l&#x27;acc&egrave;s sera restreint aux donn&eacute;es historiques<br />PE : p&ecirc;ches exp&eacute;rimentales, PA : p&ecirc;ches artisanales, ST : statistiques de p&ecirc;che');
 		echo('</div></div>');
 		// les liens permettant d'enregistrer les droits ou d'annuler
-		echo('<p id ="droits_enregistrer" class="clear"><a href="#" onclick="javascript:enregistrerDroits();" class="next_step">enregistrer</a>&nbsp;&nbsp;<a href="" class="next_step">annuler</a></p>');
+		echo('<p id ="droits_enregistrer" class="clear"><a href="#" onclick="javascript:enregistrerDroits();return false;" class="next_step">enregistrer</a>&nbsp;&nbsp;<a href="" class="next_step">annuler</a></p>');
 
 		} else {
 			echo('<p>aucun droit d&eacute;fini pour le moment.</p>');

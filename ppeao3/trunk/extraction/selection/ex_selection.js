@@ -3,7 +3,9 @@ function goToNextStep(current_step,url) {
 	// url: l'url qui doit servir de base pour l'etape suivante
 	url=replaceQueryString(url,'step',current_step+1);
 	var theStepForm=document.getElementById("step_"+current_step+"_form");
-	var formValues=theStepForm.toQueryString();
+	//var formValues=theStepForm.toQueryString();
+	//stupid stupid IE... this does not work but the line below does... go figure!!!
+	var formValues=$("step_"+current_step+"_form").toQueryString();
 	if (formValues=='') {var separator='';} else {var separator='&';}
 	url=url+separator+formValues;
 	
@@ -31,7 +33,13 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 				theNewOptions = xhr.responseText;
 				// debug 	alert(theNewOptions);
 				// on remplace le contenu du <select id=systemes>  :
-				systemesSelect.innerHTML=theNewOptions;
+				//systemesSelect.innerHTML=theNewOptions; stupid stupid IE, it does not like this,
+				//instead we have to do the following:
+				var theSelect=systemesSelect.clone();
+				theSelect.innerHTML=theNewOptions;
+				systemesSelect.replaceWith(theSelect);
+				theSelect.update();
+				
 			;} // end if xhr.readyState == 4
 		} // end xhr.onreadystatechange
 	

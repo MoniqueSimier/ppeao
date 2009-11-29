@@ -194,7 +194,7 @@ else {
 		echo('</div>'); // end div choix_systemes
 
 
-		echo('<div class="hint clear"><span class="hint_label" style="display:block;padding-top:8px;"><a href="#" onclick="toggleAide(\'aide_systemes\')">aide &gt;&gt;</a></span><div class="hint_text" id="aide_systemes" style="display:none;">');
+		echo('<div class="hint clear"><span class="hint_label" style="display:block;padding-top:8px;"><a href="#" onclick="toggleAide(\'aide_systemes\');return false;">aide &gt;&gt;</a></span><div class="hint_text" id="aide_systemes" style="display:none;">');
 		echo('vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e<br />pour effectuer une s&eacute;lection continue, cliquez sur la premi&egrave;re valeur puis sur la derni&egrave;re valeur en maintenant la touche MAJ enfonc&eacute;e');
 		echo('</div></div>');
 		echo('<p class="clear" id="add_systemes"></p>');

@@ -140,7 +140,7 @@ function modalDialogDeleteUnite(theLevel,domaine,unite) {
 	}
 	); 
 	
-	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\')" class="small link_button">annuler</a>';
+	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\');return false;" class="small link_button">annuler</a>';
 	
 	
 	theOverlay.injectInside($E('body'));

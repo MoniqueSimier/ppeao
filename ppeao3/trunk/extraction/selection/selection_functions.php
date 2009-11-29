@@ -459,7 +459,7 @@ if ($_GET["exploit"]=="stats") {$peches='art';$exploit='stats';}
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
 // et on affiche "votre selection correspond a :"
 if ($_GET["step"]>1) {
-	$link='<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();" title="afficher ou masquer la selection" href="#">[modifier ma s&eacute;lection]</a></span>';
+	$link='<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();return false;" title="afficher ou masquer la selection" href="#">[modifier ma s&eacute;lection]</a></span>';
 	
 	$text='votre s&eacute;lection correspond &agrave; :';
 } else {
@@ -575,7 +575,7 @@ switch ($peches) {
 if ($filtrees["campagnes"] || $filtrees["enquetes"]) {
 		$compteur["filtrees"]=TRUE;
 		$texte.='<div id="infos_filtre">';
-		$texte.='<span class="showHide"><a href="#" onclick="javascript:toggleInfosFiltre();">[informations sur les donn&eacute;es auxquelles vous n&#x27;avez pas acc&egrave;s]</a></span>';
+		$texte.='<span class="showHide"><a href="#" onclick="javascript:toggleInfosFiltre();return false;">[informations sur les donn&eacute;es auxquelles vous n&#x27;avez pas acc&egrave;s]</a></span>';
 		$texte.='<div id="infos_filtre_contenu">';
 		$texte.='<p>vous n&#x27;avez pas acc&egrave;s aux donn&eacute;es suivantes pour la p&eacute;riode choisie :</p>';
 		$texte.='<ul>';
@@ -670,12 +670,12 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 			WHERE TRUE ';
 		$sql_systemes.=' AND art_periode_enquete.id IN ( 
 												\''.arrayToList($enquetes_ids,'\',\'','\'').')';
-		$sql_systemes.=')';										
+		$sql_systemes.=')))';										
 	} // end if !empty($enquetes_ids[0])
-	$sql_systemes.=')';
+	//$sql_systemes.=')';
 } // end if(!empty($campagnes_ids[0]) || !empty($enquetes_ids[0]))
 		
-	$sql_systemes.='))';
+	$sql_systemes.=')';
 	
 	//debug		echo($sql_systemes);
 	
@@ -786,7 +786,7 @@ return $edit_link;
 // affiche le texte d'aide a la selection selon l'etape actuelle
 function afficheAide($topic) {
 //$topic: le "theme" de l'etape de selection ("taxonomie", "geographie", "periode", "type_exploitation", "type_donnees", "exp", "art", "campagnes", "engins", "secteurs", "agglomerations", "periodes_enquete", "grands_types_engins", "type_stats", "stats_agglo", "stats_gen", "secteurs2", "filieres")
-$hint='<div class="hint clear"><span class="hint_label"><a href="#" onclick="toggleAide(\'aide_'.$topic.'\')">aide &gt;&gt;</a></span><div class="hint_text" id="aide_'.$topic.'" style="display:none;">';
+$hint='<div class="hint clear"><span class="hint_label"><a href="#" onclick="toggleAide(\'aide_'.$topic.'\');return false;">aide &gt;&gt;</a></span><div class="hint_text" id="aide_'.$topic.'" style="display:none;">';
 $hint_multiple='vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e<br />pour effectuer une s&eacute;lection continue, cliquez sur la premi&egrave;re valeur puis sur la derni&egrave;re valeur en maintenant la touche MAJ enfonc&eacute;e';
 $hint_empty='si vous ne choisissez aucune valeur, ce crit&egrave;re ne sera pas pris en compte dans la s&eacute;lection<br />';
 	switch ($topic) {
@@ -974,7 +974,7 @@ switch ($_GET["step"]) {
 	$url=$_SERVER["FULL_URL"];
 	$url=removeQueryStringParam($url,'familles\[\]');
 	$url=removeQueryStringParam($url,'especes\[\]');
-	echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(2,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection spatiale &gt;&gt;</a></p>');
+	echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(2,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection spatiale &gt;&gt;</a></p>');
 	// on affiche le texte d'aide
 	afficheAide("taxonomie");
 	echo('</div>');// end div id="step_2"
@@ -1092,7 +1092,9 @@ $sql_pays.=(')');
 			>');
 			foreach($array_pays as $pays) {
 				// si la valeur est dans l'url, on la selectionne
-				if (in_array($pays["id"],$_GET["pays"])) {$selected='selected="selected" ';} else {$selected='';}
+				$urlPays=array();
+				if (isset($_GET["pays"])) {$urlPays=$_GET["pays"];}
+				if (in_array($pays["id"],$urlPays)) {$selected='selected="selected" ';} else {$selected='';}
 				echo('<option value="'.$pays["id"].'" '.$selected.'>'.$pays["nom"].'</option>');
 			} // end foreach
 		echo('</select>');
@@ -1123,7 +1125,7 @@ $sql_pays.=(')');
 	$url=$_SERVER["FULL_URL"];
 	$url=removeQueryStringParam($url,'pays\[\]');
 	$url=removeQueryStringParam($url,'systemes\[\]');
-	echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(3,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection temporelle &gt;&gt;</a></p>');
+	echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(3,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection temporelle &gt;&gt;</a></p>');
 		// on affiche le texte d'aide
 	afficheAide("geographie");
 	echo('</div>'); // end div id=step_3
@@ -1346,7 +1348,7 @@ switch ($_GET["step"]) {
 	$url=removeQueryStringParam($url,'f_m');
 
 	if (!empty($_GET["f_m"])) {
-	echo('<p id="step_4_link"  class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(4,\''.$url.'\');">ajouter et choisir un type d&#x27;exploitation &gt;&gt;</a></p>');}
+	echo('<p id="step_4_link"  class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(4,\''.$url.'\');return false;">ajouter et choisir un type d&#x27;exploitation &gt;&gt;</a></p>');}
 	// on affiche le texte d'aide
 	afficheAide("periode");
 }
@@ -1623,13 +1625,13 @@ function afficheSecteurs($donnees) {
 			echo('</select>');
 			
 			// le bouton permettant de tout/rien selectionner
-			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'secteurs\',\'all\');" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'secteurs\',\'none\');" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'secteurs\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'secteurs\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			
 			// on affiche le lien permettant de passer a la selection temporelle
 			// on prepare l'url pour construire le lien : on enleve les secteurs eventuellement selectionnes
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'secteurs\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des '.$nextSelectionStep.'&gt;&gt;</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des '.$nextSelectionStep.'&gt;&gt;</a></p>');
 		echo('</form>');
 		// on affiche le texte d'aide
 		afficheAide("secteurs");
@@ -1707,12 +1709,12 @@ global $connectPPEAO;
 			} // end foreach
 			echo('</select>');
 			// le bouton permettant de tout/rien selectionner
-			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'campagnes\',\'all\');" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'campagnes\',\'none\');" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'campagnes\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'campagnes\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			// on affiche le lien permettant de passer a la selection des engins de peche
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'camp\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des engins de p&ecirc;che &gt;&gt;</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des engins de p&ecirc;che &gt;&gt;</a></p>');
 			echo('</form>');
 		// on affiche le texte d'aide
 		afficheAide("campagnes");
@@ -1792,7 +1794,7 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'eng\[\]');
-			echo('<p class="clear"><a href="#" class="last_step" onclick="javascript:goToNextStep(9,\''.$url.'\');">finaliser la s&eacute;lection...</a></p>');
+			echo('<p class="clear"><a href="#" class="last_step" onclick="javascript:goToNextStep(9,\''.$url.'\');return false;">finaliser la s&eacute;lection...</a></p>');
 			echo('</form>');
 		// on affiche le texte d'aide
 		afficheAide("engins");
@@ -1830,7 +1832,7 @@ if ($_GET["step"]>9) {
 	
 	$url='/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"];
 	
-	echo('<div id="choix_filiere" class="clear"><a id="link_filieres" href="#" class="last_step" onclick="javascript:goToChoixFilieres(\''.$url.'\');">choisir une fili&egrave;re d&#x27;exploitation...</a><br /><br />');
+	echo('<div id="choix_filiere" class="clear"><a id="link_filieres" href="#" class="last_step" onclick="javascript:goToChoixFilieres(\''.$url.'\');return false;">choisir une fili&egrave;re d&#x27;exploitation...</a><br /><br />');
 // on affiche le texte d'aide
 afficheAide("filieres");
 
@@ -1878,12 +1880,12 @@ global $connectPPEAO;
 			} // end foreach
 			echo('</select>');
 			// le bouton permettant de tout/rien selectionner
-			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'agglo\',\'all\');" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'agglo\',\'none\');" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'agglo\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'agglo\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			// on affiche le lien permettant de passer au choix des filieres
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'agglo\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');">ajouter et passer au choix des p&eacute;riodes d&#x27;enqu&ecirc;te &gt;&gt;</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');return false;">ajouter et passer au choix des p&eacute;riodes d&#x27;enqu&ecirc;te &gt;&gt;</a></p>');
 			echo('</form>');}
 			// sinon on demande a l'utilisateur de modifier sa selection
 			else {
@@ -1969,12 +1971,12 @@ global $connectPPEAO;
 			} // end foreach
 			echo('</select>');
 			// le bouton permettant de tout/rien selectionner
-			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'enquetes\',\'all\');" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'enquetes\',\'none\');" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'enquetes\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'enquetes\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			// on affiche le lien permettant de passer a la selection des grands types d'engins de peche
 			// on prepare l'url pour construire le lien : on enleve les enquetes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'enq\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(9,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins de p&ecirc;che &gt;&gt;</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(9,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins de p&ecirc;che &gt;&gt;</a></p>');
 			echo('</form>');
 			// on affiche le texte d'aide
 		afficheAide("periodes_enquete");
@@ -2055,7 +2057,7 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'gteng\[\]');
-			echo('<p class="clear"><a href="#" class="last_step" onclick="javascript:goToNextStep('.$theStep.',\''.$url.'\');">finaliser la s&eacute;lection...</a></p>');
+			echo('<p class="clear"><a href="#" class="last_step" onclick="javascript:goToNextStep('.$theStep.',\''.$url.'\');return false;">finaliser la s&eacute;lection...</a></p>');
 			echo('</form>');
 			// on affiche le texte d'aide
 		afficheAide("grands_types_engins");
@@ -2251,7 +2253,7 @@ function afficheSecteurs2() {
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'systemes2\[\]');
 			$url=removeQueryStringParam($url,'secteurs\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins &gt;&gt;</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins &gt;&gt;</a></p>');
 		echo('</form>');
 		echo('</div>');
 		break; // end case step=7
@@ -2674,7 +2676,7 @@ if ($documents) {
 	}
 	echo('<div id="metadata">');
 		echo('<h2>des documents descriptifs sont disponibles pour les donn&eacute;es que vous avez s&eacute;lectionn&eacute;es</h2>');
-		echo('<span class="showHide"><a href="#" onclick="javascript:toggleMetadataList();">[afficher les documents disponibles]</a></span>');
+		echo('<span class="showHide"><a href="#" onclick="javascript:toggleMetadataList();return false;">[afficher les documents disponibles]</a></span>');
 		echo('<div id="metadataList">');
 		echo('<form id="metadataForm">');
 			echo('<p>cochez les cases en regard des documents qui vous int&eacute;ressent : ceux-ci seront ajout&eacute;s &agrave; l&#x27;archive t&eacute;l&eacute;chargeable contenant vos donn&eacute;es</p>');

@@ -45,7 +45,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
 if (isset($_GET["step"])) {$step=$_GET["step"];} else {$step=0;}
 if ($step>1) {
-	echo('<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();" title="afficher ou masquer la selection" href="#">[modifier ma s&eacute;lection]</a></span>');
+	echo('<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();return false;" title="afficher ou masquer la selection" href="#">[modifier ma s&eacute;lection]</a></span>');
 }
 ?>
 </h1>
@@ -191,14 +191,16 @@ else {
 // le script pour afficher ou masquer la selection
 ?> 
 <script type="text/javascript" charset="utf-8">
-	var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
 	
+
+	var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
 	// si on passe une valeur de 1 du parametre d'url open, on affiche la selection precedente, sinon on la masque
 	if (gup('open')!=1) {mySlider.hide();}
 	// affiche ou masque le DIV contenant la selection precedente
 	function toggleSelection() {
 		mySlider.toggle() //toggle the slider up and down.
 	}
+
 </script>
 <?php 
 
@@ -214,6 +216,7 @@ echo('</div>');
 if (isset($compteur["filtrees"])) {
 	?>
 	<script type="text/javascript" charset="utf-8">
+	
 	var mySlider2 = new Fx.Slide('infos_filtre_contenu', {duration: 500});
 	mySlider2.hide();
 	// affiche ou masque le DIV contenant la selection precedente

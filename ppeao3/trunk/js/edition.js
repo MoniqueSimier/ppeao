@@ -444,7 +444,7 @@ function modalDialogAddRecord(theLevel,theTable) {
 	}
 	); 
 	
-	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\')" class="small link_button">annuler</a>';
+	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\');return false;" class="small link_button">annuler</a>';
 	
 	
 	theOverlay.injectInside($E('body'));
@@ -674,7 +674,7 @@ function modalDialogDeleteRecord(theLevel,theTable,theRecord) {
 	}
 	); 
 	
-	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\')" class="small link_button">annuler</a>';
+	theOverlayButtons.innerHTML='<a id="overlay_'+theLevel+'_close" href="#" onclick="javascript:modalDialogClose(\'overlay_'+theLevel+'\',\'\');return false;" class="small link_button">annuler</a>';
 	
 	
 	theOverlay.injectInside($E('body'));
@@ -904,7 +904,7 @@ function refreshAddSystemLink(type) {
 	var thePtag=$('add_systemes');
 		if ((systemesSelect.selectedIndex!=-1)) {
 		var theUrl='#';
-	var theLink='<a href="'+theUrl+'" onclick="javascript:droits_acces.submit();" class="next_step">autoriser '+typeString+' &agrave; consulter les donn&eacute;es de ce(s) syst&egrave;me(s) </a>';
+	var theLink='<a href="'+theUrl+'" onclick="javascript:droits_acces.submit();return false;" class="next_step">autoriser '+typeString+' &agrave; consulter les donn&eacute;es de ce(s) syst&egrave;me(s) </a>';
 	// on met a jour le lien
 	thePtag.innerHTML=theLink;
 
