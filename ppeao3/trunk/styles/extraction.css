@@ -275,6 +275,15 @@ visibility:hidden;
 	text-align:left;
 	vertical-align:top;
 }
+#Reginfo{
+	background-color: #cccccc;
+}
+#zonetrav{
+	padding:5px;
+	font-size:75%;
+	text-align:left;
+	vertical-align:top;
+}
 #affresultat{
 	background-color: #f9f5cc;
 }
@@ -316,8 +325,7 @@ visibility:hidden;
 #filEncoursText {
 }
 #infoSuppReg{
-	font-size:70%;
-	font-style:italic;
+	font-size:80%;
 }
 #exportFic{
 padding-top:20px;	
