@@ -15,7 +15,7 @@ $parsed=parse_url($_SESSION["selection_url"]);
 parse_str($parsed["query"],$selection);
 
 // on commence a produire le contenu de la selection en XML
-$xml='<?xml version="1.0" encoding="UTF-8"?>';
+$xml='<?xml version="1.0" encoding="ISO-8859-15"?>';
 $xml.='<selection>';
 
 // le type d'exploitation
