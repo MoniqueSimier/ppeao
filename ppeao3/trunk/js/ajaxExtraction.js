@@ -433,6 +433,25 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 				urlComp = urlComp + "&espAff="+	EspSelec;
 			}
 		}
+		// On doit garder les espces sélectionnées comme groupe à part entière
+		if (urlComp=="&affEsp=y&garder=y") {
+			// On recupere le numero du regroupement selectionné + la liste des especes selectionnées
+			var EspDispo = document.getElementById("especesDispo");
+			for (i=0;i<EspDispo.options.length;i++) {
+				if (EspDispo.options[i].selected) {
+					if (EspSelec == "") {
+						EspSelec = EspDispo.options[i].value;
+					} else {
+						EspSelec = EspSelec+","+EspDispo.options[i].value;
+					}
+				}
+			}
+			if (EspSelec=="") {
+				alert('Merci de sélectionner au moins une espèce');
+			} else {
+				urlComp = urlComp + "&garder=y&espAff="+	EspSelec;
+			}
+		}
 		EspaSupp= "";
 		if (urlComp=="&suppEsp=EC") {
 			// On recupere le numero du regroupement selectionné + la liste des especes selectionnées
@@ -572,6 +591,25 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 				urlComp = urlComp + "&espAff="+	EspSelec;
 			}
 		}
+		// On doit garder les espces sélectionnées comme groupe à part entière
+		if (urlComp=="&affEsp=y&garder=y") {
+			// On recupere le numero du regroupement selectionné + la liste des especes selectionnées
+			var EspDispo = document.getElementById("especesDispo");
+			for (i=0;i<EspDispo.options.length;i++) {
+				if (EspDispo.options[i].selected) {
+					if (EspSelec == "") {
+						EspSelec = EspDispo.options[i].value;
+					} else {
+						EspSelec = EspSelec+","+EspDispo.options[i].value;
+					}
+				}
+			}
+			if (EspSelec=="") {
+				alert('Merci de sélectionner au moins une espèce');
+			} else {
+				urlComp = urlComp + "&garder=y&espAff="+	EspSelec;
+			}
+		}	
 		EspaSupp= "";
 		if (urlComp=="&suppEsp=EC") {
 			// On recupere le numero du regroupement selectionné + la liste des especes selectionnées

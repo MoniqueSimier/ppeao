@@ -1668,7 +1668,7 @@ function AfficherDonnees($file,$typeAction){
 
 				}
 			} else {
-				creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpComp);
+				creeFichier($SQLfinalFichier,$listeChamps,$typeAction,$ConstIDunique,$ExpComp);
 			}
 			// Export des selections et regroupements dans des fichiers separes
 			
@@ -1887,7 +1887,8 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 					for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
 						$NbReg2 = count($_SESSION['listeRegroup'][$cptR]);
 						for ($cptR2=2 ; $cptR2<=$NbReg2;$cptR2++) {
-							if ($_SESSION['listeRegroup'][$cptR][$cptR2] == $espEnCours) {
+							$infoEsp = explode("&#&",$_SESSION['listeRegroup'][$cptR][$cptR2]);
+							if ($infoEsp[0] == $espEnCours) {
 								$RegTrouve = true;
 								$infoReg = explode("&#&",$_SESSION['listeRegroup'][$cptR][1]);
 								$RegEnCours = $infoReg[0];
@@ -2438,6 +2439,9 @@ function AfficheEspeces($SQLEspeces,$ListeEsp,$changtAction,$typePeche,$typeActi
 // AfficheColonnes : Fonction pour afficher les tables / colonnes a selectionner par type de peche
 function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEsp,$RegEncours,$CreeReg) {
 // Cette fonction permet de gerer les regroupements d'especes
+// On crée un variable de session contenant un tableau multidimensionnel
+// pour un regroupement, la colonne O contient le code et le libelle (separé par &#&), et enfin, les colonnes >1 contiennent
+// les especes pour ce regroupement
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
 // $SQLespeces : le SQL contenant les especes sélectionnées
@@ -2451,9 +2455,8 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 	global $pasdefichier;
 	global $RegroupPourFic;
 	if (!(isset($_SESSION['listeRegroup']))) {
-		$_SESSION['listeRegroup'] = "";					  
+		$_SESSION['listeRegroup'] = "";	
 	}
-	//echo "Reg en cours = ".$RegEncours." creer reg = ".$CreeReg." nbr Reg = ".count($_SESSION['listeRegroup'])."<br/>";
 	$ulrComp="";
 	$info = "";
 	// Reinitialisation des variables d'affichage
@@ -2468,6 +2471,7 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 		$RegEncours = 1;					  
 	}
 	// Selon le type de peches, la fonction Js n'est pas la meme.
+	//$tableaudebug = print_r($_SESSION['listeRegroup']);
 	
 	switch ($typePeche) {
 		case "artisanale" :
@@ -2534,19 +2538,57 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 		}
 	}
 	// Gestion de l'ajout d'espèces dans un groupe
+	// Ou création d'un groupe pour cette espece unique (garder=y)
+	$garderEsp = "";
+	if (isset($_GET['garder'])) {
+		$garderEsp =$_GET['garder'];
+	}
 	if (isset($_GET['affEsp'])) {
 		if( $_GET['affEsp']=="y") {
 			if (isset($_GET['espAff'])) {
 				$EspAAffecter = $_GET['espAff'];
 				//echo "liste a ajouter = ".$EspAAffecter."<br/>";
 				$ListeEsp = explode(",",$EspAAffecter);
-				$nbListEsp = count($ListeEsp);
-				$derEsp = intval(count($_SESSION['listeRegroup'][$RegEncours]))-1;
+				$nbListEsp = count($ListeEsp);	
+				if (!($_SESSION['listeRegroup'] == "")) {
+					$derEsp = intval(count($_SESSION['listeRegroup'][$RegEncours]))-1;
+				} else {
+					$derEsp = 1;
+				}
 				for ($cptEsp=0 ; $cptEsp<$nbListEsp;$cptEsp++) {
-					$rangEsp = intval($cptEsp+2+$derEsp); // le + 2 indique qu'on commence au rang 1 et que le rang 1 est déjà pris par le nom du regroupement
-					$_SESSION['listeRegroup'][$RegEncours][$rangEsp] = $ListeEsp[$cptEsp];
-					$infoReg = explode("&#&",$_SESSION['listeRegroup'][$RegEncours][1]);
-					$info ="les esp&egrave;ces ".$EspAAffecter." ont &eacute;t&eacute; ajout&eacute;es au regroupement ".$infoReg[1];
+					$SQLReg = "select id,libelle from ref_espece where id = '".$ListeEsp[$cptEsp]."'";	
+					$SQLRegResult = pg_query($connectPPEAO,$SQLReg);
+					$erreurSQL = pg_last_error($connectPPEAO);
+					if ( !$SQLRegResult ) {
+						echo "erreur execution SQL pour ".$SQLReg." erreur complete = ".$erreurSQL."<br/>";
+					//erreur
+					} else { 
+						if (pg_num_rows($SQLRegResult) == 0) {
+
+						} else { 
+							// On n'a qu'une seule ligne en résultat.
+							$RegRow = pg_fetch_row($SQLRegResult);
+							if ($garderEsp == "") {
+								// On ajoute les especes au regroupement sélectionné						
+								$rangEsp = intval($cptEsp+2+$derEsp); // le + 2 indique qu'on commence au rang 1 et que le rang 1 est déjà pris par le nom du regroupement
+								$_SESSION['listeRegroup'][$RegEncours][$rangEsp] = $ListeEsp[$cptEsp]."&#&".$RegRow[1];
+								$infoReg = explode("&#&",$_SESSION['listeRegroup'][$RegEncours][1]);
+								$info ="les esp&egrave;ces ".$EspAAffecter." ont &eacute;t&eacute; ajout&eacute;es au regroupement ".$infoReg[1];
+							} else {
+								// On crée un regroupement par espece. On récupère le libellé
+								if (!($_SESSION['listeRegroup'] == "")) {
+									$rangNvReg = count($_SESSION['listeRegroup']) + 1;
+								} else {
+									$rangNvReg = 1;
+								}
+								$_SESSION['listeRegroup'][$rangNvReg][1]=$RegRow[0]."&#&".$RegRow[1];
+								$_SESSION['listeRegroup'][$rangNvReg][2]=$RegRow[0]."&#&".$RegRow[1];
+								$info .="Regroupement espece unique n&deg;".$rangNvReg." ".$RegRow[1]." (".$RegRow[0].") ajout&eacute;<br/>";
+								$RegEncours = $rangNvReg;
+							}
+						}		
+					}
+					pg_free_result($SQLRegResult);
 				}
 			} 
 		}
@@ -2571,8 +2613,14 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 				// On a déjà travaillé sur ce regroupement, le libelle etait vide, on precharge le code deja saisi
 				$nvCodeReg = $_GET['codeEC'];
 			}
-			$nouveauRegroupement = "nouveau regroupement<br/>code&nbsp;<input id=\"codeReg\" title=\"code du regroupement\" type=\"textbox\" maxlength=\"3\" size=\"3\" value=\"".$nvCodeReg."\"/><br/>nom&nbsp;&nbsp;<input id=\"nomReg\" type=\"textbox\" title=\"nom du regroupement\" value=\"".$nvNomReg."\"/><br/>";
-			$nouveauRegroupement .= "<a href=\"#\" onClick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','".$ulrComp."')\">cr&eacute;er regroupement</a>"; 
+			$nouveauRegroupement = "<b>cr&eacute;er un nouveau regroupement</b>
+			<table id=\"CreeReg\">
+				<tr><td>code&nbsp;</td><td><input id=\"codeReg\" title=\"code du regroupement\" type=\"textbox\" maxlength=\"3\" size=\"3\" value=\"".$nvCodeReg."\"/></td><tr>
+				<tr><td>nom&nbsp;&nbsp;</td><td><input id=\"nomReg\" type=\"textbox\" title=\"nom du regroupement\" value=\"".$nvNomReg."\"/></td><tr>
+				<tr><td colspan=\"2\">";
+			$nouveauRegroupement .= "<a href=\"#\" onClick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','".$ulrComp."')\">cr&eacute;er regroupement</a> - <a href=\"#\" onClick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','')\">annuler</a></td></tr>
+			</table>";
+
 			break;
 		case "f" : 
 			// Creation effective du nouveau regroupement
@@ -2678,9 +2726,9 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 	// Fin des différentes actions
 	
 	// On construit les différentes options
-	// **** contruction du select pour les espèces disponible.
-	// Especes disponibles
+	// **** contruction du select pour les espèces disponibles à la sélection.
 	$labelEspDispo = "esp&egrave;ces disponible &agrave; la s&eacute;lection";
+	$libGarderEsp = ""; // permet de gérer des boutons pour selectionner des especes et en créer directement des groupes
 	$SQLReg = "select id,libelle from ref_espece where id in (".$SQLEspeces.") order by libelle";	
 	$SQLRegResult = pg_query($connectPPEAO,$SQLReg);
 	$erreurSQL = pg_last_error($connectPPEAO);
@@ -2701,12 +2749,11 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 					} 
 				} else {
 					$pasAjoutEsp = false;
-					// On regarde si l'espece est déja dans un groupe. Si oui, on le l'affiche pas.
+					// On regarde si l'espece est déja dans un groupe. Si oui, on ne l'affiche pas.
 					$NbReg = count($_SESSION['listeRegroup']);
 					for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
 						$NbReg2 = count($_SESSION['listeRegroup'][$cptR]);
 						for ($cptR2=2 ; $cptR2<=$NbReg2;$cptR2++) {
-							//echo $cptR.$cptR."-".$_SESSION['listeRegroup'][$cptR][$cptR]." ";
 							if ($_SESSION['listeRegroup'][$cptR][$cptR2] == $RegRow[0]) {
 								$pasAjoutEsp = true;
 							}
@@ -2718,14 +2765,14 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 					}
 				}
 			}
+			$libGarderEsp = "<a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&affEsp=y&garder=y')\" title=\"garder les esp&egrave;ces s&eacute;lectionn&eacute;es comme groupe\">garder ces esp&egrave;ces </a>";
 		}
 	}
-	
 	pg_free_result($SQLRegResult);
+	// Fin de la liste des especes disponible à la sélection
 	
-	// **** contruction du select pour les regrouepements disponibles.
-	// Regroupement
-	if ($_SESSION['listeRegroup'] =="" ) {
+	// **** contruction du select pour les regroupements disponibles.
+	if ($_SESSION['listeRegroup'] == "" ) {
 		$NbReg = 0;
 		$labelRegroup = "aucun regroupement cr&eacute;&eacute;";
 	} else {
@@ -2733,7 +2780,7 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 		$labelRegroup = $NbReg." regroupements disponibles";
 	}
 	// Le onlclick sur le regroupement permet d'afficher les especes de ce regroupement
-	$OptionRegroup ="Liste des regroupements<br/><select id=\"Regroupement\" class=\"level_select\" size=\"10\" style=\"min-width: 10em;\" name=\"Regroupement\"> \">";
+	$OptionRegroup ="liste des regroupements<br/><select id=\"Regroupement\" class=\"level_select\" size=\"10\" style=\"min-width: 10em;\" name=\"Regroupement\"> \">";
 	// Remplissage de la liste des regroupements
 	if ($NbReg > 0) {
 		for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
@@ -2746,47 +2793,44 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 			$OptionRegroup .= "<option value=\"".$cptR."\" ".$selected." onClick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&regRec=change') \">".$infoReg[1]."</option>";
 		}
 	} else {
-	$OptionRegroup .= "<option disabled=\"disabled\">pas de regroupement disponible</option>";
+		$OptionRegroup .= "<option disabled=\"disabled\">pas de regroupement disponible</option>";
 	}
 	$OptionRegroup .="</select><br/>";
-	$OptionRegroup .=$labelRegroup."<br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=y')\" title=\"ajouter un regroupement\">ajouter </a><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppReg=EC')\" title=\"supprimer le regroupement\">supprimer </a> <br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppReg=tout')\" title=\"supprimer tous les regroupements\">supprimer tous les regroupements</a> <br/>";
+	// Ajout des options de création / suppression
+	$OptionRegroup .=$labelRegroup."<br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&nvReg=y')\" title=\"ajouter un regroupement\">ajouter</a> - <a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppReg=EC')\" title=\"supprimer le regroupement\">supprimer </a> <br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppReg=tout')\" title=\"supprimer tous les regroupements\">supprimer tous les regroupements</a> <br/>";
 	
 	// **** contruction du select pour afficher le contenu du regroupement en cours.	
-	// contenu du regroupement
 	$selectionComp="";
 	$OptionRegroupCont ="liste des esp&egrave;ces /regroupement<br/><select id=\"Regroupcontenu\" class=\"level_select\" multiple=\"multiple\" style=\"min-width: 10em;\" size=\"10\" name=\"Regroupcontenu\">";
-	if ($_SESSION['listeRegroup'] =="" ) {
-		$NbReg = 0;
-		//$labelListeRegroupt=$nouveauRegroupement;//nouveauRegroupement = la zone de saisie pour le nouveau groupement
-		$labelListeRegroupt="Pas d'esp&egrave;ces pour ce regroupement";
-	} else {
-		$NbReg = count($_SESSION['listeRegroup']);
-		$labelListeRegroupt=$NbReg." esp&egrave;ces pour le regroupement s&eacute;lectionn&eacute";
-	}
+	$labelListeRegroupt="";
 	// Remplissage des especes pour ce groupement
-	if ($NbReg > 0 ) {;
+	if ($NbReg > 0 ) {
 		for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
 			if ($RegEncours == $cptR) {
 				$NbReg2 = count($_SESSION['listeRegroup'][$cptR]);
-				if ($NbReg2 >=3) {
+		
+				if ($NbReg2 >=2) {
 					for ($cptR2=2 ; $cptR2<=$NbReg2;$cptR2++) {
-						$OptionRegroupCont .= "<option value=\"".$_SESSION['listeRegroup'][$cptR][$cptR2]."\">".$_SESSION['listeRegroup'][$cptR][$cptR2]."</option>";
-						$selectionComp = "<br/>".$labelListeRegroupt."<br/> supprimer <a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=EC')\" title=\"supprimer l'esp&egrave;ce s&eacute;lectionn&eacute;e\">s&eacute;lection</a> - <a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=tout')\" title=\"supprimer toutes les esp&egrave;ces\">tout</a> <br/>";
+						$nbrEspeceReg = $cptR2- 1;
+						$infoEsp = explode("&#&",$_SESSION['listeRegroup'][$cptR][$cptR2]);
+						$OptionRegroupCont .= "<option value=\"".$_SESSION['listeRegroup'][$cptR][$cptR2]."\">".$infoEsp[1]."</option>";
 					}
+					$selectionComp = "<br/>".$nbrEspeceReg." esp&egrave;ces pour le regroupement s&eacute;lectionn&eacute<br/> supprimer : <a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=EC')\" title=\"supprimer l'esp&egrave;ce s&eacute;lectionn&eacute;e\">s&eacute;lection</a> - <a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=tout')\" title=\"supprimer toutes les esp&egrave;ces\">tout</a> <br/>";
 					break;
 				} else {
 					$OptionRegroupCont .= "<option disabled=\"disabled\">pas d'esp&egrave;ces associ&eacute;es</option>";
-					$selectionComp = "<br/>".$labelListeRegroupt."<br/>s&eacute;lectionnez une esp&egrave;ce dans la <br/>premi&egrave;re colonne et cliquez sur --> pour l'affecter <br/>&agrave; ce regroupement";
+					$selectionComp = "<br/>Pas d'esp&egrave;ces pour ce regroupement";
+					$info .="s&eacute;lectionnez une esp&egrave;ce dans la troisi&egrave;me colonne et cliquez sur --> pour l'affecter &agrave; ce regroupement";
 					break;
 				}
 			}
 		}	
+	} else {
+		$OptionRegroupCont .= "<option disabled=\"disabled\">pas d'esp&egrave;ces associ&eacute;es</option>";
 	}
 	$OptionRegroupCont .="</select>".$selectionComp;
 	
-
-	// Fin de la gestion de la liste des regroupements.
-	
+	// **** Fin de la gestion de la liste des regroupements.
 	// Gestion des icones (quand il y en aura) pour deplacer une especes dans un regroupement ou l'enlever
 	if (!($info == "")) { 
 		$info = "<span id=\"infoSuppReg\">".$info."</span>";
@@ -2794,18 +2838,22 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 	if ($_SESSION['listeRegroup'] =="" ) {
 		$AffAffection="";
 	} else {
-		$AffAffection="<div id=\"gereAffectation\" class=\"level_div\"><br/><br/><br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&affEsp=y')\" title=\"ajouter l'espece au regroupement\"\><--</a><br/><br/><br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=EC')\" title=\"supprimer l'espece du regroupement\"\>--></a> </div>";
+		$AffAffection="<div id=\"gereAffectation\" class=\"level_div\"><br/><br/><br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&affEsp=y')\" title=\"ajouter l'esp&egrave;ce au regroupement\"\><--</a><br/><br/><br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=EC')\" title=\"supprimer l'esp&egrave;ce du regroupement\"\>--></a> </div>";
 	}
-		
+	// Enfin derniere etape,
 	// On construit l'affichage
+	// Les trois premiers div sont dans le meme bloc
+	// Premier div : contient la liste des especes disponibles
 	$AffListeEspecesDispo = "<div id=\"listeEspece\" class=\"level_div\">".$labelEspDispo."<br/>
 							<select id=\"especesDispo\" class=\"level_select\" multiple=\"multiple\" size=\"10\" name=\"especesDispo\">
-							".$OptionEspDispo."</select><br/>".$cptEsp." esp&egrave;ces disponibles ";
-	
-	$AffListeEspecesDispo .="</div>";
+							".$OptionEspDispo."</select><br/>".$cptEsp." esp&egrave;ces disponibles <br/>".$libGarderEsp."</div>";
+	// Deuxième div : contient la liste des regroupements
 	$AffListeRegroup = "<div id=\"Regroupt\" class=\"level_div\">".$OptionRegroup."</div>" ;
-	$AffListeRegroupCont = "<div id=\"listeRegroupt\" class=\"level_div\">".$OptionRegroupCont."</div>" ;						
+	// Troisieme div : contient la liste des especes pour le regroupement
+	$AffListeRegroupCont = "<div id=\"listeRegroupt\" class=\"level_div\">".$OptionRegroupCont."</div>" ;
+	// Construction de la ligne contenant les 3 divs (on peut changer l'ordre sans impacter sur la structure de chacun des div
 	$construitSelection .= "<br/>".$AffListeRegroup.$AffListeRegroupCont.$AffAffection.$AffListeEspecesDispo;
+	// Ligne suivante : affichage de la zone de travail et/ou des messages
 	if ( (!($info == "")) || (!( $nouveauRegroupement=="") )) {
 		$construitSelection .= "<div id=\"Reginfo\" class=\"clear \"><span id=\"Reginfogen\">".$info."</span><span id=\"zonetrav\">".$nouveauRegroupement."</span></div><br/>";
 	} else {

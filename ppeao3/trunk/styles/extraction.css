@@ -287,6 +287,10 @@ visibility:hidden;
 #affresultat{
 	background-color: #f9f5cc;
 }
+#gereAffectation{
+	padding:10px;
+
+}
 .edit_row_even {
 	font-size:75%;
 	background-color: transparent;
