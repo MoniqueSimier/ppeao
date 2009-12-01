@@ -20,7 +20,7 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 // liste_campagnes: un tableau contenant la liste des id des campagnes deja filtrees
 // liste_enquetes: un tableau contenant la liste des id des enquetes deja filtrees
 	var paysSelect=$("pays");
-	var systemesSelect=$("systemes");
+	var systemesDiv=$("systemes_div");
 	// si une valeur est sélectionnée
 	if ((paysSelect.selectedIndex!=-1)) {
 			//debug			alert('valeur sélectionnée');
@@ -30,15 +30,15 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 			// only do something if the whole response has been received and the server says OK
 			if(xhr.readyState == 4 && xhr.status == 200){
 				//on récupère la réponse du serveur (les <options> du select)
-				theNewOptions = xhr.responseText;
+				var theNewOptions = xhr.responseText;
 				// debug 	alert(theNewOptions);
 				// on remplace le contenu du <select id=systemes>  :
 				//systemesSelect.innerHTML=theNewOptions; stupid stupid IE, it does not like this,
-				//instead we have to do the following:
-				var theSelect=systemesSelect.clone();
-				theSelect.innerHTML=theNewOptions;
-				systemesSelect.replaceWith(theSelect);
-				theSelect.update();
+				//donc on doit generer le <select> et son contenu et le renvoyer via xhr:
+				
+				// on le peuple avec les <option>
+				systemesDiv.innerHTML=theNewOptions;
+
 				
 			;} // end if xhr.readyState == 4
 		} // end xhr.onreadystatechange
@@ -55,7 +55,7 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 	// else if no value is selected, we remove the next criteria select and update the edit link
 	else {
 		//debug		alert("plus de valeurs");
-		systemesSelect.innerHTML='';
+		systemesDiv.innerHTML='';
 		
 		;}
 }
@@ -144,21 +144,7 @@ function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
 					{$("div_f_m").innerHTML=theResponseText;}
 				// cas particulier: si on vient de choisir un mois de fin, on affiche le lien pour passer a la suite
 				if (selection=='f_m') {
-					if (!$("step_4_link")) {
-					var link= new Element('p', {
-						'events': {
-							'change':function() {
-								refreshPeriode('f_m','','','','');
-								}
-						},
-						'class':'clear',
-						'id':'step_4_link'
-					}
-					);
-					
-					link.injectInside($("step_4"));
-					link.innerHTML=theResponseText;
-					}
+					$("step_4_link").innerHTML=theResponseText;
 				}
 			;} // end if xhr.readyState == 4
 		} // end xhr.onreadystatechange
@@ -180,8 +166,12 @@ function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
 function goToChoixFilieres(url) {
 	// url: l'url qui doit servir de base pour l'etape suivante
 	if (document.getElementById("metadataForm")) {
-		theForm=document.getElementById("metadataForm")
-	var formValues=theForm.toQueryString();}
+	// stupid IE, this does not work
+	//theForm=document.getElementById("metadataForm")
+	//var formValues=theForm.toQueryString();
+	//but this does:
+	var formValues=$("metadataForm").toQueryString();
+	}
 	if (formValues=='') {var separator='';} else {var separator='&';}
 	url=url+separator+formValues;
 	

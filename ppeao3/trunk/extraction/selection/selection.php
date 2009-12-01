@@ -45,7 +45,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
 if (isset($_GET["step"])) {$step=$_GET["step"];} else {$step=0;}
 if ($step>1) {
-	echo('<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();return false;" title="afficher ou masquer la selection" href="#">[modifier ma s&eacute;lection]</a></span>');
+	echo('<span class="showHide"><a id="selection_precedente_toggle_haut" onclick="javascript:toggleSelection();return false;" title="afficher ou masquer la selection" href="#">[modifier ma s&eacute;lection]</a></span>');
 }
 ?>
 </h1>
@@ -184,8 +184,7 @@ else {
 	if ($_GET["step"]!='' && $_GET["step"]>4) {
 	echo('<div  class="alerte"><p class="error">vous devez &ecirc;tre connect&eacute; pour pouvoir poursuivre l&#x27;extraction des donn&eacute;es.<br /> si vous avez un compte, connectez-vous en utilisant le formulaire ci-dessus.</p>');
 		
-	echo('<p class="error">si vous n&#x27;avez pas de compte, vous pouvez en demander un en <a href="/contact.php">contactant les responsables du site</a
-	">.</p></div>');}
+	echo('<p class="error">si vous n&#x27;avez pas de compte, vous pouvez en demander un en <a href="/contact.php">contactant les responsables du site</a>.</p></div>');}
 }
 
 // le script pour afficher ou masquer la selection

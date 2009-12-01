@@ -28,7 +28,7 @@
 	border: 1px solid gray;
 }
 
-#selection_precedente_toggle {
+#selection_precedente_toggle_haut,  #selection_precedente_toggle_bas {
 	float:right;
 }
 

@@ -89,7 +89,7 @@ case "f_m":
 	$url=removeQueryStringParam($url,'d_m');
 	$url=removeQueryStringParam($url,'f_a');
 	$url=removeQueryStringParam($url,'f_m');
-	$responseText='<p id="step_4_link"  class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(4,\''.$url.'\');return false;">ajouter et choisir un type d&#x27;exploitation ...</a></p>';
+	$responseText='<a href="#" class="next_step" onclick="javascript:goToNextStep(4,\''.$url.'\');return false;">ajouter et choisir un type d&#x27;exploitation ...</a>';
 break;
 
 }

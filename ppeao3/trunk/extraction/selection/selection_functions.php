@@ -459,7 +459,7 @@ if ($_GET["exploit"]=="stats") {$peches='art';$exploit='stats';}
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
 // et on affiche "votre selection correspond a :"
 if ($_GET["step"]>1) {
-	$link='<span class="showHide"><a id="selection_precedente_toggle" onclick="javascript:toggleSelection();return false;" title="afficher ou masquer la selection" href="#">[modifier ma s&eacute;lection]</a></span>';
+	$link='<span class="showHide"><a id="selection_precedente_toggle_bas" onclick="javascript:toggleSelection();return false;" title="afficher ou masquer la selection" href="#">[modifier ma s&eacute;lection]</a></span>';
 	
 	$text='votre s&eacute;lection correspond &agrave; :';
 } else {
@@ -676,6 +676,7 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 } // end if(!empty($campagnes_ids[0]) || !empty($enquetes_ids[0]))
 		
 	$sql_systemes.=')';
+	$sql_systemes.=' ORDER BY ref_systeme.libelle';
 	
 	//debug		echo($sql_systemes);
 	
@@ -1105,19 +1106,20 @@ $sql_pays.=(')');
 		echo('<p>syst&egrave;mes</p>');
 		// si aucun pays n'est selectionne on affiche un select vide mais on doit definir
 		//if (empty($_GET["pays"])) {}
-		echo('<select id="systemes" name="systemes[]" size="10" multiple="multiple" class="level_select" style="min-width:10em">');
+		echo('<div id="systemes_div">');
 			// on n'affiche le contenu de ce select que si des valeurs de pays ont ete passees dans l'url
 			if (!empty($_GET["pays"])) {
-			
+			echo('<select id="systemes" name="systemes[]" size="10" multiple="multiple" class="level_select" style="min-width:10em">');
 			$array_systemes=listSelectSystemes($_GET["pays"],$campagnes_ids,$enquetes_ids);
 			foreach($array_systemes as $systeme) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($systeme["id"],$_GET["systemes"])) {$selected='selected="selected" ';} else {$selected='';}
 				echo('<option value="'.$systeme["id"].'" '.$selected.'>'.$systeme["libelle"].'</option>');
 			} // end foreach
-		}// fin de  if if (!empty($_GET["pays"]))
 		echo('</select>');
+		}// fin de  if if (!empty($_GET["pays"]))
 		
+		echo('</div>');
 		echo('</div>');
 	echo('</form>');
 	// on affiche le lien permettant de passer a la selection temporelle
@@ -1346,9 +1348,11 @@ switch ($_GET["step"]) {
 	$url=removeQueryStringParam($url,'d_m');
 	$url=removeQueryStringParam($url,'f_a');
 	$url=removeQueryStringParam($url,'f_m');
-
+	
+	echo('<p id="step_4_link"  class="clear">');
 	if (!empty($_GET["f_m"])) {
-	echo('<p id="step_4_link"  class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(4,\''.$url.'\');return false;">ajouter et choisir un type d&#x27;exploitation &gt;&gt;</a></p>');}
+	echo('<a href="#" class="next_step" onclick="javascript:goToNextStep(4,\''.$url.'\');return false;">ajouter et choisir un type d&#x27;exploitation &gt;&gt;</a>');}
+	echo('</p>');
 	// on affiche le texte d'aide
 	afficheAide("periode");
 }
@@ -1821,7 +1825,7 @@ global $connectPPEAO;
 		$_SESSION["selection_url"]=$_SERVER["FULL_URL"];
 		// le lien permettant d'editer la selection des campagnes
 		$edit_link=prepareSelectionEditLink(9);
-		echo('<p id="edit_campagnes" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection des engins de p&ecirc;che...</a></p>');
+		echo('<p id="edit_engins" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection des engins de p&ecirc;che...</a></p>');
 		break;
 	} // end switch step
 	
@@ -2651,6 +2655,7 @@ if (!empty($array_secteurs)) {
 } // if !empty $pays
 
 
+//debug echo('<pre>');print_r($meta_files);echo('</pre>');
 
 
 
@@ -2661,12 +2666,14 @@ if ($documents) {
 	$meta_docs=array();
 	$meta_maps=array();
 	$meta_figs=array();
+
+	
 	foreach ($meta_files as $file) {
 		switch($file["document"]["doc_type"]) {
 			case 'carte':
 				$meta_maps[]=$file;
 			break;
-			case 'doc':
+			case 'document':
 				$meta_docs[]=$file;
 			break;
 			case 'figure':
@@ -2674,6 +2681,7 @@ if ($documents) {
 			break;
 		}		
 	}
+		//debug 	echo('<pre>');print_r($meta_docs);echo('</pre>');
 	echo('<div id="metadata">');
 		echo('<h2>des documents descriptifs sont disponibles pour les donn&eacute;es que vous avez s&eacute;lectionn&eacute;es</h2>');
 		echo('<span class="showHide"><a href="#" onclick="javascript:toggleMetadataList();return false;">[afficher les documents disponibles]</a></span>');
@@ -2741,14 +2749,16 @@ if ($documents) {
 		mySlider3.toggle() //toggle the slider up and down.
 	}
 </script>');
-	echo('<script>
-    var myTips = new Tips($$(\'.toolTipSpan\'), {
+echo('</div>'); // div metadata
+
+
+echo('<script charset="utf-8" type="text/javascript">
+    window.onDomReady(function () {var myTips = new Tips($$(\'.toolTipSpan\'), {
         maxTitleChars: 30,   //I like my captions a little long
 		fixed: true
-    });
+    })});
 </script>
 ');
-	echo('</div>'); // div metadata
 	
 }
 }
