@@ -224,13 +224,15 @@ if (isset($_GET['action'])) {
 	$locSelection = AfficherSelection($file); 
 	$SelectionPourFic = $locSelection;
 	echo "<span class=\"showHide\">
-<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[modifier ma s&eacute;lection]</a></span>";
-	echo "<div id=\"selection_precedente\">".$locSelection."<br/>";
+<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier ma s&eacute;lection]</a></span>";
+	echo "<div id=\"selection_precedente\">";
 	if (!($_SESSION["selection_url"] =="")) {
-		echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >modifier la s&eacute;lection</a></span>";
-	}
+		echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."&amp;open=1\" >modifier la s&eacute;lection en cours...</a></span>";
+	}	
+	echo $locSelection."<br/>";
+
 	echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$typeAction."</span>"; 
-	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."\" >modifier la fili&egrave;re</a></span></div>";
+	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></div>";
 	echo "</div>";
 	AfficherDonnees($file,$typeAction);
 				
@@ -249,15 +251,16 @@ if (isset($_GET['action'])) {
 <?php 
 	echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li><b>".$compteurItem."</b> ".$labelSelection."</li>
 	<li><b>fili&egrave;re en cours</b> : <span id=\"filEncoursText\">".$typeAction."</span>"; 
-	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></li><li>";
+	echo "<span class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></li><li>";
 	if (!($restSupp=="")) {
 		echo "<b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp;
 	} 
-	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."&modiffil=y&action=".$typeAction."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li></ul></div>";
+	echo "<span class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."&modiffil=y&action=".$typeAction."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li></ul></div>";
 	if (!($exportFichier)) {	?>
 	<div id="exportFic2">
 	<input type="button" id="validation" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','','y','','','')" value="Exporter en fichier"/>
-<input type="hidden" id="ExpFic" checked="checked"/></div>			
+<input type="hidden" id="ExpFic" checked="checked"/></div>
+        <?php if ($EcrireLogComp) { echo"<input type=\"hidden\" id=\"logsupp\" checked=\"checked\"/>";} else {echo"<input type=\"hidden\" id=\"logsupp\" />";}	?>				
     </div>
 <?php } else {
 

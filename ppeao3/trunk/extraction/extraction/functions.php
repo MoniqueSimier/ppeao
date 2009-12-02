@@ -415,7 +415,7 @@ function AfficherDonnees($file,$typeAction){
 			//setting the zip options: write to disk, do not recurse directories, do not store path and do not compress
 			$theZipFile->set_options(array('inmemory' => 0, 'recurse' => 0, 'storepaths' => 0, 'method'=>0));			
 		}
-
+		
 		$resultatLecture .= "Le fichier de donn&eacute;es (Zip) est disponible <a href=\"".$zipFilelien."\" target=\"export\"/>ici</a>.<br/>";
 	} 	
 	// Analyse des paramètres communs
@@ -1195,14 +1195,8 @@ function AfficherDonnees($file,$typeAction){
 					}
 				} 
 				$WhereEsp = "afra.ref_espece_id in (".$SQLEspeces.") and ";
-
 			}
-			$choixSynthese = ""; // recupere le choix de la synthèse à extraire
-			if (isset($_GET['synth'])) {
-				$choixSynthese  = $_GET['synth'];
-			} else {
-				$choixSynthese  = "cap_tot"; // Par defaut le premier
-			}
+			$toutesColonnes = recupereTouteColonnes("statistiques",$typeStatistiques); // C'est juste pour charger le nom des alias dans la variable de session 
 			switch ($typeStatistiques) {
 				// *********************************************************************************
 				// STATISTIQUES PAR AGGLOMERATION
@@ -1238,15 +1232,17 @@ function AfficherDonnees($file,$typeAction){
 							$valueCount = "ast.id" ; // pour gerer la pagination
 							$builQuery = true;
 	
-							//art_stat_totale
+							// **** art_stat_totale
 							$listeChampsSpecast = ",ast.fm,ast.cap,ast.pue,ast.id";
 							$ListeTableSpecast = ",art_periode_enquete as penq, art_stat_totale as ast"; 
-							$WhereSpecast = " and ast.art_agglomeration_id = penq.art_agglomeration_id";						
-							//art_stat_sp
+							$WhereSpecast = " and ast.art_agglomeration_id = penq.art_agglomeration_id";
+							$ConstIDuniqueast = "AST-##-13";
+							// **** art_stat_sp
 							$listeChampsSpecasp = ",asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,ast.fm,ast.cap,ast.pue ,asp.id ,ast.id";
 							$ListeTableSpecasp = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp"; 
 							$WhereSpecasp = "	and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
 							$OrderComasp = ",asp.id asc";
+							$ConstIDuniqueasp = "AST-##-18";
 							// Gestion des positionnements pour les regroupements
 							$posDEBIDasp = 18 ; //position asp.id - 1 / Pour gestion regroupement
 							$posESPIDasp = 10 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
@@ -1254,32 +1250,35 @@ function AfficherDonnees($file,$typeAction){
 							$posStat1asp = 12 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
 							$posStat2asp = 13 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
 							$posStat3asp = 0 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
-							//art_taille_sp
+							// **** art_taille_sp
 							$listeChampsSpecats = ",asp.ref_espece_id,esp.libelle, asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id";
 							$ListeTableSpecats = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats,ref_espece as esp"; 
 							$WhereSpecats = " 	and ats.art_stat_sp_id = asp.id and
 													asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
+							$ConstIDuniqueats = "AST-##-17";
 							// Gestion des positionnements pour les regroupements
-							$posDEBIDats = 16 ; //position asp.id - 1 / Pour gestion regroupement
+							$posDEBIDats = 17 ; //position asp.id - 1 / Pour gestion regroupement
 							$posESPIDats = 10 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
 							$posESPNomats = 11 ; //position esp.libelle - 1 / Pour gestion regroupement
 							$posStat1ats = 12 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
 							$posStat2ats = 13 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
 							$posStat3ats = 14 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
-							//art_stat_gt	attgt
-							$listeChampsSpecasgt = ",asgt.fm_gt,asgt.cap_gt,asgt.pue_gt,asgt.id,ast.id,ast.id,asgt.art_grand_type_engin_id,gte.libelle";
+							// **** art_stat_gt	attgt
+							$listeChampsSpecasgt = ",asgt.fm_gt,asgt.cap_gt, asgt.pue_gt,asgt.id,ast.id,ast.id, asgt.art_grand_type_engin_id,gte.libelle";
 							$ListeTableSpecasgt = ",art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
 							$WhereSpecasgt = "	and asgt.art_stat_totale_id = ast.id 
-													and gte.id = 	asgt.art_grand_type_engin_id";	
-							//art_stat_gt_sp
+													and gte.id = 	asgt.art_grand_type_engin_id";
+							$ConstIDuniqueasgt = "AST-##-14";						
+							// **** art_stat_gt_sp
 							$listeChampsSpecattgt = ",attgt.ref_espece_id, esp.libelle,attgt.cap_gt_sp, attgt.pue_gt_sp, attgt.id, asgt.id, ast.id, ast.id,asgt.art_grand_type_engin_id,gte.libelle";
 							$ListeTableSpecattgt = ",art_periode_enquete as penq, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
 							$WhereSpecattgt = "	and attgt.art_stat_gt_id = asgt.id  
 													and asgt.art_stat_totale_id = ast.id 
 													and gte.id = asgt.art_grand_type_engin_id
 													and esp.id = attgt.ref_espece_id";
+							$ConstIDuniqueattgt = "AST-##-16";
 							// Gestion des positionnements pour les regroupements
-							$posDEBIDats = 14 ; //position asp.id - 1 / Pour gestion regroupement
+							$posDEBIDats = 16 ; //position asp.id - 1 / Pour gestion regroupement
 							$posESPIDats = 10 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
 							$posESPNomats = 11 ; //position esp.libelle - 1 / Pour gestion regroupement
 							$posStat1ats = 12 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
@@ -1293,8 +1292,9 @@ function AfficherDonnees($file,$typeAction){
 													and asgt.art_stat_totale_id = ast.id 
 													and gte.id = asgt.art_grand_type_engin_id
 													and esp.id = attgt.ref_espece_id";
+							$ConstIDuniqueatgts = "AST-##-19";
 							// Gestion des positionnements pour les regroupements
-							$posDEBIDgts = 16 ; //position atgts.id - 1 / Pour gestion regroupement
+							$posDEBIDgts = 19 ; //position atgts.id - 1 / Pour gestion regroupement
 							$posESPIDgts = 10 ; //position attgt.ref_espece_id - 1 / Pour gestion regroupement
 							$posESPNomgts = 11 ; //position esp.libelle - 1 / Pour gestion regroupement
 							$posStat1gts = 12 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
@@ -1489,7 +1489,7 @@ function AfficherDonnees($file,$typeAction){
 			} else {
 				// Si on ajoute un identifiant unique en debut de ligne, on l'indique dans la liste des champs.
 				if (!($ConstIDunique =="")) {
-					$listeChamps ="ID UNIQUE,".$listeChamps;
+					$listeChamps ="ID.UNIQUE,".$listeChamps;
 				}
 				if ($typeAction == "biologie") {
 					// On ajoute le libelle pour le coefficient
@@ -1654,21 +1654,29 @@ function AfficherDonnees($file,$typeAction){
 					}
 					$listeTableStatSp = "asp,ats,attgt,atgts";
 					if ( strpos($listeTableStatSp,$tableStat[$cptTS]) === false) {
-						creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat);
+						echo "pas d'especes:".$tableStat[$cptTS]."<br/>";
+						$ConstIDuniqueStat = "ConstIDunique".$tableStat[$cptTS];
+						$listeChamps ="ID.UNIQUE,".$listeChamps;
+						creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,true);
 					} else {
 						if (!($_SESSION['listeRegroup'] == "")) {
+							echo "avec d'especes et regroupement:".$tableStat[$cptTS]."<br/>";
 							$SQLfinal = "select * from temp_extraction where key4 = '".$tableStat[$cptTS]."' order by key1 asc,key2 asc,key3 asc";
 							$SQLcountfinal = "select count(*) from temp_extraction ";
 							$ConstIDunique = "AST-##-1";
-							creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat);
+							$listeChamps ="ID.UNIQUE,".$listeChamps;
+							creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false);
 						} else {
-							creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat);
+							echo "avec d'especes sans regroupement:".$tableStat[$cptTS]."<br/>";
+							$ConstIDuniqueStat = "ConstIDunique".$tableStat[$cptTS];
+							$listeChamps ="ID.UNIQUE,".$listeChamps;
+							creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,false);
 						}
 					}
 
 				}
 			} else {
-				creeFichier($SQLfinalFichier,$listeChamps,$typeAction,$ConstIDunique,$ExpComp);
+				creeFichier($SQLfinalFichier,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,false);
 			}
 			// Export des selections et regroupements dans des fichiers separes
 			
@@ -2007,10 +2015,9 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 	
 }
 
-
 //*********************************************************************
 // creeFichier : Fonction de creation d'un fichier a partir d'un SQL
-function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpComp) {
+function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,$pasTestReg) {
 // Cette fonction permet de creer un fichier a exporter a partir d'un SQL
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -2019,6 +2026,7 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 // $typeAction
 // $ConstIDunique
 // $ExpComp
+// $pasTestReg : si vrai, on ne teste pas les regroupements
 //*********************************************************************
 // En sortie : créé le fichier $ExpCom
 // La fonction met a jour $resultatLecture
@@ -2067,13 +2075,14 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 				// Ex $ConstIDunique = "DEB-##-11";
 				// On garde le prefixe DEB et on extrait l'index du champ a recuperer de la ligne du resultat de la requete. ici 11
 				$IDunique = "";
-				if (!($ConstIDunique =="")) {
+				if (!($ConstIDunique == "")) {
+								
 					$Locprefixe = substr($ConstIDunique,0,3); // Attention, pour des raisons de simplicité, le suffixe n'est que sur 3 caractères.
 					$locIndex = substr(strrchr($ConstIDunique, "-##-"),1);
 					$IDunique = $Locprefixe.$finalRow[$locIndex];
 					$resultatFichier .= $IDunique."\t";
 				}
-				if (!($_SESSION['listeRegroup'] == "")) {
+				if (!($_SESSION['listeRegroup'] == "") && (!($pasTestReg)) ) {
 					// Gestion des regroupements
 					// On doit récupérer la liste dans le champ valeur_ligne de la table temp_extraction
 					// et construire la ligne de resultat avec
@@ -2150,6 +2159,7 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 		}
 		pg_free_result($SQLfinalResult);	
 	} // fin du !$SQLfinalResult
+	fclose($ExpComp);
 }
 
 //*********************************************************************
@@ -2512,20 +2522,30 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 	if (isset($_GET['suppEsp'])) {
 		switch ($_GET['suppEsp']) {
 			case "tout":
-				$info ="tous les espèces ont &eacute;t&eacute; supprim&eacute;s pour le regroupement ";		
+					$nbListEsp = count($_SESSION['listeRegroup'][$RegEncours]);
+					for ($cptEsp=2 ; $cptEsp<=$nbListEsp;$cptEsp++) {
+						unset($_SESSION['listeRegroup'][$RegEncours][$cptEsp]);
+					}
+					// On reindexe le tableau.
+					reset($_SESSION['listeRegroup'][$RegEncours]);
+					$infoReg = explode("&#&",$_SESSION['listeRegroup'][$RegEncours][1]);
+					$info ="toutes les esp&egrave;ces ont &eacute;t&eacute; supprim&eacute;es du regroupement ".$infoReg[1];
 				break;
 			case "EC":
+			// Ca ne fonctionne pas comme ca devrait, il reste des blancs dans le tableau.
+			// Pour l'instant, pas accessible
 				if (isset($_GET['espasup'])) {
 					$espVraimentSup = "";
 					$EspAsupp = $_GET['espasup'];
 					//echo "liste a supp = ".$EspAsupp."<br/>";
 					$nbListEsp = count($_SESSION['listeRegroup'][$RegEncours]);
 					for ($cptEsp=2 ; $cptEsp<=$nbListEsp;$cptEsp++) {
-					//echo $nbListEsp." ".$cptEsp." ".$EspAsupp." ".$_SESSION['listeRegroup'][$RegEncours][$cptEsp]."<br/>";					
-						if (strpos($EspAsupp,$_SESSION['listeRegroup'][$RegEncours][$cptEsp]) === false) {
-						
+						//echo $nbListEsp." ".$cptEsp." ".$EspAsupp." ".$_SESSION['listeRegroup'][$RegEncours][$cptEsp]."<br/>";
+						$infoEsp = explode("&#&",$_SESSION['listeRegroup'][$RegEncours][$cptEsp]);
+						if (strpos($EspAsupp,$infoEsp[0]) === false) {
 						} else {
 							$_SESSION['listeRegroup'][$RegEncours][$cptEsp]="";
+							//unset($_SESSION['listeRegroup'][$RegEncours][$cptEsp]); doesn't work as wanted..
 							$espVraimentSup .= ",".$_SESSION['listeRegroup'][$RegEncours][$cptEsp];
 						}
 					}
@@ -2801,7 +2821,7 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 	
 	// **** contruction du select pour afficher le contenu du regroupement en cours.	
 	$selectionComp="";
-	$OptionRegroupCont ="liste des esp&egrave;ces /regroupement<br/><select id=\"Regroupcontenu\" class=\"level_select\" multiple=\"multiple\" style=\"min-width: 10em;\" size=\"10\" name=\"Regroupcontenu\">";
+	$OptionRegroupCont ="liste des esp&egrave;ces/regroupement<br/><select id=\"Regroupcontenu\" class=\"level_select\" multiple=\"multiple\" style=\"min-width: 10em;\" size=\"10\" name=\"Regroupcontenu\">";
 	$labelListeRegroupt="";
 	// Remplissage des especes pour ce groupement
 	if ($NbReg > 0 ) {
@@ -2813,14 +2833,15 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 					for ($cptR2=2 ; $cptR2<=$NbReg2;$cptR2++) {
 						$nbrEspeceReg = $cptR2- 1;
 						$infoEsp = explode("&#&",$_SESSION['listeRegroup'][$cptR][$cptR2]);
-						$OptionRegroupCont .= "<option value=\"".$_SESSION['listeRegroup'][$cptR][$cptR2]."\">".$infoEsp[1]."</option>";
+						$OptionRegroupCont .= "<option value=\"".$infoEsp[0]."\">".$infoEsp[1]."</option>";
 					}
-					$selectionComp = "<br/>".$nbrEspeceReg." esp&egrave;ces pour le regroupement s&eacute;lectionn&eacute<br/> supprimer : <a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=EC')\" title=\"supprimer l'esp&egrave;ce s&eacute;lectionn&eacute;e\">s&eacute;lection</a> - <a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=tout')\" title=\"supprimer toutes les esp&egrave;ces\">tout</a> <br/>";
+					//$selectionComp = "<br/>".$nbrEspeceReg." esp&egrave;ces pour le regroupement s&eacute;lectionn&eacute<br/> supprimer : <a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=EC')\" title=\"supprimer l'esp&egrave;ce s&eacute;lectionn&eacute;e\">s&eacute;lection</a> - <a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=tout')\" title=\"supprimer toutes les esp&egrave;ces\">tout</a> <br/>";
+					$selectionComp = "<br/>".$nbrEspeceReg." esp&egrave;ces pour le regroupement s&eacute;lectionn&eacute<br/><a href=\"#\" onclick=\"".$runfilieres."('".$typePeche."','".$typeAction."','".$numTab."','','n','','','','&suppEsp=tout')\" title=\"supprimer toutes les esp&egrave;ces\">supprimer toutes les esp&egrave;ces</a> <br/>";
 					break;
 				} else {
 					$OptionRegroupCont .= "<option disabled=\"disabled\">pas d'esp&egrave;ces associ&eacute;es</option>";
 					$selectionComp = "<br/>Pas d'esp&egrave;ces pour ce regroupement";
-					$info .="s&eacute;lectionnez une esp&egrave;ce dans la troisi&egrave;me colonne et cliquez sur --> pour l'affecter &agrave; ce regroupement";
+					$info .="s&eacute;lectionnez une esp&egrave;ce dans la troisi&egrave;me colonne et cliquez sur <-- pour l'affecter &agrave; ce regroupement";
 					break;
 				}
 			}
@@ -3400,7 +3421,7 @@ function remplaceAlias($listeDesChamps) {
 	$listeTitre = explode(",",$listeDesChamps);
 	$nbrTitre = count($listeTitre)-1;
 	for ($cptT=0 ; $cptT<=$nbrTitre;$cptT++) {
-		if ( $listeTitre[$cptT]=="ID UNIQUE" || $listeTitre[$cptT]=="Coeff_extrapolation") {
+		if ( $listeTitre[$cptT]=="ID.UNIQUE" || $listeTitre[$cptT]=="Coeff_extrapolation") {
 			if ($listeDesTitres == "") {
 				$listeDesTitres = $listeTitre[$cptT];
 			} else {

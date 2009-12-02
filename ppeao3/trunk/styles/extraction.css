@@ -276,7 +276,7 @@ visibility:hidden;
 	vertical-align:top;
 }
 #Reginfo{
-	background-color: #cccccc;
+	background-color: #eeebeb;
 }
 #zonetrav{
 	padding:5px;
@@ -316,8 +316,10 @@ visibility:hidden;
 }
 #changeSel{
 	text-align:right;
-	width:200px;
-	padding-left:50px;
+}
+.changeSel2{
+	text-align:right;
+	padding-left:10px;
 }
 #filEncours{
 	width:800px;

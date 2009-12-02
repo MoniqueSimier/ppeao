@@ -170,11 +170,13 @@ if (!(file_exists($file)) ) {
 				$labelSelection = "";
 				$locSelection = AfficherSelection($file,$typeAction); 
 				echo "<span class=\"showHide\">
-<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[modifier ma s&eacute;lection]</a></span>";
-				echo "<div id=\"selection_precedente\">".$locSelection;
+<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier ma s&eacute;lection]</a></span>";
+				echo "<div id=\"selection_precedente\">";
 				if (!($_SESSION["selection_url"] =="")) {
-					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."\" >modifier la s&eacute;lection en cours...</a></span>";
-				}
+					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."&amp;open=1\" >modifier la s&eacute;lection en cours...</a></span>";
+				}				
+				echo $locSelection;
+
 				echo "</div>";
 				AfficherDonnees($file,$typeAction);
 
