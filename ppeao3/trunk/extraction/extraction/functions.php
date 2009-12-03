@@ -2927,7 +2927,6 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	$inputNumDef = "";
 	$inputListeTable = "";
 	// Fichier à analyser
-	if ($TableEnCours == "") {$TableEnCours = "py";}
 	$TableATester = $TableEnCours;
 	$FiliereEnCours = $typeAction;
 	$TypePecheEnCours = $typePeche;

@@ -86,7 +86,7 @@ if (isset($_GET['CT'])) {
 if (isset($_GET['TEC'])) {
 	$codeTableEnCours = $_GET['TEC'];
 } else {
-	$codeTableEnCours = "py";
+	$codeTableEnCours = "Pays";
 }
 if (isset($_GET['Col'])) {
 	$ListeColRecues = $_GET['Col'];

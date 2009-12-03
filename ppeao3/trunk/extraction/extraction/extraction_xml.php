@@ -321,7 +321,7 @@ function startElementCol($parser, $name, $attrs){
 	global $TableATester ;
 	global $Filiere ;
 	global $FiliereEnCours ;
-	global $filiereOK ;
+	global $groupeOK ;
 	global $TableAAjouter;
 	global $RecupDonneesOK;
 	global $NumChampDef;
@@ -333,11 +333,40 @@ function startElementCol($parser, $name, $attrs){
 	global $logComp;
 	global $typeRecupTable;
 	global $ListeToutesValeurs;
+	global $Groupe;
+	global $GroupeEnCours;
+	global $ignoreGroupe;
+	global $TypePecheEnCours ;
 	array_push($stack,$name);
 	$continueTrait = true;
 	// Analyse de l'element et remplissage des variables
 	switch(strtoupper($name)) {
-	case "CHAMP":
+		case "GROUPE" :
+				if (array_key_exists("MULTI",$attrs)) {
+					// On indique par cet atribut qu'on devra prendre en compte une selection multiple par groupe
+					// ie un element peut etre affiché dans differents groupes, on ne se limite pas 
+					// au controle sur le groupe.
+					if ((strtoupper($attrs["FILIERE"]) == "TOUTES" || strtoupper($attrs["FILIERE"]) == strtoupper($FiliereEnCours)) &&
+						(strtoupper($attrs["TYPE"]) == "TOUT" || strtoupper($attrs["TYPE"]) == strtoupper($TypePecheEnCours))																									
+						) {
+						$groupeOK = true;
+					} else {
+						$groupeOK = false;
+					}
+					$ignoreGroupe = true;
+				} else {
+					if (!($groupeOK)) {
+						if ((strtoupper($attrs["FILIERE"]) == "TOUTES" || strtoupper($attrs["FILIERE"]) == strtoupper($FiliereEnCours)) &&
+							(strtoupper($attrs["TYPE"]) == "TOUT" || strtoupper($attrs["TYPE"]) == strtoupper($TypePecheEnCours))																									
+							) {
+							$groupeOK = true;
+						} 
+					}
+				}
+
+			break;
+	
+		case "CHAMP":
 			if ($RecupDonneesOK == true ) {
 				if (array_key_exists("FILIERE",$attrs)) {
 					// Cela veut dire qu'au niveau du champs, on a une restriction supplémentaire par rapport à la filière.
@@ -346,100 +375,103 @@ function startElementCol($parser, $name, $attrs){
 					// Si la filiere n'est pas dans la liste, on arrete
 						$continueTrait = false;
 					} 
+					
+				}
+				if ($ignoreGroupe) {
+					if (array_key_exists("GROUPE",$attrs)) {
+						// Cela veut dire qu'au niveau du champs, on a une restriction supplémentaire par rapport au groupe.
+						// On le teste.
+						if (strpos($attrs["GROUPE"],trim($TableATester)) === false) {
+						// Si le champ n'appartient pas au groupe, on ne le prend pas...
+							$continueTrait = false;
+						} 
+					}
 				}
 				if ($continueTrait){
-					//if ($attrs["AFFICHAGE"] =="X") {
-					//	if ($typeRecupTable == "un") {
-					//		$NumChampDef ++;
-					//		$ListeChampTableDef .= "<input id=\"".$idenTableEnCours."def".$NumChampDef."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" checked=\"checked\" disabled=\"disabled\"/>".$attrs["LIBELLE"]."<br/>";
-					//	}
-					//} else {
-						if ($typeRecupTable == "tout" && $TableAAjouter && $filiereOK) {
-							if (!($attrs["AFFICHAGE"] =="X")) {
-								$majOk = true;
-								// On recupère toutes les valeurs pour la ou les filieres autorisées
-								// On doit tester quand meme si une valeur a été décochée
-								if (!($_SESSION['listeColonne'] == "") ) {
-									$colRecues = explode (",",$_SESSION['listeColonne']);
-									$NumColR = count($colRecues) - 1;
-									for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
-										$valTest = substr($colRecues[$cptCR],0,-2);
-										// On teste si on a déjà coché cette colonne
-										if ($valTest == $idenTableEnCours."-".$attrs["CODE"]) {
-											if (strpos($colRecues[$cptCR],"-N") === false) {
-											} else {
-												// Soit on vient de la décocher suffixe = -N
-												$majOk = false;
-											}
-											break;
-										} 
-									}
-								} 
-								if ($majOk) {
-									if ( $ListeToutesValeurs == "") {
-										 $ListeToutesValeurs = $idenTableEnCours."-".$attrs["CODE"];
-									} else {
-										$ListeToutesValeurs .= ",".$idenTableEnCours."-".$attrs["CODE"];
-									}	
+					if ($typeRecupTable == "tout" && $TableAAjouter && $groupeOK) {
+						if (!($attrs["AFFICHAGE"] =="X")) {
+							$majOk = true;
+							// On recupère toutes les valeurs pour la ou les filieres autorisées
+							// On doit tester quand meme si une valeur a été décochée
+							if (!($_SESSION['listeColonne'] == "") ) {
+								$colRecues = explode (",",$_SESSION['listeColonne']);
+								$NumColR = count($colRecues) - 1;
+								for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
+									$valTest = substr($colRecues[$cptCR],0,-2);
+									// On teste si on a déjà coché cette colonne
+									if ($valTest == $idenTableEnCours."-".$attrs["CODE"]) {
+										if (strpos($colRecues[$cptCR],"-N") === false) {
+										} else {
+											// Soit on vient de la décocher suffixe = -N
+											$majOk = false;
+										}
+										break;
+									} 
 								}
+							} 
+							if ($majOk) {
+								if ( $ListeToutesValeurs == "") {
+									 $ListeToutesValeurs = $idenTableEnCours."-".$attrs["CODE"];
+								} else {
+									$ListeToutesValeurs .= ",".$idenTableEnCours."-".$attrs["CODE"];
+								}	
 							}
 						}
-						//echo $ListeToutesValeurs."<br/>";
-						// GEstion de l'afficha proprement dit
-						if ($typeRecupTable == "un") {
-							if ($attrs["AFFICHAGE"] =="X") {
-								if ($typeRecupTable == "un") {
-								$NumChampDef ++;
-								$testVal = $NumChampDef + $NumChampFac;
-								$str_testVal = strval ($testVal);
-								if (fmod($str_testVal,'7') == '0') {
-									$ListeChampTableFac .="</td><td class=\"colitem\">";
-								}
-								$ListeChampTableFac .= "<input id=\"".$idenTableEnCours."def".$NumChampDef."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" checked=\"checked\" disabled=\"disabled\"/>".$attrs["LIBELLE"]."<br/>";
-								}
-							} else {
-								$checked = "";
-								$dejaControle = false ;
-								// On vérifie que ce champs n'a pas déjà été coché
-								if (!($_SESSION['listeColonne'] == "") ) {
-									$colRecues = explode (",",$_SESSION['listeColonne']);
-									$NumColR = count($colRecues) - 1;
-									for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
-										$valTest = substr($colRecues[$cptCR],0,-2);
-										// On teste si on a déjà coché cette colonne
-										if ($valTest == $idenTableEnCours."-".$attrs["CODE"]) {
-											if (strpos($colRecues[$cptCR],"-N") === false) {
-												// Soit on vient de la cocher suffixe = -X
-												$checked = "checked=\"checked\"";
-											} else {
-												// Soit on vient de la décocher suffixe = -N
-												$checked = "";
-											}
-											break;
+					}
+					//echo $ListeToutesValeurs."<br/>";
+					// GEstion de l'afficha proprement dit
+					if ($typeRecupTable == "un") {
+						if ($attrs["AFFICHAGE"] =="X") {
+							if ($typeRecupTable == "un") {
+							$NumChampDef ++;
+							$testVal = $NumChampDef + $NumChampFac;
+							$str_testVal = strval ($testVal);
+							if (fmod($str_testVal,'7') == '0') {
+								$ListeChampTableFac .="</td><td class=\"colitem\">";
+							}
+							$ListeChampTableFac .= "<input id=\"".$TableATester."def".$NumChampDef."\" type=\"checkbox\"  name=\"".$TableATester."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" checked=\"checked\" disabled=\"disabled\"/>&nbsp;".$attrs["LIBELLE"]."<br/>";
+							}
+						} else {
+							$checked = "";
+							$dejaControle = false ;
+							// On vérifie que ce champs n'a pas déjà été coché
+							if (!($_SESSION['listeColonne'] == "") ) {
+								$colRecues = explode (",",$_SESSION['listeColonne']);
+								$NumColR = count($colRecues) - 1;
+								for ($cptCR=0 ; $cptCR<=$NumColR;$cptCR++) {
+									$valTest = substr($colRecues[$cptCR],0,-2);
+									// On teste si on a déjà coché cette colonne
+									if ($valTest == $idenTableEnCours."-".$attrs["CODE"]) {
+										if (strpos($colRecues[$cptCR],"-N") === false) {
+											// Soit on vient de la cocher suffixe = -X
+											$checked = "checked=\"checked\"";
 										} else {
-											// Si on a déjà choisi de tout affiché alors on coche
-											if (strpos($_SESSION['listeColonne'],"toutX") > 0) { // Attention, on ne teste pas XtoutX mais bien toutX car sinon strpos renvoie 0 qui eput aussi vouloir dire false... 
-												$checked = "checked=\"checked\"";
-											} else {
-												if (strpos($_SESSION['listeColonne'],"pasttX") > 0) { // Meme remarque que precedemment sur pastoutX
-													$checked = "";
-												} 
-											}							
+											// Soit on vient de la décocher suffixe = -N
+											$checked = "";
 										}
+										break;
+									} else {
+										// Si on a déjà choisi de tout affiché alors on coche
+										if (strpos($_SESSION['listeColonne'],"toutX") > 0) { // Attention, on ne teste pas XtoutX mais bien toutX car sinon strpos renvoie 0 qui eput aussi vouloir dire false... 
+											$checked = "checked=\"checked\"";
+										} else {
+											if (strpos($_SESSION['listeColonne'],"pasttX") > 0) { // Meme remarque que precedemment sur pastoutX
+												$checked = "";
+											} 
+										}							
 									}
 								}
-								$NumChampFac ++;
-								$testVal = $NumChampDef + $NumChampFac;
-								$str_testVal = strval ($testVal);
-								if (fmod($str_testVal,'7') == '0') {
-									$ListeChampTableFac .="</td><td class=\"colitem\">";
-								}
-								$ListeChampTableFac .= "<input id=\"".$idenTableEnCours."fac".$NumChampFac."\" type=\"checkbox\"  name=\"".$idenTableEnCours."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" ".$checked."/>".$attrs["LIBELLE"]."<br/>";								
-							} // fin du if ($attrs["AFFICHAGE"] =="X") 
-						} // fin du if ($typeRecupTable == "un")
-					//}
+							}
+							$NumChampFac ++;
+							$testVal = $NumChampDef + $NumChampFac;
+							$str_testVal = strval ($testVal);
+							if (fmod($str_testVal,'7') == '0') {
+								$ListeChampTableFac .="</td><td class=\"colitem\">";
+							}
+							$ListeChampTableFac .= "<input id=\"".$TableATester."fac".$NumChampFac."\" type=\"checkbox\"  name=\"".$TableATester."\" value=\"".$idenTableEnCours."-".$attrs["CODE"]."\" ".$checked."/>&nbsp;".$attrs["LIBELLE"]."<br/>";								
+						} // fin du if ($attrs["AFFICHAGE"] =="X") 
+					} // fin du if ($typeRecupTable == "un")
 				}
-				
 			}
 		break;
 	default :
@@ -483,19 +515,27 @@ function endElementCol($parser, $name){
 	global $NumChampDef;	
 	global $NumChampFac;
 	global $TabEnCours;
-	global $filiereOK ;
+	global $groupeOK ;
+	global $ignoreGroupe;
 	global $pecheLue ;
 	global $typeRecupTable;
 	global $ListeToutesValeurs;
+	global $Groupe;
+	global $GroupeEnCours;
 	// pour test
 	$AfficheDebug = false;
 	switch(strtoupper($name)) {
 		CASE "NOM":
 			$NomTableBDEnCours = strtoupper($globaldata);
 			$pecheLue = false;
+			$Groupe ="";
+			//echo "<b>".strtoupper($globaldata)."</b> - filiere = ".$FiliereEnCours." table a tester = ".$TableATester."<br/>";
 			break;
 		case "PECHE" :
-			$filiereOK = false;
+			$groupeOK = false;
+			$GroupeEnCours = "";
+			$RecupDonneesOK = false;
+			$ignoreGroupe = false;
 			$pecheLue = true;
 			if (strtoupper($globaldata) == strtoupper($TypePecheEnCours) || strtoupper($globaldata) == "TOUTES") {
 				$TableAAjouter = true;
@@ -504,7 +544,10 @@ function endElementCol($parser, $name){
 			}
 			break;	
 		case "STATISTIQUE" :
-			$filiereOK = false;
+			$groupeOK = false;
+			$GroupeEnCours = "";
+			$RecupDonneesOK = false;
+			$ignoreGroupe = false;
 			if (!($pecheLue)) { // Le fichier de selection est exclusif, soit peches soit statistiques. Mais le fichier XML contient les definitions pour les deux.. Donc on exclue ce test si il a déjà été fait au dessus.
 				if (strtoupper($globaldata) == strtoupper($TypePecheEnCours) || strtoupper($globaldata) == "TOUTES") {
 					$TableAAjouter = true;
@@ -513,11 +556,47 @@ function endElementCol($parser, $name){
 				}
 			}
 			break;	
-		case "FILIERE" :
-			if (!($filiereOK)) { 
-				if (strtoupper($globaldata) == "TOUTES" || strtoupper($globaldata) == strtoupper($FiliereEnCours)) {
-					$filiereOK = true;
+		case "GROUPE" :
+			$Groupe = $globaldata;
+			if ($groupeOK ) {
+				//echo "choisi = ".$Groupe."<br/>";
+				$GroupeEnCours = $Groupe;
+				// Soit on teste le nom du groupe soit on est dans le cas ou on recupere toutes les cases a cocher
+				//echo strtoupper($GroupeEnCours)." - ".strtoupper($TableATester)."<br/>";
+				if (!($ignoreGroupe)) {
+					if ((strtoupper($GroupeEnCours) == strtoupper($TableATester)) || $typeRecupTable == "tout" ) {
+						$RecupDonneesOK = true;
+					} else {
+						$RecupDonneesOK = false;
+					}
+					
+				} else {
+					$RecupDonneesOK = true; // On fera le controle au niveau du champs
 				}
+				switch ($TypePecheEnCours) {
+					case "artisanale" :
+					$RunFilieres = "runFilieresArt";
+					break;
+					case "experimentale":
+					$RunFilieres = "runFilieresExp";
+					break;
+					case "agglomeration":
+					$RunFilieres = "runFilieresStat";
+					break;
+				}		
+				if ($TableAAjouter && $groupeOK && $typeRecupTable =="un") {
+					if (strpos($ListeTable,$GroupeEnCours) === false) {
+						if ((strtoupper($GroupeEnCours) == strtoupper($TableATester)) || $typeRecupTable == "tout" ) {
+							$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$GroupeEnCours."','','','','','')\" class = \"active\">".$GroupeEnCours."</a><br/>";
+						} else {
+							$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$GroupeEnCours."','','','','','')\" class = \"\">".$GroupeEnCours."</a><br/>";
+						}
+					}
+				}	
+				if ($RecupDonneesOK == true ) {
+					$NomTableEnCours = $GroupeEnCours;
+				}				
+	
 			}
 			break;
 		case "ALIAS" :
@@ -540,78 +619,8 @@ function endElementCol($parser, $name){
 
 			}
 			$idenTableEnCours = $globaldata;
-			//echo strtoupper($globaldata)."-".strtoupper($TableATester)."<br/>";
-			// Controle supplementaire pour les statistiques...
-			// On exclure ou non des tables supplémentaires...
-			//if ($TableAAjouter && $filiereOK && ($TypePecheEnCours == "agglomeration" || $TypePecheEnCours == "generales")) {
-			//	$tablesAIgnorer = "PY,SYS,SE"; // pour l'instant comme ca, a paramètrer
-			//	$upperTableATester = strtoupper($idenTableEnCours);				
-			//	if (strpos($tablesAIgnorer,$upperTableATester) === false) {
-					// La table doit etre testée								 
-			//		if (isset($_GET['synth'])) {
-			//			$SynthEC = $_GET['synth'];
-			//		} else {
-			//			$SynthEC = "cap_tot";
-			//		}	
-			//		$tablesEspeces="ESP,FAM,ORD,CATE,CATT";
-			//		$nomTabSynth = "";
-			//		$gereEsp = false;
-					// Clé de décision pour la table et le choix d'afficher les especes ou non...
-			//		switch ($SynthEC) {
-			//			case "cap_tot" : 	$nomTabSynth = "ast"; break;
-			//			case "cap_sp" : 	$nomTabSynth = "asp"; $gereEsp = true;  break;
-			//			case "dft_sp" : 	$nomTabSynth = "ats"; $gereEsp = true;  break;
-			//			case "cap_GT" : 	$nomTabSynth = "asgt"; break;
-			//			case "cap_GT_sp" : 	$nomTabSynth = "attgt"; $gereEsp = true;  break;
-			//			case "dft_sp_sp" : 	$nomTabSynth = "atgts"; $gereEsp = true;  break;
-			//		}	
-			//		if (strpos($tablesEspeces,$upperTableATester) === false){
-						// C'est une table de stat
-			//			if (strtoupper($idenTableEnCours) == strtoupper($nomTabSynth)) {
-			//				$TableAAjouter = true;
-			//			} else {
-			//				$TableAAjouter = false;
-			//			}
-			//											 
-			//		} else {
-						// C'est une table d'espece: elles sont autorises pour toutes les stats. 
-						// On la filtre selon la clé de decision ci-dessus.
-			//			$TableAAjouter = $gereEsp;
-			//		}
-			//	} 
-			//} 
-			// Soit on teste le nom de la table soit on est dans le cas ou on recupere toutes les cases a cocher
-			if ((strtoupper($globaldata) == strtoupper($TableATester)) || $typeRecupTable == "tout" ) {
-				$RecupDonneesOK = true;
-			} else {
-				$RecupDonneesOK = false;
-			}
-
 			break;
-		case "LIBELLE" :
-		
-			switch ($TypePecheEnCours) {
-				case "artisanale" :
-				$RunFilieres = "runFilieresArt";
-				break;
-				case "experimentale":
-				$RunFilieres = "runFilieresExp";
-				break;
-				case "agglomeration":
-				$RunFilieres = "runFilieresStat";
-				break;
-			}		
-			if ($TableAAjouter && $filiereOK && $typeRecupTable =="un") {
-				if ($RecupDonneesOK ) {
-					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','','','','')\" class = \"active\">".$globaldata."</a><br/>";
-				} else {
-					$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$idenTableEnCours."','','','','','')\" class = \"\">".$globaldata."</a><br/>";
-				}
-			}	
-			if ($RecupDonneesOK == true ) {
-				$NomTableEnCours = $globaldata;
-			}
-			break;	
+
 		default :
 			break;
 	}

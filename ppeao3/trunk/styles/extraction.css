@@ -127,9 +127,9 @@ list-style:none;
 	font-size:12px;
 }
 #runProcess{
+	padding:3px;
 	background:#d9d8d8;
 	font-weight:bold;
-	padding-bottom:5px;
 	border-bottom:1px dotted #666666;
 }
 #resultfiliere{
@@ -137,8 +137,8 @@ list-style:none;
 	background:#FFF;
 }
 #menuTab{
-	padding-top:2px;
-	padding-bottom:2px;
+	padding-top:3px;
+	padding-bottom:3px;
 	font-size:80%;
 	top:430px;
 	left:5px;
@@ -153,79 +153,62 @@ list-style:none;
 }
 /* Poisitionnement des onglets des filieres */
 .criteresgen{
-/*	position:absolute;*/
 	display:none;
 	float:lef;
 	background-color:#FFF8A7;
-/*	visibility:hidden; */
 	width:800px;
 }
 .sscriteresgen{
 visibility:hidden;
-/*	display:none; */
+
 }
 .visi{
-/* 	display:block; */
 	visibility:visible;
 }
 .cateco{
-/*	position:absolute;*/
 	display:none;
 	float:lef;	
 	background-color:#FFF8A7;
-/*	visibility:hidden; */
 	width:800px;
 }
 .cattroph{
-/*	position:absolute;*/
 	display:none;
 	float:lef;
 	background-color:#FFF8A7;
-/*	visibility:hidden; */
 	width:800px;
 }
 .colonnes{
-/*	position:absolute; */
 	display:none;
 	float:lef;
 	background-color:#FFF8A7 ;
-/*	visibility:hidden; */
 	width:800px;
 }
 .especes{
-/*	position:absolute;*/
 	display:none;
 	float:lef;
 	background-color:#FFF8A7 ;
-/*	visibility:hidden; */
 	width:800px;
 }
 
 .regroupesp{
 	display:none;
 	float:lef;
-/*	position:absolute;*/
-
 	background-color:#FFF8A7 ;
-/*	visibility:hidden; */
 	width:800px;
 }
 .general{
 	display:none;
 	float:lef;
-/*	position:absolute;*/
-
 	background-color:#FFF8A7 ;
-/*	visibility:hidden; */
 	width:800px;
 }
 #voiresultat{
-/*	position:absolute;*/
+
 
 }
 .visible{
 	display:block;
-/*	visibility:visible;*/
+
 }
 .ChoixChampComp {
 	width:800px;
