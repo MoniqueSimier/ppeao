@@ -222,7 +222,17 @@ visibility:hidden;
 .CCCChamp{
 	vertical-align:text-top;
 	border:1px dotted #666666;
+	background-color:#dbd377;
 	width:800px;
+}
+.colpasactive{
+	width:100%;
+	color:#999;
+}
+.colactive{
+	background-color:#dbd377;
+	width:100%;
+	color:#000;
 }
 /* CSS pour les tables contenant la liste des cat eco, troph et des especes */
 #CEco{
@@ -266,6 +276,14 @@ visibility:hidden;
 	font-size:75%;
 	text-align:left;
 	vertical-align:top;
+
+}
+#EspInfo{
+	font-weight:bold;
+	font-size:75%;
+	text-align:left;
+	vertical-align:top;
+	background-color: #eeebeb;
 }
 #affresultat{
 	background-color: #f9f5cc;
@@ -321,4 +339,32 @@ padding-top:20px;
 }
 .colitem{
 	vertical-align:top;
+}
+.reg_div{
+	float:left;
+	margin:0 12px 0 0;
+}
+.lienReg {
+	padding:1px;
+	font-weight:bold;
+	color:#666;
+	background-color:#FAEFC2;
+	border:1px dashed #CCC;
+}
+.lienReg2 {
+	font-weight:bold;
+}
+a.lienReg2 hover{
+	font-weight:bold;
+	background-color:#FFF;
+}
+
+.infozip{
+	padding-bottom:5px;
+	background-color:#FEF592;
+	font-size:90%;
+}
+.titreAff{
+	font-size:90%;
+	font-weight:bold;
 }

@@ -66,7 +66,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		$_SESSION['listeCatEco'] = '';
 		$_SESSION['listeCatTrop'] = '';
 		$_SESSION['listeColonne'] = ''; // tableau nomTable / NomChamp des champs comple à afficher
-		$_SESSION['ListeRegroupEsp'] = ''; // Contient les regroupements (tableau)
+		unset($_SESSION['listeRegroup']); // Contient les regroupements (tableau)
 		// Variables de session qui contiendront la sélection de base issu du fichier XML venant de la partie I, la selection
 		$_SESSION['typeSelection'] = '';
 		$_SESSION['typePeche'] = '';

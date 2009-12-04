@@ -157,6 +157,10 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		} else {
 			ListEsp  = recupereSelection(limEsp,"Esp");
 		}
+		if (ListEsp == '' ) {
+			alert("Merci de selectionner au moins une espece !");
+			return;
+		}
 		// Recuperation des colonnes en plus selectionnees
 		TEC = "&TEC="+tableEnCours;
 		TPEC = document.getElementById("tableEC").value;
@@ -330,6 +334,10 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 			} else {
 				ListEsp  = recupereSelection(limEsp,"Esp");
 			}
+		}
+		if (ListEsp == '' ) {
+			alert("Merci de selectionner au moins une espece !");
+			return;
 		}
 		// Recuperation des colonnes en plus selectionnees
 		TEC = "&TEC="+tableEnCours;
@@ -548,7 +556,10 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 		} else {
 			addEsp = "&Esp="+ListEsp;
 		}
-
+		if (ListEsp == '' ) {
+			alert("Merci de selectionner au moins une espece !");
+			return;
+		}
 		// Gestion des regroupements
 		if (urlComp=="&nvReg=f" || urlComp=="&nvReg=f&gard=y") {
 			ValNomReg = document.getElementById("nomReg").value;

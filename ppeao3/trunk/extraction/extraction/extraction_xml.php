@@ -588,9 +588,9 @@ function endElementCol($parser, $name){
 				if ($TableAAjouter && $groupeOK && $typeRecupTable =="un") {
 					if (strpos($ListeTable,$GroupeEnCours) === false) {
 						if ((strtoupper($GroupeEnCours) == strtoupper($TableATester)) || $typeRecupTable == "tout" ) {
-							$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$GroupeEnCours."','','','','','')\" class = \"active\">".$GroupeEnCours."</a><br/>";
+							$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$GroupeEnCours."','','','','','')\" class = \"colactive\">".$GroupeEnCours."</a><br/>";
 						} else {
-							$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$GroupeEnCours."','','','','','')\" class = \"\">".$GroupeEnCours."</a><br/>";
+							$ListeTable .= "<a href=\"#\" onClick = \"".$RunFilieres."('".$TypePecheEnCours."','".$FiliereEnCours."','".$TabEnCours."','".$GroupeEnCours."','','','','','')\" class = \"colpasactive\">".$GroupeEnCours."</a><br/>";
 						}
 					}
 				}	

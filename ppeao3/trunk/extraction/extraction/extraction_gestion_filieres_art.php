@@ -159,6 +159,7 @@ if ($changtAction == "y") {
 	$_SESSION['listeCatEco'] = "";
 	$_SESSION['listeColonne'] = "";
 	$_SESSION['listeEspeces'] = "";
+	unset($_SESSION['listeRegroup']);
 	switch ($typeAction) {
 		// On ne gère pas peuplement car on va directement à la page de résultat quand on clique dessus.
 		case "activite":
@@ -300,7 +301,7 @@ echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typePeche,$
 <?php // l'onglet qui gere les regroupements ?>
 <div id="regroupesp" class="regroupesp<?php echo $regActive;?>">
 <?php 
-echo AfficheRegroupEsp($typePeche,$typeAction,$numTab,$_SESSION['SQLEspeces'],$_SESSION['ListeRegroupEsp'],$RegEncours,$CreerReg); ?>
+echo AfficheRegroupEsp($typePeche,$typeAction,$numTab,$_SESSION['SQLEspeces'],$_SESSION['listeRegroup'],$RegEncours,$CreerReg); ?>
 </div>
 </form>
 

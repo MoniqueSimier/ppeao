@@ -107,6 +107,7 @@ $_SESSION['listeColonne'] = $ListeColRecues;
 if ($changtAction == "y") {
 	$_SESSION['listetablesynth'] ="";
 	$_SESSION['listeEspeces'] = "";
+	unset($_SESSION['listeRegroup']);
 
 } else {
 	$_SESSION['listetablesynth'] = $listeSynth;
@@ -167,7 +168,7 @@ switch ($numTab) {
 <?php // l'onglet qui gere les regroupements ?>
 <div id="regroupesp" class="regroupesp<?php echo $regActive;?>">
 <?php 
-echo AfficheRegroupEsp($typeStatistiques,$typeAction,$numTab,$_SESSION['SQLEspeces'],$_SESSION['ListeRegroupEsp'],$RegEncours,$CreerReg); ?>
+echo AfficheRegroupEsp($typeStatistiques,$typeAction,$numTab,$_SESSION['SQLEspeces'],$_SESSION['listeRegroup'],$RegEncours,$CreerReg); ?>
 </div>
 
 </form>
