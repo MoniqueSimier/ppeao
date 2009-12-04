@@ -375,16 +375,17 @@ function startElementCol($parser, $name, $attrs){
 					// Si la filiere n'est pas dans la liste, on arrete
 						$continueTrait = false;
 					} 
-					
 				}
 				if ($ignoreGroupe) {
 					if (array_key_exists("GROUPE",$attrs)) {
 						// Cela veut dire qu'au niveau du champs, on a une restriction supplémentaire par rapport au groupe.
 						// On le teste.
-						if (strpos($attrs["GROUPE"],trim($TableATester)) === false) {
-						// Si le champ n'appartient pas au groupe, on ne le prend pas...
-							$continueTrait = false;
-						} 
+						if (!($TableATester == "")) {
+							if (strpos($attrs["GROUPE"],trim($TableATester)) === false) {
+							// Si le champ n'appartient pas au groupe, on ne le prend pas...
+								$continueTrait = false;
+							}
+						}
 					}
 				}
 				if ($continueTrait){

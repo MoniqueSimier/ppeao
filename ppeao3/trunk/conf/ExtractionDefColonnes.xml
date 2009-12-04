@@ -19,7 +19,7 @@
 		</filieres>
 		<Alias>py</Alias>
 		<libelle>Pays</libelle>
-		<champ code="id" affichage="X" libelle="Id unique"/>
+		<champ code="id" affichage="X" libelle="Id Pays"/>
 		<champ code="nom" affichage="X" libelle="nom"/>
 	</table>
 	<table>
@@ -38,7 +38,7 @@
 		</filieres>
 		<Alias>sy</Alias>
 		<libelle>Systeme</libelle>
-		<champ code="id" affichage="X" libelle="Id unique"/>
+		<champ code="id" affichage="X" libelle="Id Systeme"/>
 		<champ code="nom" affichage="X" libelle="nom"/>
 		<champ code="superficie" affichage="C" libelle="Superficie"/>
 	</table>
@@ -51,16 +51,23 @@
 			<statistique>toutes</statistique>
 		</statistiques>
 		<groupes>
-			<groupe type="tout" filiere="toutes">Secteur</groupe>	
+			<groupe type="experimentale" filiere="toutes">Secteur</groupe>	
+			<groupe type="artisanale" filiere="activite">Secteur</groupe>
+			<groupe type="artisanale" filiere="capture">Secteur</groupe>
+			<groupe type="artisanale" filiere="NtPt" multi="y">Secteur</groupe>
+			<groupe type="artisanale" filiere="NtPt" multi="y">Sortie</groupe>
+			<groupe type="artisanale" filiere="taille">Secteur</groupe>
+			<groupe type="artisanale" filiere="engin">Secteur</groupe>			
 		</groupes>
 		<filieres>
 			<filiere>toutes</filiere>
 		</filieres>
 		<Alias>se</Alias>
 		<libelle>Secteur</libelle>
-		<champ code="id" affichage="X" libelle="Id unique"/>
-		<champ code="nom" affichage="X" libelle="nom"/>
-		<champ code="superficie" affichage="C" libelle="Superficie"/>
+		<champ code="id" affichage="X" libelle="Id Secteur" groupe="Secteur"/>
+		<champ code="nom" affichage="X" libelle="nom" groupe="Secteur"/>
+		<champ code="superficie" affichage="C" libelle="Superficie" groupe="Secteur"/>
+		<champ code="id_dans_systeme" affichage="C" libelle="id_dans_systeme" groupe="Sortie"/>		
 	</table>
 	<table>
 		<nom>ref_espece</nom>
@@ -87,8 +94,8 @@
 		</groupes>		
 		<Alias>esp</Alias>
 		<libelle>Especes</libelle>
-		<champ code="id" affichage="X" libelle="Id unique"/>
-		<champ code="libelle" affichage="X" libelle="libelle"/>
+		<champ code="id" affichage="X" libelle="Id Especes"/>
+		<champ code="libelle" affichage="X" libelle="nom espece"/>
 		<champ code="ref_categorie_ecologique_id" affichage="X" libelle="ref_categorie_ecologique_id"/>
 		<champ code="ref_categorie_trophique_id" affichage="X" libelle="ref_categorie_trophique_id"/>
 		<champ code="coefficient_b" affichage="C" libelle="coefficient_b"/>
@@ -120,7 +127,7 @@
 		</filieres>
 		<Alias>fam</Alias>
 		<libelle>Famille</libelle>
-		<champ code="libelle" affichage="C" libelle="libelle"/>
+		<champ code="libelle" affichage="C" libelle="Nom Famille"/>
 		<champ code="non_poisson" affichage="C" libelle="non_poisson"/>
 		<champ code="ref_ordre_id" affichage="C" libelle="ref_ordre_id"/>
 	</table>
@@ -149,7 +156,7 @@
 		</filieres>
 		<Alias>ord</Alias>
 		<libelle>Ordre</libelle>
-		<champ code="libelle" affichage="C" libelle="libelle"/>
+		<champ code="libelle" affichage="C" libelle="Lib Ordre"/>
 	</table>
 	<table>
 		<nom>ref_categorie_ecologique</nom>
@@ -173,8 +180,8 @@
 		</filieres>
 		<Alias>cate</Alias>
 		<libelle>Categorie ecologique</libelle>
-		<champ code="id" affichage="X" libelle="Id"/>
-		<champ code="libelle" affichage="C" libelle="Libelle"/>
+		<champ code="id" affichage="X" libelle="Id Cat Eco"/>
+		<champ code="libelle" affichage="C" libelle="Libelle Cat Eco"/>
 	</table>
 	<table>
 		<nom>ref_categorie_trophique</nom>
@@ -198,8 +205,8 @@
 		</filieres>
 		<Alias>catt</Alias>
 		<libelle>Categorie trophique</libelle>
-		<champ code="id" affichage="X" libelle="Id"/>
-		<champ code="libelle" affichage="C" libelle="Libelle"/>
+		<champ code="id" affichage="X" libelle="Id Cat Troph"/>
+		<champ code="libelle" affichage="C" libelle="Libelle Cat Troph"/>
 	</table>
 	<!-- TABLES DE DONNEES PECHES EXPERIMENTALES -->
 	<table>
@@ -217,7 +224,7 @@
 		<libelle>Campagne</libelle>
 		<champ code="numero_campagne" affichage="X" libelle="Code"/>	
 		<champ code="date_debut" affichage="X" libelle="Date de debut"/>
-		<champ code="libelle" affichage="C" libelle="Libelle"/>		
+		<champ code="libelle" affichage="C" libelle="Libelle campagne"/>		
 		<champ code="date_fin" affichage="C" libelle="Date de fin"/>
 
 	</table>
@@ -568,7 +575,7 @@
 		</groupes>
 		<Alias>stat</Alias>
 		<libelle>Station</libelle>
-		<champ code="id" affichage="X" libelle="Id unique"/>
+		<champ code="id" affichage="X" libelle="Id Station"/>
 		<champ code="nom" affichage="X" libelle="Nom"/>
 		<champ code="site" affichage="C" libelle="Site"/>
 		<champ code="distance_embouchure" affichage="C" libelle="Distance embouchure" filiere="environnement,NtPt,biologie,trophique"/>
@@ -645,33 +652,45 @@
 			<filiere>engin</filiere>
 		</filieres>
 		<groupes>
-			<groupe type="artisanale" filiere="capture">Sortie</groupe>
-			<groupe type="artisanale" filiere="NtPt">Captures</groupe>	
+			<groupe type="artisanale" filiere="capture" multi="y">Sortie</groupe>
+			<groupe type="artisanale" filiere="capture" multi="y">Temporel</groupe>
+			<groupe type="artisanale" filiere="capture" multi="y">Agglomeration</groupe>
+			<groupe type="artisanale" filiere="capture" multi="y">Unite de peche</groupe>
+			<groupe type="artisanale" filiere="NtPt" multi="y">Sortie</groupe>	
+			<groupe type="artisanale" filiere="NtPt" multi="y">Temporel</groupe>
+			<groupe type="artisanale" filiere="NtPt" multi="y">Agglomeration</groupe>	
+			<groupe type="artisanale" filiere="NtPt" multi="y">Unite de peche</groupe>									
+			<groupe type="artisanale" filiere="taille" multi="y">Temporel</groupe>		
+			<groupe type="artisanale" filiere="taille" multi="y">Agglomeration</groupe>	
+			<groupe type="artisanale" filiere="taille" multi="y">Unite de peche</groupe>
+			<groupe type="artisanale" filiere="engin" multi="y">Temporel</groupe>		
+			<groupe type="artisanale" filiere="engin" multi="y">Agglomeration</groupe>	
+			<groupe type="artisanale" filiere="engin" multi="y">Unite de peche</groupe>																						
 		</groupes>	
 		<Alias>deb</Alias>
 		<libelle>Debarquement</libelle>
-		<champ code="art_agglomeration_id" affichage="X" libelle="ID Agglomération"/>
-		<champ code="annee" affichage="X" libelle="Annee"/>
-		<champ code="mois" affichage="X" libelle="Mois"/>
-		<champ code="date_debarquement" affichage="X" libelle="Date débarquement"/>
-		<champ code="id" affichage="X" libelle="ID debarquement"/>
-		<champ code="unite_peche_id" affichage="X" libelle="ID unité pêche"/>
-		<champ code="poids_total" affichage="X" libelle="Poids total"/>
-		<champ code="art_etat_ciel_id" affichage="C" libelle="art_etat_ciel_id" filiere="capture,NtPt"/>/>		
-		<champ code="art_lieu_de_peche_id" affichage="C" libelle="art_lieu_de_peche_id" filiere="capture,NtPt"/>/>	
-		<champ code="distance_lieu_peche" affichage="C" libelle="Distance lieu peche" filiere="capture,NtPt"/>/>		
-		<champ code="art_millieu_id" affichage="C" libelle="art_millieu_id" filiere="capture"/>
-		<champ code="art_type_sortie_id" affichage="C" libelle="art_type_sortie_id" filiere="capture"/>
-		<champ code="art_vent_id" affichage="C" libelle="art_vent_id" filiere="capture"/>
-		<champ code="date_depart" affichage="C" libelle="Date départ" filiere="capture"/>
-		<champ code="glaciere" affichage="C" libelle="Glacière" filiere="capture"/>
-		<champ code="heure" affichage="C" libelle="Heure" filiere="capture,NtPt"/>
-		<champ code="heure_depart" affichage="C" libelle="Heure départ" filiere="capture"/>
-		<champ code="heure_pose_engin" affichage="C" libelle="Heure pose engin" filiere="capture"/>
-		<champ code="nbre_coups_de_peche" affichage="C" libelle="Nombre coups de pêche" filiere="capture,NtPt"/>
-		<champ code="nbre_enfants" affichage="C" libelle="Nombre enfants" filiere="capture"/>
-		<champ code="nbre_femmes" affichage="C" libelle="Nombre femmes" filiere="capture"/>
-		<champ code="nbre_hommes" affichage="C" libelle="Nombre hommes" filiere="capture"/>
+		<champ code="art_agglomeration_id" affichage="X" libelle="ID Agglomération" filiere="capture,taille,engin" groupe="Agglomeration"/>
+		<champ code="unite_peche_id" affichage="X" libelle="ID unité pêche" filiere="capture,NtPt,taille,engin" groupe="Unite de peche"/>
+		<champ code="art_grand_type_engin_id" affichage="X" libelle="art_grand_type_engin_id" filiere="NtPt,taille,engin" groupe="Unite de peche"/>
+		<champ code="art_etat_ciel_id" affichage="C" libelle="art_etat_ciel_id" filiere="capture" groupe="Sortie"/>		
+		<champ code="art_lieu_de_peche_id" affichage="C" libelle="art_lieu_de_peche_id" filiere="capture,NtPt" groupe="Sortie"/>	
+		<champ code="distance_lieu_peche" affichage="C" libelle="Distance lieu peche" filiere="capture,NtPt" groupe="Sortie"/>		
+		<champ code="art_millieu_id" affichage="C" libelle="art_millieu_id" filiere="capture" groupe="Sortie"/>
+		<champ code="art_type_sortie_id" affichage="C" libelle="art_type_sortie_id" filiere="capture" groupe="Sortie"/>
+		<champ code="art_vent_id" affichage="C" libelle="art_vent_id" filiere="capture" groupe="Sortie"/>
+		<champ code="glaciere" affichage="C" libelle="Glacière" filiere="capture" groupe="Sortie"/>
+		<champ code="nbre_coups_de_peche" affichage="C" libelle="Nombre coups de pêche" filiere="capture,NtPt" groupe="Sortie"/>
+		<champ code="nbre_enfants" affichage="C" libelle="Nombre enfants" filiere="capture" groupe="Sortie"/>
+		<champ code="nbre_femmes" affichage="C" libelle="Nombre femmes" filiere="capture" groupe="Sortie"/>
+		<champ code="nbre_hommes" affichage="C" libelle="Nombre hommes" filiere="capture" groupe="Sortie"/>		
+		<champ code="date_depart" affichage="C" libelle="Date départ" filiere="capture" groupe="Temporel"/>
+		<champ code="annee" affichage="X" libelle="Annee" filiere="capture,NtPt,taille,engin" groupe="Temporel"/>
+		<champ code="mois" affichage="X" libelle="Mois" filiere="capture,NtPt,taille,engin" groupe="Temporel"/>
+		<champ code="date_debarquement" affichage="X" libelle="Date débarquement" filiere="capture,NtPt,engin" groupe="Temporel"/>
+		<champ code="heure" affichage="C" libelle="Heure" filiere="capture,NtPt" groupe="Temporel"/>
+		<champ code="heure_depart" affichage="C" libelle="Heure départ" filiere="capture" groupe="Temporel"/>
+		<champ code="heure_pose_engin" affichage="C" libelle="Heure pose engin" filiere="capture" groupe="Temporel"/>		
+
 	</table>
 	<table>
 		<nom>art_engin_activite</nom>
@@ -699,6 +718,10 @@
 			<filiere>NtPt</filiere>
 			<filiere>taille</filiere>
 		</filieres>
+		<groupes>
+				<groupe type="artisanale" filiere="NtPt">Fractions et especes</groupe>
+				<groupe type="artisanale" filiere="taille">Fractions et especes</groupe>
+		</groupes>
 		<Alias>afra</Alias>
 		<libelle>Fraction</libelle>
 		<champ code="id" affichage="X" libelle="ID fraction"/>
@@ -717,6 +740,10 @@
 			<filiere>capture</filiere>
 			<filiere>NtPt</filiere>
 		</filieres>
+		<groupes>
+			<groupe type="artisanale" filiere="capture">Sortie</groupe>
+			<groupe type="artisanale" filiere="NtPt">Sortie</groupe>			
+		</groupes>
 		<Alias>alieup</Alias>
 		<libelle>lieu peche</libelle>
 		<champ code="libelle" affichage="C" libelle="Libelle lieu de peche"/>
@@ -730,13 +757,10 @@
 		<filieres>
 			<filiere>activite</filiere>
 			<filiere>capture</filiere>
-			<filiere>NtPt</filiere>
 		</filieres>
 		<groupes>
-			<groupe type="artisanale" filiere="activite">Unite de peche</groupe>
-			<groupe type="artisanale" filiere="activite">Activite</groupe>
-			<groupe type="artisanale" filiere="capture">Unite de peche</groupe>
-			<groupe type="artisanale" filiere="NtPt">Unite de peche</groupe>				
+			<groupe type="artisanale" filiere="activite" >Unite de peche</groupe>
+			<groupe type="artisanale" filiere="capture">Unite de peche</groupe>				
 		</groupes>	
 		<Alias>upec</Alias>
 		<libelle>Unite de peche</libelle>
@@ -768,14 +792,17 @@
 			<filiere>toutes</filiere>
 		</filieres>
 		<groupes>
-			<groupe type="artisanale" filiere="toutes">Agglomeration</groupe>
+			<groupe type="artisanale" filiere="activite">Agglomeration</groupe>
+			<groupe type="artisanale" filiere="capture">Agglomeration</groupe>
+			<groupe type="artisanale" filiere="NtPt">Agglomeration</groupe>	
+			<groupe type="artisanale" filiere="taille">Agglomeration</groupe>									
 		</groupes>
 		<Alias>agg</Alias>
 		<libelle>Agglomeration</libelle>
-		<champ code="nom" affichage="X" libelle="Nom"/>
-		<champ code="art_type_agglomeration_id" affichage="C" libelle="art_type_agglomeration_id"/>
-		<champ code="latitude" affichage="C" libelle="Latitude" />
-		<champ code="longitude" affichage="C" libelle="Longitude"/>
+		<champ code="nom" affichage="X" libelle="Nom agglo" filiere="activite,capture,NtPt,taille"/>
+		<champ code="art_type_agglomeration_id" affichage="C" libelle="art_type_agglomeration_id" filiere="activite,capture,NtPt"/>
+		<champ code="latitude" affichage="C" libelle="Latitude" filiere="activite,capture"/>
+		<champ code="longitude" affichage="C" libelle="Longitude" filiere="activite,capture"/>
 	</table>
 	<table>
 		<nom>art_engin_peche</nom>
@@ -785,6 +812,9 @@
 		<filieres>
 			<filiere>engin</filiere>
 		</filieres>
+		<groupes>
+			<groupe type="artisanale" filiere="engin">Engin peche</groupe>					
+		</groupes>
 		<Alias>aengp</Alias>
 		<libelle>Engins de peche</libelle>
 		<champ code="art_type_engin_id" affichage="X" libelle="art_type_engin_id"/>
@@ -807,7 +837,8 @@
 			<filiere>capture</filiere>
 		</filieres>
 		<groupes>
-			<groupe type="artisanale" filiere="activite">Unite de peche</groupe>				
+			<groupe type="artisanale" filiere="activite">Unite de peche</groupe>
+			<groupe type="artisanale" filiere="capture">Unite de peche</groupe>							
 		</groupes>	
 		<Alias>acsp</Alias>
 		<libelle>Categorie socio-professionnelle</libelle>
@@ -821,6 +852,9 @@
 		<filieres>
 			<filiere>capture</filiere>
 		</filieres>
+		<groupes>
+			<groupe type="artisanale" filiere="capture">Sortie</groupe>
+		</groupes>
 		<Alias>aetatc</Alias>
 		<libelle>Etat ciel</libelle>
 		<champ code="libelle" affichage="C" libelle="Libelle etat ciel"/>
@@ -848,6 +882,7 @@
 		</filieres>
 		<groupes>
 			<groupe type="artisanale" filiere="activite">Activite</groupe>
+			<groupe type="artisanale" filiere="capture">Sortie</groupe>			
 		</groupes>
 		<Alias>amil</Alias>
 		<libelle>Milieu</libelle>
@@ -896,10 +931,11 @@
 		</filieres>
 		<groupes>
 			<groupe type="artisanale" filiere="activite">Unite de peche</groupe>
+			<groupe type="artisanale" filiere="engin">Engin peche</groupe>			
 		</groupes>
 		<Alias>teng</Alias>
 		<libelle>Type engin</libelle>
-		<champ code="libelle" affichage="C" libelle="Libelle"/>
+		<champ code="libelle" affichage="C" libelle="Libelle Engin"/>
 		<champ code="art_grand_type_engin_id" affichage="C" libelle="art_grand_type_engin_id"/>
 	</table>
 	<table>
@@ -932,6 +968,7 @@
 		</filieres>
 		<groupes>
 			<groupe type="artisanale" filiere="activite">Activite</groupe>
+			<groupe type="artisanale" filiere="capture">Sortie</groupe>			
 		</groupes>
 		<Alias>atsor</Alias>
 		<libelle>Type sortie</libelle>
@@ -945,6 +982,9 @@
 		<filieres>
 			<filiere>capture</filiere>
 		</filieres>
+		<groupes>
+			<groupe type="artisanale" filiere="capture">Sortie</groupe>			
+		</groupes>
 		<Alias>avent</Alias>
 		<libelle>Vent</libelle>
 		<champ code="libelle" affichage="C" libelle="Libelle vent"/>
