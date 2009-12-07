@@ -1158,14 +1158,17 @@ function AfficherDonnees($file,$typeAction){
 				if (!($compGTESQL == "")) {
 					$ajouteTable =",art_grand_type_engin as gte";
 			}
-			$SQLEsp = "select distinct(afra.ref_espece_id) from art_debarquement as deb,art_fraction as afra,art_agglomeration as agg,			
-				art_periode_enquete as penq".$ajouteTable."
-				where ".$WhereAgg." ".$WherePeEnq." ".$compGTESQL."
-				deb.art_agglomeration_id = agg.id and
-				deb.mois = penq.mois and 
-				deb.annee = penq.annee and
-				deb.art_agglomeration_id = penq.art_agglomeration_id and 
-				afra.art_debarquement_id = deb.id ";
+		
+			
+			$SQLEsp = "select distinct(asp.ref_espece_id) from ref_pays as py,ref_systeme as sy,ref_secteur as se,art_agglomeration as agg,art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp 
+			where ".$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq."	
+				agg.id = penq.art_agglomeration_id and
+				ast.art_agglomeration_id = penq.art_agglomeration_id and
+				py.id = sy.ref_pays_id and
+				sy.id = se.ref_systeme_id and
+				se.id = agg.ref_secteur_id  and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id
+			
+			";
 				$SQLEspeces = RecupereEspeces($SQLEsp);
 				$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite..
 	
@@ -1194,7 +1197,7 @@ function AfficherDonnees($file,$typeAction){
 						}
 					}
 				} 
-				$WhereEsp = "afra.ref_espece_id in (".$SQLEspeces.") and ";
+				
 			}
 			$toutesColonnes = recupereTouteColonnes("statistiques",$typeStatistiques); // C'est juste pour charger le nom des alias dans la variable de session 
 			switch ($typeStatistiques) {
@@ -1241,6 +1244,9 @@ function AfficherDonnees($file,$typeAction){
 							$listeChampsSpecasp = ",asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,ast.fm,ast.cap,ast.pue ,asp.id ,ast.id";
 							$ListeTableSpecasp = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp"; 
 							$WhereSpecasp = "	and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
+							if (!($SQLEspeces == "")) {
+								$WhereSpecasp .= " and asp.ref_espece_id in (".$SQLEspeces.") ";
+							}
 							$OrderComasp = ",asp.id asc";
 							$ConstIDuniqueasp = "AST-##-18";
 							// Gestion des positionnements pour les regroupements
@@ -1255,6 +1261,9 @@ function AfficherDonnees($file,$typeAction){
 							$ListeTableSpecats = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats,ref_espece as esp"; 
 							$WhereSpecats = " 	and ats.art_stat_sp_id = asp.id and
 													asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
+							if (!($SQLEspeces == "")) {
+								$WhereSpecats .= " and  asp.ref_espece_id in (".$SQLEspeces.") ";
+							}
 							$ConstIDuniqueats = "AST-##-17";
 							// Gestion des positionnements pour les regroupements
 							$posDEBIDats = 17 ; //position asp.id - 1 / Pour gestion regroupement
@@ -1276,6 +1285,9 @@ function AfficherDonnees($file,$typeAction){
 													and asgt.art_stat_totale_id = ast.id 
 													and gte.id = asgt.art_grand_type_engin_id
 													and esp.id = attgt.ref_espece_id";
+							if (!($SQLEspeces == "")) {
+								$WhereSpecattgt .= " and  attgt.ref_espece_id in (".$SQLEspeces.")";
+							}
 							$ConstIDuniqueattgt = "AST-##-16";
 							// Gestion des positionnements pour les regroupements
 							$posDEBIDats = 16 ; //position asp.id - 1 / Pour gestion regroupement
@@ -1292,6 +1304,9 @@ function AfficherDonnees($file,$typeAction){
 													and asgt.art_stat_totale_id = ast.id 
 													and gte.id = asgt.art_grand_type_engin_id
 													and esp.id = attgt.ref_espece_id";
+							if (!($SQLEspeces == "")) {
+								$WhereSpecatgts .= " and  attgt.ref_espece_id in (".$SQLEspeces.")";
+							}
 							$ConstIDuniqueatgts = "AST-##-19";
 							// Gestion des positionnements pour les regroupements
 							$posDEBIDgts = 19 ; //position atgts.id - 1 / Pour gestion regroupement
@@ -1655,20 +1670,17 @@ function AfficherDonnees($file,$typeAction){
 					}
 					$listeTableStatSp = "asp,ats,attgt,atgts";
 					if ( strpos($listeTableStatSp,$tableStat[$cptTS]) === false) {
-						echo "pas d'especes:".$tableStat[$cptTS]."<br/>";
 						$ConstIDuniqueStat = "ConstIDunique".$tableStat[$cptTS];
 						$listeChamps ="ID.UNIQUE,".$listeChamps;
 						creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,true);
 					} else {
 						if (!($_SESSION['listeRegroup'] == "")) {
-							echo "avec d'especes et regroupement:".$tableStat[$cptTS]."<br/>";
 							$SQLfinal = "select * from temp_extraction where key4 = '".$tableStat[$cptTS]."' order by key1 asc,key2 asc,key3 asc";
 							$SQLcountfinal = "select count(*) from temp_extraction ";
 							$ConstIDunique = "AST-##-1";
 							$listeChamps ="ID.UNIQUE,".$listeChamps;
 							creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false);
 						} else {
-							echo "avec d'especes sans regroupement:".$tableStat[$cptTS]."<br/>";
 							$ConstIDuniqueStat = "ConstIDunique".$tableStat[$cptTS];
 							$listeChamps ="ID.UNIQUE,".$listeChamps;
 							creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,false);
