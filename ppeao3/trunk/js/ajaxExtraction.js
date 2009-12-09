@@ -157,7 +157,7 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		} else {
 			ListEsp  = recupereSelection(limEsp,"Esp");
 		}
-		if (ListEsp == '' ) {
+		if (ListEsp == '' && (!(globalAction=="peuplement"))) {
 			alert("Merci de selectionner au moins une espece !");
 			return;
 		}
@@ -335,7 +335,7 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 				ListEsp  = recupereSelection(limEsp,"Esp");
 			}
 		}
-		if (ListEsp == '' ) {
+		if (ListEsp == ''  && (globalAction=="taille" || globalAction=="NtPt")) {
 			alert("Merci de selectionner au moins une espece !");
 			return;
 		}
