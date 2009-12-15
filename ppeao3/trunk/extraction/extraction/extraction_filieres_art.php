@@ -152,6 +152,7 @@ if (!(file_exists($file)) ) {
 					$_SESSION['pasderesultat']	 = false; // indicateur global si pas de resultat
 					unset($_SESSION['listeRegroup']); // Liste des regroupements
 					unset($_SESSION['libelleTable']); // Pour recuperer les noms des tables
+					unset($_SESSION['libelleChamp']); // Pour recuperer les noms des champs
 				}
 				// Variables pour construire les SQL	
 				$SQLPays 	= "";

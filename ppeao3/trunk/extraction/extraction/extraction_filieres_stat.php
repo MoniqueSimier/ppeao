@@ -136,6 +136,7 @@ if (!(file_exists($file)) ) {
 					$_SESSION['listeDocSect'] = ""; //liste contenant les ID des documents secteur a mettre en zip
 					unset($_SESSION['listeRegroup']); // Liste des regroupements
 					unset($_SESSION['libelleTable']); // Pour recuperer les noms des tables
+					unset($_SESSION['libelleChamp']); // Pour recuperer les noms des champs
 				}
 				// Variables pour construire les SQL	
 				$SQLPays 	= "";

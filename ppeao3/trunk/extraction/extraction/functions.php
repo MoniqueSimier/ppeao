@@ -343,6 +343,7 @@ function AfficherDonnees($file,$typeAction){
 	global $listeChampsSel;
 	global $ListeTableSel;
 	global $AjoutWhere;
+	global $LeftOuterJoin;
 	global $listeDocURL;
 	if (!($typeAction == "")) {
 		$divExportFic = "<div id=\"exportFic\"><input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('".$typePeche."?>','".$typeAction."','1','".$codeTableEnCours."','y',,'','')\" value=\"Voir les r&eacute;sultats\"/>
@@ -433,6 +434,7 @@ function AfficherDonnees($file,$typeAction){
 	$LabCatEco = "";
 	$LabCatTrop = "";
 	$LabCatPois = "";
+	$LeftOuterJoin = "";
 	$ConstIDunique = ""; // Va contenir la définition pour la construction de l'ID unique de ligne. contient une valeur differente selon type peche / filiere
 	// Analyse des categories trophiques / ecologiques / poisson-non poisson
 	// Analyse des categories ecologiques sélectionnées par l'utilisateur (selection restreinte depuis la filiere)
@@ -719,8 +721,7 @@ function AfficherDonnees($file,$typeAction){
 			// ********** PREPARATION DU SQL
 			// Definition de tout ce qui est commun aux peches expérimentales
 			$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom, stat.id, stat.nom, cpg.date_debut, cpg.id,cpg.numero_campagne, cph.date_cp, cph.heure_debut, cph.id,cph.numero_coup, cph.protocole, cph.exp_qualite_id,xqua.libelle, cph.exp_engin_id, xeng.libelle";
-			$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph,exp_qualite as xqua,exp_engin as xeng";
-			
+			$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_campagne as cpg,exp_coup_peche as cph,exp_qualite as xqua,exp_engin as xeng";
 			$WhereCom = "cpg.id = cph.exp_campagne_id and
 							stat.id = cph.exp_station_id and
 							sy.id = cpg.ref_systeme_id and
@@ -746,7 +747,10 @@ function AfficherDonnees($file,$typeAction){
 							esp.id = fra.ref_espece_id and
 							fam.id = esp.ref_famille_id ";
 						$valueCount = "fra.id" ; // pour gerer la pagination	
-						$builQuery = true;					
+						$builQuery = true;
+						if (strpos($LeftOuterJoin,"left outer join") === false ) {
+							$LeftOuterJoin = ",exp_station as stat";
+						}
 					break;
 				case "environnement" :
 						$labelSelection = "donn&eacute;e(s) d'environnement ";
@@ -757,6 +761,9 @@ function AfficherDonnees($file,$typeAction){
 						$WhereSpec = " 	and env.id = cph.exp_environnement_id ";
 						$valueCount = "cph.id" ; // pour gerer la pagination						
 						$builQuery = true;
+						if (strpos($LeftOuterJoin,"left outer join") === false ) {
+							$LeftOuterJoin = ",exp_station as stat";
+						}
 					break;
 				case "NtPt" :
 						$labelSelection = "donn&eacute;e(s) NtPt ";
@@ -768,6 +775,9 @@ function AfficherDonnees($file,$typeAction){
 							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and ".$compPoisSQL;
 						$valueCount = "cph.id" ; // pour gerer la pagination						
 						$builQuery = true;
+						if (strpos($LeftOuterJoin,"left outer join") === false ) {
+							$LeftOuterJoin = ",exp_station as stat";
+						}
 					break;
 				case "biologie" :
 						$labelSelection = "donn&eacute;e(s) biologique(s) ";
@@ -783,6 +793,9 @@ function AfficherDonnees($file,$typeAction){
 						$OrderCom .= ",fra.id asc, esp.id asc ";
 						$valueCount = "fra.id" ; // pour gerer la pagination						
 						$builQuery = true;
+						if (strpos($LeftOuterJoin,"left outer join") === false ) {
+							$LeftOuterJoin = ",exp_station as stat";
+						}
 					break;	
 				case "trophique" :
 					// Construction de la liste d'individus
@@ -797,6 +810,9 @@ function AfficherDonnees($file,$typeAction){
 							cont.id = trop.exp_contenu_id and ".$compPoisSQL;						
 						$valueCount = "bio.id" ; // pour gerer la pagination
 						$builQuery = true;	
+						if (strpos($LeftOuterJoin,"left outer join") === false ) {
+							$LeftOuterJoin = ",exp_station as stat";
+						}
 					break;
 					default	:	
 					$labelSelection = "coup(s) de p&ecirc;ches ";
@@ -972,9 +988,9 @@ function AfficherDonnees($file,$typeAction){
 			// Il va y avoir moins de données communes que pour les peches exp car certaines dependent de la filiere acti ou deb 
 			// Donc on cree des variables generales selon qu'on va traiter activite ou debarquement
 			// Définition des SQL de base pour les activites (art_activite)
-			$listeChampsArt = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.id,se.nom, act.art_agglomeration_id, agg.nom, act.annee, act.mois, act.date_activite, act.id,act.date_activite,upec.id";
-			$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_activite as act,art_agglomeration as agg,art_unite_peche as upec";
-			
+			$listeChampsArt = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.id,se.nom, act.art_agglomeration_id, agg.nom, act.annee, act.mois, act.date_activite, act.id,upec.id";
+			$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_agglomeration as agg,art_unite_peche as upec";
+
 			$WhereArt = "	py.id = sy.ref_pays_id and
 							sy.id = se.ref_systeme_id and
 							se.id = agg.ref_secteur_id and
@@ -984,10 +1000,11 @@ function AfficherDonnees($file,$typeAction){
 							act.annee = penq.annee and
 							act.art_agglomeration_id = penq.art_agglomeration_id and
 							upec.id = act.art_unite_peche_id";			
-			$OrderArt = "order by py.id asc, sy.id asc, agg.nom, act.annee asc,act.mois asc";
+			$OrderArt = "order by py.id asc, sy.id asc, agg.nom, act.annee asc,act.mois asc,act.id asc";
 			// Définition des SQL de base pour les débarquements (art_debarquement)
 			$listeChampsDeb = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,se.id, deb.art_agglomeration_id, agg.nom, deb.annee, deb.mois, deb.id, deb.date_debarquement";
-			$ListeTableDeb = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_debarquement as deb,art_agglomeration as agg,art_unite_peche as upec,art_grand_type_engin as gte";
+			$ListeTableDeb = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_agglomeration as agg,art_unite_peche as upec,art_grand_type_engin as gte";
+		
 			$WhereDeb = "	py.id = sy.ref_pays_id and
 							sy.id = se.ref_systeme_id and
 							se.id = agg.ref_secteur_id and
@@ -1015,6 +1032,9 @@ function AfficherDonnees($file,$typeAction){
 						$ConstIDunique = "ART-##-12"; // Ce qui apres le -##-n sera remplacé par la valeur d'index n de la lecture de la requete par exemple, ici, on va recuperer art.id  
 						$valueCount = "act.id" ; // pour gerer la pagination				
 						$builQuery = true;
+						if (strpos($LeftOuterJoin,"left outer join") === false ) {
+							$LeftOuterJoin = ",art_activite as act";
+						}
 					break;			
 				case "capture" :
 						// Liste des debarquements.
@@ -1029,6 +1049,9 @@ function AfficherDonnees($file,$typeAction){
 						$ConstIDunique = "DEB-##-11";
 						$valueCount = "deb.id" ; // pour gerer la pagination	
 						$builQuery = true;
+						if (strpos($LeftOuterJoin,"left outer join") === false ) {
+							$LeftOuterJoin = ",art_debarquement as deb";
+						}	
 					break;
 				case "NtPt" :
 						$labelSelection = "donn&eacute;e(s) NtPt";				
@@ -1053,6 +1076,9 @@ function AfficherDonnees($file,$typeAction){
 						$ConstIDunique = "DEB-##-11";
 						$valueCount = "deb.id" ; // pour gerer la pagination	
 						$builQuery = true;
+						if (strpos($LeftOuterJoin,"left outer join") === false ) {
+							$LeftOuterJoin = ",art_debarquement as deb";
+						}
 					break;
 				case "taille" :
 						$labelSelection = "donn&eacute;e(s) de tailles";	
@@ -1078,6 +1104,9 @@ function AfficherDonnees($file,$typeAction){
 						$ConstIDunique = "DEB-##-11";
 						$valueCount = "deb.id" ; // pour gerer la pagination
 						$builQuery = true;
+						if (strpos($LeftOuterJoin,"left outer join") === false ) {
+							$LeftOuterJoin = ",art_debarquement as deb";
+						}
 					break;
 				case "engin" :
 						$labelSelection = "donn&eacute;e(s) d'engin";	
@@ -1360,8 +1389,8 @@ function AfficherDonnees($file,$typeAction){
 		} else {
 			$WhereTotal = $WhereCom.$WhereSpec." and ".$WhereSel;
 		}
-		$SQLfinal = "select ".$listeChamps." from ".$listeTable." where ".$WhereTotal ." ".$OrderCom;
-		$SQLcountfinal = "select count(".$valueCount.") from ".$ListeTableCom.$ListeTableSpec." where ".$WhereCom.$WhereSpec;
+		$SQLfinal = "select ".$listeChamps." from ".$listeTable." ".$LeftOuterJoin." where ".$WhereTotal ." ".$OrderCom;
+		$SQLcountfinal = "select count(".$valueCount.") from ".$ListeTableCom.$ListeTableSpec." ".$LeftOuterJoin." where ".$WhereCom.$WhereSpec;
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "INFO SQL en cours :".$SQLfinal,$pasdefichier);
 		}
@@ -1692,7 +1721,6 @@ function AfficherDonnees($file,$typeAction){
 				creeFichier($SQLfinalFichier,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,false);
 			}
 			// Export des selections et regroupements dans des fichiers separes
-			
 			$SelectionPourFic = str_replace("<br/>","\n",$SelectionPourFic);
 			$SelectionPourFic = str_replace("<b>","",$SelectionPourFic);
 			$SelectionPourFic = str_replace("</b>","",$SelectionPourFic);
@@ -2070,8 +2098,7 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 			}
 			$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Pas de resultat disponible pour la sélection (creation fichier)<br/>";
 		} else {
-			// Ici, remplacer les noms des alias par le nom des tables...		
-			//$listeChamps = remplaceAlias($listeChamps);
+
 			$resultatFichier = str_replace(",","\t",$listeChamps);
 			if (! fwrite($ExpComp,$resultatFichier."\r\n") ) {
 				if ($EcrireLogComp ) {
@@ -2961,6 +2988,7 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	global $EcrireLogComp;
 	global $logComp;
 	global $pasdefichier;
+	if ($TableEnCours=="") {$TableEnCours = "Pays";}
 	//if ($EcrireLogComp ) {
 	//	WriteCompLog ($logComp, "DEBUG : liste colonnes dans  affichescolonnees = ".$ListeColonnes,$pasdefichier);
 	//}	
@@ -3004,7 +3032,7 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	if ($ListeChampTableFac == "") {
 		$ContenuChampTableFac = ""; // ca ne devrait plus etre le cas !!! 
 	} else {
-		$ContenuChampTableFac = "liste des colonnes export&eacute;es. <br/><span class=\"hints_small\">Vous pouvez les s&eacute;lectionner en les cochant quand elles ne sont pas gris&eacute;es </span><br/><br/><table id=\"colonneSel\"><tr><td class=\"colitem\">".$ListeChampTableFac."</td></tr></table><br/>";
+		$ContenuChampTableFac = "liste des colonnes export&eacute;es pour <b>".$TableEnCours."</b><br/><span class=\"hints_small\">vous pouvez les s&eacute;lectionner en les cochant quand elles ne sont pas gris&eacute;es </span><br/><br/><table id=\"colonneSel\"><tr><td class=\"colitem\">".$ListeChampTableFac."</td></tr></table><br/>";
 	}
 	$inputTableEC = "<input type=\"hidden\" id=\"tableEC\" value=\"".$TableEnCours."\"/>";
 	$inputNumDef = "<input type=\"hidden\" id=\"numDef\" value=\"".$NumChampDef."\"/>";
@@ -3083,6 +3111,7 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 	global $listeChampsSel;
 	global $ListeTableSel;
 	global $AjoutWhere;
+	global $LeftOuterJoin;
 	
 	$CR="ok";
 	if (!($_SESSION['listeColonne'] =="")){
@@ -3195,9 +3224,8 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = bio.".$TNomLongTable."_id "); 		
 									break;								
 								case "xveg" :
-									$TNomLongTable = "exp_vegetation";	
-									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = stat.".$TNomLongTable."_id "); 		
+									// On peut avoir des valeurs null, on y met un left outer join
+									$LeftOuterJoin = ",exp_station as stat left outer join exp_vegetation as xveg on xveg.id = stat.exp_vegetation_id ";
 									break;
 								case "xdeb" :
 									$TNomLongTable = "exp_debris";	
@@ -3295,16 +3323,16 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 									break;									
 								case "gte" :
 									if ($typeAction=="activite") {
-										$TNomLongTable = "art_grand_type_engin";	
-										$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-										$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = act.".$TNomLongTable."_id "); 
+										if (strpos($LeftOuterJoin,"left outer join") === false ) {
+											$LeftOuterJoin = ",((art_activite as act left outer join art_grand_type_engin as gte on gte.id = act.art_grand_type_engin_id) left outer join art_engin_activite as aenga on aenga.art_activite_id = act.id ) left outer join art_type_engin as teng on teng.id = aenga.art_type_engin_id";
+										}
 									}
 									break;
 								case "teng" :
-									if (!($typeAction=="engin")) {
-										$TNomLongTable = "art_type_engin";	
-										$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-										$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".art_grand_type_engin_id = gte.id "); 		
+									if ($typeAction=="activite") {
+										if (strpos($LeftOuterJoin,"left outer join") === false ) {
+											$LeftOuterJoin = ",((art_activite as act left outer join art_grand_type_engin as gte on gte.id = act.art_grand_type_engin_id) left outer join art_engin_activite as aenga on aenga.art_activite_id = act.id ) left outer join art_type_engin as teng on teng.id = aenga.art_type_engin_id";
+										}
 									}
 									break;
 								case "tagg" :
@@ -3473,7 +3501,11 @@ function remplaceAlias($listeDesChamps) {
 			$nomTableEC = $champ[0];
 			$nomChampEC = $champ[1];
 			$nomTable = recupeNomTableAlias($nomTableEC);
-			$nomChamp = $nomTable.".".$nomChampEC;
+			$nomChampTemp = recupeNomChamps($nomTableEC."-".$nomChampEC);
+			if ($nomChampTemp == "inconnu") {
+				$nomChampTemp = $nomChampEC;
+			}
+			$nomChamp = $nomTable.".".$nomChampTemp;
 			if ($listeDesTitres == "") {
 				$listeDesTitres = $nomChamp;
 			} else {
@@ -3497,6 +3529,23 @@ function recupeNomTableAlias($tableAlias){
 		}
 	}
 	return $nomTable;
+}
+
+//*********************************************************************
+// recupeNomChamps : Fonction pour recuperer le libelle du champs en cours defini dans le fichier de conf XML
+function recupeNomChamps($ValeurATester){
+	$NbReg = count($_SESSION['libelleChamp']);
+	//echo $NbReg." dans libelleChamp <br/>";
+	$libelleChamps = "inconnu";
+	for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
+		//echo $cptR." ".$_SESSION['libelleChamp'][$cptR]."<br/>";
+		$tablib = explode(",",$_SESSION['libelleChamp'][$cptR]);
+		if(trim($tablib[0]) == trim ($ValeurATester)) {
+			$libelleChamps = $tablib[1];
+			break;
+		}
+	}
+	return $libelleChamps;
 }
 
 

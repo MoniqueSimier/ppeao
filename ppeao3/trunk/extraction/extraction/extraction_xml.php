@@ -367,6 +367,21 @@ function startElementCol($parser, $name, $attrs){
 			break;
 	
 		case "CHAMP":
+			// On construit une variable de session contenant le libelle pour la valeur de champs
+			$NomChampsEncours = $idenTableEnCours."-".$attrs["CODE"];
+			$champTrouve = false;
+			$NbReg = count($_SESSION['libelleChamp']);
+			for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
+				$tablib = explode(",",$_SESSION['libelleChamp'][$cptR]);
+				if($tablib[0] == $NomChampsEncours) {
+					$champTrouve = true;
+					break;
+				}
+			}	
+			if (!$champTrouve) {
+				$posSuiv = 	intval($NbReg) + 1;
+				$_SESSION['libelleChamp'][$posSuiv] =  $idenTableEnCours."-".$attrs["CODE"].",".$attrs["LIBELLE"];
+			}
 			if ($RecupDonneesOK == true ) {
 				if (array_key_exists("FILIERE",$attrs)) {
 					// Cela veut dire qu'au niveau du champs, on a une restriction supplémentaire par rapport à la filière.
@@ -612,6 +627,7 @@ function endElementCol($parser, $name){
 				$tablib = explode(",",$_SESSION['libelleTable'][$cptR]);
 				if($tablib[0] == $NomTableBDEnCours) {
 					$tableTrouvee = true;
+					break;
 				}
 			}	
 			if (!$tableTrouvee) {
