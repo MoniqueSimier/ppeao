@@ -170,11 +170,11 @@ if ($changtAction == "y") {
 				// On précharge les valeurs par defaut
 				$_SESSION['listePoisson'] = "";;
 			break;
-		case "NtPt":
+		case "NtPart":
 				// On précharge les valeurs par defaut
 				$_SESSION['listePoisson'] = "0,np";
 			break;
-		case "taille":
+		case "taillart":
 				// On précharge les valeurs par defaut
 				$_SESSION['listePoisson'] = "0,np";
 			break;

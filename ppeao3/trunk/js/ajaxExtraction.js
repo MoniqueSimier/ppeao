@@ -1,7 +1,6 @@
 // Fonctions javascript pour la gestion de l'extraction, phase II (lecture des données apres la selection)
 // creation : Y. Laurent le 30/06/2009
 // 
-
 // Definition des variables globales
 var xmlHttp;
 var fenID;
@@ -295,7 +294,7 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		// Recuperation des selections sur choix des poissons
 		poiss  = recupereSelection(4,"poisson");
 		// Recuperation des categories ecologiques
-		if ( typeAction == 'NtPt' || typeAction == 'taille' ) {
+		if ( typeAction == 'NtPart' || typeAction == 'taillart' ) {
 			// Recuperation des categories ecologiques / trophiques
 			switch (selToutescat) {
 				case "tout-CEco" :
@@ -335,7 +334,7 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 				ListEsp  = recupereSelection(limEsp,"Esp");
 			}
 		}
-		if (ListEsp == ''  && (globalAction=="taille" || globalAction=="NtPt")) {
+		if (ListEsp == ''  && (globalAction=="taillart" || globalAction=="NtPart")) {
 			alert("Merci de selectionner au moins une espece !");
 			return;
 		}
@@ -496,7 +495,6 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 	if (validation == 'y') {
 		if 	(document.getElementById("ExpFic").checked) {
 			ExpFic ="&exf=y" ;
-
 		} else {
 			ExpFic ="";
 		}
@@ -697,12 +695,12 @@ function stateChanged3() {
 		
 		if (globalAction=="activite") {actActif=" active";}
 		if (globalAction=="capture") {capActif=" active";}
-		if (globalAction=="NtPt") {ntActif=" active";}
-		if (globalAction=="taille") {strActif=" active";}
+		if (globalAction=="NtPart") {ntActif=" active";}
+		if (globalAction=="taillart") {strActif=" active";}
 		if (globalAction=="engin") {engActif=" active";}
 		
 		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
-		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','activite','1','"+globalTableEnCours+"','n','','','','')\" class=\"activite"+actActif+"\">activit&eacute</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','capture','1','"+globalTableEnCours+"','n','','','','')\" class=\"capture"+capActif+"\">captures totales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','NtPt','1','"+globalTableEnCours+"','n','','','','')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','taille','1','"+globalTableEnCours+"','n','','','','')\" class=\"structure"+strActif+"\">structure de taille</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','engin','1','"+globalTableEnCours+"','n','','','','')\" class=\"engin"+engActif+"\">engin de p&ecirc;che</a>";
+		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','activite','1','"+globalTableEnCours+"','n','','','','')\" class=\"activite"+actActif+"\">activit&eacute</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','capture','1','"+globalTableEnCours+"','n','','','','')\" class=\"capture"+capActif+"\">captures totales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','NtPart','1','"+globalTableEnCours+"','n','','','','')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','taillart','1','"+globalTableEnCours+"','n','','','','')\" class=\"structure"+strActif+"\">structure de taille</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','engin','1','"+globalTableEnCours+"','n','','','','')\" class=\"engin"+engActif+"\">engin de p&ecirc;che</a>";
 		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('"+globaltypepeche+"','"+globalAction+"','1','','y','','','','')\" value=\"afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>exporter en fichier";
 		
 	}

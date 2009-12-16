@@ -337,6 +337,7 @@ function startElementCol($parser, $name, $attrs){
 	global $GroupeEnCours;
 	global $ignoreGroupe;
 	global $TypePecheEnCours ;
+	global $groupePasAffecte;
 	array_push($stack,$name);
 	$continueTrait = true;
 	// Analyse de l'element et remplissage des variables
@@ -346,12 +347,15 @@ function startElementCol($parser, $name, $attrs){
 					// On indique par cet atribut qu'on devra prendre en compte une selection multiple par groupe
 					// ie un element peut etre affiché dans differents groupes, on ne se limite pas 
 					// au controle sur le groupe.
+					
 					if ((strtoupper($attrs["FILIERE"]) == "TOUTES" || strtoupper($attrs["FILIERE"]) == strtoupper($FiliereEnCours)) &&
 						(strtoupper($attrs["TYPE"]) == "TOUT" || strtoupper($attrs["TYPE"]) == strtoupper($TypePecheEnCours))																									
 						) {
 						$groupeOK = true;
+						//echo "Groupe multi pas ok<br/>";
 					} else {
 						$groupeOK = false;
+						//echo "Groupe multi OK<br/>";
 					}
 					$ignoreGroupe = true;
 				} else {
@@ -360,12 +364,11 @@ function startElementCol($parser, $name, $attrs){
 							(strtoupper($attrs["TYPE"]) == "TOUT" || strtoupper($attrs["TYPE"]) == strtoupper($TypePecheEnCours))																									
 							) {
 							$groupeOK = true;
+							//echo "Groupe OK<br/>";
 						} 
-					}
+					} 
 				}
-
 			break;
-	
 		case "CHAMP":
 			// On construit une variable de session contenant le libelle pour la valeur de champs
 			$NomChampsEncours = $idenTableEnCours."-".$attrs["CODE"];
@@ -404,7 +407,10 @@ function startElementCol($parser, $name, $attrs){
 					}
 				}
 				if ($continueTrait){
-					if ($typeRecupTable == "tout" && $TableAAjouter && $groupeOK) {
+					$libDebug = "";
+				
+					if ($typeRecupTable == "tout" && $TableAAjouter ) {
+						//echo "AJOUT DANS LISTE<br/>";
 						if (!($attrs["AFFICHAGE"] =="X")) {
 							$majOk = true;
 							// On recupère toutes les valeurs pour la ou les filieres autorisées
@@ -433,7 +439,7 @@ function startElementCol($parser, $name, $attrs){
 								}	
 							}
 						}
-					}
+					} // fin du if ($typeRecupTable == "tout" && $TableAAjouter && $groupeOK) {
 					//echo $ListeToutesValeurs."<br/>";
 					// GEstion de l'afficha proprement dit
 					if ($typeRecupTable == "un") {
@@ -533,6 +539,7 @@ function endElementCol($parser, $name){
 	global $TabEnCours;
 	global $groupeOK ;
 	global $ignoreGroupe;
+	global $groupePasAffecte;
 	global $pecheLue ;
 	global $typeRecupTable;
 	global $ListeToutesValeurs;
@@ -552,33 +559,24 @@ function endElementCol($parser, $name){
 			$GroupeEnCours = "";
 			$RecupDonneesOK = false;
 			$ignoreGroupe = false;
+			$groupePasAffecte = true;
 			$pecheLue = true;
 			if (strtoupper($globaldata) == strtoupper($TypePecheEnCours) || strtoupper($globaldata) == "TOUTES") {
 				$TableAAjouter = true;
 			} else {
 				$TableAAjouter = false;
 			}
-			break;	
-		case "STATISTIQUE" :
-			$groupeOK = false;
-			$GroupeEnCours = "";
-			$RecupDonneesOK = false;
-			$ignoreGroupe = false;
-			if (!($pecheLue)) { // Le fichier de selection est exclusif, soit peches soit statistiques. Mais le fichier XML contient les definitions pour les deux.. Donc on exclue ce test si il a déjà été fait au dessus.
-				if (strtoupper($globaldata) == strtoupper($TypePecheEnCours) || strtoupper($globaldata) == "TOUTES") {
-					$TableAAjouter = true;
-				} else {
-					$TableAAjouter = false;
-				}
-			}
-			break;	
+			break;		
 		case "GROUPE" :
 			$Groupe = $globaldata;
 			if ($groupeOK ) {
 				//echo "choisi = ".$Groupe."<br/>";
-				$GroupeEnCours = $Groupe;
+				if ($groupePasAffecte) {
+					$GroupeEnCours = $Groupe;
+					$groupePasAffecte = false;
+				}
 				// Soit on teste le nom du groupe soit on est dans le cas ou on recupere toutes les cases a cocher
-				//echo strtoupper($GroupeEnCours)." - ".strtoupper($TableATester)."<br/>";
+				//echo "groupe en cours = ".strtoupper($GroupeEnCours)." -  groupe a afficher = ".strtoupper($TableATester)."<br/>";
 				if (!($ignoreGroupe)) {
 					if ((strtoupper($GroupeEnCours) == strtoupper($TableATester)) || $typeRecupTable == "tout" ) {
 						$RecupDonneesOK = true;

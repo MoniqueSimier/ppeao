@@ -199,7 +199,7 @@ if (!(file_exists($file)) ) {
         <?php if ($_SESSION['pasderesultat']) {
 			echo "La s&eacute;lection n'a pas retourn&eacute; de r&eacute;sultats.<br/>";
 		} else { ?>
-        <b>choix de la fili&egrave;re :</b>&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','activite','1','','n','','','','')">activit&eacute;</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','capture','1','','n','','','','')">captures totales</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','NtPt','1','','n','','','','')">Nt/Pt</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','taille','1','','n','','','','')">structure de taille</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','engin','1','','n','','','','')">engins de p&ecirc;che</a>
+        <b>choix de la fili&egrave;re :</b>&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','activite','1','','n','','','','')">activit&eacute;</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','capture','1','','n','','','','')">captures totales</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','NtPart','1','','n','','','','')">Nt/Pt</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','taillart','1','','n','','','','')">structure de taille</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','engin','1','','n','','','','')">engins de p&ecirc;che</a>
                 <?php } ?>
         </div>
 		<div id="resultfiliere"></div>
