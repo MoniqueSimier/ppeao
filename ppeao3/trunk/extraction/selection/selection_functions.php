@@ -2038,25 +2038,55 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 		case $theStep:
 		echo('<div id="step_'.$theStep.'">');
 			echo('<form id="step_'.$theStep.'_form" name="step_'.$theStep.'_form" target="/extraction/selection/selection.php" method="GET">');
-				echo('<h2>'.$theStep.'. s&eacute;lectionner des grands types d&#x27;engins</h2>');
-				// on recupere la liste des grands types d'engins correspondants aux periodes d'enquete
-				$sql='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_activite a, art_debarquement d WHERE 
-				a.id IN (\''.arrayToList($compteur["activites_ids"],'\',\'','\'').') 
-				AND d.id IN (\''.arrayToList($compteur["debarquements_ids"],'\',\'','\'').') 
-				AND a.art_grand_type_engin_id=g.id AND d.art_grand_type_engin_id=g.id
+				echo('<h2>'.$theStep.'. s&eacute;lectionner des grands types d&#x27;engins de p&ecirc;che</h2>');
+				// on recupere la liste des grands types d'engins correspondants aux debarquements
+				$sql_gte_d='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_debarquement d WHERE 
+				d.id IN (\''.arrayToList($compteur["debarquements_ids"],'\',\'','\'').') AND d.art_grand_type_engin_id=g.id
 				ORDER BY g.libelle
 				';
-				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
-				$array=pg_fetch_all($result);
-				pg_free_result($result);
-				//debug 				echo('<pre>');print_r($array);echo('</pre>');
+				
+				$result_gte_d=pg_query($connectPPEAO,$sql_gte_d) or die('erreur dans la requete : '.$sql_gte_d. pg_last_error());
+
+				$array_gte_d=pg_fetch_all($result_gte_d);
+				pg_free_result($result_gte_d);
+
+				// on recupere la liste des grands types d'engins correspondants aux activites
+				$sql_gte_a='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_activite a WHERE 
+				a.id IN (\''.arrayToList($compteur["activites_ids"],'\',\'','\'').') AND a.art_grand_type_engin_id=g.id
+				ORDER BY g.libelle
+				';				
+				
+				$result_gte_a=pg_query($connectPPEAO,$sql_gte_a) or die('erreur dans la requete : '.$sql_gte_a. pg_last_error());
+
+				$array_gte_a=pg_fetch_all($result_gte_a);
+				pg_free_result($result_gte_a);
+				
+				//debug 	echo('<pre>');print_r($array_gte_d);echo('</pre>');
+				//debug 				echo('<pre>');print_r($array_gte_a);echo('</pre>');
+				
+				
+				// ensuite on fusionne les deux listes de grands types d'engins
+				$array_gte=array_merge($array_gte_a,$array_gte_d);
+				// et enfin on elimine les valeurs en double
+				$array_gte=array_unique_multidimensionnal($array_gte);
+				// puis on trie le tableau en ordre alphabétique
+				array_csort($array_gte,'libelle', 'SORT_ASC');
+				
+				//debug 				echo('<pre>');print_r($array_gte);echo('</pre>');
+				
+				
+				
 				echo('<select id="gteng" name="gteng[]" size="10" multiple="multiple" class="level_select">');
-			foreach($array as $gteng) {
+			foreach($array_gte as $gteng) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($gteng["id"],$_GET["gteng"])) {$selected='selected="selected" ';} else {$selected='';}
-				echo('<option value="'.$gteng["id"].'" '.$selected.'>'.$gteng["libelle"].'</option>');
+				echo('<option value="'.$gteng["id"].'" '.$selected.'>'.$gteng["libelle"].' ('.$gteng["id"].')</option>');
 			} // end foreach
 			echo('</select>');
+			
+			// le bouton permettant de tout/rien selectionner
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'gteng\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'gteng\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			
 			// on affiche le lien permettant de passer au choix des filieres
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
