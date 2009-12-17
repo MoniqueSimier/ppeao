@@ -293,7 +293,7 @@ ALTER TABLE admin_log_modules ENABLE TRIGGER ALL;
 -- Name: admin_sequences_sequence_id_seq; Type: SEQUENCE SET; Schema: public; Owner: devppeao
 --
 
-SELECT pg_catalog.setval('admin_sequences_sequence_id_seq', 31, true);
+SELECT pg_catalog.setval('admin_sequences_sequence_id_seq', 0, true);
 
 --
 -- Data for Name: admin_sequences; Type: TABLE DATA; Schema: public; Owner: devppeao
@@ -315,23 +315,14 @@ INSERT INTO admin_sequences VALUES (11, 'art_type_sortie', 'id', 'art_type_sorti
 INSERT INTO admin_sequences VALUES (12, 'art_unite_peche', 'id', 'art_unite_peche_id_seq');
 INSERT INTO admin_sequences VALUES (13, 'art_vent', 'id', 'art_vent_id_seq');
 INSERT INTO admin_sequences VALUES (14, 'exp_campagne', 'id', 'exp_campagne_id_seq');
-INSERT INTO admin_sequences VALUES (15, 'exp_contenu_biologie', 'id', 'exp_contenu_biologie_id_seq');
-INSERT INTO admin_sequences VALUES (16, 'exp_contenu', 'id', 'exp_contenu_id_seq');
-INSERT INTO admin_sequences VALUES (17, 'exp_cp_peche', 'id', 'exp_cp_peche_id_seq');
-INSERT INTO admin_sequences VALUES (18, 'exp_force_courant', 'id', 'exp_force_courant_id_seq');
-INSERT INTO admin_sequences VALUES (19, 'exp_position', 'id', 'exp_position_id_seq');
-INSERT INTO admin_sequences VALUES (20, 'exp_qualite', 'id', 'exp_qualite_id_seq');
-INSERT INTO admin_sequences VALUES (21, 'exp_sens_courant', 'id', 'exp_sens_courant_id_seq');
-INSERT INTO admin_sequences VALUES (22, 'exp_stade', 'id', 'exp_stade_id_seq');
-INSERT INTO admin_sequences VALUES (23, 'ref_famille', 'id', 'ref_famille_id_seq');
-INSERT INTO admin_sequences VALUES (24, 'ref_ordre', 'id', 'ref_ordre_id_seq');
-INSERT INTO admin_sequences VALUES (25, 'ref_origine_kb', 'id', 'ref_origine_kb_id_seq');
-INSERT INTO admin_sequences VALUES (26, 'ref_secteur', 'id', 'ref_secteur_id_seq');
-INSERT INTO admin_sequences VALUES (27, 'ref_systeme', 'id', 'ref_systeme_id_seq');
-INSERT INTO admin_sequences VALUES (28, 'sys_activites_a_migrer', 'id', 'sys_activites_a_migrer_id_seq');
-INSERT INTO admin_sequences VALUES (29, 'sys_campagnes_a_migrer', 'id', 'sys_campagnes_a_migrer_id_seq');
-INSERT INTO admin_sequences VALUES (30, 'sys_debarquements_a_migrer', 'id', 'sys_debarquements_a_migrer_id_seq');
-INSERT INTO admin_sequences VALUES (31, 'sys_periodes_enquete', 'id', 'sys_periodes_enquete_id_seq');
+INSERT INTO admin_sequences VALUES (15, 'exp_coup_peche', 'id', 'exp_cp_peche_id_seq');
+INSERT INTO admin_sequences VALUES (16, 'ref_famille', 'id', 'ref_famille_id_seq');
+INSERT INTO admin_sequences VALUES (17, 'ref_ordre', 'id', 'ref_ordre_id_seq');
+INSERT INTO admin_sequences VALUES (18, 'ref_origine_kb', 'id', 'ref_origine_kb_id_seq');
+INSERT INTO admin_sequences VALUES (19, 'ref_secteur', 'id', 'ref_secteur_id_seq');
+INSERT INTO admin_sequences VALUES (20, 'ref_systeme', 'id', 'ref_systeme_id_seq');
+
+
 
 
 ALTER TABLE admin_sequences ENABLE TRIGGER ALL;
