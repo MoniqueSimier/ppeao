@@ -167,7 +167,7 @@ if (isset($_GET['action'])) {
 	echo $locSelection."<br/>";
 
 	echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$typeAction."</span>"; 
-	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;]re</a></span></div>";
+	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></div>";
 	echo "</div>";
 	AfficherDonnees($file,$typeAction);
 
