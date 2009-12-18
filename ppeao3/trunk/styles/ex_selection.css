@@ -18,7 +18,11 @@
 
 #choix_tables_stats, #choix_filiere {
 	display:block;
-	margin-top:12px;
+	margin:10px 0 10px 0;
+}
+
+#choix_tables_stats div {
+	margin-top:10px;
 }
 
 
@@ -49,7 +53,7 @@
 
 a.next_step, a.last_step {
 	font-size:12px;
-	display:block;
+	/*display:block;*/
 	background:#F7BA02;
 	padding: 3px 6px;
 	font-weight:bold;

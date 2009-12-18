@@ -2023,22 +2023,23 @@ echo('</div></div>');}
 //******************************************************************************
 // affiche le selecteur de grands types d'engins
 function afficheGrandsTypesEngins($exploit) {
-// $ exploit : le type d'exploitation choisi (donnees, stats, cartes)
+// $ exploit : le type d'exploitation choisi (donnees, stats)
 global $compteur;
 global $connectPPEAO;
 
+$theStep=10;
+
 // le step differe selon que l'on a affaire aux stats par agglo (10) ou generales (8)
 if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
-
 	switch ($_GET["step"]) {
 		// on n'est pas encore la, on n'affiche rien
 		case ($_GET["step"]<$theStep):
 		break;
 		// on en est a cette etape on affiche le selecteur de grands types d'engins
-		case $theStep:
+		case ($_GET["step"]==$theStep):
 		echo('<div id="step_'.$theStep.'">');
 			echo('<form id="step_'.$theStep.'_form" name="step_'.$theStep.'_form" target="/extraction/selection/selection.php" method="GET">');
-				echo('<h2>'.$theStep.'. s&eacute;lectionner des grands types d&#x27;engins de p&ecirc;che</h2>');
+				echo('<h2>s&eacute;lectionner des grands types d&#x27;engins de p&ecirc;che</h2>');
 				// on recupere la liste des grands types d'engins correspondants aux debarquements
 				$sql_gte_d='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_debarquement d WHERE 
 				d.id IN (\''.arrayToList($compteur["debarquements_ids"],'\',\'','\'').') AND d.art_grand_type_engin_id=g.id
@@ -2334,6 +2335,10 @@ function afficheSecteurs2() {
 		$edit_link=prepareSelectionEditLink(7);
 		echo('<p id="edit_secteurs" class="edit_selection"><a href="'.$edit_link.'">modifier la s&eacute;lection des syst&egrave;mes et des secteurs...</a></p>');
 		echo('</div>');
+		
+		// si on est juste au step suivant on ferme les div contenant la selection precedente, ouverts dans selection.php
+		if ($_GET["step"]==8) {echo('</div></div>');}
+		
 		break;
 	}
 }
