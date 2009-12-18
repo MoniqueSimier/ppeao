@@ -1022,6 +1022,8 @@
 		<champ code="li" affichage="X" libelle="Classe Lf GT"/>
 		<champ code="xi" affichage="X" libelle="Effectif Lf GT"/>
 	</table>
+	<!-- Fin Stat -->
+	<!-- Debut referentiel especes. Il est mis en fin de fichier pour pouvoir gérer l'affichage fraction espece en dernier -->
 	<table>
 		<nom>ref_espece</nom>
 		<peches>

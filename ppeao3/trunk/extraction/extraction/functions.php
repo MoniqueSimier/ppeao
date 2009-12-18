@@ -382,12 +382,12 @@ function AfficherDonnees($file,$typeAction){
 		//	Controle fichiers
 		// Pour les statistiques, il n'y a pas un seul fichier de données mais 6
 		// On cree directement le zip avec tous les fichiers.
-		$nomFicExport = $dirLog."/".date('y\-m\-d-Hmi')."_".$typeSelection."_".$typeAction.".csv";
+		$nomFicExport = $dirLog."/".date('y\-m\-d-Hmi')."_".$typeSelection."_".$typeAction.".txt";
 		$nomFicExportSel = $dirLog."/".date('y\-m\-d-Hmi')."_".$typeSelection."_".$typeAction."-Selection.txt";
 		if (!($_SESSION['listeRegroup'] == "")) {
 			$nomFicExportReg = $dirLog."/".date('y\-m\-d-Hmi')."_".$typeSelection."_".$typeAction."-Regroupement.txt";
 		}
-		$nomFicExpLien = $nomLogLien."/".date('y\-m\-d-Hmi')."_".$typeSelection."_".$typeAction.".csv";
+		$nomFicExpLien = $nomLogLien."/".date('y\-m\-d-Hmi')."_".$typeSelection."_".$typeAction.".txt";
 		// On ne cree le fichier que si il n'a pas deja ete rempli !
 		if (!($fichierDejaCree)) {
 			if (!($typeSelection == "statistiques")) {
@@ -1335,6 +1335,8 @@ function AfficherDonnees($file,$typeAction){
 				} 
 				
 			}
+			// On charge les colonnes supplémentaires juste pour l'affichage.
+			analyseColonne("statistiques",$typeAction,"ast");
 			$toutesColonnes = recupereTouteColonnes("statistiques",$typeStatistiques); // C'est juste pour charger le nom des alias dans la variable de session 
 			switch ($typeStatistiques) {
 				// *********************************************************************************
@@ -1361,7 +1363,7 @@ function AfficherDonnees($file,$typeAction){
 							// On construit les differentes requetes a executer a la suite:
 							// Les variables pour l'affichage a l'ecran :
 							$labelSelection = "Statistiques totales";	
-							$listeChampsSpec = ",ast.fm,ast.cap,ast.pue,ast.id";
+							$listeChampsSpec = ",ast.pue,ast.fm,ast.cap,ast.id";
 							$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast"; 
 							$WhereSpec = " and ast.art_agglomeration_id = penq.art_agglomeration_id";						
 							$ConstIDunique = "AST-##-13";
@@ -1369,13 +1371,13 @@ function AfficherDonnees($file,$typeAction){
 							$builQuery = true;
 							// ******************
 							// **** art_stat_totale
-							$listeChampsSpecast = ",ast.fm,ast.cap,ast.pue,ast.id";
+							$listeChampsSpecast = ",ast.pue,ast.fm,ast.cap,ast.id";
 							$ListeTableSpecast = ",art_periode_enquete as penq, art_stat_totale as ast"; 
 							$WhereSpecast = " and ast.art_agglomeration_id = penq.art_agglomeration_id";
 							$ConstIDuniqueast = "AST-##-13";
 							// ******************
 							// **** art_stat_sp
-							$listeChampsSpecasp = ",asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,ast.fm,ast.cap,ast.pue ,asp.id ,ast.id";
+							$listeChampsSpecasp = ",ast.pue,ast.fm,ast.cap,asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,asp.id ,ast.id";
 							$ListeTableSpecasp = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp"; 
 							$WhereSpecasp = "	and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
 							if (!($SQLEspeces == "")) {
@@ -1385,10 +1387,10 @@ function AfficherDonnees($file,$typeAction){
 							$ConstIDuniqueasp = "AST-##-18";
 							// Gestion des positionnements pour les regroupements
 							$posDEBIDasp = 18 ; //position ast.id - 1 / Pour gestion regroupement
-							$posESPIDasp = 10 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
-							$posESPNomasp = 11 ; //position esp.libelle - 1 / Pour gestion regroupement
-							$posStat1asp = 12 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
-							$posStat2asp = 13 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
+							$posESPIDasp = 13 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
+							$posESPNomasp = 14 ; //position esp.libelle - 1 / Pour gestion regroupement
+							$posStat1asp = 15 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
+							$posStat2asp = 16 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
 							$posStat3asp = -1 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
 							// ******************
 							// **** art_taille_sp
@@ -1409,14 +1411,14 @@ function AfficherDonnees($file,$typeAction){
 							$posStat3ats = -1 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
 							// ******************
 							// **** art_stat_gt	attgt
-							$listeChampsSpecasgt = ",asgt.fm_gt,asgt.cap_gt, asgt.pue_gt,asgt.id,ast.id,ast.id, asgt.art_grand_type_engin_id,gte.libelle";
+							$listeChampsSpecasgt = ", asgt.art_grand_type_engin_id,gte.libelle,asgt.pue_gt,asgt.fm_gt,asgt.cap_gt, asgt.id,ast.id";
 							$ListeTableSpecasgt = ",art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
 							$WhereSpecasgt = "	and asgt.art_stat_totale_id = ast.id 
 													and gte.id = 	asgt.art_grand_type_engin_id";
-							$ConstIDuniqueasgt = "AST-##-14";						
+							$ConstIDuniqueasgt = "AST-##-16";						
 							// ******************
 							// **** art_stat_gt_sp
-							$listeChampsSpecattgt = ",attgt.ref_espece_id, esp.libelle,attgt.cap_gt_sp, attgt.pue_gt_sp, attgt.id, asgt.id, ast.id, ast.id,asgt.art_grand_type_engin_id,gte.libelle";
+							$listeChampsSpecattgt = ",asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle,attgt.pue_gt_sp,attgt.cap_gt_sp,attgt.id, asgt.id, ast.id";
 							$ListeTableSpecattgt = ",art_periode_enquete as penq, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
 							$WhereSpecattgt = "	and attgt.art_stat_gt_id = asgt.id  
 													and asgt.art_stat_totale_id = ast.id 
@@ -1427,15 +1429,15 @@ function AfficherDonnees($file,$typeAction){
 							}
 							$ConstIDuniqueattgt = "AST-##-16";
 							// Gestion des positionnements pour les regroupements
-							$posDEBIDattgt = 16 ; //position asp.id - 1 / Pour gestion regroupement
-							$posESPIDattgt = 10 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
-							$posESPNomattgt = 11 ; //position esp.libelle - 1 / Pour gestion regroupement
-							$posStat1attgt = 12 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
-							$posStat2attgt = 13 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
+							$posDEBIDattgt = 16 ; //position ast.id - 1 / Pour gestion regroupement
+							$posESPIDattgt = 12 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
+							$posESPNomattgt = 13 ; //position esp.libelle - 1 / Pour gestion regroupement
+							$posStat1attgt = 14 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
+							$posStat2attgt = 15 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
 							$posStat3attgt = -1;
 							// ******************
 							//art_stat_gt_sp
-							$listeChampsSpecatgts = ",attgt.ref_espece_id, esp.libelle,attgt.cap_gt_sp, attgt.pue_gt_sp, atgts.li,atgts.xi,atgts.id, attgt.id, asgt.id, ast.id, ast.id,asgt.art_grand_type_engin_id,gte.libelle";
+							$listeChampsSpecatgts = ", asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle, attgt.pue_gt_sp, attgt.cap_gt_sp, atgts.li, atgts.xi,atgts.id, attgt.id, asgt.id, ast.id";
 							$ListeTableSpecatgts = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
 							$WhereSpecatgts = "	and atgts.art_stat_gt_sp_id = attgt.id  
 													and attgt.art_stat_gt_id = asgt.id  
@@ -1445,13 +1447,13 @@ function AfficherDonnees($file,$typeAction){
 							if (!($SQLEspeces == "")) {
 								$WhereSpecatgts .= " and  attgt.ref_espece_id in (".$SQLEspeces.")";
 							}
-							$ConstIDuniqueatgts = "AST-##-19";
+							$ConstIDuniqueatgts = "AST-##-21";
 							// Gestion des positionnements pour les regroupements
-							$posDEBIDatgts = 19 ; //position atgts.id - 1 / Pour gestion regroupement
-							$posESPIDatgts = 10 ; //position attgt.ref_espece_id - 1 / Pour gestion regroupement
-							$posESPNomatgts = 11 ; //position esp.libelle - 1 / Pour gestion regroupement
-							$posStat1gatgts = 14 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
-							$posStat2atgts = 15 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
+							$posDEBIDatgts = 21 ; //position ast.id - 1 / Pour gestion regroupement
+							$posESPIDatgts = 12 ; //position attgt.ref_espece_id - 1 / Pour gestion regroupement
+							$posESPNomatgts = 13 ; //position esp.libelle - 1 / Pour gestion regroupement
+							$posStat1gatgts = 16 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
+							$posStat2atgts = 17 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
 							$posStat3atgts = -1 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
 							break;
 						default	:	
@@ -1820,7 +1822,7 @@ function AfficherDonnees($file,$typeAction){
 					//echo "<b>".$tableStat[$cptTS]."</b> ". $SQLfinal."<br/>";
 					// Creation du fichier par stat.
 					$ficSuffixe = getSuffixeFicStat($tableStat[$cptTS]);
-					$nomFicExport = $dirLog."/".date('y\-m\-d')."_".$ficSuffixe.".csv";
+					$nomFicExport = $dirLog."/".date('y\-m\-d')."_".$ficSuffixe.".txt";
 					//echo $nomFicExport."<br/>";
 					// On ne cree le fichier que si il n'a pas deja ete rempli !
 					if (!($fichierDejaCree)) {
@@ -3311,7 +3313,7 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 			if ($_SESSION['listeColonne'] == "XtoutX") {
 				switch ($tableStat) {
 					case "ast":
-						$listeChampsSel = ",ast.nbre_obs, ast.obs_min,ast.obs_max, ast.pue_ecart_type,ast.fpe";
+						$listeChampsSel = ",agg.art_type_agglomeration_id,ast.nbre_obs, ast.obs_min,ast.obs_max, ast.pue_ecart_type,ast.fpe,ast.nbre_unite_recensee_periode,ast.nbre_jour_activite,ast.nbre_jour_enq_deb";
 						break;	
 					case "asp":
 						$listeChampsSel = ",asp.nbre_enquete_sp, asp.obs_sp_min,asp.obs_sp_max, asp.pue_sp_ecart_type";
@@ -3329,7 +3331,7 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 						$listeChampsSel = "";
 					break;
 				}	
-			}
+			} 
 		} else {
 			$champSel = explode(",",$_SESSION['listeColonne']);
 			// On va completer les champs si on a tout selectionné.
@@ -3755,12 +3757,12 @@ function remplaceAlias($listeDesChamps) {
 			$champ = explode(".",$listeTitre[$cptT]);
 			$nomTableEC = $champ[0];
 			$nomChampEC = $champ[1];
-			$nomTable = recupeNomTableAlias($nomTableEC);
+			//$nomTable = recupeNomTableAlias($nomTableEC);
 			$nomChampTemp = recupeNomChamps($nomTableEC."-".$nomChampEC);
 			if ($nomChampTemp == "inconnu") {
 				$nomChampTemp = $nomChampEC;
 			}
-			$nomChamp = $nomTable.".".$nomChampTemp;
+			$nomChamp = $nomChampTemp;
 			if ($listeDesTitres == "") {
 				$listeDesTitres = $nomChamp;
 			} else {
@@ -3774,6 +3776,7 @@ function remplaceAlias($listeDesChamps) {
 //*********************************************************************
 // recupeNomTableAlias : Fonction pour recuperer le nom de la table
 function recupeNomTableAlias($tableAlias){
+	// Attention, comme cette fonction n'est pour l'instant plus utilisé, le remplissage de la variable $_SESSION['libelleTable'] a été désactivé dans extraction_xml.php
 	$NbReg = count($_SESSION['libelleTable']);
 	$nomTable = "inconnu";
 	for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {

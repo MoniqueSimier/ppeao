@@ -615,24 +615,24 @@ function endElementCol($parser, $name){
 			break;
 		case "ALIAS" :
 			// Gestion de la variable pour recuperer les noms de table a partir des alias
-			if (isset($_SESSION['libelleTable'])) {
-				$NbReg = count($_SESSION['libelleTable']);
-			} else {
-				$NbReg = 0;
-			}
-			$tableTrouvee = false;
-			for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
-				$tablib = explode(",",$_SESSION['libelleTable'][$cptR]);
-				if($tablib[0] == $NomTableBDEnCours) {
-					$tableTrouvee = true;
-					break;
-				}
-			}	
-			if (!$tableTrouvee) {
-				$posSuiv = 	intval($NbReg) + 1;
-				$_SESSION['libelleTable'][$posSuiv] = strtolower($NomTableBDEnCours).",".$globaldata;
-
-			}
+			// Plus besoin de cette variable, on commente, on ne sait jamais, on le laisse si changement d'avis sur la gestion des colonnes
+			//if (isset($_SESSION['libelleTable'])) {
+			//	$NbReg = count($_SESSION['libelleTable']);
+			//} else {
+			//	$NbReg = 0;
+			//}
+			//$tableTrouvee = false;
+			//for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
+			//	$tablib = explode(",",$_SESSION['libelleTable'][$cptR]);
+			//	if($tablib[0] == $NomTableBDEnCours) {
+			//		$tableTrouvee = true;
+			//		break;
+			//	}
+			//}	
+			//if (!$tableTrouvee) {
+			//	$posSuiv = 	intval($NbReg) + 1;
+			//	$_SESSION['libelleTable'][$posSuiv] = strtolower($NomTableBDEnCours).",".$globaldata;
+			//}
 			$idenTableEnCours = $globaldata;
 			break;
 
