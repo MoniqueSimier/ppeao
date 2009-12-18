@@ -98,6 +98,11 @@ if (isset($_GET['Esp'])) {
 } else {
 	$listeEsp = "";
 }
+if (isset($_GET["gselec"])) {
+	$gardeSelection =  $_GET["gselec"];
+}else {
+	$gardeSelection = "";
+}
 // Gestion des regroupements
 if (isset($_GET['RegEC'])) {
 	$RegEncours = intval($_GET['RegEC']) + 1;
@@ -154,7 +159,7 @@ if (!($ListeColRecues =="")) {
 // Préchargement des valeurs par défaut
 // car on a changé de filiere ou on commence
 // Attention aux valeurs poisson / non_poisson (non_poisson = 1 correspond a la selection des especes qui ne sont pas des poissons
-if ($changtAction == "y") {
+if ($changtAction == "y" && $gardeSelection =="") {
 	$_SESSION['listeCatTrop'] ="";
 	$_SESSION['listeCatEco'] = "";
 	$_SESSION['listeColonne'] = "";

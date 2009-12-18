@@ -224,11 +224,11 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		$CRexecution .= $AjoutCR;
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div //id=\"".$nomFenetre."_txt\">Zip ex&eacute;cut&eacute;e avec succ&egrave;s </div><div id=\"
 	".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
-		echo"<div id=\"vertical_slide5\">".$CRexecution."</div>";	
+		echo"<div id=\"vertical_slide4\">".$CRexecution."</div>";	
 
 	} else {
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Traitement en erreur (voir d&eacute;tail ci-dessous)</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
-		echo"<div id=\"vertical_slide5\">".$CRexecution."</div>";
+		echo"<div id=\"vertical_slide4\">".$CRexecution."</div>";
 		logWriteTo(8,"error","**- Traitement en erreur : ".$CRexecution."","","","0");
 		if ($EcrireLogComp ) {
 				WriteCompLog ($logComp, "erreur dans le traitement = ".$CRexecution,$pasdefichier);

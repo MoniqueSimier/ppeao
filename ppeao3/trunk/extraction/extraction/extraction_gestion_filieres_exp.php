@@ -299,7 +299,7 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <?php } ?>
 
 <a href="#" class="<?php echo $tab4;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','4','<?php echo $codeTableEnCours;?>','n','','','','')">s&eacute;lection de variables optionnelles</a>
-<?php if (!($typeAction == "peuplement")) { ?> |
+<?php if (!($typeAction == "environnement") && !($typeAction == "peuplement")) { ?> |
 <a href="#" class="<?php echo $tab5;?>" onClick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','5','<?php echo $codeTableEnCours;?>','n','','','','')">esp&egrave;ces</a>
 <?php } ?>
 </div>

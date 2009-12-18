@@ -70,24 +70,12 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 			// On ajoute une variable qui permet de les rendre globalement obligatoire
 			//$boutDisabled = "disabled=\"disabled\""; // desactivés
 			$boutDisabled = ""; // activés
-		
-		
 		?>
-		
-		<div id="controleBase">
-			<div id="controleBase_img"><img src="/assets/incomplete.png" alt=""/></div>
-			<div id="controleBase_txt">Controle base de reference ACCESS.</div>
-			<div id="controleBase_chk">Controler base<input type="checkbox" id="ctrlcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
-			<?php 	$navbarLevel = 1;
-					$texteDiv = "Compte rendu du controle de la base.";	
-					include $_SERVER["DOCUMENT_ROOT"].'/export/navbarCR.inc'; ?>
-		</div>
-
 		<div id="vidage">
 			<div id="vidage_img"><img src="/assets/incomplete.png" alt=""/></div>
 			<div id="vidage_txt">Vidage de la base ACCESS de travail.</div>
 			<div id="vidage_chk">Lancer vidage<input type="checkbox" id="videcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
-			<?php 	$navbarLevel = 2;
+			<?php 	$navbarLevel = 1;
 					$texteDiv = "Compte rendu du vidage de la base de travail";	
 					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 		</div>
@@ -95,7 +83,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 			<div id="copiePPEAO_img"><img src="/assets/incomplete.png" alt=""/></div>
 			<div id="copiePPEAO_txt">Copie des donnees depuis la base PPEAO (postgreSQL) de reference.</div>
 			<div id="copiePPEAO_chk">Lancer copie PPEAO<input type="checkbox" id="copPPEAOcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
-			<?php 	$navbarLevel = 3;
+			<?php 	$navbarLevel = 2;
 					$texteDiv = "Compte rendu de copie depuis base PPEAO de reference.";	
 					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 		</div>
@@ -103,25 +91,16 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 			<div id="copieACCESS_img"><img src="/assets/incomplete.png" alt=""/></div>
 			<div id="copieACCESS_txt">Copie des donnees depuis la base ACCESS de reference.</div>
 			<div id="copieACCESS_chk">Lancer copie ACCESS<input type="checkbox" id="copAcccheck" checked="checked" <?php echo $boutDisabled;?>/></div>
-			<?php 	$navbarLevel = 4;
+			<?php 	$navbarLevel = 3;
 					$texteDiv = "Compte rendu de copie depuis base ACCESS de reference.";	
 					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 
 		</div>
-		<!--<div id="controleBD">
-			<div id="controleBD_img"><img src="/assets/incomplete.png" alt=""/></div>
-			<div id="controleBD_txt">Controle de la base de travail.</div>
-			<div id="controleBD_chk">Lancer controle base<input type="checkbox" id="testcheck" checked="checked"/></div>
-			<?php// 	$navbarLevel = 5;
-				//$texteDiv = "Compte rendu de controle de la base de travail.";	
-				//include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>				
-		</div>-->
-	
 		<div id="copieZip">
 			<div id="copieZip_img"><img src="/assets/incomplete.png" alt=""/></div>
 			<div id="copieZip_txt">Zip des bases.</div>
 			<div id="copieZip_chk">Lancer zip des bases<input type="checkbox" id="zipcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
-			<?php 	$navbarLevel = 5;
+			<?php 	$navbarLevel = 4;
 				$texteDiv = "Compte rendu du zip des bases.";	
 				include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 		</div>

@@ -136,7 +136,6 @@ if (!(file_exists($file)) ) {
 					WriteCompLog ($logComp, "#",$pasdefichier);
 					WriteCompLog ($logComp, "#",$pasdefichier);
 				}
-
 				// Si on change de filière, on remet tous à blanc
 				if (!($gardeSelection == "y")) { 
 					$_SESSION['listeQualite'] 	= "";
@@ -153,7 +152,7 @@ if (!(file_exists($file)) ) {
 					unset($_SESSION['listeRegroup']); // Liste des regroupements
 					unset($_SESSION['libelleTable']); // Pour recuperer les noms des tables
 					unset($_SESSION['libelleChamp']); // Pour recuperer les noms des champs
-				}
+				} 
 				// Variables pour construire les SQL	
 				$SQLPays 	= "";
 				$SQLSysteme	= "";

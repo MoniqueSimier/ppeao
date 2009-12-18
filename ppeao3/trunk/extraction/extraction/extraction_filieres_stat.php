@@ -162,7 +162,7 @@ if (!(file_exists($file)) ) {
 				$resultatLecture = "";
 				$labelSelection = "";
 				$locSelection = AfficherSelection($file,$typeAction); 
-
+echo $typeStatistiques."<br/>";
 				echo "<span class=\"showHide\">
 <a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier ma s&eacute;lection]</a></span>";
 				echo "<div id=\"selection_precedente\">";
@@ -198,7 +198,7 @@ if (!(file_exists($file)) ) {
 			</form></span>
 		   
 		   
-		   <script type="text/javascript" charset="utf-8">runFilieresStat('<?php echo $typeStatistiques ?>','globale','1','','n','','','','');</script>
+		   <script type="text/javascript" charset="utf-8">runFilieresStat('<?php echo $typeStatistiques ?>','stats','1','','n','','','','');</script>
         <script type="text/javascript" charset="utf-8">
 			var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
 			mySlider.hide();

@@ -560,688 +560,689 @@ function AfficherDonnees($file,$typeAction){
 		// EXTRACTION
 		// #####################################################################################
 		case "extraction" :
-		switch ($typePeche) {
-			// *********************************************************************************
-			// PECHE EXPERIMENTALE
-			// *********************************************************************************
-			case "experimentale" :
-			// ********** ANALYSE DES SELECTIONS DE L'UTILISATEUR
-			// ********** si aucune selection de campagne, alors on aura pas de resultat
-			if ($SQLCampagne == "") {
-				$_SESSION['pasderesultat'] = true;
-				return "pas de resultat <br/>";
-			}
-			// ==> construction des SQL correspondant - traitement des cas particuliers
-			// On controle que des sélections ont été faites pour les espèces / familles
-			if ($SQLEngin == "") {
-				$WhereEngin = "";
-				// Ici on doit traiter du cas d'une sélection restrictive des pays
-			} else {
-				$WhereEngin = "cph.exp_engin_id in (".$SQLEngin.") and";
-			}							
-			// Prise en compte des sélections complémentaires
-			$compSQL = "";
-			if 	(!($_SESSION['listeQualite'] =="")) {
-				$compSQL =" cph.exp_qualite_id in (".$_SESSION['listeQualite'].") ";
-				$restSupp = " qualit&eacute; limit&eacute;e à =".$_SESSION['listeQualite'];
-			}
-			if (!($_SESSION['listeProtocole'] == "")) {
-				switch ($_SESSION['listeProtocole']) {
-				case "0" : $restSupp .= " - pas restreint aux coups du protocoles ";
-							break;
-				case "1" : $restSupp .= " - restreint aux coups du protocoles ";
-							if ($compSQL == "") {
-								$compSQL =" cph.protocole = 1";
-							} else {
-								$compSQL .=" and cph.protocole = 1";
-							}
-							break;
-				}
-			}
-			// Les selections ci-dessous ne sont valables que pour les filieres autres que l'environnement
-			if ($typeAction =="environnement" ||  $typeAction =="peuplement"){
-				$compCatEcoSQL = "";
-				$compCatTropSQL ="";
-				if ($typeAction =="environnement") {
-					$compPoisSQL ="";				
-				}
-			} 	else {
-				// Maj du libelle de la selection en tete avec les restriction CatEco CatTroph et poisson
-				$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois." ";
-
-			}
-			// ********** Gestion de l'affichage des colonnes sélectionnées 
-			$listeChampsSel = "";
-			$ListeTableSel = "";
-			$WhereSel = "";
-			$AjoutWhere = "";
-			// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
-			analyseColonne($typePeche,$typeAction,"");	
-			// Analyse des différents composants du where et ajout des and quand nécessaire
-			// C'est un peu le bronx pour construire ces SQL, mais pas le choix. On doit pouvoir optimiser...
-			if ($compSQL == "" ) {
-				$WhereSel = $compCatEcoSQL;
-			} else {
-				if ($compCatEcoSQL == "") {
-					$WhereSel = $compSQL;
-				} else {
-					$WhereSel = $compSQL." and ".$compCatEcoSQL;
-				}
-			}
-			// Gestion des categories trophiques...
-			if (!($compCatTropSQL == "" )) {
-				if ($WhereSel == "" ) {
-					$WhereSel = $compCatTropSQL;
-				} else {
-					$WhereSel = $WhereSel." and ".$compCatTropSQL;
-				}
-			}
-			// Enfin on ajoute les noms des nouveaux champs à lire depuis les colonnes
-			if ($WhereSel == "" ) {
-				$WhereSel = $AjoutWhere;
-			} else {
-				if (!($AjoutWhere == "")) {
-					$WhereSel = $WhereSel." and ".$AjoutWhere;
-				}
-			}
-
-			//echo "where sel = ".$WhereSel."<br/>";
-			// Cas particulier d'aucun sélection des espèces : 
-			// On reconstruit cette liste pour l'ensemble de la sélection car on va en avoir besoin
-			// pour les catégories trophiques/ecologiques
-			if ($SQLEspeces == "") {
-				// On reconstruit la liste des especes de la sélection.
-				$SQLEsp = "select esp.id from ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph,exp_fraction as fra,ref_espece as esp
-						where cpg.id = cph.exp_campagne_id and
-						stat.id = cph.exp_station_id and
-						sy.id = cpg.ref_systeme_id and
-						".$WhereSyst."
-						py.id = sy.ref_pays_id and
-						se.id = stat.ref_secteur_id and
-						fra.exp_coup_peche_id = cph.id and
-						esp.id = fra.ref_espece_id and
-						".$WhereSect."
-						cpg.id in (".$SQLCampagne.") ";
-				$SQLEspResult = pg_query($connectPPEAO,$SQLEsp);
-				$erreurSQL = pg_last_error($connectPPEAO);
-				if ( !$SQLEspResult ) { 
-					$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query ".$SQLEsp." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
-					if ($EcrireLogComp) {
-						WriteCompLog ($logComp, "ERREUR : echec construction liste espece query sql = ".$SQLEsp." (erreur complete = ".$erreurSQL,$pasdefichier);
+			switch ($typePeche) {
+				// *********************************************************************************
+				// PECHE EXPERIMENTALE
+				// *********************************************************************************
+				case "experimentale" :
+					// ********** ANALYSE DES SELECTIONS DE L'UTILISATEUR
+					// ********** si aucune selection de campagne, alors on aura pas de resultat
+					if ($SQLCampagne == "") {
+						$_SESSION['pasderesultat'] = true;
+						return "pas de resultat <br/>";
 					}
-					$erreurProcess = true;
-					return ("erreur SQL especes");
-				} else {
-					
-					if (pg_num_rows($SQLEspResult) == 0) {
-					// Erreur
-						$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>pas de coup de peche dispo vide...<br/>";
-						if ($EcrireLogComp) {
-							WriteCompLog ($logComp, "Warning :  pas de coupe de peches trouves pour remplir la liste des especes.",$pasdefichier);
-						}
+					// ==> construction des SQL correspondant - traitement des cas particuliers
+					// On controle que des sélections ont été faites pour les espèces / familles
+					if ($SQLEngin == "") {
+						$WhereEngin = "";
+						// Ici on doit traiter du cas d'une sélection restrictive des pays
 					} else {
-						while ($EspRow = pg_fetch_row($SQLEspResult) ) {
-							if (strpos($SQLEspeces,$EspRow[0]) === false ) {
-								$SQLEspeces .= "'".$EspRow[0]."',";	
-							}
-						}		
-					}				
-				}
-				$SQLEspeces	= substr($SQLEspeces,0,- 1); // pour enlever la virgule surnumeraire;
-				$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite....
-			}
-			// Si malgré tout, toujours pas d'especes dispo, ben tant pis....
-			if ($SQLEspeces == "") {
-				$WhereEsp = "";
-			} else {
-				// Enfin on verifie qu'il n'y a pas eu de restriction supplémentaires
-				if (!($_SESSION['listeEspeces'] == "")) {
-					$TempSQLEspeces = $SQLEspeces;
-					$SQLEspeces = "";
-					$EspecesSele = explode (",",$_SESSION['listeEspeces']);
-					$NumEsp = count($EspecesSele) - 1;
-					for ($cptES=0 ; $cptES<=$NumEsp;$cptES++) {
-						
-						if (strpos($TempSQLEspeces,$EspecesSele[$cptES]) === false ){
-			
-						} else {
-							// La valeur est disponible, on la met à jour
-							if ($SQLEspeces == "" ) {
-								$SQLEspeces = "'".$EspecesSele[$cptES]."'";
-							} else {
-								$SQLEspeces .= ",'".$EspecesSele[$cptES]."'";
-							}
+						$WhereEngin = "cph.exp_engin_id in (".$SQLEngin.") and";
+					}							
+					// Prise en compte des sélections complémentaires
+					$compSQL = "";
+					if 	(!($_SESSION['listeQualite'] =="")) {
+						$compSQL =" cph.exp_qualite_id in (".$_SESSION['listeQualite'].") ";
+						$restSupp = " qualit&eacute; limit&eacute;e à =".$_SESSION['listeQualite'];
+					}
+					if (!($_SESSION['listeProtocole'] == "")) {
+						switch ($_SESSION['listeProtocole']) {
+						case "0" : $restSupp .= " - pas restreint aux coups du protocoles ";
+									break;
+						case "1" : $restSupp .= " - restreint aux coups du protocoles ";
+									if ($compSQL == "") {
+										$compSQL =" cph.protocole = 1";
+									} else {
+										$compSQL .=" and cph.protocole = 1";
+									}
+									break;
 						}
 					}
-				} 
-				if (!($SQLEspeces == "" )) {
-					$WhereEsp = "fra.ref_espece_id in (".$SQLEspeces.") and";
-				} else {
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp, "ERREUR SQLEspeces est encore vide.",$pasdefichier);
-					}
-				}
-			}
-			// ********** PREPARATION DU SQL
-			// Definition de tout ce qui est commun aux peches expérimentales
-			$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom, stat.id, stat.nom, cpg.date_debut, cpg.id,cpg.numero_campagne, cph.date_cp, cph.heure_debut, cph.id,cph.numero_coup, cph.protocole, cph.exp_qualite_id,xqua.libelle, cph.exp_engin_id, xeng.libelle";
-			$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_campagne as cpg,exp_coup_peche as cph,exp_qualite as xqua,exp_engin as xeng";
-			$WhereCom = "cpg.id = cph.exp_campagne_id and
-							stat.id = cph.exp_station_id and
-							sy.id = cpg.ref_systeme_id and
-							".$WhereSyst."
-							py.id = sy.ref_pays_id and
-							se.id = stat.ref_secteur_id and
-							".$WhereSect."
-							cpg.id in (".$SQLCampagne.") and
-							xqua.id = cph.exp_qualite_id and
-							".$WhereEngin."
-							xeng.id = cph.exp_engin_id ";
-			$OrderCom = "order by py.id asc,sy.id asc,cpg.date_debut asc,cph.id asc";
-			// ********** CONSTRUCTION DES SQL DEFINITIFS PAR FILIERE
-			switch ($typeAction) {
-				case "peuplement" :
-						$labelSelection = "donn&eacute;e(s) de peuplement ";	
-						// On n'extrait que des donnéees de fraction
-						// Il n'y aucune selection de colonnes supplémentaires
-						// On prend tous les poissons (pas de différence poisson/non poisson
-						$listeChampsSpec = ",esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,fra.nombre_total ,fra.poids_total";
-						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam"; 
-						$WhereSpec = " and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
-							esp.id = fra.ref_espece_id and
-							fam.id = esp.ref_famille_id ";
-						$valueCount = "fra.id" ; // pour gerer la pagination	
-						$builQuery = true;
-						if (strpos($LeftOuterJoin,"left outer join") === false ) {
-							$LeftOuterJoin = ",exp_station as stat,ref_espece as esp";
-						} else {	
-							if (strpos($LeftOuterJoin,"exp_station as stat") === false ) {
-								$LeftOuterJoin = ",exp_station as stat ".$LeftOuterJoin;
-							}
-							if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
-									$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
-							}
+					// Les selections ci-dessous ne sont valables que pour les filieres autres que l'environnement
+					if ($typeAction =="environnement" ||  $typeAction =="peuplement"){
+						$compCatEcoSQL = "";
+						$compCatTropSQL ="";
+						if ($typeAction =="environnement") {
+							$compPoisSQL ="";				
 						}
-					break;
-				case "environnement" :
-						$labelSelection = "donn&eacute;e(s) d'environnement ";
-						// On n'extrait que des donnéees environnements
-						// Pas de données poisson
-						$listeChampsSpec = "";
-						$ListeTableSpec = ",exp_environnement as env"; 
-						$WhereSpec = " 	and env.id = cph.exp_environnement_id ";
-						$valueCount = "cph.id" ; // pour gerer la pagination						
-						$builQuery = true;
-						if (strpos($LeftOuterJoin,"left outer join") === false ) {
-							$LeftOuterJoin = ",exp_station as stat";
-						}
-					break;
-				case "NtPt" :
-						$labelSelection = "donn&eacute;e(s) NtPt ";
-						// C'est un mixte entre les données peuplements et environnement + des selections de colonnes
-						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id";
-						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env";
-						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
-							esp.id = fra.ref_espece_id and
-							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and ".$compPoisSQL;
-						$valueCount = "cph.id" ; // pour gerer la pagination						
-						$builQuery = true;
-						if (strpos($LeftOuterJoin,"left outer join") === false ) {
-							$LeftOuterJoin = ",exp_station as stat,ref_espece as esp";
-						} else {
-							if (strpos($LeftOuterJoin,"exp_station as stat") === false ) {
-								$LeftOuterJoin = ",exp_station as stat ".$LeftOuterJoin;
-							}
-							if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
-								$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
-							}
-						}
-					break;
-				case "biologie" :
-						$labelSelection = "donn&eacute;e(s) biologique(s) ";
-						// Construction de la liste d'individus
-						// ATTENTION !!!!!! Si la liste ci-dessous est modifiée, il faut imperativement modifier la requete pour calculer le 
-						// le coefficient d'extrapolation apres l'execution de la requete 
-						$listeChampsSpec = ",fra.id, fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,bio.longueur";
-						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env";
-						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp." 
-							esp.id = fra.ref_espece_id and
-							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
-							bio.exp_fraction_id = fra.id and ".$compPoisSQL;
-						$OrderCom .= ",fra.id asc, esp.id asc ";
-						$valueCount = "fra.id" ; // pour gerer la pagination						
-						$builQuery = true;
-						if (strpos($LeftOuterJoin,"left outer join") === false ) {
-							$LeftOuterJoin = ",exp_station as stat,exp_biologie as bio,ref_espece as esp";
-						} else {
-							if (strpos($LeftOuterJoin,"exp_station as stat") === false ) {
-								$LeftOuterJoin = ",exp_station as stat ".$LeftOuterJoin;
-							}
-							if (strpos($LeftOuterJoin,"exp_biologie as bio") === false ) {
-								$LeftOuterJoin = ",exp_biologie as bio ".$LeftOuterJoin;
-							}
-							if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
-								$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
-							}
-						}
-					break;	
-				case "trophique" :
-					// Construction de la liste d'individus
-						$labelSelection = "donn&eacute;e(s) trophique(s) ";
-						$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,bio.longueur,bio.id,trop.exp_contenu_id,bio.exp_remplissage_id,cont.libelle";
-						$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,exp_trophique as trop, exp_contenu as cont";
-						$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."  
-							esp.id = fra.ref_espece_id and
-							fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
-							bio.exp_fraction_id = fra.id and 
-							trop.exp_biologie_id = bio.id 	and
-							cont.id = trop.exp_contenu_id and ".$compPoisSQL;						
-						$valueCount = "bio.id" ; // pour gerer la pagination
-						$builQuery = true;	
-						if (strpos($LeftOuterJoin,"left outer join") === false ) {
-							$LeftOuterJoin = ",exp_station as stat,exp_biologie as bio,ref_espece as esp";
-						} else {
-							if (strpos($LeftOuterJoin,"exp_station as stat") === false ) {
-								$LeftOuterJoin = ",exp_station as stat ".$LeftOuterJoin;
-							}
-							if (strpos($LeftOuterJoin,"exp_biologie as bio") === false ) {
-								$LeftOuterJoin = ",exp_biologie as bio ".$LeftOuterJoin;
-							}
-							if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
-								$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
-							}
-						}
-					break;
-					default	:	
-					$labelSelection = "coup(s) de p&ecirc;ches ";
-					$SQLfinal = "select * from ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph
-							where cpg.id = cph.exp_campagne_id and
-							stat.id = cph.exp_station_id and
-							sy.id = cpg.ref_systeme_id and
-							".$WhereSyst."
-							py.id = sy.ref_pays_id and
-							se.id = stat.ref_secteur_id and
-							".$WhereSect."
-							cpg.id in (".$SQLCampagne.") ";
-					$SQLcountfinal = "select count(cpg.id) from ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph
-							where cpg.id = cph.exp_campagne_id and
-							stat.id = cph.exp_station_id and
-							sy.id = cpg.ref_systeme_id and
-							".$WhereSyst."
-							py.id = sy.ref_pays_id and
-							se.id = stat.ref_secteur_id and
-							".$WhereSect."
-							cpg.id in (".$SQLCampagne.") "; // Pour gerer la pagination
-							break;
-			}
-			break;
-			// ********** FIN TRAITEMENT PECHE EXPERIMENTALE
-			// *
-			// *********************************************************************************
-			// PECHE ARTISANALE
-			// *********************************************************************************		
-			case "artisanale" :
-			// ********** DEBUT TRAITEMENT PECHE ARTISANALE
-			// ********** Gestion de l'affichage des colonnes sélectionnées 
-			if ($SQLPeEnquete == "") {
-				$_SESSION['pasderesultat'] = true;
-				return "pas de resultat <br/>";
-			}
-			if ($debugAff) {
-				$debugTimer = number_format(timer()-$start_while,4);
-				echo "debut traitement donnees artisanales :".$debugTimer."<br/>";
-			}		
-			$posDEBID = 0 ; 	//Pour gestion regroupement
-			$posESPID = 0 ; 	//Pour gestion regroupement
-			$posPoids = 0 ; 	//Pour gestion regroupement
-			$posNbre = 0 ; 		//Pour gestion regroupement
-			$listeChampsSel = "";
-			$ListeTableSel = "";
-			$WhereSel = "";
-			$compSQL = "";
-			if ($SQLAgg == "") {
-				$WhereAgg = "";
-			} else {
-				$WhereAgg = "agg.id in (".$SQLAgg.") and";
-			}
-			$WherePeEnq = "penq.id in (".$SQLPeEnquete.") and ";
-			// Grand type engin
-			if (!($_SESSION['SQLGTEngin'] == "")) {
-				$LabGTE = " - restreint aux grands types engin : ";
-				$champSel = explode(",",$_SESSION['SQLGTEngin']);
-				$nbrSel = count($champSel)-1;
-				$valGTE= "";
-				for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
-					if ($valGTE == "") {
-						$valGTE = "'".$champSel[$cptSel]."'";
-					} else {
-						$valGTE .= ",'".$champSel[$cptSel]."'";
-					}
-					$LabGTE .= $champSel[$cptSel]." ";
-				}
-				$compGTESQL ="gte.id in (".$valGTE.") and ";
-			} else {
-				$compGTESQL = "";
-				$LabGTE = " - toutes les grands types engin ";
-			}
-			// Les selections ci-dessous ne sont valables que pour les filieres autres que l'environnement
-			switch ($typeAction) {
-				case "activite" :
-					$compCatEcoSQL = "";
-					$compCatTropSQL ="";
-					$compPoisSQL ="";
-					$compGTESQL = "";
-				break;
-				case "capture":
-					$compCatEcoSQL = "";
-					$compCatTropSQL ="";
-					$compPoisSQL ="";
-					break;
-				default :
-					$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois." - ".$LabGTE ;
-				break;
-			}
-			$AjoutWhere = "";
-			// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
-			analyseColonne($typePeche,$typeAction,"");			
-			// Analyse des différents composants du where et ajout des and quand nécessaire
-			// C'est un peu le bronx pour construire ces SQL, mais pas le choix. On doit pouvoir optimiser...
-			if ($compSQL == "" ) {
-				$WhereSel = $compCatEcoSQL;
-			} else {
-				if ($compCatEcoSQL == "") {
-					$WhereSel = $compSQL;
-				} else {
-					$WhereSel = $compSQL." and ".$compCatEcoSQL;
-				}
-			}
-			// Gestion des categories trophiques...
-			if (!($compCatTropSQL == "" )) {
-				if ($WhereSel == "" ) {
-					$WhereSel = $compCatTropSQL;
-				} else {
-					$WhereSel = $WhereSel." and ".$compCatTropSQL;
-				}
-			}
-			// Enfin on ajoute les noms des nouveaux champs à lire depuis les colonnes
-			if ($WhereSel == "" ) {
-				$WhereSel = $AjoutWhere;
-			} else {
-				if (!($AjoutWhere == "")) {
-					$WhereSel = $WhereSel." and ".$AjoutWhere;
-				}
-			}
-			
-			// Cas particulier d'aucun sélection des espèces : 
-			// On reconstruit cette liste pour l'ensemble de la sélection car on va en avoir besoin
-			// pour les catégories trophiques/ecologiques
-			$ajouteTable ="";
-			if ($SQLEspeces == "") {
-				if (!($compGTESQL == "")) {
-					$ajouteTable =",art_grand_type_engin as gte"; // On ajoute la selection du GT
-			}
-			$SQLEsp = "select distinct(afra.ref_espece_id) from art_debarquement as deb,art_fraction as afra,art_agglomeration as agg,			
-				art_periode_enquete as penq".$ajouteTable."
-				where ".$WhereAgg." ".$WherePeEnq." ".$compGTESQL."
-				deb.art_agglomeration_id = agg.id and
-				deb.mois = penq.mois and 
-				deb.annee = penq.annee and
-				deb.art_agglomeration_id = penq.art_agglomeration_id and 
-				afra.art_debarquement_id = deb.id ";
-				$SQLEspeces = RecupereEspeces($SQLEsp);
-				$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite..
-	
-			}
-			// Si malgré tout, toujours pas d'especes dispo, ben tant pis....
-			if ($SQLEspeces == "") {
-				$WhereEsp = "";
-			} else {
-				// Enfin on verifie qu'il n'y a pas eu de restriction supplémentaires
-				if (!($_SESSION['listeEspeces'] == "")) {
-					$TempSQLEspeces = $SQLEspeces;
-					$SQLEspeces = "";
-					$EspecesSele = explode (",",$_SESSION['listeEspeces']);
-					$NumEsp = count($EspecesSele) - 1;
-					for ($cptES=0 ; $cptES<=$NumEsp;$cptES++) {
-						if (strpos($TempSQLEspeces,$EspecesSele[$cptES]) === false ){
-			
-						} else {
-							// La valeur est disponible, on la met à jour
-							if ($SQLEspeces == "" ) {
-								$SQLEspeces = "'".$EspecesSele[$cptES]."'";
-							} else {
-								$SQLEspeces .= ",'".$EspecesSele[$cptES]."'";
-							}
-						}
-					}
-				} 
-				if (!($SQLEspeces == "")) {
-					$WhereEsp = "afra.ref_espece_id in (".$SQLEspeces.") and ";
-				} else {
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp, "ERREUR SQL especes encor vide ",$pasdefichier);
-					}
-				}
-			}
-			// ********** PREPARATION DU SQL
-			// Definition de tout ce qui est commun aux peches expérimentales
-			// Il va y avoir moins de données communes que pour les peches exp car certaines dependent de la filiere acti ou deb 
-			// Donc on cree des variables generales selon qu'on va traiter activite ou debarquement
-			// Définition des SQL de base pour les activites (art_activite)
-			$listeChampsArt = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.id,se.nom, act.art_agglomeration_id, agg.nom, act.annee, act.mois, act.date_activite, act.id,upec.id";
-			$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_agglomeration as agg,art_unite_peche as upec";
-
-			$WhereArt = "	py.id = sy.ref_pays_id and
-							sy.id = se.ref_systeme_id and
-							se.id = agg.ref_secteur_id and
-							".$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq." 
-							act.art_agglomeration_id = agg.id and
-							act.mois = penq.mois and 
-							act.annee = penq.annee and
-							act.art_agglomeration_id = penq.art_agglomeration_id and
-							upec.id = act.art_unite_peche_id";			
-			$OrderArt = "order by py.id asc, sy.id asc, agg.nom, act.annee asc,act.mois asc,act.id asc";
-			// Définition des SQL de base pour les débarquements (art_debarquement)
-			$listeChampsDeb = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,se.id, deb.art_agglomeration_id, agg.nom, deb.annee, deb.mois, deb.id, deb.date_debarquement";
-			$ListeTableDeb = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_agglomeration as agg,art_unite_peche as upec";
+					} 	else {
+						// Maj du libelle de la selection en tete avec les restriction CatEco CatTroph et poisson
+						$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois." ";
 		
-			$WhereDeb = "	py.id = sy.ref_pays_id and
-							sy.id = se.ref_systeme_id and
-							se.id = agg.ref_secteur_id and
-							".$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq."
-							gte.id = deb.art_grand_type_engin_id and
-							".$compGTESQL."
-							deb.art_agglomeration_id = agg.id and
-							deb.mois = penq.mois and 
-							deb.annee = penq.annee and
-							deb.art_agglomeration_id = penq.art_agglomeration_id and
-							upec.id = deb.art_unite_peche_id";
-			$OrderDeb = "order by py.id asc, sy.id asc, agg.nom, deb.annee asc,deb.mois asc,deb.id asc";
-			// ********** CONSTRUCTION DES SQL DEFINITIFS PAR FILIERE
-			switch ($typeAction) {
-				case "activite" :
-						// On considere les données d'activité. On commence par mettre à jour les variables communes *com
-						$listeChampsCom = $listeChampsArt;
-						$ListeTableCom = $ListeTableArt ;
-						$WhereCom = $WhereArt ;
-						$OrderCom = $OrderArt ;
-						$labelSelection = "donn&eacute;e(s) d'activit&eacute;";	
-						//echo $listeChampsSel."<br/>";
-						if (strpos($listeChampsSel,"act.art_grand_type_engin_id") === false) {
-							$listeChampsSpec = ",act.art_type_activite_id,act.nbre_unite_recencee,act.art_grand_type_engin_id";
+					}
+					// ********** Gestion de l'affichage des colonnes sélectionnées 
+					$listeChampsSel = "";
+					$ListeTableSel = "";
+					$WhereSel = "";
+					$AjoutWhere = "";
+					// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
+					analyseColonne($typePeche,$typeAction,"");	
+					// Analyse des différents composants du where et ajout des and quand nécessaire
+					// C'est un peu le bronx pour construire ces SQL, mais pas le choix. On doit pouvoir optimiser...
+					if ($compSQL == "" ) {
+						$WhereSel = $compCatEcoSQL;
+					} else {
+						if ($compCatEcoSQL == "") {
+							$WhereSel = $compSQL;
 						} else {
-							$listeChampsSpec = ",act.art_type_activite_id,act.nbre_unite_recencee";
+							$WhereSel = $compSQL." and ".$compCatEcoSQL;
 						}
-						//echo $listeChampsSpec."<br/>";
-						$ListeTableSpec = ""; 
-						$WhereSpec = "";	
-						$ConstIDunique = "ART-##-12"; // Ce qui apres le -##-n sera remplacé par la valeur d'index n de la lecture de la requete par exemple, ici, on va recuperer art.id  
-						$valueCount = "act.id" ; // pour gerer la pagination				
-						$builQuery = true;
-						if (strpos($LeftOuterJoin,"left outer join") === false ) {
-							$LeftOuterJoin = ",art_activite as act";
+					}
+					// Gestion des categories trophiques...
+					if (!($compCatTropSQL == "" )) {
+						if ($WhereSel == "" ) {
+							$WhereSel = $compCatTropSQL;
+						} else {
+							$WhereSel = $WhereSel." and ".$compCatTropSQL;
+						}
+					}
+					// Enfin on ajoute les noms des nouveaux champs à lire depuis les colonnes
+					if ($WhereSel == "" ) {
+						$WhereSel = $AjoutWhere;
+					} else {
+						if (!($AjoutWhere == "")) {
+							$WhereSel = $WhereSel." and ".$AjoutWhere;
+						}
+					}
+		
+					//echo "where sel = ".$WhereSel."<br/>";
+					// Cas particulier d'aucun sélection des espèces : 
+					// On reconstruit cette liste pour l'ensemble de la sélection car on va en avoir besoin
+					// pour les catégories trophiques/ecologiques
+					if ($SQLEspeces == "") {
+						// On reconstruit la liste des especes de la sélection.
+						$SQLEsp = "select esp.id from ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph,exp_fraction as fra,ref_espece as esp
+								where cpg.id = cph.exp_campagne_id and
+								stat.id = cph.exp_station_id and
+								sy.id = cpg.ref_systeme_id and
+								".$WhereSyst."
+								py.id = sy.ref_pays_id and
+								se.id = stat.ref_secteur_id and
+								fra.exp_coup_peche_id = cph.id and
+								esp.id = fra.ref_espece_id and
+								".$WhereSect."
+								cpg.id in (".$SQLCampagne.") ";
+						$SQLEspResult = pg_query($connectPPEAO,$SQLEsp);
+						$erreurSQL = pg_last_error($connectPPEAO);
+						if ( !$SQLEspResult ) { 
+							$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query ".$SQLEsp." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+							if ($EcrireLogComp) {
+								WriteCompLog ($logComp, "ERREUR : echec construction liste espece query sql = ".$SQLEsp." (erreur complete = ".$erreurSQL,$pasdefichier);
+							}
+							$erreurProcess = true;
+							return ("erreur SQL especes");
+						} else {
+							
+							if (pg_num_rows($SQLEspResult) == 0) {
+							// Erreur
+								$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>pas de coup de peche dispo vide...<br/>";
+								if ($EcrireLogComp) {
+									WriteCompLog ($logComp, "Warning :  pas de coupe de peches trouves pour remplir la liste des especes.",$pasdefichier);
+								}
+							} else {
+								while ($EspRow = pg_fetch_row($SQLEspResult) ) {
+									if (strpos($SQLEspeces,$EspRow[0]) === false ) {
+										$SQLEspeces .= "'".$EspRow[0]."',";	
+									}
+								}		
+							}				
+						}
+						$SQLEspeces	= substr($SQLEspeces,0,- 1); // pour enlever la virgule surnumeraire;
+						$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite....
+					}
+					// Si malgré tout, toujours pas d'especes dispo, ben tant pis....
+					if ($SQLEspeces == "") {
+						$WhereEsp = "";
+					} else {
+						// Enfin on verifie qu'il n'y a pas eu de restriction supplémentaires
+						if (!($_SESSION['listeEspeces'] == "")) {
+							$TempSQLEspeces = $SQLEspeces;
+							$SQLEspeces = "";
+							$EspecesSele = explode (",",$_SESSION['listeEspeces']);
+							$NumEsp = count($EspecesSele) - 1;
+							for ($cptES=0 ; $cptES<=$NumEsp;$cptES++) {
+								
+								if (strpos($TempSQLEspeces,$EspecesSele[$cptES]) === false ){
+					
+								} else {
+									// La valeur est disponible, on la met à jour
+									if ($SQLEspeces == "" ) {
+										$SQLEspeces = "'".$EspecesSele[$cptES]."'";
+									} else {
+										$SQLEspeces .= ",'".$EspecesSele[$cptES]."'";
+									}
+								}
+							}
 						} 
-					break;			
-				case "capture" :
-						// Liste des debarquements.
-						$labelSelection = "donn&eacute;e(s) de capture";	
-						$listeChampsCom = $listeChampsDeb;
-						$ListeTableCom = $ListeTableDeb ;
-						$WhereCom = $WhereDeb ;
-						$OrderCom = $OrderDeb ;
-						if (strpos($listeChampsSel,"deb.art_grand_type_engin_id") === false) {
-							$listeChampsSpec = ", deb.poids_total,deb.art_unite_peche_id,deb.art_grand_type_engin_id";
+						if (!($SQLEspeces == "" )) {
+							$WhereEsp = "fra.ref_espece_id in (".$SQLEspeces.") and";
 						} else {
-							$listeChampsSpec = ", deb.poids_total,deb.art_unite_peche_id";
-						}
-						$ListeTableSpec = " "; 
-						$WhereSpec = " ";
-						$ConstIDunique = "DEB-##-11";
-						$valueCount = "deb.id" ; // pour gerer la pagination	
-						$builQuery = true;
-						if (strpos($LeftOuterJoin,"left outer join") === false ) {
-							$LeftOuterJoin = ",art_debarquement as deb,art_grand_type_engin as gte";
-						} else {
-							if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
-								$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
-							}
-							if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
-								$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
+							if ($EcrireLogComp ) {
+								WriteCompLog ($logComp, "ERREUR SQLEspeces est encore vide.",$pasdefichier);
 							}
 						}
-					break;
-				case "NtPart" :
-						$labelSelection = "donn&eacute;e(s) NtPt";				
-						$listeChampsCom = $listeChampsDeb;
-						$ListeTableCom = $ListeTableDeb ;
-						$WhereCom = $WhereDeb ;
-						if (!($_SESSION['listeRegroup'] == "")) {
-							$OrderCom = $OrderDeb."  , afra.ref_espece_id asc ";
+					}
+					// ********** PREPARATION DU SQL
+					// Definition de tout ce qui est commun aux peches expérimentales
+					$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom, stat.id, stat.nom, cpg.date_debut, cpg.id,cpg.numero_campagne, cph.date_cp, cph.heure_debut, cph.id,cph.numero_coup, cph.protocole, cph.exp_qualite_id,xqua.libelle, cph.exp_engin_id, xeng.libelle";
+					$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_campagne as cpg,exp_coup_peche as cph,exp_qualite as xqua,exp_engin as xeng";
+					$WhereCom = "cpg.id = cph.exp_campagne_id and
+									stat.id = cph.exp_station_id and
+									sy.id = cpg.ref_systeme_id and
+									".$WhereSyst."
+									py.id = sy.ref_pays_id and
+									se.id = stat.ref_secteur_id and
+									".$WhereSect."
+									cpg.id in (".$SQLCampagne.") and
+									xqua.id = cph.exp_qualite_id and
+									".$WhereEngin."
+									xeng.id = cph.exp_engin_id ";
+					$OrderCom = "order by py.id asc,sy.id asc,cpg.date_debut asc,cph.id asc";
+					// ********** CONSTRUCTION DES SQL DEFINITIFS PAR FILIERE
+					switch ($typeAction) {
+						case "peuplement" :
+							$labelSelection = "donn&eacute;e(s) de peuplement ";	
+							// On n'extrait que des donnéees de fraction
+							// Il n'y aucune selection de colonnes supplémentaires
+							// On prend tous les poissons (pas de différence poisson/non poisson
+							$listeChampsSpec = ",esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,fra.nombre_total ,fra.poids_total";
+							$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam"; 
+							$WhereSpec = " and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
+								esp.id = fra.ref_espece_id and
+								fam.id = esp.ref_famille_id ";
+							$valueCount = "fra.id" ; // pour gerer la pagination	
+							$builQuery = true;
+							if (strpos($LeftOuterJoin,"left outer join") === false ) {
+								$LeftOuterJoin = ",exp_station as stat,ref_espece as esp";
+							} else {	
+								if (strpos($LeftOuterJoin,"exp_station as stat") === false ) {
+									$LeftOuterJoin = ",exp_station as stat ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
+										$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
+								}
+							}
+							break;
+						case "environnement" :
+							$labelSelection = "donn&eacute;e(s) d'environnement ";
+							// On n'extrait que des donnéees environnements
+							// Pas de données poisson
+							$listeChampsSpec = "";
+							$ListeTableSpec = ",exp_environnement as env"; 
+							$WhereSpec = " 	and env.id = cph.exp_environnement_id ";
+							$valueCount = "cph.id" ; // pour gerer la pagination						
+							$builQuery = true;
+							if (strpos($LeftOuterJoin,"left outer join") === false ) {
+								$LeftOuterJoin = ",exp_station as stat";
+							}
+							break;
+						case "NtPt" :
+							$labelSelection = "donn&eacute;e(s) NtPt ";
+							// C'est un mixte entre les données peuplements et environnement + des selections de colonnes
+							$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id";
+							$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env";
+							$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
+								esp.id = fra.ref_espece_id and
+								fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and ".$compPoisSQL;
+							$valueCount = "cph.id" ; // pour gerer la pagination						
+							$builQuery = true;
+							if (strpos($LeftOuterJoin,"left outer join") === false ) {
+								$LeftOuterJoin = ",exp_station as stat,ref_espece as esp";
 							} else {
-							$OrderCom = $OrderDeb ;
-						}
-						$posDEBID = 11 ; //position deb.id - 1 / Pour gestion regroupement
-						$posESPID = 18 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
-						$posESPNom = 19 ; //position esp.libelle - 1 / Pour gestion regroupement
-						$posStat1 = 16 ; //position afra.poids - 1 / Pour gestion regroupement
-						$posStat2 = 17 ; //position afra.nbre_poissons - 1 / Pour gestion regroupement
-						$posStat3 = -1 ; // Non utilisé
-						if (strpos($listeChampsSel,"deb.art_grand_type_engin_id") === false) {
-							$listeChampsSpec = ", deb.poids_total,deb.art_unite_peche_id,afra.id,afra.poids, afra.nbre_poissons, afra.ref_espece_id,esp.libelle, deb.art_grand_type_engin_id";
-						} else {
-							$listeChampsSpec = ", deb.poids_total,deb.art_unite_peche_id,afra.id,afra.poids, afra.nbre_poissons, afra.ref_espece_id, esp.libelle";
-						}
-						if (strpos($listeChampsSel,"catt.id") === false) {
-							$listeChampsSpec .= ",esp.ref_categorie_trophique_id";
-						}
-						if (strpos($listeChampsSel,"cate.id") === false) {
-							$listeChampsSpec .= ",esp.ref_categorie_ecologique_id";
-						}						
-						$ListeTableSpec = ", art_fraction as afra"; 
-						$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id 
-										and esp.id = afra.ref_espece_id	";					
-						$ConstIDunique = "DEB-##-11";
-						$valueCount = "deb.id" ; // pour gerer la pagination	
-						$builQuery = true;
-						if (strpos($LeftOuterJoin,"left outer join") === false ) {
-							$LeftOuterJoin = ",art_debarquement as deb,ref_espece as esp,art_grand_type_engin as gte";
-						} else {
-							if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
-								$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
+								if (strpos($LeftOuterJoin,"exp_station as stat") === false ) {
+									$LeftOuterJoin = ",exp_station as stat ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
+									$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
+								}
 							}
-							if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
-								$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
-							}
-							if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
-								$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
-							}							
-						}
-					break;
-				case "taillart" :
-						$labelSelection = "donn&eacute;e(s) de tailles";	
-						$listeChampsCom = $listeChampsDeb;
-						$ListeTableCom = $ListeTableDeb ;
-						$WhereCom = $WhereDeb ;
-						if (!($_SESSION['listeRegroup'] == "")) {
-							$OrderCom = $OrderDeb."  , afra.ref_espece_id asc ";
+							break;
+						case "biologie" :
+							$labelSelection = "donn&eacute;e(s) biologique(s) ";
+							// Construction de la liste d'individus
+							// ATTENTION !!!!!! Si la liste ci-dessous est modifiée, il faut imperativement modifier la requete pour calculer le 
+							// le coefficient d'extrapolation apres l'execution de la requete 
+							$listeChampsSpec = ",fra.id, fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,bio.longueur";
+							$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env";
+							$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp." 
+								esp.id = fra.ref_espece_id and
+								fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
+								bio.exp_fraction_id = fra.id and ".$compPoisSQL;
+							$OrderCom .= ",fra.id asc, esp.id asc ";
+							$valueCount = "fra.id" ; // pour gerer la pagination						
+							$builQuery = true;
+							if (strpos($LeftOuterJoin,"left outer join") === false ) {
+								$LeftOuterJoin = ",exp_station as stat,exp_biologie as bio,ref_espece as esp";
 							} else {
-							$OrderCom = $OrderDeb ;
-						}
-						$listeChampsDeb = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,se.id, deb.art_agglomeration_id, agg.nom, deb.annee, deb.mois, deb.id, deb.date_debarquement";
-						$posDEBID = 11 ; //position deb.id - 1 / Pour gestion regroupement
-						$posESPID = 19 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
-						$posESPNom = 20 ; //position esp.libelle - 1 / Pour gestion regroupement
-						$posStat1 = 16 ; //position afra.poids - 1 / Pour gestion regroupement
-						$posStat2 = 17 ; //position afra.nbre_poissons - 1 / Pour gestion regroupement
-						$posStat3 = 18 ; //position ames.taille - 1 / Pour gestion regroupement
-						if (strpos($listeChampsSel,"deb.art_grand_type_engin_id") === false) {
-							$listeChampsSpec = ", deb.poids_total, deb.art_unite_peche_id,afra.id, afra.poids, afra.nbre_poissons, ames.taille, afra.ref_espece_id, esp.libelle, deb.art_grand_type_engin_id ";
-						} else {
-							$listeChampsSpec = ", deb.poids_total, deb.art_unite_peche_id,afra.id, afra.poids, afra.nbre_poissons, ames.taille, afra.ref_espece_id, esp.libelle ";
-						}
-						if (strpos($listeChampsSel,"catt.id") === false) {
-							$listeChampsSpec .= ",esp.ref_categorie_trophique_id";
-						}
-						if (strpos($listeChampsSel,"cate.id") === false) {
-							$listeChampsSpec .= ",esp.ref_categorie_ecologique_id";
-						}
-						$ListeTableSpec = ", art_fraction as afra left outer join art_poisson_mesure as ames on ames.art_fraction_id = afra.id"; 
-						$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id  
-										and esp.id = afra.ref_espece_id	";						
-						$ConstIDunique = "DEB-##-11";
-						$valueCount = "deb.id" ; // pour gerer la pagination
-						$builQuery = true;
-						if (strpos($LeftOuterJoin,"left outer join") === false ) {
-							$LeftOuterJoin = ",art_debarquement as deb,ref_espece as esp,art_grand_type_engin as gte";
-						} else {
-							if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
-								$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
+								if (strpos($LeftOuterJoin,"exp_station as stat") === false ) {
+									$LeftOuterJoin = ",exp_station as stat ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"exp_biologie as bio") === false ) {
+									$LeftOuterJoin = ",exp_biologie as bio ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
+									$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
+								}
 							}
-							if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
-								$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
+							break;	
+						case "trophique" :
+							// Construction de la liste d'individus
+							$labelSelection = "donn&eacute;e(s) trophique(s) ";
+							$listeChampsSpec = ",fra.nombre_total, fra.poids_total,esp.id, esp.libelle, esp.ref_categorie_ecologique_id, esp.ref_categorie_trophique_id,bio.longueur,bio.id,trop.exp_contenu_id,bio.exp_remplissage_id,cont.libelle";
+							$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam,exp_environnement as env,exp_trophique as trop, exp_contenu as cont";
+							$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."  
+								esp.id = fra.ref_espece_id and
+								fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
+								bio.exp_fraction_id = fra.id and 
+								trop.exp_biologie_id = bio.id 	and
+								cont.id = trop.exp_contenu_id and ".$compPoisSQL;						
+							$valueCount = "bio.id" ; // pour gerer la pagination
+							$builQuery = true;	
+							if (strpos($LeftOuterJoin,"left outer join") === false ) {
+								$LeftOuterJoin = ",exp_station as stat,exp_biologie as bio,ref_espece as esp";
+							} else {
+								if (strpos($LeftOuterJoin,"exp_station as stat") === false ) {
+									$LeftOuterJoin = ",exp_station as stat ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"exp_biologie as bio") === false ) {
+									$LeftOuterJoin = ",exp_biologie as bio ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
+									$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
+								}
 							}
-							if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
-								$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
-							}							
-						}
+							break;
+						default	:	
+							$labelSelection = "coup(s) de p&ecirc;ches ";
+							$SQLfinal = "select * from ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph
+									where cpg.id = cph.exp_campagne_id and
+									stat.id = cph.exp_station_id and
+									sy.id = cpg.ref_systeme_id and
+									".$WhereSyst."
+									py.id = sy.ref_pays_id and
+									se.id = stat.ref_secteur_id and
+									".$WhereSect."
+									cpg.id in (".$SQLCampagne.") ";
+							$SQLcountfinal = "select count(cpg.id) from ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_station as stat,exp_campagne as cpg,exp_coup_peche as cph
+									where cpg.id = cph.exp_campagne_id and
+									stat.id = cph.exp_station_id and
+									sy.id = cpg.ref_systeme_id and
+									".$WhereSyst."
+									py.id = sy.ref_pays_id and
+									se.id = stat.ref_secteur_id and
+									".$WhereSect."
+									cpg.id in (".$SQLCampagne.") "; // Pour gerer la pagination
+							break;
+					}
 					break;
-				case "engin" :
-						$labelSelection = "donn&eacute;e(s) d'engin";	
-						$listeChampsCom = $listeChampsDeb;
-						$ListeTableCom = $ListeTableDeb ;
-						$WhereCom = $WhereDeb ;
-						$OrderCom = $OrderDeb ;	
-						$listeChampsSpec = ",deb.art_grand_type_engin_id, aeng.art_type_engin_id,teng.libelle";
-						$ListeTableSpec = ", art_engin_peche as aeng, art_type_engin as teng"; 
-						$WhereSpec = " and aeng.art_debarquement_id = deb.id and teng.id = aeng.art_type_engin_id";						
-						$ConstIDunique = "DEB-##-11";
-						$valueCount = "deb.id" ; // pour gerer la pagination
-						$builQuery = true;
-						if (strpos($LeftOuterJoin,"left outer join") === false ) {
-							$LeftOuterJoin = ",art_debarquement as deb,art_grand_type_engin as gte";
-						} else {
-							if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
-								$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
+				// ********** FIN TRAITEMENT PECHE EXPERIMENTALE
+				// *
+				// *********************************************************************************
+				// PECHE ARTISANALE
+				// *********************************************************************************		
+				case "artisanale" :
+					// ********** DEBUT TRAITEMENT PECHE ARTISANALE
+					// ********** Gestion de l'affichage des colonnes sélectionnées 
+					if ($SQLPeEnquete == "") {
+						$_SESSION['pasderesultat'] = true;
+						return "pas de resultat <br/>";
+					}
+					if ($debugAff) {
+						$debugTimer = number_format(timer()-$start_while,4);
+						echo "debut traitement donnees artisanales :".$debugTimer."<br/>";
+					}		
+					$posDEBID = 0 ; 	//Pour gestion regroupement
+					$posESPID = 0 ; 	//Pour gestion regroupement
+					$posPoids = 0 ; 	//Pour gestion regroupement
+					$posNbre = 0 ; 		//Pour gestion regroupement
+					$listeChampsSel = "";
+					$ListeTableSel = "";
+					$WhereSel = "";
+					$compSQL = "";
+					if ($SQLAgg == "") {
+						$WhereAgg = "";
+					} else {
+						$WhereAgg = "agg.id in (".$SQLAgg.") and";
+					}
+					$WherePeEnq = "penq.id in (".$SQLPeEnquete.") and ";
+					// Grand type engin
+					if (!($_SESSION['SQLGTEngin'] == "")) {
+						$LabGTE = " - restreint aux grands types engin : ";
+						$champSel = explode(",",$_SESSION['SQLGTEngin']);
+						$nbrSel = count($champSel)-1;
+						$valGTE= "";
+						for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
+							if ($valGTE == "") {
+								$valGTE = "'".$champSel[$cptSel]."'";
+							} else {
+								$valGTE .= ",'".$champSel[$cptSel]."'";
 							}
-							if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
-								$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
+							$LabGTE .= $champSel[$cptSel]." ";
+						}
+						$compGTESQL ="gte.id in (".$valGTE.") and ";
+					} else {
+						$compGTESQL = "";
+						$LabGTE = " - toutes les grands types engin ";
+					}
+					// Les selections ci-dessous ne sont valables que pour les filieres autres que l'environnement
+					switch ($typeAction) {
+						case "activite" :
+							$compCatEcoSQL = "";
+							$compCatTropSQL ="";
+							$compPoisSQL ="";
+							$compGTESQL = "";
+						break;
+						case "capture":
+							$compCatEcoSQL = "";
+							$compCatTropSQL ="";
+							$compPoisSQL ="";
+							break;
+						default :
+							$restSupp .= " - ".$LabCatEco." - ".$LabCatTrop." - ".$LabCatPois." - ".$LabGTE ;
+						break;
+					}
+					$AjoutWhere = "";
+					// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
+					analyseColonne($typePeche,$typeAction,"");			
+					// Analyse des différents composants du where et ajout des and quand nécessaire
+					// C'est un peu le bronx pour construire ces SQL, mais pas le choix. On doit pouvoir optimiser...
+					if ($compSQL == "" ) {
+						$WhereSel = $compCatEcoSQL;
+					} else {
+						if ($compCatEcoSQL == "") {
+							$WhereSel = $compSQL;
+						} else {
+							$WhereSel = $compSQL." and ".$compCatEcoSQL;
+						}
+					}
+					// Gestion des categories trophiques...
+					if (!($compCatTropSQL == "" )) {
+						if ($WhereSel == "" ) {
+							$WhereSel = $compCatTropSQL;
+						} else {
+							$WhereSel = $WhereSel." and ".$compCatTropSQL;
+						}
+					}
+					// Enfin on ajoute les noms des nouveaux champs à lire depuis les colonnes
+					if ($WhereSel == "" ) {
+						$WhereSel = $AjoutWhere;
+					} else {
+						if (!($AjoutWhere == "")) {
+							$WhereSel = $WhereSel." and ".$AjoutWhere;
+						}
+					}
+					
+					// Cas particulier d'aucun sélection des espèces : 
+					// On reconstruit cette liste pour l'ensemble de la sélection car on va en avoir besoin
+					// pour les catégories trophiques/ecologiques
+					$ajouteTable ="";
+					if ($SQLEspeces == "") {
+						if (!($compGTESQL == "")) {
+							$ajouteTable =",art_grand_type_engin as gte"; // On ajoute la selection du GT
+					}
+					$SQLEsp = "select distinct(afra.ref_espece_id) from art_debarquement as deb,art_fraction as afra,art_agglomeration as agg,			
+						art_periode_enquete as penq".$ajouteTable."
+						where ".$WhereAgg." ".$WherePeEnq." ".$compGTESQL."
+						deb.art_agglomeration_id = agg.id and
+						deb.mois = penq.mois and 
+						deb.annee = penq.annee and
+						deb.art_agglomeration_id = penq.art_agglomeration_id and 
+						afra.art_debarquement_id = deb.id ";
+						$SQLEspeces = RecupereEspeces($SQLEsp);
+						$_SESSION['SQLEspeces'] = $SQLEspeces; // ca va servir pour la suite..
+			
+					}
+					// Si malgré tout, toujours pas d'especes dispo, ben tant pis....
+					if ($SQLEspeces == "") {
+						$WhereEsp = "";
+					} else {
+						// Enfin on verifie qu'il n'y a pas eu de restriction supplémentaires
+						if (!($_SESSION['listeEspeces'] == "")) {
+							$TempSQLEspeces = $SQLEspeces;
+							$SQLEspeces = "";
+							$EspecesSele = explode (",",$_SESSION['listeEspeces']);
+							$NumEsp = count($EspecesSele) - 1;
+							for ($cptES=0 ; $cptES<=$NumEsp;$cptES++) {
+								if (strpos($TempSQLEspeces,$EspecesSele[$cptES]) === false ){
+					
+								} else {
+									// La valeur est disponible, on la met à jour
+									if ($SQLEspeces == "" ) {
+										$SQLEspeces = "'".$EspecesSele[$cptES]."'";
+									} else {
+										$SQLEspeces .= ",'".$EspecesSele[$cptES]."'";
+									}
+								}
+							}
+						} 
+						if (!($SQLEspeces == "")) {
+							$WhereEsp = "afra.ref_espece_id in (".$SQLEspeces.") and ";
+						} else {
+							if ($EcrireLogComp ) {
+								WriteCompLog ($logComp, "ERREUR SQL especes encor vide ",$pasdefichier);
 							}
 						}
-					break;															
-				default	:	
-					$labelSelection = "p&eacute;riode(s) d'enqu&ecirc;te";
-					$SQLfinal = "select * from art_periode_enquete as penq
-									where penq.id in (".$SQLPeEnquete.")";
-					$SQLcountfinal = "select count(*) from art_periode_enquete as penq
-									where penq.id in (".$SQLPeEnquete.")";; // pour gerer la pagination	
-			}
+					}
+					// ********** PREPARATION DU SQL
+					// Definition de tout ce qui est commun aux peches expérimentales
+					// Il va y avoir moins de données communes que pour les peches exp car certaines dependent de la filiere acti ou deb 
+					// Donc on cree des variables generales selon qu'on va traiter activite ou debarquement
+					// Définition des SQL de base pour les activites (art_activite)
+					$listeChampsArt = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.id,se.nom, act.art_agglomeration_id, agg.nom, act.annee, act.mois, act.date_activite, act.id,upec.id";
+					$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_agglomeration as agg,art_unite_peche as upec";
+		
+					$WhereArt = "	py.id = sy.ref_pays_id and
+									sy.id = se.ref_systeme_id and
+									se.id = agg.ref_secteur_id and
+									".$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq." 
+									act.art_agglomeration_id = agg.id and
+									act.mois = penq.mois and 
+									act.annee = penq.annee and
+									act.art_agglomeration_id = penq.art_agglomeration_id and
+									upec.id = act.art_unite_peche_id";			
+					$OrderArt = "order by py.id asc, sy.id asc, agg.nom, act.annee asc,act.mois asc,act.id asc";
+					// Définition des SQL de base pour les débarquements (art_debarquement)
+					$listeChampsDeb = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,se.id, deb.art_agglomeration_id, agg.nom, deb.annee, deb.mois, deb.id, deb.date_debarquement";
+					$ListeTableDeb = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_agglomeration as agg,art_unite_peche as upec";
+				
+					$WhereDeb = "	py.id = sy.ref_pays_id and
+									sy.id = se.ref_systeme_id and
+									se.id = agg.ref_secteur_id and
+									".$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq."
+									gte.id = deb.art_grand_type_engin_id and
+									".$compGTESQL."
+									deb.art_agglomeration_id = agg.id and
+									deb.mois = penq.mois and 
+									deb.annee = penq.annee and
+									deb.art_agglomeration_id = penq.art_agglomeration_id and
+									upec.id = deb.art_unite_peche_id";
+					$OrderDeb = "order by py.id asc, sy.id asc, agg.nom, deb.annee asc,deb.mois asc,deb.id asc";
+					// ********** CONSTRUCTION DES SQL DEFINITIFS PAR FILIERE
+					switch ($typeAction) {
+						case "activite" :
+							// On considere les données d'activité. On commence par mettre à jour les variables communes *com
+							$listeChampsCom = $listeChampsArt;
+							$ListeTableCom = $ListeTableArt ;
+							$WhereCom = $WhereArt ;
+							$OrderCom = $OrderArt ;
+							$labelSelection = "donn&eacute;e(s) d'activit&eacute;";	
+							//echo $listeChampsSel."<br/>";
+							if (strpos($listeChampsSel,"act.art_grand_type_engin_id") === false) {
+								$listeChampsSpec = ",act.art_type_activite_id,act.nbre_unite_recencee,act.art_grand_type_engin_id";
+							} else {
+								$listeChampsSpec = ",act.art_type_activite_id,act.nbre_unite_recencee";
+							}
+							//echo $listeChampsSpec."<br/>";
+							$ListeTableSpec = ""; 
+							$WhereSpec = "";	
+							$ConstIDunique = "ART-##-12"; // Ce qui apres le -##-n sera remplacé par la valeur d'index n de la lecture de la requete par exemple, ici, on va recuperer art.id  
+							$valueCount = "act.id" ; // pour gerer la pagination				
+							$builQuery = true;
+							if (strpos($LeftOuterJoin,"left outer join") === false ) {
+								$LeftOuterJoin = ",art_activite as act";
+							} 
+							break;			
+						case "capture" :
+							// Liste des debarquements.
+							$labelSelection = "donn&eacute;e(s) de capture";	
+							$listeChampsCom = $listeChampsDeb;
+							$ListeTableCom = $ListeTableDeb ;
+							$WhereCom = $WhereDeb ;
+							$OrderCom = $OrderDeb ;
+							if (strpos($listeChampsSel,"deb.art_grand_type_engin_id") === false) {
+								$listeChampsSpec = ", deb.poids_total,deb.art_unite_peche_id,deb.art_grand_type_engin_id";
+							} else {
+								$listeChampsSpec = ", deb.poids_total,deb.art_unite_peche_id";
+							}
+							$ListeTableSpec = " "; 
+							$WhereSpec = " ";
+							$ConstIDunique = "DEB-##-11";
+							$valueCount = "deb.id" ; // pour gerer la pagination	
+							$builQuery = true;
+							if (strpos($LeftOuterJoin,"left outer join") === false ) {
+								$LeftOuterJoin = ",art_debarquement as deb,art_grand_type_engin as gte";
+							} else {
+								if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
+									$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
+									$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
+								}
+							}
+							break;
+						case "NtPart" :
+							$labelSelection = "donn&eacute;e(s) NtPt";				
+							$listeChampsCom = $listeChampsDeb;
+							$ListeTableCom = $ListeTableDeb ;
+							$WhereCom = $WhereDeb ;
+							if (!($_SESSION['listeRegroup'] == "")) {
+								$OrderCom = $OrderDeb."  , afra.ref_espece_id asc ";
+								} else {
+								$OrderCom = $OrderDeb ;
+							}
+							$posDEBID = 11 ; //position deb.id - 1 / Pour gestion regroupement
+							$posESPID = 18 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
+							$posESPNom = 19 ; //position esp.libelle - 1 / Pour gestion regroupement
+							$posStat1 = 16 ; //position afra.poids - 1 / Pour gestion regroupement
+							$posStat2 = 17 ; //position afra.nbre_poissons - 1 / Pour gestion regroupement
+							$posStat3 = -1 ; // Non utilisé
+							if (strpos($listeChampsSel,"deb.art_grand_type_engin_id") === false) {
+								$listeChampsSpec = ", deb.poids_total,deb.art_unite_peche_id,afra.id,afra.poids, afra.nbre_poissons, afra.ref_espece_id,esp.libelle, deb.art_grand_type_engin_id";
+							} else {
+								$listeChampsSpec = ", deb.poids_total,deb.art_unite_peche_id,afra.id,afra.poids, afra.nbre_poissons, afra.ref_espece_id, esp.libelle";
+							}
+							if (strpos($listeChampsSel,"catt.id") === false) {
+								$listeChampsSpec .= ",esp.ref_categorie_trophique_id";
+							}
+							if (strpos($listeChampsSel,"cate.id") === false) {
+								$listeChampsSpec .= ",esp.ref_categorie_ecologique_id";
+							}						
+							$ListeTableSpec = ", art_fraction as afra"; 
+							$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id 
+											and esp.id = afra.ref_espece_id	";					
+							$ConstIDunique = "DEB-##-11";
+							$valueCount = "deb.id" ; // pour gerer la pagination	
+							$builQuery = true;
+							if (strpos($LeftOuterJoin,"left outer join") === false ) {
+								$LeftOuterJoin = ",art_debarquement as deb,ref_espece as esp,art_grand_type_engin as gte";
+							} else {
+								if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
+									$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
+									$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
+									$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
+								}							
+							}
+							break;
+						case "taillart" :
+							$labelSelection = "donn&eacute;e(s) de tailles";	
+							$listeChampsCom = $listeChampsDeb;
+							$ListeTableCom = $ListeTableDeb ;
+							$WhereCom = $WhereDeb ;
+							if (!($_SESSION['listeRegroup'] == "")) {
+								$OrderCom = $OrderDeb."  , afra.ref_espece_id asc ";
+								} else {
+								$OrderCom = $OrderDeb ;
+							}
+							$listeChampsDeb = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,se.id, deb.art_agglomeration_id, agg.nom, deb.annee, deb.mois, deb.id, deb.date_debarquement";
+							$posDEBID = 11 ; //position deb.id - 1 / Pour gestion regroupement
+							$posESPID = 19 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
+							$posESPNom = 20 ; //position esp.libelle - 1 / Pour gestion regroupement
+							$posStat1 = 16 ; //position afra.poids - 1 / Pour gestion regroupement
+							$posStat2 = 17 ; //position afra.nbre_poissons - 1 / Pour gestion regroupement
+							$posStat3 = 18 ; //position ames.taille - 1 / Pour gestion regroupement
+							if (strpos($listeChampsSel,"deb.art_grand_type_engin_id") === false) {
+								$listeChampsSpec = ", deb.poids_total, deb.art_unite_peche_id,afra.id, afra.poids, afra.nbre_poissons, ames.taille, afra.ref_espece_id, esp.libelle, deb.art_grand_type_engin_id ";
+							} else {
+								$listeChampsSpec = ", deb.poids_total, deb.art_unite_peche_id,afra.id, afra.poids, afra.nbre_poissons, ames.taille, afra.ref_espece_id, esp.libelle ";
+							}
+							if (strpos($listeChampsSel,"catt.id") === false) {
+								$listeChampsSpec .= ",esp.ref_categorie_trophique_id";
+							}
+							if (strpos($listeChampsSel,"cate.id") === false) {
+								$listeChampsSpec .= ",esp.ref_categorie_ecologique_id";
+							}
+							$ListeTableSpec = ", art_fraction as afra left outer join art_poisson_mesure as ames on ames.art_fraction_id = afra.id"; 
+							$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id  
+											and esp.id = afra.ref_espece_id	";						
+							$ConstIDunique = "DEB-##-11";
+							$valueCount = "deb.id" ; // pour gerer la pagination
+							$builQuery = true;
+							if (strpos($LeftOuterJoin,"left outer join") === false ) {
+								$LeftOuterJoin = ",art_debarquement as deb,ref_espece as esp,art_grand_type_engin as gte";
+							} else {
+								if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
+									$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
+									$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
+									$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
+								}							
+							}
+							break;
+						case "engin" :
+							$labelSelection = "donn&eacute;e(s) d'engin";	
+							$listeChampsCom = $listeChampsDeb;
+							$ListeTableCom = $ListeTableDeb ;
+							$WhereCom = $WhereDeb ;
+							$OrderCom = $OrderDeb ;	
+							$listeChampsSpec = ",deb.art_grand_type_engin_id, aeng.art_type_engin_id,teng.libelle";
+							$ListeTableSpec = ", art_engin_peche as aeng, art_type_engin as teng"; 
+							$WhereSpec = " and aeng.art_debarquement_id = deb.id and teng.id = aeng.art_type_engin_id";						
+							$ConstIDunique = "DEB-##-11";
+							$valueCount = "deb.id" ; // pour gerer la pagination
+							$builQuery = true;
+							if (strpos($LeftOuterJoin,"left outer join") === false ) {
+								$LeftOuterJoin = ",art_debarquement as deb,art_grand_type_engin as gte";
+							} else {
+								if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
+									$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
+									$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
+								}
+							}
+							break;															
+						default	:	
+							$labelSelection = "p&eacute;riode(s) d'enqu&ecirc;te";
+							$SQLfinal = "select * from art_periode_enquete as penq
+											where penq.id in (".$SQLPeEnquete.")";
+							$SQLcountfinal = "select count(*) from art_periode_enquete as penq
+											where penq.id in (".$SQLPeEnquete.")";; // pour gerer la pagination	
+							break;
+					}
+					break;
+				// ********** FIN TRAITEMENT PECHE ARTISANALE
+				default:
+					echo "Erreur pas de peche selectionnee. Ca ne devrait pas arriver....<br/>";
+					exit;
+			} 
 			break;
-			// ********** FIN TRAITEMENT PECHE ARTISANALE
-			default:
-				echo "Erreur pas de peche selectionnee. Ca ne devrait pas arriver....<br/>";
-				exit;
-		} 
-		break;
 		// ********** FIN TRAITEMENT EXTRACTION
 		// #
 		// #####################################################################################
@@ -1338,148 +1339,135 @@ function AfficherDonnees($file,$typeAction){
 			// On charge les colonnes supplémentaires juste pour l'affichage.
 			analyseColonne("statistiques",$typeAction,"ast");
 			$toutesColonnes = recupereTouteColonnes("statistiques",$typeStatistiques); // C'est juste pour charger le nom des alias dans la variable de session 
-			switch ($typeStatistiques) {
-				// *********************************************************************************
-				// STATISTIQUES PAR AGGLOMERATION
-				// *********************************************************************************
-				case "agglomeration" :
-					// ********** DEBUT STATISTIQUES PAR AGGLOMERATION
-					// ********** CONSTRUCTION DES SQL DEFINITIFS PAR TYPE DE STATISTIQUES CHOISIS
-						$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom ,agg.id ,agg.nom ,penq.annee ,penq.mois";
-						$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_agglomeration as agg";
-						$WhereCom = 	$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq."	
-										agg.id = penq.art_agglomeration_id and
-										ast.mois = penq.mois and
-										ast.annee = penq.annee and 
-										ast.art_agglomeration_id = penq.art_agglomeration_id and
-										py.id = sy.ref_pays_id and
-										sy.id = se.ref_systeme_id and
-										se.id = agg.ref_secteur_id " ;		
+			// ********** DEBUT STATISTIQUES PAR AGGLOMERATION
+			// ********** CONSTRUCTION DES SQL DEFINITIFS PAR TYPE DE STATISTIQUES CHOISIS
+			$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom ,agg.id ,agg.nom ,penq.annee ,penq.mois";
+			$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_agglomeration as agg";
+			$WhereCom = 	$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq."	
+							agg.id = penq.art_agglomeration_id and
+							ast.mois = penq.mois and
+							ast.annee = penq.annee and 
+							ast.art_agglomeration_id = penq.art_agglomeration_id and
+							py.id = sy.ref_pays_id and
+							sy.id = se.ref_systeme_id and
+							se.id = agg.ref_secteur_id " ;		
 
-						$OrderCom = "order by py.id asc,sy.id asc,penq.annee asc,penq.mois asc";
-						switch ($typeAction) {
-						// Statistiques globales
-						case "globale" :
-							// On construit les differentes requetes a executer a la suite:
-							// Les variables pour l'affichage a l'ecran :
-							$labelSelection = "Statistiques totales";	
-							$listeChampsSpec = ",ast.pue,ast.fm,ast.cap,ast.id";
-							$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast"; 
-							$WhereSpec = " and ast.art_agglomeration_id = penq.art_agglomeration_id";						
-							$ConstIDunique = "AST-##-13";
-							$valueCount = "ast.id" ; // pour gerer la pagination
-							$builQuery = true;
-							// ******************
-							// **** art_stat_totale
-							$listeChampsSpecast = ",ast.pue,ast.fm,ast.cap,ast.id";
-							$ListeTableSpecast = ",art_periode_enquete as penq, art_stat_totale as ast"; 
-							$WhereSpecast = " and ast.art_agglomeration_id = penq.art_agglomeration_id";
-							$ConstIDuniqueast = "AST-##-13";
-							// ******************
-							// **** art_stat_sp
-							$listeChampsSpecasp = ",ast.pue,ast.fm,ast.cap,asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,asp.id ,ast.id";
-							$ListeTableSpecasp = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp"; 
-							$WhereSpecasp = "	and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
-							if (!($SQLEspeces == "")) {
-								$WhereSpecasp .= " and asp.ref_espece_id in (".$SQLEspeces.") ";
-							}
-							$OrderComasp = ",asp.id asc";
-							$ConstIDuniqueasp = "AST-##-18";
-							// Gestion des positionnements pour les regroupements
-							$posDEBIDasp = 18 ; //position ast.id - 1 / Pour gestion regroupement
-							$posESPIDasp = 13 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
-							$posESPNomasp = 14 ; //position esp.libelle - 1 / Pour gestion regroupement
-							$posStat1asp = 15 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
-							$posStat2asp = 16 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
-							$posStat3asp = -1 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
-							// ******************
-							// **** art_taille_sp
-							$listeChampsSpecats = ",asp.ref_espece_id,esp.libelle, asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id";
-							$ListeTableSpecats = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats,ref_espece as esp"; 
-							$WhereSpecats = " 	and ats.art_stat_sp_id = asp.id and
-													asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
-							if (!($SQLEspeces == "")) {
-								$WhereSpecats .= " and  asp.ref_espece_id in (".$SQLEspeces.") ";
-							}
-							$ConstIDuniqueats = "AST-##-17";
-							// Gestion des positionnements pour les regroupements
-							$posDEBIDats = 17 ; //position ast.id - 1 / Pour gestion regroupement
-							$posESPIDats = 10 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
-							$posESPNomats = 11 ; //position esp.libelle - 1 / Pour gestion regroupement
-							$posStat1ats = 14 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
-							$posStat2ats = 15 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
-							$posStat3ats = -1 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
-							// ******************
-							// **** art_stat_gt	attgt
-							$listeChampsSpecasgt = ", asgt.art_grand_type_engin_id,gte.libelle,asgt.pue_gt,asgt.fm_gt,asgt.cap_gt, asgt.id,ast.id";
-							$ListeTableSpecasgt = ",art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
-							$WhereSpecasgt = "	and asgt.art_stat_totale_id = ast.id 
-													and gte.id = 	asgt.art_grand_type_engin_id";
-							$ConstIDuniqueasgt = "AST-##-16";						
-							// ******************
-							// **** art_stat_gt_sp
-							$listeChampsSpecattgt = ",asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle,attgt.pue_gt_sp,attgt.cap_gt_sp,attgt.id, asgt.id, ast.id";
-							$ListeTableSpecattgt = ",art_periode_enquete as penq, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
-							$WhereSpecattgt = "	and attgt.art_stat_gt_id = asgt.id  
-													and asgt.art_stat_totale_id = ast.id 
-													and gte.id = asgt.art_grand_type_engin_id
-													and esp.id = attgt.ref_espece_id";
-							if (!($SQLEspeces == "")) {
-								$WhereSpecattgt .= " and  attgt.ref_espece_id in (".$SQLEspeces.")";
-							}
-							$ConstIDuniqueattgt = "AST-##-16";
-							// Gestion des positionnements pour les regroupements
-							$posDEBIDattgt = 16 ; //position ast.id - 1 / Pour gestion regroupement
-							$posESPIDattgt = 12 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
-							$posESPNomattgt = 13 ; //position esp.libelle - 1 / Pour gestion regroupement
-							$posStat1attgt = 14 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
-							$posStat2attgt = 15 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
-							$posStat3attgt = -1;
-							// ******************
-							//art_stat_gt_sp
-							$listeChampsSpecatgts = ", asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle, attgt.pue_gt_sp, attgt.cap_gt_sp, atgts.li, atgts.xi,atgts.id, attgt.id, asgt.id, ast.id";
-							$ListeTableSpecatgts = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
-							$WhereSpecatgts = "	and atgts.art_stat_gt_sp_id = attgt.id  
-													and attgt.art_stat_gt_id = asgt.id  
-													and asgt.art_stat_totale_id = ast.id 
-													and gte.id = asgt.art_grand_type_engin_id
-													and esp.id = attgt.ref_espece_id";
-							if (!($SQLEspeces == "")) {
-								$WhereSpecatgts .= " and  attgt.ref_espece_id in (".$SQLEspeces.")";
-							}
-							$ConstIDuniqueatgts = "AST-##-21";
-							// Gestion des positionnements pour les regroupements
-							$posDEBIDatgts = 21 ; //position ast.id - 1 / Pour gestion regroupement
-							$posESPIDatgts = 12 ; //position attgt.ref_espece_id - 1 / Pour gestion regroupement
-							$posESPNomatgts = 13 ; //position esp.libelle - 1 / Pour gestion regroupement
-							$posStat1gatgts = 16 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
-							$posStat2atgts = 17 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
-							$posStat3atgts = -1 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
-							break;
-						default	:	
-							$labelSelection = "p&eacute;riode(s) d'enqu&ecirc;te";
-							$SQLfinal = "select * from art_periode_enquete as penq
-											where penq.id in (".$SQLPeEnquete.")";
-							$SQLcountfinal = "select count(*) from art_periode_enquete as penq
-									where penq.id in (".$SQLPeEnquete.")";; // pour gerer la pagination	
-					}									
-					break; 
-				// ********** FIN STATISTIQUES PAR AGGLOMERATION
-				// *
-				// *********************************************************************************
-				// STATISTIQUES PAR AGGLOMERATION
-				// *********************************************************************************
-				case "generales" :
-					// ********** DEBUT STATISTIQUES GENERALES
-				break; 
-				// ********** FIN STATISTIQUES GENERALES	
+			$OrderCom = "order by py.id asc,sy.id asc,penq.annee asc,penq.mois asc";
+			switch ($typeAction) {
+				// Statistiques globales
+				case "stats" :
+					// On construit les differentes requetes a executer a la suite:
+					// Les variables pour l'affichage a l'ecran :
+					$labelSelection = "Statistiques totales";	
+					$listeChampsSpec = ",ast.pue,ast.fm,ast.cap,ast.id";
+					$ListeTableSpec = ",art_periode_enquete as penq, art_stat_totale as ast"; 
+					$WhereSpec = " and ast.art_agglomeration_id = penq.art_agglomeration_id";						
+					$ConstIDunique = "AST-##-13";
+					$valueCount = "ast.id" ; // pour gerer la pagination
+					$builQuery = true;
+					// ******************
+					// **** art_stat_totale
+					$listeChampsSpecast = ",ast.pue,ast.fm,ast.cap,ast.id";
+					$ListeTableSpecast = ",art_periode_enquete as penq, art_stat_totale as ast"; 
+					$WhereSpecast = " and ast.art_agglomeration_id = penq.art_agglomeration_id";
+					$ConstIDuniqueast = "AST-##-13";
+					// ******************
+					// **** art_stat_sp
+					$listeChampsSpecasp = ",ast.pue,ast.fm,ast.cap,asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,asp.id ,ast.id";
+					$ListeTableSpecasp = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp"; 
+					$WhereSpecasp = "	and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
+					if (!($SQLEspeces == "")) {
+						$WhereSpecasp .= " and asp.ref_espece_id in (".$SQLEspeces.") ";
+					}
+					$OrderComasp = ",asp.id asc";
+					$ConstIDuniqueasp = "AST-##-18";
+					// Gestion des positionnements pour les regroupements
+					$posDEBIDasp = 18 ; //position ast.id - 1 / Pour gestion regroupement
+					$posESPIDasp = 13 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
+					$posESPNomasp = 14 ; //position esp.libelle - 1 / Pour gestion regroupement
+					$posStat1asp = 15 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
+					$posStat2asp = 16 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
+					$posStat3asp = -1 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
+					// ******************
+					// **** art_taille_sp
+					$listeChampsSpecats = ",asp.ref_espece_id,esp.libelle, asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id";
+					$ListeTableSpecats = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats,ref_espece as esp"; 
+					$WhereSpecats = " 	and ats.art_stat_sp_id = asp.id and
+											asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
+					if (!($SQLEspeces == "")) {
+						$WhereSpecats .= " and  asp.ref_espece_id in (".$SQLEspeces.") ";
+					}
+					$ConstIDuniqueats = "AST-##-17";
+					// Gestion des positionnements pour les regroupements
+					$posDEBIDats = 17 ; //position ast.id - 1 / Pour gestion regroupement
+					$posESPIDats = 10 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
+					$posESPNomats = 11 ; //position esp.libelle - 1 / Pour gestion regroupement
+					$posStat1ats = 14 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
+					$posStat2ats = 15 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
+					$posStat3ats = -1 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
+					// ******************
+					// **** art_stat_gt	attgt
+					$listeChampsSpecasgt = ", asgt.art_grand_type_engin_id,gte.libelle,asgt.pue_gt,asgt.fm_gt,asgt.cap_gt, asgt.id,ast.id";
+					$ListeTableSpecasgt = ",art_periode_enquete as penq, art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
+					$WhereSpecasgt = "	and asgt.art_stat_totale_id = ast.id 
+											and gte.id = 	asgt.art_grand_type_engin_id";
+					$ConstIDuniqueasgt = "AST-##-16";						
+					// ******************
+					// **** art_stat_gt_sp
+					$listeChampsSpecattgt = ",asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle,attgt.pue_gt_sp,attgt.cap_gt_sp,attgt.id, asgt.id, ast.id";
+					$ListeTableSpecattgt = ",art_periode_enquete as penq, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
+					$WhereSpecattgt = "	and attgt.art_stat_gt_id = asgt.id  
+											and asgt.art_stat_totale_id = ast.id 
+											and gte.id = asgt.art_grand_type_engin_id
+											and esp.id = attgt.ref_espece_id";
+					if (!($SQLEspeces == "")) {
+						$WhereSpecattgt .= " and  attgt.ref_espece_id in (".$SQLEspeces.")";
+					}
+					$ConstIDuniqueattgt = "AST-##-16";
+					// Gestion des positionnements pour les regroupements
+					$posDEBIDattgt = 16 ; //position ast.id - 1 / Pour gestion regroupement
+					$posESPIDattgt = 12 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
+					$posESPNomattgt = 13 ; //position esp.libelle - 1 / Pour gestion regroupement
+					$posStat1attgt = 14 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
+					$posStat2attgt = 15 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
+					$posStat3attgt = -1;
+					// ******************
+					//art_stat_gt_sp
+					$listeChampsSpecatgts = ", asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle, attgt.pue_gt_sp, attgt.cap_gt_sp, atgts.li, atgts.xi,atgts.id, attgt.id, asgt.id, ast.id";
+					$ListeTableSpecatgts = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
+					$WhereSpecatgts = "	and atgts.art_stat_gt_sp_id = attgt.id  
+											and attgt.art_stat_gt_id = asgt.id  
+											and asgt.art_stat_totale_id = ast.id 
+											and gte.id = asgt.art_grand_type_engin_id
+											and esp.id = attgt.ref_espece_id";
+					if (!($SQLEspeces == "")) {
+						$WhereSpecatgts .= " and  attgt.ref_espece_id in (".$SQLEspeces.")";
+					}
+					$ConstIDuniqueatgts = "AST-##-21";
+					// Gestion des positionnements pour les regroupements
+					$posDEBIDatgts = 21 ; //position ast.id - 1 / Pour gestion regroupement
+					$posESPIDatgts = 12 ; //position attgt.ref_espece_id - 1 / Pour gestion regroupement
+					$posESPNomatgts = 13 ; //position esp.libelle - 1 / Pour gestion regroupement
+					$posStat1gatgts = 16 ; //position stat 1 a cumuler  - 1 / Pour gestion regroupement
+					$posStat2atgts = 17 ; //position stat 2 a cumuler  - 1 / Pour gestion regroupement
+					$posStat3atgts = -1 ; //position stat 3 a cumuler  - 1 / Pour gestion regroupement
+					break;
+				default	:	
+					$labelSelection = "p&eacute;riode(s) d'enqu&ecirc;te";
+					$SQLfinal = "select * from art_periode_enquete as penq
+									where penq.id in (".$SQLPeEnquete.")";
+					$SQLcountfinal = "select count(*) from art_periode_enquete as penq
+							where penq.id in (".$SQLPeEnquete.")";; // pour gerer la pagination	
+				break;
+			}
+			break;
 		// #
 		// ********** FIN TRAITEMENT STATISTIQUES
 		// #
 		default:
-			echo "Erreur pas d'action selectionnee. Ca ne devrait pas arriver....<br/>";
+			echo "Erreur pas de typeSelection disponible. Ca ne devrait pas arriver....<br/>";
 			exit;
-		} // fin du switch ($typeStatistiques) 
+		
 	} // fin du switch ($typeSelection) 
 
 	// *
@@ -2696,6 +2684,8 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 	if (!(isset($_SESSION['listeRegroup']))) {
 		$_SESSION['listeRegroup'] = "";	
 	}
+	print_r($_SESSION['listeRegroup']);
+	echo "x<br/>";
 	$ulrComp="";
 	$info = "";
 	// Reinitialisation des variables d'affichage

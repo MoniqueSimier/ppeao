@@ -61,36 +61,11 @@ height:10px;
  font-size:100%;
  font-weight:bold;
 }
-#controleBase{
-	min-height:50px;
-	background-color:#E6E6EE;
-	width:100%;
-}
-#controleBase_img{
-	display:block;
-	float:left;
-	width:40px;
-}
-#controleBase_txt{
-	display:block;
-	float:left;
-	font-size:70%;
-	font-weight:bold;
-}
-#controleBase_chk{
-	font-size:70%;
-	font-weight:bold;
-	text-align:right;
-}
-#vertical_slide1{
-	margin-left:50px;
-	background-color:#E6E6EE;
-	font-size:70%;
-}
+
 #vidage{
 	min-height:50px;
-	background-color:#FFF;
-	width:100%;
+	background-color:#E6E6EE;
+width:100%;
 }
 #vidage_img{
 	display:block;
@@ -108,14 +83,14 @@ height:10px;
 	font-weight:bold;
 	text-align:right;
 }
-#vertical_slide2{
-	margin-left:50px;
-	background-color:#FFF;
+#vertical_slide1{
+	padding-left:5px;
+	background-color:#E6E6EE;
 	font-size:70%;
 }
 #copiePPEAO{
 	min-height:50px;
-	background-color:#E6E6EE;
+	background-color:#FFF;
 	width:100%;
 }
 #copiePPEAO_img{
@@ -134,14 +109,14 @@ height:10px;
 	font-weight:bold;
 	text-align:right;
 }
-#vertical_slide3{
-	margin-left:50px;
-	background-color:#E6E6EE;
+#vertical_slide2{
+	margin-left:5px;
+	background-color:#FFF;
 	font-size:70%;
 }
 #copieACCESS{
 	min-height:50px;
-	background-color:#FFF;
+	background-color:#E6E6EE;
 	width:100%;
 }
 #copieACCESS_img{
@@ -160,41 +135,15 @@ height:10px;
 	font-weight:bold;
 	text-align:right;
 }
-#vertical_slide4{
-	margin-left:50px;
-	background-color:#FFF;
-	font-size:70%;
-}
-/*
-#controleBD{
-	min-height:60px;
-	background-color:#E6E6EE;
-	width:100%;
-}
-#controleBD_img{
-	display:block;
-	float:left;
-	width:40px;
-}
-#controleBD_txt{
-	display:block;
-	float:left;
-	font-size:70%;
-	font-weight:bold;
-}
-#controleBD_chk{
-	font-size:70%;
-	font-weight:bold;
-	text-align:right;
-}*/
-#vertical_slide5{
-	margin-left:50px;
+#vertical_slide3{
+	margin-left:5px;
 	background-color:#E6E6EE;
 	font-size:70%;
 }
+
 #copieZip{
 	min-height:50px;
-	background-color:#E6E6EE;
+	background-color:#FFF;
 	width:100%;
 }
 #copieZip_img{
@@ -213,8 +162,8 @@ height:10px;
 	font-weight:bold;
 	text-align:right;
 }
-#vertical_slide6{
-	margin-left:50px;
+#vertical_slide4{
+	margin-left:5px;
 	background-color:#FFF;
 	font-size:70%;
 }
