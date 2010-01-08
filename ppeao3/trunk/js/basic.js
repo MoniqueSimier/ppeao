@@ -132,7 +132,7 @@ function ajaxLogout(){
 		if(xhr2.readyState == 4 && xhr2.status == 200){
 			theMessage = xhr2.responseText;
 			// une fois la déconnexion faite, on rafraichit la page
-			if(theMessage == 'success') {document.location.reload(true);}
+			if(theMessage == 'success') {document.location="/";}
 		}// end function()
 	} // end ajaxLogout
 
