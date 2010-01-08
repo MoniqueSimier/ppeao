@@ -7,7 +7,7 @@ $messageGen = "";
 
 
 // variable indiquant où archiver les journaux
-$logArchivePath='/journal/archives/';
+$logArchivePath='/work/journal_archives/';
 
 // variable indiquant au bout de combien d'enregistrements il faut déclencher l'autoarchivage du journal
 $logAutoArchiveEntriesNumber='1000';

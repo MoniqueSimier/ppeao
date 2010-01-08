@@ -48,7 +48,7 @@ Examples:
 
 ATTENTION: The trailing slash is required.
 */
-$baseUrl = '/documentation/metadata/';
+$baseUrl = '/work/documentation/metadata/';
 
 /*
 $baseDir : the path to the local directory (in the server) which points to the

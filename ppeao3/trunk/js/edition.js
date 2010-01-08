@@ -943,7 +943,7 @@ function BrowseServer(inputId)
 				}
 function SetFileField( fileUrl,data )
 {
-	var filePath=fileUrl.replace('/documentation/metadata/','');
+	var filePath=fileUrl.replace('/work/documentation/metadata/','');
 	
 	document.getElementById(data["selectFunctionData"] ).value = filePath ;
 }
