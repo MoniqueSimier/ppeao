@@ -2142,7 +2142,7 @@ echo('<div id="choix_tables_stats"><p>');
 			echo('<a id="link_filieres" class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;extraction...</a>');
 			break;
 			case "stats":
-			echo('<a id="link_filieres"  class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir les tables de statistiques...</a>');
+			echo('<a id="link_filieres"  class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">Affiner les s&eacute;lections pour les statistiques...</a>');
 			break;
 		} // end switch $exploit
 		// on affiche le texte d'aide
