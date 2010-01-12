@@ -127,7 +127,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		}
 	}
 	// Test de la connexion à la BD de ref (pour log entre autre)
-	if (!$connectPPEAO) { 
+	if (!$connectPPEAOACCESS) { 
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es BD_PPEAO pour maj des logs</div>" ; exit;
 	}
 	
@@ -158,8 +158,9 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		WriteCompLog ($logComp, "*------------------------------------------------------",$pasdefichier);
 	}
 	//1. copier et renomer la base de travail
+	$BDreptravail = GetParam("nomRepBDtravail",$PathFicConfAccess);
 	$BDrep = GetParam("nomRepBD",$PathFicConfAccess);
-	$BDfic = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$BDACCESS."_travail.mdb";
+	$BDfic = $_SERVER["DOCUMENT_ROOT"]."/".$BDreptravail."/".$BDACCESS."_travail.mdb";
 	// On va utiliser un repertoire temp pour preparer l'archive
 	// On teste si il existe
 	$TempRep = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/temp/";
@@ -190,7 +191,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		//2.ajouter cette base au fichier compresse
 		//compression du fichier pour le telechargement
 		
-		$zipFilename = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/temp-".$fileCompression.".zip";
+		$zipFilename = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$fileCompression."-".$typePeche.".zip";
 		$zipFilelien = "/".$BDrep."/temp-".$fileCompression.".zip";
 		$AjoutCR = "Le fichier est celui-ci : <b><a href=\"".$zipFilelien."\" target=\"\">".$zipFilelien."</a></b>.";
 		if (file_exists($zipFilename)) {

@@ -68,9 +68,9 @@ if (isset($_GET["action"])) {
 }else {
 	$typeAction = "";
 }
-$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
+$file=$_SERVER["DOCUMENT_ROOT"]."/work/temp/".$filename;
 if (!(file_exists($file)) ) {
-	$dirTemp = $_SERVER["DOCUMENT_ROOT"]."/temp/".$userID;
+	$dirTemp = $_SERVER["DOCUMENT_ROOT"]."/work/temp/".$userID;
 	$resultatDir = creeDirTemp($dirTemp);
 	if (strpos("erreur",$resultatDir) === false ){
 		$file = $dirTemp."/tempStat.xml";
@@ -162,7 +162,11 @@ if (!(file_exists($file)) ) {
 				$resultatLecture = "";
 				$labelSelection = "";
 				$locSelection = AfficherSelection($file,$typeAction); 
-echo $typeStatistiques."<br/>";
+				if ($typeStatistiques =="agglomeration") {
+					echo "<h2>Statistiques par agglom&eacute;rations</h2>"; 
+				} else {
+					echo "<h2>Statistiques g&eacute;n&eacute;rales</h2>";
+				}
 				echo "<span class=\"showHide\">
 <a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier ma s&eacute;lection]</a></span>";
 				echo "<div id=\"selection_precedente\">";
@@ -196,8 +200,7 @@ echo $typeStatistiques."<br/>";
 			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
 			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
 			</form></span>
-		   
-		   
+
 		   <script type="text/javascript" charset="utf-8">runFilieresStat('<?php echo $typeStatistiques ?>','stats','1','','n','','','','');</script>
         <script type="text/javascript" charset="utf-8">
 			var mySlider = new Fx.Slide('selection_precedente', {duration: 500});

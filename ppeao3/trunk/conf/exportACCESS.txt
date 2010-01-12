@@ -3,7 +3,8 @@
 
 ; Export ACCESS
 ; Repertoire base de ref (pour les copies / zip)
-nomRepBD=export/base_ref;
+nomRepBD=work/export/base_ref;
+nomRepBDtravail=work/export/base_travail;
 ; Nom des bases de ref (nom de la connexion ODBC, meme nom que le nom du fichier physique...)
 ; Peche artisanale
 nomBDRefArt=Pechart;
@@ -14,7 +15,7 @@ repLogAccess=log;
 ; Nom fichier de log supplementaire (la date est ajoutée)
 nomFicLogSuppAc=ExportAccess.log;
 ; Nom fichier de compression (le type de peche est ajoutée)
-nomFicLogCompression=Compression
+nomFicLogCompression=BaseACCESS
 ; tables a vider Peches Artisanales
 listeaViderArtACCESS=activImporter,CoefficientKb,ConditionPhysicoChimiq,CorrespondanceMaille,debarqImporter,engactiImporter,engpechImporter,Enqueteur,EspeceTMO,Journal,ModeCalcul,NomVernaculaire,PaysFragmentation,PECHEXPcat_ecol,PECHEXPcat_troph,PECHEXPespece,PECHEXPfamille,PECHEXPnom,PECHEXPordre,PeriodeEnquete,poidsImporter,Recap,RecapCoef,SuiviExtractImport,SuiviExtractImportRec,tailleImporter,vdueauImporter;
 ; tables a copier entre la base de travail et la base PPEAO de reference

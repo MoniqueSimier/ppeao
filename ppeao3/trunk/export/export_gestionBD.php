@@ -71,15 +71,17 @@ if (isset($_GET['log'])) {
 // Recupération des paramétres de connexion ODBC aux bases de references artisanales ou expermientales.
 // Variables pour la sauvegarde de la base de reference (PPEAO)
 // ***********************************************************
-$BDrep = GetParam("nomRepBD",$PathFicConfAccess);
+
 
 // Note: le nom de la connexion ODBC doit etre le meme que le nom du fichier .mdb
 switch ($typePeche) { 
 	case "exp":
+		$BDrep = GetParam("nomRepBD",$PathFicConfAccess);
 		$BDACCESS = GetParam("nomBDRefExp",$PathFicConfAccess);
 		$nomPeche = "peches experimentales";
 		break;
 	case "art":
+		$BDrep = GetParam("nomRepBD",$PathFicConfAccess);
 		$BDACCESS = GetParam("nomBDRefArt",$PathFicConfAccess);
 		$nomPeche = "peches artisanales";
 		break;	
@@ -91,6 +93,7 @@ switch ($action) {
 		$nomFenetre = "controleBase";
 		break;
 	case "vide":
+		$BDrep = GetParam("nomRepBDtravail",$PathFicConfAccess);
 		$nomAction = "Vidage base de travail ".$nomPeche;
 		$BDACCESS = $BDACCESS."_travail";
 		$numFen = 2;
@@ -158,13 +161,15 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		WriteCompLog ($logComp, "*------------------------------------------------------",$pasdefichier);
 	}
 	// test d'existence du fichier
-	$BDfic = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$BDACCESS.".mdb";
-	if (!file_exists($BDfic)) {
-		$CRexecution .= "ERREUR : le fichier .mdb de references n'existe pas. (".$BDfic.")<br/>";
-		if ($EcrireLogComp ) {
-				WriteCompLog ($logComp,"*- ERREUR : le fichier .mdb de references n'existe pas. (".$BDfic.")",$pasdefichier);
-		}		
-		$erreurProcess = true;
+	if ($typePeche == 'art') {
+		$BDfic = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$BDACCESS.".mdb";
+		if (!file_exists($BDfic)) {
+			$CRexecution .= "ERREUR : le fichier .mdb de references n'existe pas. (".$BDfic.")<br/>";
+			if ($EcrireLogComp ) {
+					WriteCompLog ($logComp,"*- ERREUR : le fichier .mdb de references n'existe pas. (".$BDfic.")",$pasdefichier);
+			}		
+			$erreurProcess = true;
+		}
 	}
 	// test d'existence du fichier de lock ACCESS : si il est présent, arrêt du traitement et action de l'admin BD
 	$BDficLock = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$BDACCESS.".ldb";

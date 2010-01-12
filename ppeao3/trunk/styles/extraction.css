@@ -127,7 +127,7 @@ list-style:none;
 	font-size:12px;
 }
 #runProcess{
-	padding:3px;
+	/*padding:3px;*/
 	background:#d9d8d8;
 	font-weight:bold;
 	border-bottom:1px dotted #666666;

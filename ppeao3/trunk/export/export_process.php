@@ -263,7 +263,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			break;
 		case "art":
 			$BDACCESS = GetParam("nomBDRefArt",$PathFicConfAccess);
-			$BDSource = "connectPPEAO";
+			$BDSource = "connectPPEAOACCESS";
 			$BDCible = "connectAccessTravail";
 			$nomPeche = "peches artisanales";
 			break;	
@@ -275,18 +275,19 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	// Test préliminaire, si la base de travail est lockée, ca ne sert à rien de continuer !
 		// test d'existence du fichier de lock ACCESS : si il est présent, arrêt du traitement et action de l'admin BD
 	$BDrep = GetParam("nomRepBD",$PathFicConfAccess);
-	$BDficLock = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$BDACCESSTravail.".ldb";
+	$BDrepTravail = GetParam("nomRepBDtravail",$PathFicConfAccess);
+	$BDficLock = $_SERVER["DOCUMENT_ROOT"]."/".$BDrepTravail."/".$BDACCESSTravail.".ldb";
 	if (file_exists($BDficLock)) {
-		$CRexecution .= "ERREUR : un fichier de lock (".$BDACCESSTravail.".ldb)pour la base de donnees est present dans ".$BDrep.". <br/>Merci de reparer le probleme.<br/>Le traitement s'arrete.";
+		$CRexecution .= "ERREUR : un fichier de lock (".$BDACCESSTravail.".ldb)pour la base de donnees est present dans ".$BDrepTravail.". <br/>Merci de reparer le probleme.<br/>Le traitement s'arrete.";
 		if ($EcrireLogComp ) {
-				WriteCompLog ($logComp,"*- ERREUR : un fichier de lock (".$BDACCESSTravail.".ldb)pour la base de donnees est present dans ".$BDrep.".",$pasdefichier);
+				WriteCompLog ($logComp,"*- ERREUR : un fichier de lock (".$BDACCESSTravail.".ldb)pour la base de donnees est present dans ".$BDrepTravail.".",$pasdefichier);
 		}
 		$erreurProcess = true;
 	} else {
 	
 	
 	// Test de la connexion à la BD de ref (pour log entre autre)
-	if (!$connectPPEAO) { 
+	if (!$connectPPEAOACCESS) { 
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es BD_PPEAO pour maj des logs</div>" ; exit;
 	}
 	// Test connexion base de travail
@@ -422,8 +423,8 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 						$erreurSQL = odbc_errormsg($connectAccess); //
 						break; 
 					case "copPPEAO":
-						$compReadResultC = pg_query($connectPPEAO,$compReadSqlC);
-						$erreurSQL = pg_last_error($connectPPEAO);
+						$compReadResultC = pg_query($connectPPEAOACCESS,$compReadSqlC);
+						$erreurSQL = pg_last_error($connectPPEAOACCESS);
 						break;
 				}
 				if ( !$compReadResultC ) { 
@@ -455,8 +456,8 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 						$erreurSQL = odbc_errormsg($connectAccess); //
 						break; 
 					case "copPPEAO":
-						$compReadResult = pg_query($connectPPEAO,$compReadSql);
-						$erreurSQL = pg_last_error($connectPPEAO);
+						$compReadResult = pg_query($connectPPEAOACCESS,$compReadSql);
+						$erreurSQL = pg_last_error($connectPPEAOACCESS);
 						break;
 				}
 				if ( !$compReadResultC ) { 
@@ -491,7 +492,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 									break;
 								}
 								//echo "<br/>lecture ".$compRow[0]." - ".$compRow[1];
-								$scriptSQL = GetSQLACCESS('insert',  $nomTableEC, $where, $compRow,"ACCESS",$tables[$cpt],$connectAccessTravail,$connectPPEAO,$typePeche);
+								$scriptSQL = GetSQLACCESS('insert',  $nomTableEC, $where, $compRow,"ACCESS",$tables[$cpt],$connectAccessTravail,$connectPPEAOACCESS,$typePeche);
 								$testPos = strpos($scriptSQL,"*-ERREUR*-" );
 								//echo $scriptSQL."<br/>";
 								if ($testPos === false){
@@ -525,7 +526,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 									$ArretTimeOut =true;
 									break;
 								}
-								$scriptSQL = GetSQLACCESS('insert',  $nomTableEC, $where, $compRow,"POSTGRE",$tables[$cpt],$connectAccessTravail,$connectPPEAO,$typePeche);
+								$scriptSQL = GetSQLACCESS('insert',  $nomTableEC, $where, $compRow,"POSTGRE",$tables[$cpt],$connectAccessTravail,$connectPPEAOACCESS,$typePeche);
 								$testPos = strpos($scriptSQL[0],"*-ERREUR*-" );
 								if ($testPos === false){
 									// Il semble que le connecteur ODBC n'aime pas les scripts SQL avec plusieurs instructions. Donc, on eclate le scripts et on execute les instructions une a une.

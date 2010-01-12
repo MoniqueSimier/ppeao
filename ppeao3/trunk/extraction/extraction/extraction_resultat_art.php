@@ -53,9 +53,9 @@ if ($_SESSION['fichier_xml'] == "" ) {
 	$inputXML = "?xml=".$_SESSION['fichier_xml'];
 	$filename =  $_SESSION['fichier_xml'].".xml";
 }
-$file=$_SERVER["DOCUMENT_ROOT"]."/temp/".$filename;
+$file=$_SERVER["DOCUMENT_ROOT"]."/work/temp/".$filename;
 if (!(file_exists($file)) ) {
-	$dirTemp = $_SERVER["DOCUMENT_ROOT"]."/temp/".$userID;
+	$dirTemp = $_SERVER["DOCUMENT_ROOT"]."/work/temp/".$userID;
 	$resultatDir = creeDirTemp($dirTemp);
 	if (strpos("erreur",$resultatDir) === false ){
 		$file = $dirTemp."/tempArt.xml";

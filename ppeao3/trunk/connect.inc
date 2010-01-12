@@ -14,7 +14,15 @@ $username='devppeao';
 // mot de passe de l'utilisateur pour la connexion à la base principale
 $password='2devppe!!';
 // nom de la base de données depuis laquelle se fait le portage
-$base_portage='BD_Peche';
+$base_portage='bd_peche';
+
+//********** Connection base PPEAO POSTGRES pour maj base ACCESS
+$hostnameACCESS='vmppeao-l3.mpl.ird.fr';
+$portACCESS='5432';
+$usernameACCESS='devppeao';
+$passwordACCESS='2devppe!!';
+$baseACCESS='ppeao_test';
+$connectPPEAOACCESS = pg_connect("host=$hostnameACCESS port=$portACCESS dbname=$baseACCESS user=$usernameACCESS password=$passwordACCESS") or die('Connexion impossible a la base : '.pg_last_error());
 
 
 // ********* NE RIEN MODIFIER CI-DESSOUS *****************
