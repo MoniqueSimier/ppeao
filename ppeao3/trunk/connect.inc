@@ -3,12 +3,12 @@
 // les variables qui suivent sont celles qui peuvent être modifiées en fonction des paramètres de connexion
 
 // serveur sur lequel sont situées les bases de données (hostname)
-//$hostname='vmppeao-l3.mpl.ird.fr';
-$hostname='vmppeao.mpl.ird.fr';
+$hostname='localhost';
+
 // port de connexion au serveur de bases de données
 $port='5432';
 // nom de la base de données principale PPEAO
-$base_principale='ppeao_test';
+$base_principale='bdppeao_vmppeao_dev';
 // nom de l'utilisateur pour la connexion à la base principale
 $username='devppeao';
 // mot de passe de l'utilisateur pour la connexion à la base principale
@@ -17,7 +17,10 @@ $password='2devppe!!';
 $base_portage='bd_peche';
 
 //********** Connection base PPEAO POSTGRES pour maj base ACCESS
-$hostnameACCESS='vmppeao-l3.mpl.ird.fr';
+// saisissez ici les informations d'acces au serveur de PRODUCTION sur lequel tourne la base principale
+// cette connexion se fera en lecture seule pour exporter les donnees, et uniquement pour l'export
+// le reste de l'application utilise les informations de connexion ci-dessus
+$hostnameACCESS='vmppeao-dev.mpl.ird.fr';
 $portACCESS='5432';
 $usernameACCESS='devppeao';
 $passwordACCESS='2devppe!!';
