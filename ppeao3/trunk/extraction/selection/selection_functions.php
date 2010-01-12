@@ -51,6 +51,8 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 	if (!empty($_GET["systemes"])  && $_GET["step"]>3) {
 		$sql.=' AND exp_campagne.ref_systeme_id IN (\''.arrayToList($_GET["systemes"],'\',\'','\'').')';
 		}
+		
+		
 	// si une valeur de debut_annee a ete passee dans l'url
 	if (!empty($_GET["d_a"])  && $_GET["step"]>4) {
 		$debut_annee=$_GET["d_a"];
@@ -69,6 +71,15 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 		$fin_date=$fin_annee.'-'.$fin_mois.'-'.days_in_month($fin_annee,$fin_mois);
 		$sql.=' AND exp_campagne.date_debut<=\''.$fin_date.'\' ';
 		}
+	
+	// si des valeurs de secteurs ont ete passees dans l'url
+	if (!empty($_GET["secteurs"])  && $_GET["step"]>7) {
+		$sql.=' AND exp_campagne.ref_systeme_id IN (
+			SELECT ref_systeme_id FROM ref_secteur WHERE ref_secteur.id IN
+				(\''.arrayToList($_GET["secteurs"],'\',\'','\'').')
+			)';
+		}
+	
 	// si des valeurs de campagnes ont ete passees dans l'url
 	if (!empty($_GET["camp"]) && $_GET["step"]>8) {
 		$sql.=' AND exp_campagne.id IN (\''.arrayToList($_GET["camp"],'\',\'','\'').')';
