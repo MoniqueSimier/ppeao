@@ -941,6 +941,7 @@ function BrowseServer(inputId)
 					finder.SelectFunctionData = inputId
 					finder.Popup() ;
 				}
+
 function SetFileField( fileUrl,data )
 {
 	var filePath=fileUrl.replace('/work/documentation/metadata/','');
