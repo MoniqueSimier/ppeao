@@ -165,8 +165,8 @@ if (!empty($especes_array) && $_GET["step"]>2) {
  art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN  (\''.arrayToList($_GET["secteurs"],'\',\'','\'').')))';
 		}
 		// si des valeurs d'agglomeration ont ete passees dans l'url
-	if (!empty($_GET["agglomerations"]) && $_GET["step"]>8) {
-		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (\''.arrayToList($_GET["agglomerations"],'\',\'','\'').')';
+	if (!empty($_GET["agglo"]) && $_GET["step"]>8) {
+		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (\''.arrayToList($_GET["agglo"],'\',\'','\'').')';
 		}
 		// si une valeur de debut_annee a ete passee dans l'url
 	if (!empty($_GET["d_a"]) && $_GET["step"]>4) {
@@ -2116,9 +2116,17 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 		echo('<div id="step_'.$theStep.'">');
 			echo('<h2>'.$theStep.'. grands types d&#x27;engins de p&ecirc;che</h2>');
 			if (!empty($_GET["gteng"])) {
-			$sql='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_activite a, art_debarquement d WHERE 
-				a.id IN (\''.arrayToList($compteur["activites_ids"],'\',\'','\'').') 
-				AND d.id IN (\''.arrayToList($compteur["debarquements_ids"],'\',\'','\'').') 
+			
+			$debs='';
+			if (!empty($compteur["debarquements_ids"])) {$debs=' AND d.id IN (\''.arrayToList($compteur["debarquements_ids"],'\',\'','\'').') ';}
+			$acts='';
+			if (!empty($compteur["activites_ids"])) {$acts=' AND a.id IN (\''.arrayToList($compteur["activites_ids"],'\',\'','\'').') ';}
+			
+			$sql='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_activite a, art_debarquement d 
+				WHERE TRUE 
+				'.$acts.'
+				'.$debs.'
+				
 				AND a.art_grand_type_engin_id=g.id AND d.art_grand_type_engin_id=g.id
 				ORDER BY g.libelle
 				';
