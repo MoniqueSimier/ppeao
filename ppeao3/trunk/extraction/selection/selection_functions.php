@@ -736,10 +736,10 @@ $edit_link=replaceQueryParam ($_SERVER['FULL_URL'],'step',$step);
 
 if ($step<10) {
 	$edit_link=removeQueryStringParam($edit_link,'g_t_eng\[\]');
+	$edit_link=removeQueryStringParam($edit_link,'eng\[\]');
 }
 
 if ($step<9) {
-	$edit_link=removeQueryStringParam($edit_link,'eng\[\]');
 	$edit_link=removeQueryStringParam($edit_link,'p_enq\[\]');
 }
 
@@ -1635,7 +1635,7 @@ function afficheSecteurs($donnees) {
 			// on prepare l'url pour construire le lien : on enleve les secteurs eventuellement selectionnes
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'secteurs\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des '.$nextSelectionStep.'&gt;&gt;</a></p>');
+			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des '.$nextSelectionStep.' &gt;&gt;</a></p>');
 		echo('</form>');
 		// on affiche le texte d'aide
 		afficheAide("secteurs");
@@ -1794,6 +1794,8 @@ global $connectPPEAO;
 				echo('<option value="'.$engin["id"].'" '.$selected.'>'.$engin["libelle"].'</option>');
 			} // end foreach
 			echo('</select>');
+			// le bouton permettant de tout/rien selectionner
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'engins\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'engins\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			// on affiche le lien permettant de passer au choix des filieres
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
