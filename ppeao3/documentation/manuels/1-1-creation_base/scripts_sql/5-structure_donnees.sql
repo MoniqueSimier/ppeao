@@ -1058,7 +1058,7 @@ COMMENT ON COLUMN meta_pays.doc_type IS 'type de document (document, figure, car
 -- Name: COLUMN meta_pays.file_path; Type: COMMENT; Schema: public; Owner: devppeao
 --
 
-COMMENT ON COLUMN meta_pays.file_path IS 'le chemin du fichier par rapport au dossier /documentation/metadata/';
+COMMENT ON COLUMN meta_pays.file_path IS 'le chemin du fichier par rapport au dossier /work/documentation/metadata/';
 
 
 --
@@ -1154,7 +1154,7 @@ COMMENT ON COLUMN meta_secteurs.doc_type IS 'type de document (document, figure,
 -- Name: COLUMN meta_secteurs.file_path; Type: COMMENT; Schema: public; Owner: devppeao
 --
 
-COMMENT ON COLUMN meta_secteurs.file_path IS 'le chemin du fichier par rapport au dossier /documentation/metadata/';
+COMMENT ON COLUMN meta_secteurs.file_path IS 'le chemin du fichier par rapport au dossier /work/documentation/metadata/';
 
 
 --
@@ -1250,7 +1250,7 @@ COMMENT ON COLUMN meta_systemes.doc_type IS 'type de document (document, figure,
 -- Name: COLUMN meta_systemes.file_path; Type: COMMENT; Schema: public; Owner: devppeao
 --
 
-COMMENT ON COLUMN meta_systemes.file_path IS 'le chemin du fichier par rapport au dossier /documentation/metadata/';
+COMMENT ON COLUMN meta_systemes.file_path IS 'le chemin du fichier par rapport au dossier /work/documentation/metadata/';
 
 
 --
@@ -1279,13 +1279,6 @@ CREATE SEQUENCE meta_systemes_meta_id_seq
 
 
 ALTER TABLE public.meta_systemes_meta_id_seq OWNER TO devppeao;
-
---
--- Name: meta_systemes_meta_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: devppeao
---
-
-ALTER SEQUENCE meta_systemes_meta_id_seq OWNED BY meta_systemes.meta_id;
-
 
 --
 -- Name: meta_id; Type: DEFAULT; Schema: public; Owner: devppeao

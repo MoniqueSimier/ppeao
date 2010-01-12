@@ -207,6 +207,7 @@ INSERT INTO admin_j_group_zone VALUES (0, 0, 1);
 INSERT INTO admin_j_group_zone VALUES (1, 9999, 2);
 INSERT INTO admin_j_group_zone VALUES (2, 2, 3);
 INSERT INTO admin_j_group_zone VALUES (2, 3, 4);
+INSERT INTO admin_j_group_zone VALUES (1, 2, 5);
 
 ALTER TABLE admin_j_group_zone ENABLE TRIGGER ALL;
 
@@ -269,7 +270,7 @@ ALTER TABLE admin_log_message_types ENABLE TRIGGER ALL;
 -- Name: admin_log_modules_module_id_seq; Type: SEQUENCE SET; Schema: public; Owner: devppeao
 --
 
-SELECT pg_catalog.setval('admin_log_modules_module_id_seq', 7, true);
+SELECT pg_catalog.setval('admin_log_modules_module_id_seq', 9, true);
 
 --
 -- Data for Name: admin_log_modules; Type: TABLE DATA; Schema: public; Owner: devppeao
@@ -293,7 +294,7 @@ ALTER TABLE admin_log_modules ENABLE TRIGGER ALL;
 -- Name: admin_sequences_sequence_id_seq; Type: SEQUENCE SET; Schema: public; Owner: devppeao
 --
 
-SELECT pg_catalog.setval('admin_sequences_sequence_id_seq', 0, true);
+SELECT pg_catalog.setval('admin_sequences_sequence_id_seq', 20, true);
 
 --
 -- Data for Name: admin_sequences; Type: TABLE DATA; Schema: public; Owner: devppeao
