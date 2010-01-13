@@ -110,6 +110,7 @@ if (isset($_GET['Esp'])) {
 } else {
 	$listeEsp = "";
 }
+
 // On analyse les nouvelles colonnes recues si on vient du tab 4
 if ($EcrireLogComp && $debugLog) {
 	WriteCompLog ($logComp, "DEBUG : info x: ".$ListeColRecues." - session = ".$_SESSION['listeColonne'],$pasdefichier);
@@ -172,6 +173,12 @@ if ($changtAction == "y") {
 	$_SESSION['listeEspeces'] = "";
 	switch ($typeAction) {
 		// On ne gère pas peuplement car on va directement à la page de résultat quand on clique dessus.
+		case "peuplement":
+			// On precharge les valeurs par défaut :
+			$_SESSION['listeQualite'] = '1,3,5';
+			$_SESSION['listeProtocole'] = '1'; // Oui / non
+			$_SESSION['listePoisson'] = '0';
+			break;
 		case "environnement":
 				// On précharge les valeurs par defaut
 				$_SESSION['listeQualite'] = '1,3,5';
@@ -317,18 +324,18 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 	<input id="restreindre2" type="radio" name="restreindre" value="0"  <?php echo $valProt2;?>/> non
 	<br/>
 	<span class="sscriteresgen<?php echo $ClassEnv;?>">choisir les poissons / non poissons :<br/></span>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson1" type="radio" name="poissons" value="0"  <?php echo $valPois1;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">inclure les poissons</span>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson2" type="radio" name="poissons" value="pp"  <?php echo $valPois2;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">ne pas inclure les poissons<br/></span>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson3" type="radio" name="poissons1" value="1"  <?php echo $valPois3;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">inclure les non poissons</span>
-	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson4" type="radio" name="poissons1" value="np"  <?php echo $valPois4;?>/> <span class="sscriteresgen<?php echo $ClassEnv;?>">ne pas inclure les non poissons</span>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson1" type="radio" name="poissons" value="0"  <?php echo $valPois1;?> onclick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','<?php echo $numTab;?>','','n','','','','')" /> <span class="sscriteresgen<?php echo $ClassEnv;?>">inclure les poissons</span>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson2" type="radio" name="poissons" value="pp"  <?php echo $valPois2;?> onclick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','<?php echo $numTab;?>','','n','','','','')" /> <span class="sscriteresgen<?php echo $ClassEnv;?>">ne pas inclure les poissons<br/></span>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson3" type="radio" name="poissons1" value="1"  <?php echo $valPois3;?> onclick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','<?php echo $numTab;?>','','n','','','','')" /> <span class="sscriteresgen<?php echo $ClassEnv;?>">inclure les non poissons</span>
+	<input class="sscriteresgen<?php echo $ClassEnv;?>" id="poisson4" type="radio" name="poissons1" value="np"  <?php echo $valPois4;?> onclick="runFilieresExp('<?php echo $typePeche;?>','<?php echo $typeAction;?>','<?php echo $numTab;?>','','n','','','','')" /> <span class="sscriteresgen<?php echo $ClassEnv;?>">ne pas inclure les non poissons</span>
 </div>
 <?php // l'onglet qui gere la selection des categories ecologiques ?>
 <div id="cateco" class="cateco<?php echo $ceActive;?>">
-<?php echo AfficheCategories("Ecologiques",$typeAction,$_SESSION['listeCatEco'],$changtAction,$typePeche,$numTab); ?>
+<?php echo AfficheCategories("Ecologiques",$typeAction,$_SESSION['listeCatEco'],$changtAction,$typePeche,$numTab,$_SESSION['SQLEspeces'],$listePois); ?>
 </div>
 <?php // l'onglet qui gere la selection des categories trophiques ?>
 <div id="cattroph" class="cattroph<?php echo $ctActive;?>">
-<?php echo AfficheCategories("Trophiques",$typeAction,$_SESSION['listeCatTrop'],$changtAction,$typePeche,$numTab); ?>
+<?php echo AfficheCategories("Trophiques",$typeAction,$_SESSION['listeCatTrop'],$changtAction,$typePeche,$numTab,$_SESSION['SQLEspeces'],$listePois); ?>
 </div>
 <?php // l'onglet qui gere la selection des colonnes complémentaires ?>
 <div id="colonnes" class="colonnes<?php echo $colActive;?>">
@@ -336,7 +343,7 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 </div>
 <?php // l'onglet qui gere les espèces ?>
 <div id="especes" class="especes<?php echo $espActive;?>">
-<?php echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typePeche,$typeAction,$numTab,""); ?>
+<?php echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typePeche,$typeAction,$numTab,"",$_SESSION['listeCatEco'],$_SESSION['listeCatTrop'],$listePois); ?>
 </div>
 
 

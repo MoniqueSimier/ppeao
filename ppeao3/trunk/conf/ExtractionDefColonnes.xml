@@ -30,6 +30,7 @@
 		</statistiques>
 		<groupes>
 			<groupe type="experimentale" filiere="peuplement">Systeme</groupe>
+			<groupe type="experimentale" filiere="environnement">Systeme</groupe>
 			<groupe type="experimentale" filiere="NtPt">Systeme</groupe>
 			<groupe type="experimentale" filiere="biologie">Systeme</groupe>
 			<groupe type="experimentale" filiere="taille">Systeme</groupe>
@@ -42,9 +43,9 @@
 		</groupes>
 		<Alias>sy</Alias>
 		<libelle>Systeme</libelle>
-		<champ code="id" affichage="X" libelle="Id Systeme" filiere="peuplement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>
-		<champ code="nom" affichage="X" libelle="Systeme" filiere="peuplement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>
-		<champ code="superficie" affichage="C" libelle="Systeme_surface" filiere="peuplement,NtPt,biologie,taille,trophique,activite,capture,NtPart,engin"/>
+		<champ code="id" affichage="X" libelle="Systeme_id" filiere="peuplement,environnement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>
+		<champ code="nom" affichage="X" libelle="Systeme" filiere="peuplement,environnement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>
+		<champ code="superficie" affichage="C" libelle="Systeme_surface" filiere="peuplement,environnement,NtPt,biologie,taille,trophique,activite,capture,NtPart,engin"/>
 	</table>
 	<table>
 		<nom>ref_secteur</nom>
@@ -56,6 +57,7 @@
 		</statistiques>
 		<groupes>	
 			<groupe type="experimentale" filiere="peuplement">Secteur</groupe>
+			<groupe type="experimentale" filiere="environnement">Secteur</groupe>
 			<groupe type="experimentale" filiere="NtPt">Secteur</groupe>
 			<groupe type="experimentale" filiere="biologie">Secteur</groupe>
 			<groupe type="experimentale" filiere="taille">Secteur</groupe>
@@ -69,9 +71,9 @@
 		<Alias>se</Alias>
 		<libelle>Secteur</libelle>
 		<champ code="id_dans_systeme" affichage="X" libelle="Secteur_dans_systeme" groupe="Secteur" filiere="peuplement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>		
-		<champ code="id" affichage="X" libelle="Secteur_id" groupe="Secteur" filiere="peuplement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>
-		<champ code="nom" affichage="X" libelle="Secteur" groupe="Secteur" filiere="peuplement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>
-		<champ code="superficie" affichage="C" libelle="Secteur_surface" groupe="Secteur" filiere="peuplement,NtPt,biologie,taille,trophique,activite,capture,NtPart,engin"/>
+		<champ code="id" affichage="X" libelle="Secteur_id" groupe="Secteur" filiere="peuplement,environnement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>
+		<champ code="nom" affichage="X" libelle="Secteur" groupe="Secteur" filiere="peuplement,environnement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>
+		<champ code="superficie" affichage="C" libelle="Secteur_surface" groupe="Secteur" filiere="peuplement,environnementNtPt,biologie,taille,trophique,activite,capture,NtPart,engin"/>
 	</table>
 	<!-- TABLES DE DONNEES PECHES EXPERIMENTALES -->
 	<table>
@@ -100,8 +102,9 @@
 		</groupes>
 		<Alias>cph</Alias>
 		<libelle>Coup de peche</libelle>
+		<champ code="id" affichage="X" libelle="Coup_peche_id"/>
 		<champ code="numero_coup" affichage="X" libelle="Coup_peche"/>
-		<champ code="date_cp" affichage="X" libelle="Date coup peche"/>
+		<champ code="date_cp" affichage="X" libelle="Date_coup_peche"/>
 		<champ code="protocole" affichage="X" libelle="Protocole"/>
 		<champ code="exp_qualite_id" affichage="X" libelle="Qualite_coup_id"/>
 		<champ code="exp_engin_id" affichage="X" libelle="Engin_id"/>
@@ -131,6 +134,7 @@
 		<champ code="conductivite_fond" affichage="C" libelle="Conductivite_fond"/>
 		<champ code="conductivite_surface" affichage="C" libelle="Conductivite_surface"/>
 		<champ code="exp_force_courant_id" affichage="C" libelle="Force_courant_id"/>
+		<champ code="exp_sens_courant_id" affichage="C" libelle="Sens_courant_id"/>
 		<champ code="memo" affichage="C" libelle="Environnement_memo"/>
 		<champ code="mop_fond" affichage="C" libelle="Mop_fond"/>
 		<champ code="mop_surface" affichage="C" libelle="Mop_surface"/>
@@ -161,7 +165,7 @@
 		<champ code="poids" affichage="C" libelle="Poids_individu"/>
 		<champ code="exp_sexe_id" affichage="C" libelle="Sexe_id"/>
 		<champ code="exp_stade_id" affichage="C" libelle="Stade_maturite_id"/>
-		<champ code="exp_remplissage_id" affichage="C" libelle="Remplissage_id"/>
+		<champ code="exp_remplissage_id" affichage="C" libelle="Remplissage_id" filiere="biologie"/>
 		<champ code="memo" affichage="C" libelle="Biologie_memo"/>
 		<champ code="valeur_estimee" affichage="C" libelle="Mesure_estimee"/>
 	</table>
@@ -187,7 +191,7 @@
 		</groupes>
 		<Alias>cont</Alias>
 		<libelle>Contenu</libelle>
-		<champ code="libelle" affichage="C" libelle="Contenu"/>
+		<champ code="libelle" affichage="X" libelle="Contenu"/>
 	</table>
 	<table>
 		<nom>exp_fraction</nom>
@@ -202,6 +206,7 @@
 		</groupes>
 		<Alias>fra</Alias>
 		<libelle>Fraction</libelle>
+		<champ code="id" affichage="X" libelle="Fraction_id" filiere="peuplement,NtPt,biologie,trophique"/>
 		<champ code="nombre_total" affichage="X" libelle="Nombre_total" filiere="peuplement,NtPt,biologie,trophique"/>
 		<champ code="poids_total" affichage="X" libelle="Poids_total" filiere="peuplement,NtPt,biologie,trophique"/>
 		<champ code="nombre_estime" affichage="C" libelle="Nombre_estime" filiere="NtPt,biologie,trophique"/>	/>
@@ -831,6 +836,7 @@
 			<peche>toutes</peche>
 		</peches>
 		<groupes>
+			<groupe type="experimentale" filiere="peuplement">Especes</groupe>
 			<groupe type="experimentale" filiere="NtPt">Especes</groupe>
 			<groupe type="experimentale" filiere="biologie">Especes</groupe>
 			<groupe type="experimentale" filiere="taille">Especes</groupe>
@@ -859,6 +865,7 @@
 			<peche>toutes</peche>
 		</peches>
 		<groupes>
+			<groupe type="experimentale" filiere="peuplement">Famille</groupe>
 			<groupe type="experimentale" filiere="NtPt">Famille</groupe>
 			<groupe type="experimentale" filiere="biologie">Famille</groupe>
 			<groupe type="experimentale" filiere="taille">Famille</groupe>
@@ -878,6 +885,7 @@
 			<peche>toutes</peche>
 		</peches>
 		<groupes>
+			<groupe type="experimentale" filiere="peuplement">Ordre</groupe>
 			<groupe type="experimentale" filiere="NtPt">Ordre</groupe>
 			<groupe type="experimentale" filiere="biologie">Ordre</groupe>
 			<groupe type="experimentale" filiere="taille">Ordre</groupe>
@@ -894,6 +902,7 @@
 			<peche>toutes</peche>
 		</peches>
 		<groupes>
+			<groupe type="experimentale" filiere="peuplement">Categorie ecologique</groupe>
 			<groupe type="experimentale" filiere="NtPt">Categorie ecologique</groupe>
 			<groupe type="experimentale" filiere="biologie">Categorie ecologique</groupe>
 			<groupe type="experimentale" filiere="taille">Categorie ecologique</groupe>
@@ -912,6 +921,7 @@
 			<peche>toutes</peche>
 		</peches>
 		<groupes>
+			<groupe type="experimentale" filiere="peuplement">Categorie trophique</groupe>
 			<groupe type="experimentale" filiere="NtPt">Categorie trophique</groupe>
 			<groupe type="experimentale" filiere="biologie">Categorie trophique</groupe>
 			<groupe type="experimentale" filiere="taille">Categorie trophique</groupe>

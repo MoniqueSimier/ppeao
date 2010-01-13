@@ -111,11 +111,7 @@ if (isset($_GET['action'])) {
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "Debut du traitement Resultat de l'extraction des peches experimentales pour filiere ".$typeAction,$pasdefichier);
 		}
-		if ($typeAction == "peuplement") {
-			// On precharge les valeurs par défaut :
-			$_SESSION['listeQualite'] = '1,3,5';
-			$_SESSION['listeProtocole'] = '1'; // Oui / non
-		}
+
 	// Dans tous les autres cas, toutes les autres valeurs auront été validés avant.
 	
 ?>
@@ -197,6 +193,7 @@ if (isset($_GET['action'])) {
 			$exportFichier = true;
 		} 	
 	}
+
 	$SQLPays 	= "";
 	$SQLSysteme	= "";
 	$SQLSecteur	= "";
@@ -248,7 +245,7 @@ if (isset($_GET['action'])) {
 	</div>
 <?php 
 	echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li><b>".$compteurItem."</b> ".$labelSelection."</li><li><b>fili&egrave;re en cours</b> : <span id=\"filEncoursText\">".$typeAction."</span>"; 
-	echo "<span  class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></li><li><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp; 
+	echo "<span  class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."\" >[choisir une autre fili&egrave;re]</a></span></li><li><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp; 
 	echo "<span class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."&modiffil=y&action=".$typeAction."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li></ul></div>";
 	if (!($exportFichier)) {	?>
 	<div id="exportFic2">

@@ -118,6 +118,10 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		rest  = recupereSelection(2,"restreindre");
 		// Recuperation des selections sur choix des poissons
 		poiss  = recupereSelection(4,"poisson");
+		if (poiss=="pp,np") {
+			alert("Vous devez au moins inclure soit les poissons, soit les non-poissons, mais d'exlcure les deux");
+			poiss="0,np";
+		}
 		// Recuperation des categories ecologiques / trophiques
 		switch (selToutescat) {
 			case "tout-CEco" :
@@ -674,8 +678,6 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 		xmlHttp.send(null);
 	}
 } 
-
-
 
 function stateChanged1() {
 	if (xmlHttp.readyState==4) {
