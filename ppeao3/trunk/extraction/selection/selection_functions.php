@@ -808,8 +808,9 @@ $hint_empty='si vous ne choisissez aucune valeur, ce crit&egrave;re ne sera pas 
 		$hint.=$hint_multiple;
 	break;
 	case "geographie":
-		$hint.="pour s&eacute;lectionner les syst&egrave;mes qui vous int&eacute;ressent, commencez par s&eacute;lectionner un ou plusieurs pays<br />";
+		$hint.="pour s&eacute;lectionner les syst&egrave;mes qui vous int&eacute;ressent, commencez par s&eacute;lectionner un ou plusieurs pays, puis s&eacute;lectionnez un ou plusieurs syst&egrave;mes parmi la liste qui s&rsquo;affiche alors dans la colonne de droite<br />";
 		$hint.=$hint_empty;
+		$hint.="cliquez alors sur &quot;ajouter et passer &agrave; la s&eacute;lection temporelle&quot;";
 		$hint.=$hint_multiple;
 	break;
 	case "periode":
@@ -960,7 +961,7 @@ switch ($_GET["step"]) {
 		// on affiche le selecteur de familles
 		echo('<div id="step_2_familles" class="level_div">');
 		echo('<p>familles</p>');
-		echo('<select id="familles" name="familles[]" size="10" multiple="multiple" class="level_select" >');
+		echo('<select id="familles" name="familles[]" size="10" multiple="multiple" class="level_select" onchange="javascript:toggleNextStepLink(\'familles\',\'especes\',\'step_2_link\');">');
 			foreach($array_familles as $famille) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($famille["id"],$_GET["familles"])) {$selected='selected="selected" ';} else {$selected='';}
@@ -972,7 +973,7 @@ switch ($_GET["step"]) {
 		// on affiche le selecteur d'especes
 		echo('<div id="step_2_especes" class="level_div">');
 		echo('<p>esp&egrave;ces</p>');
-		echo('<select id="especes" name="especes[]" size="10" multiple="multiple" class="level_select" >');
+		echo('<select id="especes" name="especes[]" size="10" multiple="multiple" class="level_select" onchange="javascript:toggleNextStepLink(\'familles\',\'especes\',\'step_2_link\');">');
 			foreach($array_especes as $espece) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($espece["id"],$_GET["especes"])) {$selected='selected="selected" ';} else {$selected='';}
@@ -986,7 +987,7 @@ switch ($_GET["step"]) {
 	$url=$_SERVER["FULL_URL"];
 	$url=removeQueryStringParam($url,'familles\[\]');
 	$url=removeQueryStringParam($url,'especes\[\]');
-	echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(2,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection spatiale &gt;&gt;</a></p>');
+	echo('<p id="step_2_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(2,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection spatiale &gt;&gt;</a></p>');
 	// on affiche le texte d'aide
 	afficheAide("taxonomie");
 	echo('</div>');// end div id="step_2"
@@ -1138,7 +1139,7 @@ $sql_pays.=(')');
 	$url=$_SERVER["FULL_URL"];
 	$url=removeQueryStringParam($url,'pays\[\]');
 	$url=removeQueryStringParam($url,'systemes\[\]');
-	echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(3,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection temporelle &gt;&gt;</a></p>');
+	echo('<p id="step_3_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(3,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection temporelle &gt;&gt;</a></p>');
 		// on affiche le texte d'aide
 	afficheAide("geographie");
 	echo('</div>'); // end div id=step_3
@@ -1631,7 +1632,7 @@ function afficheSecteurs($donnees) {
 			//debug 			echo('<pre>');print_r($array);echo('</pre>');
 			
 			// on affiche le select
-			echo('<select id="secteurs" name="secteurs[]" size="10" multiple="multiple" class="level_select">');
+			echo('<select id="secteurs" name="secteurs[]" size="10" multiple="multiple" class="level_select" onchange="javascript:toggleNextStepLink(\'secteurs\',\'secteurs\',\'step_7_link\');">');
 			foreach($secteurs as $secteur) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($secteur["id"],$_GET["secteurs"])) {$selected='selected="selected" ';} else {$selected='';}
@@ -1646,7 +1647,7 @@ function afficheSecteurs($donnees) {
 			// on prepare l'url pour construire le lien : on enleve les secteurs eventuellement selectionnes
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'secteurs\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des '.$nextSelectionStep.' &gt;&gt;</a></p>');
+			echo('<p id="step_7_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des '.$nextSelectionStep.' &gt;&gt;</a></p>');
 		echo('</form>');
 		// on affiche le texte d'aide
 		afficheAide("secteurs");
@@ -1716,7 +1717,7 @@ global $connectPPEAO;
 				//debug 				echo('<pre>');print_r($array);echo('</pre>');
 				// on affiche le select
 			if (count($array)>15) {$size=15;} else {$size=10;}
-			echo('<select id="campagnes" name="camp[]" size="'.$size.'" multiple="multiple" class="level_select">');
+			echo('<select id="campagnes" name="camp[]" size="'.$size.'" multiple="multiple" class="level_select" onchange="javascript:toggleNextStepLink(\'campagnes\',\'campagnes\',\'step_8_link\');">');
 			foreach($array as $campagne) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($campagne["id"],$_GET["camp"])) {$selected='selected="selected" ';} else {$selected='';}
@@ -1729,7 +1730,7 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'camp\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des engins de p&ecirc;che &gt;&gt;</a></p>');
+			echo('<p id="step_8_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des engins de p&ecirc;che &gt;&gt;</a></p>');
 			echo('</form>');
 		// on affiche le texte d'aide
 		afficheAide("campagnes");
@@ -1798,7 +1799,7 @@ global $connectPPEAO;
 				$array=pg_fetch_all($result);
 				pg_free_result($result);
 				//debug 				echo('<pre>');print_r($array);echo('</pre>');
-				echo('<select id="engins" name="eng[]" size="10" multiple="multiple" class="level_select">');
+				echo('<select id="engins" name="eng[]" size="10" multiple="multiple" class="level_select" onchange="javascript:toggleNextStepLink(\'engins\',\'engins\',\'step_9_link\');">');
 			foreach($array as $engin) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($engin["id"],$_GET["eng"])) {$selected='selected="selected" ';} else {$selected='';}
@@ -1811,7 +1812,7 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'eng\[\]');
-			echo('<p class="clear"><a href="#" class="last_step" onclick="javascript:goToNextStep(9,\''.$url.'\');return false;">finaliser la s&eacute;lection...</a></p>');
+			echo('<p id="step_9_link" class="clear" style="display:none;"><a href="#" class="last_step" onclick="javascript:goToNextStep(9,\''.$url.'\');return false;">finaliser la s&eacute;lection...</a></p>');
 			echo('</form>');
 		// on affiche le texte d'aide
 		afficheAide("engins");
@@ -1889,7 +1890,7 @@ global $connectPPEAO;
 				$array=pg_fetch_all($result);
 				pg_free_result($result);
 				//debug 	echo('<pre>');print_r($array);echo('</pre>');
-				echo('<select id="agglo" name="agglo[]" size="10" multiple="multiple" class="level_select">');
+				echo('<select id="agglo" name="agglo[]" size="10" multiple="multiple" class="level_select" onchange="javascript:toggleNextStepLink(\'agglo\',\'agglo\',\'step_8_link\');">');
 			foreach($array as $agglo) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($agglo["id"],$_GET["agglo"])) {$selected='selected="selected" ';} else {$selected='';}
@@ -1902,7 +1903,7 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'agglo\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');return false;">ajouter et passer au choix des p&eacute;riodes d&#x27;enqu&ecirc;te &gt;&gt;</a></p>');
+			echo('<p id="step_8_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');return false;">ajouter et passer au choix des p&eacute;riodes d&#x27;enqu&ecirc;te &gt;&gt;</a></p>');
 			echo('</form>');}
 			// sinon on demande a l'utilisateur de modifier sa selection
 			else {
@@ -1980,7 +1981,7 @@ global $connectPPEAO;
 				//debug 				echo('<pre>');print_r($array);echo('</pre>');
 				// on affiche le select
 			if (count($array)>15) {$size=15;} else {$size=10;}
-			echo('<select id="enquetes" name="enq[]" size="'.$size.'" multiple="multiple" class="level_select">');
+			echo('<select id="enquetes" name="enq[]" size="'.$size.'" multiple="multiple" class="level_select" onchange="javascript:toggleNextStepLink(\'enquetes\',\'enquetes\',\'step_9_link\');">');
 			foreach($array as $enquete) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($enquete["id"],$_GET["enq"])) {$selected='selected="selected" ';} else {$selected='';}
@@ -1993,7 +1994,7 @@ global $connectPPEAO;
 			// on prepare l'url pour construire le lien : on enleve les enquetes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'enq\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(9,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins de p&ecirc;che &gt;&gt;</a></p>');
+			echo('<p id="step_9_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(9,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins de p&ecirc;che &gt;&gt;</a></p>');
 			echo('</form>');
 			// on affiche le texte d'aide
 		afficheAide("periodes_enquete");
@@ -2090,7 +2091,7 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 				
 				
 				
-				echo('<select id="gteng" name="gteng[]" size="10" multiple="multiple" class="level_select">');
+				echo('<select id="gteng" name="gteng[]" size="10" multiple="multiple" class="level_select" onchange="javascript:toggleNextStepLink(\'gteng\',\'gteng\',\'step_8-10_link\');">');
 			foreach($array_gte as $gteng) {
 				// si la valeur est dans l'url, on la selectionne
 				if (in_array($gteng["id"],$_GET["gteng"])) {$selected='selected="selected" ';} else {$selected='';}
@@ -2105,7 +2106,7 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'gteng\[\]');
-			echo('<p class="clear"><a href="#" class="last_step" onclick="javascript:goToNextStep('.$theStep.',\''.$url.'\');return false;">finaliser la s&eacute;lection...</a></p>');
+			echo('<p id="step_8-10_link" class="clear" style="display:none;"><a href="#" class="last_step" onclick="javascript:goToNextStep('.$theStep.',\''.$url.'\');return false;">finaliser la s&eacute;lection...</a></p>');
 			echo('</form>');
 			// on affiche le texte d'aide
 		afficheAide("grands_types_engins");
@@ -2309,7 +2310,7 @@ function afficheSecteurs2() {
 			$url=$_SERVER["FULL_URL"];
 			$url=removeQueryStringParam($url,'systemes2\[\]');
 			$url=removeQueryStringParam($url,'secteurs\[\]');
-			echo('<p class="clear"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins &gt;&gt;</a></p>');
+			echo('<p id="step_7_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins &gt;&gt;</a></p>');
 		echo('</form>');
 		echo('</div>');
 		break; // end case step=7

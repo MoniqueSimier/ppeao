@@ -52,12 +52,14 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 
 	}// end if ((currentSelect.selectedIndex!=-1)
 	
-	// else if no value is selected, we remove the next criteria select and update the edit link
+	// else if no value is selected, we remove the next criteria select
 	else {
 		//debug		alert("plus de valeurs");
 		systemesDiv.innerHTML='';
 		
 		;}
+	// on affiche le lien pour passer a l'etape suivante si au moins une valeur est selectionnee dans l'un des deux <select>
+	toggleNextStepLink('pays','systemes','step_3_link');
 }
 
 // fonction qui effectue une requete AJAX pour mettre a jour le selecteur de secteurs quand on change le systeme selectionne
@@ -90,12 +92,14 @@ function refreshSecteurs(liste_enquetes) {
 
 	}// end if ((currentSelect.selectedIndex!=-1)
 	
-	// else if no value is selected, we remove the next criteria select and update the edit link
+	// else if no value is selected, we remove the next criteria select
 	else {
 		//debug		alert("plus de valeurs");
 		secteursSelect.innerHTML='';
 		
 		;}
+		// on affiche le lien pour passer a l'etape suivante si au moins une valeur est selectionnee dans l'un des deux <select>
+	toggleNextStepLink('systemes2','secteurs','step_7_link');
 }
 
 // fonction qui effectue une requete AJAX pour mettre a jour le selecteur de periode quand on change une des selections
@@ -183,4 +187,13 @@ function goToChoixFilieres(url) {
 // fonction qui permet d'aficher et masque les textes d'aide
 function toggleAide(topic) {
 	if ($(topic).getStyle('display')=='none') {$(topic).setStyle('display','block');} else {$(topic).setStyle('display','none');}
+}
+
+
+// fonction qui permet d'afficher ou de masquer les liens permettant de passer à l'etape suivante de la selection
+function toggleNextStepLink(inputId1,inputId2,linkId) {
+// inputId1, inputId2 : les id uniques des SELECT a tester (si un seul SELECT, indiquer deux fois son id, ***DIRTY HACK***)
+	// si une valeur au moins est sélectionnée dans l'une des deux, on affiche le lien, sinon on le masque
+	if ($(inputId1).selectedIndex!=-1 || $(inputId2).selectedIndex!=-1) {$(linkId).setStyle('display','block');} 
+		else {$(linkId).setStyle('display','none');}
 }
