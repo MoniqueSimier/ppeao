@@ -287,11 +287,11 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 </div>
 <?php // l'onglet qui gere la selection des categories ecologiques ?>
 <div id="cateco" class="cateco<?php echo $ceActive;?>">
-<?php echo AfficheCategories("Ecologiques",$typeAction,$_SESSION['listeCatEco'],$changtAction,$typePeche,$numTab); ?>
+<?php echo AfficheCategories("Ecologiques",$typeAction,$_SESSION['listeCatEco'],$changtAction,$typePeche,$numTab,$_SESSION['SQLEspeces'],$listePois); ?>
 </div>
 <?php // l'onglet qui gere la selection des categories trophiques ?>
 <div id="cattroph" class="cattroph<?php echo $ctActive;?>">
-<?php echo AfficheCategories("Trophiques",$typeAction,$_SESSION['listeCatTrop'],$changtAction,$typePeche,$numTab); ?>
+<?php echo AfficheCategories("Trophiques",$typeAction,$_SESSION['listeCatTrop'],$changtAction,$typePeche,$numTab,$_SESSION['SQLEspeces'],$listePois); ?>
 </div>
 <?php // l'onglet qui gere la selection des colonnes complémentaires ?>
 <div id="colonnes" class="colonnes<?php echo $colActive;?>">
@@ -301,7 +301,7 @@ if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {
 <div id="especes" class="especes<?php echo $espActive;?>">
 <?php 
 //echo "session = ".$_SESSION['SQLEspeces']." - liste espe = ".$listeEsp."<br/>";
-echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typePeche,$typeAction,$numTab,"y"); ?>
+echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typePeche,$typeAction,$numTab,"y",$_SESSION['listeCatEco'],$_SESSION['listeCatTrop'],$listePois); ?>
 </div>
 <?php // l'onglet qui gere les regroupements ?>
 <div id="regroupesp" class="regroupesp<?php echo $regActive;?>">

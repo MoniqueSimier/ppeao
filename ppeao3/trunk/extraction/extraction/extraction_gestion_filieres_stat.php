@@ -169,7 +169,7 @@ switch ($numTab) {
 </div>
 <?php // l'onglet qui gere les espèces ?>
 <div id="especes" class="especes<?php echo $espActive;?>">
-<?php echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typeStatistiques,$typeAction,$numTab,""); ?>
+<?php echo AfficheEspeces($_SESSION['SQLEspeces'],$listeEsp,$changtAction,$typeStatistiques,$typeAction,$numTab,"","","",""); ?>
 </div>
 
 <?php // l'onglet qui gere les regroupements ?>
