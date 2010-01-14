@@ -102,7 +102,6 @@
 		</groupes>
 		<Alias>cph</Alias>
 		<libelle>Coup de peche</libelle>
-		<champ code="id" affichage="X" libelle="Coup_peche_id"/>
 		<champ code="numero_coup" affichage="X" libelle="Coup_peche"/>
 		<champ code="date_cp" affichage="X" libelle="Date_coup_peche"/>
 		<champ code="protocole" affichage="X" libelle="Protocole"/>
@@ -179,6 +178,7 @@
 		</groupes>
 		<Alias>trop</Alias>
 		<libelle>Trophique</libelle>
+		<champ code="exp_contenu_id" affichage="X" libelle="Contenu_id"/>
 		<champ code="quantite" affichage="C" libelle="Trophique_quantite"/>
 	</table>
 	<table>
@@ -576,6 +576,7 @@
 		</groupes>	
 		<Alias>upec</Alias>
 		<libelle>Unite de peche</libelle>
+		<champ code="id" affichage="X" libelle="Unite_peche_id"/>
 		<champ code="libelle" affichage="C" libelle="Unite_peche"/>
 		<champ code="libelle_menage" affichage="C" libelle="Nom_suplementaire_unite"/>
 		<champ code="art_agglomeration_id" affichage="C" libelle="Agglomeration_origine_unite_id"/>
@@ -852,7 +853,7 @@
 		<champ code="ref_categorie_trophique_id" affichage="X" libelle="Categorie_trophique_id"  filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>
 		<champ code="coefficient_b" affichage="C" libelle="Coefficient_b"  filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>
 		<champ code="coefficient_k" affichage="C" libelle="Coefficient_k"  filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>
-		<champ code="ref_famille_id" affichage="C" libelle="Famille_id"  filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>
+		<!--<champ code="ref_famille_id" affichage="C" libelle="Famille_id"  filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>-->
 		<champ code="id" affichage="X" libelle="Espece_id" filiere="NtPart,taillart" groupe="Fractions et especes"/>
 		<champ code="libelle" affichage="X" libelle="Espece" filiere="NtPart,taillart" groupe="Fractions et especes"/>
 		<champ code="coefficient_b" affichage="C" libelle="Coefficient_b" filiere="taillart" groupe="Fractions et especes"/>
@@ -876,8 +877,7 @@
 		<libelle>Famille</libelle>
 		<champ code="libelle" affichage="C" libelle="Famille" />
 		<champ code="non_poisson" affichage="C" libelle="Non_poisson" />
-		<champ code="ref_ordre_id" affichage="C" libelle="Ordre_id" />
-
+		<!--<champ code="ref_ordre_id" affichage="C" libelle="Ordre_id" />-->
 	</table>
 	<table>
 		<nom>ref_ordre</nom>

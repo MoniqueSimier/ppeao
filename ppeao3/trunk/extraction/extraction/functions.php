@@ -526,6 +526,7 @@ function AfficherDonnees($file,$typeAction){
 		$champSel = explode(",",$_SESSION['listePoisson']);
 		$nbrSel = count($champSel)-1;
 		$valPoisson = "";
+		$LabCatPois= "";
 		for ($cptSel = 0;$cptSel <= $nbrSel;$cptSel++) {
 			switch ($champSel[$cptSel]) {
 				case "0" : 
@@ -534,7 +535,7 @@ function AfficherDonnees($file,$typeAction){
 					} else {
 						$valPoisson .= ",".$champSel[$cptSel];
 					}
-					$LabCatPois = " inclus les poissons ";
+					$LabCatPois .= "  poissons inclus";
 					break;
 				case "1" : 
 					if ($valPoisson == "") {
@@ -542,13 +543,13 @@ function AfficherDonnees($file,$typeAction){
 					} else {
 						$valPoisson .= ",".$champSel[$cptSel];
 					}
-					$LabCatPois = " inclus les non poissons ";
+					$LabCatPois .= " 'non poissons' inclus";
 					break;
 				case "pp" :
-					$LabCatPois =" poissons exclus";
+					$LabCatPois .=" poissons exclus";
 					break;
 				case "np":
-					$LabCatPois = " non poissons exclus";
+					$LabCatPois .= " 'non poissons' exclus";
 					break;	
 			}
 		}
@@ -732,7 +733,7 @@ function AfficherDonnees($file,$typeAction){
 					}
 					// ********** PREPARATION DU SQL
 					// Definition de tout ce qui est commun aux peches expérimentales
-					$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom, stat.id, stat.nom, cpg.date_debut, cpg.id,cpg.numero_campagne, cph.date_cp, cph.heure_debut, cph.id,cph.numero_coup, cph.protocole, cph.exp_qualite_id,xqua.libelle, cph.exp_engin_id, xeng.libelle";
+					$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom, stat.id, stat.nom, cpg.date_debut, cpg.numero_campagne, cph.date_cp, cph.heure_debut, cph.numero_coup, cph.protocole, cph.exp_qualite_id,xqua.libelle, cph.exp_engin_id, xeng.libelle";
 					$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,exp_campagne as cpg,exp_coup_peche as cph,exp_qualite as xqua,exp_engin as xeng";
 					$WhereCom = "cpg.id = cph.exp_campagne_id and
 									stat.id = cph.exp_station_id and
@@ -1876,9 +1877,9 @@ function AfficherDonnees($file,$typeAction){
 								// On recupere le nombre de poissons reellement mesures pour une fraction donnée (qui elle meme correspond à 
 								// une seule espece.
 								// On recupere le nombre total d'individu de la fraction
-								$totalIndividus = $finalRow[21];
+								$totalIndividus = $finalRow[19];
 								// On compte les enregs dans biologie (individus effectivement analyse) pour cette fraction
-								$SQLcomplement = "Select count(id) from exp_biologie where exp_fraction_id =  ".$finalRow[20] ;
+								$SQLcomplement = "Select count(id) from exp_biologie where exp_fraction_id =  ".$finalRow[18] ;
 								$SQLcomplementResult = pg_query($connectPPEAO,$SQLcomplement);
 								$erreurSQL = pg_last_error($connectPPEAO);
 								if ( !$SQLcomplementResult ) { 
@@ -2687,9 +2688,9 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 							// On recupere le nombre de poissons reellement mesures pour une fraction donnée (qui elle meme correspond à 
 							// une seule espece.
 							// On recupere le nombre total d'individu de la fraction
-							$totalIndividus = $finalRow[21];
+							$totalIndividus = $finalRow[19];
 							// On compte les enregs dans biologie (individus effectivement analyse) pour cette fraction
-							$SQLcomplement = "Select count(id) from exp_biologie where exp_fraction_id =  ".$finalRow[20] ;
+							$SQLcomplement = "Select count(id) from exp_biologie where exp_fraction_id =  ".$finalRow[18] ;
 							$SQLcomplementResult = pg_query($connectPPEAO,$SQLcomplement);
 							$erreurSQL = pg_last_error($connectPPEAO);
 							if ( !$SQLcomplementResult ) { 
