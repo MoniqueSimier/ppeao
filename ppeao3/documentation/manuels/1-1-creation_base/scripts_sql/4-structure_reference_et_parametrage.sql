@@ -974,14 +974,14 @@ ALTER TABLE public.ref_systeme_id_seq OWNER TO devppeao;
 
 CREATE TABLE temp_extraction
 (
-  id char(20), -- clé unique
-  key1 char(20), -- détail clé unique 1
-  key2 char(20), -- détail clé unique 2
-  key3 char(20), -- détail clé unique 3
-  key4 char(20), -- détail clé unique 4
-  key5 char(20), -- détail clé unique 5
-  key6 char(20), -- détail clé unique 6
-  key7 char(20), -- détail clé unique 7
+  id varchar, -- clé unique
+  key1 varchar, -- détail clé unique 1
+  key2 varchar, -- détail clé unique 2
+  key3 varchar, -- détail clé unique 3
+  key4 varchar, -- détail clé unique 4
+  key5 varchar, -- détail clé unique 5
+  key6 varchar, -- détail clé unique 6
+  key7 varchar, -- détail clé unique 7
   valeur_ligne varchar, -- contenu de la ligne pour la valeur unique
   date_creation date, -- date de création de l'enreg
   "user" char(20), -- nom de l'utilisateur qui a créé la ligne
