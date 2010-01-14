@@ -203,7 +203,7 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 	global $logComp;
 	global $connectPPEAO;
 	global $cptTempExt;
-	$debugLog = true;
+	$debugLog = false;
 	$LocPasErreur = true;
 	$NbRegDeb = count($regroupDeb);
 	if ($NbRegDeb >= 1 ) {
@@ -298,7 +298,7 @@ function AfficherDonnees($file,$typeAction){
 // La fonction ne renvoie rien. Mais la variable $resultatLecture est mise à jour pour un affichage dans le script qui appelle
 // cette fonction. 
 //*********************************************************************
-	$debugLog = true;
+	$debugLog = false;
 	$debugAff=false;
 	$start_while=timer(); 		// début du chronométrage du for
 	if ($debugAff) {
@@ -1057,7 +1057,7 @@ function AfficherDonnees($file,$typeAction){
 					// Donc on cree des variables generales selon qu'on va traiter activite ou debarquement
 					// Définition des SQL de base pour les activites (art_activite)
 					$listeChampsArt = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.id,se.nom, act.art_agglomeration_id, agg.nom, act.annee, act.mois, act.date_activite, act.id,upec.id";
-					$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_agglomeration as agg,art_unite_peche as upec";
+					$ListeTableArt = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq";
 		
 					$WhereArt = "	py.id = sy.ref_pays_id and
 									sy.id = se.ref_systeme_id and
@@ -1071,7 +1071,7 @@ function AfficherDonnees($file,$typeAction){
 					$OrderArt = "order by py.id asc, sy.id asc, agg.nom, act.annee asc,act.mois asc,act.id asc";
 					// Définition des SQL de base pour les débarquements (art_debarquement)
 					$listeChampsDeb = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom,se.id, deb.art_agglomeration_id, agg.nom, deb.annee, deb.mois, deb.id, deb.date_debarquement";
-					$ListeTableDeb = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq,art_agglomeration as agg,art_unite_peche as upec";
+					$ListeTableDeb = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_periode_enquete as penq";
 				
 					$WhereDeb = "	py.id = sy.ref_pays_id and
 									sy.id = se.ref_systeme_id and
@@ -1107,8 +1107,18 @@ function AfficherDonnees($file,$typeAction){
 							$valueCount = "act.id" ; // pour gerer la pagination				
 							$builQuery = true;
 							if (strpos($LeftOuterJoin,"left outer join") === false ) {
-								$LeftOuterJoin = ",art_activite as act";
-							} 
+								$LeftOuterJoin = ",art_activite as act,art_agglomeration as agg,art_unite_peche as upec";
+							}  else {
+								if (strpos($LeftOuterJoin,"art_activite as act") === false ) {
+									$LeftOuterJoin = ",art_activite as act ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_agglomeration as agg") === false ) {
+									$LeftOuterJoin = ",art_agglomeration as agg ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_unite_peche as upec") === false ) {
+									$LeftOuterJoin = ",art_unite_peche as upec ".$LeftOuterJoin;
+								}
+							}
 							break;			
 						case "capture" :
 							// Liste des debarquements.
@@ -1128,13 +1138,19 @@ function AfficherDonnees($file,$typeAction){
 							$valueCount = "deb.id" ; // pour gerer la pagination	
 							$builQuery = true;
 							if (strpos($LeftOuterJoin,"left outer join") === false ) {
-								$LeftOuterJoin = ",art_debarquement as deb,art_grand_type_engin as gte";
+								$LeftOuterJoin = ",art_debarquement as deb,art_grand_type_engin as gte,art_agglomeration as agg,art_unite_peche as upec";
 							} else {
 								if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
 									$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
 								}
 								if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
 									$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_agglomeration as agg") === false ) {
+									$LeftOuterJoin = ",art_agglomeration as agg ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_unite_peche as upec") === false ) {
+									$LeftOuterJoin = ",art_unite_peche as upec ".$LeftOuterJoin;
 								}
 							}
 							break;
@@ -1165,14 +1181,15 @@ function AfficherDonnees($file,$typeAction){
 							if (strpos($listeChampsSel,"cate.id") === false) {
 								$listeChampsSpec .= ",esp.ref_categorie_ecologique_id";
 							}						
-							$ListeTableSpec = ", art_fraction as afra"; 
+							$ListeTableSpec = ", art_fraction as afra,ref_famille as fam"; 
 							$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id 
-											and esp.id = afra.ref_espece_id	";					
+											and esp.id = afra.ref_espece_id	
+											and fam.id = esp.ref_famille_id and ".$compPoisSQL;					
 							$ConstIDunique = "DEB-##-11";
 							$valueCount = "deb.id" ; // pour gerer la pagination	
 							$builQuery = true;
 							if (strpos($LeftOuterJoin,"left outer join") === false ) {
-								$LeftOuterJoin = ",art_debarquement as deb,ref_espece as esp,art_grand_type_engin as gte";
+								$LeftOuterJoin = ",art_debarquement as deb,ref_espece as esp,art_grand_type_engin as gte,art_agglomeration as agg,art_unite_peche as upec";
 							} else {
 								if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
 									$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
@@ -1182,7 +1199,13 @@ function AfficherDonnees($file,$typeAction){
 								}
 								if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
 									$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
-								}							
+								}
+								if (strpos($LeftOuterJoin,"art_agglomeration as agg") === false ) {
+									$LeftOuterJoin = ",art_agglomeration as agg ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_unite_peche as upec") === false ) {
+									$LeftOuterJoin = ",art_unite_peche as upec ".$LeftOuterJoin;
+								}
 							}
 							break;
 						case "taillart" :
@@ -1213,14 +1236,15 @@ function AfficherDonnees($file,$typeAction){
 							if (strpos($listeChampsSel,"cate.id") === false) {
 								$listeChampsSpec .= ",esp.ref_categorie_ecologique_id";
 							}
-							$ListeTableSpec = ", art_fraction as afra left outer join art_poisson_mesure as ames on ames.art_fraction_id = afra.id"; 
+							$ListeTableSpec = ",ref_famille as fam, art_fraction as afra left outer join art_poisson_mesure as ames on ames.art_fraction_id = afra.id"; 
 							$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id  
-											and esp.id = afra.ref_espece_id	";						
+											and esp.id = afra.ref_espece_id	
+											and fam.id = esp.ref_famille_id and ".$compPoisSQL;						
 							$ConstIDunique = "DEB-##-11";
 							$valueCount = "deb.id" ; // pour gerer la pagination
 							$builQuery = true;
 							if (strpos($LeftOuterJoin,"left outer join") === false ) {
-								$LeftOuterJoin = ",art_debarquement as deb,ref_espece as esp,art_grand_type_engin as gte";
+								$LeftOuterJoin = ",art_debarquement as deb,ref_espece as esp,art_grand_type_engin as gte,art_agglomeration as agg,art_unite_peche as upec";
 							} else {
 								if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
 									$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
@@ -1230,7 +1254,13 @@ function AfficherDonnees($file,$typeAction){
 								}
 								if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
 									$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
-								}							
+								}
+								if (strpos($LeftOuterJoin,"art_agglomeration as agg") === false ) {
+									$LeftOuterJoin = ",art_agglomeration as agg ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_unite_peche as upec") === false ) {
+									$LeftOuterJoin = ",art_unite_peche as upec ".$LeftOuterJoin;
+								}
 							}
 							break;
 						case "engin" :
@@ -1246,13 +1276,19 @@ function AfficherDonnees($file,$typeAction){
 							$valueCount = "deb.id" ; // pour gerer la pagination
 							$builQuery = true;
 							if (strpos($LeftOuterJoin,"left outer join") === false ) {
-								$LeftOuterJoin = ",art_debarquement as deb,art_grand_type_engin as gte";
+								$LeftOuterJoin = ",art_debarquement as deb,art_grand_type_engin as gte,art_agglomeration as agg,art_unite_peche as upec";
 							} else {
 								if (strpos($LeftOuterJoin,"art_debarquement as deb") === false ) {
 									$LeftOuterJoin = ",art_debarquement as deb ".$LeftOuterJoin;
 								}
 								if (strpos($LeftOuterJoin,"art_grand_type_engin as gte") === false ) {
 									$LeftOuterJoin = ",art_grand_type_engin as gte ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_agglomeration as agg") === false ) {
+									$LeftOuterJoin = ",art_agglomeration as agg ".$LeftOuterJoin;
+								}
+								if (strpos($LeftOuterJoin,"art_unite_peche as upec") === false ) {
+									$LeftOuterJoin = ",art_unite_peche as upec ".$LeftOuterJoin;
 								}
 							}
 							break;															
@@ -2189,7 +2225,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 // En sortie : 
 // La fonction cree une ligne dans la table temporaire 
 //*********************************************************************
-	$debugLog = true;
+	$debugLog = false;
 	global $connectPPEAO;
 	global $EcrireLogComp;
 	global $logComp;
@@ -3619,11 +3655,11 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 	} else {
 		$construitSelection .="<br/>";
 	}
-	$construitSelection .="<div class=\"hint clear small\">
+	$construitSelection .="<div class=\"hint clear \">
 	<span class=\"hint_label\">aide : </span>
 	<span class=\"hint_text\">
-	pour commencer, cliquez soit sur \"Ajouter\" sous la colonne des regroupements, soit cliquez sur une esp&egrave;ce puis sur \"garder ces esp&egrave;ces\" pour cr&eacute;er un regroupement d'une seule esp&egrave;ce <br/>une fois le regroupement cr&eacute;&eacute;, s&eacute;lectionnez dans la liste des esp&egrave;ces disponibles puis cliquez sur la fl&ecirc;che <-- pour affecter cette esp&egrave;ce au regroupement s&eacute;lectionn&eacute;<br/>
-	vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche \"CTRL\" (Windows, Linux) ou \"CMD\" (Mac) enfonc&eacute;e
+	Pour commencer, cliquez soit sur \"Ajouter\" sous la colonne des regroupements, soit cliquez sur une esp&egrave;ce puis sur \"garder ces esp&egrave;ces\" pour cr&eacute;er un regroupement d'une seule esp&egrave;ce. <br/>Une fois le regroupement cr&eacute;&eacute;, s&eacute;lectionnez une esp&egrave;ce dans la liste des esp&egrave;ces disponibles puis cliquez sur la fl&ecirc;che <-- pour affecter cette esp&egrave;ce au regroupement s&eacute;lectionn&eacute;.<br/>
+	Vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche \"CTRL\" (Windows, Linux) ou \"CMD\" (Mac) enfonc&eacute;e
 	</span>
 	</div>
 	</div>";
@@ -3967,7 +4003,9 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 									break;								
 						} // fin du switch ($TNomTable) 
 							break;
-						case "artisanale" :	
+						case "artisanale" :
+							$LeftOuterJoinDeb = ",(((((art_debarquement as deb left outer join art_grand_type_engin as gte on gte.id = deb.art_grand_type_engin_id) left outer join art_type_sortie as atsor on atsor.id = deb.art_type_sortie_id) left outer join art_lieu_de_peche as alieup on alieup.id = deb.art_lieu_de_peche_id) left outer join art_vent as avent on avent.id = deb.art_vent_id) left outer join art_millieu as amil on amil.id = deb.art_millieu_id) left outer join art_etat_ciel as aetatc on aetatc.id = deb.art_etat_ciel_id";
+							$LeftOuterJoinAct = ",(((((art_activite as act left outer join art_grand_type_engin as gte on gte.id = act.art_grand_type_engin_id) left outer join art_type_sortie as atsor on atsor.id = act.art_type_sortie_id) left outer join art_engin_activite as aenga on aenga.art_activite_id = act.id ) left outer join art_type_engin as teng on teng.id = aenga.art_type_engin_id) left outer join art_type_activite as tact on tact.id = act.art_type_activite_id) left outer join art_millieu as amil on amil.id = act.art_millieu_id";
 							switch ($TNomTable) {
 								case "debrec" : 	
 									$TNomLongTable = "art_debarquement_rec";	
@@ -4017,81 +4055,80 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id "); 		
 									break;
 								case "acsp" :
-									$TNomLongTable = "art_categorie_socio_professionnelle";	
-									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = upec.".$TNomLongTable."_id ");
+									$LeftOuterJoin .= ",art_unite_peche as upec left outer join art_categorie_socio_professionnelle as acsp on acsp.id = upec.art_categorie_socio_professionnelle_id";
 									break;
 								case "aengp" :
-									$TNomLongTable = "art_engin_peche";	
-									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".art_debarquement_id = deb.id"); 		
+									if (strpos($LeftOuterJoin,"gte.id = deb.art_grand_type_engin_id") === false ) {
+										$LeftOuterJoin .= "(".$LeftOuterJoinDeb.") left outer join art_engin_peche as aengp on aengp.art_debarquement_id = deb.id";
+									} else {
+										$LeftOuterJoin .= "art_debarquement as deb left outer join art_engin_peche as aengp on aengp.art_debarquement_id = deb.id";
+									}
+ 		
 									break;
-								//case "aenga" :
-								//	$TNomLongTable = "art_engin_activite";	
-								//	$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-								//	$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".art_activite_id = act.id "); 		
-								//	break;
 								case "aetatc" :
-									$TNomLongTable = "art_etat_ciel";	
-									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = deb.".$TNomLongTable."_id ");
+									if (strpos($LeftOuterJoin,"gte.id = deb.art_grand_type_engin_id") === false ) {
+										$LeftOuterJoin .= $LeftOuterJoinDeb;
+									}
+
 									break;								
 								case "amil" :
-									$TNomLongTable = "art_millieu";	
-									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 									if ($typeAction=="activite") {
-										$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = act.".$TNomLongTable."_id "); 		
+										if (strpos($LeftOuterJoin,"gte.id = act.art_grand_type_engin_id") === false ) {
+											$LeftOuterJoin .= $LeftOuterJoinAct;
+										}
 									} else {
-										$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = deb.".$TNomLongTable."_id ");
+										if (strpos($LeftOuterJoin,"gte.id = deb.art_grand_type_engin_id") === false ) {
+											$LeftOuterJoin .= $LeftOuterJoinDeb;
+										}
 									}
 									break;
 								case "alieup" :
-									$TNomLongTable = "art_lieu_de_peche";	
-									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = deb.".$TNomLongTable."_id ");
+									if (strpos($LeftOuterJoin,"gte.id = deb.art_grand_type_engin_id") === false ) {
+										$LeftOuterJoin .= $LeftOuterJoinDeb;
+									}
 									break;
 								case "atsor" :
-									$TNomLongTable = "art_type_sortie";	
-									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 									if ($typeAction=="activite") {
-										$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = act.".$TNomLongTable."_id "); 		
+										if (strpos($LeftOuterJoin,"gte.id = act.art_grand_type_engin_id") === false ) {
+											$LeftOuterJoin .= $LeftOuterJoinAct;
+										}
 									} else {
-										$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = deb.".$TNomLongTable."_id ");
+										if (strpos($LeftOuterJoin,"gte.id = deb.art_grand_type_engin_id") === false ) {
+											$LeftOuterJoin .= $LeftOuterJoinDeb;
+										}
 									}
 									break;
 								case "avent" :
-									$TNomLongTable = "art_vent";	
-									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = deb.".$TNomLongTable."_id ");
+									if (strpos($LeftOuterJoin,"gte.id = deb.art_grand_type_engin_id") === false ) {
+										$LeftOuterJoin .= $LeftOuterJoinDeb;
+									}
 									break;									
 								case "gte" :
 									if ($typeAction=="activite") {
-										if (strpos($LeftOuterJoin,"left outer join") === false ) {
-											$LeftOuterJoin = ",((art_activite as act left outer join art_grand_type_engin as gte on gte.id = act.art_grand_type_engin_id) left outer join art_engin_activite as aenga on aenga.art_activite_id = act.id ) left outer join art_type_engin as teng on teng.id = aenga.art_type_engin_id";
+										if (strpos($LeftOuterJoin,"gte.id = act.art_grand_type_engin_id") === false ) {
+											$LeftOuterJoin .= $LeftOuterJoinAct;
 										}
 									}
 									if ($typeAction=="capture" || $typeAction=="NtPart") {
-										if (strpos($LeftOuterJoin,"left outer join") === false ) {
-											$LeftOuterJoin = ",art_debarquement as deb left outer join art_grand_type_engin as gte on gte.id = deb.art_grand_type_engin_id";
+										if (strpos($LeftOuterJoin,"gte.id = deb.art_grand_type_engin_id") === false ) {
+											$LeftOuterJoin .= $LeftOuterJoinDeb;
 										}
 									}
 									break;
 								case "teng" :
 									if ($typeAction=="activite") {
-										if (strpos($LeftOuterJoin,"left outer join") === false ) {
-											$LeftOuterJoin = ",((art_activite as act left outer join art_grand_type_engin as gte on gte.id = act.art_grand_type_engin_id) left outer join art_engin_activite as aenga on aenga.art_activite_id = act.id ) left outer join art_type_engin as teng on teng.id = aenga.art_type_engin_id";
+										if (strpos($LeftOuterJoin,"gte.id = act.art_grand_type_engin_id") === false ) {
+											$LeftOuterJoin .= $LeftOuterJoinAct;
 										}
 									}
 									break;
 								case "tagg" :
-									$TNomLongTable = "art_type_agglomeration";	
-									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = agg.".$TNomLongTable."_id "); 		
+									$LeftOuterJoin .= ",art_agglomeration as agg left outer join art_type_agglomeration as tagg on tagg.id = agg.art_type_agglomeration_id";		
 									break;
 								case "tact" :
-									$TNomLongTable = "art_type_activite";	
-									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = act.".$TNomLongTable."_id "); 		
+									if (strpos($LeftOuterJoin,"gte.id = act.art_grand_type_engin_id") === false ) {
+											$LeftOuterJoin .= $LeftOuterJoinAct;
+									}		
 									break;
 							} // fin du switch ($TNomTable)
 							break;

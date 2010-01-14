@@ -235,8 +235,8 @@ if (isset($_GET['action'])) {
 	}	
 	echo $locSelection."<br/>";
 
-	echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$typeAction."</span>"; 
-	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></div>";
+	echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$libelleAction."</span>"; 
+	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."\" >&nbsp;&nbsp;[modifier la fili&egrave;re]</a></span></div>";
 	echo "</div>";
 	AfficherDonnees($file,$typeAction);
 
@@ -247,14 +247,14 @@ if (isset($_GET['action'])) {
 		echo $resultatLecture; 
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
-			WriteCompLog ($logComp, "Fin Extraction des peches experimentales pour filiere ".$typeAction,$pasdefichier);
+			WriteCompLog ($logComp, "Fin Extraction des peches experimentales pour filiere ".$libelleAction,$pasdefichier);
 			WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
 		}
 ?>
 	</div>
 <?php 
-	echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li><b>".$compteurItem."</b> ".$labelSelection."</li><li><b>fili&egrave;re en cours</b> : <span id=\"filEncoursText\">".$typeAction."</span>"; 
-	echo "<span  class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."\" >[choisir une autre fili&egrave;re]</a></span></li><li><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp; 
+	echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li><b>".$compteurItem."</b> ".$labelSelection."</li><li><b>fili&egrave;re en cours</b> : <span id=\"filEncoursText\">".$libelleAction."</span>"; 
+	echo "<span  class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."\" >&nbsp;&nbsp;[choisir une autre fili&egrave;re]</a></span></li><li><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp; 
 	echo "<span class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."&modiffil=y&action=".$typeAction."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li></ul></div>";
 	if (!($exportFichier)) {	?>
 	<div id="exportFic2">

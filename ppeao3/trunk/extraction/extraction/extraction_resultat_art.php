@@ -234,7 +234,7 @@ ouvreFichierLog($dirLog,$fileLogComp);
 	echo $locSelection."<br/>";
 
 	echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$libelleAction."</span>"; 
-	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></div>";
+	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."\" >&nbsp;&nbsp;[modifier la fili&egrave;re]</a></span></div>";
 	echo "</div>";
 	AfficherDonnees($file,$typeAction);
 				
@@ -245,15 +245,15 @@ ouvreFichierLog($dirLog,$fileLogComp);
 	echo $resultatLecture; 
 	if ($EcrireLogComp ) {
 		WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
-		WriteCompLog ($logComp, "Fin Extraction des peches artisanales pour filiere ".$typeAction,$pasdefichier);
+		WriteCompLog ($logComp, "Fin Extraction des peches artisanales pour filiere ".$libelleAction,$pasdefichier);
 		WriteCompLog ($logComp, "-----------------------------------------------------------------",$pasdefichier);
 	}
 ?>
 </div>
 <?php 
 	echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li><b>".$compteurItem."</b> ".$labelSelection."</li>
-	<li><b>fili&egrave;re en cours</b> : <span id=\"filEncoursText\">".$typeAction."</span>"; 
-	echo "<span class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></li><li>";
+	<li><b>fili&egrave;re en cours</b> : <span id=\"filEncoursText\">".$libelleAction."</span>"; 
+	echo "<span class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."\" >&nbsp;&nbsp;[modifier la fili&egrave;re]</a></span></li><li>";
 	if (!($restSupp=="")) {
 		echo "<b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp;
 	} 
