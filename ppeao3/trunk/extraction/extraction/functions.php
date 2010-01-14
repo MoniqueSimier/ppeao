@@ -1696,7 +1696,8 @@ function AfficherDonnees($file,$typeAction){
 			}else {
 				$ConstIDunique = "AST-##-1";
 			}
-			$valueCount = "temp_extraction.id" ; // pour gerer la pagination		
+			$valueCount = "temp_extraction.id" ; // pour gerer la pagination	
+
 		}
 	} // fin du if (!($_SESSION['listeRegroup'] == ""))
 	// **** fin gestion des regroupements
