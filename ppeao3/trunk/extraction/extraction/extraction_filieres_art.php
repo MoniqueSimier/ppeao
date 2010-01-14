@@ -101,10 +101,13 @@ if (!(file_exists($file)) ) {
 	if (userHasAccess($userID,$zone)) {
 
 ?>
-
-		<p class="hint_text">vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p>
-
-
+		<p class="hint_text">vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran : <br/>
+		Activit&eacute;, liste des enquêtes concernant les activit&eacute;s de p&ecirc;che des unit&eacute;s de p&ecirc;che, collect&eacute;es par p&eacute;riode d'enquête<br/>
+Captures totales, liste de toutes les enquêtes de p&ecirc;che r&eacute;alis&eacute;es au point d'enqu&ecirc;te : unit&eacute; de p&ecirc;che, grand type d'engin de p&ecirc;che, captures totales, caract&eacute;risation de la sortie de p&ecirc;che<br/>
+Nt/Pt, liste des fractions (esp&egrave;ces ou regroupement d'esp&egrave;ces) observ&eacute;es au cours de l'enqu&ecirc;te de p&ecirc;che : caract&eacute;ristiques des espèces, poids, nombre d'individus<br/>
+Structure de taille, liste des individus mesur&eacute;s dans une fraction enquêt&eacute;e : longueur en millim&egrave;tre<br/>
+Engins de pêche, liste des engins de pêche observ&eacute;s au cours de l'enquête de p&ecirc;che : engins de p&ecirc;che, caract&eacute;risation<br/>
+</p>
 			<?php 
 				// On recupere les paramètres
 				if (isset($_GET['logsupp'])) {
@@ -198,7 +201,7 @@ if (!(file_exists($file)) ) {
         <?php if ($_SESSION['pasderesultat']) {
 			echo "La s&eacute;lection n'a pas retourn&eacute; de r&eacute;sultats.<br/>";
 		} else { ?>
-        <b>choix de la fili&egrave;re :</b>&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','activite','1','','n','','','','')">activit&eacute;</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','capture','1','','n','','','','')">captures totales</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','NtPart','1','','n','','','','')">Nt/Pt</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','taillart','1','','n','','','','')">structure de taille</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','engin','1','','n','','','','')">engins de p&ecirc;che</a>
+        <b>choix de la fili&egrave;re :</b>&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','activite','1','','n','','','','')">Activit&eacute;</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','capture','1','','n','','','','')">Captures totales</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','NtPart','1','','n','','','','')">Nt/Pt</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','taillart','1','','n','','','','')">Structure de taille</a>&nbsp;-&nbsp;<a href="#" onClick="runFilieresArt('<?php echo $typePeche ?>','engin','1','','n','','','','')">Engins de p&ecirc;che</a>
                 <?php } ?>
         </div>
 		<div id="resultfiliere"></div>

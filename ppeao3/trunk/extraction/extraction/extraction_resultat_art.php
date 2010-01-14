@@ -18,24 +18,31 @@ $section="consulter";
 $subsection="";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
+include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 $zone=0; // zone libre (voir table admin_zones)
 Global $debugLog;
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <?php 
-		// les balises head communes  toutes les pages
-		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
+	// les balises head communes  toutes les pages
+	include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
+	if (isset($_GET['action'])) {
+		$typeAction = $_GET['action'];
+	} else {
+		echo "erreur, il manque le parametre action <br/>";
+		exit;
+	}		
+	$libelleAction = recupereLibelleFiliere($typeAction);
 	?>
 	<script src="/js/ajaxExtraction.js" type="text/javascript" charset="iso-8859-15"></script>
-	<title>ppeao::extraire des donn&eacute;es::afficher r&eacute;sultats</title>
+	<title>ppeao::extraire des donn&eacute;es::afficher r&eacute;sultats (<?php echo $libelleAction;?>)</title>
 </head>
 <body>
 <?php 
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 include $_SERVER["DOCUMENT_ROOT"].'/zip/archive.php';
 if (isset($_SESSION['s_ppeao_user_id'])){ 
@@ -93,12 +100,7 @@ $fileLogComp = GetParam("nomFicLogExtr",$PathFicConf);
 $logComp="";
 $nomLogLien="";
 ouvreFichierLog($dirLog,$fileLogComp);
-if (isset($_GET['action'])) {
-	$typeAction = $_GET['action'];
-} else {
-	echo "erreur, il manque le parametre action <br/>";
-	exit;
-}	
+	
 ?>
 <div id="main_container" class="home">
 	<h1>consulter des données : extraction des p&ecirc;ches artisanales</h1>
@@ -231,7 +233,7 @@ if (isset($_GET['action'])) {
 	}	
 	echo $locSelection."<br/>";
 
-	echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$typeAction."</span>"; 
+	echo "<div id=\"filEncours\"><span id=\"filEncoursTit\">fili&egrave;re en cours : </span><span id=\"filEncoursText\">".$libelleAction."</span>"; 
 	echo "<span id=\"changeSel\"><a href=\"/extraction/extraction/extraction_filieres_art.php".$inputXML.$InputLog."\" >[modifier la fili&egrave;re]</a></span></div>";
 	echo "</div>";
 	AfficherDonnees($file,$typeAction);

@@ -18,6 +18,7 @@ $section="consulter";
 $subsection="";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
+include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 $zone=0; // zone libre (voir table admin_zones)
 Global $debugLog;
 ?>
@@ -26,16 +27,24 @@ Global $debugLog;
 <?php 
 		// les balises head communes  toutes les pages
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
+	// les balises head communes  toutes les pages
+	include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
+	if (isset($_GET['action'])) {
+		$typeAction = $_GET['action'];
+	} else {
+		echo "erreur, il manque le parametre action <br/>";
+		exit;
+	}	
+	$libelleAction = recupereLibelleFiliere($typeAction);
 	?>
 	<script src="/js/ajaxExtraction.js" type="text/javascript" charset="iso-8859-15"></script>
-	<title>ppeao::extraire des donn&eacute;es::afficher r&eacute;sultats</title>
+	<title>ppeao::extraire des donn&eacute;es::afficher r&eacute;sultats (<?php echo $libelleAction;?>)</title>
 </head>
 <body>
 <?php 
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 include $_SERVER["DOCUMENT_ROOT"].'/zip/archive.php';
 if (isset($_SESSION['s_ppeao_user_id'])){ 

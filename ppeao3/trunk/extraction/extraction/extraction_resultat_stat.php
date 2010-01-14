@@ -18,6 +18,7 @@ $section="consulter";
 $subsection="";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
+include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 $zone=0; // zone libre (voir table admin_zones)
 Global $debugLog;
 ?>
@@ -35,7 +36,6 @@ Global $debugLog;
 // le menu horizontal
 include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
-include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/extraction_xml.php';
 include $_SERVER["DOCUMENT_ROOT"].'/zip/archive.php';
 if (isset($_SESSION['s_ppeao_user_id'])){ 

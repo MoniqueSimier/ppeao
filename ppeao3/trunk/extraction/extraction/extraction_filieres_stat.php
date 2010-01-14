@@ -92,7 +92,10 @@ if (!(file_exists($file)) ) {
 	// on teste à quelle zone l'utilisateur a accès
 	if (userHasAccess($userID,$zone)) {
 ?>
-		<p class="hint_text">Vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran. </p>
+		<p class="hint_text">
+        Les fichiers de statistiques globales, par esp&egrave;ces et par grands types d'engins de p&ecirc;che correspondant à la s&eacute;lection r&eacute;alis&eacute;e sont extraits dans un m&ecirc;me fichier zipp&eacute; ; le fichier des statistiques globales est affich&eacute; &agrave; l'&eacute;cran pour visualiser les r&eacute;sultats de la s&eacute;lection. 
+Des s&eacute;lections d'esp&egrave;ces ou des regroupements d'esp&egrave;ces peuvent &ecirc;tre effectu&eacute;es avant l'extraction finale de donn&eacute;es.
+</p>
 
 		<div id="resumeChoix">
 			<?php 

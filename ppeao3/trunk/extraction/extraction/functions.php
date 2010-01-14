@@ -1792,7 +1792,12 @@ function AfficherDonnees($file,$typeAction){
 				// On remplace les noms des alias par le nom des tables...
 				$listeChamps = remplaceAlias($listeChamps);
 				// On commence le formatage sous forme de table/
-				$resultatLecture .="<br/><span class=\"titreAff\">Liste des résultats (".$typeAction.") </span>";
+				$libelleAction = recupereLibelleFiliere($typeAction);
+				if ($typeSelection == "statistiques") {
+					$resultatLecture .="<br/><span class=\"titreAff\">Liste des résultats (stats par ".$typeStatistiques.") </span>";
+				} else {
+					$resultatLecture .="<br/><span class=\"titreAff\">Liste des résultats (".$libelleAction.") </span>";	
+				}
 				$resultatLecture .="<table id=\"affresultat\" ><tr class=\"affresultattitre\"><td>";
 				// Gestion des regroupements a l'affichage. Attention, non valable pour les statistiques vu qu'on affiche toujours 
 				// art_stat_totale qui ne peut pas avoir de regroupement
@@ -1850,10 +1855,11 @@ function AfficherDonnees($file,$typeAction){
 						$IDunique = $Locprefixe.$finalRow[$locIndex];
 						$resultatLecture .= "<td>".$IDunique."</td>";
 					}
-					if ( (!($_SESSION['listeRegroup'] == "") && (!($typeSelection == "statistiques"))) || ($typeSelection == "statistiques" && $typeStatistiques = "generales") ) {
+					if ( (!($_SESSION['listeRegroup'] == "") && (!($typeSelection == "statistiques"))) || ($typeSelection == "statistiques" && $typeStatistiques == "generales") ) {
 						// Gestion des regroupements
 						// On doit récupérer la liste dans le champ valeur_ligne de la table temp_extraction
 						// et construire la ligne de resultat avec
+						//echo"gestion regroupement - statistiques generales<br/>";
 						$ligne_resultat = $finalRow[8];
 						$tabResultat = explode("&#&",$ligne_resultat);
 						$NbResultat = count($tabResultat);
@@ -2128,6 +2134,34 @@ function AfficherDonnees($file,$typeAction){
 	}
 
 }
+
+
+//*********************************************************************
+// recupereLibelleFiliere : Fonction pour recuperer le libelle de la filiere
+function recupereLibelleFiliere($typeAction){
+switch ($typeAction) {
+	case "activite":
+		$libelleAction = "Activit&eacute;";
+		break;
+	case "capture":
+		$libelleAction = "Captures totales";
+		break;
+	case "NtPart":
+		$libelleAction = "NtPt";
+		break;
+	case "taillart":
+		$libelleAction = "Structure de taille";
+		break;
+	case "engin":
+		$libelleAction = "Engin";
+		break;
+	default:
+	$libelleAction = $typeAction;
+		break;
+}
+return $libelleAction;
+}
+
 //*********************************************************************
 // creeRegroupement : Fonction de creation d'un regroupement a partir d'un SQL
 function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$typeSelection,$tableStat,$Compteur,$posSysteme,$posSecteur,$posGTE,$creationRegBidon,$typeStatistiques) {
@@ -2291,10 +2325,10 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 							}
 							if (!$RegTrouve) {
 								if ($EcrireLogComp && $debugLog) {
-									WriteCompLog ($logComp, "DEBUG : pas de Regroupement trouve pour espece ".$espEnCours." ==> dans div",$pasdefichier);
+									WriteCompLog ($logComp, "DEBUG : pas de Regroupement trouve pour espece ".$espEnCours." ==> dans DIV",$pasdefichier);
 								}
 								// Pas de regroupement trouvé pour cette espece, on le met dans le regroupement "DIV"
-								$RegEnCours = "div";
+								$RegEnCours = "DIV";
 								$NomRegEncours = "divers";
 							}
 							if ($RegEnCours == $RegPrec) {
@@ -2412,10 +2446,10 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 						}
 						if (!$RegTrouve) {
 							if ($EcrireLogComp && $debugLog) {
-								WriteCompLog ($logComp, "DEBUG : pas de Regroupement trouve pour espece ".$espEnCours." ==> dans div",$pasdefichier);
+								WriteCompLog ($logComp, "DEBUG : pas de Regroupement trouve pour espece ".$espEnCours." ==> dans DIV",$pasdefichier);
 							}
 							// Pas de regroupement trouvé pour cette espece, on le met dans le regroupement "DIV"
-							$RegEnCours = "div";
+							$RegEnCours = "DIV";
 							$NomRegEncours = "divers";
 						}
 						if ($RegEnCours == $RegPrec) {
@@ -3586,7 +3620,7 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 	$construitSelection .="<div class=\"hint clear small\">
 	<span class=\"hint_label\">aide : </span>
 	<span class=\"hint_text\">
-	pour commencer, cliquez soit sur \"Ajouter\" sous la colonne des regroupemens, soit cliquez sur une esp&egrave;ce puis sur \"garder ces esp&egrave;ces\" pour cr&eacute;er un regroupement d'une seule esp&egrave;ce <br/>une fois le regroupement cr&eacute;&eacute;, s&eacute;lectionnez dans la liste des esp&egrave;ces disponibles puis cliquez sur la fl&ecirc;che <-- pour affecter cette esp&egrave;ce au regroupement s&eacute;lectionn&eacute;<br/>
+	pour commencer, cliquez soit sur \"Ajouter\" sous la colonne des regroupements, soit cliquez sur une esp&egrave;ce puis sur \"garder ces esp&egrave;ces\" pour cr&eacute;er un regroupement d'une seule esp&egrave;ce <br/>une fois le regroupement cr&eacute;&eacute;, s&eacute;lectionnez dans la liste des esp&egrave;ces disponibles puis cliquez sur la fl&ecirc;che <-- pour affecter cette esp&egrave;ce au regroupement s&eacute;lectionn&eacute;<br/>
 	vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche \"CTRL\" (Windows, Linux) ou \"CMD\" (Mac) enfonc&eacute;e
 	</span>
 	</div>

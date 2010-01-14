@@ -200,11 +200,11 @@ Dans toutes les fili&egrave;res vous avez la possibilit&eacute; de s&eacute;lect
 			echo "La s&eacute;lection n'a pas retourn&eacute; de r&eacute;sultats.<br/>";
 		} else { ?>
 			<b>choix de la fili&egrave;re :</b>&nbsp;
-			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','peuplement','1','','n','','','','')">peuplement</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','environnement','1','','n','','','','')">environnement</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','peuplement','1','','n','','','','')">Peuplement</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','environnement','1','','n','','','','')">Environnement</a>&nbsp;-&nbsp;
 			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','NtPt','1','','n','','','','')">Nt/Pt</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','biologie','1','','n','','','','')">biologie</a>&nbsp;-&nbsp;
-			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','trophique','1','','n','','','','')">trophique</a>
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','biologie','1','','n','','','','')">Biologie</a>&nbsp;-&nbsp;
+			<a href="#" onClick="runFilieresExp('<?php echo $typePeche ?>','trophique','1','','n','','','','')">Trophique</a>
 		</ul>
         <?php } ?>
 		</div>

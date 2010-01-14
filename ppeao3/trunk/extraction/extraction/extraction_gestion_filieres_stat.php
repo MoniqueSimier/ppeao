@@ -159,6 +159,7 @@ switch ($numTab) {
 <?php // Les differents div correspondant aux choix disponibles par onglet ?>
 <?php // l'onglet qui gere la selection des colonnes complémentaires ?>
 <div id="colonnes" class="colonnes<?php echo $colActive;?>">
+<span class="hint small">Les variables optionnelles qui peuvent &ecirc;tre extraites, concernent le nombre d'observations effectu&eacute;es, les valeurs extr&ecirc;mes enregistr&eacute;es, le nombre de jours d'observation et des informations compl&eacute;mentaires sur les esp&egrave;ces. Si la case d'ajout des variables est coch&eacute;e, elles sont toutes s&eacute;lectionn&eacute;es ensemble.</span><br/>
 <?php	if (strpos($_SESSION['listeColonne'],"XtoutX") === false) {
 		echo "<input id=\"facTout\" type=\"checkbox\"  name=\"fac0\" value=\"tout\"  />&nbsp;ajouter toutes les variables optionnelles<br/>";
 	} else {
