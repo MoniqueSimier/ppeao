@@ -210,6 +210,7 @@ Dans toutes les fili&egrave;res vous avez la possibilit&eacute; de s&eacute;lect
 		</div>
         <div id="resultfiliere"></div>
 		<div id="exportFic"></div>
+        <input type="hidden" id="gselec" value="<?php echo $gardeSelection;?>"/>
         <?php 
 			echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>";?>
                     <span id="affLog">

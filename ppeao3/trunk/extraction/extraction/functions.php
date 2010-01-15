@@ -564,7 +564,7 @@ function AfficherDonnees($file,$typeAction){
 					break;	
 			}
 		}
-		$compPoisSQL =" fam.non_poisson in (".$valPoisson.") ";
+		$compPoisSQL =" and fam.non_poisson in (".$valPoisson.") ";
 	} else {
 		if (!($typeAction =="environnement") && !($typeAction =="activite") && !($typeAction =="capture")){
 			$LabCatPois = " tous les poissons ";
@@ -769,7 +769,7 @@ function AfficherDonnees($file,$typeAction){
 							$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam"; 
 							$WhereSpec = " and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
 								esp.id = fra.ref_espece_id and
-								fam.id = esp.ref_famille_id and ".$compPoisSQL;
+								fam.id = esp.ref_famille_id ".$compPoisSQL;
 							$OrderCom .= ",esp.id asc";
 							$valueCount = "fra.id" ; // pour gerer la pagination	
 							$builQuery = true;
@@ -811,7 +811,7 @@ function AfficherDonnees($file,$typeAction){
 							$ListeTableSpec = ",exp_fraction as fra,ref_famille as fam";
 							$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp."
 								esp.id = fra.ref_espece_id and
-								fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and ".$compPoisSQL;
+								fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id ".$compPoisSQL;
 							$OrderCom .= ",esp.id asc";
 							$valueCount = "cph.id" ; // pour gerer la pagination						
 							$builQuery = true;
@@ -839,7 +839,7 @@ function AfficherDonnees($file,$typeAction){
 							$WhereSpec = " 	and fra.exp_coup_peche_id = cph.id and ".$WhereEsp." 
 								esp.id = fra.ref_espece_id and
 								fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
-								bio.exp_fraction_id = fra.id and ".$compPoisSQL;
+								bio.exp_fraction_id = fra.id ".$compPoisSQL;
 							$OrderCom .= ",esp.id asc,fra.id asc, esp.id asc ";
 							$valueCount = "fra.id" ; // pour gerer la pagination						
 							$builQuery = true;
@@ -870,7 +870,7 @@ function AfficherDonnees($file,$typeAction){
 								fam.id = esp.ref_famille_id and env.id = cph.exp_environnement_id and
 								bio.exp_fraction_id = fra.id and 
 								trop.exp_biologie_id = bio.id 	and
-								cont.id = trop.exp_contenu_id and ".$compPoisSQL;	
+								cont.id = trop.exp_contenu_id ".$compPoisSQL;	
 							$OrderCom .= ",esp.id asc";
 							$valueCount = "bio.id" ; // pour gerer la pagination
 							$builQuery = true;	
@@ -1195,7 +1195,7 @@ function AfficherDonnees($file,$typeAction){
 							$ListeTableSpec = ", art_fraction as afra,ref_famille as fam"; 
 							$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id 
 											and esp.id = afra.ref_espece_id	
-											and fam.id = esp.ref_famille_id and ".$compPoisSQL;					
+											and fam.id = esp.ref_famille_id ".$compPoisSQL;					
 							$ConstIDunique = "DEB-##-11";
 							$valueCount = "deb.id" ; // pour gerer la pagination	
 							$builQuery = true;
@@ -1250,7 +1250,7 @@ function AfficherDonnees($file,$typeAction){
 							$ListeTableSpec = ",ref_famille as fam, art_fraction as afra left outer join art_poisson_mesure as ames on ames.art_fraction_id = afra.id"; 
 							$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id  
 											and esp.id = afra.ref_espece_id	
-											and fam.id = esp.ref_famille_id and ".$compPoisSQL;						
+											and fam.id = esp.ref_famille_id ".$compPoisSQL;						
 							$ConstIDunique = "DEB-##-11";
 							$valueCount = "deb.id" ; // pour gerer la pagination
 							$builQuery = true;
@@ -1314,7 +1314,7 @@ function AfficherDonnees($file,$typeAction){
 					break;
 				// ********** FIN TRAITEMENT PECHE ARTISANALE
 				default:
-					echo "Erreur pas de peche selectionnee. Ca ne devrait pas arriver....<br/>";
+					echo "Pas de selection de type de peche. Recommencez une selection...<br/>";
 					exit;
 			} 
 			break;
@@ -1614,7 +1614,7 @@ function AfficherDonnees($file,$typeAction){
 		// ********** FIN TRAITEMENT STATISTIQUES
 		// #
 		default:
-			echo "Erreur pas de typeSelection disponible. Ca ne devrait pas arriver....<br/>";
+			echo "Pas de selection de type de statistiques. Recommencez une selection...<br/>";
 			exit;
 		
 	} // fin du switch ($typeSelection) 
@@ -1830,6 +1830,22 @@ function AfficherDonnees($file,$typeAction){
 				}
 				$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Pas de resultat disponible pour la sélection<br/>";
 			} else {
+				// On recupere le libelle de l'agglo unite de peche
+				$chercheAggUpec = false;
+				$posAggUpec = 0;
+				if (strpos($listeChamps,"upec.art_agglomeration_id") > 0) {
+					$tabChamp = explode(",",$listeChamps);
+					$nbrChamp  = count($tabChamp)-1;
+					// Transcription du resultat de la requete globale pour un affichage écran et un export sous forme de fichier
+					for ($cptChamp  = 0;$cptChamp  <= $nbrChamp ;$cptChamp ++) {
+						if ($tabChamp[$cptChamp] == "upec.art_agglomeration_id") {
+							$posAggUpec = $cptChamp;
+							break;
+						}
+					}
+					$listeChamps = str_replace("upec.art_agglomeration_id","upec.art_agglomeration_id,Nom_Agglomeration_origine_unite",$listeChamps);
+					$chercheAggUpec = true;
+				}				
 				// Si on ajoute un identifiant unique en debut de ligne, on l'indique dans la liste des champs.
 				if (!($ConstIDunique =="")) {
 					$listeChamps ="id.UNIQUE,".$listeChamps;
@@ -1842,6 +1858,7 @@ function AfficherDonnees($file,$typeAction){
 					$listeChamps .=",Effort_total";
 				}
 				// On remplace les noms des alias par le nom des tables...
+
 				$listeChamps = remplaceAlias($listeChamps);
 				// On commence le formatage sous forme de table/
 				$libelleAction = recupereLibelleFiliere($typeAction);
@@ -1956,7 +1973,27 @@ function AfficherDonnees($file,$typeAction){
 								$nbrRow = count($finalRow)-1;
 								// Transcription du resultat de la requete globale pour un affichage écran et un export sous forme de fichier
 								for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
-									$resultatLecture .= "<td>".$finalRow[$cptRow]."</td>";
+									if ($chercheAggUpec && $cptRow == $posAggUpec) {
+										// Recherche de l'agg d'origine de l'UPEC
+										$SQLRec = "select nom from art_agglomeration where id = ".intval($finalRow[$cptRow]);
+										$SQLRecResult = pg_query($connectPPEAO,$SQLRec);
+										$erreurSQL = pg_last_error($connectPPEAO);
+										$cpt1 = 0;
+										if ( !$SQLRecResult ) { 
+											if ($EcrireLogComp ) {
+												WriteCompLog ($logComp, "ERREUR : Erreur recherche agglomeration ".$SQLRec." (erreur complete = ".$erreurSQL.")",$pasdefichier);
+											}
+											$resultatLecture .= "<td>".$finalRow[$cptRow]."</td><td>erreur lecture</td>";
+										} else {
+											$RowRec = pg_fetch_row($SQLRecResult);
+											$NomAgg = $RowRec[0];
+											if ($NomAgg == "") {$NomAgg = "inconnu";}
+											$resultatLecture .= "<td>".$finalRow[$cptRow]."</td><td>".$NomAgg."</td>";
+										}
+									} else {
+										// On contruit la ligne de resutat
+										$resultatLecture .= "<td>".$finalRow[$cptRow]."</td>";
+									}
 								}	
 								break;
 						}
@@ -4100,30 +4137,12 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 									}		
 									break;
 								case "ord" :
-									$TNomLongTable = "ref_ordre";	
-									// On teste si on a choisi aussi d'afficher la famille. Si non, il faut ajouter la requete.
-									if (strpos($_SESSION['listeColonne'],"fam-") === false) {
-										if (strpos($ListeTableSel,"ref_famille") === false) {
-											$ajoutFam = " ,ref_famille as fam";
-											$ajoutWhereFam = "and ref_famille.id = esp.ref_espece_id ";
-										} else {
-											$ajoutFam = "";
-											$ajoutWhereFam = "";	
-										}
-									} else {
-										$ajoutFam = "";
-										$ajoutWhereFam = "";								
-									}
+									$TNomLongTable = "ref_ordre";		
 									$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-									$ListeTableSel .= $ajoutFam;
 									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = fam.".$TNomLongTable."_id ");
-									$AjoutWhere .= $ajoutWhereFam; 		
 									break;	
 								case "fam" :
 									$TNomLongTable = "ref_famille";
-									if (strpos($ListeTableSel,"ref_famille") === false) {
-										$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
-									}
 									$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = esp.".$TNomLongTable."_id "); 		
 									break;
 								case "acsp" :
@@ -4348,7 +4367,7 @@ function remplaceAlias($listeDesChamps) {
 	$listeTitre = explode(",",$listeDesChamps);
 	$nbrTitre = count($listeTitre)-1;
 	for ($cptT=0 ; $cptT<=$nbrTitre;$cptT++) {
-		if ( $listeTitre[$cptT]=="id.UNIQUE" || $listeTitre[$cptT]=="Coeff_extrapolation" || $listeTitre[$cptT]=="Nombre_individus_mesures" || $listeTitre[$cptT]=="Effort_total") {
+		if ( $listeTitre[$cptT]=="id.UNIQUE" || $listeTitre[$cptT]=="Coeff_extrapolation" || $listeTitre[$cptT]=="Nombre_individus_mesures" || $listeTitre[$cptT]=="Effort_total" || $listeTitre[$cptT]=="Nom_Agglomeration_origine_unite") {
 			if ($listeDesTitres == "") {
 				$listeDesTitres = $listeTitre[$cptT];
 			} else {

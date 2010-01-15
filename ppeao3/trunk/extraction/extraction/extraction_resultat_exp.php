@@ -255,7 +255,8 @@ if (isset($_GET['action'])) {
 <?php 
 	echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li><b>".$compteurItem."</b> ".$labelSelection."</li><li><b>fili&egrave;re en cours</b> : <span id=\"filEncoursText\">".$libelleAction."</span>"; 
 	echo "<span  class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."\" >&nbsp;&nbsp;[choisir une autre fili&egrave;re]</a></span></li><li><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp; 
-	echo "<span class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."&modiffil=y&action=".$typeAction."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li></ul></div>";
+	//echo "<span class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_exp.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."&modiffil=y&action=".$typeAction."\" >[modifier la s&eacute;lection de la fili&egrave;re en cours]</a></span></li>";
+	echo"</ul></div>";
 	if (!($exportFichier)) {	?>
 	<div id="exportFic2">
 		<input type="button" id="validation" onClick="runFilieresArt('<?php echo $typePeche;?>','<?php echo $typeAction;?>','1','','y','','','')" value="Exporter en fichier"/>

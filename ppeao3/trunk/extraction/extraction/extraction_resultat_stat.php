@@ -187,7 +187,8 @@ if (isset($_GET['action'])) {
 <?php 
 	echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li><b>".$compteurItem."</b> ".$labelSelection."</li>";
 	echo "<li><b>restriction(s) suppl&eacute;mentaire(s)</b> : ".$restSupp; 
-	echo "<span class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."&modiffil=y&action=".$typeAction."\" >[modifier la s&eacute;lection en cours]</a></span></li></ul></div>";
+	//echo "<span class=\"changeSel2\"><a href=\"/extraction/extraction/extraction_filieres_stat.php".$inputXML.$InputLog."&gselec=y&tab=".$numTab."&modiffil=y&action=".$typeAction."\" >[modifier la s&eacute;lection en cours]</a></span></li>";
+	echo"</ul></div>";
 
 	if (!($exportFichier)) {	?>
    	 <div id="exportFic2">

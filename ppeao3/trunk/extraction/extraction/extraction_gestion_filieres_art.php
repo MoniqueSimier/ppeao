@@ -103,6 +103,7 @@ if (isset($_GET["gselec"])) {
 }else {
 	$gardeSelection = "";
 }
+
 // Gestion des regroupements
 if (isset($_GET['RegEC'])) {
 	$RegEncours = intval($_GET['RegEC']) + 1;
@@ -261,6 +262,7 @@ if (strpos($_SESSION['listePoisson'],"0")  === false ) {$valPois1 =""; } else {$
 if (strpos($_SESSION['listePoisson'],"pp")  === false ) {$valPois2 =""; } else {$valPois2 = "checked=\"checked\"";}
 if (strpos($_SESSION['listePoisson'],"1")  === false ) {$valPois3 =""; } else {$valPois3 = "checked=\"checked\"";}
 if (strpos($_SESSION['listePoisson'],"np")  === false ) {$valPois4 =""; } else {$valPois4 = "checked=\"checked\"";}
+
 ?>
 
 <form id="filiere" >

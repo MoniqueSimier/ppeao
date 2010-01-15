@@ -226,11 +226,11 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 	ExpFic = '';
 	if (validation == 'y') {
 		if 	(document.getElementById("ExpFic").checked) {
-			ExpFic = '&exf=y' ;
+			addExpFic = '&exf=y' ;
 		} else {
-			ExpFic = '';
+			addExpFic = '';
 		}
-		var url="/extraction/extraction/extraction_resultat_exp.php?log="+checkLog+"&action="+typeAction+"&tab="+numtab+"&tp="+typePeche+ExpFic+addURL;
+		var url="/extraction/extraction/extraction_resultat_exp.php?log="+checkLog+"&action="+typeAction+"&tab="+numtab+"&tp="+typePeche+addExpFic+addURL;
 		window.location.replace(url);
 	} else {
 		//if (typeAction =='peuplement') {
@@ -497,12 +497,13 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		addURL = "";
 	}
 	if (validation == 'y') {
+		alert("avant erreur");
 		if 	(document.getElementById("ExpFic").checked) {
-			ExpFic ="&exf=y" ;
+			addExpFic = '&exf=y' ;
 		} else {
-			ExpFic ="";
+			addExpFic ='';
 		}
-		var url="/extraction/extraction/extraction_resultat_art.php?log="+checkLog+"&action="+typeAction+"&tab="+numtab+"&tp="+typePeche+ExpFic+addURL;
+		var url="/extraction/extraction/extraction_resultat_art.php?log="+checkLog+"&action="+typeAction+"&tab="+numtab+"&tp="+typePeche+addExpFic+addURL;
 		window.location.replace(url);
 	} else {
 		xmlHttp=GetXmlHttpObject();
@@ -658,12 +659,12 @@ function runFilieresStat(typeStat,typeAction,numtab,tableEnCours,validation,selT
 	}
 	if (validation == 'y') {
 		if 	(document.getElementById("ExpFic").checked) {
-			ExpFic ="&exf=y" ;
+			addExpFic ="&exf=y" ;
 
 		} else {
-			ExpFic ="";
+			addExpFic ="";
 		}
-		var url="/extraction/extraction/extraction_resultat_stat.php?log="+checkLog+"&action="+typeAction+"&tab="+numtab+"&ts="+typeStat+ExpFic+addURL;
+		var url="/extraction/extraction/extraction_resultat_stat.php?log="+checkLog+"&action="+typeAction+"&tab="+numtab+"&ts="+typeStat+addExpFic+addURL;
 		window.location.replace(url);
 	} else {
 		xmlHttp=GetXmlHttpObject();
