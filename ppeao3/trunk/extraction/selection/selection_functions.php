@@ -2744,7 +2744,7 @@ if ($documents) {
 		echo('<span class="showHide"><a href="#" onclick="javascript:toggleMetadataList();return false;">[afficher les documents disponibles]</a></span>');
 		echo('<div id="metadataList">');
 		echo('<form id="metadataForm">');
-			echo('<p>cochez les cases en regard des documents qui vous int&eacute;ressent : ceux-ci seront ajout&eacute;s &agrave; l&#x27;archive t&eacute;l&eacute;chargeable contenant vos donn&eacute;es</p>');
+			echo('<p>cochez les cases en regard des documents qui vous int&eacute;ressent : ceux-ci seront ajout&eacute;s &agrave; l&#x27;archive t&eacute;l&eacute;chargeable contenant vos donn&eacute;es; passez la souris sur les liens <a>[info]</a> pour lire une description du document correspondant</p>');
 			
 			// les documents
 			if (!empty($meta_docs)) {
@@ -2754,8 +2754,9 @@ if ($documents) {
 				foreach ($meta_docs as $doc) {
 					echo('<li>');
 					$tip='';
-					if (!empty($doc["document"]["doc_description"])) {$tip='class="toolTipSpan" title="description de ce document&nbsp;: ::'.$doc["document"]["doc_description"].'"';}
-					echo('<input type="checkbox" name="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" /> <span id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'_titre" '.$tip.' >'.$doc["document"]["doc_titre"]).'</span>';
+					$description='';
+					if (!empty($doc["document"]["doc_description"])) {$tip='class="toolTipSpan" title="description de ce document&nbsp;: ::'.$doc["document"]["doc_description"].'"'; $description=' <a>[infos]</a>';}
+					echo('<input type="checkbox" name="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" /> <span id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'_titre" '.$tip.' >'.$doc["document"]["doc_titre"]).$description.'</span>';
 					echo('</li>');
 				}
 				echo('</ul>');
@@ -2770,8 +2771,9 @@ if ($documents) {
 				foreach ($meta_maps as $doc) {
 					echo('<li>');
 					$tip='';
-					if (!empty($doc["document"]["doc_description"])) {$tip='class="toolTipSpan" title="description de ce document&nbsp;: ::'.$doc["document"]["doc_description"].'"';}
-					echo('<input type="checkbox" name="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" /> <span id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'_titre" '.$tip.' >'.$doc["document"]["doc_titre"]).'</span>';
+					$description='';
+					if (!empty($doc["document"]["doc_description"])) {$tip='class="toolTipSpan" title="description de ce document&nbsp;: ::'.$doc["document"]["doc_description"].'"'; $description=' <a>[infos]</a>';}
+					echo('<input type="checkbox" name="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" /> <span id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'_titre" '.$tip.' >'.$doc["document"]["doc_titre"]).$description.'</span>';
 					echo('</li>');
 				}
 				echo('</ul>');
@@ -2786,8 +2788,9 @@ if ($documents) {
 				foreach ($meta_figs as $doc) {
 					echo('<li>');
 					$tip='';
-					if (!empty($doc["document"]["doc_description"])) {$tip='class="toolTipSpan" title="description de ce document&nbsp;: ::'.$doc["document"]["doc_description"].'"';}
-					echo('<input type="checkbox" name="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" /> <span id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'_titre" '.$tip.' >'.$doc["document"]["doc_titre"]).'</span>';
+					$description='';
+					if (!empty($doc["document"]["doc_description"])) {$tip='class="toolTipSpan" title="description de ce document&nbsp;: ::'.$doc["document"]["doc_description"].'"'; $description=' <a>[infos]</a>';}
+					echo('<input type="checkbox" name="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'" /> <span id="'.$doc["document"]["meta_table"].'_'.$doc["document"]["meta_id"].'_titre" '.$tip.' >'.$doc["document"]["doc_titre"]).$description.'</span>';
 					echo('</li>');
 				}
 				echo('</ul>');
