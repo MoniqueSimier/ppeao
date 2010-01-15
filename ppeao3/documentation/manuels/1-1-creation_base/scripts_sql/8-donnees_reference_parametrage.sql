@@ -338,7 +338,7 @@ INSERT INTO art_grand_type_engin VALUES ('PIEGE', 'Pieges, barrages');
 INSERT INTO art_grand_type_engin VALUES ('SE_PL', 'Senne de plage');
 INSERT INTO art_grand_type_engin VALUES ('SE_SY', 'Senne syndicat');
 INSERT INTO art_grand_type_engin VALUES ('SE_TO', 'Senne tournante');
-INSERT INTO art_grand_type_engin VALUES ('TOUS', 'Tous');
+INSERT INTO art_grand_type_engin VALUES ('TOUS', '-Tous-');
 
 ALTER TABLE art_grand_type_engin ENABLE TRIGGER ALL;
 
