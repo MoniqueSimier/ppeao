@@ -6,7 +6,7 @@
 
 
 //******************************************************************************
-// compte le nombre de campagnes ou enquetes a supprimer - evolution de countMatchingUnits()
+// compte le nombre de campagnes ou enquetes correspondnat a la selection en cours - evolution de countMatchingUnits()
 function countMatchingUnits2($domaine,$exploit) {
 // $domaine : "exp" ou "art" selon le type de peches
 // $exploit : vide ou "stats"
