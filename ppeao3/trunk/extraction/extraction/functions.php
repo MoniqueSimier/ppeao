@@ -2276,7 +2276,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 // En sortie : 
 // La fonction cree une ligne dans la table temporaire 
 //*********************************************************************
-	$debugLog = true;
+	$debugLog = false;
 	global $connectPPEAO;
 	global $EcrireLogComp;
 	global $logComp;
