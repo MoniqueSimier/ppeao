@@ -48,7 +48,7 @@ Examples:
 
 ATTENTION: The trailing slash is required.
 */
-$baseUrl = '/work/documentation/metadata/';
+$baseUrl = '/work/';
 
 /*
 $baseDir : the path to the local directory (in the server) which points to the
@@ -76,8 +76,8 @@ Thumbnails : thumbnails settings. All thumbnails will end up in the same
 directory, no matter the resource type.
 */
 $config['Thumbnails'] = Array(
-		'url' => $baseUrl . '_thumbs',
-		'directory' => $baseDir . '_thumbs',
+		'url' => $baseUrl . 'documentation/metadata/_thumbs',
+		'directory' => $baseDir . 'documentation/metadata/_thumbs',
 		'enabled' => true,
 		'directAccess' => false,
 		'maxWidth' => 100,
@@ -164,34 +164,39 @@ Available options are: G, M, K (case insensitive).
 1M equals 1048576 bytes (one Megabyte), 1K equals 1024 bytes (one Kilobyte), 1G equals one Gigabyte.
 Example: 'maxSize' => "8M",
 */
-$config['DefaultResourceTypes'] = '';
+$config['DefaultResourceTypes'] = 'Documents,Figures,Cartes';
+
+
+
 
 $config['ResourceType'][] = Array(
-		'name' => 'Files',				// Single quotes not allowed
-		'url' => $baseUrl . 'files',
-		'directory' => $baseDir . 'files',
-		'maxSize' => 0,
+		'name' => 'Documents',				// Single quotes not allowed
+		'url' => $baseUrl . 'documentation/metadata/files',
+		'directory' => $baseDir . 'documentation/metadata/files',
+		'maxSize' => '14M',
 		'allowedExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,fla,flv,gif,gz,gzip,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,zip',
 		'deniedExtensions' => '',
 		'defaulView'=>'List');
 
 $config['ResourceType'][] = Array(
-		'name' => 'Images',
-		'url' => $baseUrl . 'images',
-		'directory' => $baseDir . 'images',
+		'name' => 'Figures',
+		'url' => $baseUrl . 'documentation/metadata/images',
+		'directory' => $baseDir . 'documentation/metadata/images',
 		'maxSize' => 0,
-		'allowedExtensions' => 'bmp,gif,jpeg,jpg,png',
-		'deniedExtensions' => ''
+		'allowedExtensions' => 'bmp,gif,jpeg,jpg,png,tiff,pict,tif',
+		'deniedExtensions' => 'exe'
 		);
 	
 $config['ResourceType'][] = Array(
-		'name' => 'Maps',
-		'url' => $baseUrl . 'maps',
-		'directory' => $baseDir . 'maps',
+		'name' => 'Cartes',
+		'url' => $baseUrl . 'documentation/metadata/maps',
+		'directory' => $baseDir . 'documentation/metadata/maps',
 		'maxSize' => 0,
 		'allowedExtensions' => 'arc,dgn,dlg,dwg,dxf,e00,gml,kf85,mif,mid,sdts,shp,svg,tiger,vpf,vxp,wmf,adrg,bil,bip,bsq,dem,hdr,gtopo30,geotiff,grib,pcx,sdts,hpgl,nef,tiff',
-		'deniedExtensions' => ''
+		'deniedExtensions' => 'exe',
+		'defaulView'=>'List'
 		);
+
 
 
 /*
