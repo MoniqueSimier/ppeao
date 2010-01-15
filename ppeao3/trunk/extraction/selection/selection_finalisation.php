@@ -18,8 +18,7 @@ parse_str($parsed["query"],$selection);
 $xml='<?xml version="1.0" encoding="ISO-8859-15"?>';
 $xml.='<selection>';
 
-//debug 
-echo('<pre>');print_r($selection);echo('</pre>');
+//debug echo('<pre>');print_r($selection);echo('</pre>');
 
 
 // le type d'exploitation
