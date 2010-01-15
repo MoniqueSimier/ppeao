@@ -1,6 +1,6 @@
 <?php 
 //************************************************
-//script used to handle user logout
+//script appelé via Ajax par la fonction JS ajaxLogout() et qui déconnecte un utilisateur
 //************************************************
 // includes the file containing the db connection script
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';

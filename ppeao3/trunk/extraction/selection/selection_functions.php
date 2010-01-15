@@ -1,6 +1,6 @@
 <?php
 /***********
-/ fonctions utilisees dans la selection en vue de l'extraction
+/ fonctions PHP utilisees dans la selection en vue de l'extraction
 */
 
 

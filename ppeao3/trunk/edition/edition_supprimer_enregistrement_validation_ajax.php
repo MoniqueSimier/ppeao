@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// script appelé par la fonction javascript 
+// script appelé via Ajax par la fonction javascript sendRecordToDelete() et qui effectue la suppression d'un enregistrement d'une table et retourne un message de confirmation ou d'erreur
 // 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';

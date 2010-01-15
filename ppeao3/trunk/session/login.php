@@ -1,6 +1,6 @@
 <?php 
 //************************************************
-//script used to handle user login
+//script qui gère la connexion et la déconnexion des utilisateurs
 //************************************************
 
 //debug sleep(30);

@@ -1,4 +1,7 @@
 <?php
+
+// script appelé via Ajax par les fonctions JS modalDialogDeleteUnite() et sendUnitToDelete() et permettant de supprimer une campagne ou une période d'enquête
+
 session_start();
 
  

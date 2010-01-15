@@ -1,3 +1,5 @@
+// fonctions utilisées par le module de journal
+
 /**
 * Function called when the user clicks on the link
 * to update the content of the theContent div

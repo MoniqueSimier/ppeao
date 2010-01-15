@@ -1,3 +1,5 @@
+// fonctions javascript utilisées par le module de sélection des données à extraire
+
 function goToNextStep(current_step,url) {
 	// current_step: le numero de l'etape ACTUELLE
 	// url: l'url qui doit servir de base pour l'etape suivante

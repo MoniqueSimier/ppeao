@@ -1,5 +1,5 @@
 <?php
-// on recupere la selection de l'utilisateur et on les transmet a l'extraction
+// script qui recupere la selection de l'utilisateur en fin de processus et  la transmet a l'extraction sous forme d'une variable contenant la selection au format XML
 
 session_start();
 

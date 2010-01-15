@@ -1,5 +1,7 @@
 <?php
 
+// script contenant des fonctions PHP utilisees par le module d'edition des tables
+
 //***************************************************************************************************
 //construit un formulaire pour choisir une table de référence d'une hiérarchie à éditer
 function buildTableSelect($hierarchyLabel,$selected)

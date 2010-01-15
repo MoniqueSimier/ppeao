@@ -1,4 +1,7 @@
 <?php
+
+// script appelé via Ajax par la fonction javascript refreshPeriode() pour rafraichir les <select> permettant de sélectionner l'année/mois de début/fin des données à extraire
+
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_generic.php';

@@ -1,8 +1,7 @@
 <?php
-session_start();
+// script appelé via Ajax par la fonction javascript showNextSelect() et servant à insérer le <div><select> correspondant à la table systeme
 
-// script appelé par la fonction javascript showNewLevel
-// 
+session_start();
 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';

@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-// script appelé par la fonction javascript showNewLevel
-// 
+// script affichant le formulaire d'ajout d'un nouvel enregistrement dans le module d'edition des tables
+// appele via Ajax par la fonction JS  modalDialogAddRecord() (script JS edition.js) 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_generic.php';

@@ -1,5 +1,5 @@
 <?php 
-// Créé par Olivier ROUX, 02-08-2008
+// Page de sélection des données à extraire
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page

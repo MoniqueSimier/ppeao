@@ -1,4 +1,7 @@
 <?php
+// script appele via Ajax par la fonction updateSystemes() (fichier edition.js)
+// lors de l'attribution des droits d'acces a des pays ou systemes
+
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_generic.php';

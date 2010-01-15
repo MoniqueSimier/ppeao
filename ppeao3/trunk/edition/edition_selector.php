@@ -1,5 +1,5 @@
 <?php 
-// Créé par Olivier ROUX, 02-08-2008
+// script affichant le selecteur qui permet de choisir la table ou les valeurs de la table à éditer
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page

@@ -1,7 +1,8 @@
 <?php
 session_start();
 
-// script appelé par la fonction javascript showNewLevel
+// script appelé via Ajax par la fonction javascript sendRecordToSave() (fichier edition.js)
+// permettant de valider les valeurs saisies lors de l'ajout d'un nouvel enregistrement
 // 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';

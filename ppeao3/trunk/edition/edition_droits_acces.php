@@ -1,5 +1,5 @@
 <?php 
-// Créé par Olivier ROUX, 02-08-2008
+// page de gestion des droits d'acces aux donnees
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 // definit a quelle section appartient la page

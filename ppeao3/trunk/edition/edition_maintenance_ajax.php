@@ -1,5 +1,7 @@
 <?php
 
+// script appele via Ajax par la fonction javascript doMaintenance() et qui permet de realiser des operations de maintenance sur la base de donnees (page edition_maintenance.php)
+
 // parametres de connexion a la base de donnees
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 

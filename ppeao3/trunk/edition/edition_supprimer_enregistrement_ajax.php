@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// script appelé par la fonction javascript showNewLevel
+// script appelé via Ajax par la fonction javascript modalDialogDeleteRecord() qui affiche un dialogue permettant de supprimer un enregistrement dasn une table
 // 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';

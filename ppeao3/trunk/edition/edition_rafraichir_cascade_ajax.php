@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// script appelé par la fonction javascript updateEditSelects
+// script appelé via Ajax par la fonction javascript updateEditSelects() pour rafraichir les <select> dependants en mode edition d'une cle etrangere avec cascade
 // 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';

@@ -1,6 +1,6 @@
 <?php
 session_start();
-// script appelé par la fonction javascript showNewLevel
+// script appelé via Ajax par la fonction javascript saveChange() qui enregistre les modifications a un enregistrement existant ou a un nouvel enregistrement ajoute
 // 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';

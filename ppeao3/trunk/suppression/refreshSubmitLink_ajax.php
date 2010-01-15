@@ -1,8 +1,11 @@
 <?php
+// script appelé via Ajax par la fonction javascript updateSubmitLink() pour mettre a jour le lien permettant d'afficher les resultats, chaque fois que la selection change
+
+
+
 session_start();
 
-// script appelé par la fonction javascript showNewLevel
-// 
+
 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';

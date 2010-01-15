@@ -1,6 +1,6 @@
 <?php
 session_start();
-// script appelé par la fonction javascript showNewLevel
+// script appelé via Ajax par la fonction javascript makeEditable() et permettant de rendre un champ éditable
 // 
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';

@@ -1,3 +1,6 @@
+
+// fonctions javascripts de base, utilisées dans de nombreux scripts
+
 /*
 * preloading of images (used for preloading the "loading..." animated GIF displayed while AJAX is doing its thing)
 */

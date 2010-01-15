@@ -1,3 +1,6 @@
+
+// scripts utilisés par le module d'édition des tables
+
 /*
 * Fonction qui affiche un SELECT listant les tables de parametrage suite au choix d'un domaine (pêche, biologie...)
 */

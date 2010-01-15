@@ -1,5 +1,7 @@
 <?php
 
+// fonctions PHP utilisées par le module de suppression de campagnes ou de périodes d'enquête
+
 //******************************************************************************
 // insere un <select> pour filtrer les campagnes ou enquetes a supprimer
 
