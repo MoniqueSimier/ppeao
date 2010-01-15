@@ -70,7 +70,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 			<div id="BDDetail">
 				<?php  $subsection="auto"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
-				<?php  include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 			</div>
 			<div id="subContent">
 				<h1>Import / recalcul de données automatique dit &quot;Portage Automatique&quot;</h1>

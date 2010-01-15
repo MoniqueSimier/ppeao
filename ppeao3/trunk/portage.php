@@ -39,7 +39,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 		<div id="BDDetail">
 		<?php  $subsection="home"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
-		<?php  include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 		</div>
 		<div id="subContent">
 		<h1>Import / recalcul de donn&eacute;es : lancement en manuel ou en automatique</h1>

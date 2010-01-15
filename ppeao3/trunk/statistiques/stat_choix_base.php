@@ -36,7 +36,6 @@ $zone=3; // zone portage (voir table admin_zones)
 
 			<div id="BDDetail">
 			<?php $subsection="manuel_agglo"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
-			<?php include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 			</div>
 			<div id="subContent">
 				<div id="formStat">

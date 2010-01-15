@@ -38,7 +38,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 		<div id="BDDetail">
 		<?php  $subsection="manuel"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
-		<?php  include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 		</div>
 		<div id="subContent">
 		<h1>Recomposition des donn&eacute;es et calcul des statistiques</h1>

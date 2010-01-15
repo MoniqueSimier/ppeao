@@ -32,7 +32,6 @@ $zone=3; // zone portage (voir table admin_zones)
 		<div id="main_container" class="home">
 			<div id="BDDetail">
 			<?php  $subsection="manuel_recomp"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
-			<?php  include $_SERVER["DOCUMENT_ROOT"].'/version.inc'; ?>
 			</div>
 			<div id="subContent">
 			
