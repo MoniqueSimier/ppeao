@@ -119,8 +119,7 @@ Engins de pêche, liste des engins de pêche observ&eacute;s au cours de l'enquête
 						$EcrireLogComp = true;
 					}
 				} else {
-					echo "erreur, il manque le parametre log <br/>";
-					exit;
+					echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
 				}
 				// On récupère les valeurs des paramètres pour les fichiers log
 				$dirLog = GetParam("repLogExtr",$PathFicConf);

@@ -116,8 +116,7 @@ Dans toutes les fili&egrave;res vous avez la possibilit&eacute; de s&eacute;lect
 						$EcrireLogComp = true;
 					}
 				} else {
-					echo "erreur, il manque le parametre log <br/>";
-					exit;
+					echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
 				}
 				// On récupère les valeurs des paramètres pour les fichiers log
 				$dirLog = GetParam("repLogExtr",$PathFicConf);

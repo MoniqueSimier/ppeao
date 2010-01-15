@@ -497,7 +497,6 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		addURL = "";
 	}
 	if (validation == 'y') {
-		alert("avant erreur");
 		if 	(document.getElementById("ExpFic").checked) {
 			addExpFic = '&exf=y' ;
 		} else {

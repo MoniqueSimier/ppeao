@@ -109,8 +109,7 @@ Des s&eacute;lections d'esp&egrave;ces ou des regroupements d'esp&egrave;ces peu
 						$EcrireLogComp = true;
 					}
 				} else {
-					echo "erreur, il manque le parametre log <br/>";
-					exit;
+					echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
 				}
 				// On récupère les valeurs des paramètres pour les fichiers log
 				$dirLog = GetParam("repLogExtr",$PathFicConf);
