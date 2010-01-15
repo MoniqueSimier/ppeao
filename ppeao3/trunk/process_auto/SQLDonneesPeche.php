@@ -227,35 +227,35 @@ if (!$ArretTimeOut) {
 	// Mise à jour des sequences.
 	// Insertion du script d'olivier
 	// on sélectionne les sequences, leurs tables et leurs colonnes
-	// pour les tables de donnees (type_table_id=4)
-	$sql='	SELECT ads.sequence_name, ads.column_name, ads.table_db 
-			FROM admin_sequences ads, admin_dictionary_tables addt 
-			WHERE (ads.table_db=addt.table_db) AND (addt.type_table_id=4)';
-	$result=pg_query($connectPPEAO,$sql);
-	$seqArray=pg_fetch_all($result);
-	//debug 		echo('<pre>');print_r($seqArray);echo('</pre>');
 	
-	// on boucle sur chaque sequence `
-	foreach ($seqArray as $seq) {
-		// on recupere la plus grande valeur de la colonne correspondant a la sequence
-		$sqlMax='	SELECT max('.$seq["column_name"].') as maxval
-					FROM '.$seq["table_db"].'
-					';
-		$resultMax=pg_query($connectPPEAO,$sqlMax);
-		$maxArray=pg_fetch_row($resultMax);
-		$maxVal=$maxArray[0];
-		
-		// on met a jour la valeur maximale de la sequence concernee
-		$sqlUpdate='SELECT pg_catalog.setval(\''.$seq["sequence_name"].'\','.$maxVal.',true);';
-		if ($resultUpdate=pg_query($connectPPEAO,$sqlUpdate)) {$ok=true;} else {$success=false;}
-		
-		if ($success) {
-			$CRexecution = $CRexecution." mise-&agrave;-jour avec succ&egrave;s des s&eacute;quences des tables de donn&eacute;es <br/>";
-		} else {
-			$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp; erreur sur la mise-&agrave;-jour des s&eacute;quences des tables de donn&eacute;es <br/>";
-		
+	$sql='	SELECT ads.sequence_name, ads.column_name, ads.table_db
+				FROM admin_sequences ads, admin_dictionary_tables addt 
+				WHERE (ads.table_db=addt.table_db) AND (addt.type_table_id=2 OR addt.type_table_id=3 OR addt.type_table_id=4)';
+		$result=pg_query($connectPPEAO,$sql) or  die('erreur dans la requete : '.$sql. pg_last_error());;
+		$seqArray=pg_fetch_all($result);
+		// on boucle sur chaque sequence `
+		foreach ($seqArray as $seq) {
+			// on recupere la plus grande valeur de la colonne correspondant a la sequence
+			$sqlMax='	SELECT max('.$seq["column_name"].') as maxval
+						FROM '.$seq["table_db"].'
+						';
+			//debug 			echo($sqlMax);
+			$resultMax=pg_query($connectPPEAO,$sqlMax);
+			$maxArray=pg_fetch_row($resultMax);
+			$maxVal=$maxArray[0];
+			if ($maxVal<>"") {
+				$success = true;
+				// on met a jour la valeur maximale de la sequence concernee
+				$sqlUpdate='SELECT pg_catalog.setval(\''.$seq["sequence_name"].'\','.$maxVal.',true);';
+				if ($resultUpdate=pg_query($connectPPEAO,$sqlUpdate)) {$ok=true;} else {$success=false;}			
+				if ($success) {
+					$CRexecution = $CRexecution." mise-&agrave;-jour avec succ&egrave;s des s&eacute;quences des tables de donn&eacute;es <br/>";
+				} else {
+					$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp; erreur sur la mise-&agrave;-jour des s&eacute;quences des tables de donn&eacute;es <br/>";
+				}
+			}
 		}
-	}
+
 }
 if ($pasDeSQL) {
 	$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/> Pas de scripts SQL &agrave; ex&eacute;cuter. <br/>";

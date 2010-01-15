@@ -188,7 +188,7 @@ function AfficherSelection($file) {
 }
 //*********************************************************************
 // AfficherDonnees : ajoute un enreg dans la table temporaire
-function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$finalRow){
+function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$finalRow,$typeStatistiques,$effort){
 // Cette fonction permet d'ajouter les lignes du tableau temporaire regroupDeb dans la table temp_extraction
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -249,6 +249,17 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 	
 					}
 				}
+			}
+			if ($typeStatistiques == "generales") {
+				// Pour les statistiques generales, on effectue le calcul de l'effort total pour la strate correspondante
+				if (floatval($regroupDeb[$cptRg][4]) <> 0 ) {
+					$EffortTotal = floatval($regroupDeb[$cptRg][5]) / floatval($regroupDeb[$cptRg][4]) * $effort;
+					//echo $regroupDeb[$cptRg][6]." - ".floatval($regroupDeb[$cptRg][5])." - ".floatval($regroupDeb[$cptRg][4])." - ".$effort." - ".$EffortTotal."<br/>";
+					$ligneResultat .= "&#&".$EffortTotal;
+				} else {
+					$ligneResultat .= "&#&Erreur Calcul";
+				}
+				
 			}
 			$ColonneTE .= ",valeur_ligne";
 			$ligneResultat = str_replace("'","''",$ligneResultat);
@@ -1821,11 +1832,14 @@ function AfficherDonnees($file,$typeAction){
 			} else {
 				// Si on ajoute un identifiant unique en debut de ligne, on l'indique dans la liste des champs.
 				if (!($ConstIDunique =="")) {
-					$listeChamps ="ID.UNIQUE,".$listeChamps;
+					$listeChamps ="id.UNIQUE,".$listeChamps;
 				}
 				if ($typeAction == "biologie") {
 					// On ajoute le libelle pour le coefficient
 					$listeChamps .=",Nombre_individus_mesures,Coeff_extrapolation";
+				}
+				if ($typeStatistiques == "generales") {
+					$listeChamps .=",Effort_total";
 				}
 				// On remplace les noms des alias par le nom des tables...
 				$listeChamps = remplaceAlias($listeChamps);
@@ -2015,24 +2029,24 @@ function AfficherDonnees($file,$typeAction){
 						$SQLfinal = "select * from temp_extraction where key4 = '".$tableStat[$cptTS]."' order by key1 asc,key2 asc,key3 asc";
 						$SQLcountfinal = "select count(*) from temp_extraction ";
 						$ConstIDunique = "AST-##-1";
-						$listeChamps ="ID.UNIQUE,".$listeChamps;
+						$listeChamps ="id.UNIQUE,".$listeChamps;
 						creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false);
 					} else {
 						$listeTableStatSp = "asp,ats,attgt,atgts";
 						if ( strpos($listeTableStatSp,$tableStat[$cptTS]) === false) {
 							$ConstIDuniqueStat = "ConstIDunique".$tableStat[$cptTS];
-							$listeChamps ="ID.UNIQUE,".$listeChamps;
+							$listeChamps ="id.UNIQUE,".$listeChamps;
 							creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,true);
 						} else {
 							if (!($_SESSION['listeRegroup'] == "")) {
 								$SQLfinal = "select * from temp_extraction where key4 = '".$tableStat[$cptTS]."' order by key1 asc,key2 asc,key3 asc";
 								$SQLcountfinal = "select count(*) from temp_extraction ";
 								$ConstIDunique = "AST-##-1";
-								$listeChamps ="ID.UNIQUE,".$listeChamps;
+								$listeChamps ="id.UNIQUE,".$listeChamps;
 								creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false);
 							} else {
 								$ConstIDuniqueStat = "ConstIDunique".$tableStat[$cptTS];
-								$listeChamps ="ID.UNIQUE,".$listeChamps;
+								$listeChamps ="id.UNIQUE,".$listeChamps;
 								creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,false);
 							}
 						}
@@ -2173,7 +2187,6 @@ function AfficherDonnees($file,$typeAction){
 
 }
 
-
 //*********************************************************************
 // recupereLibelleFiliere : Fonction pour recuperer le libelle de la filiere
 function recupereLibelleFiliere($typeAction){
@@ -2204,6 +2217,7 @@ return $libelleAction;
 // creeRegroupement : Fonction de creation d'un regroupement a partir d'un SQL
 function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$typeSelection,$tableStat,$Compteur,$posSysteme,$posSecteur,$posGTE,$creationRegBidon,$typeStatistiques) {
 // Cette fonction permet de gerer la creation des regrouepements
+// Elle est aussi tres importante car elle permet de gerer le calcul des statistiques générales.
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
 // $SQLaExecuter:
@@ -2225,7 +2239,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 // En sortie : 
 // La fonction cree une ligne dans la table temporaire 
 //*********************************************************************
-	$debugLog = false;
+	$debugLog = true;
 	global $connectPPEAO;
 	global $EcrireLogComp;
 	global $logComp;
@@ -2288,6 +2302,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 			$ColonneTE = "";
 			$ValuesTE = "";
 			$NumRegEnCours = 0;
+			$effortSysSect = 0;
 			while ($finalRow = pg_fetch_row($SQLfinalResult) ) {
 				// ********************************
 				// **** GESTION DES STATS GENERALES
@@ -2300,8 +2315,63 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 					$SystemeEncours = $finalRow[2];	// systeme
 					$sectEnCours = $finalRow[$posSecteur]; // Secteur
 					$espEnCours = $finalRow[$posESPID];		// Especes
+					// **** Analyse des valeurs disponibles dans la tables des efforts
+					// Requete dans la table des efforts pour savoir si l'effort est disponible par secteur ou par systeme.
+					$pasEffortSecteur = false;
+					$SQLaExecuter = "select * from art_stat_effort where ref_systeme_id = ".$finalRow[2]." and ref_secteur_id = ".$finalRow[$posSecteur]." and annee = ".$anneeEnCours." and ref_mois_id = ".$moisEnCours;
+					//echo $SQLaExecuter."<br/>";
+					$SQLResult = pg_query($connectPPEAO,$SQLaExecuter);
+					$erreurSQL = pg_last_error($connectPPEAO);
+					if ( !$SQLResult ) { 
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp, "ERREUR : Erreur query final regroupements ".$SQLaExecuter." (erreur complete = ".$erreurSQL.")",$pasdefichier);
+						}
+						$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query systeme dans calcul stat generales ".$SQLaExecuter." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+						$erreurProcess = true;
+					} else {
+						if (pg_num_rows($SQLResult) == 0) {
+							// Avertissement
+							if ($EcrireLogComp ) {
+								WriteCompLog ($logComp, "INFO : pas d'effort pour le systeme id = ". $finalRow[2]." et le secteur id = ".$finalRow[$posSecteur]." et annee = ".$anneeEnCours." et mois = ".$moisEnCours.", on recherche l'effort sur le systeme",$pasdefichier);
+							}
+							$pasEffortSecteur = true;
+						} else {
+							$ResultRow = pg_fetch_row($SQLResult);
+							$effortSysSect = $ResultRow[8];
+							$sectSystEncours = $sectEnCours; // On va faire le calcul par secteur
+							pg_free_result($SQLResult);
+						}
+					}
 					
-					$sectSystEncours = $sectEnCours; // pour test
+					// La recherche sur le secteur a echoue, on cherche la valeur par systeme
+					if ($pasEffortSecteur) {
+						// On recherche l'effort pour le systeme en cours
+						$SQLaExecuter = "select * from art_stat_effort as aeff where ref_systeme_id = ".$finalRow[2]." and annee = ".$anneeEnCours." and ref_mois_id = ".$moisEnCours;
+						$SQLResult = pg_query($connectPPEAO,$SQLaExecuter);
+						$erreurSQL = pg_last_error($connectPPEAO);
+						if ( !$SQLResult ) { 
+							if ($EcrireLogComp ) {
+								WriteCompLog ($logComp, "ERREUR : Erreur query final regroupements ".$SQLaExecuter." (erreur complete = ".$erreurSQL.")",$pasdefichier);
+							}
+							$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;erreur query systeme dans calcul stat generales ".$SQLaExecuter." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+							$erreurProcess = true;
+						} else {
+							if (pg_num_rows($SQLResult) == 0) {
+								// Avertissement
+								if ($EcrireLogComp ) {
+									WriteCompLog ($logComp, "ERREUR : pas d'effort pour le systeme ".$finalRow[2]." ni pour le secteur ".$finalRow[$posSecteur]." pour annee = ".$anneeEnCours." et mois = ".$moisEnCours.", arret du traitement.",$pasdefichier);
+									$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>pas d'effort ni le systeme ".$finalRow[2]." ni pour le secteur ".$finalRow[$posSecteur]." pour annee = ".$anneeEnCours." et mois = ".$moisEnCours.". Arret du calcul<br/>";
+								}
+								$erreurProcess = true;
+							} else {
+								$ResultRow = pg_fetch_row($SQLResult);
+								$effortSysSect = $ResultRow[8];
+								$sectSystEncours = $SystemeEncours; // On va faire le calcul par systeme
+								pg_free_result($SQLResult);
+							}
+						}
+					}
+					
 					// La rupture est pour tout nouveau triplé Secteur ou systeme / Annee / mois
 					// Une entree est ajoutée à chaque rupture
 					//echo $sectSystEncours." - ".$anneeEnCours." - ".$moisEnCours."<br/>";
@@ -2312,7 +2382,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 						($sectSystEncours == $sectSystPrec && $anneeEnCours==$anneePrec && $moisEnCours<>$moisPrec) ) {
 						if (!($debIDPrec == "")) {
 							// Ajout du contenu de ce tableau dans la table temporaire.
-							if (!(AjoutEnreg($regroupDeb,$sectSystPrec."-".$anneePrec."-".$moisPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$DerniereLigne))) {
+							if (!(AjoutEnreg($regroupDeb,$sectSystPrec."-".$anneePrec."-".$moisPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$DerniereLigne,$typeStatistiques,$EffortPrec))) {
 								$erreurProcess = true;
 								echo "erreur fonction AjoutEnrg<br/>";
 							}
@@ -2427,6 +2497,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 					$anneePrec= $anneeEnCours;
 					$moisPrec= $moisEnCours;
 					$debIDPrec = $sectSystPrec."-".$anneePrec."-".$moisPrec; // Pour la mise a jour de la derniere ligne
+					$EffortPrec = $effortSysSect;
 					
 				} else {
 				// ********************************
@@ -2442,7 +2513,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 					if ($debEnCours<>$debIDPrec ) {
 						if (!($debIDPrec == "")) {
 							// Ajout du contenu de ce tableau dans la table temporaire.
-							if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$DerniereLigne))) {
+							if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$DerniereLigne,$typeStatistiques,0))) {
 								$erreurProcess = true;
 								echo "erreur fonction AjoutEnrg<br/>";
 							}
@@ -2545,11 +2616,12 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 					$debIDPrec = $debEnCours;
 					$RegPrec = $RegEnCours;
 					$DerniereLigne = $finalRow;
+					$EffortPrec = 0;
 				}
 			} // fin du while
 			// Attention, quand on sort, on doit mettre à jour le dernier tableau dans la BD.
 			// On cree autant de lignes dans la table temp que de lignes dans le tableau temporaire pour ce debarquement
-			if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$DerniereLigne))) {
+			if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$DerniereLigne,$typeStatistiques,$EffortPrec))) {
 				$erreurProcess = true;
 			}
 		} // fin du if (pg_num_rows($SQLfinalResult) == 0)
@@ -4276,7 +4348,7 @@ function remplaceAlias($listeDesChamps) {
 	$listeTitre = explode(",",$listeDesChamps);
 	$nbrTitre = count($listeTitre)-1;
 	for ($cptT=0 ; $cptT<=$nbrTitre;$cptT++) {
-		if ( $listeTitre[$cptT]=="id.UNIQUE" || $listeTitre[$cptT]=="Coeff_extrapolation" || $listeTitre[$cptT]=="Nombre_individus_mesures") {
+		if ( $listeTitre[$cptT]=="id.UNIQUE" || $listeTitre[$cptT]=="Coeff_extrapolation" || $listeTitre[$cptT]=="Nombre_individus_mesures" || $listeTitre[$cptT]=="Effort_total") {
 			if ($listeDesTitres == "") {
 				$listeDesTitres = $listeTitre[$cptT];
 			} else {

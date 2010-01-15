@@ -37,10 +37,11 @@ switch ($action) {
 			$resultMax=pg_query($connectPPEAO,$sqlMax);
 			$maxArray=pg_fetch_row($resultMax);
 			$maxVal=$maxArray[0];
-			
+			if ($maxVal<>"") {
 			// on met a jour la valeur maximale de la sequence concernee
 			$sqlUpdate='SELECT pg_catalog.setval(\''.$seq["sequence_name"].'\','.$maxVal.',true);';
-			if ($resultUpdate=pg_query($connectPPEAO,$sqlUpdate)) {$ok=true;} else {$success=false;}			
+			if ($resultUpdate=pg_query($connectPPEAO,$sqlUpdate)) {$ok=true;} else {$success=false;}
+			}
 			
 		}
 		
@@ -66,10 +67,11 @@ switch ($action) {
 			$resultMax=pg_query($connectPPEAO,$sqlMax);
 			$maxArray=pg_fetch_row($resultMax);
 			$maxVal=$maxArray[0];
-			
+			if ($maxVal<>"") {
 			// on met a jour la valeur maximale de la sequence concernee
 			$sqlUpdate='SELECT pg_catalog.setval(\''.$seq["sequence_name"].'\','.$maxVal.',true);';
 			if ($resultUpdate=pg_query($connectPPEAO,$sqlUpdate)) {$ok=true;} else {$success=false;}
+			}
 		}
 
 	break;
