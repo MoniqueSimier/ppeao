@@ -199,3 +199,31 @@ function toggleNextStepLink(inputId1,inputId2,linkId) {
 	if ($(inputId1).selectedIndex!=-1 || $(inputId2).selectedIndex!=-1) {$(linkId).setStyle('display','block');} 
 		else {$(linkId).setStyle('display','none');}
 }
+
+
+/**
+* Fonction générique qui permet de sélectionner ou désélectionner toutes les valeurs d'un SELECT
+*/
+function toggleSelectSelection(select,what,next_step_link) {
+	// select : l'id du SELECT à utiliser
+	// what : que sélectionner ('all' ou 'none')
+	// next_step_link : l'id du lien permettant de passer a l'etape suivante (a afficher ou masquer)
+	
+	// on pointe le SELECT à utiliser
+	var theSelect=$(select);
+	// on récupère les OPTIONS de ce SELECT
+	var theOptions=theSelect.getElements('option');
+	
+	//debug 	alert(theOptions.length);
+	
+	// on boucle sur les options
+	for (i=0;i<theOptions.length;i++) {
+		// si on veut tout sélectionner
+		if (what=='all') {theOptions[i].setProperty('selected','selected');
+		$(next_step_link).setStyle('display','block');}
+		// si on veut tout désélectionner
+		if (what=='none') {theOptions[i].removeProperty('selected');
+		$(next_step_link).setStyle('display','none');}
+	} // end for
+	
+}

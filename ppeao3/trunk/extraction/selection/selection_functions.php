@@ -1641,7 +1641,7 @@ function afficheSecteurs($donnees) {
 			echo('</select>');
 			
 			// le bouton permettant de tout/rien selectionner
-			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'secteurs\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'secteurs\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'secteurs\',\'all\',\'step_7_link\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'secteurs\',\'none\',\'step_7_link\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			
 			// on affiche le lien permettant de passer a la selection temporelle
 			// on prepare l'url pour construire le lien : on enleve les secteurs eventuellement selectionnes
@@ -1725,7 +1725,7 @@ global $connectPPEAO;
 			} // end foreach
 			echo('</select>');
 			// le bouton permettant de tout/rien selectionner
-			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'campagnes\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'campagnes\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'campagnes\',\'all\',\'step_8_link\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'campagnes\',\'none\',\'step_8_link\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			// on affiche le lien permettant de passer a la selection des engins de peche
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
@@ -1807,7 +1807,7 @@ global $connectPPEAO;
 			} // end foreach
 			echo('</select>');
 			// le bouton permettant de tout/rien selectionner
-			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'engins\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'engins\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'engins\',\'all\',\'step_9_link\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'engins\',\'none\',\'step_9_link\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			// on affiche le lien permettant de passer au choix des filieres
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
@@ -1898,7 +1898,7 @@ global $connectPPEAO;
 			} // end foreach
 			echo('</select>');
 			// le bouton permettant de tout/rien selectionner
-			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'agglo\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'agglo\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'agglo\',\'all\',\'step_8_link\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'agglo\',\'none\',\'step_8_link\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			// on affiche le lien permettant de passer au choix des filieres
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
@@ -1989,7 +1989,7 @@ global $connectPPEAO;
 			} // end foreach
 			echo('</select>');
 			// le bouton permettant de tout/rien selectionner
-			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'enquetes\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'enquetes\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'enquetes\',\'all\',\'step_9_link\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'enquetes\',\'none\',\'step_9_link\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			// on affiche le lien permettant de passer a la selection des grands types d'engins de peche
 			// on prepare l'url pour construire le lien : on enleve les enquetes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
@@ -2100,7 +2100,7 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 			echo('</select>');
 			
 			// le bouton permettant de tout/rien selectionner
-			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'gteng\',\'all\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'gteng\',\'none\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
+			echo('<p style="clear:left;display:block;padding:4px 0px"><a href="#" onclick="toggleSelectSelection(\'gteng\',\'all\',\'step_8-10_link\');return false;" class="link_button small">tout s&eacute;lectionner</a>&nbsp;<a href="#" onclick="toggleSelectSelection(\'gteng\',\'none\',\'step_8-10_link\');return false;" class="link_button small">tout d&eacute;s&eacute;lectionner</a></p>');
 			
 			// on affiche le lien permettant de passer au choix des filieres
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
@@ -2730,7 +2730,7 @@ if ($documents) {
 			case 'carte':
 				$meta_maps[]=$file;
 			break;
-			case 'document':
+			case 'doc':
 				$meta_docs[]=$file;
 			break;
 			case 'figure':
