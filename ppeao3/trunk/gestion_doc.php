@@ -62,7 +62,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 </script>
 
 <p>cette page vous permet de g&eacute;rer les documents (textes, figures et cartes) associ&eacute;s &agrave; des unit&eacute;s g&eacute;ographiques</p>
-<h2>associer des documents à</h2>
+<p>ces documents pourront &ecirc;tre t&eacute;l&eacute;charg&eacute;s par les utilisateurs du module de consultation/extraction des donn&eacute;es</p>
+<h2>associer des documents à :</h2>
 <ul>
 	<li><a href="/edition/edition_table.php?selector=no&editTable=meta_pays">des pays</a></li>
 	<li><a href="/edition/edition_table.php?selector=no&editTable=meta_systemes">des syst&egrave;mes</a></li>
