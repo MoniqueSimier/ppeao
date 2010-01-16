@@ -539,6 +539,8 @@ switch ($peches) {
 	// si on a des campagnes ou des enquetes qui ne sont pas consultables par l'utilisateur, on change le texte du compteur
 	$sur_campagnes='';
 	$sur_enquetes='';
+	// on ne fait ça que si l'utilisateur est connecte
+	if ($_SESSION["s_ppeao_login_status"]=='good') {
 	if (isset($campagnes["total_avant"]) && $campagnes["total_avant"]!=$campagnes["total"]) {
 		$text='votre compte utilisateur vous permet de consulter :';
 		$sur_campagnes=' sur '.$campagnes["total_avant"].' disponibles ';
@@ -550,7 +552,7 @@ switch ($peches) {
 		$filtrees["enquetes"]=TRUE;
 
 	}
-	
+	}
 	$total_campagnes=$campagnes["total"];
 	if ($total_campagnes>0) {$texte_coups=' &ndash; '.$campagnes["coups"]["coups_total"].' coup(s) de p&ecirc;che'; } 
 	else {$texte_coups='';}
