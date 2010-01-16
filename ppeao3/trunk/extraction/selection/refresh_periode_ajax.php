@@ -18,9 +18,6 @@ $fin=array("annee"=>$_GET["fin_annee"],"mois"=>$_GET["fin_mois"]);
 
 
 
-//debug echo('<pre>');print_r($debut);echo('</pre>');
-//debug echo('<pre>');print_r($fin);echo('</pre>');
-
 // on construit le <select> correspondant 
 // si on a change d_a, on contruit d_m et on efface f_a et f_m
 // si on a change d_m on construit f_a et on efface f_m

@@ -16,7 +16,6 @@ function buildTableSelect($hierarchyLabel,$selected)
 
 	// on récupère la hiérarchie à afficher
 	$theHierarchy=$tableSelectors[$hierarchyLabel];
-	//debug	print_r($theHierarchy);
 
 //on commence le formulaire
 	echo('<form id="form_'.$hierarchyLabel.'" name="form_'.$hierarchyLabel.'" action="/edition/edition_selector.php" method="get">');
@@ -53,7 +52,6 @@ function buildTableList($typeTableNom)
 	$list='';
 	foreach ($tablesDefinitions as $handle=>$table) {
 		if ($table["type_table_nom"]==$typeTableNom && $table["editable"]=='t') {
-		//debug
 		if ($table["domaine_nom"]!=$previousDomain) {
 			if ($previousDomain!='') {$domain.='</ul>';}
 			$domain.='<h2>'.$table["domaine_description"].'</h2>';
@@ -113,22 +111,18 @@ echo('<h1 class="selector">g&eacute;rer les '.$thisTable["type_table_description
 echo('<div id="selector_content">');
 	// on regarde si la table choisie nécessite une cascade
 	echo('<form id="selector_form">');
-	//debug	print_r($selectorCascades);
 	
 	if ($thisTable["selector"]) 	{
 		// si oui, on récupere la liste des tables de la cascade passées dans l'URL
-			//debug		echo($targetTable." : cascade : ".$selectorCascades[$targetTable].'<br />');
 			// on crée le tableau avec la liste des tables de la cascade
 			$theTables=split(",",$thisTable["selector_cascade"]);
 		
 			}
 		else {
 			// sinon, on utilise directement la table
-			//debug echo($targetTable." : pas de cascade");
 			// on crée le tableau avec seulement la table
 			$theTables=array($editTable);
 			;}
-		//debug		print_r($theTables);
 	// end if (array_key_exists)
 	// on boucle dans le tableau $theTables pour insérer le(s) SELECT
 	// on initialise le niveau du premier SELECT (utilisé pour construire les ID des DIV)
@@ -136,7 +130,6 @@ echo('<div id="selector_content">');
 	foreach ($theTables as $oneTable) {
 		$selectedValues=array();
 		$selectedValues=$_GET[$oneTable];
-		//debug 		echo('<pre>');print_r($selectedValues);echo('</pre>');
 		
 		$selectedParentValues=array();
 		if (isset($_GET[$parentTable])) {$selectedParentValues=$_GET[$parentTable];}
@@ -152,7 +145,6 @@ echo('<div id="selector_content">');
 			
 			$whereClause=' AND '.$tablesDefinitions[$parentTable]["table"].'_id IN ('.$theList.') ';
 			
-			//debug			echo($whereClause);
 			
 			} else {$whereClause=NULL;}
 		// le DIV contenant le SELECT
@@ -187,7 +179,6 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 	global $tablesDefinitions;
 	global $connectPPEAO; // la connexion a utiliser (on travaille avec deux bases : BD_PECHE et BD_PPEAO)
 	
-	//debug	print_r($selectedValues);
 	// le nom de la table
 	$theSelect='<p>'.htmlentities($tablesDefinitions[$theTable]["label"]).'</p>';
 	// le SELECT avec les valeurs de la table
@@ -211,8 +202,6 @@ function createTableSelect($theTable,$selectedValues,$level,$whereClause) {
 
 			$valuesResult=pg_query($connectPPEAO,$valuesSql) or die('erreur dans la requete : '.$valuesSql. pg_last_error());
 			$valuesTable=pg_fetch_all($valuesResult);
-
-			//debug			print_r($valuesTable);
 
 			if (!my_empty($valuesTable)) {
 			$theSelect.='<div id="select_'.$level.'" name="select_'.$level.'">';
@@ -713,7 +702,6 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 						// si on n'a pas de valeur de la clé ($value), on ne met rien
 					if (my_empty($value)) {$thisValue='' ;} else {
 						$sql="SELECT $thisTable.$thisPrimaryKey, $thisTable.$thisPrimaryValue FROM $thisTable, $childTable WHERE $childTable.$childForeignKey=$thisTable.$thisPrimaryKey AND $childTable.$childPrimaryKey=$childValue";
-						//debug		echo($sql);
 						$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 						$resultArray=pg_fetch_all($result);
 						pg_free_result($result);									
@@ -740,9 +728,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 					
 					// on a maintenant un tableau $theCascadeValues contenant les différents niveaux de la cascade et leurs valeurs
 					// on le renverse pour commencer par le haut de la cascade :
-					$theCascadeValues=array_reverse($theCascadeValues);
-					//debug 					echo('<pre>');print_r($theCascadeValues);echo('</pre>');
-					
+					$theCascadeValues=array_reverse($theCascadeValues);					
 					
 					// le span contenant la cascade
 					$theField='<span id="'.$theId.'_foreign_key_cascade">';	
@@ -751,8 +737,6 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 					$i=0;
 					foreach ($theCascadeValues as $cv) {
 						
-					//debug 						echo('<pre>');print_r($cv);echo('</pre>');
-
 						if ($i==0) {
 							// si on est a la premiere ligne du tableau, pas besoin de filtrer
 							// on recupere les valeurs de la cle pour construire le SELECT
@@ -805,9 +789,7 @@ if (isset($theDetails["constraints"]) && !my_empty($theDetails["constraints"])) 
 									FROM '.$cv["thisTable"].'
 									WHERE '.$theCascadeValues[$i-1]["childForeignKey"].'=\''.$theCascadeValues[$i-1]["thisKeyValue"].'\'
 									ORDER BY '.$cv["thisLabelName"].'';
-							
-							//debug									echo($sql.'<br>');
-							
+														
 							$result=pg_query($connectPPEAO,$sql) or die();
 							$resultArray=pg_fetch_all($result);
 							pg_free_result($result);									
@@ -1112,7 +1094,6 @@ else {
 		// on ne traite que le cas où la valeur n'est pas vide
 		if (!is_null($value) && $value!='') {
 	// on teste la compatibilité entre les types de données
-	//debug 	echo('<pre>');print_r($cDetail);echo('</pre>');
 	
 	switch ($cDetail["data_type"]) {
 
@@ -1194,7 +1175,6 @@ global $connectPPEAO;
 				$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 				$array_droits=pg_fetch_all($result);
 				pg_free_result($result);
-				//debug 						echo('<pre>');print_r($array_droits);echo('</pre>');
 				
 				// si on a passe des systemes supplementaires, on les ajoute dans le tableau des droits
 				if (!empty($systemes_supp)) {
@@ -1212,8 +1192,6 @@ global $connectPPEAO;
 				$array_droits=array_unique($array_droits);
 				array_csort($array_droits, "lower_pays", 'SORT_ASC');
 				}
-				//debug 	echo('<pre>');print_r($array_droits);echo('</pre>');
-//debug echo('<pre>');print_r($_POST);echo('</pre>');
 
 		if (!empty($array_droits)) {
 			echo('<table id="droits_table" cellspacing="0" cellpadding="0" border="0">');
@@ -1227,7 +1205,6 @@ global $connectPPEAO;
 				$array_types=pg_fetch_all($result);
 				pg_free_result($result);
 				$types=array();
-				//debug				echo($sql);
 				if (!empty($array_types)) {
 				foreach($array_types as $type) {
 					$types[]=$type["type_donnees"];

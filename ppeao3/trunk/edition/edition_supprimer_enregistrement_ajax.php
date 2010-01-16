@@ -13,10 +13,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 global $tablesDefinitions;
 
-
-
-//debug sleep(10);
-
 // la table concernée
 $table=$_GET["table"];
 // l'enregistrement concerné

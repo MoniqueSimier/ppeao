@@ -121,7 +121,6 @@ switch ($theNewSelect) {
 $theNextLevel=$thisLevel+1;
 
 $theTable=$tablesDefinitions[$theNewSelect];
-//debug echo('<pre>');print_r($sql);echo('</pre>');
 
 
 

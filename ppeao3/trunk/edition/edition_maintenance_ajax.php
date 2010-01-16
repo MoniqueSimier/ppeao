@@ -5,9 +5,6 @@
 // parametres de connexion a la base de donnees
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 
-
-//debug sleep (10);
-
 // on recupere l'action de maintenance a realiser
 $action=$_GET["action"];
 // on suppose que l'action a ete realisee avec succes
@@ -25,7 +22,6 @@ switch ($action) {
 				WHERE (ads.table_db=addt.table_db) AND (addt.type_table_id=2 OR addt.type_table_id=3)';
 		$result=pg_query($connectPPEAO,$sql) or  die('erreur dans la requete : '.$sql. pg_last_error());;
 		$seqArray=pg_fetch_all($result);
-		//debug 			echo('<pre>');print_r($seqArray);echo('</pre>');
 		
 		// on boucle sur chaque sequence `
 		foreach ($seqArray as $seq) {
@@ -33,7 +29,6 @@ switch ($action) {
 			$sqlMax='	SELECT max('.$seq["column_name"].') as maxval
 						FROM '.$seq["table_db"].'
 						';
-			//debug 			echo($sqlMax);
 			$resultMax=pg_query($connectPPEAO,$sqlMax);
 			$maxArray=pg_fetch_row($resultMax);
 			$maxVal=$maxArray[0];
@@ -56,7 +51,6 @@ switch ($action) {
 				WHERE (ads.table_db=addt.table_db) AND (addt.type_table_id=4)';
 		$result=pg_query($connectPPEAO,$sql);
 		$seqArray=pg_fetch_all($result);
-		//debug 		echo('<pre>');print_r($seqArray);echo('</pre>');
 		
 		// on boucle sur chaque sequence `
 		foreach ($seqArray as $seq) {

@@ -60,12 +60,10 @@ function removedependentSelects(level) {
 	
 	// uses the "getElements" method from mootools.js
 	var theSelects = $('selector_content').getElements('div[id^=select_]');
-	//debug 	alert(theSelects);
 	var ln=theSelects.length;
 	for (var i=0; i<ln; i++) {
 		//cuts the id value after "level_" to get the level number
 		theLevel=theSelects[i].id.substring(7);
-		//debug 		alert('theLevel'+theLevel);
 		// removes the div from the dom if it level is higher than the level of the div that was onchanged
 		// uses the "remove" method from mootools.js
 		if (theLevel>level) {$(theSelects[i].innerHTML='');
@@ -83,7 +81,6 @@ function showNewLevel(newLevel,theParentTable) {
 	// newLevel: the level of the new div to create (used in <div id="level_n">)
 	// theParentTable: la table à partir de laquelle on crée le nouveau select
 	level=parseInt(newLevel)-1; // les niveaux sont 1,2,3 etc alors que les tableaux sont indexés à partir de 0
-	//debug		alert(level);
 	var theLevel='level_'+level;
 	var theValues=$(theLevel);
 	var select=$(theParentTable);
@@ -94,9 +91,7 @@ function showNewLevel(newLevel,theParentTable) {
 	// debug	alert('longueur='+selecteurLength+'next level='+newLevel);
 	if (newLevel<=selecteurLength) {
 	// si une valeur est sélectionnée
-	//debug	alert(select.selectedIndex);
 	if ((select.selectedIndex!=-1)) {
-		//debug			alert('valeur sélectionnée');
 		var xhr = getXhr();
 		// what to do when the response is received
 		xhr.onreadystatechange = function(){
@@ -130,13 +125,11 @@ function showNewLevel(newLevel,theParentTable) {
 	
 	// else if no value is selected, we remove the next criteria select and update the edit link
 	else {
-		//debug		alert("plus de valeurs");
 		removedependentSelects(parseInt(newLevel)-1);
 		updateEditLink(level)
 		;}
 	} // end if 
 	else {
-		//debug		alert('on ne fait rien');
 	// si on est à la fin du sélecteur, on se contente de mettre à jour le lien edit_link
 	updateEditLink(level);
 	}
@@ -156,7 +149,6 @@ function updateEditLink(level) {
 	// on récupère les valeurs des tables déjà sélectionnées
 	var theSelection='';
 	for (var i = 1; i <= level; i++) {theSelection+='&'+$('select_'+i).toQueryString();}
-	//debug 	alert(theSelection);
 	// on récupère le nom de la table
 	var editTable=theSelect.name.replace("[]","");
 	// on récupère les valeurs sélectionnées dans theSelect et on en faire une chaine pour URL
@@ -213,7 +205,6 @@ function filterTable(theUrl) {
 	
 	// l'URL de redirection
 	var newUrl=theUrl;
-	//debug 	alert(newUrl);
 	
 	// on sélectionne tous les champs du filtre 
 	var theParams=$('la_table').getElements('.filter_field');
@@ -224,7 +215,6 @@ function filterTable(theUrl) {
 	for (var i=0; i<ln; i++) {
 		// si on a affaire à un input
 		theElement=theParams[i];
-		//debug alert(theElement.nodeName);
 		if (theParams[i].nodeName=='INPUT') {
 			if (theParams[i].value!='') {newUrl+='&'+theParams[i].name+'='+theParams[i].value;}
 		}
@@ -234,7 +224,6 @@ function filterTable(theUrl) {
 		}
 	}
 	
-	//debug 		alert(newUrl);
 	document.location=newUrl;
 	
 }
@@ -265,8 +254,7 @@ function makeEditable(table,column,record,action) {
 // record : l'identifiant unique de l'enregistrement concerné
 // action : l'action à faire (edit/save/cancel)
 	
-	//debug	alert(record);
-	
+
 // la cellule concernée
 var theCell=$("edit_cell_"+column+"_"+record);
 	
@@ -322,13 +310,11 @@ function saveChange(table,column,record) {
 // la cellule concernée
 var theCell=$("edit_cell_"+column+"_"+record);
 // le div contenant les boutons d'enregistrement/annulation
-//debug alert("edit_buttons_"+column+"_"+record)
 var theEditButtons=$("edit_buttons_"+column+"_"+record);
 var theEditButtonsContent=theEditButtons.innerHTML;
 // le champ concerné
 var theField=$("e_"+column+"_"+record);
 var newValue=theField.value;
-//debug alert (newValue);
 
 
 // on initialise l'objet AJAX	
@@ -343,14 +329,12 @@ xhr.onreadystatechange = function(){
 		var theResponseNode = xhr.responseXML.documentElement;
 		var isValid=theResponseNode.attributes.getNamedItem("valid").value;
 		
-		//debug		alert(isValid);
 		
 		// si la valeur soumise est non valide, on affiche un message d'erreur
 		if (isValid=='invalid') {
 			// note : le firstChild est là car le contenu de l'élément <responseContent> est un TEXTNODE
 			var theMessage=theResponseNode.getElementsByTagName('responseContent')[0].firstChild.nodeValue.replace(/^\[CDATA\[/,'')
 			.replace(/\]\]$/,'');
-			//debug			alert(theMessage);
 			// si le message d'erreur existe déjà, on le remplace
 			if ($('e_'+column+'_'+record+'_error')) {$('e_'+column+'_'+record+'_error').innerHTML=theMessage} else {
 			// sinon crée l'élément pour afficher le message d'erreur
@@ -376,7 +360,6 @@ xhr.onreadystatechange = function(){
 	}  
 } // end xhr.onreadystatechange
 
-//debug alert("/edition/edition_enregistrer_modification_ajax.php?&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&newValue="+newValue+"&oldValue="+oldValue);
 
 // using GET to send the request
 xhr.open("GET","/edition/edition_enregistrer_modification_ajax.php?&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&newValue="+escape(newValue),true);
@@ -469,7 +452,6 @@ function modalDialogAddRecord(theLevel,theTable) {
 			var theResponseText = xhr.responseText;
 			
 			// on affiche les champs de saisie pour le nouvel enregistrement
-			//debug						alert(theResponseText);
 			
 			theOverlayContent.innerHTML=theResponseText;
 			
@@ -519,7 +501,6 @@ function modalDialogClose(theDialogOverlay,refresh) {
 function sendRecordToSave(theFormId,theFormFieldClass,theLevel,theTable) {
  var theUrl=formToUrl(theFormId,theFormFieldClass);
 
-//debug alert(theUrl);
 
 var theSaveButton=$('overlay_'+theLevel+'_save');
 var theLoader=$("overlay_"+theLevel+"_loader");
@@ -540,7 +521,6 @@ xhr.onreadystatechange = function(){
 		var theNodes=theResponseNode.childNodes;
 		// la validité des valeurs saisies
 		var isValid=theResponseNode.attributes.getNamedItem("validity").value;
-		//debug alert(theResponseNode.attributes.getNamedItem("validity").value);
 		// si la saisie n'est pas valide, on réactive le bouton enregistrer
 		if (isValid=='invalid') {
 			theSaveButton.setStyle("visibility","visible");
@@ -556,7 +536,6 @@ xhr.onreadystatechange = function(){
 				
 				// si la valeur n'est pas valide et que on a un message d'erreur
 				if (theValidity==0 && theMessage!='') {
-					//debug alert(theMessage);
 					if (theError==$('add_record_'+theLevel+'_'+theKey+'_error')) {
 						theError.innerHTML=theMessage;
 						} 
@@ -591,7 +570,6 @@ xhr.onreadystatechange = function(){
 						var theValue=$('add_record_'+theLevel+'_'+theKey).value;
 					}
 					var theValidity=theNode.attributes.getNamedItem("valid").value;
-					//debug					alert(theKey+':'+theValue);
 					// on enlève le message d'erreur si il existe
 					if ($('add_record_'+theLevel+'_'+theKey+'_error')) {$('add_record_'+theLevel+'_'+theKey+'_error').remove();}
 					// on crée un nouvel élément contenant seulement la valeur à afficher
@@ -602,7 +580,6 @@ xhr.onreadystatechange = function(){
 					);
 					theNewElement.innerHTML=theValue;
 					// on sélectionne l'élément de formulaire qu'il doit remplacer
-					//debug alert('a_'+theKey);
 					var theOldElement=$('add_record_'+theLevel+'_'+theKey);
 					// on remplace l'ancien élément par le nouveau
 					theOldElement.replaceWith(theNewElement);
@@ -868,7 +845,6 @@ function updateSystemes() {
 	var systemesSelect=$("systemes");
 	// si une valeur est sélectionnée
 	if ((paysSelect.selectedIndex!=-1)) {
-			//debug			alert('valeur sélectionnée');
 		var xhr = getXhr();
 		// what to do when the response is received
 		xhr.onreadystatechange = function(){
@@ -893,7 +869,6 @@ function updateSystemes() {
 	
 	// else if no value is selected, we remove the next criteria select and update the edit link
 	else {
-		//debug		alert("plus de valeurs");
 		systemesSelect.innerHTML='';
 		
 		;}
@@ -916,7 +891,6 @@ function refreshAddSystemLink(type) {
 	
 	// else if no value is selected, we remove the next criteria select and update the edit link
 	else {
-		//debug		alert("plus de valeurs");
 		thePtag.innerHTML='';
 		
 		;}
@@ -926,7 +900,6 @@ function refreshAddSystemLink(type) {
 // fonction qui permet d'enregistrer les changements de droits d'acces d'un acteur
 function enregistrerDroits() {
 	$("enregistrer").setProperty('value','oui');
-	//debug alert($("droits_acces").innerHTML);
 	$("droits_acces").submit();
 	
 }

@@ -274,7 +274,6 @@ $tableSql.='	LIMIT '.$rowsPerPage.' OFFSET '.$startRow;
 
 $tableResult=pg_query($connectPPEAO,$tableSql) or die('erreur dans la requete : '.$tableSql. pg_last_error());
 $tableArray=pg_fetch_all($tableResult);
-//debug echo('<pre>');print_r($tableArray);echo('</pre>');
 // libération du résultat
 pg_free_result($tableResult);
 

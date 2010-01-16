@@ -110,7 +110,6 @@ $currentPage=0;
 $filter=array();
 	// on verifie que $date contient bien une date
 	$dateExploded=explode("-",$date);
-	//debug print_r($dateExploded);
 	if (@checkdate($dateExploded[1],$dateExploded[2],$dateExploded[0]))
 		{
 		$filter["date"]=' l.log_time LIKE \''.$date.'%\' ';
@@ -202,8 +201,6 @@ $logReadSql="	SELECT l.log_time, l.log_module_id, l.log_script_file, l.log_messa
 			WHERE (l.log_module_id=lm.module_id) AND (l.log_user_id=u.user_id) $filterSql
 			ORDER BY l.log_time	DESC				
 			$limit	";
-			
-			//debug 			echo($logReadSql);
 			
 $logReadResult = pg_query($connectPPEAO,$logReadSql) or die('logRead dit - erreur dans la requete : ' . pg_last_error());
 $logEntriesArray=pg_fetch_all($logReadResult);
@@ -548,12 +545,9 @@ while($data1=pg_fetch_array($zonesResult1)) {$zonesArray1[]=$data1['zone_id'];}
 if (my_empty($zonesArray1)) {$zonesArray1=array();}
 
 
-//debug echo('$zonesArray1=');echo('<pre>');print_r($zonesArray1);echo('</pre>');
-
 // on collecte la liste des groupes auxquels appartient l'utilisateur
 $groupsArray=userGetGroups($user_id);
 
-//debug print_r($groupsArray);
 
 // on collecte la liste des zones auxquelles les groupes de l'utilisateur ont accès
 $zonesArray2=array();
@@ -566,13 +560,10 @@ while($data2=pg_fetch_array($zonesResult2)) {$zonesArray2[]=$data2['zone_id'];}
 // si aucun résultat, on considère que l'utilisateur n'a accès qu'aux zones publiques
 if (is_null($zonesArray2)) {$zonesArray2=array();}
 
-//debug echo('$zonesArray2=');echo('<pre>');print_r($zonesArray2);echo('</pre>');
 
 
 // on fusionne les deux listes en éliminant les valeurs dupliquées
 $zonesArray=array_unique(array_merge($zonesArray1,$zonesArray2));
-
-//debug echo('$zonesArray=');echo('<pre>');print_r($zonesArray);echo('</pre>');
 
 return $zonesArray;
 
@@ -584,7 +575,6 @@ function userHasAccess($user_id,$zone_id) {
 // $user_id : id de l'utilisateur
 // $zone_id : l'id de la zone à tester
 // on teste à quelle zone l'utilisateur a accès
-//debug echo('zone_id='.$zone_id);
 $access=false;
 if (isset($_SESSION['s_ppeao_login_status']) && $_SESSION['s_ppeao_login_status']=='good') {
 	// on récupère la liste des zones auxquelles l'utilisateur a accès

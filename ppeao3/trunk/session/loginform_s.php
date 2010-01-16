@@ -7,7 +7,6 @@
 
 // affiche le formulaire de login si l'utilisateur n'est pas loggué
 
-//debug
 
 if ( !isset($_SESSION['s_ppeao_login_status']) || ( isset($_SESSION['s_ppeao_login_status']) && $_SESSION['s_ppeao_login_status']!='good')) 
 	{

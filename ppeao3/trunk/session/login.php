@@ -3,7 +3,6 @@
 //script qui gère la connexion et la déconnexion des utilisateurs
 //************************************************
 
-//debug sleep(30);
 
 global $zone;
 
@@ -33,8 +32,6 @@ if(isset($_GET) && !empty($_GET['login']) && !empty($_GET['pass'])) {
 	//on encrypte le mot de passe soumis
 	$challenge_password=crypt($pass,$salt);
 	
-	//debug 	echo('challenge_password: '.$challenge_password);	print_r($loginData);
-
   // si le log/pass n'est pas le bon
   if($loginData['user_password'] != $challenge_password) {
     $_SESSION['s_ppeao_login_status']='bad';

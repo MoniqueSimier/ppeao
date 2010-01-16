@@ -53,7 +53,6 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 
 <?php
 
-//debug echo('<pre>');print_r($_POST);echo('</pre>');
 
 
 $acteur_type='';
@@ -132,7 +131,6 @@ else {
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 			$array=pg_fetch_all($result);
 			pg_free_result($result);
-			//debug 			echo('<pre>');print_r($array);echo('</pre>');
 			
 			
 			if (empty($array)) {echo('<p>aucun '.$type.' dans la base.</p>');} 

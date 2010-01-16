@@ -12,7 +12,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 global $tablesDefinitions;
 
-//debug sleep(1);
 
 // la table concernée
 $editTable=$_GET["editTable"];
@@ -39,7 +38,6 @@ $editValue=htmlspecialchars($values[0][$editColumn]);
 // on compile les informations sur les colonnes de la table $editTable
 $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["table"]);
 
-//debug echo('<pre>');print_r($cDetails);echo('</pre>');
 
 // on encode la valeur "editValue" pour les caracteres spéciaux
 //$editValue=htmlentities($editValue);
@@ -52,8 +50,6 @@ switch ($editAction) {
 	// le DIV contenant la zone d'édition
 	$theField.='<div id="edit_'.$editColumn.'_'.$editRecord.'" name="edit_'.$editColumn.'_'.$editRecord.'" class="edit_field_container small">';
 	
-	
-	//debug 	var_dump($editValue);
 	
 	// on ajoute le champ éditable
 	//$theField.=iconv('ISO-8859-15','UTF-8',makeField($cDetails,$editTable,$editColumn,$editValue,'edit='.$editRecord,''));

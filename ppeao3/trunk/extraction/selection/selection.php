@@ -71,8 +71,6 @@ $campagnes_ids=$compteur["campagnes_ids"];
 $coups_ids=$compteur["coups_ids"];
 $enquetes_ids=$compteur["enquetes_ids"];
 
-//debug echo(arrayToList($campagnes_ids,'\',\'','\''));
-
 
 // si on a depasse le step 1, on encapsule les selecteurs precedents dans un DIV id="selection_precedente"
 // pour pouvoir les masquer

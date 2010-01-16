@@ -117,18 +117,11 @@ echo('</div> <!-- end div selector_container -->')
 // on compile les informations sur les colonnes de la table $editTable
 $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["table"]);
 
-//debug echo('<pre>');print_r($cDetails);echo('</pre>');
-
-
 // la liste des colonnes concernées
 $theHeads=array_keys($cDetails);
 // et leur nombre
 $numberOfColumns=count($theHeads);
 
-/*debug
-echo('<pre>');
-print_r($theHeads);
-echo('</pre>');*/
 
 // si on a sélectionné des valeurs particulières à éditer
 if (isset($_GET[$editTable])) {
@@ -140,10 +133,7 @@ if (isset($_GET[$editTable])) {
 // note : on compare les valeurs en les passant en minuscules, afin de contourner la sensibilité à la casse
 // des requêtes SQL
 	foreach ($cDetails as $key=>$value) {
-		if (isset($_GET['f_'.$key]) && !my_empty($_GET['f_'.$key])) {
-			
-			//debug 			echo('<pre>'.$key.'<br/>');print_r($cDetails[$key]["constraints"][$key]);echo('</pre>');
-			
+		if (isset($_GET['f_'.$key]) && !my_empty($_GET['f_'.$key])) {			
 			//si la valeur passée est un booleen
 			if ($cDetails[$key]["data_type"]=="boolean") {
 				if ($_GET['f_'.$key]=="t") {$val='TRUE';} else {$val='FALSE';}
@@ -173,7 +163,6 @@ if (isset($_GET[$editTable])) {
 			}// end else de if (boolean)
 
 		}// end if isset
-		//debug 
 	} // en foreach $cDetails
 
 // si on a trié la table sur une clé
@@ -189,7 +178,6 @@ if (isset($_GET[$editTable])) {
 		$orderClause='ORDER BY '.$tablesDefinitions[$editTable]["noms_col"].' ';
 		$s_dir='u';
 	}
-	//debug	echo($s_dir);
 
 // on construit la requête SQL pour obtenir le nombre total d'enregistrements dans la table
 $countAllSql='	SELECT COUNT(*) FROM '.$tablesDefinitions[$editTable]["table"].'
@@ -209,9 +197,6 @@ $countRow=pg_fetch_row($countResult);
 $countTotal=$countRow[0];
  /* Libération du résultat */ 
  pg_free_result($countResult);
-
-
-//debug echo('XXX'.$countSql.'YYY');
 
 
 // on prend en compte la pagination (utilise la fonction paginate() definie dans functions_generic.php)
@@ -246,8 +231,6 @@ $tableSql='	SELECT * FROM '.$tablesDefinitions[$editTable]["table"].'
 
 $tableResult=pg_query($connectPPEAO,$tableSql) or die('erreur dans la requete : '.$tableSql. pg_last_error());
 $tableArray=pg_fetch_all($tableResult);
-
-//debug echo('<pre>');print_r($tableArray);echo('</pre>');
 
 // libération du résultat
 pg_free_result($tableResult);
@@ -341,10 +324,6 @@ echo('</tr>'); // fin de la ligne de filtre
 // on affiche les résultats si il y en a
 if ($countTotal!=0) {
 	$i=0;
-	/*debug 
-	echo('<pre>');
-	print_r($tableArray);
-	echo('</pre>');*/
 	
 	foreach ($tableArray as $theRow) {
 		// affiche la ligne avec un style différent si c'est un rang pair ou impair 

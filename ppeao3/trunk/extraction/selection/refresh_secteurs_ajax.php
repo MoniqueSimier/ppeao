@@ -17,8 +17,6 @@ $systemes2=$_GET["systemes2"];
 
 	
 $array_secteurs=listSelectSecteurs($systemes2,$enquetes_ids);
-//debug echo('<pre>');print_r($array_secteurs);echo('</pre>');
-
 	
 	// on genere la liste des <options> pour raffraichir le <select>
 	$options='';

@@ -195,7 +195,6 @@ function formToUrl(theFormId,theClass) {
 	for (var i=0; i<ln; i++) {
 	
 		theElement=theParams[i];
-		//debug  alert(theElement.nodeName);
 		// si on a affaire à un input ou une textarea
 		if (theParams[i].nodeName=='INPUT' || theParams[i].nodeName=='TEXTAREA') {
 			if (theParams[i].value!='') {theUrl+='&'+theParams[i].name+'='+theParams[i].value;}
@@ -206,7 +205,6 @@ function formToUrl(theFormId,theClass) {
 			if (theParams[i].selectedIndex!=-1) {theUrl+='&'+theParams[i].name+'='+theParams[i].value;}
 		}
 		}
-		//debug		alert(theUrl);
 		return theUrl;			
 }
 

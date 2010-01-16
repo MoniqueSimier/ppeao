@@ -12,7 +12,6 @@ function showNextSelect(domaine,newLevel,last) {
 	// last : "last" si on est au DERNIER <select> de la liste
 
 	var level=parseInt(newLevel)-1; // les niveaux sont 1,2,3 etc alors que les tableaux sont indexés à partir de 0
-	//debug		alert(level);
 	var theLevel='level_'+level;
 	var theSelect='select_'+level;
 	var theValues=$(theLevel);
@@ -22,7 +21,6 @@ function showNextSelect(domaine,newLevel,last) {
 	// si une valeur est sélectionnée
 	var currentSelect=$(theSelect).firstChild;
 	if ((currentSelect.selectedIndex!=-1)) {
-		//debug			alert('valeur sélectionnée');
 		var xhr = getXhr();
 		// what to do when the response is received
 		xhr.onreadystatechange = function(){
@@ -43,7 +41,6 @@ function showNextSelect(domaine,newLevel,last) {
 	removedependentSelects(parseInt(newLevel)-1);
 	// on passe les valeurs sélectionnées des SELECT dans l'URL
 	var theString="&"+$('selector_form').toQueryString();
-	//debug alert(theString);
 		
 	// using GET to send the request
 	// on récupère les valeurs des paramètres de l'URL (fonction gup() définie dans basic.js)
@@ -54,7 +51,6 @@ function showNextSelect(domaine,newLevel,last) {
 	
 	// else if no value is selected, we remove the next criteria select and update the edit link
 	else {
-		//debug	alert("plus de valeurs");
 		removedependentSelects(parseInt(newLevel)-1);
 		;}
 	} // end if (last!='last') 
@@ -87,11 +83,9 @@ function updateSubmitLink(domaine) {
 
 	// on passe les valeurs sélectionnées des SELECT dans l'URL
 	var theString="&"+$('selector_form').toQueryString();
-	//debug alert(theString);
 		
 	// using GET to send the request
 	// on récupère les valeurs des paramètres de l'URL (fonction gup() définie dans basic.js)
-//debug	alert("/suppression/refreshSubmitLink_ajax.php?&domaine="+domaine+theString);
 	xhr.open("GET","/suppression/refreshSubmitLink_ajax.php?&domaine="+domaine+theString,true);
 	xhr.send(null);
 }

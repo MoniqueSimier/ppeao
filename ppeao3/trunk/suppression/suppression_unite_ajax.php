@@ -21,7 +21,6 @@ global $connectPPEAO;
 
 
 
-//debug sleep(10);
 // quelle action est en cours?
 $action=$_GET["action"];
 // le domaine concerne

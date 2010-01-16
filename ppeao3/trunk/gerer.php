@@ -36,7 +36,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 	<p>Cette section sert à gérer l'ensemble des données de PPEAO.</p>
 <?php
-//debug echo('+'.$_SESSION['s_ppeao_user_id'].'+');
 
 // on teste à quelle zone l'utilisateur a accès
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {

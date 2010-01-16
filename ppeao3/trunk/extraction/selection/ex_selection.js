@@ -9,10 +9,7 @@ function goToNextStep(current_step,url) {
 	//stupid stupid IE... this does not work but the line below does... go figure!!!
 	var formValues=$("step_"+current_step+"_form").toQueryString();
 	if (formValues=='') {var separator='';} else {var separator='&';}
-	url=url+separator+formValues;
-	
-	//debug	alert(url);
-	
+	url=url+separator+formValues;	
 	document.location=url;
 }
 
@@ -25,7 +22,6 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 	var systemesDiv=$("systemes_div");
 	// si une valeur est sélectionnée
 	if ((paysSelect.selectedIndex!=-1)) {
-			//debug			alert('valeur sélectionnée');
 		var xhr = getXhr();
 		// what to do when the response is received
 		xhr.onreadystatechange = function(){
@@ -33,11 +29,9 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 			if(xhr.readyState == 4 && xhr.status == 200){
 				//on récupère la réponse du serveur (les <options> du select)
 				var theNewOptions = xhr.responseText;
-				// debug 	alert(theNewOptions);
 				// on remplace le contenu du <select id=systemes>  :
 				//systemesSelect.innerHTML=theNewOptions; stupid stupid IE, it does not like this,
 				//donc on doit generer le <select> et son contenu et le renvoyer via xhr:
-				
 				// on le peuple avec les <option>
 				systemesDiv.innerHTML=theNewOptions;
 
@@ -56,7 +50,6 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 	
 	// else if no value is selected, we remove the next criteria select
 	else {
-		//debug		alert("plus de valeurs");
 		systemesDiv.innerHTML='';
 		
 		;}
@@ -71,7 +64,6 @@ function refreshSecteurs(liste_enquetes) {
 	var secteursSelect=$("secteurs");
 	// si une valeur est sélectionnée
 	if ((systemes2Select.selectedIndex!=-1)) {
-			//debug			alert('valeur sélectionnée');
 		var xhr = getXhr();
 		// what to do when the response is received
 		xhr.onreadystatechange = function(){
@@ -96,7 +88,6 @@ function refreshSecteurs(liste_enquetes) {
 	
 	// else if no value is selected, we remove the next criteria select
 	else {
-		//debug		alert("plus de valeurs");
 		secteursSelect.innerHTML='';
 		
 		;}
@@ -119,8 +110,6 @@ function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
 	var theValue=theSelect.value;
 	var theResponseText="";
 	
-	//debug 	alert(theValue);
-	
 	// si la valeur selectionnee est -1 on ne fait rien
 	if (theValue!=-1) {
 	// on declare les variables
@@ -132,7 +121,6 @@ function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
 	if (selection=='f_m') {d_a=$("d_a").value; d_m=$("d_m").value;f_a=$("f_a").value;f_m=theValue;}
 
 
-		//debug			alert('valeur sélectionnée');
 		var xhr = getXhr();
 		// what to do when the response is received
 		xhr.onreadystatechange = function(){
@@ -158,8 +146,6 @@ function refreshPeriode(selection,debut_annee,debut_mois,fin_annee,fin_mois) {
 	// on passe les valeurs sélectionnées des SELECT dans l'URL
 	var theString="&"+$('step_4_form').toQueryString();
 	
-	//debug	alert(theString);
-
 	// using GET to send the request
 	xhr.open("GET","/extraction/selection/refresh_periode_ajax.php?selection="+selection+"&d_a="+d_a+"&d_m="+d_m+"&f_a="+f_a+"&debut_annee="+debut_annee+"&debut_mois="+debut_mois+"&fin_annee="+fin_annee+"&fin_mois="+fin_mois,true);
 	xhr.send(null);
@@ -180,8 +166,6 @@ function goToChoixFilieres(url) {
 	}
 	if (formValues=='') {var separator='';} else {var separator='&';}
 	url=url+separator+formValues;
-	
-	//debug			alert(url);
 	
 	document.location=url;
 }
@@ -213,8 +197,6 @@ function toggleSelectSelection(select,what,next_step_link) {
 	var theSelect=$(select);
 	// on récupère les OPTIONS de ce SELECT
 	var theOptions=theSelect.getElements('option');
-	
-	//debug 	alert(theOptions.length);
 	
 	// on boucle sur les options
 	for (i=0;i<theOptions.length;i++) {

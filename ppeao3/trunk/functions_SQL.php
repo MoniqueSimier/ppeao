@@ -169,8 +169,6 @@ function getTableConstraintDetails ($connection,$table) {
 // on liste les contraintes sur la table
 $constraints=getTableConstraints($connection,$table);
 
-//debug echo('<pre>');print_r($constraints);echo('</pre>');
-
 // on récupere les détails sur chaque contrainte
 $allConstraintDetails=array();
 foreach ($constraints as $constraint) {
@@ -246,8 +244,6 @@ function getTableColumnsDetails($connection,$table) {
 $meta=getTableColumnsMetadata($connection,$table);
 // on collecte la liste des contraintes
 $details=getTableConstraintDetails ($connection,$table);
-//debug echo('<pre>');print_r($details);echo('</pre>');
-
 // on collecte le detail de chaque contrainte
 $columnDetails=getColumnConstraintDetails ($details,$column);
 
@@ -266,8 +262,6 @@ $comments=array();
 foreach($array_comments as $row) {
 	$comments[$row["column_name"]]=$row["column_comment"];
 }
-//debug echo('<pre>');print_r($comments);echo('</pre>');
-
 
 // on construit un tableau contenant les metadata et les contraintes sur chaque colonne de la table
 $columnsDetails=array();
@@ -281,8 +275,6 @@ foreach($meta as $column) {
 	
 }
 
-//debug echo('<pre>');print_r($columnsDetails);echo('</pre>');
-
 
 return $columnsDetails;
 }
@@ -295,10 +287,8 @@ function getTableColumnForeignReference($connection,$table,$column) {
 // $table : le nom de la table dasn la base
 // $column : le nom de la colonne a verifier
 	$allConstraints=getTableConstraintDetails ($connection,$table);
-	//debug 	echo('$allConstraints<pre>');print_r($allConstraints);echo('</pre>');
 	
 	$constraints=getColumnConstraintDetails ($allConstraints,$column);
-	//debug 	echo('$constraints<pre>');print_r($constraints);echo('</pre>');
 	$foreignReference=array();
 	if (!my_empty($constraints)) {
 		foreach($constraints as $constraint) {

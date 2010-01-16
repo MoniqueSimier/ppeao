@@ -17,7 +17,6 @@ if ($selection["choix_especes"]==1) {
 					$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 					$array=pg_fetch_all($result);
 					pg_free_result($result);
-					//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
 				foreach($array as $famille) {
 					$tmpXml.='<famille id="'.$famille["id"].'">'.$famille["libelle"].'</famille>';
 				} // end foreach
@@ -46,7 +45,6 @@ if ($selection["choix_especes"]==1) {
 					$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 					$array=pg_fetch_all($result);
 					pg_free_result($result);
-					//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
 				foreach($array as $espece) {
 					$tmpXml.='<espece id="'.$espece["id"].'">'.$espece["libelle"].'</espece>';
 				}
@@ -76,7 +74,6 @@ if (!empty($selection["pays"])) {
 		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 		$array=pg_fetch_all($result);
 		pg_free_result($result);
-		//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
 	foreach($array as $pays) {
 		$tmpXml.='<pays id="'.$pays["id"].'">'.$pays["nom"].'</pays>';
 		}
@@ -103,7 +100,6 @@ if (!empty($selection["systemes"])) {
 		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 		$array=pg_fetch_all($result);
 		pg_free_result($result);
-		//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
 	foreach($array as $systeme) {
 		$tmpXml.='<systeme id="'.$systeme["id"].'">'.$systeme["libelle"].'</systeme>';
 		}
@@ -131,7 +127,6 @@ if (!empty($selection["systemes2"])) {
 		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 		$array=pg_fetch_all($result);
 		pg_free_result($result);
-		//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
 	foreach($array as $systeme) {
 		$tmpXml.='<systeme id="'.$systeme["id"].'">'.$systeme["libelle"].'</systeme>';
 		}
@@ -158,7 +153,6 @@ if (!empty($selection["secteurs"])) {
 		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 		$array=pg_fetch_all($result);
 		pg_free_result($result);
-		//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
 	foreach($array as $secteur) {
 		$tmpXml.='<secteur id="'.$secteur["id"].'">'.$secteur["nom"].'</secteur>';
 		}
@@ -200,7 +194,6 @@ if (!empty($selection["camp"])) {
 		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 		$array=pg_fetch_all($result);
 		pg_free_result($result);
-		//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
 	foreach($array as $campagne) {
 		$tmpXml.='<campagne id="'.$campagne["id"].'">'.$campagne["pays"].':'.$campagne["systeme"].':'.$campagne["date_debut"].' au '.$campagne["date_fin"].'</campagne>';
 		}
@@ -228,7 +221,6 @@ if (!empty($selection["eng"])) {
 		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 		$array=pg_fetch_all($result);
 		pg_free_result($result);
-		//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
 	foreach($array as $engin) {
 		$tmpXml.='<engin id="'.$engin["id"].'">'.$engin["libelle"].'</engin>';
 		}
@@ -257,7 +249,6 @@ if (!empty($selection["agglo"])) {
 		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 		$array=pg_fetch_all($result);
 		pg_free_result($result);
-		//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
 	foreach($array as $agglo) {
 		$tmpXml.='<agglomeration id="'.$agglo["id"].'">'.$agglo["nom"].'</agglomeration>';
 		}
@@ -288,7 +279,6 @@ if (!empty($selection["enq"])) {
 		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 		$array=pg_fetch_all($result);
 		pg_free_result($result);
-		//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
 	foreach($array as $enquete) {
 		$tmpXml.='<enquete id="'.$enquete["id"].'">'.$enquete["pays"].':'.$enquete["systeme"].':'.$enquete["secteur"].':'.$enquete["agglo"].':'.$enquete["annee"].'-'.number_pad($enquete["mois"],2).'</enquete>';
 		}
@@ -317,7 +307,6 @@ if (!empty($selection["gteng"])) {
 		$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 		$array=pg_fetch_all($result);
 		pg_free_result($result);
-		//debug 	echo('<pre>');print_r($array);echo('</pre>');					exit;
 	foreach($array as $engin) {
 		$tmpXml.='<grandTypeEngin id="'.$engin["id"].'">'.$engin["libelle"].'</grandTypeEngin>';
 		}

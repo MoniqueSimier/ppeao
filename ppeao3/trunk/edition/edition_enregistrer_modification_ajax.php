@@ -12,7 +12,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/variables.inc';
 
 global $tablesDefinitions;
 
-//debug sleep(50);
 
 // la table concernée
 $editTable=$_GET["editTable"];
@@ -24,7 +23,6 @@ $editRecord=$_GET["editRecord"];
 $editAction=$_GET["editAction"];
 // la nouvelle valeur saisie
 $newValue=$_GET["newValue"];
-//debug echo('XXX '.$newValue.' XXX');
 // la valeur actuelle du champ
 // on récupère la valeur du champ dans la base de données pour éviter les problèmes d'encodage...
 $sql='	SELECT '.$editColumn.' FROM '.$tablesDefinitions[$editTable]["table"].' 
@@ -34,7 +32,6 @@ $values=pg_fetch_all($result);
 pg_free_result($result);
 $oldValue=htmlspecialchars($values[0][$editColumn]);
 
-//debug echo('<pre>');print_r($_GET);echo('</pre>');
 
 
 
@@ -70,8 +67,6 @@ if ($cDetail["data_type"]=='boolean') {
 
 // on teste la validité de la valeur saisie
 $validityCheck=checkValidity($cDetails,$tablesDefinitions[$editTable]["table"],$editColumn,$newValue);
-
-//debug echo('<pre>');print_r($validityCheck);echo('</pre>');
 
 
 // si la valeur saisie est valide, on exécute la requête SQL

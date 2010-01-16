@@ -35,7 +35,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 <h2>Système d'informations sur les Peuplements de poissons et la P&ecirc;che artisanale des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d&rsquo;Afrique de l&rsquo;Ouest</h2>
 
 <?php
-//debug echo('+'.$_SESSION['s_ppeao_user_id'].'+');
 
 // on teste à quelle zone l'utilisateur a accès
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
