@@ -11,7 +11,6 @@ $zone=3; // zone portage (voir table admin_zones)
 <?php 
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/config.php';
 //Include for documentation
-include $_SERVER["DOCUMENT_ROOT"].'/documentation/functions_doc.php';
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
