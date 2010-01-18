@@ -80,7 +80,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				Un fichier de log compl&eacute;mentaire permet d'avoir l'ensemble des avertissements ou informations sur le traitement. </p>
 				<br/>
 				<?php // get the help/documentation for this page 
-				getDocumentation("portage_auto","icone","n","");
+				//getDocumentation("portage_auto","icone","n","");
 				?>
 				<br/>
 				<?php 
