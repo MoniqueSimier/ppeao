@@ -341,7 +341,7 @@ SELECT pg_catalog.setval('admin_users_groups_group_id_seq', 2, true);
 
 ALTER TABLE admin_usergroups DISABLE TRIGGER ALL;
 
-INSERT INTO admin_usergroups VALUES (0, 'visiteurs', 'visiteurs non enregistrés, sans aucun privilèges', true);
+INSERT INTO admin_usergroups VALUES (0, 'visiteurs', 'visiteurs non enregistrés, sans aucun privilège', true);
 INSERT INTO admin_usergroups VALUES (2, 'gestionnaires des données', 'accès à  l''ensemble des données et aux interfaces de gestion et de portage des données, mais pas à la gestion des utilisateurs', true);
 INSERT INTO admin_usergroups VALUES (5, 'testeurs', 'testeurs pour la sélection/extraction des données, avec des droits particuliers', true);
 INSERT INTO admin_usergroups VALUES (3, 'exploitants données', 'groupe ayant accès à toutes les données en extraction mais pas en modification', true);
