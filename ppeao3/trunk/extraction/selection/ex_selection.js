@@ -54,7 +54,7 @@ function refreshSystemes(liste_campagnes, liste_enquetes) {
 		
 		;}
 	// on affiche le lien pour passer a l'etape suivante si au moins une valeur est selectionnee dans l'un des deux <select>
-	toggleNextStepLink('pays','systemes','step_3_link');
+	//toggleNextStepLink('pays','systemes','step_3_link');
 }
 
 // fonction qui effectue une requete AJAX pour mettre a jour le selecteur de secteurs quand on change le systeme selectionne
