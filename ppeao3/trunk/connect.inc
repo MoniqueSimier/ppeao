@@ -8,23 +8,23 @@ $hostname='localhost';
 // port de connexion au serveur de bases de données
 $port='5432';
 // nom de la base de données principale PPEAO
-$base_principale='bdppeao_vmppeao_dev';
+$base_principale='bdppeao';
 // nom de l'utilisateur pour la connexion à la base principale
 $username='devppeao';
 // mot de passe de l'utilisateur pour la connexion à la base principale
 $password='2devppe!!';
 // nom de la base de données depuis laquelle se fait le portage
-$base_portage='bd_peche';
+$base_portage='bdpeche';
 
 //********** Connection base PPEAO POSTGRES pour maj base ACCESS
 // saisissez ici les informations d'acces au serveur de PRODUCTION sur lequel tourne la base principale
 // cette connexion se fera en lecture seule pour exporter les donnees, et uniquement pour l'export
 // le reste de l'application utilise les informations de connexion ci-dessus
-$hostnameACCESS='vmppeao-dev.mpl.ird.fr';
+$hostnameACCESS='localhost';
 $portACCESS='5432';
 $usernameACCESS='devppeao';
 $passwordACCESS='2devppe!!';
-$baseACCESS='ppeao_test';
+$baseACCESS='bdppeao';
 $connectPPEAOACCESS = pg_connect("host=$hostnameACCESS port=$portACCESS dbname=$baseACCESS user=$usernameACCESS password=$passwordACCESS") or die('Connexion impossible a la base : '.pg_last_error());
 
 

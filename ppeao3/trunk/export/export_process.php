@@ -26,7 +26,7 @@ session_start();
 $pasdetraitement = true;
 $pasdefichier = false;
 $cptAjoutMaj = 0; // pour compatibilite
-
+set_time_limit(180);
 $debugAff = false; // variable globale pour lancer le programme en mode debug
 // Variables de traitement
 $ErreurProcess = false; // Flag si erreur process

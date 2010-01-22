@@ -26,7 +26,7 @@ session_start();
 $pasdetraitement = true;
 $pasdefichier = false;
 $cptAjoutMaj = 0; // pour compatibilite
-
+set_time_limit(180);
 $debugAff = false; // variable globale pour lancer le programme en mode debug
 // Variables de traitement
 $ErreurProcess = false; // Flag si erreur process
@@ -192,7 +192,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		//compression du fichier pour le telechargement
 		
 		$zipFilename = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/".$fileCompression."-".$typePeche.".zip";
-		$zipFilelien = "/".$BDrep."/temp-".$fileCompression.".zip";
+		$zipFilelien = "/".$BDrep."/".$fileCompression."-".$typePeche.".zip";
 		$AjoutCR = "Le fichier est celui-ci : <b><a href=\"".$zipFilelien."\" target=\"\">".$zipFilelien."</a></b>.";
 		if (file_exists($zipFilename)) {
 		// pas forcement necessaire, verifier que le x+ vide le fichier

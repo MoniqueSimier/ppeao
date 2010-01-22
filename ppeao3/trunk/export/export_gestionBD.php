@@ -16,7 +16,7 @@
 session_start();
 //**** initialisation de la variable de session
 $_SESSION['s_status_export'] = 'ok';
-
+set_time_limit(180);
 // Variable de test (en fonctionnement production, les deux variables sont false)
 $pasdetraitement = true;
 $pasdefichier = false; // Variable de test pour linux. Meme valeur que dans comparaison.php
@@ -223,7 +223,6 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				// ************** fin du case "ctrl"; ************	
 
 			case "vide" :
-				set_time_limit(120);
 				if ($EcrireLogComp ) {
 					WriteCompLog ($logComp,"* Compte rendu traitement ".$nomAction,$pasdefichier);
 					WriteCompLog ($logComp,"* Base ".$BDACCESS." va etre videe",$pasdefichier);
