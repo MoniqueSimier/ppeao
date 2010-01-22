@@ -358,13 +358,6 @@ if ($domaine=='exp') {
 	if (!empty($ids)) {
 	// exp : on cherche les coups de peche
 	$sql='SELECT DISTINCT exp_coup_peche.id FROM exp_coup_peche WHERE exp_campagne_id IN (\''.arrayToList($unites["ids"],'\',\'','\'').')';
-	// si on a passe des secteurs dans l'url
-	if (!empty($_GET["secteurs"])) {
-		$sql.=' AND exp_station_id IN (
-			SELECT exp_station.id FROM exp_station 
-			WHERE exp_station.ref_secteur_id IN (\''.arrayToList($_GET["secteurs"],'\',\'','\'').')
-			)';
-	}
 	// si on a passe des engins dans l'url
 	if (!empty($_GET["eng"])) {
 		$sql.=' AND exp_engin_id IN  (\''.arrayToList($_GET["eng"],'\',\'','\'').') ';
@@ -814,7 +807,7 @@ function afficheAide($topic) {
 //$topic: le "theme" de l'etape de selection ("taxonomie", "geographie", "periode", "type_exploitation", "type_donnees", "exp", "art", "campagnes", "engins", "secteurs", "agglomerations", "periodes_enquete", "grands_types_engins", "type_stats", "stats_agglo", "stats_gen", "secteurs2", "filieres")
 $hint='<div class="hint clear"><span class="hint_label"><a href="#" onclick="toggleAide(\'aide_'.$topic.'\');return false;">aide &gt;&gt;</a></span><div class="hint_text" id="aide_'.$topic.'" style="display:none;">';
 $hint_multiple='vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e<br />pour effectuer une s&eacute;lection continue, cliquez sur la premi&egrave;re valeur puis sur la derni&egrave;re valeur en maintenant la touche MAJ enfonc&eacute;e';
-$hint_empty='si vous ne choisissez aucune valeur, ce crit&egrave;re ne sera pas pris en compte dans la s&eacute;lection<br />';
+$hint_empty='';
 	switch ($topic) {
 	case "taxonomie":
 		$hint.="s&eacute;lectionnez les familles et/ou esp&egrave;ces qui vous int&eacute;ressent<br />";
@@ -999,6 +992,7 @@ switch ($_GET["step"]) {
 	// on affiche le lien permettant de passer a la selection geographique
 	// on prepare l'url pour construire le lien : on enleve les familles et especes eventuellement selectionnees
 	$url=$_SERVER["FULL_URL"];
+	$url=removeQueryStringParam($url,'open');
 	$url=removeQueryStringParam($url,'familles\[\]');
 	$url=removeQueryStringParam($url,'especes\[\]');
 	echo('<p id="step_2_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(2,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection spatiale &gt;&gt;</a></p>');
@@ -1147,6 +1141,7 @@ $sql_pays.=(')');
 	// on affiche le lien permettant de passer a la selection temporelle
 	// on prepare l'url pour construire le lien : on enleve les pays et systemes eventuellement selectionnes
 	$url=$_SERVER["FULL_URL"];
+	$url=removeQueryStringParam($url,'open');
 	$url=removeQueryStringParam($url,'pays\[\]');
 	$url=removeQueryStringParam($url,'systemes\[\]');
 	echo('<p id="step_3_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(3,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection temporelle &gt;&gt;</a></p>');
@@ -1644,6 +1639,7 @@ function afficheSecteurs($donnees) {
 			// on affiche le lien permettant de passer a la selection temporelle
 			// on prepare l'url pour construire le lien : on enleve les secteurs eventuellement selectionnes
 			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'open');
 			$url=removeQueryStringParam($url,'secteurs\[\]');
 			echo('<p id="step_7_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des '.$nextSelectionStep.' &gt;&gt;</a></p>');
 		echo('</form>');
@@ -1725,6 +1721,7 @@ global $connectPPEAO;
 			// on affiche le lien permettant de passer a la selection des engins de peche
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'open');
 			$url=removeQueryStringParam($url,'camp\[\]');
 			echo('<p id="step_8_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des engins de p&ecirc;che &gt;&gt;</a></p>');
 			echo('</form>');
@@ -1806,6 +1803,7 @@ global $connectPPEAO;
 			// on affiche le lien permettant de passer au choix des filieres
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'open');
 			$url=removeQueryStringParam($url,'eng\[\]');
 			echo('<p id="step_9_link" class="clear" style="display:none;"><a href="#" class="last_step" onclick="javascript:goToNextStep(9,\''.$url.'\');return false;">finaliser la s&eacute;lection...</a></p>');
 			echo('</form>');
@@ -1845,6 +1843,7 @@ if ($_GET["step"]>9) {
 	
 	$url='/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"];
 	
+	echo('<p>le processus de s&eacute;lection des donn&eacute;es est termin&eacute;, cliquez sur le lien ci-dessous pour choisir les variables dont vous voulez exporter les valeurs</p>vous pouvez &eacute;galement revoir ou modifier votre s&eacute;lection en cliquant sur l&#x27;un des liens [modifier ma s&eacute;lection]<p>');
 	echo('<div id="choix_filiere" class="clear"><a id="link_filieres" href="#" class="last_step" onclick="javascript:goToChoixFilieres(\''.$url.'\');return false;">choisir une fili&egrave;re d&#x27;exploitation...</a><br /><br />');
 // on affiche le texte d'aide
 afficheAide("filieres");
@@ -1896,6 +1895,7 @@ global $connectPPEAO;
 			// on affiche le lien permettant de passer au choix des filieres
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'open');
 			$url=removeQueryStringParam($url,'agglo\[\]');
 			echo('<p id="step_8_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(8,\''.$url.'\');return false;">ajouter et passer au choix des p&eacute;riodes d&#x27;enqu&ecirc;te &gt;&gt;</a></p>');
 			echo('</form>');}
@@ -1984,6 +1984,7 @@ global $connectPPEAO;
 			// on affiche le lien permettant de passer a la selection des grands types d'engins de peche
 			// on prepare l'url pour construire le lien : on enleve les enquetes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'open');
 			$url=removeQueryStringParam($url,'enq\[\]');
 			echo('<p id="step_9_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(9,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins de p&ecirc;che &gt;&gt;</a></p>');
 			echo('</form>');
@@ -2088,6 +2089,7 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 			// on affiche le lien permettant de passer au choix des filieres
 			// on prepare l'url pour construire le lien : on enleve les campagnes eventuellement selectionnees
 			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'open');
 			$url=removeQueryStringParam($url,'gteng\[\]');
 			echo('<p id="step_8-10_link" class="clear" style="display:none;"><a href="#" class="last_step" onclick="javascript:goToNextStep('.$theStep.',\''.$url.'\');return false;">finaliser la s&eacute;lection...</a></p>');
 			echo('</form>');
@@ -2098,7 +2100,7 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 		// on a depasse cette etape, on affiche le resume textuel
 		default:
 		echo('<div id="step_'.$theStep.'">');
-			echo('<h2>'.$theStep.'. grands types d&#x27;engins de p&ecirc;che</h2>');
+			echo('<h2>grands types d&#x27;engins de p&ecirc;che</h2>');
 			if (!empty($_GET["gteng"])) {
 			
 			$debs='';
@@ -2288,6 +2290,7 @@ function afficheSecteurs2() {
 			// on affiche le lien permettant de passer a la selection temporelle
 			// on prepare l'url pour construire le lien : on enleve les systèmes et secteurs eventuellement selectionnes
 			$url=$_SERVER["FULL_URL"];
+			$url=removeQueryStringParam($url,'open');
 			$url=removeQueryStringParam($url,'systemes2\[\]');
 			$url=removeQueryStringParam($url,'secteurs\[\]');
 			echo('<p id="step_7_link" class="clear" style="display:none;"><a href="#" class="next_step" onclick="javascript:goToNextStep(7,\''.$url.'\');return false;">ajouter et passer &agrave; la s&eacute;lection des grands types d&#x27;engins &gt;&gt;</a></p>');
