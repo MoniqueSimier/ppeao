@@ -10,8 +10,6 @@
 /* styles pour le module d'extraction des tables'*/
 @import url(extraction.css);
 /* styles pour le module de documentation*/
-@import url(documentation.css);
-/* styles pour le module de documentation*/
 @import url(contact.css);
 /* styles pour le module d'export*/
 @import url(export.css);
