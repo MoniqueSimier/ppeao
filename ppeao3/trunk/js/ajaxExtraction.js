@@ -78,6 +78,42 @@ function explode( delimiter, string, limit ) {
     }
 }
 
+// To be able to run javascript withinajax HTML
+function parseScript(_source) {
+	var source = _source;
+	var scripts = new Array();
+	
+	// Strip out tags
+	while(source.indexOf("<script") > -1 || source.indexOf("</script") > -1) {
+		var s = source.indexOf("<script");
+		var s_e = source.indexOf(">", s);
+		var e = source.indexOf("</script", s);
+		var e_e = source.indexOf(">", e);
+		
+		// Add to scripts array
+		scripts.push(source.substring(s_e+1, e));
+		// Strip from source
+		source = source.substring(0, s) + source.substring(e_e+1);
+	}
+	
+	// Loop through every script collected and eval it
+	for(var i=0; i<scripts.length; i++) {
+		//alert(scripts[i]);
+		// Analyse if theren is a function
+		// to be done
+		try {
+			eval(scripts[i]);
+		}
+		catch(ex) {
+			
+			// do what you want here when a script fails
+		}
+	}
+	
+	// Return the cleaned source
+	return source;
+}
+
 function recupereSelection(limSel,Selection){
 	listeVal = "";
 	for (i=1;i<=limSel;i++) {
@@ -119,7 +155,7 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		// Recuperation des selections sur choix des poissons
 		poiss  = recupereSelection(4,"poisson");
 		if (poiss=="pp,np") {
-			alert("Vous devez au moins inclure soit les poissons, soit les non-poissons, mais d'exlcure les deux");
+			alert("Vous devez au moins inclure soit les poissons, soit les non-poissons, mais pas exlcure les deux");
 			poiss="0,np";
 		}
 		// Recuperation des categories ecologiques / trophiques
@@ -161,8 +197,10 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 			ListEsp  = recupereSelection(limEsp,"Esp");
 		}
 		if (ListEsp == '' && (!(globalAction=="peuplement"))) {
-			alert("Merci de selectionner au moins une espece !");
-			return;
+			if (listCE == '' || listCT == '') {
+				alert("Merci de modifier cette catégorie pour qu'une espece au moins soit selectionnée  !");
+				return;
+			}
 		}
 		// Recuperation des colonnes en plus selectionnees
 		TEC = "&TEC="+tableEnCours;
@@ -297,6 +335,10 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		// On charge les données modifiées
 		// Recuperation des selections sur choix des poissons
 		poiss  = recupereSelection(4,"poisson");
+		if (poiss=="pp,np") {
+			alert("Vous devez au moins inclure soit les poissons, soit les non-poissons, mais pas exlcure les deux");
+			poiss="0,np";
+		}
 		// Recuperation des categories ecologiques
 		if ( typeAction == 'NtPart' || typeAction == 'taillart' ) {
 			// Recuperation des categories ecologiques / trophiques
@@ -339,8 +381,10 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 			}
 		}
 		if (ListEsp == ''  && (globalAction=="taillart" || globalAction=="NtPart")) {
-			alert("Merci de selectionner au moins une espece !");
-			return;
+			if (listCE == '' || listCT == '') {
+				alert("Merci de modifier cette catégorie pour qu'une espece au moins soit selectionnée !");
+				return;
+			}
 		}
 		// Recuperation des colonnes en plus selectionnees
 		TEC = "&TEC="+tableEnCours;
@@ -700,8 +744,10 @@ function stateChanged3() {
 		if (globalAction=="NtPart") {ntActif=" active";}
 		if (globalAction=="taillart") {strActif=" active";}
 		if (globalAction=="engin") {engActif=" active";}
-		
-		document.getElementById(fenID).innerHTML=xmlHttp.responseText;
+		response=xmlHttp.responseText;
+
+		document.getElementById(fenID).innerHTML = parseScript(response);
+
 		document.getElementById("runProcess").innerHTML="<b>Choix de la fili&egrave;re :</b>&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','activite','1','"+globalTableEnCours+"','n','','','','')\" class=\"activite"+actActif+"\">Activit&eacute</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','capture','1','"+globalTableEnCours+"','n','','','','')\" class=\"capture"+capActif+"\">Captures totales</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','NtPart','1','"+globalTableEnCours+"','n','','','','')\" class=\"NtPt"+ntActif+"\">Nt/Pt</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','taillart','1','"+globalTableEnCours+"','n','','','','')\" class=\"structure"+strActif+"\">Structure de taille</a>&nbsp;-&nbsp;<a href=\"#\" onClick=\"runFilieresArt('"+globaltypepeche+"','engin','1','"+globalTableEnCours+"','n','','','','')\" class=\"engin"+engActif+"\">Engin de p&ecirc;che</a>";
 		document.getElementById("exportFic").innerHTML= "<input type=\"button\" id=\"validation\" onClick=\"runFilieresArt('"+globaltypepeche+"','"+globalAction+"','1','','y','','','','')\" value=\"afficher le resultat\"/><input type=\"checkbox\" id=\"ExpFic\" checked=\"checked\"/>exporter en fichier";
 		

@@ -269,6 +269,9 @@ visibility:hidden;
 	vertical-align:top;
 }
 #Reginfo{
+border-top:1px black thick;
+	padding-top:5px;
+	padding-bottom:5px;
 	background-color: #eeebeb;
 }
 #zonetrav{
@@ -353,10 +356,13 @@ padding-top:20px;
 }
 .lienReg2 {
 	font-weight:bold;
+	font-size:140%;
+	color:black;
 }
 a.lienReg2 hover{
 	font-weight:bold;
 	background-color:#FFF;
+	color:black;
 }
 
 .infozip{

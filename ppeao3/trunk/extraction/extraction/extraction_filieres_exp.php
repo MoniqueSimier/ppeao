@@ -95,7 +95,9 @@ if (!(file_exists($file)) ) {
 	if (userHasAccess($userID,$zone)) {
 
 ?>
-
+	<span class="showHide">
+	<a id="selection_precedente_toggle" href="#" title="afficher l'aide sur l'extraction des peches artisanales" onclick="javascript:toggleHelp();">aide >></a></span>
+	<div id="Aide_pechexp">
 		<p class="hint_text">vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran : <br/>Peuplement : liste de fractions pêch&eacute;es avec nombre et poids total qui permettra de construire des tableaux crois&eacute;s esp&egrave;ces x coups de p&ecirc;che pour des &eacute;tudes de peuplement<br/>
 Environnement : liste de relev&eacute;s environnementaux<br/>
 NT-PT : liste de fractions caract&eacute;ris&eacute;es par leur nombre et poids total et par les descripteurs de l'environnement associ&eacute;s<br/>
@@ -103,7 +105,7 @@ Biologie : liste d'individus pêch&eacute;s, caract&eacute;ris&eacute;s par leur 
 Trophique : listes de couples individus-contenu stomacal, associ&eacute;s aux descripteurs de l'environnement<br/>
 Dans toutes les fili&egrave;res vous avez la possibilit&eacute; de s&eacute;lectionner des variables optionnelles.
 </p>
-
+</div>
 		<div id="resumeChoix">
 			<?php 
 				// On recupere les paramètres
@@ -222,9 +224,14 @@ Dans toutes les fili&egrave;res vous avez la possibilit&eacute; de s&eacute;lect
         <script type="text/javascript" charset="utf-8">
 			var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
 			mySlider.hide();
+			var Aide = new Fx.Slide('Aide_pechexp', {duration: 500});
+			Aide.hide();
 			// affiche ou masque le DIV contenant la selection precedente
 			function toggleSelection() {
 				mySlider.toggle() //toggle the slider up and down.
+			}
+			function toggleHelp() {
+				Aide.toggle() //toggle the slider up and down.
 			}
 		</script>
 		

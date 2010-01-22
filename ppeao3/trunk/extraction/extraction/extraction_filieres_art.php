@@ -101,6 +101,9 @@ if (!(file_exists($file)) ) {
 	if (userHasAccess($userID,$zone)) {
 
 ?>
+	<span class="showHide">
+	<a id="selection_precedente_toggle" href="#" title="afficher l'aide sur l'extraction des peches artisanales" onClick="javascript:toggleHelp();">aide >></a></span>
+	<div id="Aide_pechart">
 		<p class="hint_text">vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran : <br/>
 		Activit&eacute;, liste des enquêtes concernant les activit&eacute;s de p&ecirc;che des unit&eacute;s de p&ecirc;che, collect&eacute;es par p&eacute;riode d'enquête<br/>
 Captures totales, liste de toutes les enquêtes de p&ecirc;che r&eacute;alis&eacute;es au point d'enqu&ecirc;te : unit&eacute; de p&ecirc;che, grand type d'engin de p&ecirc;che, captures totales, caract&eacute;risation de la sortie de p&ecirc;che<br/>
@@ -108,6 +111,7 @@ Nt/Pt, liste des fractions (esp&egrave;ces ou regroupement d'esp&egrave;ces) obs
 Structure de taille, liste des individus mesur&eacute;s dans une fraction enquêt&eacute;e : longueur en millim&egrave;tre<br/>
 Engins de pêche, liste des engins de pêche observ&eacute;s au cours de l'enquête de p&ecirc;che : engins de p&ecirc;che, caract&eacute;risation<br/>
 </p>
+</div>
 			<?php 
 				// On recupere les paramètres
 				if (isset($_GET['logsupp'])) {
@@ -214,14 +218,23 @@ Engins de pêche, liste des engins de pêche observ&eacute;s au cours de l'enquête
 			</form></span>
 		<?php if ($modifFiliere=="y") { ?>
                    <script type="text/javascript" charset="utf-8">runFilieresArt('<?php echo $typePeche ?>','<?php echo $typeAction ?>','1','','n','','','','')</script>
-        <?php }           ?>
+        <?php }   
+		?>
+
+
         <script type="text/javascript" charset="utf-8">
 			var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
 			mySlider.hide();
+			var Aide = new Fx.Slide('Aide_pechart', {duration: 500});
+			Aide.hide();
+
 			// affiche ou masque le DIV contenant la selection precedente
 			function toggleSelection() {
 				mySlider.toggle() //toggle the slider up and down.
-		}
+			}
+			function toggleHelp() {
+				Aide.toggle() //toggle the slider up and down.
+			}
 </script>
 		
 <?php
