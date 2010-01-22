@@ -44,9 +44,9 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 	} // fin de if (!empty($_GET["familles"]))
 	
 	// si des valeurs de pays ont ete passees dans l'url
-	if (!empty($_GET["pays"]) && $_GET["step"]>3) {
+	/*if (!empty($_GET["pays"]) && $_GET["step"]>3) {
 		$sql.=' AND exp_campagne.ref_systeme_id IN (SELECT DISTINCT ref_systeme.id FROM ref_systeme WHERE ref_systeme.ref_pays_id IN (\''.arrayToList($_GET["pays"],'\',\'','\'').')) ';
-		}
+		}*/
 	// si des valeurs de systeme ont ete passees dans l'url
 	if (!empty($_GET["systemes"])  && $_GET["step"]>3) {
 		$sql.=' AND exp_campagne.ref_systeme_id IN (\''.arrayToList($_GET["systemes"],'\',\'','\'').')';
@@ -74,9 +74,14 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 	
 	// si des valeurs de secteurs ont ete passees dans l'url
 	if (!empty($_GET["secteurs"])  && $_GET["step"]>7) {
-		$sql.=' AND exp_campagne.ref_systeme_id IN (
-			SELECT ref_systeme_id FROM ref_secteur WHERE ref_secteur.id IN
-				(\''.arrayToList($_GET["secteurs"],'\',\'','\'').')
+		$sql.=' AND exp_campagne.id IN (
+			SELECT DISTINCT exp_coup_peche.exp_campagne_id FROM exp_coup_peche WHERE exp_coup_peche.id IN (
+				SELECT DISTINCT exp_coup_peche.id FROM exp_coup_peche WHERE exp_coup_peche.exp_station_id IN (
+					SELECT DISTINCT exp_station.id FROM exp_station WHERE exp_station.ref_secteur_id IN (
+					\''.arrayToList($_GET["secteurs"],'\',\'','\'').'
+					)
+				)
+			)
 			)';
 		}
 	
@@ -150,10 +155,10 @@ if (!empty($especes_array) && $_GET["step"]>2) {
 
 	
 	// si des valeurs de pays ont ete passees dans l'url
-	if (!empty($_GET["pays"]) && $_GET["step"]>3) {
+	/*if (!empty($_GET["pays"]) && $_GET["step"]>3) {
 		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (SELECT DISTINCT art_agglomeration.id FROM art_agglomeration WHERE
  art_agglomeration.ref_secteur_id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.id IN (SELECT DISTINCT ref_secteur.id FROM ref_secteur WHERE ref_secteur.ref_systeme_id IN (SELECT DISTINCT ref_systeme.id FROM ref_systeme WHERE ref_systeme.ref_pays_id IN (\''.arrayToList($_GET["pays"],'\',\'','\'').')))))';
-		}
+		}*/
 	// si des valeurs de systeme ont ete passees dans l'url
 	if (!empty($_GET["systemes"]) && $_GET["step"]>3) {
 		$sql.=' AND art_periode_enquete.art_agglomeration_id IN (SELECT DISTINCT art_agglomeration.id FROM art_agglomeration WHERE
@@ -1125,7 +1130,7 @@ $sql_pays.=(')');
 		echo('<div id="systemes_div">');
 			// on n'affiche le contenu de ce select que si des valeurs de pays ont ete passees dans l'url
 			if (!empty($_GET["pays"])) {
-			echo('<select id="systemes" name="systemes[]" size="10" multiple="multiple" class="level_select" style="min-width:10em">');
+			echo('<select id="systemes" name="systemes[]" size="10" multiple="multiple" class="level_select" style="min-width:10em" onchange="toggleNextStepLink(\'systemes\',\'systemes\',\'step_3_link\');">');
 			$array_systemes=listSelectSystemes($_GET["pays"],$campagnes_ids,$enquetes_ids);
 			foreach($array_systemes as $systeme) {
 				// si la valeur est dans l'url, on la selectionne
