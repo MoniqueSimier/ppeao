@@ -91,11 +91,12 @@ if (!(file_exists($file)) ) {
     <?php
 	// on teste à quelle zone l'utilisateur a accès
 	if (userHasAccess($userID,$zone)) {
-?>
+?>	<a id="stat_toggle" href="#" title="afficher l'aide sur l'extraction des statistiques" onclick="javascript:toggleHelp();">aide >></a></span>
+	<div id="Aide_stat">
 		<p class="hint_text">
         Les fichiers de statistiques globales, par esp&egrave;ces et par grands types d'engins de p&ecirc;che correspondant à la s&eacute;lection r&eacute;alis&eacute;e sont extraits dans un m&ecirc;me fichier zipp&eacute; ; le fichier des statistiques globales est affich&eacute; &agrave; l'&eacute;cran pour visualiser les r&eacute;sultats de la s&eacute;lection. 
 Des s&eacute;lections d'esp&egrave;ces ou des regroupements d'esp&egrave;ces peuvent &ecirc;tre effectu&eacute;es avant l'extraction finale de donn&eacute;es.
-</p>
+</p></div>
 
 		<div id="resumeChoix">
 			<?php 
@@ -210,6 +211,11 @@ Des s&eacute;lections d'esp&egrave;ces ou des regroupements d'esp&egrave;ces peu
 			// affiche ou masque le DIV contenant la selection precedente
 			function toggleSelection() {
 				mySlider.toggle() //toggle the slider up and down.
+			}
+			var Aide = new Fx.Slide('Aide_stat', {duration: 500});
+			Aide.hide();
+			function toggleHelp() {
+				Aide.toggle() //toggle the slider up and down.
 			}
 		</script>		
 <?php
