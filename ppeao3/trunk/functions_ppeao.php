@@ -420,22 +420,25 @@ function logArchivesList($archivePath)
 	    		}
 	    closedir($handle);
 	}
-	
-		//on trie le tableau pour avoir les fichiers les plus récents en haut
-		rsort($logArchiveFiles);	
+				
 
 	
 	if (!empty($logArchiveFiles)) {
+		//on trie le tableau pour avoir les fichiers les plus récents en haut
+		rsort($logArchiveFiles);
 		$archiveList='<div id="archives_list">';
 		$archiveList.='<p><a id="showHideArchives">afficher la liste des archives</a></p>';
-		$archiveList.='<ul id="archives_list_ul">';
-			$archiveList.='<li>cliquez sur une des archives pour la t&eacute;l&eacute;charger</li>';
+		$archiveList.='<div id="archives_list_div">';
+			$archiveList.='<p>cliquez sur une des archives pour la t&eacute;l&eacute;charger</p>';
+			$archiveList.='<p id="efface_log"><a href="javascript:deleteArchivedLogs();">effacer tous les fichiers archivés du serveur</a><div id="efface_log_message"></div></p>';
+			$archiveList.='<ul>';
 			foreach ($logArchiveFiles as $file) {
 				$archiveList.='<li><a href="'.$logArchivePath.$file.'">'.$file.'</a></li>';
 			}
-		$archiveList.='</ul>';
+		$archiveList.='</ul></div>';
 		$archiveList.='</div>';		
 	}
+	
 	
 
 	
@@ -634,6 +637,22 @@ break;
 
 echo($message);
 
+}
+
+//***************************************************************************************************
+// trie un tableau selon un autre tableau
+function sortArrayByArray($array,$orderArray) {
+//$array : le tableau associatif a trier p.ex array("toto"=>"1","tutu"=>"2","tata"=>"3")
+//$orderArray: le tableau contenant l'ordre des colonnes  p.ex array("tata","titi","toto","tutu")
+// retourne array("tata"=>3,"toto"=>1,"tutu"=>2)
+	$ordered = array();
+    foreach($orderArray as $key) {
+        if(array_key_exists($key,$array)) {
+                $ordered[$key] = $array[$key];
+                unset($array[$key]);
+        }
+    }
+    return $ordered + $array;
 }
 
 ?>
