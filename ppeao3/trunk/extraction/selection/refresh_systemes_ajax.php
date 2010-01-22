@@ -19,7 +19,7 @@ $pays=$_GET["pays"];
 // on cherche la liste des systemes pour lesquels existent des campagnes et des systemes
 // en tenant compte de l'éventuelle preselection via les especes, les familles et les pays
 
-	$options='<select id="systemes" name="systemes[]" size="10" multiple="" class="level_select" style="min-width: 10em;">';
+	$options='<select id="systemes" name="systemes[]" size="10" multiple="" class="level_select" style="min-width: 10em;" onchange="toggleNextStepLink(\'systemes\',\'systemes\',\'step_3_link\');">';
 	$array_systemes=listSelectSystemes($pays,$campagnes_ids,$enquetes_ids);
 	
 	// on genere la liste des <options> pour raffraichir le <select>
