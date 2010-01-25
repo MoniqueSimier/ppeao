@@ -496,6 +496,34 @@ logWriteTo(4,"error",$errorMessage,"","",0);
 
 return $errorMessage;
 }
+//***************************************************************************************************
+//retourne la liste des groupes auxquels l'utilisateur $user_id appartient
+function nettoieLogExport(){
+// cette fonction lance la suppression des fichiers de log d'extraction ou tout autre
+
+	// Suppression des logs.
+	$hier  = mktime(0, 0, 0, date("m")  , date("d")-1, date("Y"));
+	VideRepData($_SERVER["DOCUMENT_ROOT"]."/log", $hier);
+	
+	// Suppression des fichiers d'extraction
+	VideRepData($_SERVER["DOCUMENT_ROOT"]."/work/extraction/", $hier);	
+	
+}
+//***************************************************************************************************
+// vide un repertoire de son contenu selon la date des fichiers
+function VideRepData($dir, $dateLimite) {
+	logWriteTo(4,"notice","Suppression des fichiers date de dernier acces inferieure a ".date("d-F-Y",$dateLimite)." pour ".$dir,"","",0);
+    if(!$dh = @opendir($dir)) return;
+    while (false !== ($obj = readdir($dh))) {
+        if($obj=='.' || $obj=='..') continue;
+		
+		if (fileatime($dir.'/'.$obj) < $dateLimite) { 
+			unlink($dir.'/'.$obj);			
+		} 
+    }
+    closedir($dh);
+
+}
 
 //***************************************************************************************************
 //retourne la liste des groupes auxquels l'utilisateur $user_id appartient

@@ -71,7 +71,7 @@
 		<Alias>se</Alias>
 		<libelle>Secteur</libelle>
 		<champ code="id_dans_systeme" affichage="X" libelle="Secteur_dans_systeme" groupe="Secteur" filiere="peuplement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>		
-		<champ code="id" affichage="X" libelle="Secteur_id" groupe="Secteur" filiere="peuplement,environnement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>
+		<champ code="id" affichage="X" libelle="Secteur_id" groupe="Secteur" filiere="activite,capture,NtPart,taillart,engin"/>
 		<champ code="nom" affichage="X" libelle="Secteur" groupe="Secteur" filiere="peuplement,environnement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>
 		<champ code="superficie" affichage="C" libelle="Secteur_surface" groupe="Secteur" filiere="peuplement,environnementNtPt,biologie,taille,trophique,activite,capture,NtPart"/>
 	</table>
@@ -500,6 +500,7 @@
 		</groupes>
 		<Alias>agg</Alias>
 		<libelle>Agglomeration</libelle>
+		<champ code="id" affichage="I" libelle="Agglomeration_id" />
 		<champ code="nom" affichage="X" libelle="Agglomeration" filiere="activite,capture,NtPart,taillart,engin"/>
 		<champ code="art_type_agglomeration_id" affichage="C" libelle="Type_agglomeration_id" filiere="activite,capture"/>
 		<champ code="latitude" affichage="C" libelle="Latitude" filiere="activite,capture"/>
@@ -745,6 +746,9 @@
 		</filieres>
 		<Alias>penq</Alias>
 		<libelle>Periode enquete</libelle>
+		<champ code="art_agglomeration_id" affichage="X" libelle="Agglomeration_id"/>
+		<champ code="annee" affichage="X" libelle="Annee"/>
+		<champ code="mois" affichage="X" libelle="Mois"/>
 	</table>
 	<!-- Statistiques -->
 	<table>
@@ -754,14 +758,20 @@
 		</statistiques>
 		<Alias>ast</Alias>
 		<libelle>Stats totales</libelle>
-		<champ code="pue" affichage="X" libelle="Pue"/>
-		<champ code="fm" affichage="X" libelle="Effort_peche"/>
-		<champ code="cap" affichage="X" libelle="Capture"/>
-		<champ code="nbre_obs" affichage="C" libelle="Nombre_enquetes"/>
-		<champ code="obs_min" affichage="C" libelle="Debarquement_minimal_observe"/>
-		<champ code="obs_max" affichage="C" libelle="Debarquement_maximal_observe"/>
-		<champ code="pue_ecart_type" affichage="C" libelle="Ecart_type_pue"/>
-		<champ code="fpe" affichage="C" libelle="Effort_peche_periode_enquete"/>
+		<champ code="id" affichage="X" libelle="Stat_totale_id"/>
+		<champ code="annee" affichage="X" libelle="Annee"/>
+		<champ code="mois" affichage="X" libelle="Mois"/>
+		<champ code="pue" affichage="X" libelle="Pue_totale"/>
+		<champ code="fm" affichage="X" libelle="Effort_total"/>
+		<champ code="cap" affichage="X" libelle="Captures_totales"/>
+		<champ code="nbre_obs" affichage="C" libelle="Nbre_enquetes"/>
+		<champ code="obs_min" affichage="C" libelle="Prise_enquete_min"/>
+		<champ code="obs_max" affichage="C" libelle="Prise_enquete_max"/>
+		<champ code="pue_ecart_type" affichage="C" libelle="Pue_Ecart_type"/>
+		<champ code="fpe" affichage="C" libelle="Effort_periode_enquete"/>
+		<champ code="nbre_unite_recensee_periode" affichage="C" libelle="Nbre_unites_recensee"/>
+		<champ code="nbre_jour_activite" affichage="C" libelle="Nbre_jour_enq_activite"/>
+		<champ code="nbre_jour_enq_deb" affichage="C" libelle="Nbre_jour_enq_debarquement"/>
 	</table>
 	<table>
 		<nom>art_stat_sp</nom>
@@ -770,12 +780,14 @@
 		</statistiques>
 		<Alias>asp</Alias>
 		<libelle>Stats par especes</libelle>
+		<champ code="id" affichage="X" libelle="Stat_esp_id"/>
+		<champ code="ref_espece_id" affichage="X" libelle="Espece_id"/>
 		<champ code="pue_sp" affichage="X" libelle="Pue_espece"/>
-		<champ code="cap_sp" affichage="X" libelle="Capture_espece"/>
-		<champ code="nbre_enquete_sp" affichage="C" libelle="Nombre_enquetes_espece"/>
-		<champ code="obs_sp_min" affichage="C" libelle="Debarquement_minimal_espece"/>
-		<champ code="obs_sp_max" affichage="C" libelle="Debarquement_maximal_espece"/>
-		<champ code="pue_sp_ecart_type" affichage="C" libelle="Ecart_type_pue_espece"/>
+		<champ code="cap_sp" affichage="X" libelle="Captures_espece"/>
+		<champ code="nbre_enquete_sp" affichage="C" libelle="Nbre_enquetes_espece"/>
+		<champ code="obs_sp_min" affichage="C" libelle="Prise_espece_min"/>
+		<champ code="obs_sp_max" affichage="C" libelle="Prise_espece_max"/>
+		<champ code="pue_sp_ecart_type" affichage="C" libelle="Pue_Ecart_type_espece"/>
 	</table>
 	<table>
 		<nom>art_taille_sp</nom>
@@ -784,6 +796,7 @@
 		</statistiques>
 		<Alias>ats</Alias>
 		<libelle>Stats par especes et par taille</libelle>
+		<champ code="id" affichage="X" libelle="Stat_esp_dft_id"/>
 		<champ code="li" affichage="X" libelle="Longueur"/>
 		<champ code="xi" affichage="X" libelle="Effectif"/>
 	</table>
@@ -794,14 +807,16 @@
 		</statistiques>
 		<Alias>asgt</Alias>
 		<libelle>Stats totales par GT</libelle>
+		<champ code="id" affichage="X" libelle="Stat_GT_id"/>
+		<champ code="art_grand_type_engin_id" affichage="X" libelle="Grand_type_engin_id"/>
 		<champ code="pue_gt" affichage="X" libelle="Pue_GT"/>
-		<champ code="fm_gt" affichage="X" libelle="Effort_peche_GT"/>
-		<champ code="cap_gt" affichage="X" libelle="Capture_GT"/>
-		<champ code="nbre_enquete_gt" affichage="C" libelle="Nombre_enquetes_GT"/>
-		<champ code="obs_gt_min" affichage="C" libelle="Debarquement_minimal_GT"/>
-		<champ code="obs_gt_max" affichage="C" libelle="Debarquement_maximal_GT"/>
-		<champ code="pue_gt_ecart_type" affichage="C" libelle="Ecart_type_pue_GT"/>
-		<champ code="fpe_gt" affichage="C" libelle="Effort_peche_periode_enquete_GT"/>
+		<champ code="fm_gt" affichage="X" libelle="Effort_GT"/>
+		<champ code="cap_gt" affichage="X" libelle="Captures_GT"/>
+		<champ code="nbre_enquete_gt" affichage="C" libelle="Nbre_enquetes_GT"/>
+		<champ code="obs_gt_min" affichage="C" libelle="Prise_enquete_GT_min"/>
+		<champ code="obs_gt_max" affichage="C" libelle="Prise_enquete_GT_max"/>
+		<champ code="pue_gt_ecart_type" affichage="C" libelle="Pue_Ecart_type_GT"/>
+		<champ code="fpe_gt" affichage="C" libelle="Effort_periode_enquete_GT"/>
 	</table>
 	<table>
 		<nom>art_stat_gt_sp</nom>
@@ -810,12 +825,13 @@
 		</statistiques>
 		<Alias>attgt</Alias>
 		<libelle>Stats par GT et par espece</libelle>
+		<champ code="id" affichage="X" libelle="Stat_GT_esp_id"/>
 		<champ code="pue_gt_sp" affichage="X" libelle="Pue_GT_espece"/>
-		<champ code="cap_gt_sp" affichage="X" libelle="Capture_GT_espece"/>
-		<champ code="nbre_enquete_gt_sp" affichage="C" libelle="Nombre_enquetes_GT_espece"/>
-		<champ code="obs_gt_sp_min" affichage="C" libelle="Debarquement_minimal_GT_espece"/>
-		<champ code="obs_gt_sp_max" affichage="C" libelle="Debarquement_maximal_GT_espece"/>
-		<champ code="pue_gt_sp_ecart_type" affichage="C" libelle="Ecart_type_pue_GT_espece"/>
+		<champ code="cap_gt_sp" affichage="X" libelle="Captures_GT_espece"/>
+		<champ code="nbre_enquete_gt_sp" affichage="C" libelle="Nombre_enquetes_espece_GT"/>
+		<champ code="obs_gt_sp_min" affichage="C" libelle="Prise_espece_GT_min"/>
+		<champ code="obs_gt_sp_max" affichage="C" libelle="Prise_espece_GT_max"/>
+		<champ code="pue_gt_sp_ecart_type" affichage="C" libelle="Pue_espece_Ecart_type_GT"/>
 	</table>
 	<table>
 		<nom>art_taille_gt_sp</nom>
@@ -827,8 +843,9 @@
 		</filieres>
 		<Alias>atgts</Alias>
 		<libelle>Stats par taille, par GT et par espece</libelle>
-		<champ code="li" affichage="X" libelle="Longueur_GT"/>
-		<champ code="xi" affichage="X" libelle="Effectif_GT"/>
+		<champ code="id" affichage="X" libelle="Stat_GT_esp_dft_id"/>
+		<champ code="li" affichage="X" libelle="Longueur"/>
+		<champ code="xi" affichage="X" libelle="Effectif"/>
 	</table>
 	<!-- Fin Stat -->
 	<!-- Debut referentiel especes. Il est mis en fin de fichier pour pouvoir gérer l'affichage fraction espece en dernier -->
