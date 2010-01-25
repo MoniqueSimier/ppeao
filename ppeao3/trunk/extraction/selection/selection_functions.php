@@ -518,7 +518,7 @@ switch ($peches) {
 		$filtrees["enquetes"]=FALSE;
 	}
 	$total_campagnes=$campagnes["total"];
-	if ($total_campagnes>0) {$texte_coups=' &ndash; '.$campagnes["coups"]["coups_total"].' coup(s) de p&ecirc;che)'; } 
+	if ($total_campagnes>0) {$texte_coups=' &ndash; '.$campagnes["coups"]["coups_total"].' coup(s) de p&ecirc;che'; } 
 	else {$texte_coups='';}
 	$compteur=array("campagnes_ids"=>$campagnes["ids"],
 				"campagnes_total"=>$total_campagnes,
@@ -822,7 +822,7 @@ $hint_empty='';
 	case "geographie":
 		$hint.="pour s&eacute;lectionner les syst&egrave;mes qui vous int&eacute;ressent, commencez par s&eacute;lectionner un ou plusieurs pays, puis s&eacute;lectionnez un ou plusieurs syst&egrave;mes parmi la liste qui s&rsquo;affiche alors dans la colonne de droite<br />";
 		$hint.=$hint_empty;
-		$hint.="cliquez alors sur &quot;ajouter et passer &agrave; la s&eacute;lection temporelle&quot;";
+		$hint.="cliquez alors sur &quot;ajouter et passer &agrave; la s&eacute;lection temporelle&quot;<br />";
 		$hint.=$hint_multiple;
 	break;
 	case "periode":
