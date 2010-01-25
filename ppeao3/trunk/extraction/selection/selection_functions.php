@@ -15,9 +15,13 @@ global $connectPPEAO;
 if ($domaine=='exp') {
 $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 	
+	if (!empty($_GET["familles"]) || !empty($_GET["especes"])) {
+		$sql.=' AND (';
+	}
 	// si des valeurs de familles ont ete passees dans l'url
 	if (!empty($_GET["familles"])) {
-		$sql.=' AND exp_campagne.id IN (
+		
+		$sql.=' exp_campagne.id IN (
 			SELECT exp_coup_peche.exp_campagne_id FROM exp_coup_peche WHERE exp_coup_peche.id 
 			IN (
 			SELECT DISTINCT exp_fraction.exp_coup_peche_id 
@@ -31,9 +35,12 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 			)
 			)';
 	} // fin de if (!empty($_GET["familles"]))
-		// si des valeurs d'especes ont ete passees dans l'url
+		if (!empty($_GET["familles"]) && !empty($_GET["especes"])) {
+		$sql.=' OR ';
+	}
+	// si des valeurs d'especes ont ete passees dans l'url
 	if (!empty($_GET["especes"]) && $_GET["step"]>2) {
-		$sql.=' AND exp_campagne.id IN (
+		$sql.=' exp_campagne.id IN (
 			SELECT DISTINCT exp_coup_peche.exp_campagne_id FROM exp_coup_peche WHERE exp_coup_peche.id 
 			IN (
 				SELECT DISTINCT exp_fraction.exp_coup_peche_id 
@@ -41,8 +48,10 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 				IN (\''.arrayToList($_GET["especes"],'\',\'','\'').')
 				)
 			)';
-	} // fin de if (!empty($_GET["familles"]))
-	
+	} // fin de if (!empty($_GET["especes"]))
+	if (!empty($_GET["familles"]) || !empty($_GET["especes"])) {
+		$sql.=')';
+	}	
 	// si des valeurs de pays ont ete passees dans l'url
 	/*if (!empty($_GET["pays"]) && $_GET["step"]>3) {
 		$sql.=' AND exp_campagne.ref_systeme_id IN (SELECT DISTINCT ref_systeme.id FROM ref_systeme WHERE ref_systeme.ref_pays_id IN (\''.arrayToList($_GET["pays"],'\',\'','\'').')) ';
@@ -706,6 +715,9 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 	$sql_systemes.=')';
 	$sql_systemes.=' ORDER BY ref_systeme.libelle';
 	
+	//debug 	echo('<pre>');print_r($sql_systemes);echo('</pre>');
+	
+	
 	
 	$result_systemes=pg_query($connectPPEAO,$sql_systemes) or die('erreur dans la requete : '.$sql_systemes. pg_last_error());
 	$array_systemes=pg_fetch_all($result_systemes);
@@ -1081,15 +1093,16 @@ switch ($_GET["step"]) {
 	// on recupere la liste des pays correspondant aux campagnes et enquetes correspondant a la selection precedente
 	$sql_pays='	SELECT DISTINCT ref_pays.id, ref_pays.nom 
 				FROM ref_pays, ref_systeme 
-				WHERE ref_systeme.ref_pays_id=ref_pays.id AND '; 
+				WHERE ref_systeme.ref_pays_id=ref_pays.id AND ('; 
+	
 	// si il y a des campagnes disponibles
 	if (!empty($campagnes_ids)) {
 	$sql_pays.=' ref_systeme.id IN (SELECT DISTINCT exp_campagne.ref_systeme_id FROM exp_campagne WHERE exp_campagne.id IN (\''.arrayToList($campagnes_ids,'\',\'','\'').')';
 }
-		
+		if (!empty($campagnes_ids) && !empty($enquetes_ids)) { $sql_pays.=' OR ';}
 		// si il y a des enquetes disponibles
 		if (!empty($enquetes_ids))  {
-		$sql_pays.=' OR ref_systeme.id IN (
+		$sql_pays.=' ref_systeme.id IN (
 		SELECT DISTINCT art_agglomeration.ref_secteur_id 
 		FROM art_agglomeration 
 		WHERE art_agglomeration.id IN (
@@ -1100,7 +1113,7 @@ switch ($_GET["step"]) {
 
 
 
-$sql_pays.=(')');
+$sql_pays.=('))');
 		
 	$result_pays=pg_query($connectPPEAO,$sql_pays) or die('erreur dans la requete : '.$sql_pays. pg_last_error());
 	$array_pays=pg_fetch_all($result_pays);
