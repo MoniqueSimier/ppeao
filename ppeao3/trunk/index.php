@@ -43,7 +43,8 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 <?php 
 
 //echo(logDisplayShort('','','',"",5,""));
-	nettoieLogExport();
+// cette fonction fait le ménage dans les vieux logs des modules d'exportation/extraction	
+nettoieLogExport();
 ?>
 <div id="home_thumbs"><img src="/assets/home/1.jpg" width="120" height="70" alt="1"><img src="/assets/home/2.jpg" width="120" height="70" alt="2"><img src="/assets/home/3.jpg" width="120" height="70" alt="3"><img src="/assets/home/4.jpg" width="120" height="70" alt="4"><img src="/assets/home/5.jpg" width="120" height="70" alt="5"><img src="/assets/home/6.jpg" width="120" height="70" alt="6"></div>
 <br />

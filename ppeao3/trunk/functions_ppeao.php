@@ -503,29 +503,33 @@ function nettoieLogExport(){
 
 	// Suppression des logs.
 	$hier  = mktime(0, 0, 0, date("m")  , date("d")-1, date("Y"));
-	VideRepData($_SERVER["DOCUMENT_ROOT"]."/log", $hier,"log");
+	
+	VideRepData(str_replace('//','/',$_SERVER["DOCUMENT_ROOT"]."/log"), $hier,"log");
 	
 	// Suppression des fichiers d'extraction
-	VideRepData($_SERVER["DOCUMENT_ROOT"]."/work/extraction/", $hier,"txt,zip");	
+	VideRepData(str_replace('//','/',$_SERVER["DOCUMENT_ROOT"]."/work/extraction"), $hier,"txt,zip");	
 	
 }
 //***************************************************************************************************
 // vide un repertoire de son contenu selon la date des fichiers
 function VideRepData($dir, $dateLimite,$listeExtension) {
 	logWriteTo(4,"notice","Suppression des fichiers ".$listeExtension." date de dernier acces inferieure a ".date("d-F-Y",$dateLimite)." pour ".$dir,"","",0);
-    if(!$dh = @opendir($dir)) return;
+   
+if($dh=@opendir($dir))  {
     while (false !== ($obj = readdir($dh))) {
         if($obj=='.' || $obj=='..') continue;
 		$path_parts = pathinfo($dir.'/'.$obj);
 		$extFic = $path_parts['extension'];
 		if (strpos($listeExtension,$extFic) === false ) {
 		} else {
-			if (fileatime($dir.'/'.$obj) < $dateLimite) { 
+			// il vaut mieux filemtime que fileatime
+			// dans la mesure où une simple lecture provoque la mise a jour de fileatime
+			if (filemtime($dir.'/'.$obj) < $dateLimite) { 
 				unlink($dir.'/'.$obj);			
 			} 
 		}
     }
-    closedir($dh);
+    closedir($dh);}
 }
 
 //***************************************************************************************************
