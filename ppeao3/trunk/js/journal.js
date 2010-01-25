@@ -1,9 +1,9 @@
 // fonctions utilisées par le module de journal
 
 /**
-* Function called when the user clicks on the link
-* to update the content of the theContent div
-* using an AJAX call
+* Fonction appelee lorsque l'utilisateur clique sur le lien 
+* permettant d'archiver le contenu du journal
+* en utilisant un appel Ajax (modifie le contenu du div logTableDiv)
 */
 function deleteLog() {
 
@@ -31,9 +31,8 @@ xhr.send(null);
 
 
 /**
-* Function called after the log has been deleted
-* to update the content of the logTableDiv
-* using an AJAX call
+* Fonction utilisee pour raffraichir l'affichage du journal apres son archivage
+* en utilisant un appel Ajax (modifie le contenu du div logTableDiv)
 */
 function reloadLog() {
 
@@ -57,3 +56,35 @@ var xhr2 = getXhr();
 xhr2.open("GET","/journal/reload_log.php",true);
 xhr2.send(null);
 }
+
+/**
+* Fonction utilisee pour supprimer du serveur les fichiers d'archives du journal
+* en utilisant un appel Ajax (modifie le contenu du div logTableDiv)
+*/
+function deleteArchivedLogs() {
+
+var xhr2 = getXhr();
+
+
+	// what to do when the response is received
+	xhr2.onreadystatechange = function(){
+		// while waiting for the response, display the loading animation
+		var theLoader2=' <p align="center">suppression des fichiers archiv&eacute;s du journal...<img src="/assets/ajax-loader.gif" alt="suppression des fichiers archiv&eacute;s du journal..." title="suppression des fichiers archiv&eacute;s du journal..." valign="center"/></p>';
+		if(xhr2.readyState < 4) { document.getElementById("efface_log_message").innerHTML = theLoader2;}
+		// only do something if the whole response has been received and the server says OK
+		if(xhr2.readyState == 4 && xhr2.status == 200){
+			theResult = xhr2.responseText;
+			if (theResult=='ok') {document.location.reload(true);}
+			else {
+			document.getElementById("efface_log_message").innerHTML = '<p class="error">'+theResult+'</p>';
+			}
+			
+		}// end function()
+} // end ajaxCall
+
+
+// using GET to send the request
+xhr2.open("GET","/journal/delete_archived_logs_ajax.php",true);
+xhr2.send(null);
+}
+

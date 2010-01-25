@@ -24,7 +24,7 @@ $zone=4; // zone journal (voir table admin_zones)
 	/* <![CDATA[ */
 		window.addEvent('domready', function(){
 					// note: the onComplete is there to set an automatic height to the wrapper div
-					var archivesSlide = new Fx.Slide('archives_list_ul',{duration: 500, mode: 'vertical', onComplete: function(){if(this.wrapper.offsetHeight != 0) this.wrapper.setStyle('height', 'auto');}});
+					var archivesSlide = new Fx.Slide('archives_list_div',{duration: 500, mode: 'vertical', onComplete: function(){if(this.wrapper.offsetHeight != 0) this.wrapper.setStyle('height', 'auto');}});
 					archivesSlide.hide();
 					//since the selector hides away, display a "show" link
 					$('showHideArchives').innerHTML='[afficher les archives]';
@@ -60,7 +60,6 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 <h1>Journal des activit&eacute;s</h1>
 
 <?php
-
 
 //logWriteTo(4,'notice','acc&egrave;s au journal','','',0);
 echo(logDisplayFull('','','','','','paginate'));
