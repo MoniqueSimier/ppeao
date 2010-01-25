@@ -364,6 +364,7 @@ function AfficherDonnees($file,$typeAction){
 	global $listeDocURL;
 	global $debugAff;
 	global $start_while;
+	global $erreurStatGene;
 	$PasDeResultat = false;
 	$debugAff = false;
 	$start_while=timer(); 		// début du chronométrage du for
@@ -2173,6 +2174,19 @@ function AfficherDonnees($file,$typeAction){
 			$SelectionPourFic = str_replace("&ecirc;","ê",$SelectionPourFic);
 			$SelectionPourFic = str_replace("&egrave;","è",$SelectionPourFic);
 			$SelectionPourFic = str_replace("&#x27;","'",$SelectionPourFic);
+			if ( !($erreurStatGene == "")) {
+				$erreurStatGene = str_replace("<br/>","\n",$erreurStatGene);
+				$erreurStatGene = str_replace("<b>","",$erreurStatGene);
+				$erreurStatGene = str_replace("</b>","",$erreurStatGene);
+				$erreurStatGene = str_replace("&eacute;","é",$erreurStatGene);
+				$erreurStatGene = str_replace("&ecirc;","ê",$erreurStatGene);
+				$erreurStatGene = str_replace("&egrave;","è",$erreurStatGene);
+				$erreurStatGene = str_replace("&#x27;","'",$erreurStatGene);
+				$SelectionPourFic .= "\n------------------------------------------------------------\n";
+				$SelectionPourFic .= "Liste des erreurs lors du calcul des statistiques generales\n";
+				$SelectionPourFic .= "------------------------------------------------------------\n";
+				$SelectionPourFic .= $erreurStatGene;
+			}
 			//$SelectionPourFic = "test";
 			if (! fwrite($ExpCompSel,$SelectionPourFic) ) {
 				if ($EcrireLogComp ) {
@@ -2353,6 +2367,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 	global $logComp;
 	global $pasdefichier;
 	global $resultatLecture;
+	global $erreurStatGene;
 	//echo $typeSelection." - ".$tableStat."<br/>";
 	// On commence par vider la table temporaire
 	if ($Compteur ==0) {
@@ -2464,9 +2479,12 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 						} else {
 							if (pg_num_rows($SQLResult) == 0) {
 								// Avertissement
-								if ($EcrireLogComp ) {
-									WriteCompLog ($logComp, "ERREUR : pas d'effort pour le systeme ".$finalRow[2]." ni pour le secteur ".$finalRow[$posSecteur]." pour annee = ".$anneeEnCours." et mois = ".$moisEnCours.", arret du traitement.",$pasdefichier);
-									$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>pas d'effort ni le systeme ".$finalRow[2]." ni pour le secteur ".$finalRow[$posSecteur]." pour annee = ".$anneeEnCours." et mois = ".$moisEnCours.". Arret du calcul<br/>";
+								if (strpos ($resultatLecture,"<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>pas d'effort ni pour le systeme ".$finalRow[2]." ni pour le secteur ".$finalRow[$posSecteur]." pour annee = ".$anneeEnCours." et mois = ".$moisEnCours.". Arret du calcul<br/>") === false ) {
+									if ($EcrireLogComp) {
+										WriteCompLog ($logComp, "ERREUR : pas d'effort pour le systeme ".$finalRow[2]." ni pour le secteur ".$finalRow[$posSecteur]." pour annee = ".$anneeEnCours." et mois = ".$moisEnCours.", arret du traitement.",$pasdefichier);
+									}
+									$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>pas d'effort ni pour le systeme ".$finalRow[2]." ni pour le secteur ".$finalRow[$posSecteur]." pour annee = ".$anneeEnCours." et mois = ".$moisEnCours.". Arret du calcul<br/>";
+									$erreurStatGene .= "Pas d'effort ni pour le systeme ".$finalRow[2]." ni pour le secteur ".$finalRow[$posSecteur]." pour annee = ".$anneeEnCours." et mois = ".$moisEnCours."<br/>";
 								}
 								$erreurProcess = true;
 							} else {
@@ -4109,7 +4127,7 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
 					break;
 					case "ats":
-						$listeChampsSel = ",esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						$listeChampsSel = ",ast.pue,ast.fm,ast.cap,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
 						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
 						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
 					break;
@@ -4119,12 +4137,12 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 						$AjoutWhere = "";
 					break;
 					case "attgt":
-						$listeChampsSel = ",attgt.nbre_enquete_gt_sp,attgt.obs_gt_sp_min, attgt.obs_gt_sp_max,attgt.pue_gt_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						$listeChampsSel = ",asgt.pue_gt,asgt.fm_gt,asgt.cap_gt,attgt.nbre_enquete_gt_sp,attgt.obs_gt_sp_min, attgt.obs_gt_sp_max,attgt.pue_gt_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
 						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
 						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
 					break;
 					case "atgts":
-						$listeChampsSel = ",esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						$listeChampsSel = ",asgt.pue_gt,asgt.fm_gt,asgt.cap_gt,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
 						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
 						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
 					break;

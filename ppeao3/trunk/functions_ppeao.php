@@ -503,26 +503,29 @@ function nettoieLogExport(){
 
 	// Suppression des logs.
 	$hier  = mktime(0, 0, 0, date("m")  , date("d")-1, date("Y"));
-	VideRepData($_SERVER["DOCUMENT_ROOT"]."/log", $hier);
+	VideRepData($_SERVER["DOCUMENT_ROOT"]."/log", $hier,"log");
 	
 	// Suppression des fichiers d'extraction
-	VideRepData($_SERVER["DOCUMENT_ROOT"]."/work/extraction/", $hier);	
+	VideRepData($_SERVER["DOCUMENT_ROOT"]."/work/extraction/", $hier,"txt,zip");	
 	
 }
 //***************************************************************************************************
 // vide un repertoire de son contenu selon la date des fichiers
-function VideRepData($dir, $dateLimite) {
-	logWriteTo(4,"notice","Suppression des fichiers date de dernier acces inferieure a ".date("d-F-Y",$dateLimite)." pour ".$dir,"","",0);
+function VideRepData($dir, $dateLimite,$listeExtension) {
+	logWriteTo(4,"notice","Suppression des fichiers ".$listeExtension." date de dernier acces inferieure a ".date("d-F-Y",$dateLimite)." pour ".$dir,"","",0);
     if(!$dh = @opendir($dir)) return;
     while (false !== ($obj = readdir($dh))) {
         if($obj=='.' || $obj=='..') continue;
-		
-		if (fileatime($dir.'/'.$obj) < $dateLimite) { 
-			unlink($dir.'/'.$obj);			
-		} 
+		$path_parts = pathinfo($dir.'/'.$obj);
+		$extFic = $path_parts['extension'];
+		if (strpos($listeExtension,$extFic) === false ) {
+		} else {
+			if (fileatime($dir.'/'.$obj) < $dateLimite) { 
+				unlink($dir.'/'.$obj);			
+			} 
+		}
     }
     closedir($dh);
-
 }
 
 //***************************************************************************************************
