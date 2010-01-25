@@ -71,7 +71,6 @@ $campagnes_ids=$compteur["campagnes_ids"];
 $coups_ids=$compteur["coups_ids"];
 $enquetes_ids=$compteur["enquetes_ids"];
 
-
 // si on a depasse le step 1, on encapsule les selecteurs precedents dans un DIV id="selection_precedente"
 // pour pouvoir les masquer
 // le DIV est ferme dans l'une des fonctions afficheXXXXX(), selon le step
