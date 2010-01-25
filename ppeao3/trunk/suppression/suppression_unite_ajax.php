@@ -47,54 +47,44 @@ $sqlCoups='SELECT DISTINCT id,exp_environnement_id FROM exp_coup_peche WHERE exp
 $resultCoups=pg_query($connectPPEAO,$sqlCoups) or die('erreur dans la requete : '.$sqlCoups. pg_last_error());
 $coups=pg_fetch_all($resultCoups);
 pg_free_result($resultCoups);
-if (!empty($coups)) {$coupsNombre=count($coups);} else {$coupsNombre=0;}
+if (!empty($coups)) {$coupsNombre=count($coups);
+	foreach ($coups as $coup) {$coups_id[]=$coup["id"];}
+	$coupsListe='\''.arrayToList($coups_id,'\',\'','\'');
+	} else {$coupsNombre=0;}
 
 
 // environnement
 // on extrait les listes d'id des enregistrements lies aux coups de peche a supprimer
 foreach ($coups as $coup) {
 	if (!empty($coup["exp_environnement_id"])) {$enviro[]=$coup["exp_environnement_id"];}
-	if (!empty($coup["id"])) {$coups_id[]=$coup["id"];}
 }
-// la liste des environnements lies aux coups de peche a supprimer
-$enviroListe='\''.arrayToList($enviro,'\',\'','\'');
-$sqlEnviro='SELECT DISTINCT id FROM exp_environnement WHERE id IN ('.$enviroListe.')';
-$resultEnviro=pg_query($connectPPEAO,$sqlEnviro) or die('erreur dans la requete : '.$sqlEnviro. pg_last_error());
-$enviro=pg_fetch_all($resultEnviro);
-pg_free_result($resultEnviro);
-if (!empty($enviro)) {$enviroNombre=count($enviro);} else {$enviroNombre=0;}
+if (!empty($enviro)) {$enviroNombre=count($enviro);
+	$enviroListe='\''.arrayToList($enviro,'\',\'','\'');} else {$enviroNombre=0;}
 
 // fractions
-// la liste des id des coups de peche a supprimer
-$coupsListe='\''.arrayToList($coups_id,'\',\'','\'');
 $sqlFraction='SELECT DISTINCT id FROM exp_fraction WHERE exp_coup_peche_id IN ('.$coupsListe.')';
 $resultFraction=pg_query($connectPPEAO,$sqlFraction) or die('erreur dans la requete : '.$sqlFraction. pg_last_error());
 $fractions=pg_fetch_all($resultFraction);
 pg_free_result($resultFraction);
-if (!empty($fractions)) {$fractionNombre=count($fractions);} else {$fractionNombre=0;}
+if (!empty($fractions)) {$fractionNombre=count($fractions);
+	foreach($fractions as $fraction) {$fractions_id[]=$fraction["id"];}
+	$fractionsListe='\''.arrayToList($fractions_id,'\',\'','\'');
+	} else {$fractionNombre=0;}
 
 
 // biologie
-// on extrait les listes d'id des fractions lies aux coups de peche a supprimer
-foreach ($fractions as $fraction) {
-	if (!empty($fraction["id"])) {$fractions_id[]=$fraction["id"];}
-}
-// la liste des id des fraction a supprimer
-$fractionsListe='\''.arrayToList($fractions_id,'\',\'','\'');
+// la liste des id des biologie a supprimer
 $sqlBio='SELECT DISTINCT id FROM exp_biologie WHERE exp_fraction_id IN ('.$fractionsListe.')';
 $resultBio=pg_query($connectPPEAO,$sqlBio) or die('erreur dans la requete : '.$sqlBio. pg_last_error());
 $biologies=pg_fetch_all($resultBio);
 pg_free_result($resultBio);
-$biologieNombre=count($biologies);
-if (!empty($biologies)) {$biologieNombre=count($biologies);} else {$biologieNombre=0;}
+if (!empty($biologies)) {$biologieNombre=count($biologies);
+		foreach($biologies as $biologie) {$biologies_id[]=$biologie["id"];}
+	$biologiesListe='\''.arrayToList($biologies_id,'\',\'','\'');
+	} else {$biologieNombre=0;}
 
 // trophique
-// on extrait les listes d'id des biologie lies aux coups de peche a supprimer
-foreach ($biologies as $biologie) {
-	if (!empty($biologie["id"])) {$biologies_id[]=$biologie["id"];}
-}
-// la liste des id des biologies a supprimer
-$biologiesListe='\''.arrayToList($biologies_id,'\',\'','\'');
+// la liste des id des trophiques a supprimer
 $sqlTrophique='SELECT DISTINCT id FROM exp_trophique WHERE exp_biologie_id IN ('.$biologiesListe.')';
 $resultTrophique=pg_query($connectPPEAO,$sqlTrophique) or die('erreur dans la requete : '.$sqlTrophique. pg_last_error());
 $trophiques=pg_fetch_all($resultTrophique);
@@ -151,7 +141,7 @@ $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete 
 pg_free_result($resultDelete);}
 // environnement
 if ($enviroNombre!=0) {
-$sqlDelete='DELETE FROM exp_fraction WHERE id IN ('.$enviroListe.')';
+$sqlDelete='DELETE FROM exp_environnement WHERE id IN ('.$enviroListe.')';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
 pg_free_result($resultDelete);}
 // coups de peche
@@ -235,7 +225,16 @@ if (!empty($landings)) {$landingsNombre=count($landings);
 	if (!empty($fractions)) {$fractionsNombre=count($fractions);
 		foreach ($fractions as $fraction) {$fraction_id[]=$fraction["id"];}
 		$fractionsListe='\''.arrayToList($fraction_id,'\',\'','\'');
-		
+	// fractions recomposees
+	// le lien entre art_fraction et art_fraction_rec se fait sur l'id unique de chaque table
+	$sqlFractionsRec='SELECT id FROM art_fraction_rec fr WHERE fr.id IN ('.$fractionsListe.')';
+	$resultFractionsRec=pg_query($connectPPEAO,$sqlFractionsRec) or die('erreur dans la requete : '.$sqlFractionsRec. pg_last_error());
+	$fractionsrec=pg_fetch_all($resultFractionsRec);
+	//debug 	echo('<pre>');print_r($fractionsrec);echo('</pre>');
+	
+	pg_free_result($resultFractionsRec);
+	if (!empty($fractionsrec)) {$fractionsrecNombre=count($fractionsrec);} else {$fractionsrecNombre=0;}
+	
 		// poisson_mesure
 		$sqlPoissons='SELECT id FROM art_poisson_mesure p WHERE p.art_fraction_id IN ('.$fractionsListe.')';
 		$resultPoissons=pg_query($connectPPEAO,$sqlPoissons) or die('erreur dans la requete : '.$sqlPoissons. pg_last_error());
@@ -265,7 +264,11 @@ if (!empty($activites)) {$activitesNombre=count($activites);
 	$resultEnginsactivite=pg_query($connectPPEAO,$sqlEnginsactivite) or die('erreur dans la requete : '.$sqlEnginsactivite. pg_last_error());
 	$enginsactivite=pg_fetch_all($resultEnginsactivite);
 	pg_free_result($resultEnginsactivite);
-	if (!empty($enginsactivite)) {$enginsactiviteNombre=count($enginsactivite);} else {$enginsactiviteNombre=0;}
+	if (!empty($enginsactivite)) {
+		$enginsactiviteNombre=count($enginsactivite);
+		foreach ($enginsactivite as $enginactivite) {$enginactivite_id[]=$enginactivite["id"];}
+		$enginactivitesListe='\''.arrayToList($enginactivite_id,'\',\'','\'');
+		} else {$enginsactiviteNombre=0;}
 	} 
 	// fin de  (!empty($activites))
 	else {$activitesNombre=0; $enginsactiviteNombre=0;}
@@ -287,12 +290,12 @@ if (!empty($stats)) {$statsNombre=count($stats);
 	if (!empty($statgts)) {$statgtNombre=count($statgts);
 		foreach ($statgts as $statgt) {$statgt_id[]=$statgt["id"];}
 		$statgtsListe='\''.arrayToList($statgt_id,'\',\'','\'');
-		// stat_gt_sp
+		// art_stat_gt_sp
 		$sqlStatgtsp='SELECT id FROM art_stat_gt_sp s WHERE s.art_stat_gt_id IN ('.$statgtsListe.')';
 		$resultStatgtsp=pg_query($connectPPEAO,$sqlStatgtsp) or die('erreur dans la requete : '.$sqlStatgtsp. pg_last_error());
 		$statgtsps=pg_fetch_all($resultStatgtsp);
 		pg_free_result($resultStatgtsp);
-		if (!empty($statgtsps)) {$statgtspNombre=count($statgts);
+		if (!empty($statgtsps)) {$statgtspNombre=count($statgtsps);
 			foreach ($statgtsps as $statgtsp) {$statgtsp_id[]=$statgtsp["id"];}
 			$statgtspsListe='\''.arrayToList($statgtsp_id,'\',\'','\'');
 			
@@ -301,7 +304,10 @@ if (!empty($stats)) {$statsNombre=count($stats);
 			$resultTaillegtsps=pg_query($connectPPEAO,$sqlTaillegtsps) or die('erreur dans la requete : '.$sqlTaillegtsps. pg_last_error());
 			$taillegtsps=pg_fetch_all($resultTaillegtsps);
 			pg_free_result($resultTaillegtsps);
+			foreach ($taillegtsps as $taillegtsp) {$taillegtsp_id[]=$taillegtsp["id"];}
+			$taillegtspListe='\''.arrayToList($taillegtsp_id,'\',\'','\'');
 			if (!empty($taillegtsps)) {$taillegtspNombre=count($taillegtsps);} else {$taillegtspNombre=0;}
+			//debug 			echo('<pre>');print_r($taillegtspListe);echo('</pre>');
 			}
 			// fin de if (!empty($statgtsps))
 			 else {$statgtspNombre=0;$taillegtspNombre=0;}
@@ -349,6 +355,7 @@ if ($action=='ask') {
 	$theMessage.='<li>'.$landingsrecNombre.' d&eacute;barquement(s) recompos&eacute;(s)</li>';
 	$theMessage.='<li>'.$enginsNombre.' enregistrements d\'engins/p&ecirc;che</li>';
 	$theMessage.='<li>'.$fractionsNombre.' fraction(s)</li>';
+	$theMessage.='<li>'.$fractionsrecNombre.' fraction(s) recompos&eacute;es</li>';
 	$theMessage.='<li>'.$poissonsNombre.' poisson(s) mesur&eacute;(s)</li>';
 	$theMessage.='<li>'.$activitesNombre.' activit&eacute;(s)</li>';
 	$theMessage.='<li>'.$enginsactiviteNombre.' enregistrement(s) d&#x27;engin/activit&eacute;</li>';
@@ -381,14 +388,14 @@ $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete 
 pg_free_result($resultDelete);}
 
 //art_taille_gt_sp
-if ($taillegtspsNombre!=0) {
-$sqlDelete='DELETE FROM art_taille_gt_sp t WHERE s.art_stat_gt_sp_id IN ('.$statgtspsListe.')';
+if ($taillegtspNombre!=0) {
+$sqlDelete='DELETE FROM art_taille_gt_sp t WHERE t.id IN ('.$taillegtspListe.')';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
 pg_free_result($resultDelete);}
 
 //art_stat_gt_sp
-if ($statgtspsNombre!=0) {
-$sqlDelete='DELETE FROM art_stat_gt_sp s WHERE s.art_stat_gt_id IN ('.$statgtsListe.')';
+if ($statgtspNombre!=0) {
+$sqlDelete='DELETE FROM art_stat_gt_sp s WHERE s.id IN ('.$statgtspsListe.')';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
 pg_free_result($resultDelete);}
 
@@ -406,7 +413,7 @@ pg_free_result($resultDelete);}
 
 // engin_activite
 if ($enginsactiviteNombre!=0) {
-$sqlDelete='DELETE FROM art_engin_activite e WHERE e.art_activite_id IN ('.$activitesListe.')';
+$sqlDelete='DELETE FROM art_engin_activite e WHERE e.id IN ('.$enginactivitesListe.')';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
 pg_free_result($resultDelete);}
 
@@ -425,6 +432,12 @@ pg_free_result($resultDelete);}
 // fraction
 if ($fractionsNombre!=0) {
 $sqlDelete='DELETE FROM art_fraction f WHERE f.art_debarquement_id IN ('.$landingsListe.')';
+$resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
+pg_free_result($resultDelete);}
+
+// fraction recomposee
+if ($fractionsrecNombre!=0) {
+$sqlDelete='DELETE FROM art_fraction_rec fr WHERE fr.id IN ('.$fractionsListe.')';
 $resultDelete=pg_query($connectPPEAO,$sqlDelete) or die('erreur dans la requete : '.$sqlDelete. pg_last_error());
 pg_free_result($resultDelete);}
 
@@ -466,8 +479,9 @@ pg_free_result($resultDelete);
 	$theMessage.='<ul>';
 	$theMessage.='<li>'.$landingsNombre.' d&eacute;barquement(s)</li>';
 	$theMessage.='<li>'.$landingsrecNombre.' d&eacute;barquement(s) recompos&eacute;(s)</li>';
-	$theMessage.='<li>'.$enginsNombre.' engins</li>';
+	$theMessage.='<li>'.$enginsNombre.' enregistrements d\'engins/p&ecirc;che</li>';
 	$theMessage.='<li>'.$fractionsNombre.' fraction(s)</li>';
+	$theMessage.='<li>'.$fractionsrecNombre.' fraction(s) recompos&eacute;es</li>';
 	$theMessage.='<li>'.$poissonsNombre.' poisson(s) mesur&eacute;(s)</li>';
 	$theMessage.='<li>'.$activitesNombre.' activit&eacute;(s)</li>';
 	$theMessage.='<li>'.$enginsactiviteNombre.' enregistrement(s) d&#x27;engin/activit&eacute;</li>';

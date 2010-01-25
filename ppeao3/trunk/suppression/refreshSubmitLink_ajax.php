@@ -29,7 +29,7 @@ $total=countMatchingUnits($domaine);
 if ($domaine=='exp') {
 if ($total==0) {$leLien='<div id="affiche_unites">il n&#x27;existe aucune campagne correspondante dans la base de donn&eacute;es</div>';}
 else {
-	$leLien='<div id="affiche_unites"><a href="/edition_supprimer.php?'.$_SERVER["QUERY_STRING"].'&mode=liste" id="affiche_unites_lien">afficher '.$total.' campagne(s) correspondante(s)</a></div>';
+	$leLien='<div id="affiche_unites"><a href="/edition_supprimer.php?'.$_SERVER["QUERY_STRING"].'&mode=liste" id="affiche_unites_lien" class="next_step">afficher '.$total.' campagne(s) correspondante(s)</a></div>';
 }
 
 } // end if domaine==exp
@@ -37,7 +37,7 @@ else {
 if ($domaine=='art') {
 if ($total==0) {$leLien='<div id="affiche_unites">il n&#x27;existe aucune p&eacute;riode d&#x27;enqu&ecirc;te correspondante dans la base de donn&eacute;es</div>';}
 else {
-	$leLien='<div id="affiche_unites"><a href="/edition_supprimer.php?'.$_SERVER["QUERY_STRING"].'&mode=liste" id="affiche_unites_lien">afficher '.$total.' p&eacute;riode(s) d&#x27;enqu&ecirc;te correspondante(s)</a></div>';
+	$leLien='<div id="affiche_unites"><a href="/edition_supprimer.php?'.$_SERVER["QUERY_STRING"].'&mode=liste" id="affiche_unites_lien" class="next_step">afficher '.$total.' p&eacute;riode(s) d&#x27;enqu&ecirc;te correspondante(s)</a></div>';
 }
 
 }

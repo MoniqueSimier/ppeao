@@ -153,7 +153,7 @@ if ($domaine=='exp') {
 		}
 	else
 	 {
-		echo('<div id="affiche_unites"><a href="/edition_supprimer.php?'.$_SERVER["QUERY_STRING"].'&mode=liste" id="affiche_unites_lien">afficher '.$total.' campagne(s) correspondante(s)</a></div>');
+		echo('<div id="affiche_unites"><a href="/edition_supprimer.php?'.$_SERVER["QUERY_STRING"].'&mode=liste" id="affiche_unites_lien" class="next_step">afficher '.$total.' campagne(s) correspondante(s)</a></div>');
 		}
 	;} // end if domaine=exp
 // pour les periodes d'enquete
@@ -166,7 +166,7 @@ if ($domaine=='art') {
 		}
 	else
 	 {
-		echo('<div id="affiche_unites"><a href="/edition_supprimer.php?'.$_SERVER["QUERY_STRING"].'&mode=liste" id="affiche_unites_lien">afficher '.$total.' p&eacute;riode(s) d&#x27;enqu&ecirc;te correspondante(s)</a></div>');
+		echo('<div id="affiche_unites"><a href="/edition_supprimer.php?'.$_SERVER["QUERY_STRING"].'&mode=liste" id="affiche_unites_lien" class="next_step">afficher '.$total.' p&eacute;riode(s) d&#x27;enqu&ecirc;te correspondante(s)</a></div>');
 		}
 	;} // end if domaine=art
 	
