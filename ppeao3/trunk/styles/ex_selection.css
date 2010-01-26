@@ -16,7 +16,7 @@
 }
 
 
-#choix_tables_stats, #choix_filiere {
+#choix_tables_stats, #choix_filiere, #choix_tables_stats {
 	display:block;
 	margin:10px 0 10px 0;
 }
@@ -61,8 +61,13 @@ a.next_step, a.last_step {
 	margin-top:8px;
 }
 
-#ex_selection .next_step, #ex_selection .last_step {
+#ex_selection .next_step, #ex_selection .last_step, #choix_tables_stats .last_step {
 	display:inline;
+}
+
+#choix_tables_stats p {
+	margin-top:10px;
+	font-size:12px;
 }
 
 #debut, #fin {

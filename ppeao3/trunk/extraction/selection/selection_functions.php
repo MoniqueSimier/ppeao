@@ -882,6 +882,9 @@ $hint_empty='';
 	case "type_stats":
 		$hint.="choisissez le type de statistiques qui vous int&eacute;ressent";
 	break;
+	case "stats":
+		$hint.="votre s&eacute;lection est termin&eacute;e, vous allez maintenant pouvoir choisir les statistiques &agrave; extraire";
+	break;
 		
 	default:
 		$hint.='';
@@ -2162,16 +2165,19 @@ if ($_GET["step"]==$theNextStep) {
 echo('</div></div>');}
 if ($_GET["step"]>$theStep) {
 echo('<div id="choix_tables_stats"><p>');
+		echo('<p>le processus de s&eacute;lection des donn&eacute;es est termin&eacute;, cliquez sur le lien ci-dessous pour choisir les variables dont vous voulez exporter les valeurs<br />vous pouvez &eacute;galement revoir ou modifier votre s&eacute;lection en cliquant sur l&#x27;un des liens [modifier ma s&eacute;lection]<p>');
 		switch ($exploit) {
 			case "donnees" : 
 			echo('<a id="link_filieres" class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;extraction...</a>');
+		// on affiche le texte d'aide
+		afficheAide("filieres");
 			break;
 			case "stats":
 			echo('<a id="link_filieres"  class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">Affiner les s&eacute;lections pour les statistiques...</a>');
+		// on affiche le texte d'aide
+		afficheAide("stats");
 			break;
 		} // end switch $exploit
-		// on affiche le texte d'aide
-		afficheAide("filieres");
 }
 }
 
