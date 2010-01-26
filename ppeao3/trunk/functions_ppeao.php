@@ -690,4 +690,20 @@ function sortArrayByArray($array,$orderArray) {
     return $ordered + $array;
 }
 
+//***************************************************************************************************
+// fonction qui affiche un avertissement si l'administrateur utilise Internet Explorer
+function IEwarning() {
+	// librairie de détection des navigateurs
+	include $_SERVER["DOCUMENT_ROOT"].'/functions_browser.php';
+	$browser=new Browser();
+	// si le browser est Internet Explorer, on affiche un avertissement
+	if ($browser->getBrowser()==Browser::BROWSER_IE) {
+		$message='<div id="ie_warning">';
+		$message.='<p>Vous utilisez Internet Explorer : certains outils de l&#x27;interface d&#x27;administration de PPEAO ne fonctionnent pas correctement avec ce navigateur Internet du fait de son non-respect des standards du Web.</p><p>Il est conseill&eacute; d&#x27;utiliser un navigateur respectant les standards, comme <a href="http://www.mozilla-europe.org/fr/firefox/" target="_blank">Firefox</a> ou <a href="http://www.apple.com/fr/safari/download/" target="_blank">Safari</a>.</p>';
+		$message.='<span><a onclick="javascript:$(\'ie_warning\').setStyle(\'display\',\'none\')";>masquer cet avertissement</a></span>';
+		$message.='</div>';
+		echo($message);
+	}
+}
+
 ?>

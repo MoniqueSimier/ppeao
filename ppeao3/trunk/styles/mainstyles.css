@@ -386,6 +386,21 @@ font-size: 9px;
 	margin:3px 6px 12px 3px;
 }
 
+/* utilises pour afficher l'avertissement d'utilisation de IE */
+#ie_warning {
+	display:block;
+	border:1px solid black;
+	padding:3px;
+	margin:6px 0;
+	font-size:14px;
+	background-color:#FF8000;
+}
+
+#ie_warning span {
+	text-align:right;
+	display:block;
+	font-size:12px;
+}
 
 
 /* if the browser is NOT Internet Explorer, we pass a pixel font size*/
@@ -394,3 +409,4 @@ body {
     font-size 	: 16px;
 }
 <!--<[endif]-->
+

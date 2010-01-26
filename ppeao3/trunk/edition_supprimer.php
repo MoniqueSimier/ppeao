@@ -48,9 +48,10 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 <h1>G&eacute;rer les tables de données : supprimer une <?php echo($domaine_unite); ?></h1>
 <!-- édition des tables de référence -->
 <?php
-
 // on teste à quelle zone l'utilisateur a accès
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
+// affiche un avertissement concernant l'utilisation de IE pour les outils d'administration
+IEwarning();
 ?>
 
 

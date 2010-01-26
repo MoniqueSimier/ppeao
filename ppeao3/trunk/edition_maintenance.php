@@ -37,6 +37,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 // on teste à quelle zone l'utilisateur a accès
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
+// affiche un avertissement concernant l'utilisation de IE pour les outils d'administration
+IEwarning();
 ?>
 
 

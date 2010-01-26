@@ -39,6 +39,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 // on teste à quelle zone l'utilisateur a accès
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
+// affiche un avertissement concernant l'utilisation de IE pour les outils d'administration
+IEwarning();
 ?>
 <h2><a href="/portage.php" title="portage">portage d'une base</a></h2>
 <p>vous permet de transf&eacute;rer les donn&eacute;es depuis une base temporaire vers la base principale PPEAO.</p>
