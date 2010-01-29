@@ -114,17 +114,7 @@ Engins de pêche, liste des engins de pêche observ&eacute;s au cours de l'enquête
 </div>
 			<?php 
 				// On recupere les paramètres
-				if (isset($_GET['logsupp'])) {
-					if ($_GET['logsupp'] == "false") {
-						$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
-						echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" />";
-					} else {
-						echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
-						$EcrireLogComp = true;
-					}
-				} else {
-					echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
-				}
+				echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
 				// On récupère les valeurs des paramètres pour les fichiers log
 				$dirLog = GetParam("repLogExtr",$PathFicConf);
 				$nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
@@ -212,10 +202,6 @@ Engins de pêche, liste des engins de pêche observ&eacute;s au cours de l'enquête
         <input type="hidden" id="gselec" value="<?php echo $gardeSelection;?>"/>
         <?php 
 		echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>";?>
-		        <span id="affLog">
-			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
-			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
-			</form></span>
 		<?php if ($modifFiliere=="y") { ?>
                    <script type="text/javascript" charset="utf-8">runFilieresArt('<?php echo $typePeche ?>','<?php echo $typeAction ?>','1','','n','','','','')</script>
         <?php }   

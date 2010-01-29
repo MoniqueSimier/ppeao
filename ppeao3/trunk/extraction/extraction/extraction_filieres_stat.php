@@ -101,17 +101,7 @@ Des s&eacute;lections d'esp&egrave;ces ou des regroupements d'esp&egrave;ces peu
 		<div id="resumeChoix">
 			<?php 
 				// On recupere les paramètres
-				if (isset($_GET['logsupp'])) {
-					if ($_GET['logsupp'] == "false") {
-						$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
-						echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" />";
-					} else {
-						echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
-						$EcrireLogComp = true;
-					}
-				} else {
-					echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
-				}
+				echo "<input type=\"hidden\" name=\"logsupp\" id=\"logsupp\" checked=\"checked\" />";
 				// On récupère les valeurs des paramètres pour les fichiers log
 				$dirLog = GetParam("repLogExtr",$PathFicConf);
 				$nomLogLien = "/".$dirLog; // pour créer le lien au fichier dans le cr ecran
@@ -141,6 +131,7 @@ Des s&eacute;lections d'esp&egrave;ces ou des regroupements d'esp&egrave;ces peu
 					unset($_SESSION['libelleTable']); // Pour recuperer les noms des tables
 					unset($_SESSION['libelleChamp']); // Pour recuperer les noms des champs
 				}
+				unset($_SESSION['listeEffortTotal']);
 				// Variables pour construire les SQL	
 				$SQLPays 	= "";
 				$SQLSysteme	= "";
@@ -198,13 +189,8 @@ Des s&eacute;lections d'esp&egrave;ces ou des regroupements d'esp&egrave;ces peu
 		<div id="resultfiliere"></div>
 		<div id="exportFic"></div>
         <?php // On lance systematiquement l'affichage de la filiere statistiques vu qu'on exporte toutes les tables 
-              echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>"; ?>   
-                   <span id="affLog">
-			<form id="formExtraction" method="get" action="extraction_filieres_exp.php">
-			g&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
-			</form></span>
-
-		   <script type="text/javascript" charset="utf-8">runFilieresStat('<?php echo $typeStatistiques ?>','stats','1','','n','','','','');</script>
+        echo "<div id=\"sel_compteur\"><p><b>votre s&eacute;lection correspond &agrave; : </b></p><ul><li>".$compteurItem." ".$labelSelection."</li></ul></div>"; ?>   
+		<script type="text/javascript" charset="utf-8">runFilieresStat('<?php echo $typeStatistiques ?>','stats','1','','n','','','','');</script>
         <script type="text/javascript" charset="utf-8">
 			var mySlider = new Fx.Slide('selection_precedente', {duration: 500});
 			mySlider.hide();

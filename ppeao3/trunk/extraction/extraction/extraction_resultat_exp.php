@@ -19,6 +19,8 @@ $subsection="";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
+// on appelle le ficheir de ocnfiguration du tri
+include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/ordre_tri.inc';
 $zone=0; // zone libre (voir table admin_zones)
 Global $debugLog;
 ?>
