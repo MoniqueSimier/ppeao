@@ -341,6 +341,7 @@ function AfficherDonnees($file,$typeAction){
 	$PasDeResultat = false;
 	$debugAff = false;
 	$start_while=timer(); 		// début du chronométrage du for
+	unset($_SESSION['listeDIV']);
 	if ($debugAff) {
 		$debugTimer = number_format(timer()-$start_while,4);
 		if ($EcrireLogComp ) {
@@ -1410,8 +1411,9 @@ function AfficherDonnees($file,$typeAction){
 				} else {
 					$SQLSecteurPenq = $SQLSecteur;
 				}
-				$SQLperEnq = "select id from art_periode_enquete as penq where penq.annee||'/'||penq.mois between  '".$SQLdateDebut."' and  '".$SQLdateDebut."'
+				$SQLperEnq = "select id from art_periode_enquete as penq where penq.annee||'/'||penq.mois between  '".$SQLdateDebut."' and  '".$SQLdateFin."'
 				and penq.art_agglomeration_id in (select id from art_agglomeration where ref_secteur_id in (".$SQLSecteurPenq."))";
+				//echo $SQLperEnq."<br/>";
 				$SQLperEnqResult = pg_query($connectPPEAO,$SQLperEnq);
 				$erreurSQL = pg_last_error($connectPPEAO);
 		
@@ -1492,7 +1494,11 @@ function AfficherDonnees($file,$typeAction){
 					if (!($SQLEspeces == "")) {
 						$WhereSpecasp .= " and asp.ref_espece_id in (".$SQLEspeces.") ";
 					}
-					$OrderComasp = ",asp.ref_espece_id asc";
+					if ($typeStatistiques == "agglomeration") {
+						$OrderComasp = ",agg.id asc,asp.ref_espece_id asc";
+					} else {
+						$OrderComasp = ",asp.ref_espece_id asc";
+					}
 					$ConstIDuniqueasp = "AST-##-18";
 					$posSecteurIDasp = 16 ; //position systeme ID pour calcul stats generales
 					$posGTEIDasp = -1 ; //pas de GTE
@@ -1517,7 +1523,11 @@ function AfficherDonnees($file,$typeAction){
 					if (!($SQLEspeces == "")) {
 						$WhereSpecats .= " and  asp.ref_espece_id in (".$SQLEspeces.") ";
 					}
-					$OrderComats =",asp.ref_espece_id asc,ats.li asc";
+					if ($typeStatistiques == "agglomeration") {
+						$OrderComats =",agg.id asc,asp.ref_espece_id asc,ats.li asc";
+					} else {
+						$OrderComats =",asp.ref_espece_id asc,ats.li asc";
+					}
 					$ConstIDuniqueats = "AST-##-17";
 					$posSecteurIDats = 19 ; //position systeme ID pour calcul stats generales
 					$posGTEIDats = -1 ; //pas de GTE
@@ -1560,7 +1570,11 @@ function AfficherDonnees($file,$typeAction){
 					if (!($SQLEspeces == "")) {
 						$WhereSpecattgt .= " and  attgt.ref_espece_id in (".$SQLEspeces.")";
 					}
-					$OrderComattgt =",gte.id asc,attgt.ref_espece_id asc";
+					if ($typeStatistiques == "agglomeration") {
+						$OrderComattgt =",agg.id,gte.id asc,attgt.ref_espece_id asc";
+					} else {
+						$OrderComattgt =",gte.id asc,attgt.ref_espece_id asc";
+					}
 					$ConstIDuniqueattgt = "AST-##-16";
 					$posSecteurIDattgt = 19 ; //position systeme ID pour calcul stats generales
 					$posGTEIDattgt = 10 ; //position systeme ID pour calcul stats generales
@@ -1588,7 +1602,11 @@ function AfficherDonnees($file,$typeAction){
 					if (!($SQLEspeces == "")) {
 						$WhereSpecatgts .= " and  attgt.ref_espece_id in (".$SQLEspeces.")";
 					}
-					$OrderComatgts =",gte.id asc,attgt.ref_espece_id asc,atgts.li asc";
+					if ($typeStatistiques == "agglomeration") {
+						$OrderComatgts =",agg.id asc,gte.id asc,attgt.ref_espece_id asc,atgts.li asc";
+					} else {
+						$OrderComatgts =",gte.id asc,attgt.ref_espece_id asc,atgts.li asc";
+					}
 					$ConstIDuniqueatgts = "AST-##-21";
 					$posSecteurIDatgts = 22 ; //position systeme ID pour calcul stats generales
 					$posGTEIDatgts = 10 ; //position systeme ID pour calcul stats generales
@@ -1714,6 +1732,7 @@ function AfficherDonnees($file,$typeAction){
 			unset($_SESSION['listeEffortTotal']);
 			unset($_SESSION['listeEffortGTETotal']);
 			unset($_SESSION['listeEffortEspeces']);
+			$_SESSION['calculStatSysteme '] = false;
 			for ($cptTS = 0;$cptTS <= $nbrTS;$cptTS++) {
 				$nomValLChampsSpec = "listeChampsSpec".$tableStat[$cptTS];
 				$nomValLTableSpec = "ListeTableSpec".$tableStat[$cptTS];
@@ -2202,8 +2221,7 @@ function AfficherDonnees($file,$typeAction){
 					$nomValWhereSpec = "WhereSpec".$tableStat[$cptTS];
 					$nomOrderCom = "OrderCom".$tableStat[$cptTS];
 					//echo $nomValWhereSpec. " - ".${$nomValWhereSpec}."<br/>";
-					// Construction du SQL pour chacun des tables
-					// Construction du SQL pour chacun des tables
+					// Construction du SQL pour chacune des tables
 					// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
 					$AjoutWhere = "";
 					$listeChampsSel="";
@@ -2329,7 +2347,8 @@ function AfficherDonnees($file,$typeAction){
 					WriteCompLog ($logComp, "INFO : selection ecrite dans le fichier [date]_".$typeSelection."_".$typeAction."-Selection.txt",$pasdefichier);
 				}
 			}
-			$RegroupPourFic= "";
+			fclose($ExpCompSel);
+			$RegroupPourFic= "-------------------------------------------------------------------  \n";
 			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon) {
 				// On cree la liste
 				$NbReg = count($_SESSION['listeRegroup']);
@@ -2342,7 +2361,12 @@ function AfficherDonnees($file,$typeAction){
 						$RegroupPourFic .="\t - ".$infoEsp[0]." - ".$infoEsp[1]."\n";
 					}
 				}
-				$RegroupPourFic .="Toutes les autres especes se retrouvent dans le regroupement DIV. \n";
+				$RegroupPourFic .="Toutes les autres especes se retrouvent dans le regroupement DIV :  \n";
+				$NbReg = count($_SESSION['listeDIV']);
+				for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
+					$RegroupPourFic .= "\t - ".$_SESSION['listeDIV'][$cptR][0]." - ".$_SESSION['listeDIV'][$cptR][1]."\n";
+				}			
+				$RegroupPourFic .="-------------------------------------------------------------------  \n";
 				if (! fwrite($ExpCompReg,$RegroupPourFic) ) {
 					if ($EcrireLogComp ) {
 						WriteCompLog ($logComp, "ERREUR : erreur ecriture dans fichier export regroupement.".$RegroupPourFic,$pasdefichier);
@@ -2354,6 +2378,7 @@ function AfficherDonnees($file,$typeAction){
 				if ($EcrireLogComp ) {
 					WriteCompLog ($logComp, "INFO : description regroupement ecrite dans le fichier [date]_".$typeSelection."_".$typeAction."-Regroupement.txt",$pasdefichier);
 				}
+				fclose($ExpCompReg);
 			}
 			}
 			// ********* Fin creation fichier ==> Zip
@@ -2824,12 +2849,12 @@ function litTableDocument($nomTable,$ListeID) {
 			$messageErreur .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>la requ&ecirc;te ".$SQLDoc." ne renvoie rien alors qu'un document a &eacute;t&eacute; s&eacute;lectionn&eacute;.<br/>";
 
 		} else {
-			// pour debug 
-			$messageErreur .="<br/>Document trouv&eacute; !!<br/>";
+			// pour debug 	
+			//$messageErreur .="<br/>Document trouv&eacute; !!<br/>";
 			$cptURL = count($listeDocURL);
 			while ($docRow = pg_fetch_row($SQLDocResult) ) {
 				$cptURL ++;
-				$listeDocURL[$cptURL] = "documentation/metadata/".$docRow[3];
+				$listeDocURL[$cptURL] = "work/documentation/metadata/".$docRow[3];
 			}
 		}
 		pg_free_result($SQLDocResult);
@@ -3394,7 +3419,6 @@ function recupeNomChamps($ValeurATester){
 	}
 	return $libelleChamps;
 }
-
 
 //*********************************************************************
 // creeDirTemp : Fonction pour creer le repertoire temporaire

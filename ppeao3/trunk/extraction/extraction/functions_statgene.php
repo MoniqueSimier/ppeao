@@ -256,6 +256,7 @@ function analyseTableCaptEsp(){
 // AjoutEnreg : ajoute un enreg dans la table temporaire
 function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$finalRow,$typeStatistiques,$tableStat){
 // Cette fonction permet d'ajouter les lignes du tableau temporaire regroupDeb dans la table temp_extraction
+// Le calcul final des efforts / captures et PUE se fait ici
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
 // $regroupDeb : le tableau contenant les lignes a ajouter
@@ -542,10 +543,9 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 		}
 	}
 	// Traitement du SQL
-	if ($tableStat == "x") {
-	echo "<b>".$tableStat."</b><br/>";
-	echo $SQLaExecuter."<br/>";
-	}
+	//echo "<b>".$tableStat."</b><br/>";
+	//echo $SQLaExecuter."<br/>";
+
 	if ($EcrireLogComp && $debugLog && $typeStatistiques == "generales") {
 		WriteCompLog ($logComp, "DEBUG : tables stat = ".$tableStat,$pasdefichier);
 		//WriteCompLog ($logComp, "DEBUG : liste param fonction creeRegroupement sql = ".$SQLaExecuter." - posDEBID = ".$posDEBID ." - posESPID = ".
@@ -561,6 +561,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 	//		$controleEspece = true;
 	//	}
 	//}
+	
 	if ($typeStatistiques == "generales" && $tableStat == "asp") {
 		// On doit faire un calcul preliminaire des totaux par espece
 		$SQLfinalResult = pg_query($connectPPEAO,$SQLaExecuter);
@@ -573,11 +574,16 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 
 			} else {
 				$captureTotaleEsp = 0;
+				$testEffortSysteme = false;
 				while ($finalRow = pg_fetch_row($SQLfinalResult) ) {
 					$anneeEnCours = $finalRow[8];		//annee
 					$moisEnCours = $finalRow[9];	//mois
 					$systemeEnCours = $finalRow[2];	// systeme
-					$sectEnCours = $finalRow[$posSecteur]; // Secteur
+					if ($_SESSION['calculStatSysteme ']) {
+						$sectEnCours = -1; // Stats calculees au niveau du systeme
+					} else {
+						$sectEnCours = $finalRow[$posSecteur]; // Secteur
+					}
 					$espEnCours = $finalRow[$posESPID];		// Especes
 					if ($posGTE == -1) { $GTEEnCours = "TOUS";} else {$GTEEnCours = $finalRow[$posGTE];}
 					if ($posRupSup == -1) {$posRupSupEnCours = 0;} else {$posRupSupEnCours = $finalRow[$posRupSup];}; // La longueur des especes pour la repartition par taille
@@ -622,9 +628,12 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 		analyseTableCaptEsp(); 
 
 	} // fin du if ($typeStatistiques == "generales" && $controleEspece) {
+	//echo('<pre>');print_r($_SESSION['listeEffortTotal']);echo('</pre>');
+	//echo "<br/>";
 	$SQLfinalResult = pg_query($connectPPEAO,$SQLaExecuter);
 	$erreurSQL = pg_last_error($connectPPEAO);
 	$cpt1 = 0;
+	$AffichageTypeStats = false;
 	if ( !$SQLfinalResult ) { 
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "ERREUR : Erreur query final regroupements ".$SQLaExecuter." (erreur complete = ".$erreurSQL.")",$pasdefichier);
@@ -665,11 +674,14 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 				if ($typeStatistiques == "generales") {
 					// Gestion du cas des stats generales
 					// Les ruptures sont les memes. Elles dependent en plus de ce qu'on va trouver dans la table des efforts.
-
 					$anneeEnCours = $finalRow[8];		//annee
 					$moisEnCours = $finalRow[9];	//mois
 					$systemeEncours = $finalRow[2];	// systeme
-					$sectEnCours = $finalRow[$posSecteur]; // Secteur
+					if ($_SESSION['calculStatSysteme ']) {
+						$sectEnCours = -1;
+					} else {
+						$sectEnCours = $finalRow[$posSecteur]; // Secteur
+					}
 					$espEnCours = $finalRow[$posESPID];		// Especes
 					if ($posGTE == -1) { $GTEEnCours = "TOUS";} else {$GTEEnCours = $finalRow[$posGTE];}
 					if ($posRupSup == -1) {$posRupSupEnCours = 0;} else {$posRupSupEnCours = $finalRow[$posRupSup];}; // La longueur des especes pour la repartition par taille
@@ -692,12 +704,30 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 					// Bon courage pour debugger...
 					switch ($tableStat) {
 						case "ast":
-							$RecEffortSysSect = recupereEffort($finalRow[2],$finalRow[$posSecteur],$anneeEnCours,$moisEnCours,$GTEEnCours);
+						// Si on trouve que le calcul se fait par systeme, pas la peine de chercher l'effort a chaque fois
+							$RecEffortSysSect = recupereEffort($systemeEncours,$sectEnCours,$anneeEnCours,$moisEnCours,$GTEEnCours);
 							$tabEffortSysSect = explode ("&#&",$RecEffortSysSect); // tableau contenant le resultat de la requete : [type]-[valeur sect/syst]&#&[valeur effort] 
 							$effortSysSect = floatval($tabEffortSysSect[1]);
 							$tabsectSystEncours = explode ("-",$tabEffortSysSect[0]);
 							$typesectSystEncours = $tabsectSystEncours[0]; // Va contenir soit sect soit syst si l'effort est trouvé au niveau du systeme ou du secteur.
 							$sectSystEncours = intval($tabsectSystEncours[1]);
+							// On passe ici pour l'affichage ecran. On sait avant de générer les fichiers si on est sur un effort par systeme ou par secteur.
+							if ($typesectSystEncours == "syst") {
+								$_SESSION['calculStatSysteme '] = true ;
+								if (!$AffichageTypeStats) {
+									$resultatLecture .= "Effort par secteur non trouv&eacute; : le calcul des stats g&eacute;n&eacute;rales se fait par syst&egrave;me.<br/>";
+									if ($EcrireLogComp ) {
+										WriteCompLog ($logComp, "INFO : Effort par secteur non trouve : le calcul des stats generales se fait par syst&egrave;me.",$pasdefichier);
+									}
+									$AffichageTypeStats = true;
+								}								
+							} else {
+								$_SESSION['calculStatSysteme '] = false ;
+								if ($EcrireLogComp ) {
+									WriteCompLog ($logComp, "INFO : Effort par secteur trouve : le calcul des stats generales se fait par secteur.",$pasdefichier);
+								}
+								//$resultatLecture .= "Effort par secteur trouv&eacute; : le calcul des stats g&eacute;n&eacute;rales se fait par secteur.<br/>";
+							}
 							break;	
 						case "asp":
 							// Lecture du tableau precedemment cree pour generer le resultat
@@ -724,7 +754,8 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 								}
 							}
 							if (!$EnregTrouve) { echo "asp - Enreg dans listeEffortEspeces non trouvé.<br/>";}
-							$testEffortSect = $typesectSystEncours."-".$sectEnCours."-".$anneeEnCours."-".$moisEnCours."-".$GTEEnCours; 
+							$testEffortSect = $typesectSystEncours."-".$sectSystEncours."-".$anneeEnCours."-".$moisEnCours."-".$GTEEnCours; 
+							//echo $tableStat." | ".$typesectSystEncours."-".$sectSystEncours."-".$anneeEnCours."-".$moisEnCours."-".$GTEEnCours."<br/>";
 							$NbReg = count($_SESSION['listeEffortTotal']) ;
 							for ($cptEff=1 ; $cptEff<=$NbReg;$cptEff++) {
 								$infoEff = explode("&#&",$_SESSION['listeEffortTotal'][$cptEff]);
@@ -761,7 +792,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 								}
 							}
 							if (!$EnregTrouve) { echo "ats - Enreg dans listeEffortEspeces non trouvé.<br/>";}
-							$testEffortSect = $typesectSystEncours."-".$sectEnCours."-".$anneeEnCours."-".$moisEnCours."-".$GTEEnCours; 
+							$testEffortSect = $typesectSystEncours."-".$sectSystEncours."-".$anneeEnCours."-".$moisEnCours."-".$GTEEnCours; 
 							$NbReg = count($_SESSION['listeEffortTotal']) ;
 							for ($cptEff=1 ; $cptEff<=$NbReg;$cptEff++) {
 								$infoEff = explode("&#&",$_SESSION['listeEffortTotal'][$cptEff]);
@@ -783,7 +814,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 									$_SESSION['listeEffortEspeces'][$cptEff][5] == $moisEnCours &&
 									$_SESSION['listeEffortEspeces'][$cptEff][6] == "TOUS" 
 									) {
-									$effortTotalEsp 			= $_SESSION['listeEffortEspeces'][$cptEff][9]; // contient la valeur de la capture totale pour tout le secteur/mois
+									$effortTotalEsp 		= $_SESSION['listeEffortEspeces'][$cptEff][9]; // contient la valeur de la capture totale pour tout le secteur/mois
 									$effortSysSect 		= $_SESSION['listeEffortEspeces'][$cptEff][11]; // contient la valeur de l'effort saisi
 									$typesectSystEncours = $_SESSION['listeEffortEspeces'][$cptEff][12];
 									$sectSystEncours 	= $_SESSION['listeEffortEspeces'][$cptEff][13];
@@ -792,7 +823,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 								}
 							}
 							if (!$EnregTrouve) { echo "asgt - Enreg dans listeEffortEspeces non trouvé.<br/>";}
-							$testEffortSect = $typesectSystEncours."-".$sectEnCours."-".$anneeEnCours."-".$moisEnCours."-TOUS"; 
+							$testEffortSect = $typesectSystEncours."-".$sectSystEncours."-".$anneeEnCours."-".$moisEnCours."-TOUS"; 
 							$NbReg = count($_SESSION['listeEffortTotal']) ;
 							for ($cptEff=1 ; $cptEff<=$NbReg;$cptEff++) {
 								$infoEff = explode("&#&",$_SESSION['listeEffortTotal'][$cptEff]);
@@ -983,6 +1014,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 									// Pas de regroupement trouvé pour cette espece, on le met dans le regroupement "DIV"
 									$RegEnCours = "DIV";
 									$NomRegEncours = "divers";
+									ajouteEspeceADIV($espEnCours);
 								}
 								if ($RegEnCours == $RegPrec) {
 									// On met a jour le total en cours
@@ -1134,6 +1166,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 							// Pas de regroupement trouvé pour cette espece, on le met dans le regroupement "DIV"
 							$RegEnCours = "DIV";
 							$NomRegEncours = "divers";
+							ajouteEspeceADIV($espEnCours);
 						}
 						if ($RegEnCours == $RegPrec) {
 							// On met a jour le total en cours
@@ -1328,7 +1361,66 @@ function majReg($regroupDeb,$RegEnCours,$NumRegEC,$Stat1,$posStat2,$Stat2,$posSt
 	return $regroupDeb;
 
 }
+//*********************************************************************
+// ajouteEspeceADIV : Fonction d'ajout d'une espece div a la variable de session
+function ajouteEspeceADIV($espID){
+// Cette fonction permet de creer une variable de session contenant toutes les especes du div pour l'ajouter dans le fichier des regroupements
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $espEnCours: l'espece en cours
+//*********************************************************************
+// En sortie : La fonction met a jour la variable de session $_SESSION['listeDIV'] avec l'especes
+// La fonction met a jour $regroupDeb
+//*********************************************************************
+// 
+	global $connectPPEAO;
+	global $EcrireLogComp;
+	global $logComp;
+	global $pasdefichier;
+	global $resultatLecture;
+	$libelleEsp="inconnu";
+	//echo "ajout ".$espID." au div<br/>";
+	$EspTrouve = false;
+	$NbReg = count($_SESSION['listeDIV']);
+	for ($cptR=1 ; $cptR<=$NbReg;$cptR++) {
+		if ($_SESSION['listeDIV'][$cptR][0] == $espID) {
+			$EspTrouve = true;
+			break;
+		}
 
+	}
+	if (!$EspTrouve) {
+		// On recherche le libelle de l'espece
+		$SQLLibelle = "select libelle from ref_espece where id = '".$espID."'";
+		$SQLLibellepResult = pg_query($connectPPEAO,$SQLLibelle);
+		$erreurSQL = pg_last_error($connectPPEAO);
+		if ( !$SQLLibellepResult ) { 
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "ERREUR :recherche libelle espece construction liste especes pour DIV en erreur : ".$SQLLibelle." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+			} else {
+				$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>recherche libelle espece en erreur : ".$SQLLibelle." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+			}
+		} else {
+			if (pg_num_rows($SQLLibellepResult) == 0) {
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp, "ERREUR : onstruction liste especes pour DIV : pas d'espece trouvee pour l'id ".$espID." donc pas de libelle trouve...",$pasdefichier);
+				} else {
+					$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>ERREUR : onstruction liste especes pour DIV : pas d'espece trouvee pour l'id ".$espID." donc pas de libelle trouve...<br/>";}
+			} else {
+				$EspRow = pg_fetch_row($SQLLibellepResult) ;
+				$libelleEsp = $EspRow[0];
+			}
+			pg_free_result($SQLLibellepResult);
+		}
+		$NbReg ++;
+		$_SESSION['listeDIV'][$NbReg][0] = $espID;
+		$_SESSION['listeDIV'][$NbReg][1] = $libelleEsp;	
 
+	}
+
+	
+	
+	//echo('<pre>');print_r($_SESSION['listeDIV']);echo('</pre>');
+}
 
 ?>

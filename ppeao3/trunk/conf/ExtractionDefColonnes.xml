@@ -577,7 +577,7 @@
 		</groupes>	
 		<Alias>upec</Alias>
 		<libelle>Unite de peche</libelle>
-		<champ code="id" affichage="X" libelle="Unite_peche_id"/>
+		<!--<champ code="id" affichage="X" libelle="Unite_peche_id"/>-->
 		<champ code="libelle" affichage="C" libelle="Unite_peche"/>
 		<champ code="libelle_menage" affichage="C" libelle="Nom_suplementaire_unite"/>
 		<champ code="art_agglomeration_id" affichage="C" libelle="Agglomeration_origine_unite_id" libellesup="(y compris libelle agglo origine)"/>
@@ -648,7 +648,7 @@
 			<peche>artisanale</peche>
 		</peches>
 		<groupes>
-			<groupe type="artisanale" filiere="activite">Activite</groupe>
+			<groupe type="artisanale" filiere="activite">Sortie</groupe>
 			<groupe type="artisanale" filiere="capture">Sortie</groupe>			
 		</groupes>
 		<Alias>atsor</Alias>
@@ -706,7 +706,7 @@
 		</groupes>
 		<Alias>teng</Alias>
 		<libelle>Type engin</libelle>
-		<champ code="libelle" affichage="X" libelle="Engin_peche"/>
+		<champ code="libelle" affichage="C" libelle="Engin_peche"/>
 		<champ code="art_grand_type_engin_id" affichage="C" libelle="Grand_type_engin_peche_id"/>
 	</table>
 	<table>
