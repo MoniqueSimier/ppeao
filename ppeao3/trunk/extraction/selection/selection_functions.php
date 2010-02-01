@@ -2164,7 +2164,7 @@ $theNextStep=$theStep+1;
 if ($_GET["step"]==$theNextStep) {
 echo('</div></div>');}
 if ($_GET["step"]>$theStep) {
-echo('<div id="choix_tables_stats"><p>');
+echo('<div id="choix_tables_stats">');
 		echo('<p>le processus de s&eacute;lection des donn&eacute;es est termin&eacute;, cliquez sur le lien ci-dessous pour choisir les variables dont vous voulez exporter les valeurs<br />vous pouvez &eacute;galement revoir ou modifier votre s&eacute;lection en cliquant sur l&#x27;un des liens [modifier ma s&eacute;lection]<p>');
 		switch ($exploit) {
 			case "donnees" : 
@@ -2178,6 +2178,10 @@ echo('<div id="choix_tables_stats"><p>');
 		afficheAide("stats");
 			break;
 		} // end switch $exploit
+echo('</div>');
+// on affiche la liste des documents disponibles relatifs a la selection geographique de l'utilisateur
+afficheMetadonnees();
+
 }
 }
 
@@ -2605,6 +2609,7 @@ $meta_files=array();
 // on recupere la liste des documents pour les pays selectionnes
 $pays=array();
 if (isset($_GET["pays"])) {$pays=$_GET["pays"];}
+
 if (!empty($pays)) {
 $sql='SELECT DISTINCT meta_id, ref_pays_id, doc_type,file_path,doc_titre,doc_description FROM meta_pays WHERE ref_pays_id IN (\''.arrayToList($pays,'\',\'','\'').')';
 $result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
