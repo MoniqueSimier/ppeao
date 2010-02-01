@@ -2722,7 +2722,7 @@ if ($documents) {
 			case 'carte':
 				$meta_maps[]=$file;
 			break;
-			case 'doc':
+			case 'document':
 				$meta_docs[]=$file;
 			break;
 			case 'figure':
