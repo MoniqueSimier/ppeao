@@ -32,15 +32,14 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 ?>
 
 <div id="main_container" class="edition">
-<h1>G&eacute;rer les tables de param&eacute;trage</h1>
-<!-- édition des tables de référence -->
 <?php
 // on teste à quelle zone l'utilisateur a accès
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 // affiche un avertissement concernant l'utilisation de IE pour les outils d'administration
 IEwarning();
 ?>
-
+<h1>G&eacute;rer les tables de param&eacute;trage</h1>
+<!-- édition des tables de référence -->
 
 <?php
 

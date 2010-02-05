@@ -636,6 +636,8 @@ function userAccessDenied($zone_id) {
 // $zone_id : id de la zone concernée
 
 global $connectPPEAO;
+global $section;
+global $subsection;
 
 // si on n'a pas spécifié de zone, on considère que c'est la zone publique
 if ($zone_id=='') {$zone_id=0;}
@@ -653,7 +655,7 @@ $zoneName=$zoneArray['zone_name'];
 // on teste le statut de connexion
 if (isset($_SESSION['s_ppeao_login_status'])) {
 	switch ($_SESSION['s_ppeao_login_status']) {
-		case 'good' : $message='<div id="access_denied">Vous n\'avez pas les droits d\'acc&egrave;s à la section "'.$zoneName.'". <br />Contactez un administrateur si vous souhaitez y acc&eacute;der.</div>';
+		case 'good' : $message='<div id="access_denied">Vous n\'avez pas les droits d\'acc&egrave;s à la section "'.$section.'/'.$subsection.'". <br />Contactez un administrateur si vous souhaitez y acc&eacute;der.</div>';
 		break;
 		default : $message='<div id="access_denied">Vous devez vous connecter pour acc&eacute;der &agrave; la section "'.$zoneName.'".</div>';
 		break;

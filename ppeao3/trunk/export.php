@@ -1,7 +1,7 @@
 <?php 
 // definit a quelle section appartient la page
 $section="gerer";
-$subsection="";
+$subsection="export";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 
@@ -29,8 +29,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 ?>
 
 <div id="main_container" class="home">
-	<h1>Export</h1>
-	<p>Cette section permet d'exporter les donn&eacute;es.</p>
+
 <?php
 	if (isset($_SESSION['s_ppeao_user_id'])){ 
 		$userID = $_SESSION['s_ppeao_user_id'];
@@ -45,6 +44,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		$_SESSION['s_status_export'] = 'ko';
 
 ?>
+			<h1>Export</h1>
+	<p>Cette section permet d'exporter les donn&eacute;es.</p>
 		<br/>
 		<p>Ce traitement permet de cr&eacute;er les fichiers ACCESS .mdb qui serviront de source pour les bases ACCESS d&eacute;ploy&eacute;es sur le terrain. Pour chaque cas (p&ecirc;ches exp&eacute;rimentales ou p&ecirc;ches artisanales), le r&eacute;f&eacute;rentiel et le param&eacute;trage seront mis &agrave; jour et des fichiers zip contenant toutes les bases n&eacute;cessaires aux op&eacute;rateurs sur le terrain sera g&eacute;n&eacute;r&eacute;. </p>
 		<br/>
