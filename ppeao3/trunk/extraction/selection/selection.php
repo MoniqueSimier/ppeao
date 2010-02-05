@@ -66,10 +66,17 @@ echo('<div id="ex_selection">');
 // on calcule les élements du compteur
 $compteur=prepareCompteur();
 
+
 // on en extrait la liste des campagnes et enquetes correspondant a la selection courante
 $campagnes_ids=$compteur["campagnes_ids"];
 $coups_ids=$compteur["coups_ids"];
 $enquetes_ids=$compteur["enquetes_ids"];
+$art_ids=$compteur["art_ids"];
+$stats_ids=$compteur["stats_ids"];
+
+
+
+//debug echo('<pre>');print_r($compteur);echo('</pre>');
 
 // si on a depasse le step 1, on encapsule les selecteurs precedents dans un DIV id="selection_precedente"
 // pour pouvoir les masquer

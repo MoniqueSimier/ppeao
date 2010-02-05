@@ -110,7 +110,7 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 	
 } // fin de if ($domaine=='exp') 
 
-if ($domaine=='art') {
+if ($domaine=='art' || $domaine=='stats') {
 $sql="SELECT DISTINCT id FROM art_periode_enquete WHERE TRUE ";
 
 // on compile la liste d'especes passees dans l'url
@@ -292,6 +292,7 @@ if ($_GET["step"]>4 && $user_admin!=TRUE) {
 	$unites["total_avant"]=$total;
 	$unites["ids_avant"]=$ids;
 
+
 	// on reinitialise total et ids pour les remplacer par les valeurs filtrees
 	$unites["total"]='';
 	$unites["ids"]=array();
@@ -300,8 +301,7 @@ if ($_GET["step"]>4 && $user_admin!=TRUE) {
 	$user_droits=array();
 	// si il est connecte
 	if (isset($_SESSION["s_ppeao_user_id"])) {
-	$user_droits=getUserSystemRights($_SESSION["s_ppeao_user_id"]);}
-	
+	$user_droits=getUserSystemRights($_SESSION["s_ppeao_user_id"]);}	
 	
 	// puis on filtre
 	// pour chaque unite, on verifie si l'utilisateur y a acces ou pas
@@ -350,12 +350,15 @@ if ($_GET["step"]>4 && $user_admin!=TRUE) {
 				}
 				// on autorise toutes les donnees dont annee_debut est AVANT $annee butoir
 				if ($acces["annee"]<$annee_butoir) {$unites["ids"][]=$unite;}
+				// on stocke separement les id pour art et stat
+				if($acces["annee"]<$annee_butoir_art) {$art["ids"][]=$unite;}
+				if($acces["annee"]<$annee_butoir_stats) {$stats["ids"][]=$unite;}
 				
 			}
 	}
 	
 	if (!empty($unites["ids"])) {$unites["total"]=count($unites["ids"]);} else {$unites["total"]=0;}
-		
+	
 }
 
 // si des donnees ont ete exclues, on en stocke la liste
@@ -369,7 +372,7 @@ if (isset($unites["total_avant"]) && $unites["total_avant"]!=$unites["total"]) {
 $coups=array();$debarquements=array();$activites=array();
 
 if ($domaine=='exp') {
-	if (!empty($ids)) {
+	if (!empty($unites["ids"])) {
 	// exp : on cherche les coups de peche
 	$sql='SELECT DISTINCT exp_coup_peche.id FROM exp_coup_peche WHERE exp_campagne_id IN (\''.arrayToList($unites["ids"],'\',\'','\'').')';
 	// si on a passe des engins dans l'url
@@ -396,7 +399,7 @@ else {
 
 if ($domaine=='art') {
 	// art : on cherche les debarquements
-	if (!empty($ids)) {
+	if (!empty($unites["ids"])) {
 	$debarquements_array=array();
 	foreach($unites["ids"] as $enquete) {
 	$sql='SELECT art_debarquement.id 
@@ -477,7 +480,11 @@ $unites["coups"]=$coups;
 $unites["debarquements"]=$debarquements;
 $unites["activites"]=$activites;
 
+$unites["art"]=$art["ids"];
+$unites["stats"]=$stats["ids"];
+
 return $unites;
+
 
 }
 
@@ -539,6 +546,7 @@ switch ($peches) {
 	case "art":
 	// on compte les periodes d'enquete
 	$enquetes=countMatchingUnits2('art',$exploit);
+	
 	// si on a des enquetes qui ne sont pas consultables par l'utilisateur, on change le texte du compteur
 	$sur_enquetes='';
 	if (isset($enquetes["total_avant"]) && $enquetes["total_avant"]!=$enquetes["total"]) {
@@ -557,14 +565,14 @@ switch ($peches) {
 				"debarquements_ids"=>$enquetes["debarquements"]["debarquements_ids"],
 				"activites_total"=>$enquetes["activites"]["activites_total"],
 				"activites_ids"=>$enquetes["activites"]["activites_ids"],
-				"texte"=>'<p>'.$text.$link.'</p><ul><li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$sur_enquetes.$texte_deb_act.'</li></ul>');
+				"texte"=>'<p>'.$text.$link.'</p><ul><li>'.$total_enquetes.' p&eacute;riode(s) d&#x27;enqu&ecirc;te'.$sur_enquetes.$texte_deb_act.'</li></ul>',"art_ids"=>$enquetes["ids_art"],"stats_ids"=>$enquetes["ids_stats"]);
 	break;
 	
 	default:
 	// avant le choix de exp ou art : 
 	// on compte les campagnes et les enquetes
 		$campagnes=countMatchingUnits2('exp','');
-		$enquetes=countMatchingUnits2('art','');
+		$enquetes=countMatchingUnits2('art','');		
 		
 	// si on a des campagnes ou des enquetes qui ne sont pas consultables par l'utilisateur, on change le texte du compteur
 	$sur_campagnes='';
@@ -600,7 +608,9 @@ switch ($peches) {
 				"debarquements_total"=>$enquetes["debarquements"]["debarquements_total"],
 				"debarquements_ids"=>$enquetes["debarquements"]["debarquements_ids"],
 				"activites_total"=>$enquetes["activites"]["activites_total"],
-				"activites_ids"=>$enquetes["activites"]["activites_ids"]
+				"activites_ids"=>$enquetes["activites"]["activites_ids"],
+				"stats_ids"=>$enquetes["stats"],
+				"art_ids"=>$enquetes["art"],
 				);
 				
 	$texte='<p>'.$text.$link.'</p>
@@ -618,7 +628,7 @@ if ($filtrees["campagnes"] || $filtrees["enquetes"]) {
 		$texte.='<div id="infos_filtre">';
 		$texte.='<span class="showHide"><a href="#" onclick="javascript:toggleInfosFiltre();return false;">[informations sur les donn&eacute;es auxquelles vous n&#x27;avez pas acc&egrave;s]</a></span>';
 		$texte.='<div id="infos_filtre_contenu">';
-		$texte.='<p>vous n&#x27;avez pas acc&egrave;s aux donn&eacute;es suivantes pour la p&eacute;riode choisie :</p>';
+		$texte.='<p>vous n&#x27;avez pas acc&egrave;s &agrave; la totalit&eacute; des donn&eacute;es suivantes pour la p&eacute;riode choisie :</p>';
 		$texte.='<ul>';
 		// si on a filtre des campagnes
 		if ($filtrees["campagnes"]) {
@@ -715,10 +725,7 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 	$sql_systemes.=')';
 	$sql_systemes.=' ORDER BY ref_systeme.libelle';
 	
-	//debug 	echo('<pre>');print_r($sql_systemes);echo('</pre>');
-	
-	
-	
+
 	$result_systemes=pg_query($connectPPEAO,$sql_systemes) or die('erreur dans la requete : '.$sql_systemes. pg_last_error());
 	$array_systemes=pg_fetch_all($result_systemes);
 	pg_free_result($result_systemes);
@@ -1418,6 +1425,9 @@ function afficheTypeExploitation() {
 global $connectPPEAO; // la connexion a la base
 global $campagnes_ids; // la liste des campagnes deja selectionnees
 global $enquetes_ids; // la liste des enquetes deja selectionnees
+global $art_ids; // la liste des enquetes disponibles pour art
+global $stats_ids; // la liste des enquetes disponibles pour stats
+
 
 // si l'on en est a l'etape en question, on affiche le selecteur
 switch ($_GET["step"]) {
@@ -1440,9 +1450,9 @@ switch ($_GET["step"]) {
 	$stats_link.='&exploit=stats';
 	$cartes_link=replaceQueryParam($_SERVER["FULL_URL"],'step',6);
 	$cartes_link.='#';
-		if (!empty($campagnes_ids) || !empty($enquetes_ids)) {
+		if (!empty($campagnes_ids) || !empty($art_ids)) {
 		echo('<li><a href="'.$donnees_link.'">extraction de donn&eacute;es</a></li>');}
-		if (!empty($enquetes_ids)) {
+		if (!empty($stats_ids)) {
 		echo('<li><a href="'.$stats_link.'">statistiques de p&ecirc;che</a></li>');}
 		/*echo('<li>graphiques</li>');
 		echo('<li>indicateurs &eacute;cologiques</li>');*/
