@@ -89,7 +89,7 @@ if ($_POST["enregistrer"]=='oui') {
 
 	if ($ajoute) {
 
-	// on genere un message de confirmation ou d'erreur
+	// on genere un message de confirmation ou d'erreur selon que la requete est réussie ou pas
 	if ($result=@pg_query($connectPPEAO,$sql)) {$succes=1;} else {$succes=0;}
 	pg_free_result($result);
 	}
