@@ -59,9 +59,9 @@ $acteur_type='';
 $lActeur='';
 if ($_GET["type"]=='') {$acteur_type=$_POST["acteur_type"];} else {$acteur_type=$_GET["type"];}
 if ($_GET["acteur"]=='') {$acteur_id=$_POST["acteur"];} else {$acteur_id=$_GET["acteur"];}
-
 // si on est en mode enregistrement, on sauvegarde les donnees dans la base et on remet a zero
 if ($_POST["enregistrer"]=='oui') {
+
 	$enregistrer='oui';
 	// on enregistre les modifications
 	$succes=0;
@@ -72,20 +72,27 @@ if ($_POST["enregistrer"]=='oui') {
 		$succes=1;
 	}
 	// puis on les remplace par les nouveaux 
-$sql="INSERT INTO admin_acces_donnees_acteurs (ref_acteur_id,acteur_type,ref_systeme_id,type_donnees) VALUES" ;
+	// on ne le fait que si on a des droits a ajouter
+	$sql="INSERT INTO admin_acces_donnees_acteurs (ref_acteur_id,acteur_type,ref_systeme_id,type_donnees) VALUES" ;
+	$ajoute=FALSE;
 	foreach($_POST as $key=>$value) {
 		if (substr($key,0,2)=='PE' || substr($key,0,2)=='PA' || substr($key,0,2)=='ST') {
+			$ajoute=TRUE;
 			$type_donnees=substr($key,0,2);
 			$sys_id=substringAfter($key,'_');
 			$sql.=" ($acteur_id,'$acteur_type',$sys_id,'$type_donnees'),";
 			}
+		
 		} //end foreach $_POST
 	// on enleve la derniere virgule
 	$sql=substr($sql,0,-1);
-	$result=pg_query($connectPPEAO,$sql);
-	pg_free_result($result);
+
+	if ($ajoute) {
+
 	// on genere un message de confirmation ou d'erreur
 	if ($result=@pg_query($connectPPEAO,$sql)) {$succes=1;} else {$succes=0;}
+	pg_free_result($result);
+	}
 	
 	if ($succes==1 && $enregistrer=='oui') {$message='<p class="error small">modifications enregistr&eacute;es.</p>';} else {$message='<p class="small error">une erreur a emp&ecirc;ch&eacute; l&#x27;enregistrement des modifications.</p>';}
 	//on remet a zero
