@@ -1488,7 +1488,7 @@ function AfficherDonnees($file,$typeAction){
 					$posRupSupast = -1;
 					// ******************
 					// **** art_stat_sp
-					$listeChampsSpecasp = ",asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,asp.id ,ast.id,se.id,ast.cap";
+					$listeChampsSpecasp = ",asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,asp.id ,ast.id,se.id,ast.cap,ast.pue,ast.fm";
 					$ListeTableSpecasp = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp"; 
 					$WhereSpecasp = "	and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
 					if (!($SQLEspeces == "")) {
@@ -1516,7 +1516,7 @@ function AfficherDonnees($file,$typeAction){
 					$posProrataEspGTasp = 13; // Pour calcul du prorata pour les stats générales
 					// ******************
 					// **** art_taille_sp
-					$listeChampsSpecats = ",asp.ref_espece_id,esp.libelle, asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id,se.id,ast.cap";
+					$listeChampsSpecats = ",asp.ref_espece_id,esp.libelle, asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id,se.id,ast.cap,ast.pue,ast.fm";
 					$ListeTableSpecats = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats,ref_espece as esp"; 
 					$WhereSpecats = " 	and ats.art_stat_sp_id = asp.id and
 											asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
@@ -1561,7 +1561,7 @@ function AfficherDonnees($file,$typeAction){
 					$posRupSupasgt = -1;
 					// ******************
 					// **** art_stat_gt_sp
-					$listeChampsSpecattgt = ",asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle,attgt.pue_gt_sp,attgt.cap_gt_sp,attgt.id, asgt.id, ast.id,se.id,asgt.cap_gt";
+					$listeChampsSpecattgt = ",asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle,attgt.pue_gt_sp,attgt.cap_gt_sp,attgt.id, asgt.id, ast.id,se.id,asgt.cap_gt,asgt.pue_gt,asgt.fm_gt";
 					$ListeTableSpecattgt = ",art_periode_enquete as penq, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
 					$WhereSpecattgt = "	and attgt.art_stat_gt_id = asgt.id  
 											and asgt.art_stat_totale_id = ast.id 
@@ -1579,7 +1579,7 @@ function AfficherDonnees($file,$typeAction){
 					$posSecteurIDattgt = 19 ; //position systeme ID pour calcul stats generales
 					$posGTEIDattgt = 10 ; //position systeme ID pour calcul stats generales
 					// Gestion des positionnements pour les regroupements
-					$posDEBIDattgt = 16 ; //position ast.id - 1 / Pour gestion regroupement
+					$posDEBIDattgt = 18 ; //position ast.id - 1 / Pour gestion regroupement
 					$posESPIDattgt = 12 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
 					$posESPNomattgt = 13 ; //position esp.libelle - 1 / Pour gestion regroupement
 					$posRupSupattgt = -1;
@@ -1592,7 +1592,7 @@ function AfficherDonnees($file,$typeAction){
 					$posProrataEspGTattgt = 15; // Pour calcul du prorata pour les stats générales
 					// ******************
 					// art_taille_gt_sp
-					$listeChampsSpecatgts = ", asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle, attgt.pue_gt_sp, attgt.cap_gt_sp, atgts.li, atgts.xi,atgts.id, attgt.id, asgt.id, ast.id,se.id,asgt.cap_gt";
+					$listeChampsSpecatgts = ", asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle, attgt.pue_gt_sp, attgt.cap_gt_sp, atgts.li, atgts.xi,atgts.id, attgt.id, asgt.id, ast.id,se.id,asgt.cap_gt,asgt.pue_gt,asgt.fm_gt";
 					$ListeTableSpecatgts = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
 					$WhereSpecatgts = "	and atgts.art_stat_gt_sp_id = attgt.id  
 											and attgt.art_stat_gt_id = asgt.id  
@@ -2936,12 +2936,12 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 						$AjoutWhere = "";
 						break;	
 					case "asp":
-						$listeChampsSel = ",ast.pue,ast.fm,asp.nbre_enquete_sp, asp.obs_sp_min,asp.obs_sp_max, asp.pue_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						$listeChampsSel = ",asp.nbre_enquete_sp, asp.obs_sp_min,asp.obs_sp_max, asp.pue_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
 						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
 						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
 					break;
 					case "ats":
-						$listeChampsSel = ",ast.pue,ast.fm,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						$listeChampsSel = ",esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
 						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
 						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
 					break;
@@ -2951,12 +2951,12 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 						$AjoutWhere = "";
 					break;
 					case "attgt":
-						$listeChampsSel = ",asgt.pue_gt,asgt.fm_gt,attgt.nbre_enquete_gt_sp,attgt.obs_gt_sp_min, attgt.obs_gt_sp_max,attgt.pue_gt_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						$listeChampsSel = ",attgt.nbre_enquete_gt_sp,attgt.obs_gt_sp_min, attgt.obs_gt_sp_max,attgt.pue_gt_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
 						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
 						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
 					break;
 					case "atgts":
-						$listeChampsSel = ",asgt.pue_gt,asgt.fm_gt,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						$listeChampsSel = ",esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
 						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
 						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
 					break;
