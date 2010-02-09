@@ -313,6 +313,8 @@ if ($_GET["step"]>4 && $user_admin!=TRUE) {
 		// si l'utilisateur a acces a la totalite des donnees du systeme
 		if ($acces["acces_complet"]) {
 			$unites["ids"][]=$unite;
+			$art["ids"][]=$unite;
+			$stats["ids"][]=$unite;
 			;}
 			//sinon, on doit tester si l'unite peut etre qualifiee de donnees historiques
 			else {
@@ -360,6 +362,14 @@ if ($_GET["step"]>4 && $user_admin!=TRUE) {
 	if (!empty($unites["ids"])) {$unites["total"]=count($unites["ids"]);} else {$unites["total"]=0;}
 	
 }
+
+
+if ($_GET["step"]>4 && $user_admin==TRUE) {
+	
+			$art["ids"]=$unites["ids"];
+			$stats["ids"]=$unites["ids"];
+	
+	;}
 
 // si des donnees ont ete exclues, on en stocke la liste
 if (isset($unites["total_avant"]) && $unites["total_avant"]!=$unites["total"]) {
@@ -572,7 +582,8 @@ switch ($peches) {
 	// avant le choix de exp ou art : 
 	// on compte les campagnes et les enquetes
 		$campagnes=countMatchingUnits2('exp','');
-		$enquetes=countMatchingUnits2('art','');		
+		$enquetes=countMatchingUnits2('art','');
+	
 		
 	// si on a des campagnes ou des enquetes qui ne sont pas consultables par l'utilisateur, on change le texte du compteur
 	$sur_campagnes='';
