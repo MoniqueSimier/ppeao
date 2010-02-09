@@ -374,7 +374,11 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 						$pue = floatval($regroupDeb[$cptRg][11]);
 						$CapturesTotal = $pue * $effort;
 						$CapturesSp =  $CapturesTotal * $prorata;
-						$pue_sp = $CapturesSp / $effort;
+						if ($effort == 0) {
+							$pue_sp = 0;
+						} else {
+							$pue_sp = $CapturesSp / $effort;
+						}
 						$ligneResultat .= "&#&".$pue_sp."&#&".$effort."&#&".$CapturesSp;	
 
 						break;

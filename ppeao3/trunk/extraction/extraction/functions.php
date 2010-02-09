@@ -1499,7 +1499,7 @@ function AfficherDonnees($file,$typeAction){
 					} else {
 						$OrderComasp = ",asp.ref_espece_id asc";
 					}
-					$ConstIDuniqueasp = "AST-##-18";
+					$ConstIDuniqueasp = "AST-##-15";
 					$posSecteurIDasp = 16 ; //position systeme ID pour calcul stats generales
 					$posGTEIDasp = -1 ; //pas de GTE
 					// Gestion des positionnements pour les regroupements
@@ -1575,7 +1575,7 @@ function AfficherDonnees($file,$typeAction){
 					} else {
 						$OrderComattgt =",gte.id asc,attgt.ref_espece_id asc";
 					}
-					$ConstIDuniqueattgt = "AST-##-16";
+					$ConstIDuniqueattgt = "AST-##-18";
 					$posSecteurIDattgt = 19 ; //position systeme ID pour calcul stats generales
 					$posGTEIDattgt = 10 ; //position systeme ID pour calcul stats generales
 					// Gestion des positionnements pour les regroupements
