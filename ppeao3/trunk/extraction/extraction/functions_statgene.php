@@ -9,6 +9,71 @@
 // Le fichier de fonctions principales commencait a exploser...
 //*****************************************
 
+//*********************************************************************
+// TestsuppressionChamp  Fonction de test pour supprimer un enregistrement dans une table
+// Cette fonction permet de supprimer des champs dans les lignes de resultat
+//*********************************************************************
+// En entrée, le nom de la table a tester et la position du champ a tester
+// En sortie, le code et le nom du regroupement
+function TestsuppressionChamp($table,$TestSupp) {
+	$Asupprimer = false;
+	switch ($table) {
+		case "ast":
+			switch ($TestSupp) {
+				case 14: // secteur_id
+					$Asupprimer = true;
+					break;
+			}
+			break;
+		case "asp":
+			switch ($TestSupp) {
+				case 16: // secteur_id
+					$Asupprimer = true;
+					break;
+			}
+			break;
+		case "ats":
+			switch ($TestSupp) {
+				case 16: // asp.id,
+					$Asupprimer = true;
+					break;
+				case 17: // ast.id,
+					$Asupprimer = true;
+					break;
+				case 18: // ats.id
+					$Asupprimer = true;
+					break;
+				case 19: // secteur_id
+					$Asupprimer = true;
+					break;
+			}
+			break;
+		case "asgt":
+			switch ($TestSupp) {
+				case 17: // secteur_id
+					$Asupprimer = true;
+					break;
+			}
+			break;
+		case "attgt":
+			switch ($TestSupp) {
+				case 19: // secteur_id
+					$Asupprimer = true;
+					break;
+			}
+			break;
+		case "atgts":
+			switch ($TestSupp) {
+				case 22: // secteur_id
+					$Asupprimer = true;
+					break;
+			}
+			break;
+			
+	}
+	return $Asupprimer;
+}
+
 
 //*********************************************************************
 // recupereRegroupement  Fonction de recuperation du regroupement pour une espece
@@ -251,7 +316,7 @@ function analyseTableCaptEsp(){
 
 //*********************************************************************
 // AjoutEnreg : ajoute un enreg dans la table temporaire
-function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$finalRow,$typeStatistiques,$tableStat){
+function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$finalRow,$typeStatistiques,$tableStat,$posLongueur){
 // Cette fonction permet d'ajouter les lignes du tableau temporaire regroupDeb dans la table temp_extraction
 // Le calcul final des efforts / captures et PUE se fait ici
 //*********************************************************************
@@ -268,6 +333,7 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 // $finalRow
 // $typeStatistiques
 // $tableStat
+// $posLongueur
 //*********************************************************************
 // En sortie : 
 // La fonction ne renvoie rien. Mais la variable $resultatLecture est mise à jour pour un affichage dans le script qui appelle
@@ -281,6 +347,7 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 	$debugLog = false;
 	$LocPasErreur = true;
 	$NbRegDeb = count($regroupDeb);
+	//echo "<b> table = ".$tableStat."<br/>";
 	if ($NbRegDeb >= 1 ) {
 		if ($EcrireLogComp && $debugLog) {
 			WriteCompLog ($logComp, "DEBUG : mise à jour de la table TEMP_EXTRACTION",$pasdefichier);
@@ -306,13 +373,26 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 	// Analyse de la ligne, on remplace l'espece par le regroupement et les valeurs poids et nombre par les valeurs agrégées
 			$nbrRow = count($finalRow)-1;
 			$ligneResultat = "";
+			if ($tableStat == "ats" || $tableStat == "atgts") {
+				// On doit recuperer uniquement le code du regroupement sans la taille
+				$infoReg = explode("-",$regroupDeb[$cptRg][1]);
+				$nomReg = $infoReg[0];
+				$nomTaille = $infoReg[1];
+			} else {
+				$nomReg = $regroupDeb[$cptRg][1];
+				$nomTaille = "";
+			}
 			for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
-				if ($cptRow<> $posESPID && $cptRow<> $posESPNom && $cptRow<> $posStat1 && $cptRow<> $posStat2 && $cptRow<> $posStat3 && $cptRow<> $posStat4 && $cptRow<> $posStat5){
-					$ligneResultat .= "&#&".$finalRow[$cptRow];
+				if ($cptRow<> $posESPID && $cptRow<> $posESPNom && $cptRow<> $posStat1 && $cptRow<> $posStat2 && $cptRow<> $posStat3 && $cptRow<> $posStat4 && $cptRow<> $posStat5 && $cptRow<>$posLongueur){
+					// On gere ici des suppressions
+					$Asupprimer = TestsuppressionChamp($tableStat,$cptRow);
+					if (!$Asupprimer) {	
+						$ligneResultat .= "&#&".$finalRow[$cptRow];
+					}
 				} else {
 					switch ($cptRow) {
 					case $posESPID :
-						$ligneResultat .= "&#&".$regroupDeb[$cptRg][1];
+						$ligneResultat .= "&#&".$nomReg;
 						break;
 					case $posESPNom :
 						$ligneResultat .= "&#&".$regroupDeb[$cptRg][2];
@@ -331,6 +411,13 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 						break;
 					case $posStat5 :
 						$ligneResultat .= "&#&".$regroupDeb[$cptRg][8];						
+						break;
+					case $posLongueur :// uniquement pour les stats par taille
+						if ($tableStat == "ats" || $tableStat == "atgts") {
+							$ligneResultat .= "&#&".$nomTaille;
+						} else {
+							$ligneResultat .= "&#&".$finalRow[$cptRow];
+						}
 						break;
 					}
 				}
@@ -923,10 +1010,10 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 							if ($EcrireLogComp ) {
 								WriteCompLog ($logComp, "DEBUG : appel AjoutEnreg rupture sur debIDPrec",$pasdefichier);
 							}
-							if (!(AjoutEnreg($regroupDeb,$typesectSystPrec."-".$sectSystPrec."-".$anneePrec."-".$moisPrec.'-'.$GTEPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat))) {
+							if (!(AjoutEnreg($regroupDeb,$typesectSystPrec."-".$sectSystPrec."-".$anneePrec."-".$moisPrec.'-'.$GTEPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat,$posRupSupPosPrec))) {
 								$erreurProcess = true;
 								echo "erreur fonction AjoutEnrg<br/>";
-							}
+							}  
 							// On reinitialise les compteurs
 							$Mesure = 0;
 							unset($regroupDeb);
@@ -1054,6 +1141,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 						}
 					} // fin du if ($controleRegroupement)
 					// On met a jour les variables contenant toutes les valeurs de rupture precedentes
+					$posRupSupPosPrec = $posRupSup;
 					$posRupSupPrec = $posRupSupEnCours;
 					$espPrec = $espEnCours;
 					$RegPrec = $RegEnCours;
@@ -1085,10 +1173,10 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 					if ($debEnCours<>$debIDPrec || ($debEnCours == $debIDPrec && $GTEEnCours <>$GTEPrec)) {
 						if (!($debIDPrec == "")) {
 							// Ajout du contenu de ce tableau dans la table temporaire.
-							if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,0,0,""))) {
+							if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat,$posRupSupPosPrec))) {
 								$erreurProcess = true;
 								echo "erreur fonction AjoutEnrg<br/>";
-							}
+							} 
 							if ($posRupSupEnCours<>0) {
 								//echo('<pre>');print_r($regroupDeb);echo('</pre>');
 								//echo "ajout a la rupture ".$RegEnCours."<br/>";
@@ -1213,6 +1301,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 						}
 					} // fin du if ($controleRegroupement)
 					// On met a jour les variables contenant l'espece et le regroupement precedent
+					$posRupSupPosPrec = $posRupSup;
 					$posRupSupPrec = $posRupSupEnCours;
 					$GTEPrec = $GTEEnCours;
 					$espPrec = $espEnCours;
@@ -1229,9 +1318,9 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 				WriteCompLog ($logComp, "DEBUG : appel AjoutEnreg derniere ligne",$pasdefichier);
 			}
 
-			if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat))) {
+			if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat,$posRupSupPosPrec))) {
 				$erreurProcess = true;
-			}
+			} 
 		} // fin du if (pg_num_rows($SQLfinalResult) == 0)
 	}
 	pg_free_result($SQLfinalResult);

@@ -1910,8 +1910,11 @@ function AfficherDonnees($file,$typeAction){
 					$listeChamps .=",Pue_strate,Effort_strate,Captures_strate";
 				}
 				// On remplace les noms des alias par le nom des tables...
-
-				$listeChamps = remplaceAlias($listeChamps);
+				if (!($ConstIDunique =="")) {
+					$listeChamps = remplaceAlias($listeChamps,"y",$typeAction);
+				} else {
+					$listeChamps = remplaceAlias($listeChamps,"n",$typeAction);
+				}
 				// On commence le formatage sous forme de table/
 				$libelleAction = recupereLibelleFiliere($typeAction);
 				if ($typeSelection == "statistiques") {
@@ -2276,34 +2279,34 @@ function AfficherDonnees($file,$typeAction){
 								$listeChamps =$listeChamps.",Effectif_strate_GT";
 								break;	
 						}
-						$listeChamps = remplaceAlias($listeChamps);
-						creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false,0,0,false,false);
+						$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS]);
+						creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false,0,0,false,false,$tableStat[$cptTS]);
 					} else {
 						$listeTableStatSp = "asp,ats,attgt,atgts";
 						if ( strpos($listeTableStatSp,$tableStat[$cptTS]) === false) {
 							$ConstIDuniqueStat = "ConstIDunique".$tableStat[$cptTS];
 							$listeChamps ="id.unique,".$listeChamps;
-							$listeChamps = remplaceAlias($listeChamps);
-							creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,true,0,0,false,false);
+							$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS]);
+							creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,true,0,0,false,false,$tableStat[$cptTS]);
 						} else {
 							if (!($_SESSION['listeRegroup'] == "")) {
 								$SQLfinal = "select * from temp_extraction where key4 = '".$tableStat[$cptTS]."' order by key1 asc,key2 asc,key3 asc";
 								$SQLcountfinal = "select count(*) from temp_extraction ";
 								$ConstIDunique = "AST-##-1";
 								$listeChamps ="id.unique,".$listeChamps;
-								$listeChamps = remplaceAlias($listeChamps);
-								creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false,0,0,false,false);
+								$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS]);
+								creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false,0,0,false,false,$tableStat[$cptTS]);
 							} else {
 								$ConstIDuniqueStat = "ConstIDunique".$tableStat[$cptTS];
 								$listeChamps ="id.unique,".$listeChamps;
-								$listeChamps = remplaceAlias($listeChamps);
-								creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,false,0,0,false,false);
+								$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS]);
+								creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,false,0,0,false,false,$tableStat[$cptTS]);
 							}
 						}
 					}
 				}
 			} else {
-				creeFichier($SQLfinalFichier,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,false,$posESPID,$posESPNom,$chercheAggUpec,$posAggUpec);
+				creeFichier($SQLfinalFichier,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,false,$posESPID,$posESPNom,$chercheAggUpec,$posAggUpec,"");
 			}
 			if ($debugAff) {
 				$debugTimer = number_format(timer()-$start_while,4);
@@ -2465,7 +2468,7 @@ function AfficherDonnees($file,$typeAction){
 
 //*********************************************************************
 // creeFichier : Fonction de creation d'un fichier a partir d'un SQL
-function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,$pasTestReg,$posESPID,$posESPNom,$chercheAggUpec,$posAggUpec) {
+function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,$pasTestReg,$posESPID,$posESPNom,$chercheAggUpec,$posAggUpec,$tableStat) {
 // Cette fonction permet de creer un fichier a exporter a partir d'un SQL
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -2475,6 +2478,11 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 // $ConstIDunique
 // $ExpComp
 // $pasTestReg : si vrai, on ne teste pas les regroupements
+// $posESPID
+// $posESPNom
+// $chercheAggUpec: est-ce qu'on cherche l'agglo de l'unite de peche
+// $posAggUpec : la post de l'agglo Id de l'unite de peche
+// $tableStat : la table stat en cours si en cours de gestion des stats
 //*********************************************************************
 // En sortie : créé le fichier $ExpCom
 // La fonction met a jour $resultatLecture
@@ -2727,13 +2735,20 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 										$resultatFichierX .= $finalRow[$cptRow]."\t".$NomAgg."\t";
 									}
 								} else {
-									if (is_numeric($finalRow[$cptRow])){
-										$AjChps = strval($finalRow[$cptRow]);
-										$AjChps =str_replace(".",",",$AjChps);
-									}else {
-										$AjChps = $finalRow[$cptRow];	
+									if ($tableStat == "") {
+										$Asupprimer = TestsuppressionChamp($typeAction,$cptRow);
+									} else {
+										$Asupprimer = TestsuppressionChamp($tableStat,$cptRow);
 									}
-									$resultatFichierX .=$AjChps."\t";
+									if (!$Asupprimer) {	
+										if (is_numeric($finalRow[$cptRow])){
+											$AjChps = strval($finalRow[$cptRow]);
+											$AjChps =str_replace(".",",",$AjChps);
+										}else {
+											$AjChps = $finalRow[$cptRow];	
+										}
+										$resultatFichierX .=$AjChps."\t";
+									}
 								}
 							}		
 					}
@@ -3321,11 +3336,13 @@ function RecupereEspeces($SQLAexec){
 
 //*********************************************************************
 // remplaceAlias : Fonction pour remplacer les alias par le nom de la table
-function remplaceAlias($listeDesChamps) {
+function remplaceAlias($listeDesChamps,$Idunique,$table) {
 // Cette fonction permet de remplacer pour l'affichage les alias par les nom complets des tables
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
 // $listeDesChamps : la liste des champs avec les alias
+// $Idunique = y si ajout id unique, n si pas ajout idunique
+// $table : la table a tester
 //*********************************************************************
 // En sortie : 
 // La fonction renvoie $listeDesChamps, la liste mise à jour avec les noms des tables
@@ -3335,38 +3352,52 @@ function remplaceAlias($listeDesChamps) {
 	$listeTitre = explode(",",$listeDesChamps);
 	$nbrTitre = count($listeTitre)-1;
 	for ($cptT=0 ; $cptT<=$nbrTitre;$cptT++) {
-		if ( $listeTitre[$cptT]=="id.unique" || $listeTitre[$cptT]=="Coeff_extrapolation" || $listeTitre[$cptT]=="Nombre_individus_mesures" || 
-		$listeTitre[$cptT]=="Effort_total" || $listeTitre[$cptT]=="Nom_Agglomeration_origine_unite" || $listeTitre[$cptT]=="Effort_total_strate" ||
-		$listeTitre[$cptT]=="Pue_strate" || $listeTitre[$cptT]=="Effort_strate" || $listeTitre[$cptT]=="Captures_strate" ||
-		$listeTitre[$cptT]=="Pue_strate_sp" || $listeTitre[$cptT]=="Effort_strate_sp" || $listeTitre[$cptT]=="Captures_strate_sp" ||
-		$listeTitre[$cptT]=="Effectif_strate" || 
-		$listeTitre[$cptT]=="Pue_strate_GT" || $listeTitre[$cptT]=="Effort_strate_GT" || $listeTitre[$cptT]=="Captures_strate_GT" ||
-		$listeTitre[$cptT]=="Pue_strate_GT_esp" || $listeTitre[$cptT]=="Effort_strate_GT_esp" || $listeTitre[$cptT]=="Captures_strate_GT_esp" ||
-		$listeTitre[$cptT]=="Effectif_strate_GT" 
-		) 
-
-		{
-			if ($listeDesTitres == "") {
-				$listeDesTitres = $listeTitre[$cptT];
-			} else {
-				$listeDesTitres .= ",".$listeTitre[$cptT];
-			}			
-		}else {
-			$champ = explode(".",$listeTitre[$cptT]);
-			$nomTableEC = $champ[0];
-			$nomChampEC = $champ[1];
-			//$nomTable = recupeNomTableAlias($nomTableEC);
-			$nomChampTemp = recupeNomChamps($nomTableEC."-".$nomChampEC);
-			if ($nomChampTemp == "inconnu") {
-				$nomChampTemp = $nomChampEC;
-			}
-			$nomChamp = $nomChampTemp;
-			if ($listeDesTitres == "") {
-				$listeDesTitres = $nomChamp;
-			} else {
-				$listeDesTitres .= ",".$nomChamp;
-			}
+		// Test suppression
+		if ($Idunique == "y") {
+			$cptRow = $cptT - 1; // On doit prendre en compte la position de l'ID unique en debut de ligne
+		} else {
+			$cptRow = $cptT; // Pas d'ID unique en debut de ligne
 		}
+		$Asupprimer = TestsuppressionChamp($table,$cptRow);
+		if (!$Asupprimer) {	
+			if ( $listeTitre[$cptT]=="id.unique" || $listeTitre[$cptT]=="Coeff_extrapolation" || $listeTitre[$cptT]=="Nombre_individus_mesures" || 
+			$listeTitre[$cptT]=="Effort_total" || $listeTitre[$cptT]=="Nom_Agglomeration_origine_unite" || $listeTitre[$cptT]=="Effort_total_strate" ||
+			$listeTitre[$cptT]=="Pue_strate" || $listeTitre[$cptT]=="Effort_strate" || $listeTitre[$cptT]=="Captures_strate" ||
+			$listeTitre[$cptT]=="Pue_strate_sp" || $listeTitre[$cptT]=="Effort_strate_sp" || $listeTitre[$cptT]=="Captures_strate_sp" ||
+			$listeTitre[$cptT]=="Effectif_strate" || 
+			$listeTitre[$cptT]=="Pue_strate_GT" || $listeTitre[$cptT]=="Effort_strate_GT" || $listeTitre[$cptT]=="Captures_strate_GT" ||
+			$listeTitre[$cptT]=="Pue_strate_GT_esp" || $listeTitre[$cptT]=="Effort_strate_GT_esp" || $listeTitre[$cptT]=="Captures_strate_GT_esp" ||
+			$listeTitre[$cptT]=="Effectif_strate_GT" 
+			) 
+	
+			{
+				if ($listeDesTitres == "") {
+					$listeDesTitres = $listeTitre[$cptT];
+				} else {
+					$listeDesTitres .= ",".$listeTitre[$cptT];
+				}			
+			}else {
+				$champ = explode(".",$listeTitre[$cptT]);
+				$nomTableEC = $champ[0];
+				$nomChampEC = $champ[1];
+				//$nomTable = recupeNomTableAlias($nomTableEC);
+				$nomChampTemp = recupeNomChamps($nomTableEC."-".$nomChampEC);
+				if ($nomChampTemp == "inconnu") {
+					$nomChampTemp = $nomChampEC;
+				}
+				$nomChamp = $nomChampTemp;
+				if ($listeDesTitres == "") {
+					$listeDesTitres = $nomChamp;
+				} else {
+					$listeDesTitres .= ",".$nomChamp;
+				}
+			}		
+		
+		
+		} 
+		
+		
+
 	}
 	return $listeDesTitres;
 }
