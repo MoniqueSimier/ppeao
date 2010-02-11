@@ -15,61 +15,223 @@
 //*********************************************************************
 // En entrée, le nom de la table a tester et la position du champ a tester
 // En sortie, le code et le nom du regroupement
-function TestsuppressionChamp($table,$TestSupp) {
+function TestsuppressionChamp($table,$TestSupp,$typeStatistiques) {
+	// on fait des suppressions a posteriori dans le fichier a extraire
+	// Je sais, c'est moche, c'est mal branlé, mais ca reflete l'etat du cahier des charges, ie, le neant
+	// Les positions correspondent aux positions des champs dans le SQL construit dans affichedonnees	
+	//echo $table."<br/>";
+	$debug = false;
 	$Asupprimer = false;
 	switch ($table) {
-		case "ast":
+		case "NtPart":
 			switch ($TestSupp) {
-				case 14: // secteur_id
-					$Asupprimer = true;
-					break;
+				case 6: $Asupprimer = true;break;// secteur_id
+			}
+			break;
+		case "stats":
+			if ($typeStatistiques == "generales") {
+				switch ($TestSupp) {
+					case 4 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 5 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 6 : $Asupprimer = true; break;	//agglo					
+					case 7 : $Asupprimer = true;break;	//agglo id					
+					case 10 : $Asupprimer = true;break;
+					case 11 : $Asupprimer = true;break;
+					case 12 : $Asupprimer = true;break;
+					case 13 : $Asupprimer = true;break;
+					case 14 : $Asupprimer = true;break;// secteur_id			
+				}
+			} else {			
+				switch ($TestSupp) {
+					case 14: $Asupprimer = true;break;// secteur_id
+				}
+			}
+			break;
+		case "ast":
+			if ($typeStatistiques == "generales") {
+				switch ($TestSupp) {
+					case 4 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 5 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 6 : $Asupprimer = true; break;						
+					case 7 : $Asupprimer = true;break;						
+					case 10 : $Asupprimer = true;break;
+					case 11 : $Asupprimer = true;break;
+					case 12 : $Asupprimer = true;break;
+					case 13 : $Asupprimer = true;break;
+					case 14 : $Asupprimer = true;break;		
+				}
+			} else {			
+				switch ($TestSupp) {
+					case 14: $Asupprimer = true;break;// secteur_id
+				}
 			}
 			break;
 		case "asp":
-			switch ($TestSupp) {
-				case 16: // secteur_id
-					$Asupprimer = true;
-					break;
+			if ($typeStatistiques == "generales") {
+				switch ($TestSupp) {
+					case 4 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 5 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 6 : $Asupprimer = true; break;						
+					case 7 : $Asupprimer = true;break;						
+					case 12 : $Asupprimer = true;break;
+					case 13 : $Asupprimer = true;break;
+					case 14 : $Asupprimer = true;break;
+					case 15 : $Asupprimer = true;break;
+					case 16 : $Asupprimer = true;break;
+					case 17 : $Asupprimer = true;break;
+					case 18 : $Asupprimer = true;break;
+					case 19 : $Asupprimer = true;break;					
+				}
+			} else {
+				switch ($TestSupp) {
+					case 16: $Asupprimer = true;break;// secteur_id
+				}
 			}
 			break;
 		case "ats":
-			switch ($TestSupp) {
-				case 16: // asp.id,
-					$Asupprimer = true;
-					break;
-				case 17: // ast.id,
-					$Asupprimer = true;
-					break;
-				case 18: // ats.id
-					$Asupprimer = true;
-					break;
-				case 19: // secteur_id
-					$Asupprimer = true;
-					break;
+			if ($typeStatistiques == "generales") {
+				switch ($TestSupp) {
+					case 4 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 5 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 6 : $Asupprimer = true; break;						
+					case 7 : $Asupprimer = true;break;						
+					case 12 : $Asupprimer = true;break;
+					case 13 : $Asupprimer = true;break;
+					case 15 : $Asupprimer = true;break;
+					case 16 : $Asupprimer = true;break;
+					case 17 : $Asupprimer = true;break;
+					case 18 : $Asupprimer = true;break;
+					case 19 : $Asupprimer = true;break;
+					case 20 : $Asupprimer = true;break;					
+					case 21 : $Asupprimer = true;break;
+					case 22 : $Asupprimer = true;break;
+				}
+			} else {
+				switch ($TestSupp) {
+					case 16: $Asupprimer = true;	break;	
+					case 17: $Asupprimer = true;break;
+					case 18: $Asupprimer = true;break;
+					case 19: $Asupprimer = true;break;
+				}
 			}
 			break;
 		case "asgt":
-			switch ($TestSupp) {
-				case 17: // secteur_id
-					$Asupprimer = true;
-					break;
+			if ($typeStatistiques == "generales") {
+				switch ($TestSupp) {
+					case 4 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 5 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 6 : $Asupprimer = true; break;						
+					case 7 : $Asupprimer = true;break;						
+					case 12 : $Asupprimer = true;break;
+					case 13 : $Asupprimer = true;break;
+					case 14 : $Asupprimer = true;break;
+					case 15 : $Asupprimer = true;break;
+					case 16 : $Asupprimer = true;break;	
+					case 17 : $Asupprimer = true;break;	
+				}
+			} else {
+				switch ($TestSupp) {
+					case 17: $Asupprimer = true;break;// secteur_id
+				}
 			}
 			break;
 		case "attgt":
-			switch ($TestSupp) {
-				case 19: // secteur_id
-					$Asupprimer = true;
-					break;
+			if ($typeStatistiques == "generales") {
+				switch ($TestSupp) {
+					case 4 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 5 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 6 : $Asupprimer = true; break;						
+					case 7 : $Asupprimer = true;break;						
+					case 14 : $Asupprimer = true;break;
+					case 15 : $Asupprimer = true;break;
+					case 16 : $Asupprimer = true;break;	
+					case 17 : $Asupprimer = true;break;	
+					case 18 : $Asupprimer = true;break;
+					case 19 : $Asupprimer = true;break;	
+					case 20 : $Asupprimer = true;break;					
+					case 21 : $Asupprimer = true;break;
+					case 22 : $Asupprimer = true;break;
+				}
+			} else {
+				switch ($TestSupp) {
+					case 19: $Asupprimer = true;break;// secteur_id
+				}
 			}
 			break;
 		case "atgts":
-			switch ($TestSupp) {
-				case 22: // secteur_id
-					$Asupprimer = true;
-					break;
+			if ($typeStatistiques == "generales") {
+				switch ($TestSupp) {
+					case 4 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 5 : if ($_SESSION['calculStatSysteme ']) {
+						 		$Asupprimer = true;
+								}
+								break;
+					case 6 : $Asupprimer = true; break;						
+					case 7 : $Asupprimer = true;break;						
+					case 14 : $Asupprimer = true;break;
+					case 15 : $Asupprimer = true;break;
+					case 17 : $Asupprimer = true;break;	
+					case 18 : $Asupprimer = true;break;
+					case 19 : $Asupprimer = true;break;	
+					case 20 : $Asupprimer = true;break;					
+					case 21 : $Asupprimer = true;break;
+					case 22 : $Asupprimer = true;break;		
+					case 23 : $Asupprimer = true;break;					
+					case 24 : $Asupprimer = true;break;
+					case 25 : $Asupprimer = true;break;	
+				}
+			} else {
+				switch ($TestSupp) {
+					case 22: $Asupprimer = true;break;// secteur_id
+				}
 			}
-			break;
-			
+			break;	
+	}
+	if ($debug) {
+		if ($Asupprimer) {
+			echo "- suppression table = ".$table." position =  ".$TestSupp." stat = ".$typeStatistiques."<br/>";
+		} else {
+			echo "+ pas suppression table = ".$table." position =  ".$TestSupp." stat = ".$typeStatistiques."<br/>";
+		}
 	}
 	return $Asupprimer;
 }
@@ -172,6 +334,10 @@ function recupereEffort($systemeId,$SecteurID,$AnneeEC,$MoisEC,$GTEEC) {
 				}
 				$erreurProcess = true;
 			} else {
+				if (pg_num_rows($SQLResult) > 1) {
+					echo "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>La saisie des efforts n'est pas cohérente. Les calculs suivant seront faux.<br/>";
+					exit;
+				}
 				$ResultRow = pg_fetch_row($SQLResult);
 				$effortSysSect = $ResultRow[8];
 				$sectSystEncours = "syst-".$systemeId; // On va faire le calcul par systeme
@@ -276,10 +442,14 @@ function analyseTableCaptEsp(){
 						$_SESSION['listeEffortEspeces'][$cptMAJ][5] == $moisPrec
 						) { 
 							// Maj captures totales
-							$_SESSION['listeEffortEspeces'][$cptMAJ][9] = $captureTotales;
-							// Maj prorata
-							$_SESSION['listeEffortEspeces'][$cptMAJ][10] = floatval($_SESSION['listeEffortEspeces'][$cptMAJ][8]) / $captureTotales;
-							//echo "MAJ ".$_SESSION['listeEffortEspeces'][$cptMAJ][7]." ".$_SESSION['listeEffortEspeces'][$cptMAJ][9]." ".$_SESSION['listeEffortEspeces'][$cptMAJ][10]."<br/>";						
+							if ($captureTotales == 0) {
+								$_SESSION['listeEffortEspeces'][$cptMAJ][9] = 0;
+								$_SESSION['listeEffortEspeces'][$cptMAJ][10] = 0;
+							} else {
+								$_SESSION['listeEffortEspeces'][$cptMAJ][9] = $captureTotales;
+								// Maj prorata
+								$_SESSION['listeEffortEspeces'][$cptMAJ][10] = floatval($_SESSION['listeEffortEspeces'][$cptMAJ][8]) / $captureTotales;
+							}
 					}
 				}
 			$captureTotales = 0;
@@ -383,14 +553,12 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 				$nomTaille = "";
 			}
 			for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
-				if ($cptRow<> $posESPID && $cptRow<> $posESPNom && $cptRow<> $posStat1 && $cptRow<> $posStat2 && $cptRow<> $posStat3 && $cptRow<> $posStat4 && $cptRow<> $posStat5 && $cptRow<>$posLongueur){
-					// On gere ici des suppressions
-					$Asupprimer = TestsuppressionChamp($tableStat,$cptRow);
-					if (!$Asupprimer) {	
+				$Asupprimer = TestsuppressionChamp($tableStat,$cptRow,$typeStatistiques);
+				if (!$Asupprimer) {					
+				switch ($cptRow) {
+					case 0 :
 						$ligneResultat .= "&#&".$finalRow[$cptRow];
-					}
-				} else {
-					switch ($cptRow) {
+						break;				
 					case $posESPID :
 						$ligneResultat .= "&#&".$nomReg;
 						break;
@@ -419,9 +587,13 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 							$ligneResultat .= "&#&".$finalRow[$cptRow];
 						}
 						break;
+					default :
+						$ligneResultat .= "&#&".$finalRow[$cptRow]; 
+						break;
 					}
-				}
+				} // fin du switch
 			}
+			//echo $ligneResultat."<br/>";
 			if ($typeStatistiques == "generales") {
 				$messErreur = "Erreur car division par 0";
 				$effort = floatval($regroupDeb[$cptRg][9]);
@@ -463,7 +635,7 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 						} else {
 							$pue_sp = $CapturesSp / $effort;
 						}
-						$ligneResultat .= "&#&".$pue_sp."&#&".$effort."&#&".$CapturesSp;	
+						$ligneResultat .= "&#&".$pue_sp."&#&".$CapturesSp."&#&".$pue."&#&".$effort."&#&".$CapturesTotal;	
 
 						break;
 					case "ats":
@@ -472,6 +644,11 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 						$effortSp = floatval($regroupDeb[$cptRg][12]);
 						$CapturesTotal = $pue * $effort;
 						$CapturesSp =  $CapturesTotal * $prorata;
+						if ($effort == 0) {
+							$pue_sp = 0;
+						} else {
+							$pue_sp = $CapturesSp / $effort;
+						}
 						if ($effortSp == 0) {
 							//echo "Erreur effort pour l'espece ".$finalRow[$posESPID]." est nul.<br/>";
 							$Coeff = 0;
@@ -480,17 +657,25 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 						}
 						//echo "coef = ".$Coeff."<br/>";
 						$CapturesTaille = floatval($regroupDeb[$cptRg][3]) * $Coeff;
-						$ligneResultat .= "&#&".$CapturesTaille;
+						$ligneResultat .= "&#&".$CapturesTaille."&#&".$pue_sp."&#&".$CapturesSp."&#&".$pue."&#&".$effort."&#&".$CapturesTotal;
 
 						break;
 					case "asgt":
 						$pue = floatval($regroupDeb[$cptRg][11]);
 						$effortTotal = floatval($regroupDeb[$cptRg][13]);
 						$CapturesTotal = $pue * $effort;
-						$CapturesGTE =  $regroupDeb[$cptRg][4]*$CapturesTotal/$effortTotal;
+						if ($effortTotal == 0) {
+							$CapturesGTE = 0;
+						} else {
+							$CapturesGTE =  $regroupDeb[$cptRg][4]*$CapturesTotal/$effortTotal;
+						}
 						if ($regroupDeb[$cptRg][3] <> 0) {
 							$PueGTE = $regroupDeb[$cptRg][4]/$regroupDeb[$cptRg][3];
-							$EffortGTE = $CapturesGTE/$PueGTE;
+							if ($PueGTE == 0) {
+								$EffortGTE = 0;
+							} else {
+								$EffortGTE = $CapturesGTE/$PueGTE;
+							}
 						} else {
 							$PueGTE = 0;
 							$EffortGTE = 0;
@@ -526,22 +711,37 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 								$PUEGTEEsp = $CapturesGTEEsp / $EffortGTEEsp;
 							}
 						}
-						$ligneResultat .= "&#&". $PUEGTEEsp."&#&".$EffortGTEEsp."&#&".$CapturesGTEEsp;
+						$ligneResultat .= "&#&". $PUEGTEEsp."&#&".$EffortGTEEsp."&#&".$CapturesGTEEsp."&#&". $puestrate."&#&".$EffortGTEStrate."&#&".$CapturesGTEStrate;
 						break;
 					case "atgts":
+						$puestrate = floatval($regroupDeb[$cptRg][11]);
+						$effortTotal = floatval($regroupDeb[$cptRg][13]);
+						$EffortGTEStrate = floatval($regroupDeb[$cptRg][14]) ;
+						$CapturesGTEStrate = $puestrate *  $EffortGTEStrate;
+						$CapturesGTE = floatval($regroupDeb[$cptRg][15]) ;
+						if ( $CapturesGTE == 0) {
+							$prorataGTE =0;
+							$CapturesGTEEsp = 0;
+						} else {
+							$prorataGTE = $regroupDeb[$cptRg][4] / $CapturesGTE;
+							$CapturesGTEEsp = $CapturesGTEStrate  * $prorataGTE;
+							$EffortGTEEsp = $EffortGTEStrate  * $prorataGTE;
+							if (  $EffortGTEEsp <> 0) {
+								$PUEGTEEsp = $CapturesGTEEsp / $EffortGTEEsp;
+							}
+						}
+
 						$pue = floatval($regroupDeb[$cptRg][16]);
 						$effortSp = floatval($regroupDeb[$cptRg][12]);
-						$effortTotal = floatval($regroupDeb[$cptRg][13]);
 						$CapturesTotal = $pue * $effort;
 						$CapturesSp =  $CapturesTotal * $prorata;
 						if ($effortSp == 0) {
-							//echo "Erreur effort pour l'espece ".$finalRow[$posESPID]." est nul.<br/>";
 							$Coeff = 0;
 						} else {
 							$Coeff = $CapturesSp / $effortSp;
 						}		
 						$CapturesTaille = floatval($regroupDeb[$cptRg][3]) * $Coeff;
-						$ligneResultat .= "&#&".$CapturesTaille;
+						$ligneResultat .= "&#&".$CapturesTaille."&#&". $PUEGTEEsp."&#&".$EffortGTEEsp."&#&".$CapturesGTEEsp."&#&". $puestrate."&#&".$EffortGTEStrate."&#&".$CapturesGTEStrate;
 						break;
 				}
 			}
@@ -604,7 +804,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 // En sortie : 
 // La fonction cree une ligne dans la table temporaire 
 //*********************************************************************
-	$debugLog = false;
+	$debugLog = true;
 	global $connectPPEAO;
 	global $EcrireLogComp;
 	global $logComp;
@@ -1015,6 +1215,8 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 								echo "erreur fonction AjoutEnrg<br/>";
 							}  
 							// On reinitialise les compteurs
+							//echo "sect = ".$sectSystPrec." - annee = ".$anneePrec." - mois = ".$moisPrec." - GTE = ".$GTEPrec."<br/>";
+							//echo "sect = ".$sectSystEncours." - annee = ".$anneeEnCours." - mois = ".$moisEnCours." - GTE = ".$GTEEnCours."<br/>";
 							$Mesure = 0;
 							unset($regroupDeb);
 							$NumRegEnCours = 0;
@@ -1167,9 +1369,9 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 						WriteCompLog ($logComp, "DEBUG : debencours = ".$debEnCours." espencours = ".$espEnCours. " [".$posStat1."] val1 = ".$finalRow[$posStat1]." [".$posStat2."] val2 = ".$finalRow[$posStat2],$pasdefichier);
 						//WriteCompLog ($logComp, "DEBUG : debprec = ".$debIDPrec." espprec = ".$espPrec,$pasdefichier);
 					}
-					if ($posRupSupEnCours<>0) {
-					//echo "debencours = ".$debEnCours." espencours = ".$espEnCours. " [".$posStat1."] val1 = ".$finalRow[$posStat1]." [".$posStat2."] val2 = ".$finalRow[$posStat2]." taille encours = ".$posRupSupEnCours." taile prec = ".$posRupSupPrec."<br/>";
-					}
+					//if ($posRupSupEnCours<>0) {
+					//echo "debencours = ".$debEnCours." espencours = ".$espEnCours. " || pos ".$posStat1." val1 = ".$finalRow[$posStat1]." - pos ".$posStat2." val2 = ".$finalRow[$posStat2]." - pos ".$posStat3." val3 = ".$finalRow[$posStat3]." taille encours = ".$posRupSupEnCours." taile prec = ".$posRupSupPrec."<br/>";
+					//}
 					if ($debEnCours<>$debIDPrec || ($debEnCours == $debIDPrec && $GTEEnCours <>$GTEPrec)) {
 						if (!($debIDPrec == "")) {
 							// Ajout du contenu de ce tableau dans la table temporaire.
@@ -1177,10 +1379,10 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 								$erreurProcess = true;
 								echo "erreur fonction AjoutEnrg<br/>";
 							} 
-							if ($posRupSupEnCours<>0) {
+							//if ($posRupSupEnCours<>0) {
 								//echo('<pre>');print_r($regroupDeb);echo('</pre>');
 								//echo "ajout a la rupture ".$RegEnCours."<br/>";
-							}
+							//}
 							// On reinitialise les compteurs
 							$Mesure = 0;
 							unset($regroupDeb);
@@ -1374,13 +1576,13 @@ function creeNouveauReg($regroupDeb,$RegEnCours,$NomRegEncours,$NbRegDebSuiv,$St
 	if (!($posStat4 == -1 )) {
 		$regroupDeb[$NbRegDebSuiv][7] = floatval($Stat4);
 		if ($EcrireLogComp && $debugLog) {
-			WriteCompLog ($logComp, "DEBUG : CREATION tableau temporaire prise en compte de la 4ieme colone ".$regroupDeb[$NbRegDebSuiv][7],$pasdefichier);
+			WriteCompLog ($logComp, "DEBUG : CREATION tableau temporaire prise en compte de la 4ieme colonne ".$regroupDeb[$NbRegDebSuiv][7],$pasdefichier);
 		}							
 	}
 	if (!($posStat5 == -1 )) {
 		$regroupDeb[$NbRegDebSuiv][8] = floatval($Stat5);
 		if ($EcrireLogComp && $debugLog) {
-			WriteCompLog ($logComp, "DEBUG : CREATION tableau temporaire prise en compte de la 5ieme colone ".$regroupDeb[$NbRegDebSuiv][8],$pasdefichier);
+			WriteCompLog ($logComp, "DEBUG : CREATION tableau temporaire prise en compte de la 5ieme colonne ".$regroupDeb[$NbRegDebSuiv][8],$pasdefichier);
 		}							
 	}	
 	$regroupDeb[$NbRegDebSuiv][9] = floatval($effort);
@@ -1431,19 +1633,19 @@ function majReg($regroupDeb,$RegEnCours,$NumRegEC,$Stat1,$posStat2,$Stat2,$posSt
 	if (!($posStat3 == -1 )) {
 		$regroupDeb[$NumRegEC][5] = floatval($regroupDeb[$NumRegEC][5]) + floatval($Stat3);
 		if ($EcrireLogComp && $debugLog) {
-			WriteCompLog ($logComp, "DEBUG : MAJ tableau prise en compte de la 3ieme colone ".$regroupDeb[$NbRegDebSuiv][5],$pasdefichier);
+			WriteCompLog ($logComp, "DEBUG : MAJ tableau prise en compte de la 3ieme colonne ".$regroupDeb[$NbRegDebSuiv][5],$pasdefichier);
 		}
 	}
 	if (!($posStat4 == -1 )) {
 		$regroupDeb[$NumRegEC][7] = floatval($regroupDeb[$NumRegEC][7]) + floatval($Stat4);
 		if ($EcrireLogComp && $debugLog) {
-			WriteCompLog ($logComp, "DEBUG : MAJ tableau prise en compte de la 4ieme colone ".$regroupDeb[$NbRegDebSuiv][7],$pasdefichier);
+			WriteCompLog ($logComp, "DEBUG : MAJ tableau prise en compte de la 4ieme colonne ".$regroupDeb[$NbRegDebSuiv][7],$pasdefichier);
 		}							
 	}
 	if (!($posStat5 == -1 )) {
 		$regroupDeb[$NumRegEC][8] = floatval($regroupDeb[$NumRegEC][8]) + floatval($Stat5);
 		if ($EcrireLogComp && $debugLog) {
-			WriteCompLog ($logComp, "DEBUG : MAJ tableau prise en compte de la 5ieme colone ".$regroupDeb[$NbRegDebSuiv][8],$pasdefichier);
+			WriteCompLog ($logComp, "DEBUG : MAJ tableau prise en compte de la 5ieme colonne ".$regroupDeb[$NbRegDebSuiv][8],$pasdefichier);
 		}							
 	}
 	return $regroupDeb;

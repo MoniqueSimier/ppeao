@@ -27,6 +27,29 @@ $ListeTableInput = "";
 
 
 //*********************************************************************
+// convertit num : test et ajoute
+function  convertitNum($valeurAConvertir) {
+	if (is_numeric($valeurAConvertir)){
+		$valsub = -1 * (strlen($valeurAConvertir) - strpos($valeurAConvertir,".") - 3);
+		//echo "val sub = ".$valsub."<br/>";
+		//echo $valeurAConvertir." - ".strpos($valeurAConvertir,".")."  ".strlen($valeurAConvertir)." ".substr($valeurAConvertir,0,$valsub)."<br/>";
+		if ( strpos($valeurAConvertir,".") > 0 && $valsub < 0 ) {
+			$AjChps = str_replace(".",",",substr($valeurAConvertir,0,$valsub));
+		} else {
+			if ( strpos($valeurAConvertir,".") > 0) {
+				$AjChps = str_replace(".",",",$valeurAConvertir);
+			} else {
+				$AjChps = $valeurAConvertir;
+			}
+		}
+
+	}else {
+		$AjChps = $valeurAConvertir;
+	}
+	return $AjChps;
+}
+
+//*********************************************************************
 // ajouterAuWhere : test et ajoute
 function  ajouterAuWhere($WhereEncours,$CodeAajouter) {
 // Cette fonction permet  d'ajouter une table a un SQL si elle n'existe pas deja  
@@ -622,7 +645,7 @@ function AfficherDonnees($file,$typeAction){
 					$WhereSel = "";
 					$AjoutWhere = "";
 					// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
-					analyseColonne($typePeche,$typeAction,"");	
+					analyseColonne($typePeche,$typeAction,"",$typeStatistiques);	
 					// Analyse des différents composants du where et ajout des and quand nécessaire
 					// C'est un peu le bronx pour construire ces SQL, mais pas le choix. On doit pouvoir optimiser...
 					if ($compSQL == "" ) {
@@ -965,7 +988,7 @@ function AfficherDonnees($file,$typeAction){
 					}
 					$AjoutWhere = "";
 					// Analyse de la liste des colonnes venant des sélections précédentes, ajout de ces colonnes au fichier
-					analyseColonne($typePeche,$typeAction,"");			
+					analyseColonne($typePeche,$typeAction,"",$typeStatistiques);			
 					// Analyse des différents composants du where et ajout des and quand nécessaire
 					// C'est un peu le bronx pour construire ces SQL, mais pas le choix. On doit pouvoir optimiser...
 					if ($compSQL == "" ) {
@@ -1164,8 +1187,9 @@ function AfficherDonnees($file,$typeAction){
 							$posStat2 = 18 ; //position afrarec.poids - 1 / Pour gestion regroupement
 							$posStat3 = 19 ; //position afra.nbre_poissons
 							$posStat4 = 20 ; //position afrarec.nbre_poissons
+							$posStat5 = -1;
 							if (strpos($listeChampsSel,"deb.art_grand_type_engin_id") === false) {
-								$listeChampsSpec = ", deb.poids_total,debrec.poids_total,deb.art_unite_peche_id,afra.id,afra.poids,afrarec.poids, afra.nbre_poissons, afrarec.nbre_poissons,afra.ref_espece_id,esp.libelle, deb.art_grand_type_engin_id";
+								$listeChampsSpec = ", deb.poids_total,debrec.poids_total,deb.art_unite_peche_id,afra.id,afra.poids,afrarec.poids, afra.nbre_poissons, afrarec.nbre_poissons, afra.ref_espece_id,esp.libelle, deb.art_grand_type_engin_id";
 							} else {
 								$listeChampsSpec = ", deb.poids_total,debrec.poids_total,deb.art_unite_peche_id,afra.id,afra.poids,afrarec.poids,afra.nbre_poissons, afrarec.nbre_poissons, afra.ref_espece_id, esp.libelle";
 							}
@@ -1218,11 +1242,11 @@ function AfficherDonnees($file,$typeAction){
 							$posDEBID = 11 ; //position deb.id - 1 / Pour gestion regroupement
 							$posESPID = 22 ; //position afra.ref_espece_id - 1 / Pour gestion regroupement
 							$posESPNom = 23 ; //position esp.libelle - 1 / Pour gestion regroupement
-							$posStat1 = 17 ; //position afra.poids - 1 / Pour gestion regroupement
-							$posStat2 = 18 ; //position afrarec.poids - 1 / Pour gestion regroupement
-							$posStat3 = 19 ; //position ames.taille - 1 / Pour gestion regroupement
-							$posStat4 = 20 ; //position afra.nbre_poissons  - 1 / Pour gestion regroupement
-							$posStat5 = 21 ; //position ames.taille - 1 / Pour gestion regroupement
+							$posStat1 = -1; //position afra.poids - 1 / Pour gestion regroupement
+							$posStat2 = -1; //Pas de cumul pour les structures de taille
+							$posStat3 = -1; //Pas de cumul pour les structures de taille
+							$posStat4 = -1; //Pas de cumul pour les structures de taille
+							$posStat5 = -1; //Pas de cumul pour les structures de taille
 							if (strpos($listeChampsSel,"deb.art_grand_type_engin_id") === false) {
 								$listeChampsSpec = ", deb.poids_total, debrec.poids_total,deb.art_unite_peche_id,afra.id, afra.poids,afrarec.poids,  afra.nbre_poissons,  afrarec.nbre_poissons,ames.taille, afra.ref_espece_id, esp.libelle, deb.art_grand_type_engin_id ";
 							} else {
@@ -1394,7 +1418,7 @@ function AfficherDonnees($file,$typeAction){
 				} 
 			}
 			// On charge les colonnes supplémentaires juste pour l'affichage.
-			analyseColonne("statistiques",$typeAction,"ast");
+			analyseColonne("statistiques",$typeAction,"ast",$typeStatistiques);
 			$toutesColonnes = recupereTouteColonnes("statistiques",$typeStatistiques); // C'est juste pour charger le nom des alias dans la variable de session 
 			// Dans le cas des stats par systeme, on n'a pas de liste de période d'enquetes, on la reconstruit.
 			// $SQLdateDebut annee/mois
@@ -1444,7 +1468,26 @@ function AfficherDonnees($file,$typeAction){
 				pg_free_result($SQLperEnqResult);
 			}
 			
-			// ********** DEBUT STATISTIQUES PAR AGGLOMERATION
+			// ********** DEBUT STATISTIQUES. Agglomeration et generale se basent sur les memes tables, pour générales, on va effectuer des calculs
+			if ($typeStatistiques == "generales") {
+				// On doit tester si on a un effort par secteur ou uniquement sur le systeme.
+				// On prend le premier secteur qui vient. Si il existe un effort sur le systeme et pas sur le secteur 
+				// alors on considere que pour cette selection on est sur un effort par systeme.
+				// Le tri du SQL en sera changé.
+					$explodedatedebut = explode("/",$SQLdateDebut);
+					$anneeEnCours=$explodedatedebut[0];
+					$moisEnCours=$explodedatedebut[1];
+					$explodeSysteme = explode(",",$SQLSysteme);
+					$systemeEncours = $explodeSysteme[0];
+					$explodeSecteur = explode(",",$SQLSecteur);
+					$sectEnCours = $explodeSecteur[0];
+					//echo $systemeEncours."-".$sectEnCours."-".$anneeEnCours."-".$moisEnCours."<br/>";
+					$RecEffortSysSect = recupereEffort($systemeEncours,$sectEnCours,$anneeEnCours,$moisEnCours,"TOUS");
+					$tabEffortSysSect = explode ("&#&",$RecEffortSysSect); // tableau contenant le resultat de la requete : [type]-[valeur sect/syst]&#&[valeur effort] 
+					$tabsectSystEncours = explode ("-",$tabEffortSysSect[0]);
+					$typesectSystEncours = $tabsectSystEncours[0]; // Va contenir soit sect soit syst si l'effort est trouvé au niveau du systeme ou du secteur
+
+			}
 			// ********** CONSTRUCTION DES SQL DEFINITIFS PAR TYPE DE STATISTIQUES CHOISIS
 			$listeChampsCom = "py.id, py.nom, sy.id, sy.libelle, se.id_dans_systeme, se.nom ,agg.id ,agg.nom ,penq.annee ,penq.mois";
 			$ListeTableCom = "ref_pays as py,ref_systeme as sy,ref_secteur as se,art_agglomeration as agg";
@@ -1457,7 +1500,12 @@ function AfficherDonnees($file,$typeAction){
 							sy.id = se.ref_systeme_id and
 							se.id = agg.ref_secteur_id " ;		
 			$posSystemeID = 2 ; //position systeme ID pour calcul stats generales
-			$OrderCom = "order by py.id asc,sy.id asc,se.id asc,penq.annee asc,penq.mois asc";
+			if ($typeStatistiques == "generales" && $typesectSystEncours == "syst") {
+				// Le tri ne prend pas en compte les secteurs, on fait un traitement sur le systeme / annee / mois
+				$OrderCom = "order by py.id asc,sy.id asc,penq.annee asc,penq.mois asc";
+			} else {
+				$OrderCom = "order by py.id asc,sy.id asc,se.id asc,penq.annee asc,penq.mois asc";
+			}
 			switch ($typeAction) {
 				case "stats" :
 					// On construit les differentes requetes a executer a la suite:
@@ -1742,7 +1790,7 @@ function AfficherDonnees($file,$typeAction){
 				$AjoutWhere = "";
 				$listeChampsSel="";
 				$listeChampsSel="";
-				analyseColonne("statistiques",$typeAction,$tableStat[$cptTS]);
+				analyseColonne("statistiques",$typeAction,$tableStat[$cptTS],$typeStatistiques);
 				$WhereSel = $AjoutWhere;
 				$listeChampsReg = $listeChampsCom.${$nomValLChampsSpec}.$listeChampsSel;
 				$listeTableReg = $ListeTableCom.${$nomValLTableSpec}.$ListeTableSel; 
@@ -1907,13 +1955,13 @@ function AfficherDonnees($file,$typeAction){
 					$listeChamps .=",Nombre_individus_mesures,Coeff_extrapolation";
 				}
 				if ($typeStatistiques == "generales") {
-					$listeChamps .=",Pue_strate,Effort_strate,Captures_strate";
+					$listeChamps .=",Pue_totale,Effort_total,Captures_totales";
 				}
 				// On remplace les noms des alias par le nom des tables...
 				if (!($ConstIDunique =="")) {
-					$listeChamps = remplaceAlias($listeChamps,"y",$typeAction);
+					$listeChamps = remplaceAlias($listeChamps,"y",$typeAction,$typeStatistiques);
 				} else {
-					$listeChamps = remplaceAlias($listeChamps,"n",$typeAction);
+					$listeChamps = remplaceAlias($listeChamps,"n",$typeAction,$typeStatistiques);
 				}
 				// On commence le formatage sous forme de table/
 				$libelleAction = recupereLibelleFiliere($typeAction);
@@ -2026,8 +2074,8 @@ function AfficherDonnees($file,$typeAction){
 						$tabResultat = explode("&#&",$ligne_resultat);
 						$NbResultat = count($tabResultat);
 						for ($cptResult = 1;$cptResult < $NbResultat;$cptResult++) {
-							//$resultatLecture .= "<td>".$tabResultat[$cptResult]."</td>";
-							$resultatLectureX .= "<td>".$tabResultat[$cptResult]."</td>";
+							$AjChps = convertitNum($tabResultat[$cptResult]);
+							$resultatLectureX .= "<td>".$AjChps."</td>";
 						}
 					} else {
 						// Le traitement normal
@@ -2063,7 +2111,6 @@ function AfficherDonnees($file,$typeAction){
 									} else {
 										// On contruit la ligne de resutat
 										if ( !($_SESSION['listeRegroup'] == "")) {
-
 											switch ($cptRow) {
 												case $posESPID:
 													$ValAAjouter = $infoReg[0];
@@ -2075,9 +2122,17 @@ function AfficherDonnees($file,$typeAction){
 													$ValAAjouter = $finalRow[$cptRow];
 													break;
 											}
-											$resultatLectureX .= "<td>".$ValAAjouter."</td>";
+											$Asupprimer = TestsuppressionChamp($tableStat,$cptRow,$typeStatistiques);
+											if (!$Asupprimer) {
+												$AjChps = convertitNum($ValAAjouter);
+												$resultatLectureX .= "<td>".$AjChps."</td>";
+											}
 										} else {
-											$resultatLectureX .= "<td>".$finalRow[$cptRow]."</td>";
+											$Asupprimer = TestsuppressionChamp($tableStat,$cptRow,$typeStatistiques);
+											if (!$Asupprimer) {	
+												$AjChps = convertitNum($finalRow[$cptRow]);
+												$resultatLectureX .= "<td>".$AjChps."</td>";
+											}
 										}
 									}
 								}	
@@ -2104,11 +2159,15 @@ function AfficherDonnees($file,$typeAction){
 								}
 								// Calcul du coefficient = nombre de poisson peches / nombre de poissons mesures
 								$coefficient =floatval( intval($totalIndividus) / intval($totalBio));	
-								$coefficient = round($coefficient,2);
+								$coefficient = number_format($coefficient,2,",","");
 								$nbrRow = count($finalRow)-1;
 								// Transcription du resultat de la requete globale pour un affichage écran et un export sous forme de fichier
 								for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
-									$resultatLectureX .= "<td>".$finalRow[$cptRow]."</td>";
+									$Asupprimer = TestsuppressionChamp($tableStat,$cptRow,$typeStatistiques);
+									if (!$Asupprimer) {	
+										$AjChps = convertitNum($finalRow[$cptRow]);
+										$resultatLectureX .= "<td>".$AjChps."</td>";
+									}
 								}
 								// Ajout du coefficient tout a la fin du fichier
 								$resultatLectureX .= "<td>".$totalBio."</td><td>".$coefficient."</td>";
@@ -2136,7 +2195,15 @@ function AfficherDonnees($file,$typeAction){
 										}
 									} else {
 										// On contruit la ligne de resutat
-										$resultatLectureX .= "<td>".$finalRow[$cptRow]."</td>";
+										if ($tableStat == "") {
+											$Asupprimer = TestsuppressionChamp($typeAction,$cptRow,$typeStatistiques);
+										} else {
+											$Asupprimer = TestsuppressionChamp($tableStat,$cptRow,$typeStatistiques);
+										}
+										if (!$Asupprimer) {	
+											$AjChps = convertitNum($finalRow[$cptRow]);
+											$resultatLectureX .= "<td>".$AjChps."</td>";
+										}
 									}
 								}	
 								break;
@@ -2229,7 +2296,7 @@ function AfficherDonnees($file,$typeAction){
 					$AjoutWhere = "";
 					$listeChampsSel="";
 					$listeChampsSel="";
-					analyseColonne("statistiques",$typeAction,$tableStat[$cptTS]);
+					analyseColonne("statistiques",$typeAction,$tableStat[$cptTS],$typeStatistiques);
 					$WhereSel = $AjoutWhere;
 					$listeChamps = $listeChampsCom.${$nomValLChampsSpec}.$listeChampsSel;
 					$listeTableTot = $ListeTableCom.${$nomValLTableSpec}.$ListeTableSel; // L'ordre est important pour les join
@@ -2261,52 +2328,52 @@ function AfficherDonnees($file,$typeAction){
 						// Selon la table, on ajoute des coefficients a la fin de la ligne
 						switch ($tableStat[$cptTS]) {
 							case "ast":
-								$listeChamps =$listeChamps.",Pue_strate,Effort_strate,Captures_strate";
+								$listeChamps =$listeChamps.",Pue_totale,Effort_total,Captures_totales";
 								break;
 							case "asp":
-								$listeChamps =$listeChamps.",Pue_strate_sp,Effort_strate_sp,Captures_strate_sp";
+								$listeChamps =$listeChamps.",Pue_espece,Captures_especes,Pue_totale,Effort_total,Captures_totales";
 								break;
 							case "ats":
-								$listeChamps =$listeChamps.",Effectif_strate";
+								$listeChamps =$listeChamps.",Effectif,Pue_espece,Captures_especes,Pue_totale,Effort_total,Captures_totales";
 								break;
 							case "asgt":
-								$listeChamps =$listeChamps.",Pue_strate_GT,Effort_strate_GT,Captures_strate_GT";
+								$listeChamps =$listeChamps.",Pue_GT,Effort_GT,Captures_GT";
 								break;
 							case "attgt":
-								$listeChamps =$listeChamps.",Pue_strate_GT_esp,Effort_strate_GT_esp,Captures_strate_GT_esp";
+								$listeChamps =$listeChamps.",Pue_GT_espece,Effort_GT_espece,Captures_GT_espece,Pue_GT,Effort_GT,Captures_GT";
 								break;
 							case "atgts":
-								$listeChamps =$listeChamps.",Effectif_strate_GT";
+								$listeChamps =$listeChamps.",Effectif,Pue_GT_espece,Effort_GT_espece,Captures_GT_espece,Pue_GT,Effort_GT,Captures_GT";
 								break;	
 						}
-						$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS]);
-						creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false,0,0,false,false,$tableStat[$cptTS]);
+						$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS],$typeStatistiques);
+						creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false,0,0,false,false,$tableStat[$cptTS],$typeStatistiques);
 					} else {
 						$listeTableStatSp = "asp,ats,attgt,atgts";
 						if ( strpos($listeTableStatSp,$tableStat[$cptTS]) === false) {
 							$ConstIDuniqueStat = "ConstIDunique".$tableStat[$cptTS];
 							$listeChamps ="id.unique,".$listeChamps;
-							$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS]);
-							creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,true,0,0,false,false,$tableStat[$cptTS]);
+							$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS],$typeStatistiques);
+							creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,true,0,0,false,false,$tableStat[$cptTS],$typeStatistiques);
 						} else {
 							if (!($_SESSION['listeRegroup'] == "")) {
 								$SQLfinal = "select * from temp_extraction where key4 = '".$tableStat[$cptTS]."' order by key1 asc,key2 asc,key3 asc";
 								$SQLcountfinal = "select count(*) from temp_extraction ";
 								$ConstIDunique = "AST-##-1";
 								$listeChamps ="id.unique,".$listeChamps;
-								$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS]);
-								creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false,0,0,false,false,$tableStat[$cptTS]);
+								$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS],$typeStatistiques);
+								creeFichier($SQLfinal,$listeChamps,$typeAction,$ConstIDunique,$ExpCompStat,false,0,0,false,false,$tableStat[$cptTS],$typeStatistiques);
 							} else {
 								$ConstIDuniqueStat = "ConstIDunique".$tableStat[$cptTS];
 								$listeChamps ="id.unique,".$listeChamps;
-								$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS]);
-								creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,false,0,0,false,false,$tableStat[$cptTS]);
+								$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS],$typeStatistiques);
+								creeFichier($SQLfinal,$listeChamps,$typeAction,${$ConstIDuniqueStat},$ExpCompStat,false,0,0,false,false,$tableStat[$cptTS],$typeStatistiques);
 							}
 						}
 					}
 				}
 			} else {
-				creeFichier($SQLfinalFichier,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,false,$posESPID,$posESPNom,$chercheAggUpec,$posAggUpec,"");
+				creeFichier($SQLfinalFichier,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,false,$posESPID,$posESPNom,$chercheAggUpec,$posAggUpec,"",$typeStatistiques);
 			}
 			if ($debugAff) {
 				$debugTimer = number_format(timer()-$start_while,4);
@@ -2468,7 +2535,7 @@ function AfficherDonnees($file,$typeAction){
 
 //*********************************************************************
 // creeFichier : Fonction de creation d'un fichier a partir d'un SQL
-function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,$pasTestReg,$posESPID,$posESPNom,$chercheAggUpec,$posAggUpec,$tableStat) {
+function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,$pasTestReg,$posESPID,$posESPNom,$chercheAggUpec,$posAggUpec,$tableStat,$typeStatistiques) {
 // Cette fonction permet de creer un fichier a exporter a partir d'un SQL
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -2581,13 +2648,8 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 					for ($cptResult = 1;$cptResult <= $NbResultat;$cptResult++) {
 						//$resultatFichierX .=$tabResultat[$cptResult]."\t";
 						//$resultatFichier .= $tabResultat[$cptResult]."\t";
-
-						if (is_numeric($tabResultat[$cptResult])){
-							$AjChps = strval($tabResultat[$cptResult]);
-							$AjChps =str_replace(".",",",$AjChps);
-						}else {
-							$AjChps = $tabResultat[$cptResult];
-						}
+						// Pas besoin de gerer la suppression ici, elle est faite lors de la construction de la ligne avant
+						$AjChps = convertitNum($tabResultat[$cptResult]);
 						$resultatFichierX  .= $AjChps."\t";
 					}
 				} else {
@@ -2635,24 +2697,19 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 												$ValAAjouter = $finalRow[$cptRow];
 												break;
 										}
-										if (is_numeric($ValAAjouter)){
-											$AjChps = strval($ValAAjouter);
-											$AjChps =str_replace(".",",",$AjChps);
-										}else {
-											$AjChps = $ValAAjouter;
+										$Asupprimer = TestsuppressionChamp($typeAction,$cptRow,$typeStatistiques);
+										if (!$Asupprimer) {
+											$AjChps = convertitNum($ValAAjouter);
+											$resultatFichierX .=$AjChps."\t";
 										}
-										$resultatFichierX .=$AjChps."\t";
+
 									} else {
-										if (is_numeric($finalRow[$cptRow])){
-											$AjChps = strval($finalRow[$cptRow]);
-											$AjChps =str_replace(".",",",$AjChps);
-										}else {
-											$AjChps = $finalRow[$cptRow];
+										$Asupprimer = TestsuppressionChamp($typeAction,$cptRow,$typeStatistiques);
+										if (!$Asupprimer) {	
+											$AjChps = convertitNum($finalRow[$cptRow]);
+											$resultatFichierX .= $AjChps."\t";
 										}
-										$resultatFichierX .= $AjChps."\t";
-										
 									}
-									
 								}
 							}	
 							break;
@@ -2694,24 +2751,18 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 							}
 							// Calcul du coefficient = nombre de poisson peches / nombre de poissons mesures
 							$coefficient =floatval( intval($totalIndividus) / intval($totalBio));	
-							$coefficient = round($coefficient,2);
+							$coefficient = number_format($coefficient,2,",","");
 							$nbrRow = count($finalRow)-1;
 
 							// Transcription du resultat de la requete globale pour un affichage écran et un export sous forme de fichier
 							for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
-								if (is_numeric($finalRow[$cptRow])){
-									$AjChps = strval($finalRow[$cptRow]);
-									$AjChps =str_replace(".",",",$AjChps);
-								}else {
-									$AjChps = $finalRow[$cptRow];
-									
-								}
-								$resultatFichierX .=$AjChps."\t";
-								//$resultatFichier .=$AjChps."\t";
+									$Asupprimer = TestsuppressionChamp($typeAction,$cptRow,$typeStatistiques);
+									if (!$Asupprimer) {	
+										$AjChps = convertitNum($finalRow[$cptRow]);
+										$resultatFichierX .=$AjChps."\t";
+									}
 							}
 							// Ajout du coefficient tout a la fin du fichier
-							//$resultatFichierX .=$AjChps."\t";
-							//$resultatFichier .= $totalBio."\t".$coefficient;
 							$resultatFichierX .= $totalBio."\t".$coefficient;
 							break;	
 						default	:
@@ -2736,17 +2787,12 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 									}
 								} else {
 									if ($tableStat == "") {
-										$Asupprimer = TestsuppressionChamp($typeAction,$cptRow);
+										$Asupprimer = TestsuppressionChamp($typeAction,$cptRow,$typeStatistiques);
 									} else {
-										$Asupprimer = TestsuppressionChamp($tableStat,$cptRow);
+										$Asupprimer = TestsuppressionChamp($tableStat,$cptRow,$typeStatistiques);
 									}
 									if (!$Asupprimer) {	
-										if (is_numeric($finalRow[$cptRow])){
-											$AjChps = strval($finalRow[$cptRow]);
-											$AjChps =str_replace(".",",",$AjChps);
-										}else {
-											$AjChps = $finalRow[$cptRow];	
-										}
+										$AjChps = convertitNum($finalRow[$cptRow]);
 										$resultatFichierX .=$AjChps."\t";
 									}
 								}
@@ -2916,7 +2962,7 @@ function recupereTouteColonnes ($typePeche,$typeAction) {
 
 //*********************************************************************
 // recupereTouteColonnes : Fonction qui analyse la colonne en cours et complete le SQL si besoin
-function analyseColonne($typePeche,$typeAction,$tableStat){
+function analyseColonne($typePeche,$typeAction,$tableStat,$typeStatistiques){
 // Cette fonction permet de recupérer controler si la colonne en cours necessite une requete SQL supplementaire et l'ajoute 
 // cas echeant
 //*********************************************************************
@@ -2946,14 +2992,23 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 			if ($_SESSION['listeColonne'] == "XtoutX") {
 				switch ($tableStat) {
 					case "ast":
-						$listeChampsSel = ",agg.art_type_agglomeration_id,ast.nbre_obs, ast.obs_min,ast.obs_max, ast.pue_ecart_type,ast.fpe,ast.nbre_unite_recensee_periode,ast.nbre_jour_activite,ast.nbre_jour_enq_deb";
+						if ($typeStatistiques == "generales") {
+							$listeChampsSel = ",ast.nbre_obs, ast.obs_min,ast.obs_max";
+						}else {
+							$listeChampsSel = ",agg.art_type_agglomeration_id,ast.nbre_obs, ast.obs_min,ast.obs_max, ast.pue_ecart_type,ast.fpe,ast.nbre_unite_recensee_periode,ast.nbre_jour_activite,ast.nbre_jour_enq_deb";
+						}
 						$ListeTableSel = "";
-						$AjoutWhere = "";
+						$AjoutWhere = "";						
 						break;	
 					case "asp":
-						$listeChampsSel = ",asp.nbre_enquete_sp, asp.obs_sp_min,asp.obs_sp_max, asp.pue_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						if ($typeStatistiques == "generales") {
+							$listeChampsSel = ",asp.nbre_enquete_sp, asp.obs_sp_min,asp.obs_sp_max,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						}else {
+							$listeChampsSel = ",asp.nbre_enquete_sp, asp.obs_sp_min,asp.obs_sp_max, asp.pue_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						}
 						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
 						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
+						
 					break;
 					case "ats":
 						$listeChampsSel = ",esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
@@ -2961,12 +3016,20 @@ function analyseColonne($typePeche,$typeAction,$tableStat){
 						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
 					break;
 					case "asgt":
-						$listeChampsSel = ",asgt.nbre_enquete_gt, asgt.obs_gt_min, asgt.obs_gt_max, asgt.pue_gt_ecart_type,asgt.fpe_gt";
+						if ($typeStatistiques == "generales") {
+							$listeChampsSel = ",asgt.nbre_enquete_gt, asgt.obs_gt_min, asgt.obs_gt_max";
+						}else {
+							$listeChampsSel = ",asgt.nbre_enquete_gt, asgt.obs_gt_min, asgt.obs_gt_max, asgt.pue_gt_ecart_type,asgt.fpe_gt";
+						}
 						$ListeTableSel = "";
 						$AjoutWhere = "";
 					break;
 					case "attgt":
-						$listeChampsSel = ",attgt.nbre_enquete_gt_sp,attgt.obs_gt_sp_min, attgt.obs_gt_sp_max,attgt.pue_gt_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						if ($typeStatistiques == "generales") {
+							$listeChampsSel = ",attgt.nbre_enquete_gt_sp,attgt.obs_gt_sp_min, attgt.obs_gt_sp_max,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						}else {
+							$listeChampsSel = ",attgt.nbre_enquete_gt_sp,attgt.obs_gt_sp_min, attgt.obs_gt_sp_max,attgt.pue_gt_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
+						}
 						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
 						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
 					break;
@@ -3336,7 +3399,7 @@ function RecupereEspeces($SQLAexec){
 
 //*********************************************************************
 // remplaceAlias : Fonction pour remplacer les alias par le nom de la table
-function remplaceAlias($listeDesChamps,$Idunique,$table) {
+function remplaceAlias($listeDesChamps,$Idunique,$table,$typeStatistiques) {
 // Cette fonction permet de remplacer pour l'affichage les alias par les nom complets des tables
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -3358,25 +3421,24 @@ function remplaceAlias($listeDesChamps,$Idunique,$table) {
 		} else {
 			$cptRow = $cptT; // Pas d'ID unique en debut de ligne
 		}
-		$Asupprimer = TestsuppressionChamp($table,$cptRow);
-		if (!$Asupprimer) {	
+		$Asupprimer = TestsuppressionChamp($table,$cptRow,$typeStatistiques);
+		if (!$Asupprimer) {
+			//echo "pas a supprimer : ".$table." ".$listeTitre[$cptT]." <br/>";
 			if ( $listeTitre[$cptT]=="id.unique" || $listeTitre[$cptT]=="Coeff_extrapolation" || $listeTitre[$cptT]=="Nombre_individus_mesures" || 
 			$listeTitre[$cptT]=="Effort_total" || $listeTitre[$cptT]=="Nom_Agglomeration_origine_unite" || $listeTitre[$cptT]=="Effort_total_strate" ||
-			$listeTitre[$cptT]=="Pue_strate" || $listeTitre[$cptT]=="Effort_strate" || $listeTitre[$cptT]=="Captures_strate" ||
-			$listeTitre[$cptT]=="Pue_strate_sp" || $listeTitre[$cptT]=="Effort_strate_sp" || $listeTitre[$cptT]=="Captures_strate_sp" ||
+			$listeTitre[$cptT]=="Pue_totale" || $listeTitre[$cptT]=="Captures_totales" ||
+			$listeTitre[$cptT]=="Pue_espece" ||  $listeTitre[$cptT]=="Captures_especes" ||
 			$listeTitre[$cptT]=="Effectif_strate" || 
-			$listeTitre[$cptT]=="Pue_strate_GT" || $listeTitre[$cptT]=="Effort_strate_GT" || $listeTitre[$cptT]=="Captures_strate_GT" ||
-			$listeTitre[$cptT]=="Pue_strate_GT_esp" || $listeTitre[$cptT]=="Effort_strate_GT_esp" || $listeTitre[$cptT]=="Captures_strate_GT_esp" ||
-			$listeTitre[$cptT]=="Effectif_strate_GT" 
-			) 
-	
-			{
+			$listeTitre[$cptT]=="Pue_GT" || $listeTitre[$cptT]=="Effort_GT" || $listeTitre[$cptT]=="Captures_GT" ||
+			$listeTitre[$cptT]=="Pue_GT_espece" || $listeTitre[$cptT]=="Effort_GT_espece" || $listeTitre[$cptT]=="Captures_GT_espece" ||
+			$listeTitre[$cptT]=="Effectif" 
+			) {
 				if ($listeDesTitres == "") {
 					$listeDesTitres = $listeTitre[$cptT];
 				} else {
 					$listeDesTitres .= ",".$listeTitre[$cptT];
 				}			
-			}else {
+			} else {
 				$champ = explode(".",$listeTitre[$cptT]);
 				$nomTableEC = $champ[0];
 				$nomChampEC = $champ[1];
@@ -3392,13 +3454,11 @@ function remplaceAlias($listeDesChamps,$Idunique,$table) {
 					$listeDesTitres .= ",".$nomChamp;
 				}
 			}		
-		
-		
-		} 
-		
-		
-
+		} else {
+			//echo "a supprimer : ".$table." ".$listeTitre[$cptT]." <br/>";	
+		}
 	}
+	//echo $listeDesTitres."<br/>";
 	return $listeDesTitres;
 }
 
