@@ -411,9 +411,13 @@ function analyseTableCaptEsp(){
 //*********************************************************************
 // En sortie : la variable de session mise à jour
 // 
+// Hum, c'est peut etre plus necessaire car la somme des captures par especes par agglo/secteur ne correspond pas a la somme des captures totales par agglo/secteur
+// Certainement, a enlever....
+//
 //*********************************************************************
 	//print_r($_SESSION['listeEffortEspeces']);
 	//echo"<br/>";
+	//echo "<table >";
 	$numEnrEff = count($_SESSION['listeEffortEspeces']) ;
 	for ($cptEff=1 ; $cptEff<=$numEnrEff;$cptEff++) {
 		//echo $_SESSION['listeEffortEspeces'][$cptEff][1]." - ".$_SESSION['listeEffortEspeces'][$cptEff][2]." - ".
@@ -432,7 +436,7 @@ function analyseTableCaptEsp(){
 				$_SESSION['listeEffortEspeces'][$cptEff][5] == $moisPrec &&
 				$_SESSION['listeEffortEspeces'][$cptEff][6] <> $GTEPrec)
 			) {
-				//echo "rupture ".$_SESSION['listeEffortEspeces'][$cptEff][6]." ".$captureTotales."<br/>";
+				//echo "<tr><td>rupture ".$_SESSION['listeEffortEspeces'][$cptEff][7]."</td><td> ".$captureTotales."</td><td> total = ".$_SESSION['listeEffortEspeces'][$cptEff][9]."</td></tr>";
 				// On met a jour la valeur de la capture totale et on calcule le prorata cap esp / cap totale
 				for ($cptMAJ=1 ; $cptMAJ<$numEnrEff;$cptMAJ++) {
 					if ($_SESSION['listeEffortEspeces'][$cptMAJ][1] == $tableStatPrec && 
@@ -448,12 +452,14 @@ function analyseTableCaptEsp(){
 							} else {
 								$_SESSION['listeEffortEspeces'][$cptMAJ][9] = $captureTotales;
 								// Maj prorata
-								$_SESSION['listeEffortEspeces'][$cptMAJ][10] = floatval($_SESSION['listeEffortEspeces'][$cptMAJ][8]) / $captureTotales;
+								//$_SESSION['listeEffortEspeces'][$cptMAJ][10] = floatval($_SESSION['listeEffortEspeces'][$cptMAJ][8]) / $captureTotales;
+								$_SESSION['listeEffortEspeces'][$cptMAJ][10] = floatval($_SESSION['listeEffortEspeces'][$cptMAJ][8]);
 							}
 					}
 				}
 			$captureTotales = 0;
 		} else {
+			//echo "<tr><td>somme ".$_SESSION['listeEffortEspeces'][$cptEff][7]."</td><td>".$captureTotales." </td><td>total = ".$_SESSION['listeEffortEspeces'][$cptEff][9]."</td></tr>";
 			$captureTotales = $captureTotales + floatval($_SESSION['listeEffortEspeces'][$cptEff][8]);
 		}
 		$tableStatPrec = $_SESSION['listeEffortEspeces'][$cptEff][1]; 
@@ -463,6 +469,8 @@ function analyseTableCaptEsp(){
 		$moisPrec = $_SESSION['listeEffortEspeces'][$cptEff][5];
 		$GTEPrec = $_SESSION['listeEffortEspeces'][$cptEff][6] ; 		
 	}
+	//echo "</table >";
+	//echo "capt totale = ".$captureTotales."<br/>";
 	// Maj pour le dernier enregistrement
 	//echo "maj dernier enreg ".$_SESSION['listeEffortEspeces'][$cptEff][6]." ".$captureTotales."<br/>";
 	// On met a jour la valeur de la capture totale et on calcule le prorata cap esp / cap totale
@@ -477,7 +485,8 @@ function analyseTableCaptEsp(){
 				// Maj captures totales
 				$_SESSION['listeEffortEspeces'][$cptMAJ][9] = $captureTotales;
 				// Maj prorata
-				$_SESSION['listeEffortEspeces'][$cptMAJ][10] = floatval($_SESSION['listeEffortEspeces'][$cptMAJ][8]) / $captureTotales;
+				//$_SESSION['listeEffortEspeces'][$cptMAJ][10] = floatval($_SESSION['listeEffortEspeces'][$cptMAJ][8]) / $captureTotales;
+				$_SESSION['listeEffortEspeces'][$cptMAJ][10] = floatval($_SESSION['listeEffortEspeces'][$cptMAJ][8]);
 				//echo "<tr><td>MAJ espece ".$_SESSION['listeEffortEspeces'][$cptMAJ][7]." </td><td> ".$_SESSION['listeEffortEspeces'][$cptMAJ][8]." </td><td>".$_SESSION['listeEffortEspeces'][$cptMAJ][9]." </td><td> ".$_SESSION['listeEffortEspeces'][$cptMAJ][10]."</td></tr>";						
 		}
 	}
@@ -606,6 +615,7 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 					case "ast":
 						// Ici, en 3 on a la somme des efforts, en 4 la somme des captures, en 9 l'effort saisi.
 						if (floatval($regroupDeb[$cptRg][3]) <> 0 ) {
+							//echo $regroupDeb[$cptRg][4]." - ".$regroupDeb[$cptRg][3]."<br/>";
 							$PueStrate = floatval($regroupDeb[$cptRg][4]) / floatval($regroupDeb[$cptRg][3]);
 							$EffortStrate = $effort;
 							$CaptureStrate = $PueStrate * $effort;
@@ -620,7 +630,7 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 									break;
 								}
 							}
-							if ($ajoutEffOK) {$_SESSION['listeEffortTotal'][$numEnrEff] = $debIDPrec."&#&".$EffortStrate."&#&".$PueStrate; }
+							if ($ajoutEffOK) {$_SESSION['listeEffortTotal'][$numEnrEff] = $debIDPrec."&#&".$EffortStrate."&#&".$PueStrate."&#&".$regroupDeb[$cptRg][4]."&#&".$regroupDeb[$cptRg][3];}
 						} else {
 							$ligneResultat .= "&#&".$messErreur;
 						}
@@ -739,7 +749,8 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 							$Coeff = 0;
 						} else {
 							$Coeff = $CapturesSp / $effortSp;
-						}		
+						}	
+						//echo $effortSp."-".$CapturesTotal."-". $prorata."-".$CapturesSp."-".$Coeff."<br/>";
 						$CapturesTaille = floatval($regroupDeb[$cptRg][3]) * $Coeff;
 						$ligneResultat .= "&#&".$CapturesTaille."&#&". $PUEGTEEsp."&#&".$EffortGTEEsp."&#&".$CapturesGTEEsp."&#&". $puestrate."&#&".$EffortGTEStrate."&#&".$CapturesGTEStrate;
 						break;
@@ -1006,6 +1017,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 							break;	
 						case "asp":
 							// Lecture du tableau precedemment cree pour generer le resultat
+							//echo('<pre>');print_r($_SESSION['listeEffortEspeces']);echo('</pre>');
 							$numEnrEff = count($_SESSION['listeEffortEspeces']) ;
 							$EnregTrouve = false;
 							$CodeNomReg = recupereRegroupement($espEnCours);
@@ -1020,7 +1032,8 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 									$_SESSION['listeEffortEspeces'][$cptEff][6] == $GTEEnCours && 
 									$_SESSION['listeEffortEspeces'][$cptEff][7] == $RegEspEnCours
 									) {
-									$prorata 			= $_SESSION['listeEffortEspeces'][$cptEff][10];
+									//$prorata 			= $_SESSION['listeEffortEspeces'][$cptEff][10];
+									$capturesEsp 		= $_SESSION['listeEffortEspeces'][$cptEff][10];
 									$effortSysSect 		= $_SESSION['listeEffortEspeces'][$cptEff][11];
 									$typesectSystEncours = $_SESSION['listeEffortEspeces'][$cptEff][12];
 									$sectSystEncours 	= $_SESSION['listeEffortEspeces'][$cptEff][13];
@@ -1028,6 +1041,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 									break;
 								}
 							}
+							
 							if (!$EnregTrouve) { echo "asp - Enreg dans listeEffortEspeces non trouvé.<br/>";}
 							$testEffortSect = $typesectSystEncours."-".$sectSystEncours."-".$anneeEnCours."-".$moisEnCours."-".$GTEEnCours; 
 							//echo $tableStat." | ".$typesectSystEncours."-".$sectSystEncours."-".$anneeEnCours."-".$moisEnCours."-".$GTEEnCours."<br/>";
@@ -1036,9 +1050,11 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 								$infoEff = explode("&#&",$_SESSION['listeEffortTotal'][$cptEff]);
 								if ($infoEff[0] == $testEffortSect) {
 									$pueSysSect = floatval($infoEff[2]);
+									$capturesTotales = floatval($infoEff[3]);
 									break;
 								}
 							}
+							$prorata = $capturesEsp / $capturesTotales ;
 							break;
 						case "ats":
 							// Lecture du tableau precedemment cree pour lire les valeurs globales pour ensuite extrapoler
@@ -1058,7 +1074,8 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 									$_SESSION['listeEffortEspeces'][$cptEff][7] == $RegEspEnCours
 									) {
 									$effortEsp 			= $_SESSION['listeEffortEspeces'][$cptEff][8]; // effort especes
-									$prorata 			= $_SESSION['listeEffortEspeces'][$cptEff][10];
+									//$prorata 			= $_SESSION['listeEffortEspeces'][$cptEff][10];
+									$capturesEsp 		= $_SESSION['listeEffortEspeces'][$cptEff][10];
 									$effortSysSect 		= $_SESSION['listeEffortEspeces'][$cptEff][11];
 									$typesectSystEncours = $_SESSION['listeEffortEspeces'][$cptEff][12];
 									$sectSystEncours 	= $_SESSION['listeEffortEspeces'][$cptEff][13];
@@ -1073,9 +1090,11 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 								$infoEff = explode("&#&",$_SESSION['listeEffortTotal'][$cptEff]);
 								if ($infoEff[0] == $testEffortSect) {
 									$pueSysSect = floatval($infoEff[2]);
+									$capturesTotales = floatval($infoEff[3]);
 									break;
 								}
 							}
+							$prorata = $capturesEsp / $capturesTotales ;
 							break;
 						case "asgt":
 							// Lecture du tableau precedemment cree pour lire les valeurs globales (pour les GTE) pour ensuite extrapoler par GTE
@@ -1125,7 +1144,8 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 									$_SESSION['listeEffortEspeces'][$cptEff][7] == $RegEspEnCours
 									) {
 									$effortTotalEsp 			= $_SESSION['listeEffortEspeces'][$cptEff][9]; //  contient la valeur de la capture totale pour tout le secteur/mois
-									$prorata 			= $_SESSION['listeEffortEspeces'][$cptEff][10];// Contient le prorata de l'espece dans les captures totales
+									//$prorata 			= $_SESSION['listeEffortEspeces'][$cptEff][10];
+									$capturesEsp 		= $_SESSION['listeEffortEspeces'][$cptEff][10];
 									$effortSysSect 		= $_SESSION['listeEffortEspeces'][$cptEff][11];// contient la valeur de l'effort saisi
 									$typesectSystEncours = $_SESSION['listeEffortEspeces'][$cptEff][12];
 									$sectSystEncours 	= $_SESSION['listeEffortEspeces'][$cptEff][13];
@@ -1145,6 +1165,17 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 									break;
 								}
 							}
+							// Pour le calcul du prorata
+							$testEffortSect = $typesectSystEncours."-".$sectEnCours."-".$anneeEnCours."-".$moisEnCours."-TOUS"; 
+							$NbReg = count($_SESSION['listeEffortTotal']) ;
+							for ($cptEff=1 ; $cptEff<=$NbReg;$cptEff++) {
+								$infoEff = explode("&#&",$_SESSION['listeEffortTotal'][$cptEff]);
+								if ($infoEff[0] == $testEffortSect) {
+									$capturesTotales = floatval($infoEff[3]);
+									break;
+								}
+							}
+							$prorata = $capturesEsp / $capturesTotales ;
 							break;
 						case "atgts":
 							// Lecture du tableau precedemment cree pour generer le resultat
@@ -1164,7 +1195,8 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 									) {
 									$effortEsp 			= $_SESSION['listeEffortEspeces'][$cptEff][8]; //  contient la valeur de la capture pour l'espece
 									$effortTotalEsp 	= $_SESSION['listeEffortEspeces'][$cptEff][9]; //  contient la valeur de la capture totale pour tout le secteur/mois
-									$prorata 			= $_SESSION['listeEffortEspeces'][$cptEff][10];// Contient le prorata de l'espece dans les captures totales
+									//$prorata 			= $_SESSION['listeEffortEspeces'][$cptEff][10];
+									$capturesEsp 		= $_SESSION['listeEffortEspeces'][$cptEff][10];
 									$effortSysSect 		= $_SESSION['listeEffortEspeces'][$cptEff][11];// contient la valeur de l'effort saisi
 									$typesectSystEncours = $_SESSION['listeEffortEspeces'][$cptEff][12];
 									$sectSystEncours 	= $_SESSION['listeEffortEspeces'][$cptEff][13];
@@ -1181,7 +1213,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 									$pueSysSect = floatval($infoEff[2]);
 									break;
 								}
-							}
+							}						
 							// Pour le calcul du coefficient
 							$testEffortSect = $typesectSystEncours."-".$sectEnCours."-".$anneeEnCours."-".$moisEnCours."-TOUS"; 
 							$NbReg = count($_SESSION['listeEffortTotal']) ;
@@ -1189,10 +1221,11 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 								$infoEff = explode("&#&",$_SESSION['listeEffortTotal'][$cptEff]);
 								if ($infoEff[0] == $testEffortSect) {
 									$pueTous = floatval($infoEff[2]);
+									$capturesTotales = floatval($infoEff[3]);
 									break;
 								}
 							}
-							
+							$prorata = $capturesEsp / $capturesTotales ;
 							break;
 					}
 					// La rupture est pour tout nouveau triplé Secteur ou systeme / Annee / mois
