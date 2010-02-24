@@ -20,7 +20,7 @@ $subsection="";
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 
 $zone=6; // zone extraction (voir table admin_zones)
-$debugLog = true;
+$debugLog = false;
 ?>
 
 

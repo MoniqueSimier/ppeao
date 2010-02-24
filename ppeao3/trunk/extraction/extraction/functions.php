@@ -34,7 +34,8 @@ function  convertitNum($valeurAConvertir) {
 		//echo "val sub = ".$valsub."<br/>";
 		//echo $valeurAConvertir." - ".strpos($valeurAConvertir,".")."  ".strlen($valeurAConvertir)." ".substr($valeurAConvertir,0,$valsub)."<br/>";
 		if ( strpos($valeurAConvertir,".") > 0 && $valsub < 0 ) {
-			$AjChps = str_replace(".",",",substr($valeurAConvertir,0,$valsub));
+			$AjChps = str_replace(".",",",$valeurAConvertir);
+			//$AjChps = str_replace(".",",",substr($valeurAConvertir,0,$valsub));
 		} else {
 			if ( strpos($valeurAConvertir,".") > 0) {
 				$AjChps = str_replace(".",",",$valeurAConvertir);
@@ -361,6 +362,7 @@ function AfficherDonnees($file,$typeAction){
 	global $debugAff;
 	global $start_while;
 	global $erreurStatGene;
+	global $creationRegBidon;
 	$PasDeResultat = false;
 	$debugAff = false;
 	$start_while=timer(); 		// début du chronométrage du for
@@ -782,6 +784,8 @@ function AfficherDonnees($file,$typeAction){
 							$OrderCom .= ",esp.libelle asc";
 							$valueCount = "fra.id" ; // pour gerer la pagination	
 							$builQuery = true;
+							// Gestion des outer join, si pas present, on doit rajouter les tables et leur alias
+							// Si on a un outer join, on l'analyse pour etre sur qu'il ne manque pas des declarations de tables dans le SQL
 							if (strpos($LeftOuterJoin,"left outer join") === false ) {
 								$LeftOuterJoin = ",exp_station as stat,ref_espece as esp";
 							} else {	
@@ -802,6 +806,8 @@ function AfficherDonnees($file,$typeAction){
 							$WhereSpec = " 	and env.id = cph.exp_environnement_id ";
 							$valueCount = "cph.id" ; // pour gerer la pagination						
 							$builQuery = true;
+							// Gestion des outer join, si pas present, on doit rajouter les tables et leur alias
+							// Si on a un outer join, on l'analyse pour etre sur qu'il ne manque pas des declarations de tables dans le SQL
 							if (strpos($LeftOuterJoin,"left outer join") === false ) {
 								$LeftOuterJoin = ",exp_station as stat,exp_environnement as env";
 							} else {
@@ -824,6 +830,8 @@ function AfficherDonnees($file,$typeAction){
 							$OrderCom .= ",fra.id asc,esp.libelle asc";
 							$valueCount = "cph.id" ; // pour gerer la pagination						
 							$builQuery = true;
+							// Gestion des outer join, si pas present, on doit rajouter les tables et leur alias
+							// Si on a un outer join, on l'analyse pour etre sur qu'il ne manque pas des declarations de tables dans le SQL
 							if (strpos($LeftOuterJoin,"left outer join") === false ) {
 								$LeftOuterJoin = ",exp_station as stat,ref_espece as esp";
 							} else {
@@ -832,6 +840,10 @@ function AfficherDonnees($file,$typeAction){
 								}
 								if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
 									$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
+								}
+								// Attention, il faut rajouter une condition dans le cas ou on ajoute des variables environnement
+								if (!(strpos($LeftOuterJoin,"exp_environnement as env") === false )) {
+									$WhereSpec .= "and env.id = cph.exp_environnement_id";
 								}
 							}
 							break;
@@ -849,6 +861,8 @@ function AfficherDonnees($file,$typeAction){
 							$OrderCom .= ",esp.libelle asc,bio.id asc ";
 							$valueCount = "fra.id" ; // pour gerer la pagination						
 							$builQuery = true;
+							// Gestion des outer join, si pas present, on doit rajouter les tables et leur alias
+							// Si on a un outer join, on l'analyse pour etre sur qu'il ne manque pas des declarations de tables dans le SQL
 							if (strpos($LeftOuterJoin,"left outer join") === false ) {
 								$LeftOuterJoin = ",exp_station as stat,exp_biologie as bio,ref_espece as esp";
 							} else {
@@ -860,6 +874,10 @@ function AfficherDonnees($file,$typeAction){
 								}
 								if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
 									$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
+								}
+								// Attention, il faut rajouter une condition dans le cas ou on ajoute des variables environnement
+								if (!(strpos($LeftOuterJoin,"exp_environnement as env") === false )) {
+									$WhereSpec .= "and env.id = cph.exp_environnement_id";
 								}
 							}
 							break;	
@@ -877,6 +895,8 @@ function AfficherDonnees($file,$typeAction){
 							$OrderCom .= ",esp.libelle asc,bio.id asc,trop.exp_contenu_id asc";
 							$valueCount = "bio.id" ; // pour gerer la pagination
 							$builQuery = true;	
+							// Gestion des outer join, si pas present, on doit rajouter les tables et leur alias
+							// Si on a un outer join, on l'analyse pour etre sur qu'il ne manque pas des declarations de tables dans le SQL
 							if (strpos($LeftOuterJoin,"left outer join") === false ) {
 								$LeftOuterJoin = ",exp_station as stat,exp_biologie as bio,ref_espece as esp";
 							} else {
@@ -888,6 +908,10 @@ function AfficherDonnees($file,$typeAction){
 								}
 								if (strpos($LeftOuterJoin,"ref_espece as esp") === false ) {
 									$LeftOuterJoin = ",ref_espece as esp ".$LeftOuterJoin;
+								}
+								// Attention, il faut rajouter une condition dans le cas ou on ajoute des variables environnement
+								if (!(strpos($LeftOuterJoin,"exp_environnement as env") === false )) {
+									$WhereSpec .= "and env.id = cph.exp_environnement_id";
 								}
 							}
 							break;
@@ -1780,6 +1804,9 @@ function AfficherDonnees($file,$typeAction){
 			unset($_SESSION['listeEffortTotal']);
 			unset($_SESSION['listeEffortGTETotal']);
 			unset($_SESSION['listeEffortEspeces']);
+			if ($EcrireLogComp && $debugLog) {
+					WriteCompLog ($logComp, "DEBUG : remise a zero des tables temps pour calcul stat listeEffortTotal listeEffortGTETotal et listeEffortEspeces",$pasdefichier);
+			}
 			$_SESSION['calculStatSysteme '] = false;
 			for ($cptTS = 0;$cptTS <= $nbrTS;$cptTS++) {
 				$nomValLChampsSpec = "listeChampsSpec".$tableStat[$cptTS];
@@ -2037,9 +2064,9 @@ function AfficherDonnees($file,$typeAction){
 				$enTetesTries=implode(",",$enTetesTries);
 				
 				// nouveau de Olivier trié
-				//$resultatLecture .= str_replace(","," </td><td> ",$enTetesTries);
+				$resultatLecture .= str_replace(","," </td><td> ",$enTetesTries);
 				//original de Yann
-				$resultatLecture .= str_replace(","," </td><td> ",$listeChamps); // pour l'instant pas le tri des entetes
+				//$resultatLecture .= str_replace(","," </td><td> ",$listeChamps); // pour l'instant pas le tri des entetes
 				// FIN DE TRI DES EN TETES DE TABLEAU
 				//***********************************
 				$resultatLecture .="</td></tr>";
@@ -2213,13 +2240,16 @@ function AfficherDonnees($file,$typeAction){
 					// note : $resultatLectureX contient les <td>
 					// on trie la ligne
 					if (!empty($ordreTri)) {
+						//echo"gestion du tri<br/>";
 						// on va transformer ça en un tableau correct pour le trier
 						$valeursATrier=explode("</td><td>",$resultatLectureX);
 						// au cas òu un <td> se ballade dans les valeurs...
 						$valeursATrier= str_replace("<td>","",$valeursATrier);
-						
-						//debug 					echo('<pre>');print_r($valeursATrier);echo('</pre>');
-						
+						//debug 	
+						//echo"ordre du tri<br/>";
+						//echo('<pre>');print_r($ordreTri);echo('</pre>');
+						//echo"valeurs a trier <br/>";
+						//echo('<pre>');print_r($valeursATrier);echo('</pre>');
 						// on construit un tableau avec comme clés les valeurs de $headers (voir tri des en tetes plus haut)
 						$i=0;
 						$tableauATrier=array();
@@ -2228,24 +2258,24 @@ function AfficherDonnees($file,$typeAction){
 							$i++;
 						}
 						$tableauTrie=sortArrayByArray($tableauATrier,$ordreTri);
-						//debug		echo('<pre>');print_r($tableauTrie);echo('</pre>');
-						
+						//debug		
+						//echo"tableau trie<br/>";
+						//echo('<pre>');print_r($tableauTrie);echo('</pre>');
 						// a partir du tableau trie, on recree les <td>
 						$resultatTds='<td>';
 						//debug 
 						//echo('<pre><table border="1"><tr><td>');print_r(implode("</td><td>",$tableauTrie));echo('</td></tr></table></pre>');
-						
 						$resultatTds.=implode("</td><td>",$tableauTrie);
 						$resultatTds.='</td>';
-						
-						//debug 					echo('<pre>');print_r($resultatTds);echo('</pre>');
+						//debug 					
+						//echo('<pre>');print_r($resultatTds);echo('</pre>');
 					}
 					else {
 						$resultatTds=$resultatLectureX;
 					}
 					
-					//$resultatLecture.=$resultatTds; // pour l'instant pas de tri
-					$resultatLecture.=$resultatLectureX;
+					$resultatLecture.=$resultatTds;
+					//$resultatLecture.=$resultatLectureX; // Cas d'origine si pas de tri
 					
 					// FIN TRI DE LA LIGNE DE VALEURS
 					//************************************
@@ -2419,6 +2449,8 @@ function AfficherDonnees($file,$typeAction){
 			}
 			fclose($ExpCompSel);
 			$RegroupPourFic= "-------------------------------------------------------------------  \n";
+			// debug
+			//if ($creationRegBidon) {echo "creation reg bidon <br/>";} else {echo "pas creation reg bidon <br/>";}
 			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon) {
 				// On cree la liste
 				$NbReg = count($_SESSION['listeRegroup']);
@@ -2596,9 +2628,9 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 			if (!empty($ordreTri)) {$enTetesTries=sortArrayByArray($headers,$ordreTri);} else {$enTetesTries=$headers;}				
 			$enTetesTries=implode(",",$enTetesTries);
 			// nouveau trie par olivier
-			//$resultatFichier = str_replace(",","\t",$enTetesTries);
+			$resultatFichier = str_replace(",","\t",$enTetesTries);
 			//original de Yann
-			$resultatFichier = str_replace(",","\t",$listeChamps);
+			//$resultatFichier = str_replace(",","\t",$listeChamps);
 			// FIN DE TRI DES EN TETES DE TABLEAU
 			//***********************************	
 			if (! fwrite($ExpComp,$resultatFichier."\r\n") ) {
@@ -2642,6 +2674,7 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 					// Gestion des regroupements
 					// On doit récupérer la liste dans le champ valeur_ligne de la table temp_extraction
 					// et construire la ligne de resultat avec
+					//echo"gestion fichier <br/>";
 					$ligne_resultat = $finalRow[8];
 					$tabResultat = explode("&#&",$ligne_resultat);
 					$NbResultat = count($tabResultat);
@@ -2650,6 +2683,7 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 						//$resultatFichier .= $tabResultat[$cptResult]."\t";
 						// Pas besoin de gerer la suppression ici, elle est faite lors de la construction de la ligne avant
 						$AjChps = convertitNum($tabResultat[$cptResult]);
+						//echo $tabResultat[$cptResult]." - ".$AjChps." <br/>";
 						$resultatFichierX  .= $AjChps."\t";
 					}
 				} else {
@@ -2837,8 +2871,8 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 					else {
 						$resultatTds=$resultatFichierX;
 					}
-					//$resultatFichier.=$resultatTds;
-					$resultatFichier.=$resultatFichierX; // Pour l'instant, pas de tri dans les fichiers
+					$resultatFichier.=$resultatTds;
+					//$resultatFichier.=$resultatFichierX; // Cas d'origine si pas de tri
 					// FIN TRI DE LA LIGNE DE VALEURS
 					//************************************
 				$resultatFichier .="\n";

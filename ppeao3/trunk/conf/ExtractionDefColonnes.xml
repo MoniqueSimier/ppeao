@@ -70,291 +70,12 @@
 		</groupes>
 		<Alias>se</Alias>
 		<libelle>Secteur</libelle>
-		<champ code="id_dans_systeme" affichage="X" libelle="Secteur_dans_systeme" groupe="Secteur" filiere="peuplement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>		
+		<champ code="id_dans_systeme" affichage="X" libelle="Secteur_dans_systeme" groupe="Secteur" filiere="peuplement,environnement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>		
 		<champ code="id" affichage="X" libelle="Secteur_id" groupe="Secteur" filiere="activite,capture,NtPart,taillart,engin"/>
 		<champ code="nom" affichage="X" libelle="Secteur" groupe="Secteur" filiere="peuplement,environnement,NtPt,biologie,taille,trophique,activite,capture,NtPart,taillart,engin"/>
 		<champ code="superficie" affichage="C" libelle="Secteur_surface" groupe="Secteur" filiere="peuplement,environnementNtPt,biologie,taille,trophique,activite,capture,NtPart"/>
 	</table>
 	<!-- TABLES DE DONNEES PECHES EXPERIMENTALES -->
-	<table>
-		<nom>exp_campagne</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="toutes">Campagne</groupe>	
-		</groupes>		
-		<Alias>cpg</Alias>
-		<libelle>Campagne</libelle>
-		<champ code="numero_campagne" affichage="X" libelle="Campagne"/>	
-		<champ code="date_debut" affichage="X" libelle="Date_debut"/>
-		<champ code="libelle" affichage="C" libelle="Campagne_libelle"/>		
-		<champ code="date_fin" affichage="C" libelle="Date_fin"/>
-
-	</table>
-	<table>
-		<nom>exp_coup_peche</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="toutes">Coup de peche</groupe>	
-		</groupes>
-		<Alias>cph</Alias>
-		<libelle>Coup de peche</libelle>
-		<champ code="numero_coup" affichage="X" libelle="Coup_peche"/>
-		<champ code="date_cp" affichage="X" libelle="Date_coup_peche"/>
-		<champ code="protocole" affichage="X" libelle="Protocole"/>
-		<champ code="exp_qualite_id" affichage="X" libelle="Qualite_coup_id"/>
-		<champ code="exp_engin_id" affichage="X" libelle="Engin_id"/>
-		<champ code="heure_debut" affichage="X" libelle="Heure_debut"/>
-		<champ code="heure_fin" affichage="C" libelle="Heure_fin"/>
-		<champ code="latitude" affichage="C" libelle="Coup_latitude" filiere="environnement,NtPt,biologie,trophique"/>
-		<champ code="longitude" affichage="C" libelle="Coup_longitude" filiere="environnement,NtPt,biologie,trophique"/>
-		<champ code="memo" affichage="C" libelle="Coup_memo" filiere="environnement,NtPt,biologie,trophique"/>
-		<champ code="numero_filet" affichage="C" libelle="Coup_numero_filet" filiere="environnement,NtPt,biologie,trophique"/>
-		<champ code="profondeur" affichage="C" libelle="Profondeur" filiere="environnement,NtPt,biologie,trophique"/>
-	</table>
-	<table>
-		<nom>exp_environnement</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="environnement">Environnement</groupe>	
-			<groupe type="experimentale" filiere="NtPt">Environnement</groupe>	
-			<groupe type="experimentale" filiere="biologie">Environnement</groupe>	
-			<groupe type="experimentale" filiere="trophique">Environnement</groupe>	
-		</groupes>		
-		<Alias>env</Alias>
-		<libelle>Environnement</libelle>
-		<champ code="chlorophylle_fond" affichage="C" libelle="Chlorophylle_fond"/>
-		<champ code="chlorophylle_surface" affichage="C" libelle="Chlorophylle_surface"/>
-		<champ code="conductivite_fond" affichage="C" libelle="Conductivite_fond"/>
-		<champ code="conductivite_surface" affichage="C" libelle="Conductivite_surface"/>
-		<champ code="exp_force_courant_id" affichage="C" libelle="Force_courant_id"/>
-		<champ code="exp_sens_courant_id" affichage="C" libelle="Sens_courant_id"/>
-		<champ code="memo" affichage="C" libelle="Environnement_memo"/>
-		<champ code="mop_fond" affichage="C" libelle="Mop_fond"/>
-		<champ code="mop_surface" affichage="C" libelle="Mop_surface"/>
-		<champ code="mot_fond" affichage="C" libelle="Mot_fond"/>
-		<champ code="mot_surface" affichage="C" libelle="Mot_surface"/>
-		<champ code="oxygene_fond" affichage="C" libelle="Oxygene_fond"/>
-		<champ code="oxygene_surface" affichage="C" libelle="Oxygene_surface"/>
-		<champ code="salinite_fond" affichage="C" libelle="Salinite_fond"/>
-		<champ code="salinite_surface" affichage="C" libelle="Salinite_surface"/>
-		<champ code="temperature_fond" affichage="C" libelle="Temperature_fond"/>
-		<champ code="temperature_surface" affichage="C" libelle="Temperature_surface"/>
-		<champ code="transparence" affichage="C" libelle="Transparence"/>
-	</table>
-	<table>
-		<nom>exp_biologie</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="biologie">Biologie</groupe>	
-			<groupe type="experimentale" filiere="trophique">Biologie</groupe>
-		</groupes>
-		<Alias>bio</Alias>
-		<libelle>Biologie</libelle>
-		<champ code="id" affichage="X" libelle="Biologie_id"/>
-		<champ code="longueur" affichage="X" libelle="Longueur_fourche"/>
-		<champ code="longueur_totale" affichage="C" libelle="Longueur_totale"/>
-		<champ code="poids" affichage="C" libelle="Poids_individu"/>
-		<champ code="exp_sexe_id" affichage="C" libelle="Sexe_id"/>
-		<champ code="exp_stade_id" affichage="C" libelle="Stade_maturite_id"/>
-		<champ code="exp_remplissage_id" affichage="C" libelle="Remplissage_id" filiere="biologie"/>
-		<champ code="memo" affichage="C" libelle="Biologie_memo"/>
-		<champ code="valeur_estimee" affichage="C" libelle="Mesure_estimee"/>
-	</table>
-	<table>
-		<nom>exp_trophique</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="trophique">Trophique</groupe>	
-		</groupes>
-		<Alias>trop</Alias>
-		<libelle>Trophique</libelle>
-		<champ code="exp_contenu_id" affichage="X" libelle="Contenu_id"/>
-		<champ code="quantite" affichage="C" libelle="Trophique_quantite"/>
-	</table>
-	<table>
-		<nom>exp_contenu</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="trophique">Contenu</groupe>	
-		</groupes>
-		<Alias>cont</Alias>
-		<libelle>Contenu</libelle>
-		<champ code="libelle" affichage="X" libelle="Contenu"/>
-	</table>
-	<table>
-		<nom>exp_fraction</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="peuplement">Fraction</groupe>	
-			<groupe type="experimentale" filiere="NtPt">Fraction</groupe>	
-			<groupe type="experimentale" filiere="biologie">Fraction</groupe>	
-			<groupe type="experimentale" filiere="trophique">Fraction</groupe>	
-		</groupes>
-		<Alias>fra</Alias>
-		<libelle>Fraction</libelle>
-		<champ code="id" affichage="X" libelle="Fraction_id" filiere="peuplement,NtPt,biologie,trophique"/>
-		<champ code="nombre_total" affichage="X" libelle="Nombre_total" filiere="peuplement,NtPt,biologie,trophique"/>
-		<champ code="poids_total" affichage="X" libelle="Poids_total" filiere="peuplement,NtPt,biologie,trophique"/>
-		<champ code="nombre_estime" affichage="C" libelle="Nombre_estime" filiere="NtPt,biologie,trophique"/>	/>
-		<champ code="memo" affichage="C" libelle="Fraction_memo" filiere="NtPt,biologie,trophique"/>
-	</table>
-	<!-- TABLES PARAMETRAGE PECHES EXPERIMENTALES -->
-	<table>
-		<nom>exp_debris</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="environnement">Debris</groupe>	
-			<groupe type="experimentale" filiere="NtPt">Debris</groupe>	
-			<groupe type="experimentale" filiere="biologie">Debris</groupe>	
-			<groupe type="experimentale" filiere="trophique">Debris</groupe>	
-		</groupes>
-		<Alias>xdeb</Alias>
-		<libelle>Debris</libelle>
-		<champ code="libelle" affichage="C" libelle="Debris"/>
-	</table>
-	<table>
-		<nom>exp_engin</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="toutes">Engin</groupe>	
-		</groupes>
-		<Alias>xeng</Alias>
-		<libelle>Engin</libelle>
-		<champ code="libelle" affichage="X" libelle="Engin_peche"/>
-		<champ code="chute" affichage="C" libelle="Engin_chute"/>
-		<champ code="longueur" affichage="C" libelle="Engin_longueur"/>
-		<champ code="maille" affichage="C" libelle="Engin_maille"/>
-		<champ code="memo" affichage="C" libelle="Engin_memo"/>
-	</table>
-	<table>
-		<nom>exp_force_courant</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="environnement">Force courant</groupe>	
-			<groupe type="experimentale" filiere="NtPt">Force courant</groupe>	
-			<groupe type="experimentale" filiere="biologie">Force courant</groupe>	
-			<groupe type="experimentale" filiere="trophique">Force courant</groupe>	
-		</groupes>
-		<Alias>efc</Alias>
-		<libelle>Force courant</libelle>
-		<champ code="libelle" affichage="C" libelle="Force_courant"/>
-	</table>
-	<table>
-		<nom>exp_position</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="environnement">Position</groupe>	
-			<groupe type="experimentale" filiere="NtPt">Position</groupe>
-			<groupe type="experimentale" filiere="biologie">Position</groupe>
-			<groupe type="experimentale" filiere="trophique">Position</groupe>						
-		</groupes>
-		<Alias>xpos</Alias>
-		<libelle>Position</libelle>
-		<champ code="libelle" affichage="C" libelle="Position_station"/>
-	</table>
-	<table>
-		<nom>exp_qualite</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="toutes">Qualite</groupe>	
-		</groupes>
-		<Alias>xqua</Alias>
-		<libelle>Qualite</libelle>
-		<champ code="libelle" affichage="X" libelle="Qualite_coup"/>
-	</table>
-	<table>
-		<nom>exp_remplissage</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="biologie">Remplissage</groupe>	
-			<groupe type="experimentale" filiere="trophique">Remplissage</groupe>	
-		</groupes>
-		<Alias>xremp</Alias>
-		<libelle>Remplissage</libelle>
-		<champ code="libelle" affichage="C" libelle="Remplissage"/>
-	</table>
-	<table>
-		<nom>exp_sediment</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="environnement">Sediment</groupe>	
-			<groupe type="experimentale" filiere="NtPt">Sediment</groupe>
-			<groupe type="experimentale" filiere="biologie">Sediment</groupe>
-			<groupe type="experimentale" filiere="trophique">Sediment</groupe>		
-		</groupes>
-		<Alias>xsed</Alias>
-		<libelle>Sediment</libelle>
-		<champ code="libelle" affichage="C" libelle="Sediment"/>
-	</table>
-	<table>
-		<nom>exp_sens_courant</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="environnement">Sens courant</groupe>	
-			<groupe type="experimentale" filiere="NtPt">Sens courant</groupe>
-			<groupe type="experimentale" filiere="biologie">Sens courant</groupe>
-			<groupe type="experimentale" filiere="trophique">Sens courant</groupe>
-		</groupes>
-		<Alias>xssc</Alias>
-		<libelle>Sens courant</libelle>
-		<champ code="libelle" affichage="C" libelle="Sens_courant"/>
-	</table>
-	<table>
-		<nom>exp_sexe</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="biologie">Sexe</groupe>
-			<groupe type="experimentale" filiere="trophique">Sexe</groupe>
-		</groupes>
-		<Alias>xsex</Alias>
-		<libelle>Sexe</libelle>
-		<champ code="libelle" affichage="C" libelle="Sexe"/>
-	</table>
-	<table>
-		<nom>exp_stade</nom>
-		<peches>
-			<peche>experimentale</peche>
-		</peches>
-		<groupes>
-			<groupe type="experimentale" filiere="biologie">Stade</groupe>
-			<groupe type="experimentale" filiere="trophique">Stade</groupe>
-		</groupes>
-		<Alias>xsta</Alias>
-		<libelle>Stade</libelle>
-		<champ code="libelle" affichage="C" libelle="Stade_maturite"/>
-	</table>
 	<table>
 		<nom>exp_station</nom>
 		<peches>
@@ -378,15 +99,295 @@
 		<champ code="memo" affichage="C" libelle="Station_memo" filiere="environnement,NtPt,biologie,trophique"/>
 	</table>
 	<table>
+		<nom>exp_campagne</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="toutes">Campagne</groupe>	
+		</groupes>		
+		<Alias>cpg</Alias>
+		<libelle>Campagne</libelle>
+		<champ code="numero_campagne" affichage="X" libelle="Campagne"/>
+		<champ code="libelle" affichage="C" libelle="Campagne_libelle"/>				
+		<champ code="date_debut" affichage="X" libelle="Date_debut_campagne"/>
+		<champ code="date_fin" affichage="C" libelle="Date_fin_campagne"/>
+	</table>
+	<table>
+		<nom>exp_coup_peche</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="toutes">Coup de peche</groupe>	
+		</groupes>
+		<Alias>cph</Alias>
+		<libelle>Coup de peche</libelle>
+		<champ code="numero_coup" affichage="X" libelle="Coup_peche"/>
+		<champ code="date_cp" affichage="X" libelle="Date_coup_peche"/>
+		<champ code="heure_debut" affichage="X" libelle="Heure_debut_coup"/>
+		<champ code="heure_fin" affichage="C" libelle="Heure_fin_coup"/>
+		<champ code="protocole" affichage="X" libelle="Protocole"/>		
+		<champ code="latitude" affichage="C" libelle="Coup_latitude" filiere="environnement,NtPt,biologie,trophique"/>
+		<champ code="longitude" affichage="C" libelle="Coup_longitude" filiere="environnement,NtPt,biologie,trophique"/>
+		<champ code="numero_filet" affichage="C" libelle="Coup_numero_filet" filiere="environnement,NtPt,biologie,trophique"/>
+		<champ code="memo" affichage="C" libelle="Coup_memo" filiere="environnement,NtPt,biologie,trophique"/>		
+		<champ code="profondeur" affichage="C" libelle="Profondeur" filiere="environnement,NtPt,biologie,trophique"/>
+		<champ code="exp_engin_id" affichage="X" libelle="Engin_id"/>		
+		<champ code="exp_qualite_id" affichage="X" libelle="Qualite_coup_id"/>		
+	</table>
+	<table>
+		<nom>exp_qualite</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="toutes">Coup de peche</groupe>	
+		</groupes>
+		<Alias>xqua</Alias>
+		<libelle>Qualite</libelle>
+		<champ code="libelle" affichage="X" libelle="Qualite_coup"/>
+	</table>
+	<table>
+		<nom>exp_environnement</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="environnement">Environnement</groupe>	
+			<groupe type="experimentale" filiere="NtPt">Environnement</groupe>	
+			<groupe type="experimentale" filiere="biologie">Environnement</groupe>	
+			<groupe type="experimentale" filiere="trophique">Environnement</groupe>	
+		</groupes>		
+		<Alias>env</Alias>
+		<libelle>Environnement</libelle>
+		<champ code="transparence" affichage="C" libelle="Transparence"/>	
+		<champ code="salinite_fond" affichage="C" libelle="Salinite_fond"/>
+		<champ code="salinite_surface" affichage="C" libelle="Salinite_surface"/>	
+		<champ code="temperature_fond" affichage="C" libelle="Temperature_fond"/>
+		<champ code="temperature_surface" affichage="C" libelle="Temperature_surface"/>	
+		<champ code="oxygene_fond" affichage="C" libelle="Oxygene_fond"/>
+		<champ code="oxygene_surface" affichage="C" libelle="Oxygene_surface"/>		
+		<champ code="conductivite_fond" affichage="C" libelle="Conductivite_fond"/>
+		<champ code="conductivite_surface" affichage="C" libelle="Conductivite_surface"/>					
+		<champ code="chlorophylle_fond" affichage="C" libelle="Chlorophylle_fond"/>
+		<champ code="chlorophylle_surface" affichage="C" libelle="Chlorophylle_surface"/>
+		<champ code="mop_fond" affichage="C" libelle="Mop_fond"/>
+		<champ code="mop_surface" affichage="C" libelle="Mop_surface"/>
+		<champ code="mot_fond" affichage="C" libelle="Mot_fond"/>
+		<champ code="mot_surface" affichage="C" libelle="Mot_surface"/>
+		<champ code="exp_force_courant_id" affichage="C" libelle="Force_courant_id"/>
+		<champ code="exp_sens_courant_id" affichage="C" libelle="Sens_courant_id"/>
+		<champ code="memo" affichage="C" libelle="Environnement_memo"/>
+	</table>
+	<table>
+		<nom>exp_biologie</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="biologie">Biologie</groupe>	
+			<groupe type="experimentale" filiere="trophique">Biologie</groupe>
+		</groupes>
+		<Alias>bio</Alias>
+		<libelle>Biologie</libelle>
+		<champ code="id" affichage="X" libelle="Biologie_id"/>
+		<champ code="longueur" affichage="X" libelle="Longueur_fourche"/>
+		<champ code="longueur_totale" affichage="C" libelle="Longueur_totale"/>
+		<champ code="poids" affichage="C" libelle="Poids_individu"/>
+		<champ code="valeur_estimee" affichage="C" libelle="Mesure_estimee"/>		
+		<champ code="exp_sexe_id" affichage="C" libelle="Sexe_id"/>
+		<champ code="exp_stade_id" affichage="C" libelle="Stade_maturite_id"/>
+		<champ code="exp_remplissage_id" affichage="C" libelle="Remplissage_id" />
+		<champ code="memo" affichage="C" libelle="Biologie_memo"/>
+
+	</table>
+	<table>
+		<nom>exp_trophique</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="trophique">Trophique</groupe>	
+		</groupes>
+		<Alias>trop</Alias>
+		<libelle>Trophique</libelle>
+		<champ code="exp_contenu_id" affichage="X" libelle="Contenu_id"/>
+		<champ code="quantite" affichage="C" libelle="Trophique_quantite"/>
+	</table>
+	<table>
+		<nom>exp_contenu</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="trophique">Trophique</groupe>	
+		</groupes>
+		<Alias>cont</Alias>
+		<libelle>Contenu</libelle>
+		<champ code="libelle" affichage="X" libelle="Contenu"/>
+	</table>
+	<table>
+		<nom>exp_fraction</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="peuplement">Fraction</groupe>	
+			<groupe type="experimentale" filiere="NtPt">Fraction</groupe>	
+			<groupe type="experimentale" filiere="biologie">Fraction</groupe>	
+			<groupe type="experimentale" filiere="trophique">Fraction</groupe>	
+		</groupes>
+		<Alias>fra</Alias>
+		<libelle>Fraction</libelle>
+		<champ code="nombre_total" affichage="X" libelle="Nombre_total" filiere="peuplement,NtPt,biologie,trophique"/>
+		<champ code="poids_total" affichage="X" libelle="Poids_total" filiere="peuplement,NtPt,biologie,trophique"/>
+		<champ code="nombre_estime" affichage="C" libelle="Nombre_estime" filiere="NtPt,biologie,trophique"/>	/>
+		<champ code="memo" affichage="C" libelle="Fraction_memo" filiere="NtPt,biologie,trophique"/>
+	</table>
+	<!-- TABLES PARAMETRAGE PECHES EXPERIMENTALES -->
+	<table>
+		<nom>exp_debris</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="environnement">Station</groupe>	
+			<groupe type="experimentale" filiere="NtPt">Station</groupe>	
+			<groupe type="experimentale" filiere="biologie">Station</groupe>	
+			<groupe type="experimentale" filiere="trophique">Station</groupe>	
+		</groupes>
+		<Alias>xdeb</Alias>
+		<libelle>Debris</libelle>
+		<champ code="libelle" affichage="C" libelle="Debris"/>
+	</table>
+	<table>
+		<nom>exp_engin</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="toutes">Coup de peche</groupe>	
+		</groupes>
+		<Alias>xeng</Alias>
+		<libelle>Engin</libelle>
+		<champ code="libelle" affichage="X" libelle="Engin_peche"/>
+		<champ code="chute" affichage="C" libelle="Engin_chute"/>
+		<champ code="longueur" affichage="C" libelle="Engin_longueur"/>
+		<champ code="maille" affichage="C" libelle="Engin_maille"/>
+		<champ code="memo" affichage="C" libelle="Engin_memo"/>
+	</table>
+	<table>
+		<nom>exp_force_courant</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="environnement">Environnement</groupe>	
+			<groupe type="experimentale" filiere="NtPt">Environnement</groupe>	
+			<groupe type="experimentale" filiere="biologie">Environnement</groupe>	
+			<groupe type="experimentale" filiere="trophique">Environnement</groupe>	
+		</groupes>
+		<Alias>efc</Alias>
+		<libelle>Force courant</libelle>
+		<champ code="libelle" affichage="C" libelle="Force_courant"/>
+	</table>
+	<table>
+		<nom>exp_position</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="environnement">Station</groupe>	
+			<groupe type="experimentale" filiere="NtPt">Station</groupe>
+			<groupe type="experimentale" filiere="biologie">Station</groupe>
+			<groupe type="experimentale" filiere="trophique">Station</groupe>						
+		</groupes>
+		<Alias>xpos</Alias>
+		<libelle>Position</libelle>
+		<champ code="libelle" affichage="C" libelle="Position_station"/>
+	</table>
+
+	<table>
+		<nom>exp_remplissage</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="biologie">Biologie</groupe>	
+			<groupe type="experimentale" filiere="trophique">Biologie</groupe>	
+		</groupes>
+		<Alias>xremp</Alias>
+		<libelle>Remplissage</libelle>
+		<champ code="libelle" affichage="C" libelle="Remplissage"/>
+	</table>
+	<table>
+		<nom>exp_sediment</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="environnement">Station</groupe>	
+			<groupe type="experimentale" filiere="NtPt">Station</groupe>
+			<groupe type="experimentale" filiere="biologie">Station</groupe>
+			<groupe type="experimentale" filiere="trophique">Station</groupe>		
+		</groupes>
+		<Alias>xsed</Alias>
+		<libelle>Sediment</libelle>
+		<champ code="libelle" affichage="C" libelle="Sediment"/>
+	</table>
+	<table>
+		<nom>exp_sens_courant</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="environnement">Environnement</groupe>	
+			<groupe type="experimentale" filiere="NtPt">Environnement</groupe>
+			<groupe type="experimentale" filiere="biologie">Environnement</groupe>
+			<groupe type="experimentale" filiere="trophique">Environnement</groupe>
+		</groupes>
+		<Alias>xssc</Alias>
+		<libelle>Sens courant</libelle>
+		<champ code="libelle" affichage="C" libelle="Sens_courant"/>
+	</table>
+	<table>
+		<nom>exp_sexe</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="biologie">Biologie</groupe>
+			<groupe type="experimentale" filiere="trophique">Biologie</groupe>
+		</groupes>
+		<Alias>xsex</Alias>
+		<libelle>Sexe</libelle>
+		<champ code="libelle" affichage="C" libelle="Sexe"/>
+	</table>
+	<table>
+		<nom>exp_stade</nom>
+		<peches>
+			<peche>experimentale</peche>
+		</peches>
+		<groupes>
+			<groupe type="experimentale" filiere="biologie">Biologie</groupe>
+			<groupe type="experimentale" filiere="trophique">Biologie</groupe>
+		</groupes>
+		<Alias>xsta</Alias>
+		<libelle>Stade</libelle>
+		<champ code="libelle" affichage="C" libelle="Stade_maturite"/>
+	</table>
+
+	<table>
 		<nom>exp_vegetation</nom>
 		<peches>
 			<peche>experimentale</peche>
 		</peches>
 		<groupes>
-			<groupe type="experimentale" filiere="environnement">Vegetation</groupe>	
-			<groupe type="experimentale" filiere="NtPt">Vegetation</groupe>
-			<groupe type="experimentale" filiere="biologie">Vegetation</groupe>
-			<groupe type="experimentale" filiere="trophique">Vegetation</groupe>
+			<groupe type="experimentale" filiere="environnement">Station</groupe>	
+			<groupe type="experimentale" filiere="NtPt">Station</groupe>
+			<groupe type="experimentale" filiere="biologie">Station</groupe>
+			<groupe type="experimentale" filiere="trophique">Station</groupe>
 		</groupes>
 		<Alias>xveg</Alias>
 		<libelle>Vegetation</libelle>
@@ -855,28 +856,27 @@
 			<peche>toutes</peche>
 		</peches>
 		<groupes>
-			<groupe type="experimentale" filiere="peuplement">Especes</groupe>
-			<groupe type="experimentale" filiere="NtPt">Especes</groupe>
-			<groupe type="experimentale" filiere="biologie">Especes</groupe>
-			<groupe type="experimentale" filiere="taille">Especes</groupe>
-			<groupe type="experimentale" filiere="trophique">Especes</groupe>
+			<groupe type="experimentale" filiere="peuplement">Espece</groupe>
+			<groupe type="experimentale" filiere="NtPt">Espece</groupe>
+			<groupe type="experimentale" filiere="biologie">Espece</groupe>
+			<groupe type="experimentale" filiere="taille">Espece</groupe>
+			<groupe type="experimentale" filiere="trophique">Espece</groupe>
 			<groupe type="artisanale" filiere="NtPart">Fraction</groupe>
 			<groupe type="artisanale" filiere="taillart">Fraction</groupe>
 		</groupes>		
 		<Alias>esp</Alias>
 		<libelle>Especes</libelle>
-		<champ code="id" affichage="X" libelle="Espece_id" filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>
-		<champ code="libelle" affichage="X" libelle="Espece"  filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>
-		<champ code="ref_categorie_ecologique_id" affichage="X" libelle="Categorie_ecologique_id"  filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>
-		<champ code="ref_categorie_trophique_id" affichage="X" libelle="Categorie_trophique_id"  filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>
-		<champ code="coefficient_b" affichage="C" libelle="Coefficient_b"  filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>
-		<champ code="coefficient_k" affichage="C" libelle="Coefficient_k"  filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>
-		<!--<champ code="ref_famille_id" affichage="C" libelle="Famille_id"  filiere="NtPt,biologie,taille,trophique" groupe="Especes"/>-->
+		<champ code="id" affichage="X" libelle="Espece_id" filiere="NtPt,biologie,taille,trophique" groupe="Espece"/>
+		<champ code="libelle" affichage="X" libelle="Espece"  filiere="NtPt,biologie,taille,trophique" groupe="Espece"/>
+		<champ code="coefficient_b" affichage="C" libelle="Coefficient_b"  filiere="NtPt,biologie,taille,trophique" groupe="Espece"/>
+		<champ code="coefficient_k" affichage="C" libelle="Coefficient_k"  filiere="NtPt,biologie,taille,trophique" groupe="Espece"/>
 		<champ code="id" affichage="X" libelle="Espece_id" filiere="NtPart,taillart" groupe="Fraction"/>
 		<champ code="libelle" affichage="X" libelle="Espece" filiere="NtPart,taillart" groupe="Fraction"/>
 		<champ code="coefficient_b" affichage="C" libelle="Coefficient_b" filiere="taillart" groupe="Fraction"/>
 		<champ code="coefficient_k" affichage="C" libelle="Coefficient_k" filiere="taillart" groupe="Fraction"/>
 		<champ code="ref_famille_id" affichage="C" libelle="Famille_id" filiere="NtPart" groupe="Fraction"/>
+		<champ code="ref_categorie_ecologique_id" affichage="I" libelle="Categorie_ecologique_id"  />
+		<champ code="ref_categorie_trophique_id" affichage="I" libelle="Categorie_trophique_id"  />
 	</table>
 	<table>
 		<nom>ref_famille</nom>
@@ -884,11 +884,11 @@
 			<peche>toutes</peche>
 		</peches>
 		<groupes>
-			<groupe type="experimentale" filiere="peuplement">Famille</groupe>
-			<groupe type="experimentale" filiere="NtPt">Famille</groupe>
-			<groupe type="experimentale" filiere="biologie">Famille</groupe>
-			<groupe type="experimentale" filiere="taille">Famille</groupe>
-			<groupe type="experimentale" filiere="trophique">Famille</groupe>
+			<groupe type="experimentale" filiere="peuplement">Espece</groupe>
+			<groupe type="experimentale" filiere="NtPt">Espece</groupe>
+			<groupe type="experimentale" filiere="biologie">Espece</groupe>
+			<groupe type="experimentale" filiere="taille">Espece</groupe>
+			<groupe type="experimentale" filiere="trophique">Espece</groupe>
 			<groupe type="artisanale" filiere="NtPart">Fraction</groupe>
 		</groupes>
 		<Alias>fam</Alias>
@@ -903,16 +903,16 @@
 			<peche>toutes</peche>
 		</peches>
 		<groupes>
-			<groupe type="experimentale" filiere="peuplement">Ordre</groupe>
-			<groupe type="experimentale" filiere="NtPt">Ordre</groupe>
-			<groupe type="experimentale" filiere="biologie">Ordre</groupe>
-			<groupe type="experimentale" filiere="taille">Ordre</groupe>
-			<groupe type="experimentale" filiere="trophique">Ordre</groupe>
+			<groupe type="experimentale" filiere="peuplement">Espece</groupe>
+			<groupe type="experimentale" filiere="NtPt">Espece</groupe>
+			<groupe type="experimentale" filiere="biologie">Espece</groupe>
+			<groupe type="experimentale" filiere="taille">Espece</groupe>
+			<groupe type="experimentale" filiere="trophique">Espece</groupe>
 			<groupe type="artisanale" filiere="NtPart">Fraction</groupe>
 		</groupes>
 		<Alias>ord</Alias>
 		<libelle>Ordre</libelle>
-		<champ code="id" affichage="C" libelle="Ordre_id" />
+		<champ code="id" affichage="C" libelle="Ordre_id" filiere="NtPart"/>
 		<champ code="libelle" affichage="C" libelle="Ordre" />
 	</table>
 	<table>
@@ -921,11 +921,11 @@
 			<peche>toutes</peche>
 		</peches>
 		<groupes>
-			<groupe type="experimentale" filiere="peuplement">Categorie ecologique</groupe>
-			<groupe type="experimentale" filiere="NtPt">Categorie ecologique</groupe>
-			<groupe type="experimentale" filiere="biologie">Categorie ecologique</groupe>
-			<groupe type="experimentale" filiere="taille">Categorie ecologique</groupe>
-			<groupe type="experimentale" filiere="trophique">Categorie ecologique</groupe>
+			<groupe type="experimentale" filiere="peuplement">Espece</groupe>
+			<groupe type="experimentale" filiere="NtPt">Espece</groupe>
+			<groupe type="experimentale" filiere="biologie">Espece</groupe>
+			<groupe type="experimentale" filiere="taille">Espece</groupe>
+			<groupe type="experimentale" filiere="trophique">Espece</groupe>
 			<groupe type="artisanale" filiere="NtPart">Fraction</groupe>
 			<groupe type="artisanale" filiere="taillart">Fraction</groupe>
 		</groupes>
@@ -940,11 +940,11 @@
 			<peche>toutes</peche>
 		</peches>
 		<groupes>
-			<groupe type="experimentale" filiere="peuplement">Categorie trophique</groupe>
-			<groupe type="experimentale" filiere="NtPt">Categorie trophique</groupe>
-			<groupe type="experimentale" filiere="biologie">Categorie trophique</groupe>
-			<groupe type="experimentale" filiere="taille">Categorie trophique</groupe>
-			<groupe type="experimentale" filiere="trophique">Categorie trophique</groupe>
+			<groupe type="experimentale" filiere="peuplement">Espece</groupe>
+			<groupe type="experimentale" filiere="NtPt">Espece</groupe>
+			<groupe type="experimentale" filiere="biologie">Espece</groupe>
+			<groupe type="experimentale" filiere="taille">Espece</groupe>
+			<groupe type="experimentale" filiere="trophique">Espece</groupe>
 			<groupe type="artisanale" filiere="NtPart">Fraction</groupe>
 			<groupe type="artisanale" filiere="taillart">Fraction</groupe>
 		</groupes>

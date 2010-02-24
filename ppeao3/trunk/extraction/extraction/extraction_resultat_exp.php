@@ -103,7 +103,7 @@ $fileLogComp = GetParam("nomFicLogExtr",$PathFicConf);
 $logComp="";
 $nomLogLien="";
 ouvreFichierLog($dirLog,$fileLogComp);
-$debugLog= true;
+$debugLog= false;
 if (isset($_GET['action'])) {
 	$typeAction = $_GET['action'];
 } else {

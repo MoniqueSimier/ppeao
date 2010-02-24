@@ -19,7 +19,7 @@ $envActive = "";
 $NtActive = "";
 $bioActive = "";
 $trophActive = "";
-$debugLog = true;
+$debugLog = false;
 session_start();
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
