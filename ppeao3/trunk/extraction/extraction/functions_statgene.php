@@ -18,21 +18,50 @@ include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/stat_definition_positi
 //*********************************************************************
 // En entrée, le nom de la table a tester et la position du champ a tester
 // En sortie, le code et le nom du regroupement
+
+// WARNING, SI CETTE FONCTION EST MISE A JOUR POUR AJOUTER DES CHAMPS A SUPPRIMER  HORS CHAMPS STATISTIQUES, MERCI DE MODIFIER AUSSI TestsuppressionChampTRI
 function TestsuppressionChamp($table,$TestSupp,$typeStatistiques) {
 	// on fait des suppressions a posteriori dans le fichier a extraire
-	// Je sais, c'est moche, c'est mal branlé, mais ca reflete l'etat du cahier des charges, ie, le neant
-	// et dix milliards de cas a gerer
+	// Je sais, c'est moche, c'est mal branlé
 	// Les positions correspondent aux positions des champs dans le SQL construit dans affichedonnees	
 	//echo $table."<br/>";
 	global $creationRegBidon;
 	$debug = false;
 	$Asupprimer = false;
 	switch ($table) {
-
-		
 		case "NtPart":
 			switch ($TestSupp) {
-				case 6: $Asupprimer = true;break;// secteur_id
+				case 6 : $Asupprimer = true; break;	
+			}
+			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon && $_SESSION['listeColonne'] == "XtoutX") {
+				// Cas d'un vrai regroupement et d'une selection de toutes les variables...
+				switch ($TestSupp) {
+					// On enleve les valeurs concernant les especes...
+					case 34 : $Asupprimer = true;break;
+					case 35 : $Asupprimer = true;break;
+					case 36 : $Asupprimer = true;break;
+					case 37 : $Asupprimer = true;break;
+					case 38 : $Asupprimer = true;break;
+					case 39 : $Asupprimer = true;break;
+					case 40 : $Asupprimer = true;break;
+					case 41 : $Asupprimer = true;break;
+					case 42 : $Asupprimer = true;break;
+					
+				}
+			}
+			break;
+		case "taillart":
+			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon && $_SESSION['listeColonne'] == "XtoutX" ) {
+				// Cas d'un vrai regroupement et d'une selection de toutes les variables...
+				switch ($TestSupp) {
+					// On enleve les valeurs concernant les especes...
+					case 24 : $Asupprimer = true;break;
+					case 25 : $Asupprimer = true;break;
+					case 28 : $Asupprimer = true;break;
+					case 29 : $Asupprimer = true;break;				
+					case 30 : $Asupprimer = true;break;
+					case 31 : $Asupprimer = true;break;	
+}
 			}
 			break;
 		case "stats":
@@ -57,6 +86,7 @@ function TestsuppressionChamp($table,$TestSupp,$typeStatistiques) {
 
 			} else {			
 				switch ($TestSupp) {
+					case 13: $Asupprimer = true;break;// ast.id
 					case 14: $Asupprimer = true;break;// secteur_id
 				}
 			}
@@ -82,6 +112,7 @@ function TestsuppressionChamp($table,$TestSupp,$typeStatistiques) {
 				}
 			} else {			
 				switch ($TestSupp) {
+					case 13: $Asupprimer = true;break;// ast.id
 					case 14: $Asupprimer = true;break;// secteur_id
 				}
 			}
@@ -126,6 +157,8 @@ function TestsuppressionChamp($table,$TestSupp,$typeStatistiques) {
 				}
 			} else {
 				switch ($TestSupp) {
+					case 14: $Asupprimer = true;break;// asp.id
+					case 15: $Asupprimer = true;break;// ast.id
 					case 16: $Asupprimer = true;break;// secteur_id
 				}
 				if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon && $_SESSION['listeColonne'] == "XtoutX") {
@@ -214,6 +247,8 @@ function TestsuppressionChamp($table,$TestSupp,$typeStatistiques) {
 				}
 			} else {
 				switch ($TestSupp) {
+					case 15: $Asupprimer = true;break;//  asgt.id
+					case 16: $Asupprimer = true;break;// ast.id
 					case 17: $Asupprimer = true;break;// secteur_id
 				}
 			}
@@ -254,6 +289,9 @@ function TestsuppressionChamp($table,$TestSupp,$typeStatistiques) {
 				}
 			} else {
 				switch ($TestSupp) {
+					case 16: $Asupprimer = true;break;// attgt.id
+					case 17: $Asupprimer = true;break;// asgt.id
+					case 18: $Asupprimer = true;break;// ast.id
 					case 19: $Asupprimer = true;break;// secteur_id
 				}
 				if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon && $_SESSION['listeColonne'] == "XtoutX") {
@@ -307,6 +345,10 @@ function TestsuppressionChamp($table,$TestSupp,$typeStatistiques) {
 				}				
 			} else {
 				switch ($TestSupp) {
+					case 18: $Asupprimer = true;break;// atgts.id
+					case 19: $Asupprimer = true;break;// attgt.id
+					case 20: $Asupprimer = true;break;// asgt.id
+					case 21: $Asupprimer = true;break;// ast.id
 					case 22: $Asupprimer = true;break;// secteur_id
 				}
 				if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon && $_SESSION['listeColonne'] == "XtoutX") {
@@ -323,6 +365,59 @@ function TestsuppressionChamp($table,$TestSupp,$typeStatistiques) {
 			}
 			break;	
 	}
+	return $Asupprimer;
+}
+//*********************************************************************
+// TestsuppressionChampTri  Fonction de test pour supprimer un enregistrement dans une table
+// Cette fonction permet de supprimer des champs dans les lignes de resultat triés
+// Le probleme est que d'un cote on gerait par position et de l'autre par nom
+//*********************************************************************
+// En entrée, le nom de la table a tester et le nom du champ a tester
+// En sortie, le code et le nom du regroupement
+// WARNING, SI CETTE FONCTION EST MISE A JOUR POUR AJOUTER DES CHAMPS A SUPPRIMER HORS CHAMPS STATISTIQUES, MERCI DE MODIFIER AUSSI TestsuppressionChamp
+// A terme, il faudra fusionner ces deux fonctions pour ne gerer que sur le nom... Pas le temps de le faire.
+
+function TestsuppressionChampTri($table,$NomChamp,$typeStatistiques) {
+	
+	global $creationRegBidon;
+	$debug = false;
+	$Asupprimer = false;
+	switch ($table) {
+		case "NtPart":
+			switch ($NomChamp) {
+				case "Secteur_id" : $Asupprimer = true; break;	
+			}
+			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon && $_SESSION['listeColonne'] == "XtoutX") {
+				// Cas d'un vrai regroupement et d'une selection de toutes les variables...
+				switch ($TestSupp) {
+					// On enleve les valeurs concernant les especes...
+					case "Famille_id" 	: $Asupprimer = true;break;
+					case "Famille" 		:  $Asupprimer = true;break;
+					case "Non_poisson"	: $Asupprimer = true;break;
+					case "Ordre_id" 	: $Asupprimer = true;break;
+					case "Ordre" 		: $Asupprimer = true;break;
+					case "Categorie_ecologique_id" : $Asupprimer = true;break;
+					case "Categorie_ecologique" : $Asupprimer = true;break;
+					case "Categorie_trophique_id" : $Asupprimer = true;break;
+					case "Categorie_trophique" : $Asupprimer = true;break;
+				}
+			}
+			break;
+		case "taillart":
+			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon && $_SESSION['listeColonne'] == "XtoutX") {
+				// Cas d'un vrai regroupement et d'une selection de toutes les variables...
+				switch ($TestSupp) {
+					// On enleve les valeurs concernant les especes...
+					case "Categorie_ecologique_id" : $Asupprimer = true;break;
+					case "Categorie_ecologique" : $Asupprimer = true;break;
+					case "Categorie_trophique_id" : $Asupprimer = true;break;
+					case "Categorie_trophique" : $Asupprimer = true;break;
+					case "Coefficient_b" : $Asupprimer = true;break;
+					case "Coefficient_k" : $Asupprimer = true;break;
+				}
+			}
+			break;			
+	}
 	if ($debug) {
 		if ($Asupprimer) {
 			echo "- suppression table = ".$table." position =  ".$TestSupp." stat = ".$typeStatistiques."<br/>";
@@ -332,6 +427,9 @@ function TestsuppressionChamp($table,$TestSupp,$typeStatistiques) {
 	}
 	return $Asupprimer;
 }
+
+
+
 
 //*********************************************************************
 // recupereRegroupement  Fonction de recuperation du regroupement pour une espece
@@ -591,7 +689,7 @@ function analyseTableCaptEsp(){
 
 //*********************************************************************
 // AjoutEnreg : ajoute un enreg dans la table temporaire
-function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$finalRow,$typeStatistiques,$tableStat,$posLongueur){
+function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$finalRow,$typeStatistiques,$tableStat,$posLongueur,$typeAction){
 // Cette fonction permet d'ajouter les lignes du tableau temporaire regroupDeb dans la table temp_extraction
 // Le calcul final des efforts / captures et PUE se fait ici
 //*********************************************************************
@@ -668,7 +766,11 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 			for ($cptRow = 0;$cptRow <= $nbrRow;$cptRow++) {
 				//echo $finalRow[$cptRow]." - ";
 				$modifFaite = false;
-				$Asupprimer = TestsuppressionChamp($tableStat,$cptRow,$typeStatistiques);
+				if ($tableStat == "" && !($typeAction == "")) { 
+					$Asupprimer = TestsuppressionChamp($typeAction,$cptRow,$typeStatistiques);
+				} else {
+					$Asupprimer = TestsuppressionChamp($tableStat,$cptRow,$typeStatistiques);
+				}
 				if (!$Asupprimer) {
 					//echo " a garder ";
 					switch ($cptRow) {
@@ -911,15 +1013,18 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 						$CapturesGTEStrate = $puestrate *  $EffortGTEStrate;
 						$CapturesGTE = floatval($regroupDeb[$cptRg][15]) ;
 						if ( $CapturesGTE == 0) {
+							//echo "capture GTE = 0<br/>";
 							$prorataGTE =0;
 							$CapturesGTEEsp = 0;
 						} else {
+							// Le probleme ici est le calcul par espece, il faudrait le stocker par espece/GT...
+							//echo "reg 4 = ".$regroupDeb[$cptRg][4]."<br/>";
 							$prorataGTE = $regroupDeb[$cptRg][4] / $CapturesGTE;
 							$CapturesGTEEsp = $CapturesGTEStrate  * $prorataGTE;
 							$EffortGTEEsp = $EffortGTEStrate  * $prorataGTE;
 							if (  $EffortGTEEsp <> 0) {
 								$PUEGTEEsp = $CapturesGTEEsp / $EffortGTEEsp;
-							}
+							} 
 						}
 
 						$pue = floatval($regroupDeb[$cptRg][16]);
@@ -931,9 +1036,10 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 						} else {
 							$Coeff = $CapturesSp / $effortSp;
 						}	
-						//echo $effortSp."-".$CapturesTotal."-". $prorata."-".$CapturesSp."-".$Coeff."<br/>";
+
 						$CapturesTaille = floatval($regroupDeb[$cptRg][3]) * $Coeff;
 						$ligneResultat .= "&#&".$CapturesTaille."&#&". $PUEGTEEsp."&#&".$EffortGTEEsp."&#&".$CapturesGTEEsp."&#&". $puestrate."&#&".$EffortGTEStrate."&#&".$CapturesGTEStrate;
+						//echo "|".$CapturesTaille."|". $PUEGTEEsp."|".$EffortGTEEsp."|".$CapturesGTEEsp."|". $puestrate."|".$EffortGTEStrate."|".$CapturesGTEStrate."<br/>";
 						break;
 				}
 			}
@@ -972,7 +1078,7 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 
 //*********************************************************************
 // creeRegroupement : Fonction de creation d'un regroupement a partir d'un SQL
-function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$typeSelection,$tableStat,$Compteur,$posSysteme,$posSecteur,$posGTE,$creationRegBidon,$typeStatistiques,$prorataTot,$prorataESPGT,$posRupSup) {
+function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$typeSelection,$tableStat,$Compteur,$posSysteme,$posSecteur,$posGTE,$creationRegBidon,$typeStatistiques,$prorataTot,$prorataESPGT,$posRupSup,$typeAction) {
 // Cette fonction permet de gerer la creation des regrouepements
 // Elle est aussi tres importante car elle permet de gerer le calcul des statistiques générales.
 //*********************************************************************
@@ -1420,6 +1526,8 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 								$infoEff = explode("&#&",$_SESSION['listeEffortGTETotal'][$cptEff]);
 								if ($infoEff[0] == $testEffortSect) {
 									$pueSysSect = floatval($infoEff[2]);
+									$effortGTESysSect = floatval($infoEff[1]); // effort pour le GTE
+									$CapturesGTESysSect = floatval($infoEff[3]); // captures pour le GTE
 									break;
 								}
 							}						
@@ -1454,10 +1562,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 						($sectSystEncours == $sectSystPrec && $anneeEnCours==$anneePrec && $moisEnCours==$moisPrec && $GTEEnCours<>$GTEPrec) ) {
 						if (!($debIDPrec == "")) {
 							// Ajout du contenu de ce tableau dans la table temporaire.
-							if ($EcrireLogComp ) {
-								WriteCompLog ($logComp, "DEBUG : appel AjoutEnreg rupture sur debIDPrec",$pasdefichier);
-							}
-							if (!(AjoutEnreg($regroupDeb,$typesectSystPrec."-".$sectSystPrec."-".$anneePrec."-".$moisPrec.'-'.$GTEPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat,$posRupSupPosPrec))) {
+							if (!(AjoutEnreg($regroupDeb,$typesectSystPrec."-".$sectSystPrec."-".$anneePrec."-".$moisPrec.'-'.$GTEPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat,$posRupSupPosPrec,$typeAction))) {
 								$erreurProcess = true;
 								echo "erreur fonction AjoutEnrg<br/>";
 							}  
@@ -1623,7 +1728,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 					if ($debEnCours<>$debIDPrec || ($debEnCours == $debIDPrec && $GTEEnCours <>$GTEPrec)) {
 						if (!($debIDPrec == "")) {
 							// Ajout du contenu de ce tableau dans la table temporaire.
-							if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat,$posRupSupPosPrec))) {
+							if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat,$posRupSupPosPrec,$typeAction))) {
 								$erreurProcess = true;
 								echo "erreur fonction AjoutEnrg<br/>";
 							} 
@@ -1765,11 +1870,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 			} // fin du while
 			// Attention, quand on sort, on doit mettre à jour le dernier tableau dans la BD.
 			// On cree autant de lignes dans la table temp que de lignes dans le tableau temporaire pour ce debarquement
-			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp, "DEBUG : appel AjoutEnreg derniere ligne",$pasdefichier);
-			}
-
-			if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat,$posRupSupPosPrec))) {
+			if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat,$posRupSupPosPrec,$typeAction))) {
 				$erreurProcess = true;
 			} 
 			//else {echo "fin <pre>";print_r($DerniereLigne);echo "</pre>";	}

@@ -578,7 +578,7 @@
 		</groupes>	
 		<Alias>upec</Alias>
 		<libelle>Unite de peche</libelle>
-		<!--<champ code="id" affichage="X" libelle="Unite_peche_id"/>-->
+		<champ code="id" affichage="X" libelle="Unite_peche_id"/>
 		<champ code="libelle" affichage="C" libelle="Unite_peche"/>
 		<champ code="libelle_menage" affichage="C" libelle="Nom_suplementaire_unite"/>
 		<champ code="art_agglomeration_id" affichage="C" libelle="Agglomeration_origine_unite_id" libellesup="(y compris libelle agglo origine)"/>
@@ -605,7 +605,7 @@
 		<groupes>
 			<groupe type="artisanale" filiere="engin">Engin peche</groupe>					
 		</groupes>
-		<Alias>aengp</Alias>
+		<Alias>aeng</Alias>
 		<libelle>Engins de peche</libelle>
 		<!--<champ code="id" affichage="X" libelle="Engin_peche_id"/>-->
 		<champ code="art_type_engin_id" affichage="X" libelle="Type_engin_id"/>
@@ -615,7 +615,7 @@
 		<champ code="nbre_mail_ham" affichage="C" libelle="Nbre_mailles_hamecons"/>
 		<champ code="nbre_nap" affichage="C" libelle="Nbre_nappes"/>
 		<champ code="nombre" affichage="C" libelle="Nombre_engins"/>
-		<champ code="num_ham" affichage="C" libelle="Maille_hamecon"/>
+		<champ code="num_ham" affichage="C" libelle="Taille_hamecon"/>
 		<champ code="proprietaire" affichage="C" libelle="Proprietaire"/>
 	</table>
 	<table>
@@ -827,6 +827,7 @@
 		<Alias>attgt</Alias>
 		<libelle>Stats par GT et par espece</libelle>
 		<champ code="id" affichage="X" libelle="Stat_GT_esp_id"/>
+		<champ code="ref_espece_id" affichage="X" libelle="Espece_id"/>
 		<champ code="pue_gt_sp" affichage="X" libelle="Pue_GT_espece"/>
 		<champ code="cap_gt_sp" affichage="X" libelle="Captures_GT_espece"/>
 		<champ code="nbre_enquete_gt_sp" affichage="C" libelle="Nombre_enquetes_espece_GT"/>

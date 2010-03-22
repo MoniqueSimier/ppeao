@@ -224,7 +224,6 @@ function AfficherSelection($file) {
 		} else {
 			$SQLEspeces .= ",".$listEspFamille;
 		}
-		
 		pg_free_result($SQLfamResult);		
 	} else  {
 		$listeSelection = str_replace("<b>familles</b> :","<b>familles</b> : toutes",$listeSelection);
@@ -235,19 +234,14 @@ function AfficherSelection($file) {
 		// On va reconstruire cette liste plus tard dans la fonction afficherdonnees
 	}
 	return $listeSelection;
-
 }
-
 
 //*********************************************************************
 // genereOrdre : Fonction d'extraction trie les donnees
-function genereOrdre($contexte) {
-	
+function genereOrdre($contexte,$typeAction,$typeStatistiques) {
 	// ces variables globales definissent l'ordre de tri des diverses extractions (definies dans /ordre_tri.inc)
-	global $peuplement,$environnement,$ntpt,$biologie,$trophique,$st_tot,$st_sp,$st_dft,$st_gt,$st_gt_sp,$st_gt_sp_dft,$activite,$captures,$fractions,$dft,$engin,$default;
-	
+	global $peuplement,$environnement,$ntpt,$biologie,$trophique,$st_tot,$st_sp,$st_dft,$st_gt,$st_gt_sp,$st_gt_sp_dft,$st_tot_gen,$st_sp_gen,$st_dft_gen,$st_gt_gen,$st_gt_sp_gen,$st_gt_sp_dft_gen,$activite,$captures,$fractions,$dft,$engin,$default;
 	$default='';
-	
 	switch($contexte) {
 		case 'activite' : $varNom='activite';
 		break;
@@ -265,35 +259,52 @@ function genereOrdre($contexte) {
 		break;
 		case 'capture': $varNom='captures';
 		break;
-		case 'ntpart': $varNom='fractions';
+		case 'NtPart': $varNom='fractions';
 		break;
 		case 'taillart': $varNom='dft';
 		break;
 		case 'engin': $varNom='engin';
 		break;
-		case 'ast': $varNom='st_tot';
+		case 'ast': if ($typeStatistiques == "agglomeration" ) {$varNom='st_tot';} else {$varNom='st_tot_gen';}
 		break;
-		case 'asp': $varNom='st_sp';
+		case 'asp': if ($typeStatistiques == "agglomeration" ) {$varNom='st_sp';} else {$varNom='st_sp_gen';}
 		break;
-		case 'ats': $varNom='st_dft';
+		case 'ats': if ($typeStatistiques == "agglomeration" ) {$varNom='st_dft';} else {$varNom='st_dft_gen';}
 		break;
-		case 'asgt': $varNom='st_gt';
+		case 'asgt': if ($typeStatistiques == "agglomeration" ) {$varNom='st_gt';} else {$varNom='st_gt_gen';}
 		break;
-		case 'attgt': $varNom='st_gt_sp';
+		case 'attgt': if ($typeStatistiques == "agglomeration" ) {$varNom='st_gt_sp';} else {$varNom='st_gt_sp_gen';}
 		break;
-		case 'atgts': $varNom='st_gt_sp_dft';
+		case 'atgts': if ($typeStatistiques == "agglomeration" ) {$varNom='st_gt_sp_dft';} else {$varNom='st_gt_sp_dft_gen';}
+		break;
+		case 'stats': if ($typeStatistiques == "agglomeration" ) {$varNom='st_tot';} else {$varNom='st_tot_gen';}
 		break;
 		default: $varNom='default';
 		break;
-
 	}	
-	if (!empty($varNom)) 
-		{
+	//echo "contexte = ".$contexte." nom var tri = ".$varNom." | ".$typeAction." - ".$typeStatistique."<br/>";
+	if (!empty($varNom)) {
 			$ordreListe=$$varNom;
-			$ordreTri=explode(",",$$varNom);
-		}
-		else {$ordreListe=array();}
-
+			//echo "liste=".$ordreListe."<br/>";
+			$ordreTriTemp=explode(",",$ordreListe);
+			$ordreListeRecons = "";
+			$NbResultat = count($ordreTriTemp);
+			// On controle qu'il n'y a pas des champs a supprimer
+			$Asupprimer = false;
+			for ($cptResult = 0;$cptResult < $NbResultat;$cptResult++) {
+				$Asupprimer = TestsuppressionChampTri($typeAction,$ordreTriTemp[$cptResult],$typeStatistiques);
+				if (!$Asupprimer) {
+					if ($ordreListeRecons == "") {
+						$ordreListeRecons = $ordreTriTemp[$cptResult];
+					} else {
+						$ordreListeRecons .= ",".$ordreTriTemp[$cptResult];
+					}
+				} 
+			}
+			//echo "GenerOrdre = ".$ordreListeRecons." FIN <br/>";
+			$ordreTri=explode(",",$ordreListeRecons);
+			//echo count($ordreTri)."  <br/>";
+		}else {$ordreListe=array();}
 	return $ordreTri;
 }
 
@@ -389,13 +400,11 @@ function AfficherDonnees($file,$typeAction){
 		}
 	} else {
 		$fichierDejaCree = false;
-	} 		
-		
+	} 			
 	if ($exportFichier ) {
 		// On recupère les info pour creer le fichier d'export 
 		$nomLogLien = "/work/extraction";
 		$dirLog = $_SERVER["DOCUMENT_ROOT"].$nomLogLien;
-		
 		// On fait tous les tests associés
 		if (! file_exists($dirLog)) {
 			if (! mkdir($dirLog) ) {
@@ -1168,12 +1177,12 @@ function AfficherDonnees($file,$typeAction){
 							$WhereCom = $WhereDeb ;
 							$OrderCom = $OrderDeb ;
 							if (strpos($listeChampsSel,"deb.art_grand_type_engin_id") === false) {
-								$listeChampsSpec = ", deb.poids_total,deb.art_unite_peche_id,deb.art_grand_type_engin_id";
+								$listeChampsSpec = ", deb.poids_total,debrec.poids_total,deb.art_unite_peche_id,deb.art_grand_type_engin_id";
 							} else {
-								$listeChampsSpec = ", deb.poids_total,deb.art_unite_peche_id";
+								$listeChampsSpec = ", deb.poids_total,debrec.poids_total,deb.art_unite_peche_id";
 							}
-							$ListeTableSpec = " "; 
-							$WhereSpec = " ";
+							$ListeTableSpec = " ,art_debarquement_rec as debrec "; 
+							$WhereSpec = " and debrec.art_debarquement_id = deb.id ";
 							$ConstIDunique = "DEB-##-11";
 							$valueCount = "deb.id" ; // pour gerer la pagination	
 							$builQuery = true;
@@ -1226,7 +1235,6 @@ function AfficherDonnees($file,$typeAction){
 							$ListeTableSpec = ", ref_famille as fam,art_debarquement_rec as debrec,art_fraction as afra left outer join art_fraction_rec as afrarec on afrarec.id = afra.id"; 
 							$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id 
 											and debrec.art_debarquement_id = deb.id
-
 											and esp.id = afra.ref_espece_id	
 											and fam.id = esp.ref_famille_id ".$compPoisSQL;					
 							$ConstIDunique = "DEB-##-11";
@@ -1285,7 +1293,6 @@ function AfficherDonnees($file,$typeAction){
 							$ListeTableSpec = ",ref_famille as fam,art_debarquement_rec as debrec, (art_fraction as afra left outer join art_fraction_rec as afrarec on afrarec.id = afra.id) left outer join art_poisson_mesure as ames on ames.art_fraction_id = afra.id"; 
 							$WhereSpec = " 	and ".$WhereEsp." afra.art_debarquement_id = deb.id 
 											and debrec.art_debarquement_id = deb.id
-											
 											and esp.id = afra.ref_espece_id	
 											and fam.id = esp.ref_famille_id ".$compPoisSQL;						
 							$ConstIDunique = "DEB-##-11";
@@ -1317,7 +1324,7 @@ function AfficherDonnees($file,$typeAction){
 							$ListeTableCom = $ListeTableDeb ;
 							$WhereCom = $WhereDeb ;
 							$OrderCom = $OrderDeb ;	
-							$listeChampsSpec = ",deb.art_grand_type_engin_id, aeng.art_type_engin_id,teng.libelle";
+							$listeChampsSpec = ",deb.art_unite_peche_id,deb.art_grand_type_engin_id, aeng.art_type_engin_id,teng.libelle";
 							$ListeTableSpec = ", art_engin_peche as aeng, art_type_engin as teng"; 
 							$WhereSpec = " and aeng.art_debarquement_id = deb.id and teng.id = aeng.art_type_engin_id";						
 							$ConstIDunique = "DEB-##-11";
@@ -1717,8 +1724,7 @@ function AfficherDonnees($file,$typeAction){
 	// *********************************************************************************
 	// EXECUTION DE LA REQUETE APRES SA CONSTRUCTION
 	// *********************************************************************************
-	//echo $SQLfinal."<br/>";
-	//echo $SQLcountfinal."<br/>";
+
 	if ($debugAff) {
 		$debugTimer = number_format(timer()-$start_while,4);
 		if ($EcrireLogComp ) {
@@ -1748,8 +1754,10 @@ function AfficherDonnees($file,$typeAction){
 		}
 		if ($EcrireLogComp && $debugLog) {
 			WriteCompLog ($logComp, "DEBUG :  select countfinal = ".$SQLcountfinal,$pasdefichier);
+		}
 	}
-	}
+	//echo $SQLfinal."<br/>";
+	//echo $SQLcountfinal."<br/>";
 	// Gestion des regroupements / stats generales
 	// A ce niveau, pour gérer les regroupements, il faut passer par une étape intermédiaire d'agrégation
 	// On exécute la requete, on effectue les groupements et enfin on créé des entrées dans la table temporaire temp_extraction
@@ -1757,6 +1765,8 @@ function AfficherDonnees($file,$typeAction){
 	// Le regroupement se gere sur la rupture Id stat/Id espece, alors que la rupture pour les stats générales sera secteur (ou systeme) / id Stat (ou especes)
 	// Dans le cas ou il n'y a pas de regroupement pour les statistiques generales, on en cree un bidon.
 	$creationRegBidon = false;
+	//echo "nbre reg=".count($_SESSION['listeRegroup'])."<br.>";
+	//echo "<pre>";print_r($_SESSION['listeRegroup']);echo"</pre>";
 	if (!($_SESSION['listeRegroup'] == "") || ($typeStatistiques == "generales" && $typeAction =="stats")) {
 		if ($typeSelection == "statistiques") {
 			if ($typeStatistiques == "generales") {
@@ -1842,11 +1852,11 @@ function AfficherDonnees($file,$typeAction){
 				$posSecteurIDm = posSecteurID.$tableStat[$cptTS];
 				$posGTEIDm = posGTEID.$tableStat[$cptTS];
 				//echo $tableStat[$cptTS]."-".$$posDEBIDm." - ".$$posESPIDm." - ".$$posESPNomm." - ".$$posStat1m." - ".$$posStat2m." - ".$$posStat3m."<br/>";
-				creeRegroupement($SQLfinalreg,${$posDEBIDm} ,${$posESPIDm},${$posESPNomm},${$posStat1m},${$posStat2m},${$posStat3m},-1,-1,$typeSelection,$tableStat[$cptTS],$cptTS,$posSystemeID,${$posSecteurIDm},${$posGTEIDm},$creationRegBidon,$typeStatistiques,${$posProrataTotm},${$posposProrataEspGTm},${$posRupSupm});				
+				creeRegroupement($SQLfinalreg,${$posDEBIDm} ,${$posESPIDm},${$posESPNomm},${$posStat1m},${$posStat2m},${$posStat3m},-1,-1,$typeSelection,$tableStat[$cptTS],$cptTS,$posSystemeID,${$posSecteurIDm},${$posGTEIDm},$creationRegBidon,$typeStatistiques,${$posProrataTotm},${$posposProrataEspGTm},${$posRupSupm},"");				
 			}
 		} else {
 			if (!($typeAction == "taillart")) {
-				creeRegroupement($SQLfinal,$posDEBID ,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$typeSelection,"",0,-1,-1,-1,false,"",-1,-1,-1);
+				creeRegroupement($SQLfinal,$posDEBID ,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$typeSelection,"",0,-1,-1,-1,false,"",-1,-1,-1,$typeAction);
 				$SQLfinal = "select * from temp_extraction order by key1 asc,key2 asc,key3 asc";
 				$SQLcountfinal = "select count(*) from temp_extraction ";
 				if ($typeSelection == "extraction") {
@@ -1900,14 +1910,6 @@ function AfficherDonnees($file,$typeAction){
 		$PasDeResultat = true;
 	}
 	pg_free_result($SQLcountfinalResult); 
-	if ($debugAff) {
-		$debugTimer = number_format(timer()-$start_while,4);	
-		if ($EcrireLogComp ) {
-			WriteCompLog ($logComp, "TEST PERF : apres  requete SQLcountfinal :".$debugTimer,$pasdefichier);
-		} else {
-			echo "apres  requete SQLcountfinal :".$debugTimer."<br/>";
-		}
-	}
 	if ($PasDeResultat) {
 		$resultatLecture .= "<span class=\"infozip\"><img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Attention, la requ&ecirc;te ne renvoie aucun r&eacute;sultat. Aucun fichier de donn&eacute;e n'est disponible. <br/>Le probl&egrave;me vient peut &ecirc;tre d'une restriction trop s&eacute;v&egrave;re sur les cat&eacute;gories trophiques/&eacute;cologiques</span><br/>";
 	} else {
@@ -1970,7 +1972,7 @@ function AfficherDonnees($file,$typeAction){
 							break;
 						}
 					}
-					$listeChamps = str_replace("upec.art_agglomeration_id","upec.art_agglomeration_id,Nom_Agglomeration_origine_unite",$listeChamps);
+					$listeChamps = str_replace("upec.art_agglomeration_id","upec.art_agglomeration_id,Agglomeration_origine_unite",$listeChamps);
 					$chercheAggUpec = true;
 				}				
 				// Si on ajoute un identifiant unique en debut de ligne, on l'indique dans la liste des champs.
@@ -1984,12 +1986,14 @@ function AfficherDonnees($file,$typeAction){
 				if ($typeStatistiques == "generales") {
 					$listeChamps .=",Pue_totale,Effort_total,Captures_totales";
 				}
+				//echo $listeChamps."<br/>";
 				// On remplace les noms des alias par le nom des tables...
 				if (!($ConstIDunique =="")) {
 					$listeChamps = remplaceAlias($listeChamps,"y",$typeAction,$typeStatistiques);
 				} else {
 					$listeChamps = remplaceAlias($listeChamps,"n",$typeAction,$typeStatistiques);
 				}
+				//echo $listeChamps."<br/>";
 				// On commence le formatage sous forme de table/
 				$libelleAction = recupereLibelleFiliere($typeAction);
 				if ($typeSelection == "statistiques") {
@@ -2000,73 +2004,27 @@ function AfficherDonnees($file,$typeAction){
 				$resultatLecture .="<table id=\"affresultat\" ><tr class=\"affresultattitre\"><td>";
 				// Gestion des regroupements a l'affichage. Attention, non valable pour les statistiques vu qu'on affiche toujours 
 				// art_stat_totale qui ne peut pas avoir de regroupement
-				if ($debugAff) {
-					$debugTimer = number_format(timer()-$start_while,4);
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp, "TEST PERF : apres  requete SQLfinal - avant regroupement :".$debugTimer,$pasdefichier);
-					} else {
-						echo "apres  requete SQLfinal - avant regroupement :".$debugTimer."<br/>";
-					}
-				}
-				if (!($_SESSION['listeRegroup'] == "") && (!($typeSelection == "statistiques"))) {
-					// On modifie le label pour les especes (nom et cid)
-					$tabTitre = explode(",",$listeChamps);
-					$listeChamps = "";
-					$NbTitre = count($tabTitre);
-					for ($cptTitre = 0;$cptTitre < $NbTitre;$cptTitre++) {
-						$ValAAjouter = "";
-						$Position = intval($cptTitre)-1;// On prend en compte que la premiere valeur de la ligne est l'id unique rajouté
-						// On remplace la valeur du titre pour le code et le nom espece par respectivement le code et le nom du regroupement
-						switch ($Position) {
-							case $posESPID:
-								$ValAAjouter = "code Regroupement";
-								break;
-							case $posESPNom:
-								$ValAAjouter = "nom Regroupement";
-								break;	
-							default: 
-								$ValAAjouter = $tabTitre[$cptTitre];
-								break;
-						}
-						// On reconstruit la ligne contenant tous les titres
-						if ($listeChamps == "") {
-							$listeChamps = $ValAAjouter;
-						} else {
-							$listeChamps .= ",".$ValAAjouter;
-						}
-					}
-				}
-				if ($debugAff) {
-					$debugTimer = number_format(timer()-$start_while,4);
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp, "TEST PERF : apres regroupement :".$debugTimer,$pasdefichier);
-					} else {
-						echo "apres regroupement :".$debugTimer."<br/>";
-					}
-				}
-			
 				// *********************** TRI ************
 				// on genere le tableau de tri
 				if (!empty($typeAction)) {$contexte=$typeAction;}
-				if (!empty($typeStatistique)) {$contexte=$typeStatistique;}
-				$ordreTri=genereOrdre($contexte);
-				
+				$ordreTri=genereOrdre($contexte,$typeAction,$typeStatistiques);
+
 				//****************************
 				// TRI DES EN TETES DE TABLEAU
-				
 				//on trie les en-tetes selon l'ordre defini 
-			
 				$enTetes=explode(',',$listeChamps);
 				foreach ($enTetes as $key=>$value) {
 					$headers[$value]=$value;
 				}				
 				if (!empty($ordreTri)) {$enTetesTries=sortArrayByArray($headers,$ordreTri);} else {$enTetesTries=$headers;}				
 				$enTetesTries=implode(",",$enTetesTries);
-				
-				// nouveau de Olivier trié
+				if (!($_SESSION['listeRegroup'] == "") && (!($typeSelection == "statistiques"))) {
+					// On modifie le label pour les especes (nom et cid)
+					$enTetesTries = str_replace("Espece_id","Code_regroupement",$enTetesTries);
+					$enTetesTries = str_replace("Espece","Nom_regroupement",$enTetesTries);
+				}
 				$resultatLecture .= str_replace(","," </td><td> ",$enTetesTries);
-				//original de Yann
-				//$resultatLecture .= str_replace(","," </td><td> ",$listeChamps); // pour l'instant pas le tri des entetes
+				
 				// FIN DE TRI DES EN TETES DE TABLEAU
 				//***********************************
 				$resultatLecture .="</td></tr>";
@@ -2083,13 +2041,13 @@ function AfficherDonnees($file,$typeAction){
 					// Ex $ConstIDunique = "DEB-##-11";
 					// On garde le prefixe DEB et on extrait l'index du champ a recuperer de la ligne du resultat de la requete. ici 11
 					$IDunique = "";
+					$PondIDUnique = 0;
 					if (!($ConstIDunique =="")) {
 						$Locprefixe = substr($ConstIDunique,0,3); // Attention, pour des raisons de simplicité, le sufffixe n'est que sur 3 caractères.
 						$locIndex = substr(strrchr($ConstIDunique, "-##-"),1);
-						//echo $Locprefixe." - ".$locIndex. " - ".strrchr($ConstIDunique, "-##-");
 						$IDunique = $Locprefixe.$finalRow[$locIndex];
-						//$resultatLecture .= "<td>".$IDunique."</td>";
 						$resultatLectureX .= "<td>".$IDunique."</td>";
+						$PondIDUnique = 1;
 					}
 					if ( (!($_SESSION['listeRegroup'] == "") && (!($typeSelection == "statistiques") && !($typeAction =="taillart") )) || 
 						($typeSelection == "statistiques" && $typeStatistiques == "generales") ) {
@@ -2257,6 +2215,8 @@ function AfficherDonnees($file,$typeAction){
 							$tableauATrier[$value]=$valeursATrier[$i];
 							$i++;
 						}
+						//echo"tableau a trier <br/>";
+						//echo('<pre>');print_r($tableauATrier);echo('</pre>');
 						$tableauTrie=sortArrayByArray($tableauATrier,$ordreTri);
 						//debug		
 						//echo"tableau trie<br/>";
@@ -2281,15 +2241,7 @@ function AfficherDonnees($file,$typeAction){
 					//************************************
 					$resultatLecture .="</tr>";
 					$cptNbRow ++;
-				}//fin du while
-				if ($debugAff) {
-					$debugTimer = number_format(timer()-$start_while,4);
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp, "TEST PERF : apres creation de l'affichage a l ecran:".$debugTimer,$pasdefichier);
-					} else {
-						echo "apres creation de l'affichage a l ecran:".$debugTimer."<br/>";
-					}
-				}				
+				}//fin du while			
 				$resultatLecture .="</table>";		
 			}			
 			pg_free_result($SQLfinalResult);
@@ -2300,14 +2252,6 @@ function AfficherDonnees($file,$typeAction){
 		// ********************************
 		// Gestion de creation du fichier
 		// ********************************
-		if ($debugAff) {
-			$debugTimer = number_format(timer()-$start_while,4);
-			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp, "TEST PERF : avant export fichier:".$debugTimer,$pasdefichier);
-			} else {
-				echo "avant export fichier:".$debugTimer."<br/>";
-			}
-		}
 		if ($exportFichier && (!($fichierDejaCree))) {
 			// Creation du fichier d'apres le SQL
 			if ($typeSelection == "statistiques") {
@@ -2405,14 +2349,6 @@ function AfficherDonnees($file,$typeAction){
 			} else {
 				creeFichier($SQLfinalFichier,$listeChamps,$typeAction,$ConstIDunique,$ExpComp,false,$posESPID,$posESPNom,$chercheAggUpec,$posAggUpec,"",$typeStatistiques);
 			}
-			if ($debugAff) {
-				$debugTimer = number_format(timer()-$start_while,4);
-				if ($EcrireLogComp ) {
-					WriteCompLog ($logComp, "TEST PERF : apres creation fichier:".$debugTimer,$pasdefichier);
-				} else {
-					echo "apres creation fichier:".$debugTimer."<br/>";
-				}
-			}
 			// Export des selections et regroupements dans des fichiers separes
 			$SelectionPourFic = str_replace("<br/>","\n",$SelectionPourFic);
 			$SelectionPourFic = str_replace("<b>","",$SelectionPourFic);
@@ -2450,7 +2386,6 @@ function AfficherDonnees($file,$typeAction){
 			fclose($ExpCompSel);
 			$RegroupPourFic= "-------------------------------------------------------------------  \n";
 			// debug
-			//if ($creationRegBidon) {echo "creation reg bidon <br/>";} else {echo "pas creation reg bidon <br/>";}
 			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon) {
 				// On cree la liste
 				$NbReg = count($_SESSION['listeRegroup']);
@@ -2595,6 +2530,7 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 	global $resultatLecture;
 	global $debugAff;
 	global $start_while;
+	global $creationRegBidon;
 	// Execution de la requete
 	$SQLfinalResult = pg_query($connectPPEAO,$SQLaExecuter);
 	$erreurSQL = pg_last_error($connectPPEAO);
@@ -2615,9 +2551,10 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 		} else {
 			// *********************** TRI ************
 			// on genere le tableau de tri
-				if (!empty($typeAction)) {$contexte=$typeAction;}
-				if (!empty($typeStatistique)) {$contexte=$typeStatistique;}
-				$ordreTri=genereOrdre($contexte);
+			
+			if (!empty($typeAction)) {$contexte=$typeAction;}
+			if (!empty($tableStat)) {$contexte=$tableStat;}
+			$ordreTri=genereOrdre($contexte,$typeAction,$typeStatistiques);
 			//****************************
 			// TRI DES EN TETES DE TABLEAU
 			//on trie les en-tetes selon l'ordre defini 
@@ -2627,10 +2564,12 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 			}				
 			if (!empty($ordreTri)) {$enTetesTries=sortArrayByArray($headers,$ordreTri);} else {$enTetesTries=$headers;}				
 			$enTetesTries=implode(",",$enTetesTries);
-			// nouveau trie par olivier
+			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon) {
+				// On modifie le label pour les especes (nom et cid)
+				$enTetesTries = str_replace("Espece_id","Code_regroupement",$enTetesTries);
+				$enTetesTries = str_replace("Espece","Nom_regroupement",$enTetesTries);
+			}
 			$resultatFichier = str_replace(",","\t",$enTetesTries);
-			//original de Yann
-			//$resultatFichier = str_replace(",","\t",$listeChamps);
 			// FIN DE TRI DES EN TETES DE TABLEAU
 			//***********************************	
 			if (! fwrite($ExpComp,$resultatFichier."\r\n") ) {
@@ -2648,15 +2587,6 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 				// TRI DE LA LIGNE : utilisation de $resultatFichierX au lieu de $resultatFichier
 				// pour bricoler tranquille
 				$resultatFichierX="";
-				if ($debugAff) {
-					$debugTimer = number_format(timer()-$start_while,4);
-					$cptDebug++;					
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp, "TEST PERF : lecture enreg while num ".$cptDebug." : ".$debugTimer,$pasdefichier);
-					} else {
-						echo "lecture enreg while num ".$cptDebug." : ".$debugTimer."<br/>";
-					}
-				}
 				$resultatFichier = "";
 				// Construction de la liste des résultat
 				// Tout d'abord, construction de l'ID unique
@@ -2668,7 +2598,6 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 					$locIndex = substr(strrchr($ConstIDunique, "-##-"),1);
 					$IDunique = $Locprefixe.$finalRow[$locIndex];
 					$resultatFichierX .= $IDunique."\t";
-					//$resultatFichier .= $IDunique."\t";
 				}
 				if (!($_SESSION['listeRegroup'] == "") && (!($pasTestReg))  && !($typeAction =="taillart") ) {
 					// Gestion des regroupements
@@ -2755,14 +2684,6 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 							// On recupere le nombre total d'individu de la fraction
 							$totalIndividus = $finalRow[19];
 							// On compte les enregs dans biologie (individus effectivement analyse) pour cette fraction
-							if ($debugAff) {
-								$debugTimer = number_format(timer()-$start_while,4);				
-								if ($EcrireLogComp ) {
-									WriteCompLog ($logComp, "TEST PERF : avant requete complementaire ".$debugTimer,$pasdefichier);
-								} else {
-									echo "avant requete complementaire ".$debugTimer."<br/>";
-								}
-							}
 							$SQLcomplement = "Select count(id) from exp_biologie where exp_fraction_id =  ".$finalRow[18] ;
 							$SQLcomplementResult = pg_query($connectPPEAO,$SQLcomplement);
 							$erreurSQL = pg_last_error($connectPPEAO);
@@ -2774,14 +2695,6 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 								$RowComplement = pg_fetch_row($SQLcomplementResult); 
 								$totalBio = $RowComplement[0];
 								pg_free_result($SQLcomplementResult);
-							}
-							if ($debugAff) {
-								$debugTimer = number_format(timer()-$start_while,4);				
-								if ($EcrireLogComp ) {
-									WriteCompLog ($logComp, "TEST PERF : apres requete complementaire ".$debugTimer,$pasdefichier);
-								} else {
-									echo "apres requete complementaire ".$debugTimer."<br/>";
-								}
 							}
 							// Calcul du coefficient = nombre de poisson peches / nombre de poissons mesures
 							$coefficient =floatval( intval($totalIndividus) / intval($totalBio));	
@@ -2833,14 +2746,6 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 							}		
 					}
 				}
-				if ($debugAff) {
-					$debugTimer = number_format(timer()-$start_while,4);				
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp, "TEST PERF : avant ecriture ligne dans fichier ".$debugTimer,$pasdefichier);
-					} else {
-						echo "apres requete complementaire ".$debugTimer."<br/>";
-					}
-				}
 				//echo $resultatFichierX."<br/>";
 				// note : $resultatFichierX contient les \t
 				// on trie la ligne
@@ -2849,7 +2754,11 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 					$valeursATrier=explode("\t",$resultatFichierX);
 					// au cas òu un \t se ballade dans les valeurs...
 					$valeursATrier= str_replace("\t","",$valeursATrier);
-					//debug 					echo('<pre>');print_r($valeursATrier);echo('</pre>');
+					//debug 
+					//echo "Ordre de tri <br/>";
+					//echo('<pre>');print_r($ordreTri);echo('</pre>');
+					//echo "valeurs a trier <br/>";
+					//echo('<pre>');print_r($valeursATrier);echo('</pre>');
 					// on construit un tableau avec comme clés les valeurs de $headers (voir tri des en tetes plus haut)
 					$i=0;
 					$tableauATrier=array();
@@ -2857,13 +2766,15 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 						$tableauATrier[$value]=$valeursATrier[$i];
 						$i++;
 					}
+					//debug 
+					//echo "tableau a trier <br/>";
+					//echo('<pre>');print_r($tableauATrier);echo('</pre>');
 					$tableauTrie=sortArrayByArray($tableauATrier,$ordreTri);
-					//debug		echo('<pre>');print_r($tableauTrie);echo('</pre>');
+					//debug
+					//echo "tableau trie <br/>";
+					//echo('<pre>');print_r($tableauTrie);echo('</pre>');
 					// a partir du tableau trie, on recree les \t
 					//debug 
-					//echo('<pre><table border="1"><tr><td>');
-					//print_r(implode("</td><td>",$tableauTrie));
-					//echo('</td></tr></table></pre>');
 					$resultatTds=implode("\t",$tableauTrie);
 					//debug 					
 					//echo('<pre>');print_r($resultatTds);echo('</pre>');
@@ -2884,14 +2795,6 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 					}
 					exit;
 				}
-				if ($debugAff) {
-					$debugTimer = number_format(timer()-$start_while,4);				
-					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp, "TEST PERF : apres ecriture ligne dans fichier ".$debugTimer,$pasdefichier);
-					} else {
-						echo "apres ecriture ligne dans fichier ".$debugTimer."<br/>";
-					}
-				}
 			// Compteur
 			$cpt1++;							
 			}
@@ -2900,14 +2803,6 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 		pg_free_result($SQLfinalResult);	
 	} // fin du !$SQLfinalResult
 	fclose($ExpComp);
-	if ($debugAff) {
-		$debugTimer = number_format(timer()-$start_while,4);				
-		if ($EcrireLogComp ) {
-			WriteCompLog ($logComp, "TEST PERF : fin cree fichier ".$debugTimer,$pasdefichier);
-		} else {
-			echo "fin cree fichier ".$debugTimer."<br/>";
-		}
-	}
 }
 
 //*********************************************************************
@@ -3459,7 +3354,7 @@ function remplaceAlias($listeDesChamps,$Idunique,$table,$typeStatistiques) {
 		if (!$Asupprimer) {
 			//echo "pas a supprimer : ".$table." ".$listeTitre[$cptT]." <br/>";
 			if ( $listeTitre[$cptT]=="id.unique" || $listeTitre[$cptT]=="Coeff_extrapolation" || $listeTitre[$cptT]=="Nombre_individus_mesures" || 
-			$listeTitre[$cptT]=="Effort_total" || $listeTitre[$cptT]=="Nom_Agglomeration_origine_unite" || $listeTitre[$cptT]=="Effort_total_strate" ||
+			$listeTitre[$cptT]=="Effort_total" || $listeTitre[$cptT]=="Agglomeration_origine_unite" || $listeTitre[$cptT]=="Effort_total_strate" ||
 			$listeTitre[$cptT]=="Pue_totale" || $listeTitre[$cptT]=="Captures_totales" ||
 			$listeTitre[$cptT]=="Pue_espece" ||  $listeTitre[$cptT]=="Captures_especes" ||
 			$listeTitre[$cptT]=="Effectif_strate" || 
