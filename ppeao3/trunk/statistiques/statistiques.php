@@ -4,6 +4,8 @@
 // correction vers ligne 1500 d'une division par 0
 // suppresion des lignes de commentaires inutiles
 // rectification des ecarts types à n-1 
+//
+// correction du traitement des individus de grandes tailles (03/2010)
 
 $bdd = $_GET['base'];
 if ($bdd==""){
@@ -19,9 +21,7 @@ if(! ini_set("max_execution_time", "360")) {echo "échec";}
 
 
 
-
 <?php
-
 
 
 $connection = pg_connect ("host=".$host." dbname=".$bdd." user=".$user." password=".$passwd);
@@ -83,7 +83,6 @@ print("<br><br>Statistiques de Pêche pour le système : <Font Color =\"#333366\">
 print("</div>");
 print("</Font>");
 */
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,7 +179,6 @@ $id_sp = 0;	//identifiant sp
 while (list($key, $val) = each($ST))
 	{
 	
-	
 	$query1 = "select count(distinct AD.id) 
 	from art_debarquement as AD 
 	where AD.art_agglomeration_id = ".$val[0]." 
@@ -237,8 +235,6 @@ while (list($key, $val) = each($ST))
 		
 		}
 	}
-		
-		
 	
 	reset($tab_esp);
 
@@ -257,7 +253,6 @@ while (list($key, $val) = each($ST))
 		reset($val2);
 
 		$poids_total = 0;
-		
 		$min = 10000;
 		$max = 0.00001;
 		for ($i=0; $i<$nb_deb; $i++)
@@ -318,7 +313,6 @@ $id_gt_sp =0;
 $enplus=Array();
 while (list($key, $val) = each($ST))
 	{
-	
 	
 	$query2 = "select sum(AD_rec.poids_total), count(AD_rec.poids_total), 
 	min(AD_rec.poids_total), max(AD_rec.poids_total), avg(AD_rec.poids_total), 
@@ -385,8 +379,6 @@ while (list($key, $val) = each($ST))
 		
 		$tab_gt_esp = Array();
 		////////
-		
-		
 	
 		$intermediaire=Array();
 		while($ligne = pg_fetch_row($result3))
@@ -413,7 +405,6 @@ while (list($key, $val) = each($ST))
 			}
 		}
 		
-
 		reset($tab_gt_esp);
 		while (list($key2, $val2) = each($tab_gt_esp))
 			{
@@ -461,9 +452,6 @@ while (list($key, $val) = each($ST))
 				} else {
 				$ecart_type_gt = 0;
 				}
-			
-			
-			
 			
 			$query12 = "insert into art_stat_gt_sp ( id, nbre_enquete_gt_sp, obs_gt_sp_min, obs_gt_sp_max, 
 			pue_gt_sp_ecart_type, pue_gt_sp, ref_espece_id, art_stat_gt_id) 
@@ -602,9 +590,6 @@ while (list($key, $val) = each($ST))
 	$Fpe = $NbS / $NbEnqAct * ($NbUPr_def * $Nbjoe);
 	$Fm = round (($Fpe * $Nbjo / $Nbjoe) , 3);
 	
-
-
-
 	$query13 = "update art_stat_totale 
 	set nbre_unite_recensee_periode = ".$NbUPr_def.", nbre_jour_activite = ".$Nbjoe.", fpe = ".$Fpe.", fm = ".$Fm." 
 	where annee = ".$val[1]."  
@@ -684,15 +669,11 @@ while (list($key, $val) = each($ST))
 					$i =$i+1;
 				}
 				
-
-			
 			$NbS_gt += $NbS_gt_i;
 			}
 	
 		$Fpe_gt = $NbS_gt / $NbEnqAct * ($NbUPr_def * $Nbjoe);
 		$Fm_gt = round (($Fpe_gt * $Nbjo / $Nbjoe) , 3);
-		
-
 		
 		$query14 = "update art_stat_gt 
 		set fpe_gt = ".$Fpe_gt.", fm_gt = ".$Fm_gt." 
@@ -700,7 +681,6 @@ while (list($key, $val) = each($ST))
 		and art_stat_totale_id = ".$cle_tab_tot [$val[0]][$val[1]][$val[2]]." ";
 
 		$result14 = pg_exec($connection, $query14);
-
 		}
 	
 	}//fin du while (list($key, $val) = each($ST))
@@ -732,17 +712,11 @@ while (list($key, $val) = each($ST))
 		{
 		$capt_tot = round (($row[0] * $row[1]) ,1);
 		
-
-
 		$query15 = "update art_stat_totale 
 		set cap = ".$capt_tot." 
 		where annee = ".$val[1]." 
 		and mois = ".$val[2]." 
 		and art_agglomeration_id = ".$val[0]." ";
-		
-		
-		
-		
 		
 		$result15 = pg_exec($connection, $query15);
 		
@@ -817,7 +791,6 @@ while (list($key, $val) = each($ST))
 		if ($row[0] == null)continue;
 		else $tab_effort[$row[1]]=$row[0];
 		}
-	
 	
 	$query_pue = "select A_S_gt.pue_gt, A_S_gt.art_grand_type_engin_id 
 	from art_stat_gt as A_S_gt, art_stat_totale as A_S_T 
@@ -960,8 +933,6 @@ while (list($key, $val) = each($ST))
 			
 			else	{	//ds enquetes de la même agglo avec GT id
 					//quelque soit le mois sur une période de moi-12 à mois +12
-				
-
 				
 				
 				$annee_cour = $val[1];
@@ -1186,7 +1157,6 @@ while (list($key, $val) = each($ST))
 					and A_S_gt.art_grand_type_engin_id = '".$key2."'";
 					break;
 					}
-				
 				
 				
 //print("<br>3 : ".$query_int4);
@@ -1481,8 +1451,6 @@ while (list($key, $val) = each($ST))
 							and A_S_gt.art_grand_type_engin_id = '".$key2."'";
 							break;
 							}
-							
-								
 						
 
 //print("<br>5 : ".$query_int6);
@@ -1644,9 +1612,6 @@ while (list($key, $val) = each($ST))
 		{
 		$capt_gt_sp = round(($row[0] * $row[1] / $row[2]) , 1 );
 		
-	
-
-	
 		$query21 = "update art_stat_gt_sp 
 		set cap_gt_sp = ".$capt_gt_sp." 
 		where ref_espece_id = '".$row[3]."' 
@@ -1680,8 +1645,6 @@ while($row = pg_fetch_row($result30)){
 	$coef_esp[$esp][1]= $b;
 	$coef_esp[$esp][2]= $ref;
 	}
-
-
 
 //remise à zéro du pointeur
 reset($coef_esp);
@@ -1754,7 +1717,9 @@ while (list($key_st, $val_st) = each($ST))
 		if ($row[1]<10)$taille_stand=5;
 		else if ($row[1]<100)$taille_stand=((substr($row[1],0,1))*10)+5;//ex 87->85
 		//si > :
-		else $taille_stand=((substr($row[1],0,2))*10)+5;//ex 123->125
+		else if ($row[1]<1000) $taille_stand=((substr($row[1],0,2))*10)+5;//ex 123->125
+		else $taille_stand=((substr($row[1],0,3))*10)+5; 
+// enregistrement de longueur supérieure à 1000mm
 		
 		//on somme les effectifs de même tailles.
 
@@ -1780,13 +1745,16 @@ while (list($key_st, $val_st) = each($ST))
 		reset($val_esp);
 		while (list($key_taille, $val_taille) = each($val_esp))	//pour chaque taille
 			{
-			
 			if($key_taille==5)$li=0;
 			else if ($key_taille <99)$li=substr($key_taille,0,1);
-			else $li=substr($key_taille,0,2);
+			else if ($key_taille <999) $li=substr($key_taille,0,2);
+			else  $li=substr($key_taille,0,3);  
+// corr JME 03 2010, pour prendre en compte les poissons de plus d'un metre
+
 			
-			$xi=round(($val_taille[0]*($val_taille[1]/$wdft_sp)),1);//mettre à 1 pour réel 0.1
-			
+			$xi=round(($val_taille[0]*($val_taille[1]/$wdft_sp)),1);//mettre à 1 pour réel 0.1, 
+// la colonne xi de la table taille_sp est mise en reel dans bdppeao et non en integer. JME 03 2010
+
 			if($xi != 0)
 				{
 				$query_taille = "insert into art_taille_sp ( id, li, xi, art_stat_sp_id) 
@@ -1844,11 +1812,9 @@ while (list($key_st, $val_st) = each($ST))
 		if ($row[1]<10)$taille_stand=5;
 		else if ($row[1]<100)$taille_stand=((substr($row[1],0,1))*10)+5;//ex 87->85
 		//si > :
-		else $taille_stand=((substr($row[1],0,2))*10)+5;//ex 123->125
-		
-		
-		
-
+		else if ($row[1]<1000) $taille_stand=((substr($row[1],0,2))*10)+5;//ex 123->125
+		else $taille_stand=((substr($row[1],0,3))*10)+5; //JME correction 03 2010		
+	
 		
 		//on somme les effectifs de même tailles.
 
@@ -1880,11 +1846,13 @@ while (list($key_st, $val_st) = each($ST))
 				{
 				if($key_taille==5)$li=0;
 				else if ($key_taille <99)$li=substr($key_taille,0,1);
-				else $li=substr($key_taille,0,2);
+				else if ($key_taille <999) $li=substr($key_taille,0,2);
+				else $li=substr($key_taille,0,3);  
+// corr JME 03 2010, pour prendre en compte les poissons de plus d'un metre
+							
 				
 				
-				
-				$xi=round(($val_taille[0]*($val_taille[1]/$wdft_gt_sp)),1);//mettre à 1 pour réel 0.1
+				$xi=round(($val_taille[0]*($val_taille[1]/$wdft_gt_sp)),1);//mettre à 1 pour réel 0.1 
 				
 				if($xi != 0)
 					{
@@ -1899,24 +1867,9 @@ while (list($key_st, $val_st) = each($ST))
 			}
 		}
 	}//fin du while $ST
-	
-
-
 
 
 }//fin pour 1 systeme
-/*
-//envoie mail confirm
-// Subject
-$subject = 'PPEAO';
-// Message
-$msg = 'Fin du traitement de calcul des données statistiques';
-// Headers
-$headers = 'From: base_PPEAO'."\r\n";
-$headers .= "\r\n";
-// Function mail()
-//mail($to, $subject, $msg, $headers);
-*/
 
 print("<br><br><br>");
 ?>
