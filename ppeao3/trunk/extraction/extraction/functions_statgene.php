@@ -33,35 +33,51 @@ function TestsuppressionChamp($table,$TestSupp,$typeStatistiques) {
 			switch ($TestSupp) {
 				case 6 : $Asupprimer = true; break;	
 			}
-			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon && $_SESSION['listeColonne'] == "XtoutX") {
-				// Cas d'un vrai regroupement et d'une selection de toutes les variables...
-				switch ($TestSupp) {
-					// On enleve les valeurs concernant les especes...
-					case 34 : $Asupprimer = true;break;
-					case 35 : $Asupprimer = true;break;
-					case 36 : $Asupprimer = true;break;
-					case 37 : $Asupprimer = true;break;
-					case 38 : $Asupprimer = true;break;
-					case 39 : $Asupprimer = true;break;
-					case 40 : $Asupprimer = true;break;
-					case 41 : $Asupprimer = true;break;
-					case 42 : $Asupprimer = true;break;
-					
+			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon ) {
+				// Cas d'un vrai regroupement
+				if ( $_SESSION['listeColonne'] == "XtoutX") {
+					// On enleve aussi les variable supplementaire....
+					switch ($TestSupp) {
+						// On enleve les valeurs concernant les especes... (les catetro.id et cateeco.id viennent ici des tables ref_categorie_xxx et plus de la table espece.)
+						case 34 : $Asupprimer = true;break;
+						case 35 : $Asupprimer = true;break;
+						case 36 : $Asupprimer = true;break;
+						case 37 : $Asupprimer = true;break;
+						case 38 : $Asupprimer = true;break;
+						case 39 : $Asupprimer = true;break;
+						case 40 : $Asupprimer = true;break;
+						case 41 : $Asupprimer = true;break;
+						case 42 : $Asupprimer = true;break;	
+					}
+				} else {
+					switch ($TestSupp) {
+						// On enleve les valeurs concernant les especes, ie cate trop et ecol (ici venant de la table esp)
+						case 24 : $Asupprimer = true;break;
+						case 25 : $Asupprimer = true;break;
+					}					
 				}
 			}
 			break;
 		case "taillart":
-			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon && $_SESSION['listeColonne'] == "XtoutX" ) {
-				// Cas d'un vrai regroupement et d'une selection de toutes les variables...
-				switch ($TestSupp) {
-					// On enleve les valeurs concernant les especes...
-					case 24 : $Asupprimer = true;break;
+			if (!($_SESSION['listeRegroup'] == "") && !$creationRegBidon ) {
+				// Cas d'un vrai regroupement.				
+				if ( $_SESSION['listeColonne'] == "XtoutX") {
+					switch ($TestSupp) {
+						// On enleve les valeurs supplémentaires concernant les especes...
+						case 24 : $Asupprimer = true;break;
+						case 25 : $Asupprimer = true;break;
+						case 28 : $Asupprimer = true;break;
+						case 29 : $Asupprimer = true;break;				
+						case 30 : $Asupprimer = true;break;
+						case 31 : $Asupprimer = true;break;	
+					}
+				} else  {
+					switch ($TestSupp) {
+					// On enleve les valeurs concernant les especes
 					case 25 : $Asupprimer = true;break;
-					case 28 : $Asupprimer = true;break;
-					case 29 : $Asupprimer = true;break;				
-					case 30 : $Asupprimer = true;break;
-					case 31 : $Asupprimer = true;break;	
-}
+					case 26 : $Asupprimer = true;break;
+					}
+				}
 			}
 			break;
 		case "stats":
@@ -999,12 +1015,13 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 						} else {
 							$prorataGTE = $regroupDeb[$cptRg][4] / $CapturesGTE;
 							$CapturesGTEEsp = $CapturesGTEStrate  * $prorataGTE;
-							$EffortGTEEsp = $EffortGTEStrate  * $prorataGTE;
+							
+							$EffortGTEEsp = $EffortGTEStrate  * $prorataGTE; // juste pour le calcul, il n'y a pas d'effort par GT/Esp
 							if (  $EffortGTEEsp <> 0) {
 								$PUEGTEEsp = $CapturesGTEEsp / $EffortGTEEsp;
 							}
 						}
-						$ligneResultat .= "&#&". $PUEGTEEsp."&#&".$EffortGTEEsp."&#&".$CapturesGTEEsp."&#&". $puestrate."&#&".$EffortGTEStrate."&#&".$CapturesGTEStrate;
+						$ligneResultat .= "&#&". $PUEGTEEsp."&#&".$CapturesGTEEsp."&#&". $puestrate."&#&".$EffortGTEStrate."&#&".$CapturesGTEStrate;
 						break;
 					case "atgts":
 						$puestrate = floatval($regroupDeb[$cptRg][11]);
@@ -1021,7 +1038,7 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 							//echo "reg 4 = ".$regroupDeb[$cptRg][4]."<br/>";
 							$prorataGTE = $regroupDeb[$cptRg][4] / $CapturesGTE;
 							$CapturesGTEEsp = $CapturesGTEStrate  * $prorataGTE;
-							$EffortGTEEsp = $EffortGTEStrate  * $prorataGTE;
+							$EffortGTEEsp = $EffortGTEStrate  * $prorataGTE; // juste pour le calcul, il n'y a pas d'effort par GT/Esp
 							if (  $EffortGTEEsp <> 0) {
 								$PUEGTEEsp = $CapturesGTEEsp / $EffortGTEEsp;
 							} 
@@ -1038,7 +1055,7 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 						}	
 
 						$CapturesTaille = floatval($regroupDeb[$cptRg][3]) * $Coeff;
-						$ligneResultat .= "&#&".$CapturesTaille."&#&". $PUEGTEEsp."&#&".$EffortGTEEsp."&#&".$CapturesGTEEsp."&#&". $puestrate."&#&".$EffortGTEStrate."&#&".$CapturesGTEStrate;
+						$ligneResultat .= "&#&".$CapturesTaille."&#&". $PUEGTEEsp."&#&".$CapturesGTEEsp."&#&". $puestrate."&#&".$EffortGTEStrate."&#&".$CapturesGTEStrate;
 						//echo "|".$CapturesTaille."|". $PUEGTEEsp."|".$EffortGTEEsp."|".$CapturesGTEEsp."|". $puestrate."|".$EffortGTEStrate."|".$CapturesGTEStrate."<br/>";
 						break;
 				}

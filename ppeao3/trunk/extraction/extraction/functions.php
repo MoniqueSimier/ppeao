@@ -1324,7 +1324,7 @@ function AfficherDonnees($file,$typeAction){
 							$ListeTableCom = $ListeTableDeb ;
 							$WhereCom = $WhereDeb ;
 							$OrderCom = $OrderDeb ;	
-							$listeChampsSpec = ",deb.art_unite_peche_id,deb.art_grand_type_engin_id, aeng.art_type_engin_id,teng.libelle";
+							$listeChampsSpec = ",deb.art_unite_peche_id,deb.art_grand_type_engin_id, aeng.art_type_engin_id";
 							$ListeTableSpec = ", art_engin_peche as aeng, art_type_engin as teng"; 
 							$WhereSpec = " and aeng.art_debarquement_id = deb.id and teng.id = aeng.art_type_engin_id";						
 							$ConstIDunique = "DEB-##-11";
@@ -2305,19 +2305,19 @@ function AfficherDonnees($file,$typeAction){
 								$listeChamps =$listeChamps.",Pue_totale,Effort_total,Captures_totales";
 								break;
 							case "asp":
-								$listeChamps =$listeChamps.",Pue_espece,Captures_especes,Pue_totale,Effort_total,Captures_totales";
+								$listeChamps =$listeChamps.",Pue_espece,Captures_espece,Pue_totale,Effort_total,Captures_totales";
 								break;
 							case "ats":
-								$listeChamps =$listeChamps.",Effectif,Pue_espece,Captures_especes,Pue_totale,Effort_total,Captures_totales";
+								$listeChamps =$listeChamps.",Effectif,Pue_espece,Captures_espece,Pue_totale,Effort_total,Captures_totales";
 								break;
 							case "asgt":
 								$listeChamps =$listeChamps.",Pue_GT,Effort_GT,Captures_GT";
 								break;
 							case "attgt":
-								$listeChamps =$listeChamps.",Pue_GT_espece,Effort_GT_espece,Captures_GT_espece,Pue_GT,Effort_GT,Captures_GT";
+								$listeChamps =$listeChamps.",Pue_GT_espece,Captures_GT_espece,Pue_GT,Effort_GT,Captures_GT";
 								break;
 							case "atgts":
-								$listeChamps =$listeChamps.",Effectif,Pue_GT_espece,Effort_GT_espece,Captures_GT_espece,Pue_GT,Effort_GT,Captures_GT";
+								$listeChamps =$listeChamps.",Effectif,Pue_GT_espece,Captures_GT_espece,Pue_GT,Effort_GT,Captures_GT";
 								break;	
 						}
 						$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS],$typeStatistiques);
@@ -3356,10 +3356,10 @@ function remplaceAlias($listeDesChamps,$Idunique,$table,$typeStatistiques) {
 			if ( $listeTitre[$cptT]=="id.unique" || $listeTitre[$cptT]=="Coeff_extrapolation" || $listeTitre[$cptT]=="Nombre_individus_mesures" || 
 			$listeTitre[$cptT]=="Effort_total" || $listeTitre[$cptT]=="Agglomeration_origine_unite" || $listeTitre[$cptT]=="Effort_total_strate" ||
 			$listeTitre[$cptT]=="Pue_totale" || $listeTitre[$cptT]=="Captures_totales" ||
-			$listeTitre[$cptT]=="Pue_espece" ||  $listeTitre[$cptT]=="Captures_especes" ||
+			$listeTitre[$cptT]=="Pue_espece" ||  $listeTitre[$cptT]=="Captures_espece" ||
 			$listeTitre[$cptT]=="Effectif_strate" || 
 			$listeTitre[$cptT]=="Pue_GT" || $listeTitre[$cptT]=="Effort_GT" || $listeTitre[$cptT]=="Captures_GT" ||
-			$listeTitre[$cptT]=="Pue_GT_espece" || $listeTitre[$cptT]=="Effort_GT_espece" || $listeTitre[$cptT]=="Captures_GT_espece" ||
+			$listeTitre[$cptT]=="Pue_GT_espece" || $listeTitre[$cptT]=="Captures_GT_espece" ||
 			$listeTitre[$cptT]=="Effectif" 
 			) {
 				if ($listeDesTitres == "") {
