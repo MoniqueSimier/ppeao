@@ -69,9 +69,10 @@ case "f_a":
 	if ($_GET["f_a"]==$debut["annee"]) {$premier_mois=$debut["mois"];$dernier_mois=12;}
 	if ($_GET["f_a"]==$fin["annee"] && $_GET["f_a"]==$debut["annee"])
 		{$premier_mois=$_GET["d_m"];$dernier_mois=$fin["mois"];}
-	if ($_GET["f_a"]==$_GET["d_a"])
-		{$premier_mois=$_GET["d_m"];$dernier_mois=$fin["mois"];}
+	if ($_GET["f_a"]==$_GET["d_a"])	
+		{$premier_mois=$_GET["d_m"];}
 	$i=$premier_mois;
+	
 	while ($i<=$dernier_mois) {
 		$responseText.='<option value="'.$i.'">'.number_pad($i,2).'</option>';
 		$i++;
