@@ -1466,8 +1466,10 @@ function AfficherDonnees($file,$typeAction){
 				} else {
 					$SQLSecteurPenq = $SQLSecteur;
 				}
-				$SQLperEnq = "select id from art_periode_enquete as penq where penq.annee||'/'||penq.mois between  '".$SQLdateDebut."' and  '".$SQLdateFin."'
-				and penq.art_agglomeration_id in (select id from art_agglomeration where ref_secteur_id in (".$SQLSecteurPenq."))";
+				//$SQLperEnq = "select id from art_periode_enquete as penq where penq.annee||'/'||penq.mois between  '".$SQLdateDebut."' and  '".$SQLdateFin."'
+				//and penq.art_agglomeration_id in (select id from art_agglomeration where ref_secteur_id in (".$SQLSecteurPenq."))";
+				// Dommage le script ci-dessus ne fonctionne pas toujours... C'etait elegant. On fait dans le bourrin.
+				$SQLperEnq = "select id,annee,mois from art_periode_enquete as penq where penq.art_agglomeration_id in (select id from art_agglomeration where ref_secteur_id in (".$SQLSecteurPenq."))";
 				//echo $SQLperEnq."<br/>";
 				$SQLperEnqResult = pg_query($connectPPEAO,$SQLperEnq);
 				$erreurSQL = pg_last_error($connectPPEAO);
@@ -1485,20 +1487,30 @@ function AfficherDonnees($file,$typeAction){
 							WriteCompLog ($logComp, "Pas de resultat disponible pour la selection ".$SQLfinal,$pasdefichier);
 						}
 					} else {
-		
+						$dateDeb = explode("/",$SQLdateDebut);
+						$dateFin = explode("/",$SQLdateFin);
+						$dateDebaComp = intval($dateDeb[0].str_pad($dateDeb[1], 2, "0", STR_PAD_LEFT)."01");
+						$jfmdateFin  = days_in_month($dateFin[0],$dateFin[1]);
+						$dateFinaComp = intval($dateFin[0].str_pad($dateFin[1], 2, "0", STR_PAD_LEFT).$jfmdateFin);		
 						while ($PenqRow = pg_fetch_row($SQLperEnqResult) ) {
-							if ($SQLPeEnquete == "") {
-								$SQLPeEnquete = $PenqRow[0];
-							} else {
-								$SQLPeEnquete .= ",".$PenqRow[0];
+							// On explose les dates pour contruire une valeur comparable.
+							$dateEnq = intval($PenqRow[1].str_pad($PenqRow[2], 2, "0", STR_PAD_LEFT)."01");
+							//echo "date enquete = ".$dateEnq." date deb = ".$dateDebaComp." date fin = ".$dateFinaComp."<br/>";
+							if ( $dateEnq >= $dateDebaComp && $dateEnq <= $dateFinaComp ) {	 
+								if ($SQLPeEnquete == "") {
+									$SQLPeEnquete = $PenqRow[0];
+								} else {
+									$SQLPeEnquete .= ",".$PenqRow[0];
+								}
 							}
+																													   
 						}
 					}
 				}
 				$WherePeEnq = "penq.id in (".$SQLPeEnquete.") and ";
 				pg_free_result($SQLperEnqResult);
 			}
-			
+			//echo $WherePeEnq."<br/>";
 			// ********** DEBUT STATISTIQUES. Agglomeration et generale se basent sur les memes tables, pour générales, on va effectuer des calculs
 			if ($typeStatistiques == "generales") {
 				// On doit tester si on a un effort par secteur ou uniquement sur le systeme.
