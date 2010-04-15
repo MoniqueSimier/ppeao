@@ -1022,6 +1022,19 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 							}
 						}
 						$ligneResultat .= "&#&". $PUEGTEEsp."&#&".$CapturesGTEEsp."&#&". $puestrate."&#&".$EffortGTEStrate."&#&".$CapturesGTEStrate;
+						// On ajoute un enreg dans le tableau temporaire des efforts par GTE et par ESP pour pouvoir l'extraire plus tard.
+						$numEnrEff = count($_SESSION['listeEffortGTEESPTotal']) + 1;
+						$ajoutEffOK = true;
+						for ($cptEff=1 ; $cptEff<=$NbReg;$cptEff++) {
+							$infoEff = explode("&#&",$_SESSION['listeEffortGTEESPTotal'][$cptEff][1]);
+							if ($infoEff[0] == $debIDPrec."-".$nomReg) {
+								$ajoutEffOK = false;
+								break;
+							}
+						}
+						if ($ajoutEffOK) { 
+						//echo "ajout ".$debIDPrec."-".$nomReg."&#&". $PUEGTEEsp."&#&".$CapturesGTEEsp."<br/>"; 
+						$_SESSION['listeEffortGTEESPTotal'][$numEnrEff] = $debIDPrec."-".$nomReg."&#&". $PUEGTEEsp."&#&".$CapturesGTEEsp; }
 						break;
 					case "atgts":
 						$puestrate = floatval($regroupDeb[$cptRg][11]);
@@ -1055,7 +1068,20 @@ function AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posSt
 						}	
 
 						$CapturesTaille = floatval($regroupDeb[$cptRg][3]) * $Coeff;
-						$ligneResultat .= "&#&".$CapturesTaille."&#&". $PUEGTEEsp."&#&".$CapturesGTEEsp."&#&". $puestrate."&#&".$EffortGTEStrate."&#&".$CapturesGTEStrate;
+						// On recupere dans le tableau temporaire les efforts par GTE et par ESP.
+						//echo "-".$debIDPrec."-".$nomReg."<br/>";
+						$NbReg = count($_SESSION['listeEffortGTEESPTotal']) ;
+						for ($cptEff=1 ; $cptEff<=$NbReg;$cptEff++) {
+							$infoEff = explode("&#&",$_SESSION['listeEffortGTEESPTotal'][$cptEff]);
+							//echo $infoEff[0]."<br/>";
+							if ($infoEff[0] == $debIDPrec."-".$nomReg) {
+								$EffortGTEEspStrate = $infoEff[1];
+								$CapturesGTEEspStrate = $infoEff[2];
+								//echo "Trouve !<br/>";
+								break;
+							}
+						}
+						$ligneResultat .= "&#&".$CapturesTaille."&#&". $puestrate."&#&".$EffortGTEStrate."&#&".$CapturesGTEStrate."&#&".$EffortGTEEspStrate."&#&".$CapturesGTEEspStrate;
 						//echo "|".$CapturesTaille."|". $PUEGTEEsp."|".$EffortGTEEsp."|".$CapturesGTEEsp."|". $puestrate."|".$EffortGTEStrate."|".$CapturesGTEStrate."<br/>";
 						break;
 				}

@@ -1825,6 +1825,7 @@ function AfficherDonnees($file,$typeAction){
 			// On boucle sur toutes les tables pour extraire les donnees
 			unset($_SESSION['listeEffortTotal']);
 			unset($_SESSION['listeEffortGTETotal']);
+			unset($_SESSION['listeEffortGTEESPTotal']);
 			unset($_SESSION['listeEffortEspeces']);
 			if ($EcrireLogComp && $debugLog) {
 					WriteCompLog ($logComp, "DEBUG : remise a zero des tables temps pour calcul stat listeEffortTotal listeEffortGTETotal et listeEffortEspeces",$pasdefichier);
@@ -2329,7 +2330,7 @@ function AfficherDonnees($file,$typeAction){
 								$listeChamps =$listeChamps.",Pue_GT_espece,Captures_GT_espece,Pue_GT,Effort_GT,Captures_GT";
 								break;
 							case "atgts":
-								$listeChamps =$listeChamps.",Effectif,Pue_GT_espece,Captures_GT_espece,Pue_GT,Effort_GT,Captures_GT";
+								$listeChamps =$listeChamps.",Effectif,Pue_GT,Effort_GT,Captures_GT,Pue_GT_espece,Captures_GT_espece";
 								break;	
 						}
 						$listeChamps = remplaceAlias($listeChamps,"y",$tableStat[$cptTS],$typeStatistiques);
