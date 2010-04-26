@@ -299,13 +299,20 @@ function replaceQueryParam ($queryString,$queryParam,$newValue) {
 $found=0;
 $queryParam2=$queryParam.'=';
 $newQueryString='';
-$string=split('&',$queryString);
+// 2010-04-26 split replaced by explode since it is deprecated in PHP 5.3
+$string=explode('&',$queryString);
 $i=0;
 foreach($string as $pair)
 {
-if (ereg($queryParam2,$pair)) {
+	
+//if (ereg($queryParam2,$pair)) {
+// 2010-04-26 ereg replaced by preg_match  since it is deprecated in PHP 5.3
+if (preg_match('/'.$queryParam2.'/',$pair)) {
+
 $trim=strstr($pair,'=');
-$newpair=ereg_replace($trim,'',$pair);
+// 2010-04-26 ereg_replace replaced by preg_replace  since it is deprecated in PHP 5.3
+
+$newpair=preg_replace('/'.$trim.'/','',$pair);
 $pair=$newpair.'='.$newValue;
 $found=1;
 }
