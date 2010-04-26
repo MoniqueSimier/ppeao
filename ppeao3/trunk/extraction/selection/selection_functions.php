@@ -78,7 +78,12 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 		if (empty($_GET["f_m"])) {$fin_mois=1;} else {$fin_mois=$_GET["f_m"];}
 		// on construit une date a partir de l'annee et du mois
 		$fin_date=$fin_annee.'-'.$fin_mois.'-'.days_in_month($fin_annee,$fin_mois);
-		$sql.=' AND exp_campagne.date_debut<=\''.$fin_date.'\' ';
+		
+		// 2010-04-26 dirty hack to go around the problem of records with mois=11 but date_debut=2002-10-31
+		// we replace <= with < (same as adding one day)
+		//$sql.=' AND exp_campagne.date_debut<=\''.$fin_date.'\' ';
+
+		$sql.=' AND exp_campagne.date_debut<\''.$fin_date.'\' ';
 		}
 	
 	// si des valeurs de secteurs ont ete passees dans l'url
@@ -198,7 +203,10 @@ if (!empty($especes_array) && $_GET["step"]>2) {
 		if (empty($_GET["f_m"])) {$fin_mois=1;} else {$fin_mois=$_GET["f_m"];}
 		// on construit une date a partir de l'annee et du mois
 		$fin_date=$fin_annee.'-'.$fin_mois.'-'.days_in_month($fin_annee,$fin_mois);
-		$sql.=' AND art_periode_enquete.date_debut<=\''.$fin_date.'\' ';
+		// 2010-04-26 dirty hack to go around the problem of records with mois=11 but date_debut=2002-10-31
+		// we replace <= with < (same as adding one day)
+		//$sql.=' AND art_periode_enquete.date_debut<=\''.$fin_date.'\' ';
+		$sql.=' AND art_periode_enquete.date_debut<\''.$fin_date.'\' ';
 		}
 		
 	// si des valeurs de periodes d'enquete ont ete passees dans l'url
@@ -1289,11 +1297,9 @@ switch ($_GET["step"]) {
 	// on choisit la date de debut la plus ancienne et la date de fin la plus recente
 	$from=array();
 	$to=array();
-
 	if ($array_c[0]["campagne_debut"]<$array_e[0]["enquete_debut"]) {$from=getdate(strtotime($array_c[0]["campagne_debut"]));} else {$from=getdate(strtotime($array_e[0]["enquete_debut"]));}
 	if ($array_c[0]["campagne_fin"]>$array_e[0]["enquete_fin"]) {$to=getdate(strtotime($array_c[0]["campagne_fin"]));} else {$to=getdate(strtotime($array_e[0]["enquete_fin"]));}
 
-	
 
 	$debut["annee"]=$from["year"];
 	$debut["mois"]=$from["mon"];
@@ -1987,7 +1993,7 @@ echo('</div></div>');}
 }
 
 //******************************************************************************
-// affiche le selecteur de mois-annee de debut/fin
+// affiche le selecteur de periodes d'enquete
 function affichePeriodeEnquetes() {
 global $compteur;
 global $connectPPEAO;
@@ -1995,7 +2001,7 @@ global $connectPPEAO;
 		// on n'est pas encore la, on n'affiche rien
 		case ($_GET["step"]<9):
 		break;
-		// on en est a cette etape on affiche le selecteur de campagnes
+		// on en est a cette etape on affiche le selecteur d'enquetes
 		case 9:
 		echo('<div id="step_9">');
 			echo('<form id="step_9_form" name="step_9_form" target="/extraction/selection/selection.php" method="GET">');
