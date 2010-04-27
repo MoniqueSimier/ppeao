@@ -198,7 +198,7 @@
 		<champ code="valeur_estimee" affichage="C" libelle="Mesure_estimee"/>		
 		<champ code="exp_sexe_id" affichage="C" libelle="Sexe_id"/>
 		<champ code="exp_stade_id" affichage="C" libelle="Stade_maturite_id"/>
-		<champ code="exp_remplissage_id" affichage="C" libelle="Remplissage_id" />
+		<champ code="exp_remplissage_id" affichage="X" libelle="Remplissage_id" />
 		<champ code="memo" affichage="C" libelle="Biologie_memo"/>
 
 	</table>
