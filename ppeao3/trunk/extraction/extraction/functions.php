@@ -1580,7 +1580,11 @@ function AfficherDonnees($file,$typeAction){
 					// ******************
 					// **** art_stat_sp
 					$listeChampsSpecasp = ",asp.ref_espece_id,esp.libelle ,asp.pue_sp,asp.cap_sp ,asp.id ,ast.id,se.id,ast.cap,ast.pue,ast.fm";
-					$ListeTableSpecasp = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp"; 
+					if ($_SESSION['listeColonne'] == "XtoutX") { 
+						$ListeTableSpecasp = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp"; 
+					} else {
+						$ListeTableSpecasp = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,ref_espece as esp"; 
+					}
 					$WhereSpecasp = "	and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
 					if (!($SQLEspeces == "")) {
 						$WhereSpecasp .= " and asp.ref_espece_id in (".$SQLEspeces.") ";
@@ -1608,7 +1612,11 @@ function AfficherDonnees($file,$typeAction){
 					// ******************
 					// **** art_taille_sp
 					$listeChampsSpecats = ",asp.ref_espece_id,esp.libelle, asp.pue_sp,asp.cap_sp,ats.li,ats.xi,asp.id,ast.id,ats.id,se.id,ast.cap,ast.pue,ast.fm";
-					$ListeTableSpecats = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats,ref_espece as esp"; 
+					if ($_SESSION['listeColonne'] == "XtoutX") { 
+						$ListeTableSpecats = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats"; 
+					} else {
+						$ListeTableSpecats = ",art_periode_enquete as penq, art_stat_totale as ast,art_stat_sp as asp,art_taille_sp as ats,ref_espece as esp";  
+					}
 					$WhereSpecats = " 	and ats.art_stat_sp_id = asp.id and
 											asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
 					if (!($SQLEspeces == "")) {
@@ -1653,7 +1661,11 @@ function AfficherDonnees($file,$typeAction){
 					// ******************
 					// **** art_stat_gt_sp
 					$listeChampsSpecattgt = ",asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle,attgt.pue_gt_sp,attgt.cap_gt_sp,attgt.id, asgt.id, ast.id,se.id,asgt.cap_gt,asgt.pue_gt,asgt.fm_gt";
-					$ListeTableSpecattgt = ",art_periode_enquete as penq, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
+					if ($_SESSION['listeColonne'] == "XtoutX") { 
+						$ListeTableSpecattgt = ",art_periode_enquete as penq, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
+					} else {
+						$ListeTableSpecattgt = ",art_periode_enquete as penq, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
+					}
 					$WhereSpecattgt = "	and attgt.art_stat_gt_id = asgt.id  
 											and asgt.art_stat_totale_id = ast.id 
 											and gte.id = asgt.art_grand_type_engin_id
@@ -1684,7 +1696,11 @@ function AfficherDonnees($file,$typeAction){
 					// ******************
 					// art_taille_gt_sp
 					$listeChampsSpecatgts = ", asgt.art_grand_type_engin_id,gte.libelle,attgt.ref_espece_id, esp.libelle, attgt.pue_gt_sp, attgt.cap_gt_sp, atgts.li, atgts.xi,atgts.id, attgt.id, asgt.id, ast.id,se.id,asgt.cap_gt,asgt.pue_gt,asgt.fm_gt";
-					$ListeTableSpecatgts = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp"; 
+					if ($_SESSION['listeColonne'] == "XtoutX") { 
+						$ListeTableSpecatgts = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte"; 
+					} else {
+						$ListeTableSpecatgts = ",art_periode_enquete as penq, art_taille_gt_sp as atgts, art_stat_gt_sp as attgt,art_stat_gt as asgt, art_stat_totale as ast,art_grand_type_engin as gte,ref_espece as esp";
+					}
 					$WhereSpecatgts = "	and atgts.art_stat_gt_sp_id = attgt.id  
 											and attgt.art_stat_gt_id = asgt.id  
 											and asgt.art_stat_totale_id = ast.id 
@@ -1840,6 +1856,7 @@ function AfficherDonnees($file,$typeAction){
 				$AjoutWhere = "";
 				$listeChampsSel="";
 				$listeChampsSel="";
+				$LeftOuterJoin = "";
 				analyseColonne("statistiques",$typeAction,$tableStat[$cptTS],$typeStatistiques);
 				$WhereSel = $AjoutWhere;
 				$listeChampsReg = $listeChampsCom.${$nomValLChampsSpec}.$listeChampsSel;
@@ -1850,7 +1867,7 @@ function AfficherDonnees($file,$typeAction){
 				} else {
 					$WhereTotalReg = $WhereCom.${$nomValWhereSpec}." and ".$WhereSel;
 				}
-				$SQLfinalreg = "select ".$listeChampsReg." from ".$listeTableReg." where ".$WhereTotalReg ." ".$OrderCom.${$nomOrderCom};
+				$SQLfinalreg = "select ".$listeChampsReg." from ".$listeTableReg." ".$LeftOuterJoin." where ".$WhereTotalReg ." ".$OrderCom.${$nomOrderCom};
 				//echo "<br/><b>requete [".$tableStat[$cptTS]."] </b> = ".$SQLfinalreg."<br/>";
 				$posDEBIDm = posDEBID.$tableStat[$cptTS];
 				$posESPIDm = posESPID.$tableStat[$cptTS];
@@ -2283,6 +2300,7 @@ function AfficherDonnees($file,$typeAction){
 					$AjoutWhere = "";
 					$listeChampsSel="";
 					$listeChampsSel="";
+					$LeftOuterJoin= "";
 					analyseColonne("statistiques",$typeAction,$tableStat[$cptTS],$typeStatistiques);
 					$WhereSel = $AjoutWhere;
 					$listeChamps = $listeChampsCom.${$nomValLChampsSpec}.$listeChampsSel;
@@ -2292,7 +2310,7 @@ function AfficherDonnees($file,$typeAction){
 					} else {
 						$WhereTotalTot = $WhereCom.${$nomValWhereSpec}." and ".$WhereSel;
 					}
-					$SQLfinal = "select ".$listeChamps." from ".$listeTableTot." where ".$WhereTotalTot ." ".$OrderCom.${$nomOrderCom};					
+					$SQLfinal = "select ".$listeChamps." from ".$listeTableTot." ".$LeftOuterJoin." where ".$WhereTotalTot ." ".$OrderCom.${$nomOrderCom};					
 					//echo "<b>".$tableStat[$cptTS]."</b> ". $SQLfinal."<br/>";
 					// Creation du fichier par stat.
 					$ficSuffixe = getSuffixeFicStat($tableStat[$cptTS]);
@@ -2545,6 +2563,7 @@ function creeFichier($SQLaExecuter,$listeChamps,$typeAction,$ConstIDunique,$ExpC
 	global $start_while;
 	global $creationRegBidon;
 	// Execution de la requete
+	//echo "cree fichier ".$tableStat." : ".$SQLaExecuter."<br/>";
 	$SQLfinalResult = pg_query($connectPPEAO,$SQLaExecuter);
 	$erreurSQL = pg_last_error($connectPPEAO);
 	$cpt1 = 0;
@@ -2948,14 +2967,16 @@ function analyseColonne($typePeche,$typeAction,$tableStat,$typeStatistiques){
 						}else {
 							$listeChampsSel = ",asp.nbre_enquete_sp, asp.obs_sp_min,asp.obs_sp_max, asp.pue_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
 						}
-						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
-						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
+						$ListeTableSel = ",ref_famille as fam";
+						$AjoutWhere = " fam.id = esp.ref_famille_id  ";
+						$LeftOuterJoin = ",(ref_espece as esp left outer join ref_categorie_ecologique as cate on cate.id = esp.ref_categorie_ecologique_id) left outer join ref_categorie_trophique as catt on catt.id = esp.ref_categorie_trophique_id ";
 						
 					break;
 					case "ats":
 						$listeChampsSel = ",esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
-						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
-						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
+						$ListeTableSel = ",ref_famille as fam";
+						$AjoutWhere = " fam.id = esp.ref_famille_id  ";
+						$LeftOuterJoin = ",(ref_espece as esp left outer join ref_categorie_ecologique as cate on cate.id = esp.ref_categorie_ecologique_id) left outer join ref_categorie_trophique as catt on catt.id = esp.ref_categorie_trophique_id ";
 					break;
 					case "asgt":
 						if ($typeStatistiques == "generales") {
@@ -2972,13 +2993,15 @@ function analyseColonne($typePeche,$typeAction,$tableStat,$typeStatistiques){
 						}else {
 							$listeChampsSel = ",attgt.nbre_enquete_gt_sp,attgt.obs_gt_sp_min, attgt.obs_gt_sp_max,attgt.pue_gt_sp_ecart_type,esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
 						}
-						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
-						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
+						$ListeTableSel = ",ref_famille as fam";
+						$AjoutWhere = " fam.id = esp.ref_famille_id  ";
+						$LeftOuterJoin = ",(ref_espece as esp left outer join ref_categorie_ecologique as cate on cate.id = esp.ref_categorie_ecologique_id) left outer join ref_categorie_trophique as catt on catt.id = esp.ref_categorie_trophique_id ";
 					break;
 					case "atgts":
 						$listeChampsSel = ",esp.ref_categorie_ecologique_id,cate.libelle,esp.ref_categorie_trophique_id,catt.libelle,fam.libelle";
-						$ListeTableSel = ",ref_categorie_ecologique as cate, ref_categorie_trophique as catt, ref_famille as fam";
-						$AjoutWhere = "  cate.id = esp.ref_categorie_ecologique_id  and catt.id = esp.ref_categorie_trophique_id and fam.id=esp.ref_famille_id";
+						$ListeTableSel = ",ref_famille as fam";
+						$AjoutWhere = " fam.id = esp.ref_famille_id  ";
+						$LeftOuterJoin = ",(ref_espece as esp left outer join ref_categorie_ecologique as cate on cate.id = esp.ref_categorie_ecologique_id) left outer join ref_categorie_trophique as catt on catt.id = esp.ref_categorie_trophique_id ";
 					break;
 				}	
 			} 
