@@ -429,7 +429,16 @@ if ($tableEnCours == "") {
 						if (pg_num_rows($testPerEnqResult) == 0) {
 							// Creation de la periode d'enquete
 							// Le xx et le yy seront remplacés plus tard par les bonnes valeurs des dates min et max
-							$tempSQL = "insert into art_periode_enquete (id,art_agglomeration_id,annee,mois,date_debut,date_fin,description,exec_recomp,date_recomp,exec_stat,date_stat) values (".$valDernierIDPer.",".$compRow[0].",".$compRow[1].",".$compRow[2].",''xx'',''yy'',''Peche artisanale pour agglomeration id = ".$compRow[0].", annee = ".$compRow[1].", mois = ".$compRow[2]."'',null,null,null,null)";
+							
+							// modification par Olivier, 04/05/10 pour utiliser le champ date_stat pour la date de debut
+							// composee de annee-mois-01 (nécessaire pour la sélection/extraction)
+							// pour les cas où le "mois" de début n'est pas celui de date_début
+							
+							// on commence par mettre le mois sur deux chiffre
+							$mois=number_pad($compRow[2],2);
+							$annee=$compRow[1];
+							
+							$tempSQL = "insert into art_periode_enquete (id,art_agglomeration_id,annee,mois,date_debut,date_fin,description,exec_recomp,date_recomp,exec_stat,date_stat) values (".$valDernierIDPer.",".$compRow[0].",".$compRow[1].",".$compRow[2].",''xx'',''yy'',''Peche artisanale pour agglomeration id = ".$compRow[0].", annee = ".$compRow[1].", mois = ".$compRow[2]."'',null,null,null,".$annee."-".$mois."-01)";
 
 							// On prepare la création de la peche artisanale dans la table art_periode_enquete.
 							$insertSQL = "insert into temp_recomp_id values ('art_periode_enquete',".$valDernierIDPer.",null,".$valDernierIDPer.",null,'n','a','".$tempSQL."',".$compRow[0].",".$compRow[1].",".$compRow[2].",'',null,null)";

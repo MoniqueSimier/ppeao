@@ -79,11 +79,8 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 		// on construit une date a partir de l'annee et du mois
 		$fin_date=$fin_annee.'-'.$fin_mois.'-'.days_in_month($fin_annee,$fin_mois);
 		
-		// 2010-04-26 dirty hack to go around the problem of records with mois=11 but date_debut=2002-10-31
-		// we replace <= with < (same as adding one day)
-		//$sql.=' AND exp_campagne.date_debut<=\''.$fin_date.'\' ';
+		$sql.=' AND exp_campagne.date_debut<=\''.$fin_date.'\' ';
 
-		$sql.=' AND exp_campagne.date_debut<\''.$fin_date.'\' ';
 		}
 	
 	// si des valeurs de secteurs ont ete passees dans l'url
@@ -194,7 +191,10 @@ if (!empty($especes_array) && $_GET["step"]>2) {
 		if (empty($_GET["d_m"])) {$debut_mois=1;} else {$debut_mois=$_GET["d_m"];}
 		// on construit une date a partir de l'annee et du mois
 		$debut_date=$debut_annee.'-'.$debut_mois.'-01';
-		$sql.=' AND art_periode_enquete.date_debut>=\''.$debut_date.'\' ';
+		// 2010-05-04 dirty hack to go around the problem of records with mois=11 but date_debut=2002-10-31
+		// we use the column date_stat which contains a concatenation of annee-mois-01 instead of date_debut
+		//$sql.=' AND art_periode_enquete.date_debut>=\''.$debut_date.'\' ';
+		$sql.=' AND art_periode_enquete.date_stat>=\''.$debut_date.'\' ';
 		}
 	// si une valeur de fin_annee a ete passee dans l'url
 	if (!empty($_GET["f_a"]) && $_GET["step"]>4) {
@@ -203,10 +203,10 @@ if (!empty($especes_array) && $_GET["step"]>2) {
 		if (empty($_GET["f_m"])) {$fin_mois=1;} else {$fin_mois=$_GET["f_m"];}
 		// on construit une date a partir de l'annee et du mois
 		$fin_date=$fin_annee.'-'.$fin_mois.'-'.days_in_month($fin_annee,$fin_mois);
-		// 2010-04-26 dirty hack to go around the problem of records with mois=11 but date_debut=2002-10-31
-		// we replace <= with < (same as adding one day)
+		// 2010-05-04 dirty hack to go around the problem of records with mois=11 but date_debut=2002-10-31
+		// we use the column date_stat which contains a concatenation of annee-mois-01 instead of date_debut
 		//$sql.=' AND art_periode_enquete.date_debut<=\''.$fin_date.'\' ';
-		$sql.=' AND art_periode_enquete.date_debut<\''.$fin_date.'\' ';
+		$sql.=' AND art_periode_enquete.date_stat<=\''.$fin_date.'\' ';
 		}
 		
 	// si des valeurs de periodes d'enquete ont ete passees dans l'url
