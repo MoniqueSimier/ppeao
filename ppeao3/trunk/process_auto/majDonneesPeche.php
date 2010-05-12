@@ -434,11 +434,10 @@ if ($tableEnCours == "") {
 							// composee de annee-mois-01 (nécessaire pour la sélection/extraction)
 							// pour les cas où le "mois" de début n'est pas celui de date_début
 							
-							// on commence par mettre le mois sur deux chiffre
-							$mois=number_pad($compRow[2],2);
-							$annee=$compRow[1];
+							// on commence par construire la date
+							$theDate=$compRow[1].'-'.number_pad($compRow[2],2).'-01';
 							
-							$tempSQL = "insert into art_periode_enquete (id,art_agglomeration_id,annee,mois,date_debut,date_fin,description,exec_recomp,date_recomp,exec_stat,date_stat) values (".$valDernierIDPer.",".$compRow[0].",".$compRow[1].",".$compRow[2].",''xx'',''yy'',''Peche artisanale pour agglomeration id = ".$compRow[0].", annee = ".$compRow[1].", mois = ".$compRow[2]."'',null,null,null,".$annee."-".$mois."-01)";
+							$tempSQL = "insert into art_periode_enquete (id,art_agglomeration_id,annee,mois,date_debut,date_fin,description,exec_recomp,date_recomp,exec_stat,date_stat) values (".$valDernierIDPer.",".$compRow[0].",".$compRow[1].",".$compRow[2].",''xx'',''yy'',''Peche artisanale pour agglomeration id = ".$compRow[0].", annee = ".$compRow[1].", mois = ".$compRow[2]."'',null,null,null,CAST('$theDate' as date))";
 
 							// On prepare la création de la peche artisanale dans la table art_periode_enquete.
 							$insertSQL = "insert into temp_recomp_id values ('art_periode_enquete',".$valDernierIDPer.",null,".$valDernierIDPer.",null,'n','a','".$tempSQL."',".$compRow[0].",".$compRow[1].",".$compRow[2].",'',null,null)";
