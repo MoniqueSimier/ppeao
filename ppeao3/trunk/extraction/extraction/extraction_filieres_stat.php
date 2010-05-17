@@ -19,7 +19,9 @@ $subsection="";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 $zone=0; // zone libre (voir table admin_zones)
-Global $debugLog;
+global $debugLog;
+global $EcrireLogComp;
+$EcrireLogComp = true;
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -91,7 +93,7 @@ if (!(file_exists($file)) ) {
     <?php
 	// on teste à quelle zone l'utilisateur a accès
 	if (userHasAccess($userID,$zone)) {
-?>	<a id="stat_toggle" href="#" title="afficher l'aide sur l'extraction des statistiques" onclick="javascript:toggleHelp();">aide >></a></span>
+?>	<a id="stat_toggle" href="#" title="afficher l'aide sur l'extraction des statistiques" onClick="javascript:toggleHelp();">aide >></a></span>
 	<div id="Aide_stat">
 		<p class="hint_text">
         Les fichiers de statistiques globales, par esp&egrave;ces et par grands types d'engins de p&ecirc;che correspondant à la s&eacute;lection r&eacute;alis&eacute;e sont extraits dans un m&ecirc;me fichier zipp&eacute; ; le fichier des statistiques globales est affich&eacute; &agrave; l'&eacute;cran pour visualiser les r&eacute;sultats de la s&eacute;lection. 

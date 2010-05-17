@@ -1418,6 +1418,8 @@ function AfficherDonnees($file,$typeAction){
 			where ".$WhereSyst." ".$WhereAgg." ".$WhereSect." ".$WherePeEnq."	
 				agg.id = penq.art_agglomeration_id and
 				ast.art_agglomeration_id = penq.art_agglomeration_id and
+				ast.annee = penq.annee and
+				ast.mois = penq.mois and
 				py.id = sy.ref_pays_id and
 				sy.id = se.ref_systeme_id and
 				se.id = agg.ref_secteur_id  and asp.art_stat_totale_id = ast.id and esp.id = asp.ref_espece_id";
@@ -1447,6 +1449,13 @@ function AfficherDonnees($file,$typeAction){
 						}
 					}
 				} 
+			}
+			$EspAcompter=explode(",",$SQLEspeces);
+			$nbreEsp = count($EspAcompter);
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "INFO : ".$nbreEsp." especes trouvees = ".$SQLEspeces,$pasdefichier);
+			} else {
+			echo "pas ecriture log<br/>";	
 			}
 			// On charge les colonnes supplémentaires juste pour l'affichage.
 			analyseColonne("statistiques",$typeAction,"ast",$typeStatistiques);

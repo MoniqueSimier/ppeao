@@ -19,7 +19,9 @@ $subsection="";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 $zone=0; // zone libre (voir table admin_zones)
-Global $debugLog;
+global $debugLog;
+global $EcrireLogComp;
+$EcrireLogComp = true;
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>

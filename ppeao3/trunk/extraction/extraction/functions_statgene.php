@@ -1617,6 +1617,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 							unset($regroupDeb);
 							$NumRegEnCours = 0;
 							$RegPrec = "";
+							$espPrec = "";
 						}
 					} // fin du if ($debEnCours<>$debIDPrec)
 					$controleRegroupement = false;	 // Est-ce qu'on controle la presence de l'espece dans le regroupement, eventuellement on le cree ?
@@ -1763,6 +1764,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 					// Debug
 					if ($EcrireLogComp && $debugLog) {
 						WriteCompLog ($logComp, "DEBUG : debencours = ".$debEnCours." espencours = ".$espEnCours. " [".$posStat1."] val1 = ".$finalRow[$posStat1]." [".$posStat2."] val2 = ".$finalRow[$posStat2],$pasdefichier);
+						WriteCompLog ($logComp, "DEBUG : debprec = ".$debIDPrec." espprec = ".$espPrec,$pasdefichier);
 						//WriteCompLog ($logComp, "DEBUG : debprec = ".$debIDPrec." espprec = ".$espPrec,$pasdefichier);
 					}
 					//if ($posRupSupEnCours<>0) {
@@ -1775,6 +1777,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 								$erreurProcess = true;
 								echo "erreur fonction AjoutEnrg<br/>";
 							} 
+							if ($EcrireLogComp && $debugLog) {WriteCompLog ($logComp, "DEBUG : ajout ligne dans table temp ET reinitialisation",$pasdefichier);	}
 							//else{echo "ajout ligne xxx <pre>";print_r($DerniereLigne);echo "</pre>";} 
 							//if ($posRupSupEnCours<>0) {
 								//echo('<pre>');print_r($regroupDeb);echo('</pre>');
@@ -1785,6 +1788,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 							unset($regroupDeb);
 							$NumRegEnCours = 0;
 							$RegPrec = "";
+							$espPrec = "";
 						}
 					} // fin du if ($debEnCours<>$debIDPrec)
 					$controleRegroupement = false;	 // Est-ce qu'on controle la presence de l'espece dans le regroupement, eventuellement on le cree ?					
@@ -1831,9 +1835,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 							}
 							if ($RegEnCours == $RegPrec) {
 								// On met a jour le total en cours
-								if ($posRupSupEnCours<>0) {
-									//echo "1- maj regroupement ".$RegEnCours."<br/>";
-								}
+								//echo "1- maj regroupement ".$RegEnCours."<br/>";
 								$regroupDeb = majReg($regroupDeb,$RegEnCours,$NumRegEnCours,$finalRow,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$tableStat,$typeSelection,$debugLog);
 							} else {
 								// On doit controler si l'espece n'est pas déja dans un regroupement dans le tableau temporaire pour le débarquement en cours.
@@ -1849,9 +1851,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 					} else {
 						// On est toujours sur la meme espece
 						// On ajoute
-						if ($posRupSupEnCours<>0) {
-							//echo "2- maj regroupement ".$RegEnCours."<br/>";
-						}
+						//echo "2- maj regroupement ".$RegEnCours."<br/>";
 						$regroupDeb = majReg($regroupDeb,$RegEnCours,$NumRegEnCours,$finalRow,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$tableStat,$typeSelection,$debugLog);	
 					}// fin du ( $espEnCours<>$espPrec)
 
@@ -1869,9 +1869,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 							for ($cptRg=1 ; $cptRg<=$NbRegDeb;$cptRg++) {
 								if ($regroupDeb[$cptRg][1] == $RegEnCours) {
 									$NumRegEnCours = $cptRg;
-									if ($posRupSupEnCours<>0) {
-										//echo "3- maj regroupement existant".$RegEnCours."<br/>";
-									}
+									//echo "3- maj regroupement existant ".$RegEnCours."<br/>";
 									$regroupDeb = majReg($regroupDeb,$RegEnCours,$cptRg,$finalRow,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$tableStat,$typeSelection,$debugLog);
 									$RegTempTrouve = true;
 									break;
@@ -1882,9 +1880,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 							// On crée une entrée dans le tableau
 							$NbRegDebSuiv = count($regroupDeb) +1;
 							$NumRegEnCours = $NbRegDebSuiv;
-							if ($posRupSupEnCours<>0) {
-								//echo "1-cree nouvel enreg".$RegEnCours."<br/>";
-							}
+							//echo "4-cree nouvel enreg ".$RegEnCours."<br/>";
 							$regroupDeb= creeNouveauReg($regroupDeb,$RegEnCours,$NomRegEncours,$NbRegDebSuiv,$finalRow,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$tableStat,$typeSelection,$effort,$prorata,0,0,0,0,0,0,0,0,0,$debugLog);
 							$RegTempTrouve = true; // On le met a vrai pour eviter que le tableau soit créé deux fois		
 						}// fin du 	if ($NbRegDeb >= 1 )	
@@ -1893,9 +1889,7 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 							// On cree le nouveau regroupement
 							$NbRegDebSuiv = count($regroupDeb) +1;
 							$NumRegEnCours = $NbRegDebSuiv;
-							if ($posRupSupEnCours<>0) {
-								//echo "2-cree nouvel enreg".$RegEnCours."<br/>";
-							}
+							//echo "5-cree nouvel enreg ".$RegEnCours."<br/>";
 							$regroupDeb = creeNouveauReg($regroupDeb,$RegEnCours,$NomRegEncours,$NbRegDebSuiv,$finalRow,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$tableStat,$typeSelection,$effort,$prorata,0,0,0,0,0,0,0,0,0,$debugLog);
 						}
 					} // fin du if ($controleRegroupement)
@@ -1916,6 +1910,9 @@ function creeRegroupement($SQLaExecuter,$posDEBID ,$posESPID,$posESPNom,$posStat
 			if (!(AjoutEnreg($regroupDeb,$debIDPrec,$posESPID,$posESPNom,$posStat1,$posStat2,$posStat3,$posStat4,$posStat5,$DerniereLigne,$typeStatistiques,$tableStat,$posRupSupPosPrec,$typeAction))) {
 				$erreurProcess = true;
 			} 
+			else {
+			if ($EcrireLogComp && $debugLog) {WriteCompLog ($logComp, "DEBUG : ajout ligne dans table temp et FIN traitement",$pasdefichier);	}
+			}
 			//else {echo "fin <pre>";print_r($DerniereLigne);echo "</pre>";	}
 		} // fin du if (pg_num_rows($SQLfinalResult) == 0)
 	}
@@ -2059,7 +2056,7 @@ function majReg($regroupDeb,$RegEnCours,$NumRegEC,$finalRow,$posStat1,$posStat2,
 		$Stat2 = $finalRow[$posStat2];
 		$regroupDeb[$NumRegEC][4] = $regroupDeb[$NumRegEC][4] + floatval($Stat2); 
 		if ($EcrireLogComp && $debugLog) {
-			WriteCompLog ($logComp, "DEBUG : MAJ tableau meme espece = ".$RegEnCours. " num ".$NumRegEC." val1 = ".$regroupDeb[$NumRegEC][3]." - val2= ".$regroupDeb[$NumRegEC][4],$pasdefichier);
+			WriteCompLog ($logComp, "DEBUG : MAJ tableau espece = ".$RegEnCours. " num Reg En cours =  ".$NumRegEC." val1 = ".$regroupDeb[$NumRegEC][3]." - val2= ".$regroupDeb[$NumRegEC][4],$pasdefichier);
 		}
 	}	
 	if (!($posStat3 == -1 )) {
