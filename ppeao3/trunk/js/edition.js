@@ -910,17 +910,15 @@ function BrowseServer(inputId)
 				{
 					// You can use the "CKFinder" class to render CKFinder in a page:
 					var finder = new CKFinder() ;
-					finder.BasePath = '/ckfinder/' ;
-					finder.Width = 640 ;
-					finder.Height = 480;
-					finder.SelectFunction = SetFileField ;
-					finder.SelectFunctionData = inputId
-					finder.Popup() ;
+					finder.basePath = '/ckfinder/' ;
+					finder.selectActionFunction = SetFileField ;
+					finder.selectActionData = inputId
+					finder.popup() ;
 				}
 
 function SetFileField( fileUrl,data )
 {
 	var filePath=fileUrl.replace('/work/documentation/metadata/','');
 	
-	document.getElementById(data["selectFunctionData"] ).value = filePath ;
+	document.getElementById(data["selectActionData"] ).value = filePath ;
 }
