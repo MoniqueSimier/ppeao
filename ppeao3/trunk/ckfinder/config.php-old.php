@@ -20,30 +20,18 @@
  */
 function CheckAuthentication()
 {
-	// WARNING : DO NOT simply return "true". By doing so, you are allowing
-	// "anyone" to upload and list the files in your server. You must implement
-	// some kind of session validation here. Even something very simple as...
-
-	// return isset($_SESSION['IsAuthorized']) && $_SESSION['IsAuthorized'];
-
-	// ... where $_SESSION['IsAuthorized'] is set to "true" as soon as the
-	// user logs in your system. To be able to use session variables don't
-	// forget to add session_start() at the top of this file.
-
-	return true;
+	//WARNING : DO NOT simply return "true". By doing so, you are allowing
+	//"anyone" to upload and list the files in your server. You must implement
+	//some kind of session validation here. Even something very simple as...
+	// on teste si l'utilisateur a acces a la zone 2, gestion des donnees
+	//return (isset($_SESSION["zones_autorisees"]) && in_array(2,$_SESSION["zones_autorisees"]));
+	return TRUE;
 }
 
 // LicenseKey : Paste your license key here. If left blank, CKFinder will be
 // fully functional, in demo mode.
 $config['LicenseName'] = '';
 $config['LicenseKey'] = '';
-
-/*
- Uncomment lines below to enable PHP error reporting and displaying PHP errors.
- Do not do this on a production server. Might be helpful when debugging why CKFinder does not work as expected.
-*/
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
 
 /*
 To make it easy to configure CKFinder, the $baseUrl and $baseDir can be used.
@@ -72,9 +60,7 @@ Examples:
 	$baseDir = '/home/login/public_html/ckfinder/files/';
 	$baseDir = 'C:/SiteDir/CKFinder/userfiles/';
 
-	// Or you may let CKFinder discover the path, based on $baseUrl.
-	// WARNING: resolveUrl() *will not work* if $baseUrl does not start with a slash ("/"),
-	// for example if $baseDir is set to  http://example.com/ckfinder/files/
+	// Or you may let CKFinder discover the path, based on $baseUrl:
 	$baseDir = resolveUrl($baseUrl);
 
 ATTENTION: The trailing slash is required.
@@ -117,7 +103,7 @@ To be able to use this feature, you must initialize the session data by
 uncommenting the following "session_start()" call.
 */
 $config['RoleSessionVar'] = 'CKFinder_UserRole';
-//session_start();
+session_start();
 
 /*
 AccessControl : used to restrict access or features to specific folders.
@@ -156,12 +142,6 @@ $config['AccessControl'][] = Array(
 		'resourceType' => 'Images',
 		'folder' => '/Logos',
 
-		'folderView' => true,
-		'folderCreate' => true,
-		'folderRename' => true,
-		'folderDelete' => true,
-
-		'fileView' => true,
 		'fileUpload' => false,
 		'fileRename' => false,
 		'fileDelete' => false);
@@ -185,6 +165,9 @@ Available options are: G, M, K (case insensitive).
 Example: 'maxSize' => "8M",
 */
 $config['DefaultResourceTypes'] = 'Documents,Figures,Cartes';
+
+
+
 
 $config['ResourceType'][] = Array(
 		'name' => 'Documents',				// Single quotes not allowed
@@ -296,18 +279,3 @@ See comments above.
 Used when creating folders that does not exist.
 */
 $config['ChmodFolders'] = 0755 ;
-
-/*
-Force ASCII names for files and folders.
-If enabled, characters with diactric marks, like å, ä, ö, ć, č, đ, š
-will be automatically converted to ASCII letters.
-*/
-$config['ForceAscii'] = false;
-
-
-include_once "plugins/imageresize/plugin.php";
-include_once "plugins/fileeditor/plugin.php";
-
-$config['plugin_imageresize']['smallThumb'] = '90x90';
-$config['plugin_imageresize']['mediumThumb'] = '120x120';
-$config['plugin_imageresize']['largeThumb'] = '180x180';
