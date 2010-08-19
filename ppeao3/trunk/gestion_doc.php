@@ -54,12 +54,13 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 <script type="text/javascript" charset="utf-8">
 	function BrowseFiles()
 				{
+						
 					// You can use the "CKFinder" class to render CKFinder in a page:
 					var finder = new CKFinder() ;
-					finder.BasePath = '/ckfinder/' ;
-					finder.Width = 640 ;
-					finder.Height = 480;
-					finder.Popup() ;
+					finder.basePath = '/ckfinder/' ;
+					finder.width=700;
+					finder.height=350;
+					finder.popup() ;
 				}
 </script>
 
