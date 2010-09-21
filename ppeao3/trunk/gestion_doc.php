@@ -57,6 +57,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 						
 					// You can use the "CKFinder" class to render CKFinder in a page:
 					var finder = new CKFinder() ;
+					finder.removePlugins = 'basket';
 					finder.basePath = '/ckfinder/' ;
 					finder.width=700;
 					finder.height=350;

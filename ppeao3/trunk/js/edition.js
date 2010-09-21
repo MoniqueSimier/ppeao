@@ -910,6 +910,7 @@ function BrowseServer(inputId)
 				{
 					// You can use the "CKFinder" class to render CKFinder in a page:
 					var finder = new CKFinder() ;
+					finder.removePlugins = 'basket';
 					finder.basePath = '/ckfinder/' ;
 					finder.selectActionFunction = SetFileField ;
 					finder.selectActionData = inputId

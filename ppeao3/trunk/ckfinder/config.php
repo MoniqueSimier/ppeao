@@ -1,4 +1,5 @@
 <?php
+session_start();
 /*
  * ### CKFinder : Configuration File - Basic Instructions
  *
@@ -23,14 +24,15 @@ function CheckAuthentication()
 	// WARNING : DO NOT simply return "true". By doing so, you are allowing
 	// "anyone" to upload and list the files in your server. You must implement
 	// some kind of session validation here. Even something very simple as...
-
 	// return isset($_SESSION['IsAuthorized']) && $_SESSION['IsAuthorized'];
+	
+	return (isset($_SESSION["zones_autorisees"]) && in_array(2,$_SESSION["zones_autorisees"]));
 
 	// ... where $_SESSION['IsAuthorized'] is set to "true" as soon as the
 	// user logs in your system. To be able to use session variables don't
 	// forget to add session_start() at the top of this file.
 
-	return true;
+	//return true;
 }
 
 // LicenseKey : Paste your license key here. If left blank, CKFinder will be
