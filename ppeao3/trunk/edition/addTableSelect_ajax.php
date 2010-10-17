@@ -17,7 +17,7 @@ $editTable=$_GET["editTable"];
 $targetTable=$_GET["targetTable"];
 $thisLevel=$_GET["level"];
 
-$tablesList=split(",",$tablesDefinitions[$targetTable]["selector_cascade"]);
+$tablesList=explode(",",$tablesDefinitions[$targetTable]["selector_cascade"]);
 
 $thisTable=$tablesList[$thisLevel-1];
 $parentTable=$tablesList[$thisLevel-2];

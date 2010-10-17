@@ -12,6 +12,7 @@ function countMatchingUnits2($domaine,$exploit) {
 // $exploit : vide ou "stats"
 global $connectPPEAO;
 
+// on s'interesse aux peches experimentales
 if ($domaine=='exp') {
 $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 	
@@ -39,7 +40,7 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 		$sql.=' OR ';
 	}
 	// si des valeurs d'especes ont ete passees dans l'url
-	if (!empty($_GET["especes"]) && $_GET["step"]>2) {
+	if (!empty($_GET["especes"]) && $_GET["step"]>1) {
 		$sql.=' exp_campagne.id IN (
 			SELECT DISTINCT exp_coup_peche.exp_campagne_id FROM exp_coup_peche WHERE exp_coup_peche.id 
 			IN (
@@ -112,6 +113,8 @@ $sql="SELECT DISTINCT id FROM exp_campagne WHERE TRUE ";
 	
 } // fin de if ($domaine=='exp') 
 
+// on s'interesse aux peches artisanales ou aux statistiques
+
 if ($domaine=='art' || $domaine=='stats') {
 $sql="SELECT DISTINCT id FROM art_periode_enquete WHERE TRUE ";
 
@@ -128,13 +131,14 @@ if (!empty($_GET["familles"]) && $_GET["step"]>2) {
 	foreach ($array_esp as $esp) {
 		$especes_array[]=$esp["id"];
 	}
-}
-		
+} // fin if (!empty($_GET["familles"]) && $_GET["step"]>2)
+
+// si des especes ont ete passees dans l'URL		
 if (!empty($_GET["especes"])) {$especes_array=array_merge($especes_array,$_GET["especes"]);
 array_unique($especes_array);}
 	
 // si des valeurs d'especes ont ete passees dans l'url
-if (!empty($especes_array) && $_GET["step"]>2) {
+if (!empty($especes_array) && $_GET["step"]>1) {
 	$sql.=' AND art_periode_enquete.art_agglomeration_id IN(
 		SELECT d.art_agglomeration_id 
 		FROM art_debarquement d 
@@ -268,7 +272,9 @@ if (!empty($especes_array) && $_GET["step"]>2) {
 
 
 // on fait la requete
-// debug echo($sql);
+//debug echo('<pre>sql pour lister les unites disponibles<br>');print_r($sql);echo('</pre>');
+
+
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 	$totalArray=pg_fetch_all($result);
 	pg_free_result($result);	
@@ -281,6 +287,9 @@ if (empty($totalArray)) {$total=0;$ids=array();}
 		}
 	}
 $unites=array("total"=>$total,"ids"=>$ids);
+
+//debug echo('<pre>');print_r($unites);echo('</pre>');
+
 
 
 
@@ -1126,23 +1135,30 @@ switch ($_GET["step"]) {
 	
 	// si il y a des campagnes disponibles
 	if (!empty($campagnes_ids)) {
-	$sql_pays.=' ref_systeme.id IN (SELECT DISTINCT exp_campagne.ref_systeme_id FROM exp_campagne WHERE exp_campagne.id IN (\''.arrayToList($campagnes_ids,'\',\'','\'').')';
+	$sql_pays.=' ref_systeme.id IN (SELECT DISTINCT exp_campagne.ref_systeme_id FROM exp_campagne WHERE exp_campagne.id IN (\''.arrayToList($campagnes_ids,'\',\'','\'').'))';
 }
 		if (!empty($campagnes_ids) && !empty($enquetes_ids)) { $sql_pays.=' OR ';}
-		// si il y a des enquetes disponibles
-		if (!empty($enquetes_ids))  {
+	
+	// si il y a des enquetes disponibles
+	if (!empty($enquetes_ids))  {
 		$sql_pays.=' ref_systeme.id IN (
+		SELECT DISTINCT ref_secteur.ref_systeme_id FROM ref_secteur WHERE ref_secteur.id IN (
 		SELECT DISTINCT art_agglomeration.ref_secteur_id 
 		FROM art_agglomeration 
 		WHERE art_agglomeration.id IN (
 			SELECT DISTINCT art_periode_enquete.art_agglomeration_id 
 			FROM art_periode_enquete 
-			WHERE art_periode_enquete.id IN( \''.arrayToList($enquetes_ids,'\',\'','\'').')))';}
+			WHERE art_periode_enquete.id IN ( \''.arrayToList($enquetes_ids,'\',\'','\'').')
+			)
+			)
+			)'
+		;}
 			
+$sql_pays.=(')');
+		
+//debug echo('<pre>');print_r($sql_pays);echo('</pre>');
 
-
-
-$sql_pays.=('))');
+		
 		
 	$result_pays=pg_query($connectPPEAO,$sql_pays) or die('erreur dans la requete : '.$sql_pays. pg_last_error());
 	$array_pays=pg_fetch_all($result_pays);
@@ -1590,6 +1606,7 @@ function afficheSecteurs($donnees) {
 		
 		// on recupere la liste des secteurs pour les campagnes ou periodes d'enquetes selectionnees
 		switch($donnees) {
+		// on s'interesse aux peches experimentales
 			case "exp":
 			$sql='SELECT DISTINCT ref_secteur.id, ref_secteur.nom as secteur, ref_systeme.libelle as systeme, ref_pays.nom as pays FROM ref_secteur, ref_systeme,ref_pays WHERE ref_secteur.ref_systeme_id IN 
 				(SELECT DISTINCT ref_systeme_id FROM exp_campagne WHERE exp_campagne.id IN
@@ -1597,6 +1614,17 @@ function afficheSecteurs($donnees) {
 				) 
 				 AND ref_systeme.id=ref_secteur.ref_systeme_id AND ref_pays.id=ref_systeme.ref_pays_id ';
 				
+		
+		// ajout 17/10/2010 : oubli de filtrer les secteurs selon les coups de peche des campagnes restantes
+		$sql.=' AND ref_secteur.id IN (
+			SELECT exp_station.ref_secteur_id FROM exp_station WHERE exp_station.id IN (
+				SELECT exp_coup_peche.exp_station_id FROM exp_coup_peche WHERE exp_coup_peche.exp_campagne_id IN (
+					\''.arrayToList($campagnes_ids,'\',\'','\'').')
+				)
+			
+			)
+		';
+		
 		// on ne retient que les secteurs des coups de peche ayant ramene les especes choisies
 			if (!empty($_GET["familles"]) || !empty($_GET["especes"])) {
 			// on recupere les especes correspondant aux familles selectionnees
@@ -1625,6 +1653,7 @@ function afficheSecteurs($donnees) {
 			$nextSelectionStep='campagnes';
 			break; // end case exp
 			
+		// on s'interesse aux peches artisanales
 			case "art":
 			$sql='SELECT DISTINCT ref_secteur.id, ref_secteur.nom as secteur, ref_systeme.libelle as systeme, ref_pays.nom as pays FROM ref_secteur, ref_systeme,ref_pays WHERE ref_secteur.id IN 
 				(SELECT DISTINCT ref_secteur_id FROM art_agglomeration WHERE art_agglomeration.id IN (
@@ -1667,6 +1696,10 @@ function afficheSecteurs($donnees) {
 			break; // end case art
 			
 		}
+			
+			//debug 			echo('<pre>sql pour secteurs <br>');print_r($sql);echo('</pre>');
+			
+			
 			$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 			$secteurs=pg_fetch_all($result);
 			pg_free_result($result);

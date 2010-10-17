@@ -66,11 +66,28 @@ if ($_POST["enregistrer"]=='oui') {
 	// on enregistre les modifications
 	$succes=0;
 	// on commence par supprimer les droits existants (plus simple que de faire une mise a jour)
+	// on cherche d'abord si cet acteur a des droits deja definis...
+	$sql_test='SELECT COUNT(*) FROM admin_acces_donnees_acteurs WHERE ref_acteur_id='.$acteur_id.' AND acteur_type=\''.$acteur_type.'\'';
+	
+		$testResult=pg_query($connectPPEAO,$sql_test) or die('erreur dans la requete : '.$sql_test. pg_last_error());
+		$testTable=pg_fetch_all($testResult);
+		
+		//debug 		echo('<pre>');print_r($testTable);echo('</pre>');
+		
+		
+		if (empty($testTable)) {$succes=1;}
+		if (!empty($testTable)) {
+	
 	$sql='DELETE FROM admin_acces_donnees_acteurs WHERE ref_acteur_id='.$acteur_id.' AND acteur_type=\''.$acteur_type.'\'';
+
+	
+	
 	if ($result=@pg_query($connectPPEAO,$sql)) {
 		pg_free_result($result);
 		$succes=1;
 	}
+	}
+	
 	// puis on les remplace par les nouveaux 
 	// on ne le fait que si on a des droits a ajouter
 	$sql="INSERT INTO admin_acces_donnees_acteurs (ref_acteur_id,acteur_type,ref_systeme_id,type_donnees) VALUES" ;

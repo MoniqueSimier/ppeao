@@ -115,7 +115,7 @@ echo('<div id="selector_content">');
 	if ($thisTable["selector"]) 	{
 		// si oui, on récupere la liste des tables de la cascade passées dans l'URL
 			// on crée le tableau avec la liste des tables de la cascade
-			$theTables=split(",",$thisTable["selector_cascade"]);
+			$theTables=explode(",",$thisTable["selector_cascade"]);
 		
 			}
 		else {
