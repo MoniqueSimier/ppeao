@@ -155,7 +155,7 @@ function runFilieresExp(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		// Recuperation des selections sur choix des poissons
 		poiss  = recupereSelection(4,"poisson");
 		if (poiss=="pp,np") {
-			alert("Vous devez au moins inclure soit les poissons, soit les non-poissons, mais pas exlcure les deux");
+			alert("Vous devez au moins inclure soit les poissons, soit les non-poissons, mais pas exclure les deux");
 			poiss="0,np";
 		}
 		// Recuperation des categories ecologiques / trophiques
@@ -336,7 +336,7 @@ function runFilieresArt(typePeche,typeAction,numtab,tableEnCours,validation,selT
 		// Recuperation des selections sur choix des poissons
 		poiss  = recupereSelection(4,"poisson");
 		if (poiss=="pp,np") {
-			alert("Vous devez au moins inclure soit les poissons, soit les non-poissons, mais pas exlcure les deux");
+			alert("Vous devez au moins inclure soit les poissons, soit les non-poissons, mais pas exclure les deux");
 			poiss="0,np";
 		}
 		// Recuperation des categories ecologiques
