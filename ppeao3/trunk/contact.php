@@ -48,10 +48,12 @@ $zone=0; // zone publique (voir table admin_zones)
 				<p class="contact">Pour pouvoir acc&eacute;der librement &agrave; la base PPEAO, contactez les gestionnaires de la base qui vous communiqueront des codes d&rsquo;acc&egrave;s.</p><br/>
 				<div id="listcontact"><h2>contact</h2>
 				<ul class="contact">
-					<li class="contact"><a href="#" onClick="o='@';o=' 	&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='ird.fr';this.href=o;"><script type="text/javascript"> <!-- o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o+='ird.fr';document.write(o);//--> </script>Monique SIMIER</a></li>
-					<li class="contact"><a href="#" onclick="o='@';o='&#106;&#101;&#97;&#110;-&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o='mailto:'+o;o+='ird.fr';this.href=o;"><script language="JavaScript"> <!--
+					<li class="contact">Monique Simier : <a href="#" onclick="o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='ird.fr'+'?subject=PPEAO';this.href=o;"><script language="JavaScript"> <!--
+o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o+='ird.fr';document.write(o);//-->
+</script></a> </li>
+					<li class="contact">Jean-Marc ECOUTIN : <a href="#" onclick="o='@';o='&#106;&#101;&#97;&#110;-&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o='mailto:'+o;o+='ird.fr'+'?subject=PPEAO';this.href=o;"><script language="JavaScript"> <!--
 o='@';o='&#106;&#101;&#97;&#110;-&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o+='ird.fr';document.write(o);//-->
-</script>Jean-Marc ECOUTIN</a></li>
+</script></a> </li>
 				</ul>
 				</div>
 				<br/>
