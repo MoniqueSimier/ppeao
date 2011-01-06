@@ -1911,7 +1911,7 @@ COMMENT ON COLUMN exp_biologie.exp_fraction_id   IS 'numéro de la fraction pêché
 
 COMMENT ON COLUMN exp_biologie.memo  IS 'commentaire sur l''individu';
 
--
+--
 -- Name: COLUMN exp_biologie.valeur_estimee ; Type: COMMENT; Schema: public; Owner: devppeao
 --
 
