@@ -37,20 +37,22 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 	?>
 
 
-		<div id="BDDetail">
-		<?php  $subsection="home"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
-		</div>
+		<!-- <div id="BDDetail">
+		<?php  // enleve pour ne laisser que le portage automatique
+		// $subsection="home"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
+		</div> -->
 		<div id="subContent">
-		<h1>Import / recalcul de donn&eacute;es : lancement en manuel ou en automatique</h1>
+		<h1>Import / recalcul de donn&eacute;es <!-- en manuel ou : lancement en automatique--></h1>
 		<br/>
 		<p>Cette section vous permet de lancer les traitements sp&eacute;cifiques sur les bases de donn&eacute;es import&eacute;es.</p>
 		<p>Le portage automatique va permettre de lancer l'import de donn&eacute;es depuis la base r&eacute;ceptacle des donn&eacute;es de terrain dans la base de r&eacute;f&eacute;rence PPEAO.</p>
 		<p>Ce portage automatique va effetuer un certain nombre de contr&ocirc;le pour assurer la qualit&eacute; des donn&eacute;es import&eacute;es et lancera automatiquement les programmes de recalcul.</p>
-		<p>Ces programmes peuvent &ecirc;tre aussi lanc&eacute;s &agrave; la demande depuis le portage manuel.  </p>
-		<p>&nbsp;</p>
+		<!-- <p>Ces programmes peuvent &ecirc;tre aussi lanc&eacute;s &agrave; la demande depuis le portage manuel.  </p> -->
+		<p>Vous pouvez &eacute;galement acc&eacute;der au module d&#x27;importation de donn&eacute;es dans la base bdpeche (application &quot;SINTI&quot;).</p>
 		<ul class="list">
-			<li class="listitem"><a href="/portage_auto.php" ><b>Portage automatique</b></a></li>
-			<li class="listitem"><a href="/portage_manuel.php" ><b>Portage manuel</b></a>
+			<li class="listitem"><a href="/portage_auto.php" ><b>Lancer le portage automatique</b></a></li>
+			<!-- <li class="listitem"><a href="/portage_manuel.php" ><b>Portage manuel</b></a></li> -->
+			<li class="listitem"><a href="/acces_sinti.php" ><b>Acc&eacute;der &agrave; l&#x27;application SINTI pour importer des donn&eacute;es dans la base bdpeche</b></a></li>
 		</ul>
 		</div>	
 	

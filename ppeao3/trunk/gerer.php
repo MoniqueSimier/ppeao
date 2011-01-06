@@ -43,7 +43,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 IEwarning();
 ?>
 <h2><a href="/portage.php" title="portage">portage d'une base</a></h2>
-<p>vous permet de transf&eacute;rer les donn&eacute;es depuis une base temporaire vers la base principale PPEAO.</p>
+<p>vous permet d&#x27;exporter des donn&eacute;es vers bdpeche (application SINTI) et de transf&eacute;rer les donn&eacute;es depuis une base temporaire vers la base principale PPEAO.</p>
 <h2><a href="/edition_maintenance.php" title="maintenance">maintenance de la base</a></h2>
 <p>vous permet d&#x27;effectuer des op&eacute;rations de maintenance sur la base principale PPEAO (mise-&agrave;-jour des s&eacute;quences, VACUUM...).</p>
 <h2><a href="/edition_donnees.php" title="gestion des donn&eacute;es">gestion des donn&eacute;es</a></h2>
