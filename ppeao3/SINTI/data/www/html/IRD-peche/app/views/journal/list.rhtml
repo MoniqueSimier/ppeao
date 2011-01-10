@@ -1,0 +1,119 @@
+<script>
+// This function gets called when the end-user clicks on some date.
+function selected(cal, date) {
+  cal.sel.value = date; // just update the date in the input field.
+  if (cal.dateClicked && (cal.sel.id == "d1" || cal.sel.id == "sel3"))
+    // if we add this call we close the calendar on single-click.
+    // just to exemplify both cases, we are using this only for the 1st
+    // and the 3rd field, while 2nd and 4th will still require double-click.
+    cal.callCloseHandler();
+}
+
+// And this gets called when the end-user clicks on the _selected_ date,
+// or clicks on the "Close" button.  It just hides the calendar without
+// destroying it.
+function closeHandler(cal) {
+  cal.hide();                        // hide the calendar
+//  cal.destroy();
+  _dynarch_popupCalendar = null;
+}
+
+// This function shows the calendar under the element having the given id.
+// It takes care of catching "mousedown" signals on document and hiding the
+// calendar if the click was outside.
+function showCalendar(id, format, showsTime, showsOtherMonths) {
+  var el = document.getElementById(id);
+  if (_dynarch_popupCalendar != null) {
+    // we already have some calendar created
+    _dynarch_popupCalendar.hide();                 // so we hide it first.
+  } else {
+    // first-time call, create the calendar.
+    var cal = new Calendar(1, null, selected, closeHandler);
+    // uncomment the following line to hide the week numbers
+    // cal.weekNumbers = false;
+    if (typeof showsTime == "string") {
+      cal.showsTime = true;
+      cal.time24 = (showsTime == "24");
+    }
+    if (showsOtherMonths) {
+      cal.showsOtherMonths = true;
+    }
+    _dynarch_popupCalendar = cal;                  // remember it in the global var
+    cal.setRange(1900, 2070);        // min/max year allowed.
+    cal.create();
+  }
+  _dynarch_popupCalendar.setDateFormat(format);    // set the specified date format
+  _dynarch_popupCalendar.parseDate(el.value);      // try to parse the text in field
+  _dynarch_popupCalendar.sel = el;                 // inform it what input field we use
+
+  // the reference element that we pass to showAtElement is the button that
+  // triggers the calendar.  In this example we align the calendar bottom-right
+  // to the button.
+  _dynarch_popupCalendar.showAtElement(el, "Br");        // show the calendar
+
+  return false;
+}
+
+</script>
+<h2>Moteur de recherche</h2>
+
+<%= start_form_tag :action => 'search' %>
+<table width="100%">
+    <tr>
+        <th>Début</th>
+        <th>Fin</th>
+        <th>Utilisateur</th>
+        <th>Action</th>      
+        <th>Statut</th>         
+    </tr>
+    <tr>
+        <td>
+            
+            <%= text_field(:critere, :date_debut, :size => 20, :value => @critere.date_debut, :id => 'd1')%>
+            <input type="reset" value=" ... "
+               onclick="return showCalendar('d1', '%Y-%m-%d ', '24', true);"><div />
+         </td>
+        <td>
+             <%= text_field(:critere, :date_fin, :size => 20, :value => @critere.date_fin, :id => 'd2')%>
+            <input type="reset" value=" ... "
+               onclick="return showCalendar('d2', '%Y-%m-%d ', '24', true);"><div />
+        </td>
+        <td><%= text_field(:critere, :utilisateur, :size => 20, :value => @critere.utilisateur)%></td>
+        <td><%= select(:critere, :action, @actions) %></td>
+        <td><%= select(:critere, :statut, @statuts)%></td>
+    </tr>
+    <tr>
+        <th colspan="5">
+            <input type="submit" value="Rechercher"/>
+            <input type="button" value="Annuler" onClick="javascript:document.location='/journal/annuler'"/>
+        </th>
+    </tr>
+</table>
+<%= end_form_tag %>
+<h2>Liste des événements</h2>
+<table width="100%">
+    <tr>
+        <th>Date</th>
+        <th>Utilisateur</th>
+        <th>Adresse Ip</th>
+        <th>Action</th>      
+        <th>Statut</th> 
+        <th>Détails</th> 
+    </tr>
+    <%for journal in @journaux%>
+    <tr>
+        <td><%= journal.date_log.strftime("%d/%m/%Y %H h - %M mn - %S s")%></td>
+        <td><%= journal.login_utilisateur%></td>
+        <td><%= journal.adresse_ip%></td>
+        <td><%= journal.action_log%></td>      
+        <td><%= journal.statut%></td> 
+        <td><%= journal.detail%></td> 
+    </tr> 
+    <%end%>
+    <tr>
+        <th colspan="5">
+            <input type="button" value="Exporter" onClick="javascript:document.location='/journal/exporter'"/>
+            <input type="button" value="Réinitialiser" onClick="confirmInitJournal();"/>
+        </th>
+    </tr>
+</table>

@@ -1,0 +1,25 @@
+<h2>Evolution des transformations : </h2>
+<div id="barre">
+</div>
+<br/><br/>
+<div id="message-progression">
+</div>    
+      
+<%
+    interval = APP_CONFIG["interval"]
+    
+    interval_test_fin = APP_CONFIG["intervaltest_fin"]
+%>
+<%= periodically_call_remote(
+                             :update => 'barre',
+                             :url => {:action => 'tracerBarre', :controller => 'progression_globale'},
+                             :frequency => interval )%>
+
+
+
+
+<%= periodically_call_remote(
+                            
+                             :update => 'message-progression',
+                             :url => {:action => 'message', :controller => 'progression_globale'},
+                             :frequency => interval_test_fin )%>

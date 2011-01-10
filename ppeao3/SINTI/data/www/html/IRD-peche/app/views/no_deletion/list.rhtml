@@ -1,0 +1,13 @@
+<h2>Liste des données source supprimées </h2>
+   <ul>
+        <% for indice in @indices %>
+            <li><b><%=@titres[indice]%></b></li>
+            <ul>
+                <%for da in @data[indice] %>
+                    <li><%= da%></li>
+                <%end%>
+            </ul>
+        <%end%>
+   </ul>
+    
+Veuillez relancer une <%= link_to "migration globale", :controller => "migration_globale"%> SVP.

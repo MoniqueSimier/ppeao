@@ -1,0 +1,13 @@
+<h2>Migration du Référentiel</h2>
+<p>Seules les données du Référentiel seront migrées</p>
+
+<%= start_form_tag ({:controller => "migration_referentiel", :action => "launch"}, {:id => "frm"})%>
+      <table width="100%">
+        <tr>
+            <td>Commentaires</td>
+            <td><textarea name="commentaires"></textarea></td>
+            <td><input type="button" value="Exécuter" 
+                       onClick="confirmThenGo('Vous êtes sur le point de lancer une migration du référentiel.\n Voulez vous continuer ?','frm');"/></td>
+        </tr>
+      </table>
+ <%= end_form_tag %>

@@ -1,0 +1,16 @@
+<h2>Migration de tout Pechart</h2>
+<p>Vous avez choisi la migration de tout Pechart.</p>
+<p>Toutes les données de la pêche artisanale seront migrées.</p>
+
+<%= start_form_tag ({:controller => "migration_pechart", :action => "launch_tout"},{:id => 'frm'})%>
+      <table width="100%">
+        <tr>
+            <td>Commentaires</td>
+            <td><textarea name="commentaires"></textarea></td>
+            <td>
+                <input type="button" value="Exécuter"  
+                       onClick="confirmThenGo('Vous êtes sur le point de lancer une migration qui risque de prendre du temps.\n Voulez vous continuer ?','frm');"/>
+            </td>
+        </tr>
+      </table>
+ <%= end_form_tag %>

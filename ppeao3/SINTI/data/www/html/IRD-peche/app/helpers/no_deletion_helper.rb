@@ -1,0 +1,2 @@
+module NoDeletionHelper
+end

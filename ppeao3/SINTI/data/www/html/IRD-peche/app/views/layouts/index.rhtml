@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+<head>
+<%= stylesheet_link_tag 'style' %>
+<%= stylesheet_link_tag 'menu' %>
+<%= stylesheet_link_tag 'aqua/theme' %>
+<%= javascript_include_tag :defaults%>
+<%= javascript_include_tag "prototype" %>
+<%= javascript_include_tag "calendar" %>
+<%= javascript_include_tag "calendar-fr" %>
+
+
+
+<title>IRD >> Pêche estuarienne et lagunaire >> <%= flash[:titre] %></title>
+
+</head>
+<body>
+
+
+<%= render(:partial => 'shared/'+@menu) %>
+
+<div id="main">
+    <div id="titre">
+        IRD <b>&raquo;</b> Pêche estuarienne et lagunaire <b>&raquo;</b> <%= flash[:titre] %>
+    </div>
+    <div id="message">
+        <%= flash[:notice] %>
+    </div>
+<%= @content_for_layout %>
+</div>
+
+</body>
+</html>

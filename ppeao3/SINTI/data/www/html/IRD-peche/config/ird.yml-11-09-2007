@@ -1,0 +1,68 @@
+#Informations sur le serveur Postgresql
+
+postgres_user: devpechartexp
+postgres_password: 2devpech
+
+
+postgres_host: devpgsql.intranet.mpl.ird.fr
+postgres_port: 5432
+
+
+#Repertoire des back-up
+rep_back_up: /data/www/ird/backup/
+
+#Repertoire des fichier batch
+rep_batch: /data/www/ird/batch/
+
+#Nom des différentes bases sur le serveur Postgres
+postgres_pechexp_database: exp2003_bdd
+postgres_pechart_database: pechart
+postgres_cible_database: BD_Peche
+postgres_referentiel_database: referentiel_peche
+postgres_systeme_database: systeme_BD_Peche
+
+#Nom de la connexion sous Kettle pointant sur la base pays en cours
+postgres_pays_connection: conn_MALI2
+
+#Base pays par défaut quand l'utilisateur n'a encore choisi aucun pays.
+pechart_default_base_pays: senegal
+
+#Shell utilisé
+launcher: /bin/sh
+
+#A partir de cette ligne NE PLUS RIEN MODIFIER !!!!
+
+#Nom des différents batch de migration
+migration_globale_batch: migration_globale.sh
+
+migration_referentiel_batch: migration_referentiel.sh
+
+migration_tout_pechexp_batch: migration_tout_pechexp.sh
+migration_parametrage_pechexp_batch: migration_parametrage_pechexp.sh
+migration_campagnes_pechexp_batch: migration_campagnes_pechexp.sh
+
+migration_tout_pechart_batch: migration_tout_pechart.sh
+migration_parametrage_pechart_batch: migration_parametrage_pechart.sh
+migration_enquetes_pechart_batch: migration_enquetes_pechart.sh
+migration_pays_batch: migration_pays.sh
+
+#Debut Evaluation du nombre de transformations par migration
+nb_trans_migration_referentiel: 9
+
+nb_trans_migration_parametrage_pechexp: 13
+nb_trans_migration_campagnes_pechexp: 12
+
+nb_trans_migration_parametrage_pechart: 10
+nb_trans_migration_enquetes_pechart: 17
+nb_trans_migration_pays_pechart: 19
+#Fin
+
+#Paramètres de la barre de progression
+
+#Intervalle de temps avant test de nouvelle transformation
+interval: 2
+
+#Intervalle de temps avant test de fin de migration
+interval_test_fin: 5
+
+#fin

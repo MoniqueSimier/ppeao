@@ -1,0 +1,210 @@
+<h2>Aide En Ligne</h2>
+
+<h3>Généralités</h3>
+
+<p>
+    Cette aide en ligne a pour objectif de décrire le mode d'utilisation de l'interface de migration.
+</p>
+
+<h3>Règles générales</h3>
+
+<p>
+    Toute suppression d'enregistrements du paramétrage ou du référentiel dans les bases sources nécessite une migration globale ou une restauration manuelle d'une base vide. <br/>
+    L'application est toutefois en mesure de détecter une telle situation.
+</p>
+
+<h3>Logique de migration</h3>
+<p>
+Les éléments du menu de l'interface peuvent être exécutés de façon indépendante. Par contre, un ordre de migration s'impose à cause des dépendances d'intégrités entre les tables.
+L'ordre d'exécution est le suivant :
+    <ul>        
+        <li>Référentiel</li>
+        <li>Tout (Pechexp ou Pechart), Paramétrage (Pechexp ou Pechart)</li>
+        <li>Campagnes, Périodes d'enquêtes</li>
+    </ul>
+</p>
+
+<h3>Authentification</h3>
+<p>
+    Avant toute opération, il faut se connecter avec un compte administrateur valide.
+    Une fois connecté, on arrive sur le journal qui trace l'ensemble des événements survenus.
+</p>
+
+<h3>Journal</h3>
+<p>
+Le journal sert de trace de tous les événements applicatifs. Il se présente sous forme de tableau à 6 colonnes :
+    <ul>
+        
+        <li>Date : La date et l'heure auxquelles l'événement est survenu.</li>
+        <li>Utilisateur : Le login de l'utilisateur concerné par l'événement.</li>
+        <li>Adresse Ip : L'adresse ip de la machine depuis laquelle l'utilisateur s'est connecté.</li>
+        <li>Action : Le type d'événement, il peut s'agir d'une connexion, d'une déconnexion, d'une migration, ...</li>
+        <li>Statut : Il varie selon l'action associée et représente l'état au moment du traçage.</li>
+        <li>Détails : Commentaire éventuel portant sur l'événement </li>
+    </ul>
+    Le journal est donc un élément très important dans le cas, par exemple, où une migration ne se passerait pas bien puisqu'il donne des informations sur le problème rencontré.
+    Du fait même de son utilisation, il peut rapidement atteindre une taille importante. Dans ce cas, on peut l'exporter au format csv avant de le réinitialiser en cliquant sur les boutons Exporter et Réinintialiser prévus à cet effet.
+    On peut également effectuer des filtres sur les principales colonnes : Utilisateur, Action, Statut.
+</p>
+
+
+<h3>Migration globale</h3>
+<p>
+    Elle permet de migrer en une seule opération toutes les données de Pechart et de Pechexp. Elle est toujours précédée d'une restauration automatique et transparente de la base cible vide.
+    <br/>
+    Pour la lancer :
+    <ul>
+        
+        <li>Cliquer sur le lien Migration Globale du menu</li>
+        <li>Saisir un commentaire sur la migration. Ce commentaire permet de conserver un résumé de la migration effectuée ; il sera affiché dans le Journal d'évènements.</li>
+        <li>Cliquer sur le bouton Exécuter</li>
+        <li>Confirmer la migration (Attention elle peut s'avérer très longue)</li>
+    </ul>
+    Après confirmation, une barre de progression s'affiche, informant de l'avancement de la migration. Il est possible d'annuler une migration en cours. En cas d'erreur, on est redirigé vers le Journal dans lequel l'erreur sera tracée ; en cas de succès, on est redirigé vers le journal avec la confirmation que tout s'est bien passé.
+</p>
+
+<h3>Migration du référentiel</h3>
+<p>
+    Elle sert à migrer les informations du référentiel. Elle doit être exécutée avant toute autre migration, exceptée la migration globale.
+    <br/>
+     Pour la lancer :
+    <ul>
+       
+        <li>Cliquer sur le lien Référentiel du menu</li>
+        <li>Saisir un commentaire sur la migration. Ce commentaire permet de conserver un résumé de la migration effectuée ; il sera affiché dans le Journal d'évènements.</li>
+        <li>Cliquer sur le bouton Exécuter</li>
+        <li>Confirmer la migration.</li>
+    </ul>
+    Dans ce cas également, la barre de progression s'affiche.
+</p>
+
+<h3>Migration de tout Pechexp</h3>
+<p>
+    Cette action permet de migrer à la fois le paramétrage de Pechexp ainsi que toutes les campagnes de Pechexp.
+    <br/>
+    Pour la lancer :
+    <ul>
+        
+        <li>Cliquer sur le lien Tout du sous-menu Pechexp</li>
+        <li>Saisir un commentaire sur la migration. Ce commentaire permet de conserver un résumé de la migration effectuée ; il sera affiché dans le Journal d'évènements.</li>
+        <li>Cliquer sur le bouton Exécuter</li>
+        <li>Confirmer la migration.</li>
+    </ul>
+</p>
+
+<h3>Migration du paramétrage Pechexp</h3>
+<p>
+    Cette action permet de migrer toutes les données de paramétrage de la pêche expérimentale.
+    <br/>
+    Pour la lancer, :
+    <ul>
+        
+        <li>Cliquer sur le lien Paramétrage du sous-menu Pechexp</li>
+        <li>Saisir un commentaire sur la migration. Ce commentaire permet de conserver un résumé de la migration effectuée ; il sera affiché dans le Journal d'évènements.</li>
+        <li>Cliquer sur le bouton Exécuter</li>
+        <li>Confirmer la migration.</li>
+    </ul>
+</p>
+
+<h3>Migration des campagnes</h3>
+<p>
+    Ce type de migration permet de ne migrer que certaines campagnes contrairement à la migration  Tout Pechexp. 
+    Cependant il faut s'assurer d'avoir migré le Référentiel Pechexp au préalable.
+    <br/>
+    Pour la lancer, :
+    <ul>
+        
+        <li>Cliquer sur le lien Campagnes du sous-menu Pechexp</li>
+        <li>Choisir un pays, et valider par OK</li>
+        <li>Choisir un système puis valider par OK</li>
+        <li>Choisir une ou plusieurs campagnes ou tout simplement tout cocher grâce au lien Tout Cocher.</li>
+        <li>Saisir un commentaire sur la migration. Ce commentaire permet de conserver un résumé de la migration effectuée ; il sera affiché dans le Journal d'évènements.</li>
+        <li>Cliquer sur le bouton Exécuter</li>
+        <li>Confirmer la migration.</li>
+    </ul>
+</p>
+
+<h3>Migration de tout Pechart</h3>
+<p>
+    Elle permet de migrer à la fois le paramétrage de Pechart ainsi que toutes les périodes d'enquête des bases pays.
+    <br/>
+    Pour la lancer :
+    <ul>
+        
+        <li>Cliquer sur le lien Tout du sous-menu Pechart</li>
+        <li>Saisir un commentaire sur la migration. Ce commentaire permet de conserver un résumé de la migration effectuée ; il sera affiché dans le Journal d'évènements.</li>
+        <li>Cliquer sur le bouton Exécuter</li>
+        <li>Confirmer la migration.</li>
+    </ul>
+</p>
+
+<h3>Migration du paramétrage Pechart</h3>
+<p>
+    Ce type de migration permet de migrer toutes les données de paramétrage de la pêche artisanale.
+    <br/>
+     Pour la lancer :
+    <ul>
+       
+        <li>Cliquer sur le lien Paramétrage du sous-menu Pechart</li>
+	<li>Saisir un commentaire sur la migration. Ce commentaire permet de conserver un résumé de la migration effectuée ; il sera affiché dans le Journal d'évènements.</li>
+        <li>Cliquer sur le bouton Exécuter</li>
+        <li>Confirmer la migration.</li>
+    </ul>
+</p>
+
+<h3>Migration des périodes d'enquêtes</h3>
+<p>
+    Ce type de migration permet de ne migrer que les activités et débarquements ayant eu lieu durant 
+    des périodes d'enquête choisies, contrairement à la migration « Tout Pechart ». 
+    Cependant il faut s'assurer au préalable d'avoir migré le Référentiel Pechart.
+    <br/>
+    Pour la lancer :
+    <ul>
+        
+        <li>Cliquer sur le lien Périodes du sous-menu Pechart</li>
+	<li>Choisir un pays, valider par OK
+        <li>Choisir un système puis valider par OK</li>
+        <li>Choisir un, plusieurs ou tout simplement tous les secteurs du système.</li>
+        <li>Choisir un, plusieurs ou tout simplement toutes les agglomérations des secteurs précédemment choisis</li>
+        <li>Choisir un ou plusieurs périodes d'enquête ou tout simplement tout cocher grace au lien « Tout Cocher ».</li>
+        <li>Saisir un commentaire sur la migration. Ce commentaire permet de conserver un résumé de la migration effectuée ; il sera affiché dans le Journal d'évènements.</li>
+        <li>Cliquer sur le bouton Exécuter</li>
+        <li>Confirmer la migration.</li>
+    </ul>
+</p>
+
+<h3>Cas d'une nouvelle base pays</h3>
+<p>
+    Les migrations globales et de tout Pechart sont basées sur deux tables de la base sys_BD_Peche :
+    <br/>
+    <ul>
+        <li>sys_base_pays qui contient la liste des bases pays</li>
+        <li>sys_pays_default_base qui établit la correspondance entre un pays et sa base « non fragmentée ».</li>
+    </ul>
+    <br/>
+    La base d'un nouveau pays est automatiquement créée avec l'application vba d'export. 
+    <br/>
+    Ses données d'enquêtes pourront alors être migrées via l'interface de la même manière que pour
+    les pays déjà migrés.
+    <br/>
+    Toutes fois, avant toute migration, il faut :
+    <br/>
+    <br/>
+    S'il s'agit d'un nouveau pays, 
+    <br/>
+    <ul>
+        
+        <li>Etablir la correspondance entre le pays et le nom de la base via la table sys_pays_default_base.</li>
+        <li>Remplir sys_base_pays.</li>
+    </ul>
+    <br/>
+    S'il s'agit d'une nouvelle fragmentation,
+    <br/>
+    <ul>
+         
+        <li>S'assurer que la correspondance nom base, pays a déjà été établie</li>
+        <li>Remplir sys_base_pays.</li>
+        <li>Déclarer la fragmentation dans la table paysfragmentation de Pechart</li>
+    </ul>
+</p>
+

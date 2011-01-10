@@ -1,0 +1,108 @@
+<h2>Sélection Spatiale</h2>
+
+    <%= start_form_tag :action => 'campagnes', :controller => 'migration_pechexp'%>
+    <table>
+
+        <tr>
+            <td>Pays :</td>
+            <td>
+                <select name="pays">
+                    <%for pays in @pays_source%>
+                        <%
+                            selected = ''
+                            if (pays.id == params[:pays])
+                            selected =  'selected'
+                            end
+                        %>                       
+                        <option value="<%= pays.pays_code_fip%>" <%= selected %> > <%= pays.pays_nom%></option>
+                    <%end%>
+                </select>
+            </td>
+            <td><input type="submit" value="OK"/></td>
+        </tr>
+        
+    <%= end_form_tag %>
+
+    
+
+    <%= start_form_tag :action => 'campagnes', :controller => 'migration_pechexp'%>
+        <tr>
+            <td>Systemes :</td>
+            <td>
+                <select name="systeme">
+                    <%for systeme in @systemes%>
+                        <%
+                            selected = ''
+                            if (systeme.id.to_i == params[:systeme].to_i)
+                            selected =  'selected'
+                            end
+                        %>
+                        <option value="<%= systeme.sys_num%>" <%= selected %> ><%= systeme.sys_nom%></option>
+                    <%end%>
+                </select>
+            </td>
+            <td><input type="submit" value="OK" <%=@etat_bouton_ok_systeme%>/></td>
+        </tr>
+        <tr>
+            <td><input type="hidden" name="pays" value="<%= params[:pays]%>"/></td>
+            
+        </tr>
+    </table>
+    <%= end_form_tag %>
+    <br><br>
+    <h2>Sélection des Campagnes</h2>
+
+        <%= start_form_tag ({:action => 'launch_campagnes', :controller => 'migration_pechexp'}, {:id => 'frmSelectCampagnes'})%>    
+            <table width="100%">
+                <tr>
+                    <th>Campagne n° </th>
+                    <th>Début </th>
+                    <th>Fin </th>
+                    <th width="1"><a href="#" onClick="selectionnerToutesEnquetes();">Tout</a> <a href="#" onClick="deselectionnerToutesEnquetes()">Rien</a> </th>
+                </tr>
+                <%for campagne in @campagnes%>
+                    
+                    <tr>
+                        <td><%= campagne.camp_num%></td>
+                        <td>
+                            <%if campagne.coups_de_peche.size !=0%>
+                                <%= campagne.coups_de_peche.last.cp_date.strftime("%d/%m/%Y")%>
+                            <%end%>
+                            </td>
+                        <td>
+                            <%if campagne.coups_de_peche.size != 0%>
+                                <%= campagne.coups_de_peche.first.cp_date.strftime("%d/%m/%Y")%>
+                            <%end%>
+                        </td>
+                        <td><input name="campagnes[]" type="checkbox" value="<%= campagne.camp_num%>" onClick="boutonExecuterManager();"/></td>
+                    </tr>                        
+                  
+                <%end%>
+                 
+                </table>
+                <br><br>
+      <h2>Détails Migration</h2>
+                    <table width="100%">
+                        <tr>
+                            <td>Commentaires</td>
+                            <td><textarea name="commentaires"></textarea></td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <th colspan="3"> 
+                            <input type="button" value="Effacer" onClick="effacerCampagnes();" id="btEffacerCampagnes"/>
+                            <input type="button" value="Exécuter" disabled id="btExecuterCampagnes" 
+                                   onClick="confirmThenGo('Vous êtes sur le point de lancer une migration qui risque de durer.\n Voulez vous continuer ?','frmSelectCampagnes');"/>
+                            <input type="hidden" name="pays" value="<%= params[:pays]%>"/>
+                            <input type="hidden" name="systeme" value="<%= params[:systeme]%>"/>
+                            </th>
+                        </tr>
+                    </table>               
+                
+                    
+            </table>
+       <%= end_form_tag %>
+    
+    
+
+

@@ -1,0 +1,2 @@
+module PechartBaseHelper
+end

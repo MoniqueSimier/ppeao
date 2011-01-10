@@ -1,0 +1,208 @@
+<h2>Sélection Spatiale</h2>
+<table width="100%">
+    <tr>
+        <td>
+            <%= start_form_tag({:action => 'enquetes', :controller => 'migration_pechart'}, {:id => 'frmChoixPays'})%>
+                <table width="100%">
+                    <tr>
+                        <td>Pays :</td>
+                        <td>
+                            <select name="pays">
+                                <%for pays in @pays_source%>
+                                    <%
+                                        selected = ''
+                                        if (pays.id == params[:pays])
+                                        selected =  'selected'
+                                        end
+                                    %>                       
+                                    <option value="<%= pays.codepays%>" <%= selected %> > <%= pays.nompays%></option>
+                                <%end%>
+                            </select>
+                        </td>
+                        <td>
+                        
+                            <!--a href="#" onClick="submitForm('frmChoixPays')">OK</a-->
+                            <input type="submit" value="OK" />
+                        </td>
+                    </tr>
+                    
+                </table>
+            <%= end_form_tag %>
+        </td>
+        <td>
+           <%= start_form_tag({:action => 'enquetes', :controller => 'migration_pechart'}, {:id => 'frmChoixSystemes'})%>
+            <table width="100%">
+                <tr>
+                    <td>Ecosystemes :</td>
+                    <td>
+                        <select name="systeme">
+                            <%for systeme in @systemes%>
+                                <%
+                                    selected = ''
+                                    if (systeme.id.to_i == params[:systeme].to_i)
+                                    selected =  'selected'
+                                    end
+                                %>
+                                <option value="<%= systeme.idsysteme%>" <%= selected %> ><%= systeme.nomsysteme%></option>
+                            <%end%>
+                        </select>
+                    </td>
+                    <td>   
+                        <%if (@etat_bouton_ok_systeme == '') %>
+                            <!--a href="#" onClick="submitForm('frmChoixSystemes')">OK</a-->
+                        <%end%>
+                        
+                        <%if (@etat_bouton_ok_systeme == 'disabled') %>
+                            <!--a>OK</a-->
+                        <%end%>
+                        <input type="submit" value="OK" <%=@etat_bouton_ok_systeme%> id="btOKSysteme"/>
+                        <input type="hidden" name="pays" value="<%= params[:pays]%>"/>
+                    </td>
+                </tr>
+                
+            </table>
+            <%= end_form_tag %>
+                
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <%= start_form_tag ({:action => 'enquetes', :controller => 'migration_pechart'},{'id' => 'frmChoixSecteurs'})%>
+                <table width="100%">
+                    <tr>
+                        <td>
+                            Secteurs : <br>
+                            <select name="secteurs[]" multiple size="10" width="75">
+                                <%for secteur in @secteurs%>
+                                    <%
+                                        selected = ''
+                                        if ((params[:secteurs]!=nil)&&(params[:secteurs].include?(secteur.id.to_s)  ))
+                                        selected =  'selected'
+                                        end
+                                    %>
+                                    <option value="<%= secteur.id%>" <%= selected %> onClick="boutonOKSecteurManager();"><%= secteur.nomsecteur%></option>
+                                <%end%>
+                            </select>
+                            <br>
+                               
+                            <%if (@etat_bouton_ok_secteur == '') %>
+                                <!--a href="#" onClick="submitForm('frmChoixSecteurs')" id="btOKSecteur">OK</a-->
+                            <%end%>
+                            
+                            <%if (@etat_bouton_ok_secteur == 'disabled') %>
+                                <!--a id ="btOKSecteur" onClick=" submitForm('frmChoixSecteurs')">OK</a-->
+                            <%end%>
+                            <input type="submit" value="OK" <%=@etat_bouton_ok_secteur%> id="btOKSecteur"/>
+                            | <input type="button" value="Tout" onClick="selectionnerTousSecteurs();"/> 
+                            <input type="hidden" name="pays" value="<%= params[:pays]%>"/>
+                            <input type="hidden" name="systeme" value="<%= params[:systeme]%>"/>
+                        
+                        </td>
+                        
+                    </tr>
+                    
+                </table>
+            <%= end_form_tag %>
+        </td>
+        <td>
+            <%= start_form_tag ({:action => 'enquetes', :controller => 'migration_pechart'},{'id' => 'frmChoixAgglomerations'})%>
+                <table width="100%">
+                    <tr>
+                        <td>
+                            Agglomérations : <br>
+                            <select name="agglomerations[]" multiple size="10" width="75">
+                                <%for agglomeration in @agglomerations%>
+                                    <%
+                                        selected = ''
+                                        if ((params[:agglomerations]!=nil)&&(params[:agglomerations].include?(agglomeration.id.to_s)  ))
+                                        selected =  'selected'
+                                        end
+                                    %>
+                                    <option value="<%= agglomeration.id%>" <%= selected %> onClick="boutonOKAgglomerationManager();"><%= agglomeration.nomagglo%></option>
+                                <%end%>
+                            </select>
+                            <br>
+                            <%if (@etat_bouton_ok_agglomeration == '') %>
+                                <!--a href="#" onClick="submitForm('frmChoixAgglomerations')" id="btOKAgglomeration">OK</a-->
+                            <%end%>
+                            
+                            <%if (@etat_bouton_ok_agglomeration == 'disabled') %>
+                                <!--a id ="btOKAgglomeration" onClick=" submitForm('frmChoixAgglomerations')">OK</a-->
+                            <%end%>
+                            <input type="submit" value="OK" <%=@etat_bouton_ok_agglomeration%> id="btOKAgglomeration"/>
+                            | <input type="button" value="Tout" onClick="selectionnerToutesAgglomerations();"/>
+                            
+                            <input type="hidden" name="pays" value="<%= params[:pays]%>"/>
+                            <input type="hidden" name="systeme" value="<%= params[:systeme]%>"/>
+                            <%if params[:secteurs]!=nil%>
+                            <%for secteur in params[:secteurs]%>
+                                <input type="hidden" name="secteurs[]" value="<%= secteur%>"/>
+                            <%end%>
+                            <%end%>
+                        </td> 
+                        
+                    </tr>
+                    
+                </table>
+            <%= end_form_tag %>
+        </td>
+    </tr>
+</table>
+
+    <br><br>
+    <h2>Sélection Temporelle</h2>
+    <%= start_form_tag ({:action => 'launch_enquetes', :controller => 'migration_pechart'},{'id' => 'frmChoixPeriodes'})%>
+            <table width="100%">
+                <tr>
+                    <th>Secteur</th>
+                    <th>Agglomération</th>
+                    <th>Périodes d'enquête</th>
+                    <th>
+                        Cocher 
+                        <br>
+                        <a href="#" onClick="selectionnerToutesPeriodes();">Toutes</a>
+                        <br>
+                        <a href="#" onClick="deselectionnerToutesPeriodes();">Aucune</a>
+                    </th>
+                </tr>
+                <%
+                    #for agg in @agglomerations_choisies 
+                        #for p in agg.periodesEnquetes
+                        for p in @periodes
+                %>
+                    <tr>
+                    <td><%= p.agglomeration.first.secteur.nomsecteur%></td>       
+                    <td><%= p.agglomeration.first.nomagglo%></td>
+                    <td><%= p.periode%> / <%=p.an%></td>
+                    <td>    
+                        <input type="checkbox" name="periodes[]" onClick="boutonExecuterEnquetesManager();" value="<%= p.agglomeration.first.idagglo%>,<%= p.datedeb%>,<%= p.datefin%>"/>
+                        
+                    </td>
+                    </tr>
+                    
+                <%
+                      end  
+                    #end
+                %>
+         
+        </table>
+        <br><br>
+        <h2>Détails Migration</h2>
+        <table width="100%">
+        <tr>
+            <td>Commentaires<input type="hidden" name="pays" value="<%= params[:pays]%>"/>
+                            <input type="hidden" name="systeme" value="<%= params[:systeme]%>"/></td>
+            <td><textarea name="commentaires"></textarea></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <th colspan="3"><input type="button" value="Effacer" onClick="effacerEnquetes();"/>&nbsp;
+            <input type="button" value="Exécuter" disabled id="btExecuterEnquete" 
+                                   onClick="confirmThenGo('Vous êtes sur le point de lancer une migration qui risque de durer.\n Voulez vous continuer ?','frmChoixPeriodes');"/>
+            </th>
+        </tr>
+      </table>  
+        
+    
+   <%= end_form_tag %>
+    

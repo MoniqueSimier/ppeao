@@ -1,0 +1,25 @@
+<div id="menu">
+
+	<div id="menutop"><a title="home" href="http://vmppeao-test.mpl.ird.fr/bienvenue/"><img alt="home" src="/images/debarcadere.jpg" width="200" height="200" /></a></div>
+	<%= start_form_tag :action=> 'doConnexion', :controller => 'authentication'%>
+	<div class="navcontainer">
+		<ul class="navlist">
+			<li><h1>Login :</h1></li>
+			<li><input name="login" type="text"/></li>
+			<li><h1>Mot de passe :</h1></li>
+			<li><input name="password" type="password"/></li>
+			<li><%= submit_tag "Connexion" %></li>
+			
+		</ul>
+	</div>
+	<%= end_form_tag%>
+	<div class="navcontainer">
+		<ul class="navlist">
+			<li><h1>Crédits :</h1></li>
+			<li><a title="UR RAP" href="http://www.ird.fr">Réalisation : UR-RAP IRD</a></li>
+			<li><a title="Sinti-group" href="http://www.sinti-group.com">Développement : Sinti Group</a></li>
+			<li><a title="derby web design" href="http://www.tristarwebdesign.co.uk">Webdesign : tri-star</a></li>
+		</ul>
+	</div>
+
+</div>

@@ -1,0 +1,16 @@
+<h2>Migration du paramétrage de Pechexp</h2>
+<p>Vous avez choisi la migration du paramétrage de Pechexp.</p>
+<p>Aucun coup de pêche ne sera migré.</p>
+
+<%= start_form_tag ({:controller => "migration_pechexp", :action => "launch_parametrage"},{:id => 'frm'})%>
+      <table width="100%">
+        <tr>
+            <td>Commentaires</td>
+            <td><textarea name="commentaires"></textarea></td>
+            <td>
+                <input type="button" value="Exécuter" 
+                       onClick="confirmThenGo('Vous êtes sur le point de lancer une migration.\n Voulez vous continuer ?','frm');"/>
+            </td>
+        </tr>
+      </table>
+ <%= end_form_tag %>

@@ -1,0 +1,14 @@
+<h2>Migration globale</h2>
+<p>Ce processus migrera toutes les informations des bases Pechexp, Pechart et pays.</p>
+ <%= start_form_tag ({:controller => "migration_globale", :action => "launch"}, {:id => 'frm'})%>
+      <table width="100%">
+        <tr>
+            <td>Commentaires</td>
+            <td><textarea name="commentaires"></textarea></td>
+            <td>
+                <input type="button" value="Exécuter" 
+                       onClick="confirmThenGo('Vous êtes sur le point de lancer une migration globale.\n Voulez vous continuer ?','frm');"/>
+            </td>
+        </tr>
+      </table>
+ <%= end_form_tag %>
