@@ -58,6 +58,11 @@ do
         (psql -U postgres -f $n $nom_fichier) > $rep_log/$nom_fichier-$(date +%d%m%y_%H%M%S).log &&
         rm -f $rep_source_sql/$n
 done
+
+# modification otolithe 2011-01-10 pour ajouter une ligne au journal índiquant qu'une importation a eu lieu
+psql -U postgres -c "INSERT INTO sys_logs (login_utilisateur, action_log, statut, detail, date_log,adresse_ip) VALUES ('cron','import cron','Succes','Importation fichier Sql_Access_Postgres.zip reussie',CURRENT_TIMESTAMP(0),'local')" systeme_BD_Peche
+# fin modification otolithe
+
 #deverrouillage migration
 psql -U postgres -c "UPDATE sys_parametre SET valeur = '0' WHERE code='depot_cron'" systeme_BD_Peche
 #deverrouillage du script check.sh
