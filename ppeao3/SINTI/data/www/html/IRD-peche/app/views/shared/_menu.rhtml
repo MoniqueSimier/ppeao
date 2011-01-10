@@ -23,6 +23,7 @@
 			<li><h1>Divers :</h1></li>
 			<li><%= link_to "Journal", :controller => "journal", :action => "list" %></li>
 			<li><%= link_to "Manuel Utilisateur", :controller => "aide"%></li>
+			<!-- modification otolithe 2011-01-10 ajout du nom utilisateur-->
 			<li><%= link_to "Déconnecter "+session[:sess_utilisateur].login_utilisateur, :controller => "authentication", :action => "deconnexion" %></li>
 		</ul>
 	</div>
