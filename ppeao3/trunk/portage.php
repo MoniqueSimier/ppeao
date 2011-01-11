@@ -8,6 +8,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 
 $zone=3; // zone portage (voir table admin_zones)
 
+$zipfileimportlaunch=$_POST["$zipfileimportlaunch"];
+
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -19,7 +21,6 @@ $zone=3; // zone portage (voir table admin_zones)
 	<title>ppeao::manipulation de donn&eacute;es</title>
 
 <script src="/ckfinder/ckfinder.js" type="text/javascript"></script>
-
 </head> 
  <body>
 <?php 
@@ -42,6 +43,13 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 					finder.height=350;
 					finder.popup() ;
 				}
+</script>
+<script type="text/javascript" charset="utf-8">
+
+function triggerZipFileImport() {
+	$("zipfileimport").submit();
+}
+
 </script>
 
 <?php 
@@ -71,6 +79,28 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 			<li class="listitem"><a href="/portage_auto.php" ><b>Lancer le portage automatique</b></a></li>
 			<!-- <li class="listitem"><a href="/portage_manuel.php" ><b>Portage manuel</b></a></li> -->
 			<li class="listitem"><a href="javascript:BrowseFiles();" ><b>Charger un fichier de Sql_Access_Postgres.zip sur le serveur <?php echo($_SERVER["SERVER_NAME"])?> pour qu'il soit importé par le script CRON</b></a></li>
+			<?php
+			// si un fichier /data/www/html/IRD-Peche/public/work/portage/Sql_Access_Postgres.zip est present,
+			// on affiche le lien permettant de declencher son importation
+			$zipfile=$_SERVER["DOCUMENT_ROOT"].'work/portage/Sql_Access_Postgres.zip';
+			$heure_prochaine=time()+3600;
+			$heure=date('G',$heure_prochaine);
+			$message='(si vous le la lancez pas, elle sera effectu&eacute;e automatiquement &agrave; '.$heure.':00)';
+			// si le fichier lock est present, une importation est en cours
+			$lockfile=$_SERVER["DOCUMENT_ROOT"].'/data/pechartexp/import.lock';
+			if (file_exists($lockfile)) {$message='une importation est d&eacute;j&agrave; en cours, merci de r&eacute;essayer dans un moment...';} else {if ($zipfileimportlaunch) {$message=shell_exec('/opt/bin/pechartexp/check');}}
+			if (file_exists($zipfile)) {
+				echo('<li class="listitem">');
+				echo('
+				<form action="/portage.php" method="post" accept-charset="utf-8" name="zipfileimport" id="zipfileimport">
+					<input type="hidden" name="$zipfileimportlaunch" value="1" id="$zipfileimportlaunch">
+				</form>
+				<a href="javascript:triggerZipFileImport();" ><b>Lancer manuellement l\'importation du fichier Sql_Access_Postgres.zip</b></a><br />'.$message);
+				echo('</li>');
+			}
+
+			
+			?>
 			<li class="listitem"><a href="/acces_sinti.php" ><b>Acc&eacute;der &agrave; l&#x27;application SINTI pour importer des donn&eacute;es dans la base bdpeche</b></a></li>
 		</ul>
 		</div>	
