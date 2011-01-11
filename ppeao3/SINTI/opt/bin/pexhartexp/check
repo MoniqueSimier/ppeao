@@ -11,7 +11,10 @@ REP_LOCK=/data/pechartexp
 #repertoire contenant le fichier zip
 # YPOUR
 #REP_DEPOT=/usr/local/ird
-REP_DEPOT=/data/www/ird
+# ci dessous, config SINTI normale
+#REP_DEPOT=/data/www/ird
+#ci-dessous, config SINTI modifiee par otolithe le 11/01/2011
+REP_DEPOT=/data/www/html/IRD-Peche/public/work/portage
 
 #nom du fichier zip
 zip_file=Sql_Access_Postgres.zip

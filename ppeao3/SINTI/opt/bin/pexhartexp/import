@@ -6,7 +6,10 @@
 #repertoire contenant le fichier zip
 # YPOUR
 #REP_DEPOT=/usr/local/ird
-REP_DEPOT=/data/www/ird
+# ci dessous, config SINTI normale
+#REP_DEPOT=/data/www/ird
+#ci-dessous, config SINTI modifiee par otolithe le 11/01/2011
+REP_DEPOT=/data/www/html/IRD-Peche/public/work/portage
 
 #repertoire ou seront decompressés les fichiers du zip
 rep_source_sql=$REP_DEPOT/SQL_Sources
@@ -14,7 +17,7 @@ rep_source_sql=$REP_DEPOT/SQL_Sources
 #nom du fichier a decompresser
 zip_file=Sql_Access_Postgres.zip
 
-#repertoire ou seront stockéB les fichiers log
+#repertoire ou seront stocké les fichiers log
 rep_log=$rep_source_sql
 
 
