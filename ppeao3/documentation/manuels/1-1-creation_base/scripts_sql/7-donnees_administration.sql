@@ -208,6 +208,8 @@ INSERT INTO admin_j_group_zone VALUES (1, 9999, 2);
 INSERT INTO admin_j_group_zone VALUES (2, 2, 3);
 INSERT INTO admin_j_group_zone VALUES (2, 3, 4);
 INSERT INTO admin_j_group_zone VALUES (1, 2, 5);
+INSERT INTO admin_j_group_zone VALUES (2, 7, 6);
+
 
 ALTER TABLE admin_j_group_zone ENABLE TRIGGER ALL;
 
