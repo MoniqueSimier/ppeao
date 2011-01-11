@@ -77,3 +77,4 @@ rm -f $REP_DEPOT/$zip_file
 }
 
 main > $rep_log/import_$(date +%d%m%y_%H%M%S).log
+echo "importation terminee"

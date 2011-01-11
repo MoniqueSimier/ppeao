@@ -39,7 +39,7 @@ echo $fichier_lock1
 echo $zip_file
 echo $verrou
 
-#test l'existence de verroux et de l'existence du fichier zip avant de lancer l'importation 
+#test l'existence de verrou et de l'existence du fichier zip avant de lancer l'importation 
 
 if [ -e $fichier_lock1 -o $verrou == "1" ]
 then
@@ -47,6 +47,6 @@ then
 
 elif [ -e $fichier_zip ]
 then
- echo  "ca marche: $script_file" 
+ echo  "Fichier Sql_Access_Postgres.zip trouvé, lancement importation: $script_file" 
 	$script_file		
 fi
