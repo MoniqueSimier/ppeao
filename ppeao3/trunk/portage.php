@@ -85,7 +85,7 @@ function triggerZipFileImport() {
 			$zipfile=$_SERVER["DOCUMENT_ROOT"].'work/portage/Sql_Access_Postgres.zip';
 			$heure_prochaine=time()+3600;
 			$heure=date('G',$heure_prochaine);
-			$message='(si vous le la lancez pas, elle sera effectu&eacute;e automatiquement &agrave; '.$heure.':00)';
+			$message='(si vous ne la lancez pas, elle sera effectu&eacute;e automatiquement &agrave; '.$heure.':00)';
 			// si le fichier lock est present, une importation est en cours
 			$lockfile=$_SERVER["DOCUMENT_ROOT"].'/data/pechartexp/import.lock';
 			if (file_exists($lockfile)) {$message='une importation est d&eacute;j&agrave; en cours, merci de r&eacute;essayer dans un moment...';} else {if ($zipfileimportlaunch) {$message=shell_exec('/opt/bin/pechartexp/check');}}
