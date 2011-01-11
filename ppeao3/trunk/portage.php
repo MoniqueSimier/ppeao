@@ -18,6 +18,8 @@ $zone=3; // zone portage (voir table admin_zones)
 	?>
 	<title>ppeao::manipulation de donn&eacute;es</title>
 
+<script src="/ckfinder/ckfinder.js" type="text/javascript"></script>
+
 </head> 
  <body>
 <?php 
@@ -26,6 +28,22 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 ?>
 <div id="main_container" class="home">
+
+<script type="text/javascript" charset="utf-8">
+	function BrowseFiles()
+				{
+						
+					// You can use the "CKFinder" class to render CKFinder in a page:
+					var finder = new CKFinder() ;
+					finder.removePlugins = 'basket';
+					finder.basePath = '/ckfinder/' ;
+					finder.startupPath="Portage:portage/"
+					finder.width=700;
+					finder.height=350;
+					finder.popup() ;
+				}
+</script>
+
 <?php 
 	if (isset($_SESSION['s_ppeao_user_id'])){ 
 		$userID = $_SESSION['s_ppeao_user_id'];
@@ -52,6 +70,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		<ul class="list">
 			<li class="listitem"><a href="/portage_auto.php" ><b>Lancer le portage automatique</b></a></li>
 			<!-- <li class="listitem"><a href="/portage_manuel.php" ><b>Portage manuel</b></a></li> -->
+			<li class="listitem"><a href="javascript:BrowseFiles();" ><b>Charger un fichier de Sql_Access_Postgres.zip sur le serveur <?php echo($_SERVER["SERVER_NAME"])?> pour qu'il soit importé par le script CRON</b></a></li>
 			<li class="listitem"><a href="/acces_sinti.php" ><b>Acc&eacute;der &agrave; l&#x27;application SINTI pour importer des donn&eacute;es dans la base bdpeche</b></a></li>
 		</ul>
 		</div>	

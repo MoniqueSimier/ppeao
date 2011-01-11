@@ -186,7 +186,7 @@ Available options are: G, M, K (case insensitive).
 1M equals 1048576 bytes (one Megabyte), 1K equals 1024 bytes (one Kilobyte), 1G equals one Gigabyte.
 Example: 'maxSize' => "8M",
 */
-$config['DefaultResourceTypes'] = 'Documents,Figures,Cartes';
+$config['DefaultResourceTypes'] = 'Documents,Figures,Cartes,Portage';
 
 $config['ResourceType'][] = Array(
 		'name' => 'Documents',				// Single quotes not allowed
@@ -216,7 +216,14 @@ $config['ResourceType'][] = Array(
 		'defaulView'=>'List'
 		);
 
-
+$config['ResourceType'][] = Array(
+		'name' => 'Portage',
+		'url' => $baseUrl . 'portage',
+		'directory' => $baseDir . 'portage',
+		'maxSize' => 0,
+		'allowedExtensions' => '.zip',
+		'deniedExtensions' => 'exe'
+		);
 
 /*
  Due to security issues with Apache modules, it is recommended to leave the
