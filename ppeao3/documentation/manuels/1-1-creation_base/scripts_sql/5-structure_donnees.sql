@@ -1285,6 +1285,8 @@ CREATE TABLE art_stat_gt_sp (
 
 
 
+
+
 ALTER TABLE public.art_stat_gt_sp OWNER TO devppeao;
 
 --
@@ -1361,6 +1363,23 @@ COMMENT ON COLUMN art_stat_gt_sp.nbre_enquete_gt_sp IS 'nombre d''enquêtes avec 
 
 ALTER TABLE ONLY art_stat_gt_sp
     ADD CONSTRAINT art_stat_gt_sp_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: art_stat_gt_sp_art_stat_gt_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY art_stat_gt_sp
+    ADD CONSTRAINT art_stat_gt_sp_art_stat_gt_id_fkey FOREIGN KEY (art_stat_gt_id) REFERENCES art_stat_gt(id);
+
+
+--
+-- Name: art_stat_gt_sp_ref_espece_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: devppeao
+--
+
+ALTER TABLE ONLY art_stat_gt_sp
+    ADD CONSTRAINT art_stat_gt_sp_ref_espece_id_fkey FOREIGN KEY (ref_espece_id) REFERENCES ref_espece(id);
+
 
 
 -- ---------------------------------------------------------------------------
