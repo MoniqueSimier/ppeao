@@ -43,7 +43,7 @@ if ($section=='gerer') {
 	switch ($subsection) {
 		case "portage" : $portage=" active";
 		break;
-		case "maintenance" : $manintenance=" active";
+		case "maintenance" : $maintenance=" active";
 		break;
 		case "donnees" : $donnees=" active";
 		break;
