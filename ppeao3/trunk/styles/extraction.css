@@ -377,3 +377,14 @@ a.lienReg2 hover{
 .grise{
 	background-color:#CCC;
 }
+#selComp{
+	border:1px solid #333;
+	background-color:#CCC;
+	margin:4px;
+	padding:4px;
+}
+#expResultat{
+	font-weight:bold;
+	margin:4px;
+	padding:4px;
+}

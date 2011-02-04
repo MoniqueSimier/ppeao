@@ -36,7 +36,12 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 	} else {
 		$userID=null;
 	}
-
+	$OSType="";
+	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+		$OSType="WIN";
+	} else {
+		$OSType="OTHER";
+	}
 	// on teste à quelle zone l'utilisateur a accès
 	if (userHasAccess($userID,$zone)) {
 
@@ -44,73 +49,42 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		$_SESSION['s_status_export'] = 'ko';
 
 ?>
-			<h1>Export</h1>
-	<p>Cette section permet d'exporter les donn&eacute;es.</p>
+		<h1>Export</h1>
+		<p>Cette section permet de pr&eacute;parer et de r&eacute;aliser l'exportation des donn&eacute;es en format ACCESS.</p>
 		<br/>
-		<p>Ce traitement permet de cr&eacute;er les fichiers ACCESS .mdb qui serviront de source pour les bases ACCESS d&eacute;ploy&eacute;es sur le terrain. Pour chaque cas (p&ecirc;ches exp&eacute;rimentales ou p&ecirc;ches artisanales), le r&eacute;f&eacute;rentiel et le param&eacute;trage seront mis &agrave; jour et des fichiers zip contenant toutes les bases n&eacute;cessaires aux op&eacute;rateurs sur le terrain sera g&eacute;n&eacute;r&eacute;. </p>
+
+		<p>Vous allez pouvoir r&eacute;aliser les op&eacute;rations pr&eacute;paratoires &agrave; l'export des donn&eacute;es en format ACCESS, puis lancer cette export une fois la base de r&eacute;f&eacute;rence mise &agrave; jour.</p>
 		<br/>
-		<div id="runProcess">
-		<form id="formProcessAuto">
-			<br/><h2>Choissisez le type de p&ecirc;che à exporter : </h2>
-			 <input type="radio" id="typepecheexp" name="typepeche" value="exp" checked="checked" />&nbsp;P&ecirc;ches expérimentales<br />
-			<input type="radio" id="typepecheart" name="typepeche" value="art" />&nbsp;P&ecirc;ches artisanales<br/><br/>
-			<input id="startProcess" type="button" value="Lancer le traitement" onClick="runProcess()"/>
 
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G&eacute;n&eacute;rer un fichier de log compl&eacute;mentaire <input type="checkbox" name="logsupp" id="logsupp" checked="checked"/><br/>
-		</form><br/>
-		</div>
-		<div id="titleProcess">D&eacute;tail des process.</div>
+		  <h2>Op&eacute;rations pour la mise &agrave; jour de la base de r&eacute;f&eacute;rence bdppeo sur le PC</h2>
+            <ul>
+              <li><a href="javascript:doExportSelect('exportBaseRef');">Exporter la base de r&eacute;f&eacute;rence apr&egrave;s s&eacute;lection des donn&eacute;es &agrave; extraire pour pr&eacute;parer la mise &agrave; jour de la base de r&eacute;f&eacute;rence sur le PC</a>
+              <div id="exportSelComp"></div>
+              </li>
+               <?php if ($OSType=="WIN") { ?>
+              <li><a href="javascript:doExport('videbdppeaoPC','exportOutputVide','Base cible en cours de nettoyage ...');">Vider la base de r&eacute;f&eacute;rence bdppeao du PC pour pr&eacute;parer sa mise &agrave; jour</a>
+              <div id="exportOutputVide"></div>
+              </li>
+              <li><a href="javascript:doExport('majbdppeaoPC','exportOutputInt','Base cible en cours de mise a jour...');">Lancer l'int&eacute;gration des donn&eacute;es de r&eacute;f&eacute;rence dans la base bdppeao sur le PC depuis le fichier /work/export/SQL-bdppeao/bdppeao_a_importer.sql</a>
+              <div id="exportOutputInt"></div>
+              </li>
+              <?php } ?>
+            </ul>
+            <?php if ($OSType=="WIN") { ?>
+            <h2>Export des donn&eacute;es en format ACCESS</h2>
+  Vous pouvez acc&eacute;der &agrave; l'outil d'export des donn&eacute;es ici :<a href="export_process.php" target="_blank"> exporter les donn&eacute;es en format ACCESS</a>.
+			<?php } ?>
 		<br/>
-		
-		<?php // for test include $_SERVER["DOCUMENT_ROOT"].'/export/export_access.php'; 
-			
-			$_SESSION['s_erreur_process'] = false;
-			$_SESSION['s_status_export'] = 'ok';
-			$_SESSION['s_CR_export'] = "";
-			// Pour test: toutes les étapes ne sont pas obligatoires.
-			// On ajoute une variable qui permet de les rendre globalement obligatoire
-			//$boutDisabled = "disabled=\"disabled\""; // desactivés
-			$boutDisabled = ""; // activés
-		?>
-		<div id="vidage">
-			<div id="vidage_img"><img src="/assets/incomplete.png" alt=""/></div>
-			<div id="vidage_txt">Vidage de la base ACCESS de travail.</div>
-			<div id="vidage_chk">Lancer vidage<input type="checkbox" id="videcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
-			<?php 	$navbarLevel = 1;
-					$texteDiv = "Compte rendu du vidage de la base de travail";	
-					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
-		</div>
-		<div id="copiePPEAO">
-			<div id="copiePPEAO_img"><img src="/assets/incomplete.png" alt=""/></div>
-			<div id="copiePPEAO_txt">Copie des donnees depuis la base PPEAO (postgreSQL) de reference.</div>
-			<div id="copiePPEAO_chk">Lancer copie PPEAO<input type="checkbox" id="copPPEAOcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
-			<?php 	$navbarLevel = 2;
-					$texteDiv = "Compte rendu de copie depuis base PPEAO de reference.";	
-					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
-		</div>
-		<div id="copieACCESS">
-			<div id="copieACCESS_img"><img src="/assets/incomplete.png" alt=""/></div>
-			<div id="copieACCESS_txt">Copie des donnees depuis la base ACCESS de reference.</div>
-			<div id="copieACCESS_chk">Lancer copie ACCESS<input type="checkbox" id="copAcccheck" checked="checked" <?php echo $boutDisabled;?>/></div>
-			<?php 	$navbarLevel = 3;
-					$texteDiv = "Compte rendu de copie depuis base ACCESS de reference.";	
-					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
-
-		</div>
-		<div id="copieZip">
-			<div id="copieZip_img"><img src="/assets/incomplete.png" alt=""/></div>
-			<div id="copieZip_txt">Zip des bases.</div>
-			<div id="copieZip_chk">Lancer zip des bases<input type="checkbox" id="zipcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
-			<?php 	$navbarLevel = 4;
-				$texteDiv = "Compte rendu du zip des bases.";	
-				include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
-		</div>
-		<div id="exportOK"><div id="exportOK_img"><img src="/assets/incomplete.png" alt=""/></div><div id="exportOK_txt">Status du portage automatique.</div></div>
-
+        <br/>
+        <br/>
+        
 <?php
+
+
+
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
 
-;} // end if (userHasAccess($_SESSION['user_id'],$zone))
+} // end if (userHasAccess($_SESSION['user_id'],$zone))
 
 // si l'utilisateur n'a pas accès ou n'est pas connecté, on affiche un message l'invitant à contacter un administrateur pour obtenir l'accès
 else {userAccessDenied($zone);}

@@ -196,3 +196,10 @@ width:100%;
 	font-weight:bold;
 	border:1 px dashed #000000;
 }
+#videResultat{
+	font-weight:bold;
+	background-color:#CCC;
+}
+#expResultat{
+	background-color:#CCC;
+}

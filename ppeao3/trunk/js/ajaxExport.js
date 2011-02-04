@@ -180,3 +180,103 @@ function GetXmlHttpObject()
 	  }
 	return xmlHttp;
 }
+
+function recupereSelection(limSel,Selection){
+	listeVal = "";
+	for (i=1;i<=limSel;i++) {
+		if 	(document.getElementById(Selection+i).checked) {
+			if (listeVal=="") {
+				listeVal = document.getElementById(Selection+i).value;
+			} else {
+				listeVal = listeVal+","+document.getElementById(Selection+i).value;
+			}
+		}
+	}
+	return listeVal;
+}
+
+
+/**
+* Fonction qui permet de gerer des selections complementaires et puis lance l'export des données
+*/
+function doExportSelect(action,changeSelection) {
+	var choixExport="";
+	var choixPays="";
+	var nbPays = 0;
+	var nbSysteme = 0;
+	var choixSysteme = "";
+	// action : l'action à faire (sequences_ref_param, sequences_donnees, vacuum, reindex)
+	var outputDiv=$('exportSelComp');
+	// on initialise l'objet AJAX	
+	var xhr = getXhr();
+	// what to do when the response is received
+	xhr.onreadystatechange = function(){
+			// while waiting for the response, display the loading animation
+		var theLoader='<div align="left"><h2>Operation en cours</h2><br/>&nbsp;<img src="/assets/ajax-loader.gif" alt="Operation en cours..." title="Operation en cours..." valign="center"/></div>';
+		if(xhr.readyState < 4) { outputDiv.innerHTML = theLoader;}
+		// only do something if the whole response has been received and the server says OK
+		if(xhr.readyState == 4 && xhr.status == 200){
+			maintenanceResult = xhr.responseText;
+			outputDiv.innerHTML=maintenanceResult;
+		}  
+	} // end xhr.onreadystatechange
+	// using GET to send the request
+	if (document.getElementById("choixExport1")) {
+		choixExport = "&choixExport=" +recupereSelection(3,"choixExport");
+	}
+	if (document.getElementById("choixPays1")) {
+		
+		// a choice is done - we get the id of the selected dountry
+		if (changeSelection == 'non') {
+			choixExport = "&choixExport=" +document.getElementById("choixExportEC").value;
+			nbPays = document.getElementById("nbPays").value;
+			payschoisi = recupereSelection(nbPays,"choixPays");
+			if (payschoisi == "") {
+				alert("Merci de choisir un pays");
+				return;
+			}
+			choixPays = "&choixPays=" + payschoisi;
+		}
+		
+	}
+	if (document.getElementById("choixPaysEC")) {
+		// we finally reached to system selection
+		choixExport = "&choixExport=" +document.getElementById("choixExportEC").value;
+		if (changeSelection == 'non') {
+			choixPays = "&choixPays=" +document.getElementById("choixPaysEC").value;	
+			nbSysteme = document.getElementById("nbSysteme").value;
+			systemchoisi = recupereSelection(nbSysteme,"choixSysteme");
+			if (systemchoisi == "") {
+				alert("Merci de choisir au moins un système");
+				return;
+			}
+			choixSysteme = "&choixSysteme=" +systemchoisi;
+		}
+		
+	}
+	xhr.open("GET","/export/export_ajax.php?action="+action+choixExport+choixPays+choixSysteme,true);
+	xhr.send(null);	
+}
+/**
+* Fonction qui déclenche une opération d'exportation de données et en retourne le résultat
+*/
+function doExport(action,fenetre,label) {
+	// action : l'action à faire (sequences_ref_param, sequences_donnees, vacuum, reindex)
+	var outputDiv=$(fenetre);
+	// on initialise l'objet AJAX	
+	var xhr = getXhr();
+	// what to do when the response is received
+	xhr.onreadystatechange = function(){
+			// while waiting for the response, display the loading animation
+		var theLoader='<div align="left"><h2>'+label+'&nbsp;<img src="/assets/ajax-loader.gif" alt="export en cours..." title="export en cours..." valign="center"/></h2></div>';
+		if(xhr.readyState < 4) { outputDiv.innerHTML = theLoader;}
+		// only do something if the whole response has been received and the server says OK
+		if(xhr.readyState == 4 && xhr.status == 200){
+			maintenanceResult = xhr.responseText;
+			outputDiv.innerHTML=maintenanceResult;
+		}  
+	} // end xhr.onreadystatechange
+	// using GET to send the request
+	xhr.open("GET","/export/export_ajax.php?action="+action,true);
+	xhr.send(null);	
+}
