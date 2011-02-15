@@ -45,11 +45,11 @@ switch ($TableEnCours[$cptTable]) {
 	case "exp_trophique":
 			if (!$restrictionPays =="") {$restrictionEcosysteme = " where exp_biologie_id in (select id from exp_biologie where exp_fraction_id in (select id from exp_fraction where exp_coup_peche_id in ( select id from exp_coup_peche where exp_campagne_id in (select id from exp_campagne where ref_systeme_id in (".$restrictionSysteme.") ))))";}
 		break;
-	case "art_unite_peche":
-		if (!$restrictionPays =="") {$restrictionEcosysteme = " where art_agglomeration_id in ( select id from art_agglomeration where ref_secteur_id in ( select id from ref_secteur where ref_systeme_id in (".$restrictionSysteme.")))";}
-		break;	
+	//case "art_unite_peche": Le probleme est qu'on peut avoir des unites de peches lies aux debarquements ou aux activites. On extrait tout, c'est pas une grosse table
+	//	if (!$restrictionPays =="") {$restrictionEcosysteme = " where id in (select art_unite_peche_id from art_debarquement where art_agglomeration_id in ( select id from art_agglomeration where ref_secteur_id in ( select id from ref_secteur where ref_systeme_id in (".$restrictionSysteme."))))";}
+	//	break;	
 	case "art_lieu_de_peche":
-		if (!$restrictionPays =="") {$restrictionEcosysteme = " where ref_secteur_id in ( select id from ref_secteur where ref_systeme_id in (".$restrictionSysteme."))";}
+		if (!$restrictionPays =="") {$restrictionEcosysteme = " where id in (select art_lieu_de_peche_id from art_debarquement where art_agglomeration_id in ( select id from art_agglomeration where ref_secteur_id in ( select id from ref_secteur where ref_systeme_id in (".$restrictionSysteme."))))";}
 		break;
 	case "art_debarquement":
 		if (!$restrictionPays =="") {$restrictionEcosysteme = " where art_agglomeration_id in ( select id from art_agglomeration where ref_secteur_id in ( select id from ref_secteur where ref_systeme_id in (".$restrictionSysteme.")))";}

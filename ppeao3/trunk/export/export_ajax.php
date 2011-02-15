@@ -7,6 +7,7 @@
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/export/functions_ajax.php';
+include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 // on recupere l'action de maintenance a realiser
 $action=$_GET["action"];
 if (isset($_GET["choixExport"])){

@@ -12,14 +12,6 @@
 	$listeTablesDonneesExp="exp_environnement,exp_campagne,exp_coup_peche,exp_fraction,exp_biologie,exp_trophique";
 	$listeTablesDonneesArt="art_unite_peche,art_lieu_de_peche,art_debarquement,art_debarquement_rec,art_engin_peche,art_fraction,art_poisson_mesure,art_activite,art_engin_activite,art_fraction_rec,art_periode_enquete";
 	$listeTablesDonneesStat="art_stat_totale,art_stat_gt,art_stat_gt_sp,art_stat_sp,art_taille_gt_sp,art_taille_sp,art_stat_effort";
-	// Si il y a des restrictions, des tables continuent à s'exporter de la meme facon, d'autres ont des  restrictions
-	//$listeTablesRefSansRestriction = "ref_categorie_ecologique,ref_categorie_trophique,ref_ordre,ref_famille,ref_espece,ref_origine_kb,art_categorie_socio_professionnelle,art_etat_ciel";
-	//$listeTablesParamExpSansRestriction = "exp_contenu,exp_debris,exp_engin,exp_force_courant,exp_position,exp_qualite,exp_remplissage,exp_sediment,exp_sens_courant,exp_sexe,exp_stade,exp_vegetation,exp_station";
-	//$listeTablesParamArtSansRestriction = "art_grand_type_engin,art_millieu,art_type_activite,art_type_agglomeration,art_type_sortie,art_type_engin,art_vent";
-	//$listeTablesRefAvecRestriction = "ref_pays,ref_systeme,ref_secteur";
-	//$listeTablesParamExpAvecRestriction = "";
-	//$listeTablesParamArtAvecRestriction = "art_agglomeration";
-
 
 function getNomPays ($IDPays,$connectPPEAO)  {
 	$nomPays ="";
@@ -129,7 +121,7 @@ function createSQLFile($fileSQLname, $connectPPEAO) {
 	$fileSQLopen=fopen($fileSQL,'w');
 	rewind($fileSQLopen);	
 	if ($erreur =="") {
-		$sql = "SELECT key1,valeur_ligne FROM temp_extraction ";
+		$sql = "SELECT key1,valeur_ligne FROM temp_extraction order by key1";
 		$Result = pg_query($connectPPEAO,$sql);
 		$erreurSQL = pg_last_error($connectPPEAO);
 		if (!$Result) {
@@ -139,9 +131,7 @@ function createSQLFile($fileSQLname, $connectPPEAO) {
 				echo "Table temp_extraction vide<br/>";
 			} else {
 				while ($Row = pg_fetch_row($Result) ) {
-					//echo $Row[1]."<br/>";
 					$script = str_replace("##quot##","'",$Row[1]);
-					
 					fwrite($fileSQLopen,$script."\r\n");
 					
 				}
@@ -183,14 +173,29 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 		case "Tout": 
 			set_time_limit(0);
 			$listeTables= $listeTablesRef.",".$listeTablesParamExp.",".$listeTablesParamArt.",".$listeTablesDonneesExp.",".$listeTablesDonneesArt.",".$listeTablesDonneesStat;
-			//$listeTables="art_debarquement";
+			//$listeTables="exp_biologie";
 			break;
 		case "RefParam": 
 			set_time_limit(90);
 			$listeTables= $listeTablesRef.",".$listeTablesParamExp.",".$listeTablesParamArt;
 			break;
 	}
+	// tout d'abord on ajoute la desactivation des contraintes dans les sql
+	//echo "1- desactivation triggers <br/>";
 	$TableEnCours = explode(",",$listeTables);
+	$nbrTable = count($TableEnCours)-1;
+	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
+		$sql ="ALTER TABLE ".$TableEnCours[$cptTable]." DISABLE TRIGGER ALL;";
+		$SQLInsert = "insert into temp_extraction (key1,valeur_ligne) values ('1-REM-CONSTRAINTS','".$sql."')";
+		$SQLInsertresult = pg_query($connectPPEAO,$SQLInsert);
+		$erreurSQL = pg_last_error($connectPPEAO);
+		if ( !$SQLInsertresult ) { 
+			echo " Erreur insertion dans temp_extraction - sql = ".$SQLInsertresult." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+		} 
+		pg_free_result($SQLInsertresult);
+	}
+	
+	// On commence le traitement proprement dit
 	$nbrTable = count($TableEnCours)-1;
 	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
 		$SQLTypeChamps = array();
@@ -214,6 +219,7 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 			} else {
 				while ($Row = pg_fetch_row($Result) ) {
 					$SQLValues = "";
+					$valeurID = $Row[1];
 					for ($cptElement = 0;$cptElement < $nbChampTable;$cptElement++) {
 							//echo $Row[$cptElement]." type = ".$SQLTypeChamps[$cptElement]." - ";
 							$valAAjouter = "";
@@ -250,10 +256,10 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 					
 					}
 					//echo "<br/>insert into ".$TableEnCours[$cptTable]." (".$SQLChamps.") values (".$SQLValues.");<br/>";
-					$valeurSQL= "insert into ".$TableEnCours[$cptTable]." (".$SQLChamps.") values (".$SQLValues.");";
-					$valeurSQL = str_replace ("'","##quot##",$valeurSQL);
+					$valeurSQL= "insert into ".$TableEnCours[$cptTable]." (".$SQLChamps.") values (".$SQLValues.");##FL##";
+					$valeurSQL = str_replace ("'","##quot##",$valeurSQL); // ca va eviter les problemes de quot dans le sql qu'on stocke. Ne pas oublier de les remplacer apres !!!!
 					//  Etape 3: On stocke le SQL dans TempExtraction
-					$SQLInsert = "insert into temp_extraction (key1,valeur_ligne) values ('".$TableEnCours[$cptTable]."','".$valeurSQL."')";
+					$SQLInsert = "insert into temp_extraction (key1,key2,valeur_ligne) values ('2-".$TableEnCours[$cptTable]."','".$valeurID."','".$valeurSQL."')";
 					//echo $SQLInsert."<br/>";
 					$SQLInsertresult = pg_query($connectPPEAO,$SQLInsert);
 					$erreurSQL = pg_last_error($connectPPEAO);
@@ -265,6 +271,20 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 			}
 		}
 	} // fin du for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++)
+	// A la fin de l'execution du SQL on reactive les contraintes:
+	//echo "fin- reactivation triggers <br/>";
+	$nbrTable = count($TableEnCours)-1;
+	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
+		$sql ="ALTER TABLE ".$TableEnCours[$cptTable]." ENABLE TRIGGER ALL;";
+		$SQLInsert = "insert into temp_extraction (key1,valeur_ligne) values ('3-ADD-CONSTRAINTS','".$sql."')";
+		$SQLInsertresult = pg_query($connectPPEAO,$SQLInsert);
+		$erreurSQL = pg_last_error($connectPPEAO);
+		if ( !$SQLInsertresult ) { 
+			echo " Erreur insertion dans temp_extraction - sql = ".$SQLInsertresult." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+		} 
+		pg_free_result($SQLInsertresult);
+	}
+	
 	return $erreur;
 }
 //*********************************************************************
@@ -296,6 +316,7 @@ function emptyDB($typeAction,$connectPPEAO) {
 		case "Tout": 
 			set_time_limit(0);
 			$listeTables= $listeTablesRef.",".$listeTablesParamExp.",".$listeTablesParamArt.",".$listeTablesDonneesExp.",".$listeTablesDonneesArt.",".$listeTablesDonneesStat;
+			//$listeTables="art_activite";
 			break;
 		case "RefParam": 
 			$listeTables= $listeTablesRef.",".$listeTablesParamExp.",".$listeTablesParamArt;
@@ -305,13 +326,38 @@ function emptyDB($typeAction,$connectPPEAO) {
 	$TableEnCours = explode(",",$listeTables);
 	$nbrTable = count($TableEnCours)-1;
 	//echo $listeTables."<br/>";
+	// pour plus de sécurité on vire les contraintes
+	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
+		$sql ="ALTER TABLE ".$TableEnCours[$cptTable]." DISABLE TRIGGER ALL;";
+		$Result = pg_query($connectPPEAO,$sql);
+		$erreurSQL = pg_last_error($connectPPEAO);
+		if (!$Result) {
+			$erreur =  "erreur disable trigger pour ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
+		} else {
+			$compteRendu.=$TableEnCours[$cptTable]." vid&eacute; <br/>"; 
+		}
+		pg_free_result($Result);
+	}
+	
 	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
 		//echo "<b>Table ".$TableEnCours[$cptTable]." videe</b><br/>";
 		$sql = "delete from ".$TableEnCours[$cptTable];
 		$Result = pg_query($connectPPEAO,$sql);
 		$erreurSQL = pg_last_error($connectPPEAO);
 		if (!$Result) {
-			$erreur =  "erreur lecture structure table ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
+			$erreur =  "erreur vidage table ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
+		} else {
+			$compteRendu.=$TableEnCours[$cptTable]." vid&eacute; <br/>"; 
+		}
+		pg_free_result($Result);
+	}
+	// On rajoute ensuite les contraintes
+	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
+		$sql="ALTER TABLE ".$TableEnCours[$cptTable]." ENABLE TRIGGER ALL;";
+		$Result = pg_query($connectPPEAO,$sql);
+		$erreurSQL = pg_last_error($connectPPEAO);
+		if (!$Result) {
+			$erreur =  "erreur disable trigger pour ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
 		} else {
 			$compteRendu.=$TableEnCours[$cptTable]." vid&eacute; <br/>"; 
 		}
@@ -333,7 +379,23 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 // En sortie : 
 // La fonction renvoie une chaine contenant une erreur sinon vide si pas d'erreur
 //*********************************************************************
-$erreur="";
+	Global $logComp;
+	Global $nomLogLien;
+	Global $EcrireLogComp;
+	
+	// Pour les tests on ecrit les erreurs dans un fichier log
+	$dirLog = $_SERVER["DOCUMENT_ROOT"]."/log";
+	$fileLogComp = "export.log";
+	$logComp="";
+	$nomLogLien="";
+	$EcrireLogComp = true;
+	$pasdefichier = false; // vieux residu du portage....
+	ouvreFichierLog($dirLog,$fileLogComp);
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "***** Debut import données",$pasdefichier);
+	}
+	// Debut du traitement: 
+	$erreur="";
 	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$fileSQLname;
 	if (!(file_exists($fileSQL)) ) {
 		$erreur = "Le fichier ".$_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$fileSQLname." n'est pas pr&eacute;sent sur le serveur. Merci de le copier dans le bon r&eacute;pertoire.<br/>";
@@ -341,14 +403,47 @@ $erreur="";
 		exit;
 	} 
 	$fileSQLopen=fopen($fileSQL,'r');
+	$cptLigne = 0;
+	$ligneEnConstruction = false;
 	while ( ($line = fgets($fileSQLopen)) !== false) {
-		$sql = $line;
-		$Result = pg_query($connectPPEAO,$sql);
-		$erreurSQL = pg_last_error($connectPPEAO);
-		if (!$Result) {
-			$erreur .=  "erreur execution SQL ".$sql." - erreur complete = ".$erreurSQL."<br/>";
-		} 
+		$cptLigne ++;
+		// On peut avoir des instruction sur 2 lignes...
+		if (strpos($line,"##FL##") === false && strpos($line,"ALL;") === false) {
+			$sql .= $line;
+			// On n'a pas la fin de la ligne
+			$ligneEnConstruction = true;
+			//echo "<b>En cours de construction</b> ".$sql."  <br/>";
+		} else {
+			if ($ligneEnConstruction) {
+				// On finit de contruire la ligne
+				$ligneEnConstruction = false;
+				$sql .= $line;
+				$cptLEC = 0;
+			} else {
+				$sql = $line;
+			}
+			
+			//echo "1".$sql." fin SQL a excuter <br/>";
+			$sql = str_replace("##FL##","",$sql);
+			//echo "2".$sql." fin SQL a excuter <br/>";
+			$Result = pg_query($connectPPEAO,$sql);
+			$erreurSQL = pg_last_error($connectPPEAO);
+			if (!$Result) {
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp, "Ligne ".$cptLigne." Erreur execution SQL ".$sql." - erreur complete = ".$erreurSQL."",$pasdefichier);
+				}
+				$erreur .=  "erreur execution SQL ".$sql." - erreur complete = ".$erreurSQL."<br/>";
+			}
+			$sql ="";
+		}
+		//  test
+		//if ($cptLigne == 40) {
+		//exit;	
+		//}
 	  //echo $line."<br>";
+	}
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "***** Fin import données",$pasdefichier);
 	}
 return $erreur;
 }

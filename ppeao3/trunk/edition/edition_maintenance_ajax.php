@@ -11,6 +11,15 @@ $action=$_GET["action"];
 $success=true;
 $operation="";
 $erreurSQL="";
+// Liste des tables de la BD // Ajout YL 07/02/2011
+$listeTablesRef="ref_pays,ref_systeme,ref_secteur,ref_categorie_ecologique,ref_categorie_trophique,ref_ordre,ref_famille,ref_espece,ref_origine_kb,art_categorie_socio_professionnelle,art_etat_ciel";
+$listeTablesParamExp = "exp_contenu,exp_debris,exp_engin,exp_force_courant,exp_position,exp_qualite,exp_remplissage,exp_sediment,exp_sens_courant,exp_sexe,exp_stade,exp_vegetation,exp_station";
+$listeTablesParamArt = "art_grand_type_engin,art_millieu,art_type_activite,art_type_agglomeration,art_type_sortie,art_type_engin,art_vent,art_agglomeration";
+$listeTablesDonneesExp="exp_environnement,exp_campagne,exp_coup_peche,exp_fraction,exp_biologie,exp_trophique";
+$listeTablesDonneesArt="art_unite_peche,art_lieu_de_peche,art_debarquement,art_debarquement_rec,art_engin_peche,art_fraction,art_poisson_mesure,art_activite,art_engin_activite,art_fraction_rec,art_periode_enquete";
+$listeTablesDonneesStat="art_stat_totale,art_stat_gt,art_stat_gt_sp,art_stat_sp,art_taille_gt_sp,art_taille_sp,art_stat_effort";
+$sql="";
+
 switch ($action) {
 	case 'sequences_ref_param':
 		$operation="de mise-&agrave;-jour des s&eacute;quences des tables de r&eacute;f&eacute;rence et de param&eacute;trage";
@@ -243,6 +252,77 @@ switch ($action) {
 					$success=true;
 				}
 			}
+		break;
+	case 'empty_bdpeche':
+		$operation=" de vidage de bdpeche";
+
+		$connectBDPECHE =pg_connect ("host=".$host." dbname=".$base_portage." user=".$user." password=".$passwd);
+		if ($connectBDPECHE) {$success=true;} else {$success=false;$erreurSQL ="(erreur = erreur connexion bdpeche)";}
+		if ($success) {
+			$listeTables= $listeTablesRef.",".$listeTablesParamExp.",".$listeTablesParamArt.",".$listeTablesDonneesExp.",".$listeTablesDonneesArt.",".$listeTablesDonneesStat;
+			$TableEnCours = explode(",",$listeTables);
+			$nbrTable = count($TableEnCours)-1;
+			for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
+				$sql.="ALTER TABLE ".$TableEnCours[$cptTable]." DISABLE TRIGGER ALL;";
+			}
+			for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
+				$sql.="DELETE  FROM ".$TableEnCours[$cptTable]." ;";
+			}
+			//echo $sql;
+			$result = pg_query($connectBDPECHE,$sql);
+			$erreurSQL = pg_last_error($connectBDPECHE);
+			$erreurSQL = "(<b>erreur </b>= ".$erreurSQL.")";
+			if (!$result) {
+				$success=false;
+			} else {
+				$success=true;
+			}
+		}// fin du if ($success)
+	break;
+	case 'empty_ACCESS':
+		$PathFicConfAccess = $_SERVER["DOCUMENT_ROOT"]."/conf/exportACCESS.txt";
+		include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
+		$operation=" de vidage des bases ACCESS exp2003_bdd, pechart et pays.";
+		$success = true;
+		// On recupere les noms des tables a vider.
+		// exp2003_bdd
+		$go = false;
+		if ($go) {
+			$connectAccess = odbc_connect('exp2003_bdd','','',SQL_CUR_USE_ODBC);
+			$listeTables = GetParam("listeaViderExpACCESS",$PathFicConfAccess);
+			$TableEnCours = explode(",",$listeTables);
+			$nbrTable = count($TableEnCours)-1;
+			for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
+				$sql.="DELETE * FROM ".$TableEnCours[$cptTable]." ;";
+			}
+			//echo $sql;
+			$result = odbc_exec($connectAccess,$sql);
+			$erreurSQL = odbc_errormsg($connectAccess); // 
+			$erreurSQL = "(<b>erreur </b>= ".$erreurSQL.")";
+			if (!$result) {
+				$success=false;
+			} 
+		}
+		//pechart
+		if ($success) {
+			echo "vidage de pechart<br/>";
+			$connectAccess = odbc_connect('pechart','','',SQL_CUR_USE_ODBC);
+			$listeTables = GetParam("listeaViderArtACCESS",$PathFicConfAccess);
+			//echo "liste table = ".$listeTables."<br/>";
+			$TableEnCours = explode(",",$listeTables);
+			$nbrTable = count($TableEnCours)-1;
+			for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
+				$sql =" delete * from ".$TableEnCours[$cptTable]." ;";
+				$result = odbc_exec($connectAccess,$sql);
+				if (!$result) {
+					$success=false;
+					$erreurSQL = odbc_errormsg($connectAccess); // 
+					$erreurSQL = "(<b>erreur </b>= ".$erreurSQL.")";
+				}
+				
+			}
+			//echo $sql."<br/>";
+		}
 		break;
 	default: 
 		break;
