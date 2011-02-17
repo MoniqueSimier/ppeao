@@ -109,6 +109,11 @@ function createSQLFile($fileSQLname, $connectPPEAO) {
 // En sortie : 
 // La fonction renvoie une chaine contenant une erreur sinon vide si pas d'erreur
 //*********************************************************************
+	global $zipFilelien;
+	global $logComp;
+	global $EcrireLogComp;
+	global $pasdefichier;
+	include $_SERVER["DOCUMENT_ROOT"].'/zip/archive.php';
 	$erreur = "";
 	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$fileSQLname;
 	if (!(file_exists($fileSQL)) ) {
@@ -139,6 +144,26 @@ function createSQLFile($fileSQLname, $connectPPEAO) {
 		}
 	}
 	fclose($fileSQLopen);
+	// creation de l'archive
+	
+	$zipFilename = $_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$fileSQLname.".zip";
+	$zipFilelien = "/work/export/SQL-bdppeao/".$fileSQLname.".zip";
+	
+	if (file_exists($zipFilename)) {
+	// pas forcement necessaire, verifier que le x+ vide le fichier
+		unlink($zipFilename);
+	}
+	$theZipFile=new zip_file($zipFilename);	
+	//setting the zip options: write to disk, do not recurse directories, do not store path and do not compress
+	$theZipFile->set_options(array('inmemory' => 0, 'recurse' => 0, 'storepaths' => 0, 'method'=>1));			
+	
+	$theZipFile->add_files($fileSQL);
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "Ajout de ".$fileSQL." dans l'archive ".$zipFilename ,$pasdefichier);
+	}	
+	$theZipFile->create_archive();
+	
+	
 	return $erreur;
 }
 
@@ -166,9 +191,22 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 	global $compteRendu;
 	global $SQLTypeChamps;
 	global $nbChampTable;
-	$erreur = "";
-	$premierPassage = false;
+	global $logComp;
+	global $nomLogLien;
+	global $EcrireLogComp;
+	global $pasdefichier;
 	
+	$erreur = "";
+
+	$nbTablesExportees = 0;
+	$nbEnregLus = 0;
+	$nbEnregExportes = 0;
+	
+	// Pour les tests on ecrit les erreurs dans un fichier log
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "***** Debut Lecture table et ajout dans temp_extraction données",$pasdefichier);
+	}
+
 	switch ($typeAction) {
 		case "Tout": 
 			set_time_limit(0);
@@ -178,6 +216,7 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 		case "RefParam": 
 			set_time_limit(90);
 			$listeTables= $listeTablesRef.",".$listeTablesParamExp.",".$listeTablesParamArt;
+			//$listeTables="ref_espece";
 			break;
 	}
 	// tout d'abord on ajoute la desactivation des contraintes dans les sql
@@ -201,9 +240,15 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 		$SQLTypeChamps = array();
 		$SQLChamps = "";
 		$nbChampTable=0;
+		$nbTablesExportees++;
+		$nbEnregLus = 0;
+		$nbEnregExportes = 0;
 		// Etape 1 : on recupere la structure de la table
 		$SQLChamps = GetTableStructure($TableEnCours[$cptTable],$connectPPEAO);
 		// Etape 2 : on lit le contenu de la table et on cree les SQL
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "Export de la table ".$TableEnCours[$cptTable],$pasdefichier);
+		}
 		//echo "Export de la table ".$TableEnCours[$cptTable]." <br/>";
 		$restrictionEcosysteme ="";
 		include $_SERVER["DOCUMENT_ROOT"].'/export/gestion_restriction_export.php';
@@ -212,6 +257,9 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 		$Result = pg_query($connectPPEAO,$sql);
 		$erreurSQL = pg_last_error($connectPPEAO);
 		if (!$Result) {
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "** Erreur lecture ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL,$pasdefichier);
+			}
 			$erreur =  "erreur lecture ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
 		} else {
 			if (pg_num_rows($Result) == 0) {
@@ -220,6 +268,7 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 				while ($Row = pg_fetch_row($Result) ) {
 					$SQLValues = "";
 					$valeurID = $Row[1];
+					$nbEnregLus++;
 					for ($cptElement = 0;$cptElement < $nbChampTable;$cptElement++) {
 							//echo $Row[$cptElement]." type = ".$SQLTypeChamps[$cptElement]." - ";
 							$valAAjouter = "";
@@ -234,16 +283,20 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 									$valAAjouter = $Row[$cptElement];
 								}
 							} else {
-								if ($Row[$cptElement] == "") {
-									if (strpos($SQLTypeChamps[$cptElement],"date") === false && 
-									strpos($SQLTypeChamps[$cptElement],"time") === false) {
-										$valAAjouter = "''";
-									} else {
-										$valAAjouter = "null";
-									}
+								if ($Row[$cptElement] == null ) {
+									$valAAjouter = "null";
 								} else {
-									$valQuot = str_replace("'","''",$Row[$cptElement]); // On remplace les quotes qui pourraient etre presentes dans la chaine
-									$valAAjouter = "'".$valQuot."'";// une chaine est entouree de quotes dans le SQL
+									if ($Row[$cptElement] == "") {
+										if (strpos($SQLTypeChamps[$cptElement],"date") === false && 
+										strpos($SQLTypeChamps[$cptElement],"time") === false) {
+											$valAAjouter = "''";
+										} else {
+											$valAAjouter = "null";
+										}
+									} else {
+										$valQuot = str_replace("'","''",$Row[$cptElement]); // On remplace les quotes qui pourraient etre presentes dans la chaine
+										$valAAjouter = "'".$valQuot."'";// une chaine est entouree de quotes dans le SQL
+									}
 								}
 							}
 							if ($SQLValues == "") {
@@ -252,23 +305,41 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 								$SQLValues .= ",".$valAAjouter;
 							}
 					}
-					if ($premierPassage) {
+
+
 					
-					}
 					//echo "<br/>insert into ".$TableEnCours[$cptTable]." (".$SQLChamps.") values (".$SQLValues.");<br/>";
 					$valeurSQL= "insert into ".$TableEnCours[$cptTable]." (".$SQLChamps.") values (".$SQLValues.");##FL##";
 					$valeurSQL = str_replace ("'","##quot##",$valeurSQL); // ca va eviter les problemes de quot dans le sql qu'on stocke. Ne pas oublier de les remplacer apres !!!!
+					//if ($EcrireLogComp ) {
+					//	WriteCompLog ($logComp, "** DEBUG ".$valeurSQL,$pasdefichier);
+					//}
+					$valeurID = str_replace ("'","",$valeurID);
 					//  Etape 3: On stocke le SQL dans TempExtraction
 					$SQLInsert = "insert into temp_extraction (key1,key2,valeur_ligne) values ('2-".$TableEnCours[$cptTable]."','".$valeurID."','".$valeurSQL."')";
 					//echo $SQLInsert."<br/>";
+					//if ($EcrireLogComp ) {
+					//	WriteCompLog ($logComp, "** DEBUG ".$SQLInsert,$pasdefichier);
+					//}
 					$SQLInsertresult = pg_query($connectPPEAO,$SQLInsert);
 					$erreurSQL = pg_last_error($connectPPEAO);
 					if ( !$SQLInsertresult ) { 
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp, "** Erreur insertion dans temp_extraction - sql = ".$SQLInsertresult." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+						}
 						echo " Erreur insertion dans temp_extraction - sql = ".$SQLInsertresult." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
-					} 
+					} else {
+						$nbEnregExportes ++;
+					}
 					pg_free_result($SQLInsertresult);
 				}
 			}
+		}
+				
+		// compte rendu traitement pour la table		
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "   - Enregs lus dans la table             : ".$nbEnregLus,$pasdefichier);
+			WriteCompLog ($logComp, "   - Enregs exportes dans temp_extraction : ".$nbEnregExportes,$pasdefichier);
 		}
 	} // fin du for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++)
 	// A la fin de l'execution du SQL on reactive les contraintes:
@@ -279,12 +350,15 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 		$SQLInsert = "insert into temp_extraction (key1,valeur_ligne) values ('3-ADD-CONSTRAINTS','".$sql."')";
 		$SQLInsertresult = pg_query($connectPPEAO,$SQLInsert);
 		$erreurSQL = pg_last_error($connectPPEAO);
-		if ( !$SQLInsertresult ) { 
+		if ( !$SQLInsertresult ) {
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "** Erreur insertion dans temp_extraction - sql = ".$SQLInsertresult." (erreur compl&egrave;te = ".$erreurSQL.")",$pasdefichier);
+			}
 			echo " Erreur insertion dans temp_extraction - sql = ".$SQLInsertresult." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 		} 
 		pg_free_result($SQLInsertresult);
 	}
-	
+
 	return $erreur;
 }
 //*********************************************************************
@@ -309,9 +383,19 @@ function emptyDB($typeAction,$connectPPEAO) {
 	global $listeTablesDonneesStat;
 	global $listeTablesDonneesExp;
 	global $compteRendu;
+	global $logComp;
+	global $nomLogLien;
+	global $EcrireLogComp;
+	global $pasdefichier;
+	
+	$nbTablesVidees = 0;
+	
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "***** Debut vidage données de la base ".pg_dbname($connectPPEAO),$pasdefichier);
+	}
+
 	$erreur = "";
 
-	
 	switch ($typeAction) {
 		case "Tout": 
 			set_time_limit(0);
@@ -332,6 +416,9 @@ function emptyDB($typeAction,$connectPPEAO) {
 		$Result = pg_query($connectPPEAO,$sql);
 		$erreurSQL = pg_last_error($connectPPEAO);
 		if (!$Result) {
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "erreur disable trigger pour ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL,$pasdefichier);
+			}
 			$erreur =  "erreur disable trigger pour ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
 		} else {
 			$compteRendu.=$TableEnCours[$cptTable]." vid&eacute; <br/>"; 
@@ -341,12 +428,19 @@ function emptyDB($typeAction,$connectPPEAO) {
 	
 	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
 		//echo "<b>Table ".$TableEnCours[$cptTable]." videe</b><br/>";
+		$nbTablesVidees++;
 		$sql = "delete from ".$TableEnCours[$cptTable];
 		$Result = pg_query($connectPPEAO,$sql);
 		$erreurSQL = pg_last_error($connectPPEAO);
 		if (!$Result) {
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "erreur vidage table ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL,$pasdefichier);
+			}
 			$erreur =  "erreur vidage table ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
 		} else {
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "  - table ".$TableEnCours[$cptTable]." videe",$pasdefichier);
+			}
 			$compteRendu.=$TableEnCours[$cptTable]." vid&eacute; <br/>"; 
 		}
 		pg_free_result($Result);
@@ -357,11 +451,19 @@ function emptyDB($typeAction,$connectPPEAO) {
 		$Result = pg_query($connectPPEAO,$sql);
 		$erreurSQL = pg_last_error($connectPPEAO);
 		if (!$Result) {
-			$erreur =  "erreur disable trigger pour ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "erreur enable trigger pour ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL,$pasdefichier);
+			}
+			$erreur =  "erreur enable trigger pour ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
 		} else {
 			$compteRendu.=$TableEnCours[$cptTable]." vid&eacute; <br/>"; 
 		}
 		pg_free_result($Result);
+	}
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "***** Fin vidage données de la base ".pg_dbname($connectPPEAO),$pasdefichier);
+		WriteCompLog ($logComp, "***** Nombre total tables videes =  ".$nbTablesVidees,$pasdefichier);
+		WriteCompLog ($logComp, "***** erreur :  ".$erreur,$pasdefichier);
 	}
 	return $erreur;
 }
@@ -379,20 +481,13 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 // En sortie : 
 // La fonction renvoie une chaine contenant une erreur sinon vide si pas d'erreur
 //*********************************************************************
-	Global $logComp;
-	Global $nomLogLien;
-	Global $EcrireLogComp;
+	global $logComp;
+	global $nomLogLien;
+	global $EcrireLogComp;
+	global $pasdefichier;
 	
-	// Pour les tests on ecrit les erreurs dans un fichier log
-	$dirLog = $_SERVER["DOCUMENT_ROOT"]."/log";
-	$fileLogComp = "export.log";
-	$logComp="";
-	$nomLogLien="";
-	$EcrireLogComp = true;
-	$pasdefichier = false; // vieux residu du portage....
-	ouvreFichierLog($dirLog,$fileLogComp);
 	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "***** Debut import données",$pasdefichier);
+		WriteCompLog ($logComp, "***** Debut lecture fichier SQL données et import dans ".pg_dbname($connectPPEAO),$pasdefichier);
 	}
 	// Debut du traitement: 
 	$erreur="";
@@ -405,7 +500,12 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 	$fileSQLopen=fopen($fileSQL,'r');
 	$cptLigne = 0;
 	$ligneEnConstruction = false;
+	$NomTableEnCours = "";
+	$nbTablesLues = 0;
+	$nbEnregsLus = 0;
+	$nbEnregsErreurs = 0;
 	while ( ($line = fgets($fileSQLopen)) !== false) {
+		
 		$cptLigne ++;
 		// On peut avoir des instruction sur 2 lignes...
 		if (strpos($line,"##FL##") === false && strpos($line,"ALL;") === false) {
@@ -425,6 +525,25 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 			
 			//echo "1".$sql." fin SQL a excuter <br/>";
 			$sql = str_replace("##FL##","",$sql);
+			$extraitNomTable= strstr($sql,"(",true);
+			$extraitNomTable= strstr($extraitNomTable,"into ");
+			$extraitNomTable = str_replace("into ","",$extraitNomTable);
+			//echo "nom table lue = ".$extraitNomTable." tableEC = ".$NomTableEnCours." <br/>";
+			if ( $NomTableEnCours == "") {
+				$NomTableEnCours = $extraitNomTable;
+			} else {
+				if ($NomTableEnCours == $extraitNomTable) {
+					$nbEnregsLus ++;
+				} else {
+					if ($EcrireLogComp ) {
+						WriteCompLog ($logComp, "  -  nb enregs lus = ".$nbEnregsLus." pour ".$NomTableEnCours."  (en erreur = ".$nbEnregsErreurs.")",$pasdefichier);
+					}
+					$nbEnregsLus=0;
+					$nbEnregsErreurs=0;
+					$nbTablesLues++;
+					$NomTableEnCours = $extraitNomTable;
+				}
+			}
 			//echo "2".$sql." fin SQL a excuter <br/>";
 			$Result = pg_query($connectPPEAO,$sql);
 			$erreurSQL = pg_last_error($connectPPEAO);
@@ -432,6 +551,7 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 				if ($EcrireLogComp ) {
 					WriteCompLog ($logComp, "Ligne ".$cptLigne." Erreur execution SQL ".$sql." - erreur complete = ".$erreurSQL."",$pasdefichier);
 				}
+				$nbEnregsErreurs ++;
 				$erreur .=  "erreur execution SQL ".$sql." - erreur complete = ".$erreurSQL."<br/>";
 			}
 			$sql ="";
@@ -442,9 +562,26 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 		//}
 	  //echo $line."<br>";
 	}
-	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "***** Fin import données",$pasdefichier);
+	// A la fin de l'execution du SQL on ajoute un petit vaccuum pour eviter les problemes d'insertion massif d'enregs.:
+	$sql = "VACUUM ANALYZE";
+	WriteCompLog ($logComp, "***** Excecution d'un VACUUM ANALYZE pour ".pg_dbname($connectPPEAO),$pasdefichier);
+	$Result = pg_query($connectPPEAO,$sql);
+	$erreurSQL = pg_last_error($connectPPEAO);
+	if (!$Result) {
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "Erreur lors du vaccuum analyse - erreur complete = ".$erreurSQL."",$pasdefichier);
+		}
+		$nbEnregsErreurs ++;
+		$erreur .=  "Erreur lors du vaccuum analyse  - erreur complete = ".$erreurSQL."<br/>";
 	}
-return $erreur;
+
+	
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "***** Fin lecture fichier SQL données et import dans ".pg_dbname($connectPPEAO),$pasdefichier);
+		WriteCompLog ($logComp, "***** Nombre total tables lues et importees = ".$nbTablesLues,$pasdefichier);
+		$erreurFic = str_replace ("<br/>","\r\n".date('y\-m\-d\-His')."- ",$erreur);
+		WriteCompLog ($logComp, "***** erreur : ".$erreurFic,$pasdefichier);
+	}
+	return $erreur;
 }
 ?>

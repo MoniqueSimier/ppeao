@@ -15,6 +15,16 @@ if (isset($_GET["choixExport"])){
 } else {
 $choixExport="";
 }
+global $nomLogLien;
+global $zipFilelien;
+// fichier log pour les test
+$dirLog = $_SERVER["DOCUMENT_ROOT"]."/log";
+$fileLogComp = "export.log";
+$logComp="";
+$nomLogLien="";
+$EcrireLogComp = true;
+$pasdefichier = false; // vieux residu du portage....
+ouvreFichierLog($dirLog,$fileLogComp);
 
 // on suppose que l'action a ete realisee avec succes
 $success=true;
@@ -54,7 +64,11 @@ switch ($action) {
 						$erreur  = createSQLFile("bdppeao_complete.sql",$connectPPEAO);
 					}
 					if ($erreur == "") {
-						$contenu = "<div id=\"expResultat\">L'export complet de la base a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s<br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/bdppeao_complete.sql\">ici</a>).</div>";
+						$contenu = "<div id=\"expResultat\">L'export complet de la base a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s<br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/bdppeao_complete.sql.zip\">ici</a>). ";
+						if ($EcrireLogComp ) {
+							$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
+						}
+						$contenu .="</div>";
 					} else {
 						$contenu = "<div id=\"expResultat\">Erreur lors de l'export complet de la base : ".$erreur."</div>";
 					}
@@ -72,7 +86,11 @@ switch ($action) {
 						$erreur  = createSQLFile("bdppeao_Ref_Param.sql",$connectPPEAO);
 					}
 					if ($erreur == "") {
-						$contenu = "<div id=\"expResultat\">L'export de la base de saisie a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s<br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/bdppeao_Ref_Param.sql\">ici</a>).</div>";
+						$contenu = "<div id=\"expResultat\">L'export de la base de saisie a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s<br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/bdppeao_Ref_Param.sql.zip\">ici</a>).";
+						if ($EcrireLogComp ) {
+							$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
+						}
+						$contenu .="</div>";
 					} else {
 						$contenu = "<div id=\"expResultat\">Erreur lors de l'export de la base de saisie : ".$erreur."</div>";
 					}
@@ -123,12 +141,18 @@ switch ($action) {
 								$erreur  = createSQLFile("bdppeao_partielle.sql",$connectPPEAO);
 							}
 							if ($erreur == "") {
-								$contenu .= "<div id=\"expResultat\">L'export de la base partielle pour le pays ".$nomPays." et les &eacute;cosyst&egrave;mes ".$afficheNomSysteme."  a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s<br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/bdppeao_partielle.sql\" target=\"blank\">ici</a>).</div>";
+								$contenu .= "<div id=\"expResultat\">L'export de la base partielle pour le pays ".$nomPays." et les &eacute;cosyst&egrave;mes ".$afficheNomSysteme."  a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s<br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/bdppeao_partielle.sql.zip\" target=\"blank\">ici</a>).";
+								if ($EcrireLogComp ) {
+									$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
+								}
+								$contenu .="</div>";
 							} else {
-								$contenu .= "<div id=\"expResultat\">Erreur lors de l'export de la base partielle : ".$erreur."</div>";
+								$contenu .= "<div id=\"expResultat\">Erreur lors de l'export de la base partielle : ".$erreur;
+								if ($EcrireLogComp ) {
+									$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
+								}
+								$contenu .="</div>";
 							}
-							
-							
 						} else {
 							// Le pays est choisie, on lance le choix de l'ecosystème						
 							$choixPays=$_GET["choixPays"];
@@ -214,9 +238,17 @@ switch ($action) {
 		$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
 		$erreur = emptyDB("Tout",$connectPPEAOtest);
 		if ($erreur == "") {
-			$contenu = "<div id=\"videResultat\">La base ".$base_principale." a &eacute;t&eacute; vid&eacute;e avec succ&egrave;s.</div>";
+			$contenu = "<div id=\"videResultat\">La base ".$base_principale." a &eacute;t&eacute; vid&eacute;e avec succ&egrave;s.";
+			if ($EcrireLogComp ) {
+				$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
+			}
+			$contenu .="</div>";
 		} else {
-			$contenu = "<div id=\"videResultat\">Erreur lors du vidage de la base ".$base_principale." : ".$erreur."</div>";
+			$contenu = "<div id=\"videResultat\">Erreur lors du vidage de la base ".$base_principale." : ".$erreur;
+			if ($EcrireLogComp ) {
+				$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
+			}
+			$contenu .="</div>";
 		}
 	break;
 	case "majbdppeaoPC":
@@ -225,9 +257,17 @@ switch ($action) {
 			$fileSQLname = "bdppeao_a_importer.sql";
 			$erreur = readAndRunSQL($fileSQLname,$connectPPEAOtest);
 			if ($erreur == "") {
-				$contenu = "<div id=\"videResultat\">La base a &eacute;t&eacute; mise &agrave; jour avec succ&egrave;s.</div>";
+				$contenu = "<div id=\"videResultat\">La base a &eacute;t&eacute; mise &agrave; jour avec succ&egrave;s.";
+				if ($EcrireLogComp ) {
+					$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
+				}
+				$contenu .="</div>";
 			} else {
-				$contenu = "<div id=\"videResultat\">Erreur lors de la mise &agrave; jour de la base  : ".$erreur."</div>";
+				$contenu = "<div id=\"videResultat\">Erreur lors de la mise &agrave; jour de la base  : ".$erreur." .";
+				if ($EcrireLogComp ) {
+					$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
+				}
+				$contenu .="</div>";
 			}
 	break;
 	default: 

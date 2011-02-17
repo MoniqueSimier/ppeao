@@ -62,10 +62,10 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
               <div id="exportSelComp"></div>
               </li>
                <?php if ($OSType=="WIN") { ?>
-              <li><a href="javascript:doExport('videbdppeaoPC','exportOutputVide','Base cible en cours de nettoyage ...');">Vider la base de r&eacute;f&eacute;rence bdppeao du PC pour pr&eacute;parer sa mise &agrave; jour</a>
+              <li><a href="javascript:doExport('videbdppeaoPC','exportOutputVide','Base cible en cours de nettoyage ...');">Vider la base de r&eacute;f&eacute;rence bdppeao (pour les tests bdppeao_test) du PC pour pr&eacute;parer sa mise &agrave; jour</a>
               <div id="exportOutputVide"></div>
               </li>
-              <li><a href="javascript:doExport('majbdppeaoPC','exportOutputInt','Base cible en cours de mise a jour...');">Lancer l'int&eacute;gration des donn&eacute;es de r&eacute;f&eacute;rence dans la base bdppeao sur le PC depuis le fichier /work/export/SQL-bdppeao/bdppeao_a_importer.sql</a>
+              <li><a href="javascript:doExport('majbdppeaoPC','exportOutputInt','Base cible en cours de mise a jour...');">Lancer l'int&eacute;gration des donn&eacute;es de r&eacute;f&eacute;rence dans la base bdppeao (pour les tests bdppeao_test) sur le PC depuis le fichier /work/export/SQL-bdppeao/bdppeao_a_importer.sql</a>
               <div id="exportOutputInt"></div>
               </li>
               <?php } ?>

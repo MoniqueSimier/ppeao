@@ -19,13 +19,13 @@ switch ($TableEnCours[$cptTable]) {
 		if (!$restrictionPays =="") {$restrictionEcosysteme = " where id ='".$restrictionPays."'";}
 		break;
 	case "ref_systeme":
-		if (!$restrictionPays =="") {$restrictionEcosysteme = " where id in (".$restrictionSysteme.")";}
+		if (!$restrictionPays =="") {$restrictionEcosysteme = " where ref_pays_id ='".$restrictionPays."'";}
 		break;
 	case "ref_secteur":
-		if (!$restrictionPays =="") {$restrictionEcosysteme = " where ref_systeme_id in (".$restrictionSysteme.")";}
+		if (!$restrictionPays =="") {$restrictionEcosysteme = " where ref_systeme_id in (select id from ref_systeme where ref_pays_id ='".$restrictionPays."')";}
 		break;
 	case "art_agglomeration":
-		if (!$restrictionPays =="") {$restrictionEcosysteme = " where ref_secteur_id in ( select id from ref_secteur where ref_systeme_id in (".$restrictionSysteme."))";}
+		if (!$restrictionPays =="") {$restrictionEcosysteme = " where ref_secteur_id in ( select id from ref_secteur where ref_systeme_id in (select id from ref_systeme where ref_pays_id ='".$restrictionPays."'))";}
 		break;
 	case "exp_environnement":
 			if (!$restrictionPays =="") {$restrictionEcosysteme = " where id in ( select exp_environnement_id from exp_coup_peche where exp_campagne_id in (select id from exp_campagne where ref_systeme_id in (".$restrictionSysteme.") ))";}
