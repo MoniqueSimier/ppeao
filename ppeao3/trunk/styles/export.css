@@ -199,6 +199,9 @@ width:100%;
 #videResultat{
 	font-weight:bold;
 	background-color:#CCC;
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-left:2px;
 }
 #expResultat{
 	background-color:#CCC;

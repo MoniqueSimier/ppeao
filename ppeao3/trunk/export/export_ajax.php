@@ -22,7 +22,7 @@ $dirLog = $_SERVER["DOCUMENT_ROOT"]."/log";
 $fileLogComp = "export.log";
 $logComp="";
 $nomLogLien="";
-$EcrireLogComp = true;
+$EcrireLogComp = false;
 $pasdefichier = false; // vieux residu du portage....
 ouvreFichierLog($dirLog,$fileLogComp);
 
@@ -40,8 +40,8 @@ switch ($action) {
 		if ($choixExport =="") {
 			// Selection complementaire pour savoir quel type d'export de la base bdppeoa l'utilisateur veut faire
 		$contenu = "<div id=\"selComp\"><form ><h2>Que voulez-vous faire ?</h2><br/>
+		<input id=\"choixExport2\" checked=\"checked\" name=\"choixExport\" type=\"radio\" value=\"2\" />Exporter une base pour la saisie de nouvelles informations ?<br/>		
 		<input id=\"choixExport1\"  name=\"choixExport\" type=\"radio\" value=\"1\" />Exporter la base bdppeao compl&egrave;te (<b>attention, l'op&eacute;ration pourra prendre un certain temps!</b>) ?<br/>
-		<input id=\"choixExport2\" checked=\"checked\" name=\"choixExport\" type=\"radio\" value=\"2\" />Exporter une base pour la saisie de nouvelles informations ?<br/>
 		<input id=\"choixExport3\" name=\"choixExport\" type=\"radio\" value=\"3\" />Exporter une base partielle apr&egrave;s avoir s&eacute;lectionn&eacute; le ou les &eacute;cosyst&egrave;me(s) &agrave; extraire ?<br/>
 		<br/>
 		&nbsp;<input type=\"button\" value=\"Valider mon choix\" onclick=\"javascript:doExportSelect('exportBaseRef','non');\"/>
@@ -54,6 +54,7 @@ switch ($action) {
 			switch ($choixExport) {
 				case  "1": // pg_dump de la base
 					// Initialisation de la table de donnée
+					$timer_debut = timer();
 					$erreur  = initializeTempExtraction($connectPPEAO);
 					// Extraction du referentiel, du parametrage et des données
 					if ($erreur == "") {
@@ -61,10 +62,11 @@ switch ($action) {
 					} 
 					// Création du fichier SQL
 					if ($erreur == "") {
-						$erreur  = createSQLFile("bdppeao_complete.sql",$connectPPEAO);
+						$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO);
 					}
+					$delaiExec = number_format(timer() - $timer_debut,1);
 					if ($erreur == "") {
-						$contenu = "<div id=\"expResultat\">L'export complet de la base a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s<br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/bdppeao_complete.sql.zip\">ici</a>). ";
+						$contenu = "<div id=\"expResultat\">L'export complet de la base a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s en ".$delaiExec." secondes.<br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/".$zipFilelien."\">ici</a>). ";
 						if ($EcrireLogComp ) {
 							$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
 						}
@@ -76,6 +78,7 @@ switch ($action) {
 				case  "2": // export uniquement du ref / parametrage
 					// Creation du fichier SQL
 					// Initialisation de la table de donnée
+					$timer_debut = timer();
 					$erreur  = initializeTempExtraction($connectPPEAO);
 					// Extraction du referentiel et du parametrage
 					if ($erreur == "") {
@@ -83,10 +86,11 @@ switch ($action) {
 					} 
 					// Création du fichier SQL
 					if ($erreur == "") {
-						$erreur  = createSQLFile("bdppeao_Ref_Param.sql",$connectPPEAO);
+						$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO);
 					}
+					$delaiExec = number_format(timer() - $timer_debut,1);
 					if ($erreur == "") {
-						$contenu = "<div id=\"expResultat\">L'export de la base de saisie a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s<br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/bdppeao_Ref_Param.sql.zip\">ici</a>).";
+						$contenu = "<div id=\"expResultat\">L'export de la base de saisie a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s en ".$delaiExec." secondes.<br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/".$zipFilelien."\">ici</a>)<br/>.";
 						if ($EcrireLogComp ) {
 							$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
 						}
@@ -99,6 +103,7 @@ switch ($action) {
 					
 					if (isset($_GET["choixPays"])){
 						if (isset($_GET["choixSysteme"])){
+							$timer_debut = timer();
 							$afficheNomSysteme = "";
 							$choixPays=$_GET["choixPays"];
 							$nomPays = getNomPays($choixPays,$connectPPEAO);
@@ -138,20 +143,22 @@ switch ($action) {
 							} 
 							// Création du fichier SQL
 							if ($erreur == "") {
-								$erreur  = createSQLFile("bdppeao_partielle.sql",$connectPPEAO);
+								$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO);
 							}
+							// Calcul du temps d'execution
+							$delaiExec = number_format(timer() - $timer_debut,1);
 							if ($erreur == "") {
-								$contenu .= "<div id=\"expResultat\">L'export de la base partielle pour le pays ".$nomPays." et les &eacute;cosyst&egrave;mes ".$afficheNomSysteme."  a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s<br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/bdppeao_partielle.sql.zip\" target=\"blank\">ici</a>).";
+								$contenu .= "<div id=\"expResultat\">L'export de la base partielle pour le pays ".$nomPays." et les &eacute;cosyst&egrave;mes ".$afficheNomSysteme."  a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s en ".$delaiExec." secondes. <br/>(le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/".$zipFilelien."\" target=\"blank\">ici</a>).";
 								if ($EcrireLogComp ) {
 									$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
 								}
-								$contenu .="</div>";
+								$contenu .="<br/></div>";
 							} else {
 								$contenu .= "<div id=\"expResultat\">Erreur lors de l'export de la base partielle : ".$erreur;
 								if ($EcrireLogComp ) {
 									$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
 								}
-								$contenu .="</div>";
+								$contenu .="<br/></div>";
 							}
 						} else {
 							// Le pays est choisie, on lance le choix de l'ecosystème						
@@ -159,8 +166,8 @@ switch ($action) {
 							$nomPays = getNomPays($choixPays,$connectPPEAO);
 							if ($erreur == "") {
 								// Choix des écosystèmes
-								$contenu = "<div id=\"selComp\"><form ><h2>Vous voulez s&eacute;lectionner un ou plusieurs &eacute;cosyst&egrave;mes</h2><br/>
-									Etape 2 - choix de l'&eacute;cosyst&egrave;me pour le pays ".$nomPays."
+								$contenu = "<div id=\"selComp\"><form ><h2>Vous voulez extraire une base restreinte :</h2>
+									<h3>Etape 2 - choix de ou des &eacute;cosyst&egrave;me(s) pour le pays ".$nomPays."</h3>
 									<br/>";
 								$SQLSysteme = "select id,libelle from ref_systeme where ref_pays_id ='".$choixPays."'";
 								$SQLSystemeResult = pg_query($connectPPEAO,$SQLSysteme);
@@ -171,8 +178,10 @@ switch ($action) {
 								} else {
 									$cptSysteme=0;
 									while ($row = pg_fetch_row($SQLSystemeResult) ) {
-										$cptSysteme++;
-										$contenu .="<input id=\"choixSysteme".$cptSysteme."\"  name=\"choixSysteme\" type=\"checkbox\" value=\"".$row[0]."\" />".$row[1]."	<br/>";		
+										if (strtoupper($row[1]) != "AUCUN" && strtoupper($row[1]) != "INCONNU" ) {
+											$cptSysteme++;
+											$contenu .="<input id=\"choixSysteme".$cptSysteme."\"  name=\"choixSysteme\" type=\"checkbox\" value=\"".$row[0]."\" />".$row[1]."	<br/>";		
+										}
 									}
 									if ($cptSysteme ==0) {
 										$contenu .="Il n'y a pas d'écosystème pour le (la) : ".$nomPays.".";
@@ -191,8 +200,8 @@ switch ($action) {
 						}
 					} else {
 						// Choix du pays
-						$contenu = "<div id=\"selComp\"><form ><h2>Vous voulez s&eacute;lectionner un ou plusieurs &eacute;cosyst&egrave;mes</h2><br/>
-								Etape 1 - choix du pays
+						$contenu = "<div id=\"selComp\"><form ><h2>Vous voulez extraire une base restreinte :</h2>
+								<h3>Etape 1 - choix du pays</h3>
 								<br/>";
 						$SQLPays = "select id,nom from ref_pays ";
 						$SQLPaysResult = pg_query($connectPPEAO,$SQLPays);
@@ -214,8 +223,10 @@ switch ($action) {
 									if (pg_num_rows($SQLSystemeResult) == 0) {
 										// message d'avertissement ?
 									} else {
-										$cptPays++;
-										$contenu .="<input id=\"choixPays".$cptPays."\"  name=\"choixPays\" type=\"radio\" value=\"".$row[0]."\" />".$row[1]."	<br/>";		
+										if (strtoupper($row[1]) != "AUCUN" && strtoupper($row[1]) != "INCONNU" ) {
+											$cptPays++;
+											$contenu .="<input id=\"choixPays".$cptPays."\"  name=\"choixPays\" type=\"radio\" value=\"".$row[0]."\" />".$row[1]."	<br/>";		
+										}
 									}
 								}
 								pg_free_result($SQLSystemeResult);
@@ -235,39 +246,43 @@ switch ($action) {
 		}
 	break;
 	case "videbdppeaoPC":
+		$timer_debut = timer();
 		$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
 		$erreur = emptyDB("Tout",$connectPPEAOtest);
+		$delaiExec = number_format(timer() - $timer_debut,1);
 		if ($erreur == "") {
-			$contenu = "<div id=\"videResultat\">La base ".$base_principale." a &eacute;t&eacute; vid&eacute;e avec succ&egrave;s.";
+			$contenu = "<div id=\"videResultat\">La base ".$base_principale." a &eacute;t&eacute; vid&eacute;e avec succ&egrave;s en ".$delaiExec." secondes.";
 			if ($EcrireLogComp ) {
 				$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
 			}
-			$contenu .="</div>";
+			$contenu .="<br/></div>";
 		} else {
 			$contenu = "<div id=\"videResultat\">Erreur lors du vidage de la base ".$base_principale." : ".$erreur;
 			if ($EcrireLogComp ) {
 				$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
 			}
-			$contenu .="</div>";
+			$contenu .="<br/></div>";
 		}
 	break;
 	case "majbdppeaoPC":
 			set_time_limit(0);
+			$timer_debut = timer();
 			$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
 			$fileSQLname = "bdppeao_a_importer.sql";
 			$erreur = readAndRunSQL($fileSQLname,$connectPPEAOtest);
+			$delaiExec = number_format(timer() - $timer_debut,1);
 			if ($erreur == "") {
-				$contenu = "<div id=\"videResultat\">La base a &eacute;t&eacute; mise &agrave; jour avec succ&egrave;s.";
+				$contenu = "<div id=\"videResultat\">La base a &eacute;t&eacute; mise &agrave; jour avec succ&egrave;s en ".$delaiExec." secondes.";
 				if ($EcrireLogComp ) {
 					$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
 				}
-				$contenu .="</div>";
+				$contenu .="<br/></div>";
 			} else {
 				$contenu = "<div id=\"videResultat\">Erreur lors de la mise &agrave; jour de la base  : ".$erreur." .";
 				if ($EcrireLogComp ) {
 					$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
 				}
-				$contenu .="</div>";
+				$contenu .="<br/></div>";
 			}
 	break;
 	default: 

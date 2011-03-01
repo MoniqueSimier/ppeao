@@ -115,7 +115,10 @@ function createSQLFile($fileSQLname, $connectPPEAO) {
 	global $pasdefichier;
 	include $_SERVER["DOCUMENT_ROOT"].'/zip/archive.php';
 	$erreur = "";
-	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$fileSQLname;
+	$fileSQL = $fileSQLname."_".date('y\-m\-d-H-i').".sql";
+	$zipFilelien = $fileSQL.".zip";
+	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$fileSQL;
+	
 	if (!(file_exists($fileSQL)) ) {
 		$erreurDir = creeDirTemp($_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/");
 		if (strpos($erreurDir,"erreur") === false ){
@@ -142,12 +145,12 @@ function createSQLFile($fileSQLname, $connectPPEAO) {
 				}
 			}
 		}
+		pg_free_result($Result);
 	}
 	fclose($fileSQLopen);
 	// creation de l'archive
 	
-	$zipFilename = $_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$fileSQLname.".zip";
-	$zipFilelien = "/work/export/SQL-bdppeao/".$fileSQLname.".zip";
+	$zipFilename = $_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$zipFilelien;
 	
 	if (file_exists($zipFilename)) {
 	// pas forcement necessaire, verifier que le x+ vide le fichier
@@ -335,7 +338,7 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 				}
 			}
 		}
-				
+		pg_free_result($Result);		
 		// compte rendu traitement pour la table		
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "   - Enregs lus dans la table             : ".$nbEnregLus,$pasdefichier);
@@ -490,6 +493,25 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 		WriteCompLog ($logComp, "***** Debut lecture fichier SQL données et import dans ".pg_dbname($connectPPEAO),$pasdefichier);
 	}
 	// Debut du traitement: 
+	// test pour savoir si la base est vide
+	$sql = "SELECT * FROM ref_espece";
+	//echo $sql."<br/>";
+	$Result = pg_query($connectPPEAO,$sql);
+	$erreurSQL = pg_last_error($connectPPEAO);
+	if (!$Result) {
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "** Erreur lecture ref_espece pour test - erreur complete = ".$erreurSQL,$pasdefichier);
+		}
+		$erreur =  "erreur lecture ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
+	} else {
+		if (pg_num_rows($Result) == 0) {
+			
+		} else {
+			$erreur = "<br/>Attention, la base cible n'est pas vide. Merci de la vider avant de lancer l'int&eacute;gration de ce fichier";
+			return $erreur;
+			exit;			
+		}
+	}
 	$erreur="";
 	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$fileSQLname;
 	if (!(file_exists($fileSQL)) ) {
@@ -504,6 +526,8 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 	$nbTablesLues = 0;
 	$nbEnregsLus = 0;
 	$nbEnregsErreurs = 0;
+
+	// Traitement du fichier
 	while ( ($line = fgets($fileSQLopen)) !== false) {
 		
 		$cptLigne ++;
@@ -555,6 +579,7 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 				$erreur .=  "erreur execution SQL ".$sql." - erreur complete = ".$erreurSQL."<br/>";
 			}
 			$sql ="";
+			pg_free_result($Result);
 		}
 		//  test
 		//if ($cptLigne == 40) {
@@ -564,7 +589,9 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 	}
 	// A la fin de l'execution du SQL on ajoute un petit vaccuum pour eviter les problemes d'insertion massif d'enregs.:
 	$sql = "VACUUM ANALYZE";
-	WriteCompLog ($logComp, "***** Excecution d'un VACUUM ANALYZE pour ".pg_dbname($connectPPEAO),$pasdefichier);
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "***** Excecution d'un VACUUM ANALYZE pour ".pg_dbname($connectPPEAO),$pasdefichier);
+	}
 	$Result = pg_query($connectPPEAO,$sql);
 	$erreurSQL = pg_last_error($connectPPEAO);
 	if (!$Result) {
@@ -574,7 +601,7 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 		$nbEnregsErreurs ++;
 		$erreur .=  "Erreur lors du vaccuum analyse  - erreur complete = ".$erreurSQL."<br/>";
 	}
-
+	pg_free_result($Result);
 	
 	if ($EcrireLogComp ) {
 		WriteCompLog ($logComp, "***** Fin lecture fichier SQL données et import dans ".pg_dbname($connectPPEAO),$pasdefichier);
