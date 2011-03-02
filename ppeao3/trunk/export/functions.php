@@ -416,8 +416,48 @@ if ($flagTemp) {
 return $LocScriptSQL;
 }
 
+//*********************************************************************
+// GetSQL : génère le code SQL pour mettre à jour la table
+function executeSQLFichier($fileSQLopen,$connectAccessTravail,$EcrireLogComp,$logComp,$pasdefichier) {
+// Cette fonction permet de générer le code SQL en fonction de la table en entrée et du type d'action à mener.
+//*********************************************************************
+// En entrée, les paramètres suivants sont :
+// $fileSQLopen : le fichier à lire
+// $connectAccessTravail : la connexion a la base access
 
-
+//*********************************************************************
+// En sortie : 
+// La fonction renvoie le code SQL prêt à être exécuté.
+//*********************************************************************
+	// lecture des lignes et execution de la commande SQL
+	$erreurSQLSup = "";
+	$cptLigne = 0;
+	while ( ($line = fgets($fileSQLopen)) !== false) {
+		if (strpos($line,"UPDATE") === false && 
+			strpos($line,"DELETE") === false && 
+			strpos($line,"INSERT") === false ) {
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "Ligne ".$cptLigne." rejetee car SQL = '".$line."' errone ",$pasdefichier);
+			}								
+		} else {
+			$cptLigne ++;
+			$compReadResultC = odbc_exec($connectAccessTravail,$line);
+			$erreurSQL = odbc_errormsg($connectAccessTravail); //
+			if (!$compReadResultC) {
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp, "Ligne ".$cptLigne." Erreur execution SQL ".$line." - erreur complete = ".$erreurSQL."",$pasdefichier);
+				}
+				$erreurSQLSup.="Ligne ".$cptLigne." Erreur execution SQL ".$line." - erreur complete = ".$erreurSQL."<br/>";
+			} else {
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp, "Execution du sql : ".$line,$pasdefichier);
+				}	
+			}
+			odbc_free_result($compReadResultC);
+		}
+	}
+ return $erreurSQLSup;
+}
 
 
 ?>

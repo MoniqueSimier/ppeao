@@ -20,6 +20,7 @@
 // Attention l'activation de l'ecriture dans la table des logs peut amener a des performances catastrophiques (la table peut rapidement etre enorme
 // Privilegier plutot l'ecriture dans le fichier log complémentaire
 
+// Faudrait remplacer tous les access a la table du log par des ecritures dans le fichier de log....
 
 session_start();
 // Variable qui permet d'identifier si le traitement est lancé
@@ -40,6 +41,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/process_auto/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/export/functions.php';
 include $_SERVER["DOCUMENT_ROOT"].'/export/config.php';
 include $_SERVER["DOCUMENT_ROOT"].'/zip/archive.php';
+
 // ***** Recuperation des parameters en entree 
 
 // On identifie si le traitement est exécutable ou non
@@ -128,7 +130,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	}
 	// Test de la connexion à la BD de ref (pour log entre autre)
 	if (!$connectPPEAOACCESS) { 
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es BD_PPEAO pour maj des logs</div>" ; exit;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es bdppeao pour maj des logs</div>" ; exit;
 	}
 	
 	// Début du traitement de comparaison par table.
@@ -143,13 +145,21 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			$BDACCESS = GetParam("nomBDRefExp",$PathFicConfAccess);
 			$filestoAdd = "";
 			$nomPeche = "peches experimentales";
+			$fileSQLSup = GetParam("sqlPechexp",$PathFicConfAccess); // fichier contenant les SQL supplementaires
+			$fileMAJExcel = GetParam("ficxlsPechexp",$PathFicConfAccess); // fichier(s) excel contenant les données supplementaires à maj
 			break;
 		case "art":
 			$BDACCESS = GetParam("nomBDRefArt",$PathFicConfAccess);
 			$filestoAdd = "PechartPays.mdb,PechartSaisie.mdb";
 			$nomPeche = "peches artisanales";
+			$fileSQLSup = GetParam("sqlPechart",$PathFicConfAccess); // fichier contenant les SQL supplementaires
+			$fileMAJExcel = GetParam("ficxlsPechart",$PathFicConfAccess); // fichier(s) excel contenant les données supplementaires à maj
 			break;	
 	}
+	$BDreptravail = GetParam("nomRepBDtravail",$PathFicConfAccess);
+	$BDrep = GetParam("nomRepBD",$PathFicConfAccess);
+	$BDfic = $_SERVER["DOCUMENT_ROOT"]."/".$BDreptravail."/".$BDACCESS."_travail.mdb";
+	$BDACCESSTravail = $BDACCESS."_travail";
 	// Initialisation des logs
 	logWriteTo(8,"notice","**- Debut lancement Zip","","","0");
 	if ($EcrireLogComp ) {
@@ -157,10 +167,101 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		WriteCompLog ($logComp, "*- DEBUT lancement Zip peche ".$nomPeche,$pasdefichier);
 		WriteCompLog ($logComp, "*------------------------------------------------------",$pasdefichier);
 	}
+	
+	
+	//0.a. Exécution de scripts complémentaires avant le ZIP (Ajout Lot 5 YL 01-03-2001)
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "*- Exécution de scripts complémentaires",$pasdefichier);
+	}
+	$CRexecution .= "Avec execution de scripts SQL<br/>";
+	// test de connexion a la base de travail
+	$connectAccessTravail = odbc_connect($BDACCESSTravail,'Administrateurs','',SQL_CUR_USE_ODBC);
+	if (!$connectAccessTravail) {
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "Erreur de la connection à la base ACCESS de travail".$BDACCESSTravail,$pasdefichier);
+		}
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base ACCESS de travail ".$BDACCESSTravail."</div>" ; exit;
+	}
+
+	// lecture du fichier
+	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/conf/".$fileSQLSup;
+	$fileSQLopen=fopen($fileSQL,'r');
+	$erreurSQLSup = executeSQLFichier($fileSQLopen,$connectAccessTravail,$EcrireLogComp,$logComp,$pasdefichier);
+
+	if ($erreurSQLSup !="") {
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur a l'execution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
+	} 
+	// 
+	//0.b.mise à jour des tables a partir de fichiers EXCEL (Ajout Lot 5 YL 01-03-2001)
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "*- MAJ de tables a partir de fichiers excel",$pasdefichier);
+	}
+	$CRexecution .= "Avec MAJ de tables a partir de fichiers excel<br/>";
+	$TableSFichierS = explode(",",$fileMAJExcel);
+	$nbrFichiers = count($TableSFichierS)-1;
+	$erreurSQLSup = "";
+	for ($cptFic = 0;$cptFic <= $nbrFichiers;$cptFic++) {
+		$TableFichier = explode("-",$TableSFichierS[$cptFic]); // chaque entree doit etre, dans le fichier de conf, du type nomTable-CheminFichier
+		$fileXLS=$_SERVER["DOCUMENT_ROOT"]."/".$TableFichier[1];
+		$nomTableAccess = $TableFichier[0];
+		if (! file_exists($fileXLS)) {
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "-- ERREUR: le fichier ".$TableFichier[1]." n'est pas présent sur le serveur. Arret du traitement.",$pasdefichier);
+			}
+			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR le fichier ".$TableFichier[1]." n'est pas pr&eacute;sent sur le serveur. Veuillez contacter votre administrateur.</div>" ;
+			exit;
+			$erreurProcess = true;
+		} else {
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "-- ok pour fichier ".$TableFichier[1]." maj de la table ".$TableFichier[0],$pasdefichier);
+			}
+			$fileXLSopen=fopen($fileXLS,'r');
+			
+			$cptLigne = 0;
+			//insert into table (champ1,champ2) values (1,2));
+			
+			include $_SERVER["DOCUMENT_ROOT"].'/export/definitionImportXLS.php';
+			while ( ($line = fgets($fileXLSopen)) !== false) {
+				$cptLigne ++;
+				//echo $line."<br/>";
+				if ($cptLigne == 1) {
+					// On recupere les noms des colonnes a maj
+					$listeColonnes = str_replace(";",",",$line);
+				} else {
+					// On construit le SQL 
+					$listeValeurs = explode(";",$line);
+					$NbValeur = count($listeValeurs)-1;
+					$listeValeursSQL = "";
+					// Analyse de la ligne et des types associés pour construire la liste des valeurs
+					for ($cptVal = 0;$cptVal <= $NbValeur;$cptVal++) {
+						if ($typeChampTA[$cptVal] == "text") {
+							$ValAAjouter = "'".$listeValeurs[$cptVal]."'";	
+						} else {
+							$ValAAjouter = $listeValeurs[$cptVal];
+						}
+						if ($listeValeursSQL == "") { $listeValeursSQL = $ValAAjouter; } else {$listeValeursSQL .= ",".$ValAAjouter;}
+					}
+					// Construction du SQL
+					$SQL = "insert into ".$nomTableAccess." (".$listeColonnes .") values (".$listeValeursSQL.");";
+					// On exécute le SQL
+					$ResultSQL = odbc_exec($connectAccessTravail,$SQL);
+					$erreurSQL = odbc_errormsg($connectAccessTravail); //
+					if (!$ResultSQL) {
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp, "Ligne ".$cptLigne." Erreur execution SQL ".$line." - erreur complete = ".$erreurSQL."",$pasdefichier);
+						}
+						$erreurSQLSup.="Ligne ".$cptLigne." Erreur execution SQL ".$line." - erreur complete = ".$erreurSQL."<br/>";
+					} 
+					odbc_free_result($ResultSQL);
+				}// fin du else du if ($cptLigne == 1)
+			}// fin du while
+		} // fin du if (! file_exists($fileXLS))
+	}// fin du for ($cptFic = 0;$cptFic <= $nbrFichiers;$cptFic++)
+	if ($erreurSQLSup !="") {
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur a l'execution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
+	}
 	//1. copier et renomer la base de travail
-	$BDreptravail = GetParam("nomRepBDtravail",$PathFicConfAccess);
-	$BDrep = GetParam("nomRepBD",$PathFicConfAccess);
-	$BDfic = $_SERVER["DOCUMENT_ROOT"]."/".$BDreptravail."/".$BDACCESS."_travail.mdb";
+
 	// On va utiliser un repertoire temp pour preparer l'archive
 	// On teste si il existe
 	$TempRep = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/temp/";
