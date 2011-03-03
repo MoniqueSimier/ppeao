@@ -77,7 +77,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
     <p>utilisez cet outil pour vider la base bdpeche en supprimant les contraintes. </p>
     </li>
     <?php	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {?>
-        <li><h2><a href="javascript:doMaintenance('empty_ACCESS');">Vider les bases ACCESS</a></h2>
+        <li>
+        <h2><a href="javascript:doMaintenance('empty_ACCESS');">Vider les bases PostgreSQL au format ACCESS</a></h2>
         <p>utilisez cet outil pour vider les bases exp2003_bdd, pechart et les bases pays situées sur le serveur.</p>
         </li>	
      <?php } ?>

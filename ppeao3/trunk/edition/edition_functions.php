@@ -1245,4 +1245,33 @@ global $connectPPEAO;
 	
 }
 
+
+
+function viderBase($listeTables,$connectbaseavider){
+	global $erreurSQL;
+	$success = true;
+	$sql="";
+	$TableEnCours = explode(",",$listeTables);
+	$nbrTable = count($TableEnCours)-1;
+	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
+		$sql.="ALTER TABLE ".$TableEnCours[$cptTable]." DISABLE TRIGGER ALL;";
+	}
+	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
+		$sql.="DELETE FROM ".$TableEnCours[$cptTable]." ;";
+	}
+	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
+		$sql.="ALTER TABLE ".$TableEnCours[$cptTable]." ENABLE TRIGGER ALL;";
+	}
+	//echo $sql."<br/>";
+	$result = pg_query($connectbaseavider,$sql);
+	$erreurSQL = pg_last_error($connectbaseavider); // 
+	$erreurSQL = "(<b>erreur </b>= ".$erreurSQL.")";
+	if (!$result) {
+		$success=false;
+	} 
+	return $success;
+	
+	
+	
+}
 ?>

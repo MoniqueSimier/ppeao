@@ -4,10 +4,11 @@
 
 // parametres de connexion a la base de donnees
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
-
+include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 // on recupere l'action de maintenance a realiser
 $action=$_GET["action"];
 // on suppose que l'action a ete realisee avec succes
+global $erreurSQL;
 $success=true;
 $operation="";
 $erreurSQL="";
@@ -18,8 +19,9 @@ $listeTablesParamArt = "art_grand_type_engin,art_millieu,art_type_activite,art_t
 $listeTablesDonneesExp="exp_environnement,exp_campagne,exp_coup_peche,exp_fraction,exp_biologie,exp_trophique";
 $listeTablesDonneesArt="art_unite_peche,art_lieu_de_peche,art_debarquement,art_debarquement_rec,art_engin_peche,art_fraction,art_poisson_mesure,art_activite,art_engin_activite,art_fraction_rec,art_periode_enquete";
 $listeTablesDonneesStat="art_stat_totale,art_stat_gt,art_stat_gt_sp,art_stat_sp,art_taille_gt_sp,art_taille_sp,art_stat_effort";
+// Liste des tables pour les bases postgre au format access
 $sql="";
-
+$infoComp="";
 switch ($action) {
 	case 'sequences_ref_param':
 		$operation="de mise-&agrave;-jour des s&eacute;quences des tables de r&eacute;f&eacute;rence et de param&eacute;trage";
@@ -286,43 +288,41 @@ switch ($action) {
 		$success = true;
 		// On recupere les noms des tables a vider.
 		// exp2003_bdd
-		$go = false;
+		$go = true;
 		if ($go) {
-			$connectAccess = odbc_connect('exp2003_bdd','','',SQL_CUR_USE_ODBC);
-			$listeTables = GetParam("listeaViderExpACCESS",$PathFicConfAccess);
-			$TableEnCours = explode(",",$listeTables);
-			$nbrTable = count($TableEnCours)-1;
-			for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
-				$sql.="DELETE * FROM ".$TableEnCours[$cptTable]." ;";
+			//echo "vidage de exp2003_bdd<br/>";
+			$connectbaseavider = pg_connect ("host=".$host." dbname=exp2003_bdd user=".$user." password=".$passwd);
+			$listeTables = GetParam("listePostAccessExp2003_bdd",$PathFicConfAccess);
+			$success = viderBase($listeTables,$connectbaseavider);
+			if ($success) {
+				$infoComp .=" exp2003_bdd vid&eacute;e avec succ&egrave;s<br/>";
 			}
-			//echo $sql;
-			$result = odbc_exec($connectAccess,$sql);
-			$erreurSQL = odbc_errormsg($connectAccess); // 
-			$erreurSQL = "(<b>erreur </b>= ".$erreurSQL.")";
-			if (!$result) {
-				$success=false;
-			} 
 		}
 		//pechart
 		if ($success) {
-			echo "vidage de pechart<br/>";
-			$connectAccess = odbc_connect('pechart','','',SQL_CUR_USE_ODBC);
-			$listeTables = GetParam("listeaViderArtACCESS",$PathFicConfAccess);
-			//echo "liste table = ".$listeTables."<br/>";
-			$TableEnCours = explode(",",$listeTables);
-			$nbrTable = count($TableEnCours)-1;
-			for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
-				$sql =" delete * from ".$TableEnCours[$cptTable]." ;";
-				$result = odbc_exec($connectAccess,$sql);
-				if (!$result) {
-					$success=false;
-					$erreurSQL = odbc_errormsg($connectAccess); // 
-					$erreurSQL = "(<b>erreur </b>= ".$erreurSQL.")";
-				}
-				
+			//echo "vidage de pechart<br/>";
+			$connectbaseavider = pg_connect ("host=".$host." dbname=pechart user=".$user." password=".$passwd);
+			$listeTables = GetParam("listePostAccessPechart",$PathFicConfAccess);
+			//echo $listeTables."<br/>";
+			$success = viderBase($listeTables,$connectbaseavider);
+			if ($success) {
+				$infoComp .=" pechart vid&eacute;e avec succ&egrave;s<br/>";
 			}
 			//echo $sql."<br/>";
 		}
+		// Base pays
+		// pour l'instant on teste avec togo
+		if ($success) {
+			//echo "vidage de pechart<br/>";
+			$connectbaseavider = pg_connect ("host=".$host." dbname=togo user=".$user." password=".$passwd);
+			$listeTables = GetParam("listePostAccessPays",$PathFicConfAccess);
+			//echo $listeTables."<br/>";
+			$success = viderBase($listeTables,$connectbaseavider);
+			if ($success) {
+				$infoComp .=" togo vid&eacute;e avec succ&egrave;s<br/>";
+			}
+			//echo $sql."<br/>";
+		}		
 		break;
 	default: 
 		break;
@@ -335,10 +335,10 @@ $message='<h2>maintenance de la base</h2>';
 
 // on indique si l'operation a eu lieu avec succes ou pas
 if ($success) {
-	$message.='<p>l\'op&eacute;ration '.$operation.' a &eacute;t&eacute; r&eacute;alis&eacute;e avec succ&egrave;s.</p>';
+	$message.="<p>l'op&eacute;ration ".$operation." a &eacute;t&eacute; r&eacute;alis&eacute;e avec succ&egrave;s.".$infoComp."</p>";
 }
 	else {
-		$message.='<p>une erreur est survenue lors de l\'op&eacute;ration de '.$operation.' '.$erreurSQL.'.</p>';
+		$message.="<p>une erreur est survenue lors de l'op&eacute;ration de ".$operation." ".$erreurSQL.".</p>";
 
 	}
 echo($message);

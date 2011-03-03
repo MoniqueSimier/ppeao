@@ -42,3 +42,7 @@ listeTableRefExpPPEAO=cat_ecol,cat_troph,contenu,debris,engin,f_courant,position
 listeDonneesExp=envir,campagne,cp_peche,fraction,biolo,trophique;
 : prevu mais pas utilisé pour les peches arts
 listeDonneesArt=;
+;liste des tables des bases postgreSQL au format ACCESS pour pouvoir les vider
+listePostAccessExp2003_bdd=biolo,campagne,cat_ecol,cat_troph,contenu,cp_peche,debris,engin,envir,espece,f_courant,famille,fraction,nom,ordre,pays,position,qualite,rempliss,s_courant,sediment,sexe,stade,station,systeme,systeme_corresp,trophique,vegetation,zone_postgre;
+listePostAccessPechart=activimporter,agglomeration,categorieecologique,categorietrophique,coefficientkb,conditionphysicochi,correspondancemaill,debarqimporter,engactiimporter,engpechimporter,enqueteur,espece,especetmo,etatciel,famille,grandtypeengin,journal,milieu,modecalcul,nom,nomvernaculaire,ordre,originekb,pays,paysfragmentation,pechexpcat_ecol,pechexpcat_troph,pechexpespece,pechexpfamille,pechexpnom,pechexpordre,periodeenquete,poidsimporter,recap,recapcoef,suiviextractimport,suiviextractimportr,systeme,systeme_corresp,tailleimporter,typeactivite,typeagglomeration,typeengin,typesortie,vdueauimporter,vent;
+listePostAccessPays=activite,caracteristiquesup,debarquement,enginactivite,enginpeche,fractiondebarquee,fractionnondebarque,lieupeche,poissonmesuredebarq,sys_activites_a_migrer,sys_base_pays,sys_debarquements_a_migrer,unitepeche,villageattache;
