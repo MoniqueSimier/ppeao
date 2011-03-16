@@ -167,13 +167,10 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		WriteCompLog ($logComp, "*- DEBUT lancement Zip peche ".$nomPeche,$pasdefichier);
 		WriteCompLog ($logComp, "*------------------------------------------------------",$pasdefichier);
 	}
-	
-	
-	//0.a. Exécution de scripts complémentaires avant le ZIP (Ajout Lot 5 YL 01-03-2001)
+	//0.a.mise à jour des tables a partir de fichiers EXCEL (Ajout Lot 5 YL 01-03-2001)
 	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "*- Exécution de scripts complémentaires",$pasdefichier);
+		WriteCompLog ($logComp, "*- MAJ de tables a partir de fichiers excel",$pasdefichier);
 	}
-	$CRexecution .= "Avec execution de scripts SQL<br/>";
 	// test de connexion a la base de travail
 	$connectAccessTravail = odbc_connect($BDACCESSTravail,'Administrateurs','',SQL_CUR_USE_ODBC);
 	if (!$connectAccessTravail) {
@@ -183,19 +180,6 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base ACCESS de travail ".$BDACCESSTravail."</div>" ; exit;
 	}
 
-	// lecture du fichier
-	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/conf/".$fileSQLSup;
-	$fileSQLopen=fopen($fileSQL,'r');
-	$erreurSQLSup = executeSQLFichier($fileSQLopen,$connectAccessTravail,$EcrireLogComp,$logComp,$pasdefichier);
-
-	if ($erreurSQLSup !="") {
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur a l'execution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
-	} 
-	// 
-	//0.b.mise à jour des tables a partir de fichiers EXCEL (Ajout Lot 5 YL 01-03-2001)
-	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "*- MAJ de tables a partir de fichiers excel",$pasdefichier);
-	}
 	$CRexecution .= "Avec MAJ de tables a partir de fichiers excel<br/>";
 	$TableSFichierS = explode(",",$fileMAJExcel);
 	$nbrFichiers = count($TableSFichierS)-1;
@@ -235,14 +219,17 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 					// Analyse de la ligne et des types associés pour construire la liste des valeurs
 					for ($cptVal = 0;$cptVal <= $NbValeur;$cptVal++) {
 						if ($typeChampTA[$cptVal] == "text") {
-							$ValAAjouter = "'".$listeValeurs[$cptVal]."'";	
+							$valReplace = str_replace ("'","''",$listeValeurs[$cptVal]);
+							$ValAAjouter = "'".$valReplace."'";	
 						} else {
-							$ValAAjouter = $listeValeurs[$cptVal];
+							$valReplace = str_replace (",",".",$listeValeurs[$cptVal]);
+							$ValAAjouter = $valReplace;
 						}
 						if ($listeValeursSQL == "") { $listeValeursSQL = $ValAAjouter; } else {$listeValeursSQL .= ",".$ValAAjouter;}
 					}
 					// Construction du SQL
 					$SQL = "insert into ".$nomTableAccess." (".$listeColonnes .") values (".$listeValeursSQL.");";
+					//echo $SQL."<br/>";
 					// On exécute le SQL
 					$ResultSQL = odbc_exec($connectAccessTravail,$SQL);
 					$erreurSQL = odbc_errormsg($connectAccessTravail); //
@@ -259,7 +246,25 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	}// fin du for ($cptFic = 0;$cptFic <= $nbrFichiers;$cptFic++)
 	if ($erreurSQLSup !="") {
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur a l'execution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
+	}	
+	
+	//0.b. Exécution de scripts complémentaires avant le ZIP (Ajout Lot 5 YL 01-03-2001)
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "*- Exécution de scripts complémentaires",$pasdefichier);
 	}
+	$CRexecution .= "Avec execution de scripts SQL<br/>";
+
+
+	// lecture du fichier
+	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/conf/".$fileSQLSup;
+	$fileSQLopen=fopen($fileSQL,'r');
+	$erreurSQLSup = executeSQLFichier($fileSQLopen,$connectAccessTravail,$EcrireLogComp,$logComp,$pasdefichier);
+
+	if ($erreurSQLSup !="") {
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur a l'execution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
+	} 
+	// 
+
 	//1. copier et renomer la base de travail
 
 	// On va utiliser un repertoire temp pour preparer l'archive
