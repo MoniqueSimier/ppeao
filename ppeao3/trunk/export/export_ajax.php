@@ -247,8 +247,8 @@ switch ($action) {
 	break;
 	case "videbdppeaoPC":
 		$timer_debut = timer();
-		$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
-		$erreur = emptyDB("Tout",$connectPPEAOtest);
+		//$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
+		$erreur = emptyDB("Tout",$connectPPEAO);
 		$delaiExec = number_format(timer() - $timer_debut,1);
 		if ($erreur == "") {
 			$contenu = "<div id=\"videResultat\">La base ".$base_principale." a &eacute;t&eacute; vid&eacute;e avec succ&egrave;s en ".$delaiExec." secondes.";
@@ -267,9 +267,9 @@ switch ($action) {
 	case "majbdppeaoPC":
 			set_time_limit(0);
 			$timer_debut = timer();
-			$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
+			//$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
 			$fileSQLname = "bdppeao_a_importer.sql";
-			$erreur = readAndRunSQL($fileSQLname,$connectPPEAOtest);
+			$erreur = readAndRunSQL($fileSQLname,$connectPPEAO);
 			$delaiExec = number_format(timer() - $timer_debut,1);
 			if ($erreur == "") {
 				$contenu = "<div id=\"videResultat\">La base a &eacute;t&eacute; mise &agrave; jour avec succ&egrave;s en ".$delaiExec." secondes.";
