@@ -1,0 +1,79 @@
+#!/bin/sh
+#sintiGroup
+#projet: IRD_Peche
+#@auteur :Moussa TOURE mail: moussa.toure@sinti-group.com
+
+#repertoire contenant le fichier zip
+# YPOUR
+#REP_DEPOT=/usr/local/ird
+# ci dessous, config SINTI normale
+#REP_DEPOT=/data/www/ird
+#ci-dessous, config SINTI modifiee par otolithe le 11/01/2011
+REP_DEPOT=/data/www/html/IRD-Peche/public/work/portage
+
+#repertoire ou seront decompressés les fichiers du zip
+rep_source_sql=$REP_DEPOT/SQL_Sources
+
+#nom du fichier a decompresser
+zip_file=Sql_Access_Postgres.zip
+
+#repertoire ou seront stocké les fichiers log
+rep_log=$rep_source_sql
+
+
+#repertoire contenant le fichier import.lock
+REP_LOCK=/data/www/html/IRD-Peche/public/work/portage
+
+
+
+function main()
+{
+cd $REP_DEPOT
+
+#creation du fichier verrou pour eviter que le script check.sh lance une autre instance du script
+touch $REP_LOCK/import.lock &&
+
+#verrou pour empecher une migration
+psql -U postgres -c "UPDATE sys_parametre SET valeur = '1' WHERE code='depot_cron'" systeme_BD_Peche &&
+
+#decompression du fichier zip
+unzip $zip_file -d $rep_source_sql &&
+
+cd $rep_source_sql/
+
+for n in $(ls *.sql)
+do
+        #recuperation du nom de fichier sans l'extention
+        longueur=${#n} &&
+        nom_fichier=${n:0:longueur-4} &&
+
+        #trouve=$(psql -U ird -c "select datname from pg_database" template1 | grep $nom_fichier)
+
+	#suppresion et regeneration de la base
+        dropdb -U postgres $nom_fichier
+        createdb -U devppeao -E latin9 $nom_fichier -T template0 &&
+	# YPOUR
+        #createdb -U postgres $nom_fichier -T template0 &&
+
+        echo $nom_fichier
+        echo importation $n
+        #importation des fichier SQL et creation de log d'importation
+        (psql -U postgres -f $n $nom_fichier) > $rep_log/$nom_fichier-$(date +%d%m%y_%H%M%S).log &&
+        rm -f $rep_source_sql/$n
+done
+
+# modification otolithe 2011-01-10 pour ajouter une ligne au journal índiquant qu'une importation a eu lieu
+psql -U postgres -c "INSERT INTO sys_logs (login_utilisateur, action_log, statut, detail, date_log,adresse_ip) VALUES ('cron','import cron','Succes','Importation fichier Sql_Access_Postgres.zip reussie',CURRENT_TIMESTAMP(0),'local')" systeme_BD_Peche
+# fin modification otolithe
+
+#deverrouillage migration
+psql -U postgres -c "UPDATE sys_parametre SET valeur = '0' WHERE code='depot_cron'" systeme_BD_Peche
+#deverrouillage du script check.sh
+
+#suppression des sql et du zip
+rm -f $REP_LOCK/import.lock
+rm -f $REP_DEPOT/$zip_file
+
+}
+
+main > $rep_log/import_$(date +%d%m%y_%H%M%S).log

@@ -1,0 +1,53 @@
+#!/bin/sh
+#sintiGroup
+#projet: IRD_Peche
+#@auteur :Moussa  mail:moussa.toure@sinti-group.com
+
+#repertoire contenant le fichier import.lock
+# YPOUR
+#REP_LOCK=/usr/local/ird
+#ci-dessous, config SINTI modifiee par otolithe le 11/01/2011
+REP_LOCK=/data/www/html/IRD-Peche/public/work/portage
+
+#repertoire contenant le fichier zip
+# YPOUR
+#REP_DEPOT=/usr/local/ird
+# ci dessous, config SINTI normale
+#REP_DEPOT=/data/www/ird
+#ci-dessous, config SINTI modifiee par otolithe le 11/01/2011
+REP_DEPOT=/data/www/html/IRD-Peche/public/work/portage
+
+#nom du fichier zip
+zip_file=Sql_Access_Postgres.zip
+
+#chemin complet vers le script d'importation
+# YPOUR
+#script_file=/usr/local/ird/Cron/import.sh
+script_file=/opt/bin/pechartexp/import
+
+#chemin vers le fichier le import.lock (importation non terminee)
+fichier_lock1=$REP_LOCK/import.lock
+
+#lecture du verrou de migration
+# YPOUR
+#verrou=$(psql -U ird -c "SELECT valeur FROM sys_parametre WHERE code ='migration_cours'" systeme_BD_Peche |grep '^ *[01]') 
+verrou=$(psql -U postgres -c "SELECT valeur FROM sys_parametre WHERE code ='migration_cours'" systeme_BD_Peche |grep '^ *[01]') 
+
+
+fichier_zip=$REP_DEPOT/$zip_file
+
+echo $fichier_lock1
+echo $zip_file
+echo $verrou
+
+#test l'existence de verrou et de l'existence du fichier zip avant de lancer l'importation 
+
+if [ -e $fichier_lock1 -o $verrou == "1" ]
+then
+	exit
+
+elif [ -e $fichier_zip ]
+then
+ echo  "Fichier Sql_Access_Postgres.zip trouvé, lancement importation: $script_file" 
+	$script_file		
+fi
