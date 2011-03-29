@@ -220,7 +220,7 @@ $config['ResourceType'][] = Array(
 		'name' => 'Portage',
 		'url' => $baseUrl . 'portage',
 		'directory' => $baseDir . 'portage',
-		'maxSize' => 0,
+		'maxSize' => '50M',
 		'allowedExtensions' => 'zip,ZIP',
 		'deniedExtensions' => 'exe'
 		);
@@ -311,7 +311,7 @@ Force ASCII names for files and folders.
 If enabled, characters with diactric marks, like å, ä, ö, ć, č, đ, š
 will be automatically converted to ASCII letters.
 */
-$config['ForceAscii'] = false;
+$config['ForceAscii'] = true;
 
 
 include_once "plugins/imageresize/plugin.php";
