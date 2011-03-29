@@ -88,7 +88,7 @@ function triggerZipFileImport() {
 			$message='(si vous ne la lancez pas, elle sera effectu&eacute;e automatiquement &agrave; '.$heure.':00)';
 			// si le fichier lock est present, une importation est en cours
 			$lockfile=$_SERVER["DOCUMENT_ROOT"].'/data/pechartexp/import.lock';
-			if (file_exists($lockfile)) {$message='une importation est d&eacute;j&agrave; en cours, merci de r&eacute;essayer dans un moment...';} else {if ($zipfileimportlaunch) {$message=shell_exec('/opt/bin/pechartexp/check');}}
+			if (file_exists($lockfile)) {$message='une importation est d&eacute;j&agrave; en cours, merci de r&eacute;essayer dans un moment...';} else {if ($zipfileimportlaunch) {$message=exec('sh /opt/bin/pechartexp/check');}}
 			if (file_exists($zipfile)) {
 				echo('<li class="listitem">');
 				echo('
