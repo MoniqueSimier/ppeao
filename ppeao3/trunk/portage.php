@@ -18,7 +18,7 @@ $zipfileimportlaunch=$_POST["$zipfileimportlaunch"];
 		// les balises head communes  toutes les pages
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
-	<title>ppeao::manipulation de donn&eacute;es</title>
+	<title>ppeao::manipulation de donn&eacute;es - TEST</title>
 
 <script src="/ckfinder/ckfinder.js" type="text/javascript"></script>
 </head> 
@@ -35,13 +35,13 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				{
 						
 					// You can use the "CKFinder" class to render CKFinder in a page:
-					var finder = new CKFinder() ;
-					finder.removePlugins = 'basket';
-					finder.basePath = '/ckfinder/' ;
-					finder.startupPath="Portage:portage/"
-					finder.width=700;
-					finder.height=350;
-					finder.popup() ;
+					var thefinder = new CKFinder() ;
+					thefinder.removePlugins = 'basket';
+					thefinder.basePath = '/ckfinder/';
+					thefinder.resourceType = 'Portage';
+					thefinder.startupPath='Portage:/';
+					thefinder.startupFolderExpanded = true;
+					thefinder.popup() ;
 				}
 </script>
 <script type="text/javascript" charset="utf-8">

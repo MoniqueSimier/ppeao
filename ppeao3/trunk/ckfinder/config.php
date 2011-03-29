@@ -221,7 +221,7 @@ $config['ResourceType'][] = Array(
 		'url' => $baseUrl . 'portage',
 		'directory' => $baseDir . 'portage',
 		'maxSize' => 0,
-		'allowedExtensions' => '.zip',
+		'allowedExtensions' => 'zip,ZIP',
 		'deniedExtensions' => 'exe'
 		);
 
