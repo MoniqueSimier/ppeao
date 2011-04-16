@@ -58,11 +58,11 @@ switch ($action) {
 					$erreur  = initializeTempExtraction($connectPPEAO);
 					// Extraction du referentiel, du parametrage et des données
 					if ($erreur == "") {
-						$erreur  = getSQLExport("","","Tout",$connectPPEAO);
+						$erreur  = getSQLExport("","","Tout",$connectPPEAO,"n");
 					} 
 					// Création du fichier SQL
 					if ($erreur == "") {
-						$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO);
+						$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO,"n");
 					}
 					$delaiExec = number_format(timer() - $timer_debut,1);
 					if ($erreur == "") {
@@ -82,11 +82,11 @@ switch ($action) {
 					$erreur  = initializeTempExtraction($connectPPEAO);
 					// Extraction du referentiel et du parametrage
 					if ($erreur == "") {
-						$erreur  = getSQLExport("","","RefParam",$connectPPEAO);
+						$erreur  = getSQLExport("","","RefParam",$connectPPEAO,"n");
 					} 
 					// Création du fichier SQL
 					if ($erreur == "") {
-						$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO);
+						$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO,"n");
 					}
 					$delaiExec = number_format(timer() - $timer_debut,1);
 					if ($erreur == "") {
@@ -139,11 +139,11 @@ switch ($action) {
 							$erreur  = initializeTempExtraction($connectPPEAO);
 							// Extraction du referentiel et du parametrage
 							if ($erreur == "") {
-								$erreur  = getSQLExport($choixPays,$choixSysteme,"Tout",$connectPPEAO);
+								$erreur  = getSQLExport($choixPays,$choixSysteme,"Tout",$connectPPEAO,"n");
 							} 
 							// Création du fichier SQL
 							if ($erreur == "") {
-								$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO);
+								$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO,"n");
 							}
 							// Calcul du temps d'execution
 							$delaiExec = number_format(timer() - $timer_debut,1);
@@ -269,7 +269,7 @@ switch ($action) {
 			$timer_debut = timer();
 			//$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
 			$fileSQLname = "bdppeao_a_importer.sql";
-			$erreur = readAndRunSQL($fileSQLname,$connectPPEAO);
+			$erreur = readAndRunSQL($fileSQLname,$connectPPEAO,"y");
 			$delaiExec = number_format(timer() - $timer_debut,1);
 			if ($erreur == "") {
 				$contenu = "<div id=\"videResultat\">La base a &eacute;t&eacute; mise &agrave; jour avec succ&egrave;s en ".$delaiExec." secondes.";

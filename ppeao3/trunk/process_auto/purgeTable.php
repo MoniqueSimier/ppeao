@@ -113,15 +113,15 @@ if (!$connectPPEAO) {
 	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion à la base de donn&eacute;es pour maj des logs</div>" ; 
 	exit;
 	}
-logWriteTo(7,"notice","**- Debut lancement purge base portage automatique.","","","0");
+logWriteTo(7,"notice","**- Debut lancement purge base portage .","","","0");
 
 // Paramètres  de sauvegarde
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
 
-	logWriteTo(7,"notice","**- Debut lancement purge table (portage automatique)","","","0");
+	logWriteTo(7,"notice","**- Debut lancement purge table ","","","0");
 	if ($EcrireLogComp ) {
 		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
-		WriteCompLog ($logComp, "*- DEBUT lancement purge table (portage automatique)",$pasdefichier);
+		WriteCompLog ($logComp, "*- DEBUT lancement purge table (portage)",$pasdefichier);
 		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
 	}
 	// Connexion aux deux bases de données pour comparaison.
@@ -298,7 +298,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		$resultVacuum=pg_query($connectBDPECHE,$scriptVacuum);
 		if ( $resultVacuum){
 			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp,"Vacuum / Analysze execute avec succes sur BDPECHE ",$pasdefichier);
+				WriteCompLog ($logComp,"Vacuum / Analyze execute avec succes sur BDPECHE ",$pasdefichier);
 			}			
 		} else {
 			$ErreurProcess = true;
@@ -331,6 +331,11 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
 			WriteCompLog ($logComp,"*- FIN TRAITEMENT purge table ",$pasdefichier);
 			WriteCompLog ($logComp,"*---------------------------------------------",$pasdefichier);
+			WriteCompLog ($logComp, "#",$pasdefichier);
+			WriteCompLog ($logComp, "#",$pasdefichier);
+			WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
+			WriteCompLog ($logComp, "*- FIN PORTAGE",$pasdefichier);
+			WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
 		}	
 	} else { // End for statement ($ArretTimeOut)
 	// Le traitement est relancé pour cause de timeout, on met a jour le(s) log(s)

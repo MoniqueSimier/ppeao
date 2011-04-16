@@ -284,6 +284,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		$erreurProcess = true;
 	} else {
 		$nouveauNomFic = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/temp/".$BDACCESS.".mdb";
+		//echo $BDfic." - ".$nouveauNomFic."<br/>";
 		if (copy($BDfic,$nouveauNomFic)) {
 			if ($EcrireLogComp ) {
 				WriteCompLog ($logComp,"Fichier de travail ".$BDACCESS."_travail renomme en ".$BDACCESS.".mdb",$pasdefichier);
@@ -293,6 +294,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			$erreurProcess = true;
 		}
 	}
+
 	if (!$erreurProcess) {
 		//2.ajouter cette base au fichier compresse
 		//compression du fichier pour le telechargement

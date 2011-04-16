@@ -43,12 +43,15 @@ if (isset($_GET['exec'])) {
 	}
 } 
 if (isset($_GET['log'])) {
-
 	if ($_GET['log'] == "false") {
 		$EcrireLogComp = false;// Ecrire dans le fichier de log complémentaire. 
 	} else {
 		$EcrireLogComp = true;
 	}
+}
+$PortagePartiel = "";
+if (isset($_GET['pp'])) {
+	$PortagePartiel = $_GET['pp'];
 }
 // Recuperation des parametres (nom repertoire, nom fichiers etc..) depuis le fichier de parametres
 $dirLog = GetParam("repLogAuto",$PathFicConf);
@@ -89,7 +92,7 @@ CloseFileReverseSQL ($ficRevSQL,$pasdefichier);
 if (!$connectPPEAO) { 
 	echo "<div id=\"sauvegarde_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"sauvegarde_txt\">Erreur de connexion à la base de donn&eacute;es pour maj des logs</div>" ;; exit;
 	}
-logWriteTo(7,"notice","**- Debut lancement sauvegarde portage automatique.","","","0");
+logWriteTo(7,"notice","**- Debut lancement sauvegarde portage .","","","0");
 
 // Paramètres  de sauvegarde
 if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine complète de traitement automatique (saute cette etape)
@@ -98,14 +101,18 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		WriteCompLog ($logComp, "#",$pasdefichier);
 		WriteCompLog ($logComp, "#",$pasdefichier);
 		WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
-		WriteCompLog ($logComp, "*- DEBUT PORTAGE AUTOMATIQUE ".date('y\-m\-d\-His'),$pasdefichier);
+		if ($PortagePartiel == "y") {
+			WriteCompLog ($logComp, "*- DEBUT PORTAGE PARTIEL ".date('y\-m\-d\-His'),$pasdefichier);
+		} else {
+			WriteCompLog ($logComp, "*- DEBUT PORTAGE AUTOMATIQUE ".date('y\-m\-d\-His'),$pasdefichier);
+		}
 		WriteCompLog ($logComp, "*-#####################################################",$pasdefichier);
 		WriteCompLog ($logComp, "#",$pasdefichier);
 		WriteCompLog ($logComp, "#",$pasdefichier);
 	}
 	if ($EcrireLogComp ) {
 		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
-		WriteCompLog ($logComp, "*- DEBUT lancement sauvegarde (portage automatique)",$pasdefichier);
+		WriteCompLog ($logComp, "*- DEBUT lancement sauvegarde (portage)",$pasdefichier);
 		WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
 	}
 	// ajout demande JME pour purge des tables sys_ (tables import sinthi)

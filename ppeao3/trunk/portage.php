@@ -18,7 +18,7 @@ $zipfileimportlaunch=$_POST["$zipfileimportlaunch"];
 		// les balises head communes  toutes les pages
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
-	<title>ppeao::manipulation de donn&eacute;es - TEST</title>
+	<title>ppeao::manipulation de donn&eacute;es</title>
 
 <script src="/ckfinder/ckfinder.js" type="text/javascript"></script>
 </head> 
@@ -35,13 +35,13 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				{
 						
 					// You can use the "CKFinder" class to render CKFinder in a page:
-					var thefinder = new CKFinder() ;
-					thefinder.removePlugins = 'basket';
-					thefinder.basePath = '/ckfinder/';
-					thefinder.resourceType = 'Portage';
-					thefinder.startupPath='Portage:/';
-					thefinder.startupFolderExpanded = true;
-					thefinder.popup() ;
+					var finder = new CKFinder() ;
+					finder.removePlugins = 'basket';
+					finder.basePath = '/ckfinder/' ;
+					finder.startupPath="Portage:portage/"
+					finder.width=700;
+					finder.height=350;
+					finder.popup() ;
 				}
 </script>
 <script type="text/javascript" charset="utf-8">
@@ -77,7 +77,8 @@ function triggerZipFileImport() {
 		<p>Vous pouvez &eacute;galement acc&eacute;der au module d&#x27;importation de donn&eacute;es dans la base bdpeche (application &quot;SINTI&quot;).</p>
 		<ul class="list">
 			<li class="listitem"><a href="/portage_auto.php" ><b>Lancer le portage automatique</b></a></li>
-			<!-- <li class="listitem"><a href="/portage_manuel.php" ><b>Portage manuel</b></a></li> -->
+			<li class="listitem"><a href="/portage_auto_partiel.php" ><b>R&eacute;aliser un portage sur des donn&eacute;es déjà import&eacute;es dans BDPPEAO.</b></a></li>
+            <!-- <li class="listitem"><a href="/portage_manuel.php" ><b>Portage manuel</b></a></li> -->
 			<li class="listitem"><a href="javascript:BrowseFiles();" ><b>Charger un fichier de Sql_Access_Postgres.zip sur le serveur <?php echo($_SERVER["SERVER_NAME"])?> pour qu'il soit importé par le script CRON</b></a></li>
 			<?php
 			// si un fichier /data/www/html/IRD-Peche/public/work/portage/Sql_Access_Postgres.zip est present,
@@ -88,7 +89,7 @@ function triggerZipFileImport() {
 			$message='(si vous ne la lancez pas, elle sera effectu&eacute;e automatiquement &agrave; '.$heure.':00)';
 			// si le fichier lock est present, une importation est en cours
 			$lockfile=$_SERVER["DOCUMENT_ROOT"].'/data/pechartexp/import.lock';
-			if (file_exists($lockfile)) {$message='une importation est d&eacute;j&agrave; en cours, merci de r&eacute;essayer dans un moment...';} else {if ($zipfileimportlaunch) {$message=exec('sh /opt/bin/pechartexp/check');}}
+			if (file_exists($lockfile)) {$message='une importation est d&eacute;j&agrave; en cours, merci de r&eacute;essayer dans un moment...';} else {if ($zipfileimportlaunch) {$message=shell_exec('/opt/bin/pechartexp/check');}}
 			if (file_exists($zipfile)) {
 				echo('<li class="listitem">');
 				echo('

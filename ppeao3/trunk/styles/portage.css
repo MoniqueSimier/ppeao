@@ -70,6 +70,7 @@ height:10px;
 #titleProcess{
  font-size:100%;
  font-weight:bold;
+ background-color:#FFF;
 }
 #sauvegarde{
 	min-height:50px;
@@ -305,3 +306,94 @@ height:10px;
 	font-weight:bold;
 	border:1 px dashed #000000;
 }
+/*Portage partiel YL 16/03/2011 */
+
+#selectionRec_img{
+	display:block;
+	float:left;
+	width:40px;
+}
+
+#selectionRec{
+	min-height:50px;
+	background-color:#FFF;
+	width:100%;
+}
+
+#selectionRec_txt{
+	display:block;
+	float:left;
+	font-size:70%;
+	font-weight:bold;
+}
+#selectionRec_chk{
+	font-size:70%;
+	font-weight:bold;
+	text-align:right;
+}
+#importBdpeche{
+	min-height:50px;
+	background-color:#E6E6EE;
+	width:100%;
+}
+#importBdpeche_img{
+	display:block;
+	float:left;
+	width:40px;
+}
+
+#importBdpeche_txt{
+	display:block;
+	float:left;
+	font-size:70%;
+	font-weight:bold;
+}
+#importBdpeche_chk{
+	font-size:70%;
+	font-weight:bold;
+	text-align:right;
+}
+#SupBdppeao{
+	min-height:50px;
+	background-color:#FFF;
+	width:100%;
+}
+#SupBdppeao_img{
+	display:block;
+	float:left;
+	width:40px;
+}
+#SupBdppeao_txt{
+	display:block;
+	float:left;
+	font-size:70%;
+	font-weight:bold;
+}
+#SupBdppeao_chk{
+	font-size:70%;
+	font-weight:bold;
+	text-align:right;
+}
+#portageSel{
+	min-height:50px;
+	background-color:#E6E6EE;
+	width:100%;
+}
+#portageSel_img{
+	display:block;
+	float:left;
+	width:40px;
+}
+#portageSel_txt{
+	display:block;
+	float:left;
+	font-size:70%;
+	font-weight:bold;
+}
+#portageSel_chk{
+	font-size:70%;
+	font-weight:bold;
+	text-align:right;
+}
+
+

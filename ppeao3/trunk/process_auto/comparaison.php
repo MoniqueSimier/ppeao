@@ -339,11 +339,11 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	
 	// Initialisation des logs
 	if ($tableEnCours == "") {
-		logWriteTo(7,"notice","**- Debut lancement ".$nomAction." (portage automatique)","","","0");
+		logWriteTo(7,"notice","**- Debut lancement ".$nomAction." (portage)","","","0");
 		logWriteTo(7,"notice","**- source : ".$nomBDSource." cible : ".$nomBDCible,"","","0");
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
-			WriteCompLog ($logComp, "*- DEBUT lancement ".$nomAction." (portage automatique)",$pasdefichier);
+			WriteCompLog ($logComp, "*- DEBUT lancement ".$nomAction." (portage)",$pasdefichier);
 			WriteCompLog ($logComp, "*- source : ".$nomBDSource." cible : ".$nomBDCible,$pasdefichier);
 			WriteCompLog ($logComp, "*******************************************************",$pasdefichier);
 		}

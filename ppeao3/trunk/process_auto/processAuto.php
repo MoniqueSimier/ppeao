@@ -122,7 +122,10 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				$nb_deja_recTest = $rowTest[0];
 				if ($nb_deja_recTest == 0){
 					$continueTrait = false;
-					$messageinfo = "art_debarquement est vide. Pas de recomposition possible";
+					$messageinfo = "art_debarquement est vide dans ".pg_dbname($connectionTest).". Pas de recomposition possible";
+					if ($EcrireLogComp ) {
+						WriteCompLog ($logComp,"art_debarquement est vide dans ".pg_dbname($connectionTest).". Pas de recomposition possible",$pasdefichier);
+					}
 				}
 				pg_free_result($resultTest);
 				
@@ -134,7 +137,10 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					$nb_deja_recTest = $rowTest[0];
 					if ($nb_deja_recTest == 0){
 						$continueTrait = false;
-						$messageinfo = "art_activite est vide. Pas de recomposition possible";
+						$messageinfo = "art_activite est vide dans ".pg_dbname($connectionTest).". Pas de recomposition possible";
+						if ($EcrireLogComp ) {
+							WriteCompLog ($logComp,"art_activite est vide dans ".pg_dbname($connectionTest).". Pas de recomposition possible",$pasdefichier);
+						}
 					}
 					pg_free_result($resultTest);
 				}

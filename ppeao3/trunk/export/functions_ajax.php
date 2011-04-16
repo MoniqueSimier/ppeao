@@ -41,10 +41,11 @@ function GetTableStructure($TableEnCours,$connectPPEAO) {
 //*********************************************************************
 // En sortie : 
 // La fonction renvoie une chaine contenant une chaine avec les champs de la table separés par une virgule
-// Les variables global $SQLTypeChamps  et $nbChampTable sont aussi mises a jour
+// Les variables global $SQLTypeChamps  et $nbChampTable sont aussi mises a jour, ainsi que la position de l'ID
 //*********************************************************************
 	global $SQLTypeChamps;
 	global $nbChampTable;
+	global $positionIDTable;
 	$SQLChamps= "";
 	//echo "<b>Structure de la table ".$TableEnCours." </b><br/>";
 	$sql = "SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name='".$TableEnCours."'";
@@ -60,6 +61,15 @@ function GetTableStructure($TableEnCours,$connectPPEAO) {
 				while ($Row = pg_fetch_row($Result) ) {
 					$SQLTypeChamps[$nbChampTable] = $Row[2];	
 					//echo $Row[0]." - ".$Row[1]." - ".$Row[2]."  <br/>";
+					if ($TableEnCours == "art_stat_effort") { // toutes les tables ont un id SAUF art_stat_effort....
+						if ($Row[1] == "effort_id") {
+							$positionIDTable = $nbChampTable;
+						}
+					} else {
+						if ($Row[1] == "id") {
+							$positionIDTable = $nbChampTable;
+						}
+					}
 					if ($SQLChamps == "") {
 						$SQLChamps = $Row[1];
 					} else {
@@ -100,7 +110,7 @@ function initializeTempExtraction($connectPPEAO) {
 
 //*********************************************************************
 // createSQLFile : creation du fichier SQL pour la creation de la base
-function createSQLFile($fileSQLname, $connectPPEAO) {
+function createSQLFile($fileSQLname, $connectPPEAO,$genereDelete) {
 // Cette fonction permet de creer le fichier SQL a partir du contenu de la table temp_extraction
 //*********************************************************************
 // En entrée, les paramètres suivants sont :
@@ -115,10 +125,14 @@ function createSQLFile($fileSQLname, $connectPPEAO) {
 	global $pasdefichier;
 	include $_SERVER["DOCUMENT_ROOT"].'/zip/archive.php';
 	$erreur = "";
-	$fileSQL = $fileSQLname."_".date('y\-m\-d-H-i').".sql";
-	$zipFilelien = $fileSQL.".zip";
-	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$fileSQL;
+	if ($genereDelete =="y") {
+		$fileSQLname = $fileSQLname.".sql"; // Dans le cas du traitement pour le portage partiel, comme le fichier n'est pas exporté, on ne le date pas, ni on ne le zip
+	}else {
+		$fileSQLname = $fileSQLname."_".date('y\-m\-d-H-i').".sql";
+		$zipFilelien = $fileSQLname.".zip";
+	}
 	
+	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$fileSQLname;
 	if (!(file_exists($fileSQL)) ) {
 		$erreurDir = creeDirTemp($_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/");
 		if (strpos($erreurDir,"erreur") === false ){
@@ -128,8 +142,21 @@ function createSQLFile($fileSQLname, $connectPPEAO) {
 	} 
 	$fileSQLopen=fopen($fileSQL,'w');
 	rewind($fileSQLopen);	
+	if ($genereDelete =="y") {
+		// Creation demandée en parallele d'un fichier contenant la selection a supprimer.
+		$fileSQLDEL=$_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/DEL-".$fileSQLname;
+		if (!(file_exists($fileSQLDEL)) ) {
+			$erreurDir = creeDirTemp($_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/");
+			if (strpos($erreurDir,"erreur") === false ){
+			} else {
+				$erreur = $erreurDir;
+			}
+		} 
+		$fileSQLDELopen=fopen($fileSQLDEL,'w');	
+		rewind($fileSQLDELopen);
+	}	
 	if ($erreur =="") {
-		$sql = "SELECT key1,valeur_ligne FROM temp_extraction order by key1";
+		$sql = "SELECT key1,key3,valeur_ligne FROM temp_extraction order by key1,key3";
 		$Result = pg_query($connectPPEAO,$sql);
 		$erreurSQL = pg_last_error($connectPPEAO);
 		if (!$Result) {
@@ -139,32 +166,36 @@ function createSQLFile($fileSQLname, $connectPPEAO) {
 				echo "Table temp_extraction vide<br/>";
 			} else {
 				while ($Row = pg_fetch_row($Result) ) {
-					$script = str_replace("##quot##","'",$Row[1]);
-					fwrite($fileSQLopen,$script."\r\n");
-					
+					//echo $Row[0]." - ".$Row[1]." - ".$Row[2]." <br/>";
+					$script = str_replace("##quot##","'",$Row[2]);
+					if ($Row[1] == "DEL") {
+						fwrite($fileSQLDELopen,$script."\r\n");
+					} else {
+						fwrite($fileSQLopen,$script."\r\n");
+					}
 				}
 			}
 		}
 		pg_free_result($Result);
 	}
 	fclose($fileSQLopen);
-	// creation de l'archive
-	
-	$zipFilename = $_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$zipFilelien;
-	
-	if (file_exists($zipFilename)) {
-	// pas forcement necessaire, verifier que le x+ vide le fichier
-		unlink($zipFilename);
+	if ($genereDelete =="n") {
+		// creation de l'archive 
+		$zipFilename = $_SERVER["DOCUMENT_ROOT"]."/work/export/SQL-bdppeao/".$zipFilelien;
+		if (file_exists($zipFilename)) {
+		// pas forcement necessaire, verifier que le x+ vide le fichier
+			unlink($zipFilename);
+		}
+		$theZipFile=new zip_file($zipFilename);	
+		//setting the zip options: write to disk, do not recurse directories, do not store path and do not compress
+		$theZipFile->set_options(array('inmemory' => 0, 'recurse' => 0, 'storepaths' => 0, 'method'=>1));			
+		
+		$theZipFile->add_files($fileSQL);
+		if ($EcrireLogComp ) {
+			WriteCompLog ($logComp, "Ajout de ".$fileSQL." dans l'archive ".$zipFilename ,$pasdefichier);
+		}	
+		$theZipFile->create_archive();
 	}
-	$theZipFile=new zip_file($zipFilename);	
-	//setting the zip options: write to disk, do not recurse directories, do not store path and do not compress
-	$theZipFile->set_options(array('inmemory' => 0, 'recurse' => 0, 'storepaths' => 0, 'method'=>1));			
-	
-	$theZipFile->add_files($fileSQL);
-	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "Ajout de ".$fileSQL." dans l'archive ".$zipFilename ,$pasdefichier);
-	}	
-	$theZipFile->create_archive();
 	
 	
 	return $erreur;
@@ -172,7 +203,7 @@ function createSQLFile($fileSQLname, $connectPPEAO) {
 
 //*********************************************************************
 // getSQLforRefParam : renvoie un script SQL contenant l'ensemble des données pour le référentiel et le paramétrage
-function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectPPEAO) {
+function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectPPEAO,$genereDelete) {
 // Cette fonction permet de générer le code SQL contenant toutes les données de référentiel et de paramétrage de la base bdppeao
 // Ce code est stocké dans la table temporaire tem_extraction
 //*********************************************************************
@@ -181,6 +212,8 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 // $restrictionSysteme = id(s) du (es) systeme(s) du pays à extraire. Si "", pas de restrictions
 // $typeAction = action: 'Tout'; extraire referentiel, parametrage et données
 //						 'RefParam':  extraire referentiel et parametrage
+// $connectPPEAO = la connexion a la base PPEAO
+// $genereDelete = le SQL contenant la suppression des donnees dans le cas d'un portage partiel.
 //*********************************************************************
 // En sortie : 
 // La fonction renvoie une chaine contenant une erreur sinon vide si pas d'erreur
@@ -194,13 +227,14 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 	global $compteRendu;
 	global $SQLTypeChamps;
 	global $nbChampTable;
+	global $positionIDTable;
 	global $logComp;
 	global $nomLogLien;
 	global $EcrireLogComp;
 	global $pasdefichier;
 	
 	$erreur = "";
-
+	$listeTablesDEL="";
 	$nbTablesExportees = 0;
 	$nbEnregLus = 0;
 	$nbEnregExportes = 0;
@@ -214,7 +248,12 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 		case "Tout": 
 			set_time_limit(0);
 			$listeTables= $listeTablesRef.",".$listeTablesParamExp.",".$listeTablesParamArt.",".$listeTablesDonneesExp.",".$listeTablesDonneesArt.",".$listeTablesDonneesStat;
-			//$listeTables="exp_biologie";
+			break;
+		case "pechart": 
+			set_time_limit(0);
+			$listeTables= $listeTablesRef.",".$listeTablesParamArt.",".$listeTablesDonneesArt.",".$listeTablesDonneesStat;
+			$listeTablesDEL=$listeTablesDonneesArt.",".$listeTablesDonneesStat;
+			//$listeTables="exp_campagne";
 			break;
 		case "RefParam": 
 			set_time_limit(90);
@@ -228,7 +267,10 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 	$nbrTable = count($TableEnCours)-1;
 	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
 		$sql ="ALTER TABLE ".$TableEnCours[$cptTable]." DISABLE TRIGGER ALL;";
-		$SQLInsert = "insert into temp_extraction (key1,valeur_ligne) values ('1-REM-CONSTRAINTS','".$sql."')";
+		$SQLInsert = "insert into temp_extraction (key1,key3,valeur_ligne) values ('1-REM-CONSTRAINTS','INSERT','".$sql."');";
+		if ($genereDelete == "y") {
+			$SQLInsert .= "insert into temp_extraction (key1,key3,valeur_ligne) values ('4-REM-CONSTRAINTS','DEL','".$sql."');";
+		}
 		$SQLInsertresult = pg_query($connectPPEAO,$SQLInsert);
 		$erreurSQL = pg_last_error($connectPPEAO);
 		if ( !$SQLInsertresult ) { 
@@ -246,8 +288,10 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 		$nbTablesExportees++;
 		$nbEnregLus = 0;
 		$nbEnregExportes = 0;
+		$positionIDTable = 0;
 		// Etape 1 : on recupere la structure de la table
 		$SQLChamps = GetTableStructure($TableEnCours[$cptTable],$connectPPEAO);
+		//echo "pos id = ".$positionIDTable."<br/>";
 		// Etape 2 : on lit le contenu de la table et on cree les SQL
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "Export de la table ".$TableEnCours[$cptTable],$pasdefichier);
@@ -266,7 +310,11 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 			$erreur =  "erreur lecture ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
 		} else {
 			if (pg_num_rows($Result) == 0) {
-				echo "Table ".$TableEnCours[$cptTable]." vide<br/>";
+				if ($EcrireLogComp ) {
+					WriteCompLog ($logComp, "** info : Table ".$TableEnCours[$cptTable]." vide",$pasdefichier);
+				} else {
+					echo "Table ".$TableEnCours[$cptTable]." vide<br/>";
+				}
 			} else {
 				while ($Row = pg_fetch_row($Result) ) {
 					$SQLValues = "";
@@ -280,12 +328,26 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 								strpos($SQLTypeChamps[$cptElement],"text") === false && 
 								strpos($SQLTypeChamps[$cptElement],"date") === false && 
 								strpos($SQLTypeChamps[$cptElement],"time") === false) {
+								if ($genereDelete =="y" && $cptElement == $positionIDTable ) {
+									// on prepare la suppression des données.
+									if ($TableEnCours[$cptTable]=="art_stat_effort") {
+										$SQLInsertDel = "delete from ".$TableEnCours[$cptTable]." where effort_id = ".$Row[$cptElement].";##FL##";
+									} else {
+										$SQLInsertDel = "delete from ".$TableEnCours[$cptTable]." where id = ".$Row[$cptElement].";##FL##";
+									}
+								
+								}
+
 								if ($Row[$cptElement] == "" || $Row[$cptElement] == null) {
 									$valAAjouter = "null"; // Pour eviter des valeurs vides dans le script SQL qui donneraient values (,,,)
 								} else {
 									$valAAjouter = $Row[$cptElement];
 								}
 							} else {
+								if ($genereDelete =="y" && $cptElement == $positionIDTable ) {
+									// on prepare la suppression des données.
+									$SQLInsertDel = "delete from ".$TableEnCours[$cptTable]." where id = ''".$Row[$cptElement]."'';##FL##";
+								}
 								if ($Row[$cptElement] == null ) {
 									$valAAjouter = "null";
 								} else {
@@ -308,18 +370,19 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 								$SQLValues .= ",".$valAAjouter;
 							}
 					}
-
-
-					
 					//echo "<br/>insert into ".$TableEnCours[$cptTable]." (".$SQLChamps.") values (".$SQLValues.");<br/>";
 					$valeurSQL= "insert into ".$TableEnCours[$cptTable]." (".$SQLChamps.") values (".$SQLValues.");##FL##";
 					$valeurSQL = str_replace ("'","##quot##",$valeurSQL); // ca va eviter les problemes de quot dans le sql qu'on stocke. Ne pas oublier de les remplacer apres !!!!
 					//if ($EcrireLogComp ) {
 					//	WriteCompLog ($logComp, "** DEBUG ".$valeurSQL,$pasdefichier);
 					//}
-					$valeurID = str_replace ("'","",$valeurID);
+					$valeurID = str_replace ("'","",$valeurID); // pour avoir une insertion clean dans la table temp. Pas necessaire de garder les quotes, juste pour test.
 					//  Etape 3: On stocke le SQL dans TempExtraction
-					$SQLInsert = "insert into temp_extraction (key1,key2,valeur_ligne) values ('2-".$TableEnCours[$cptTable]."','".$valeurID."','".$valeurSQL."')";
+					$SQLInsert = "insert into temp_extraction (key1,key2,key3,valeur_ligne) values ('2-".$TableEnCours[$cptTable]."','".$valeurID."','INSERT','".$valeurSQL."');";
+					if (! strpos($listeTablesDEL,$TableEnCours[$cptTable]) === false) {
+						$SQLInsert .= "insert into temp_extraction (key1,key2,key3,valeur_ligne) values ('5-".$TableEnCours[$cptTable]."','".$valeurID."','DEL','".$SQLInsertDel."');";
+					}
+					
 					//echo $SQLInsert."<br/>";
 					//if ($EcrireLogComp ) {
 					//	WriteCompLog ($logComp, "** DEBUG ".$SQLInsert,$pasdefichier);
@@ -350,7 +413,11 @@ function getSQLExport($restrictionPays,$restrictionSysteme,$typeAction,$connectP
 	$nbrTable = count($TableEnCours)-1;
 	for ($cptTable = 0;$cptTable <= $nbrTable;$cptTable++) {
 		$sql ="ALTER TABLE ".$TableEnCours[$cptTable]." ENABLE TRIGGER ALL;";
-		$SQLInsert = "insert into temp_extraction (key1,valeur_ligne) values ('3-ADD-CONSTRAINTS','".$sql."')";
+		$SQLInsert = "insert into temp_extraction (key1,key3,valeur_ligne) values ('3-ADD-CONSTRAINTS','INSERT','".$sql."');";
+		if ($genereDelete == "y") {
+			// A nouveau insertion de la reactivation des contraintes pour finir la suppression des données
+			$SQLInsert .= "insert into temp_extraction (key1,key3,valeur_ligne) values ('6-ADD-CONSTRAINTS','DEL','".$sql."');";
+		}
 		$SQLInsertresult = pg_query($connectPPEAO,$SQLInsert);
 		$erreurSQL = pg_last_error($connectPPEAO);
 		if ( !$SQLInsertresult ) {
@@ -473,7 +540,7 @@ function emptyDB($typeAction,$connectPPEAO) {
 
 //*********************************************************************
 // getSQLforRefParam : renvoie un script SQL contenant l'ensemble des données pour le référentiel et le paramétrage
-function readAndRunSQL($fileSQLname,$connectPPEAO) {
+function readAndRunSQL($fileSQLname,$connectPPEAO,$runTestVide) {
 // Cette fonction permet de générer le code SQL contenant toutes les données de référentiel et de paramétrage de la base bdppeao
 // Ce code est stocké dans la table temporaire tem_extraction
 //*********************************************************************
@@ -494,22 +561,24 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 	}
 	// Debut du traitement: 
 	// test pour savoir si la base est vide
-	$sql = "SELECT * FROM ref_espece";
-	//echo $sql."<br/>";
-	$Result = pg_query($connectPPEAO,$sql);
-	$erreurSQL = pg_last_error($connectPPEAO);
-	if (!$Result) {
-		if ($EcrireLogComp ) {
-			WriteCompLog ($logComp, "** Erreur lecture ref_espece pour test - erreur complete = ".$erreurSQL,$pasdefichier);
-		}
-		$erreur =  "erreur lecture ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
-	} else {
-		if (pg_num_rows($Result) == 0) {
-			
+	if ($runTestVide == "y") {
+		$sql = "SELECT * FROM ref_espece";
+		//echo $sql."<br/>";
+		$Result = pg_query($connectPPEAO,$sql);
+		$erreurSQL = pg_last_error($connectPPEAO);
+		if (!$Result) {
+			if ($EcrireLogComp ) {
+				WriteCompLog ($logComp, "** Erreur lecture ref_espece pour test - erreur complete = ".$erreurSQL,$pasdefichier);
+			}
+			$erreur =  "erreur lecture ".$TableEnCours[$cptTable]." - erreur complete = ".$erreurSQL."<br/>";
 		} else {
-			$erreur = "<br/>Attention, la base cible n'est pas vide. Merci de la vider avant de lancer l'int&eacute;gration de ce fichier";
-			return $erreur;
-			exit;			
+			if (pg_num_rows($Result) == 0) {
+				
+			} else {
+				$erreur = "<br/>Attention, la base cible n'est pas vide. Merci de la vider avant de lancer l'int&eacute;gration de ce fichier";
+				return $erreur;
+				exit;			
+			}
 		}
 	}
 	$erreur="";
@@ -549,9 +618,17 @@ function readAndRunSQL($fileSQLname,$connectPPEAO) {
 			
 			//echo "1".$sql." fin SQL a excuter <br/>";
 			$sql = str_replace("##FL##","",$sql);
-			$extraitNomTable= strstr($sql,"(",true);
-			$extraitNomTable= strstr($extraitNomTable,"into ");
-			$extraitNomTable = str_replace("into ","",$extraitNomTable);
+			// pour l'instant, on n'a que du insert ou du delete
+			if (strpos ($sql,"into") === false) { // c'est du DEL
+				$extraitNomTable= strstr($sql,"(",true);
+				$extraitNomTable= strstr($extraitNomTable,"from ");
+				$extraitNomTable = str_replace("from ","",$extraitNomTable);			
+			} else { // c'est de l'insert
+				$extraitNomTable= strstr($sql,"(",true);
+				$extraitNomTable= strstr($extraitNomTable,"into ");
+				$extraitNomTable = str_replace("into ","",$extraitNomTable);
+			}
+			
 			//echo "nom table lue = ".$extraitNomTable." tableEC = ".$NomTableEnCours." <br/>";
 			if ( $NomTableEnCours == "") {
 				$NomTableEnCours = $extraitNomTable;
