@@ -76,30 +76,41 @@ function triggerZipFileImport() {
 		<!-- <p>Ces programmes peuvent &ecirc;tre aussi lanc&eacute;s &agrave; la demande depuis le portage manuel.  </p> -->
 		<p>Vous pouvez &eacute;galement acc&eacute;der au module d&#x27;importation de donn&eacute;es dans la base bdpeche (application &quot;SINTI&quot;).</p>
 		<ul class="list">
-			<li class="listitem"><a href="/portage_auto.php" ><b>Lancer le portage automatique</b></a></li>
-			<li class="listitem"><a href="/portage_auto_partiel.php" ><b>R&eacute;aliser un portage sur des donn&eacute;es déjà import&eacute;es dans BDPPEAO.</b></a></li>
-            <!-- <li class="listitem"><a href="/portage_manuel.php" ><b>Portage manuel</b></a></li> -->
 			<li class="listitem"><a href="javascript:BrowseFiles();" ><b>Charger un fichier de Sql_Access_Postgres.zip sur le serveur <?php echo($_SERVER["SERVER_NAME"])?> pour qu'il soit importé par le script CRON</b></a></li>
 			<?php
+			$lockfile=$_SERVER["DOCUMENT_ROOT"].'work/portage/import.lock';
+			// si le fichier de lock est present, une importation est en cours
+			// on bloque donc toute action suivante
+			if (file_exists($lockfile)) {echo('<li class="error">Une importation est actuellement en cours, merci de r&eacute;essayer dans un moment.<br /><br /><br /></li>');} 
+			// sinon, on teste si un fichier ZIP est present
+			else {
 			// si un fichier /data/www/html/IRD-Peche/public/work/portage/Sql_Access_Postgres.zip est present,
 			// on affiche le lien permettant de declencher son importation
 			$zipfile=$_SERVER["DOCUMENT_ROOT"].'work/portage/Sql_Access_Postgres.zip';
-			$heure_prochaine=time()+3600;
-			$heure=date('G',$heure_prochaine);
-			$message='(si vous ne la lancez pas, elle sera effectu&eacute;e automatiquement &agrave; '.$heure.':00)';
-			// si le fichier lock est present, une importation est en cours
-			$lockfile=$_SERVER["DOCUMENT_ROOT"].'/data/pechartexp/import.lock';
-			if (file_exists($lockfile)) {$message='une importation est d&eacute;j&agrave; en cours, merci de r&eacute;essayer dans un moment...';} else {if ($zipfileimportlaunch) {$message=shell_exec('/opt/bin/pechartexp/check');}}
+			// finding what the next multiple of 5 minutes is
+			function minutes_ceil ($minutes = '5', $format = "H:i")
+			{
+			    // by Femi Hasani [www.vision.to]
+			    $rounded = ceil(time() / ($minutes * 60)) * ($minutes * 60);
+			    return date($format, $rounded);
+			}
+			$next_run=minutes_ceil();
 			if (file_exists($zipfile)) {
-				echo('<li class="listitem">');
-				echo('
-				<form action="/portage.php" method="post" accept-charset="utf-8" name="zipfileimport" id="zipfileimport">
-					<input type="hidden" name="$zipfileimportlaunch" value="1" id="$zipfileimportlaunch">
-				</form>
-				<a href="javascript:triggerZipFileImport();" ><b>Lancer manuellement l\'importation du fichier Sql_Access_Postgres.zip</b></a><br />'.$message);
-				echo('</li>');
+			echo('<li class="error">Un fichier Sql_Access_Postgres.zip est d&eacute;j&agrave; pr&eacute;sent sur le serveur, il sera import&eacute; automatiquement par le script CRON &agrave; '.$next_run.' <br /><br /><br /></li>');
 			}
 
+			
+			?>
+			
+			<li class="listitem"><a href="/portage_auto.php" ><b>Lancer le portage automatique</b></a></li>
+			<li class="listitem"><a href="/portage_auto_partiel.php" ><b>R&eacute;aliser un portage sur des donn&eacute;es déjà import&eacute;es dans BDPPEAO.</b></a></li>
+            <!-- <li class="listitem"><a href="/portage_manuel.php" ><b>Portage manuel</b></a></li> -->
+			
+			
+			<?php
+			
+		} 
+		// fin de la boucle testant si une importation est en cours
 			
 			?>
 			<li class="listitem"><a href="/acces_sinti.php" ><b>Acc&eacute;der &agrave; l&#x27;application SINTI pour importer des donn&eacute;es dans la base bdpeche</b></a></li>
