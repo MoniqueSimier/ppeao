@@ -58,8 +58,11 @@ do
         echo $nom_fichier
         echo importation $n
         #importation des fichier SQL et creation de log d'importation
-        (psql -U postgres -f $n $nom_fichier) > $rep_log/$nom_fichier-$(date +%d%m%y_%H%M%S).log &&
+        # mod otolithe 2011-07-15 supression du log de CHAQUE transaction SQL pour cause de fichier .log trop gros et remplacement par une notification d'importation terminee
+		#(psql -U postgres -f $n $nom_fichier) > $rep_log/$nom_fichier-$(date +%d%m%y_%H%M%S).log &&
+		psql -U postgres -f $n $nom_fichier &&
         rm -f $rep_source_sql/$n
+		echo importation $n terminee
 done
 
 # modification otolithe 2011-01-10 pour ajouter une ligne au journal índiquant qu'une importation a eu lieu
