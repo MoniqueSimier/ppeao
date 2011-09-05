@@ -41,36 +41,50 @@ unzip $zip_file -d $rep_source_sql &&
 
 cd $rep_source_sql/
 
+
 for n in $(ls *.sql)
 do
         #recuperation du nom de fichier sans l'extention
         longueur=${#n} &&
         nom_fichier=${n:0:longueur-4} &&
+		#mod otolithe 05/09/2011
+		#log de la base qui va etre importee
+        echo -------------
+		echo base courante  $nom_fichier $(date +%d-%m-%y@%H:%M:%S)
 
         #trouve=$(psql -U ird -c "select datname from pg_database" template1 | grep $nom_fichier)
 
 	#suppresion et regeneration de la base
         dropdb -U postgres $nom_fichier
+		#mod otolithe 05/09/2011
+		echo --base $nom_fichier supprimee $(date +%d-%m-%y@%H:%M:%S)
+
         createdb -U devppeao -E latin9 $nom_fichier -T template0 &&
+		
+		#mod otolithe 05/09/2011
+		echo --base $nom_fichier recreee $(date +%d-%m-%y@%H:%M:%S)
+		
 	# YPOUR
         #createdb -U postgres $nom_fichier -T template0 &&
 
-        echo $nom_fichier
-        echo importation $n
+		#mod otolithe 05/09/2011
+        echo --importation du contenu de $n commencee $(date +%d-%m-%y@%H:%M:%S)
         #importation des fichier SQL et creation de log d'importation
         # mod otolithe 2011-07-15 supression du log de CHAQUE transaction SQL pour cause de fichier .log trop gros et remplacement par une notification d'importation terminee
+		# par ailleurs, option -q (--quiet) utilisee pour eviter une ligne par transaction dans le fichier de log
 		#(psql -U postgres -f $n $nom_fichier) > $rep_log/$nom_fichier-$(date +%d%m%y_%H%M%S).log &&
-		psql -U postgres -f $n $nom_fichier &&
+		psql -q -U postgres -f $n $nom_fichier &&
         rm -f $rep_source_sql/$n
-		echo importation $n terminee
+		#mod otolithe 05/09/2011
+        echo --importation du contenu de $n terminee $(date +%d-%m-%y@%H:%M:%S)
 done
 
 # modification otolithe 2011-01-10 pour ajouter une ligne au journal índiquant qu'une importation a eu lieu
-psql -U postgres -c "INSERT INTO sys_logs (login_utilisateur, action_log, statut, detail, date_log,adresse_ip) VALUES ('cron','import cron','Succes','Importation fichier Sql_Access_Postgres.zip reussie',CURRENT_TIMESTAMP(0),'local')" systeme_BD_Peche
+psql -q -U postgres -c "INSERT INTO sys_logs (login_utilisateur, action_log, statut, detail, date_log,adresse_ip) VALUES ('cron','import cron','Succes','Importation fichier Sql_Access_Postgres.zip reussie',CURRENT_TIMESTAMP(0),'local')" systeme_BD_Peche
 # fin modification otolithe
 
 #deverrouillage migration
-psql -U postgres -c "UPDATE sys_parametre SET valeur = '0' WHERE code='depot_cron'" systeme_BD_Peche
+psql -q -U postgres -c "UPDATE sys_parametre SET valeur = '0' WHERE code='depot_cron'" systeme_BD_Peche
 #deverrouillage du script check.sh
 
 #suppression des sql et du zip

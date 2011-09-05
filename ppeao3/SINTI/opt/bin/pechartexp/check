@@ -48,6 +48,6 @@ then
 
 elif [ -e $fichier_zip ]
 then
- echo  "Fichier Sql_Access_Postgres.zip trouvé, lancement importation: $script_file" 
+ echo  "Fichier Sql_Access_Postgres.zip present, lancement importation: $script_file" 
 	$script_file		
 fi
