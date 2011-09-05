@@ -28,13 +28,16 @@ REP_LOCK=/data/www/html/IRD-Peche/public/work/portage
 
 function main()
 {
+echo /////////////////////////////////////////////////////////
+echo $(date +%d-%m-%y@%H:%M:%S) - demarrage importation
+
 cd $REP_DEPOT
 
 #creation du fichier verrou pour eviter que le script check.sh lance une autre instance du script
 touch $REP_LOCK/import.lock &&
 
 #verrou pour empecher une migration
-psql -U postgres -c "UPDATE sys_parametre SET valeur = '1' WHERE code='depot_cron'" systeme_BD_Peche &&
+psql -q -U postgres -c "UPDATE sys_parametre SET valeur = '1' WHERE code='depot_cron'" systeme_BD_Peche &&
 
 #decompression du fichier zip
 unzip $zip_file -d $rep_source_sql &&
@@ -50,25 +53,25 @@ do
 		#mod otolithe 05/09/2011
 		#log de la base qui va etre importee
         echo -------------
-		echo base courante  $nom_fichier $(date +%d-%m-%y@%H:%M:%S)
+		echo $(date +%d-%m-%y@%H:%M:%S) - base courante: $nom_fichier
 
         #trouve=$(psql -U ird -c "select datname from pg_database" template1 | grep $nom_fichier)
 
 	#suppresion et regeneration de la base
         dropdb -U postgres $nom_fichier
 		#mod otolithe 05/09/2011
-		echo --base $nom_fichier supprimee $(date +%d-%m-%y@%H:%M:%S)
+		echo --base $nom_fichier supprimee $(date +@%H:%M:%S)
 
         createdb -U devppeao -E latin9 $nom_fichier -T template0 &&
 		
 		#mod otolithe 05/09/2011
-		echo --base $nom_fichier recreee $(date +%d-%m-%y@%H:%M:%S)
+		echo --base $nom_fichier recreee $(date +@%H:%M:%S)
 		
 	# YPOUR
         #createdb -U postgres $nom_fichier -T template0 &&
 
 		#mod otolithe 05/09/2011
-        echo --importation du contenu de $n commencee $(date +%d-%m-%y@%H:%M:%S)
+        echo --importation du contenu de $n commencee $(date +@%H:%M:%S)
         #importation des fichier SQL et creation de log d'importation
         # mod otolithe 2011-07-15 supression du log de CHAQUE transaction SQL pour cause de fichier .log trop gros et remplacement par une notification d'importation terminee
 		# par ailleurs, option -q (--quiet) utilisee pour eviter une ligne par transaction dans le fichier de log
@@ -76,8 +79,12 @@ do
 		psql -q -U postgres -f $n $nom_fichier &&
         rm -f $rep_source_sql/$n
 		#mod otolithe 05/09/2011
-        echo --importation du contenu de $n terminee $(date +%d-%m-%y@%H:%M:%S)
+        echo --importation du contenu de $n terminee $(date +@%H:%M:%S)
+		echo   
 done
+
+echo importation de toutes les bases terminee $(date +@%H:%M:%S)
+
 
 # modification otolithe 2011-01-10 pour ajouter une ligne au journal índiquant qu'une importation a eu lieu
 psql -q -U postgres -c "INSERT INTO sys_logs (login_utilisateur, action_log, statut, detail, date_log,adresse_ip) VALUES ('cron','import cron','Succes','Importation fichier Sql_Access_Postgres.zip reussie',CURRENT_TIMESTAMP(0),'local')" systeme_BD_Peche
@@ -85,11 +92,17 @@ psql -q -U postgres -c "INSERT INTO sys_logs (login_utilisateur, action_log, sta
 
 #deverrouillage migration
 psql -q -U postgres -c "UPDATE sys_parametre SET valeur = '0' WHERE code='depot_cron'" systeme_BD_Peche
+echo variable depot_cron de la table sys_parametre de la base systeme_BD_Pech remis a zero $(date +@%H:%M:%S)
+
 #deverrouillage du script check.sh
 
 #suppression des sql et du zip
 rm -f $REP_LOCK/import.lock
+echo fichier de verrouillage de l execution du script shell d importation supprime $(date +@%H:%M:%S)
+
 rm -f $REP_DEPOT/$zip_file
+echo fichier $zip_file supprime $(date +@%H:%M:%S)
+
 
 }
 
