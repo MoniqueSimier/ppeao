@@ -536,8 +536,8 @@ function recupereEffort($systemeId,$SecteurID,$AnneeEC,$MoisEC,$GTEEC) {
 					if ($EcrireLogComp) {
 						WriteCompLog ($logComp, "ERREUR : pas d'effort pour le systeme ".$systemeId." ni pour le secteur ".$SecteurID." pour annee = ".$AnneeEC." et mois = ".$MoisEC." et GTE = ".$GTEEC.", arret du traitement.",$pasdefichier);
 					}
-					if (strpos($resultatLecture,"Erreur dans les calcul des stats generales, consulter le fichier des selections pour plus de details (fichier inclus dans le zip)") === false) {
-						$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Erreur dans les calcul des stats generales, consulter le fichier des selections pour plus de details (fichier inclus dans le zip)<br/>";
+					if (strpos($resultatLecture,"Erreur dans le calcul des stats generales, consulter le fichier des selections pour plus de details (fichier inclus dans le zip)") === false) {
+						$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>Erreur dans le calcul des stats generales, consulter le fichier des selections pour plus de details (fichier inclus dans le zip)<br/>";
 					}
 					//$resultatLecture .= "<img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>pas d'effort ni pour le systeme ".$systemeId." ni pour le secteur ".$SecteurID." pour annee = ".$anneeEC." et mois = ".$MoisEC." et GTE = ".$GTEEC.". Arret du calcul<br/>";
 					$erreurStatGene .= "Pas d'effort ni pour le systeme ".$systemeId." ni pour le secteur ".$SecteurID." pour annee = ".$AnneeEC." et mois = ".$MoisEC." et GTE = ".$GTEEC."<br/>";

@@ -43,7 +43,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		<h1>Recomposition des donn&eacute;es et calcul des statistiques</h1>
 		<br/>
 		<br/>
-		<p>Cette section reprend les traitements manuel d&eacute;velopp&eacute;s dans le lot 2 PPEAO r&eacute;alis&eacute;s en 2007.</p>
+		<p>Cette section reprend les traitements manuels d&eacute;velopp&eacute;s dans le lot 2 PPEAO r&eacute;alis&eacute;s en 2007.</p>
 		<ul class="list">
 			<li class="listitem"><a href="/recomposition/rec_choix_base.php" ><b>Recomposition donn&eacute;es</b></a></li>
 			<li class="listitem"><a href="/statistiques/stat_choix_base.php" ><b>Stats p&ecirc;che par agglom&eacute;ration</b></a></a>

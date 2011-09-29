@@ -248,9 +248,9 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 					WriteCompLog ($logComp,"*- INFO : apres connexion",$pasdefichier);
 				}
 				if (! $connectAccess ) {
-					$CRexecution .= "Erreur de la connection à la base ACCESS ".$BDACCESS."<br/>";
+					$CRexecution .= "Erreur de la connection &agrave; la base ACCESS ".$BDACCESS."<br/>";
 					if ($EcrireLogComp ) {
-						WriteCompLog ($logComp,"*- ERREUR : Erreur de la connection à la base ACCESS ".$BDACCESS,$pasdefichier);
+						WriteCompLog ($logComp,"*- ERREUR : Erreur de la connection &agrave; la base ACCESS ".$BDACCESS,$pasdefichier);
 					}
 					$erreurProcess = true;
 				} else {

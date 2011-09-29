@@ -49,7 +49,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 
 <div id="main_container" class="selection">
 <h1>g&eacute;rer les droits d&#x27;acc&egrave;s aux donn&eacute;es</h1>
-<p>cette page vous permet d&#x27;accorder &agrave; un utilisateur ou &agrave; un groupe d&#x27;utilisateur le droit d&#x27;acc&egrave;s &agrave; la totalit&eacute; d&#x27;un jeu de donn&eacute;es pour l&#x27;extraction des donn&eacute;es. dans le cas contraire, un utilisateur ou groupe aura acc&egrave;s uniquement aux donn&eacute;es &quot;historiques&quot;.</p>
+<p>Cette page vous permet d&#x27;accorder &agrave; un utilisateur ou &agrave; un groupe d&#x27;utilisateurs le droit d&#x27;acc&egrave;s &agrave; la totalit&eacute; d&#x27;un jeu de donn&eacute;es pour l&#x27;extraction des donn&eacute;es. Dans le cas contraire, un utilisateur ou groupe aura acc&egrave;s uniquement aux donn&eacute;es &quot;historiques&quot;.</p>
 
 <?php
 
@@ -118,7 +118,7 @@ if ($_POST["enregistrer"]=='oui') {
 }
 
 if ($acteur_type=='') {
-echo('<h2>g&eacute;rer les droits pour un <a href="?type=g">groupe</a> ou un <a href="?type=u">utilisateur</a>.</h2>');}
+echo('<h2>g&eacute;rer les droits pour un <a href="?type=g">groupe</a> ou un <a href="?type=u">utilisateur</a></h2>');}
 // si l'on a choisi quel type d'acteur (utilisateur ou groupe) on veut editer
 else {
 	switch ($acteur_type) {
@@ -127,7 +127,7 @@ else {
 		$typeCode='g';
 		$type="groupe";
 		echo('<h2>g&eacute;rer les droits pour un groupe (changer pour un <a href="?type=u">utilisateur</a>).</h2>');
-		echo('<p>vous pouvez &eacute;galement <a href="/edition/edition_table.php?selector=no&editTable=usergroups" alt="cr&eacute;er un groupe">cr&eacute;er un nouveau groupe</a></p>');
+		echo('<p>Vous pouvez &eacute;galement <a href="/edition/edition_table.php?selector=no&editTable=usergroups" alt="cr&eacute;er un groupe">cr&eacute;er un nouveau groupe</a>.</p>');
 		// choix de l'acteur pour lequel on veut definir des droits
 		// on ne propose pas les groupes "visiteurs" (aucun droit, 0) ni les groupes admin (1), gestionnaires 
 		// des donnees (2) et exploitants des donnees (3) qui ont eux acces a toutes les donnees
@@ -217,7 +217,7 @@ else {
 
 
 		echo('<div class="hint clear"><span class="hint_label" style="display:block;padding-top:8px;"><a href="#" onclick="toggleAide(\'aide_systemes\');return false;">aide &gt;&gt;</a></span><div class="hint_text" id="aide_systemes" style="display:none;">');
-		echo('vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e<br />pour effectuer une s&eacute;lection continue, cliquez sur la premi&egrave;re valeur puis sur la derni&egrave;re valeur en maintenant la touche MAJ enfonc&eacute;e');
+		echo('Vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en maintenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e.<br />Pour effectuer une s&eacute;lection continue, cliquez sur la premi&egrave;re valeur puis sur la derni&egrave;re valeur en maintenant la touche MAJ enfonc&eacute;e');
 		echo('</div></div>');
 		echo('<p class="clear" id="add_systemes"></p>');
 		// on affiche la liste des  droits d'acces accordes a cet acteur

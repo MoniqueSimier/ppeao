@@ -24,7 +24,7 @@ $sql="";
 $infoComp="";
 switch ($action) {
 	case 'sequences_ref_param':
-		$operation="de mise-&agrave;-jour des s&eacute;quences des tables de r&eacute;f&eacute;rence et de param&eacute;trage";
+		$operation="de mise &agrave; jour des s&eacute;quences des tables de r&eacute;f&eacute;rence et de param&eacute;trage";
 
 		// on sélectionne les sequences, leurs tables et leurs colonnes
 		// pour les tables de ref (type_table_id=2) et de param (type_table_id=3)
@@ -54,7 +54,7 @@ switch ($action) {
 		
 	break;
 	case 'sequences_donnees':
-		$operation="de mise-&agrave;-jour des s&eacute;quences des tables de donn&eacute;es";
+		$operation="de mise &agrave; jour des s&eacute;quences des tables de donn&eacute;es";
 		// on sélectionne les sequences, leurs tables et leurs colonnes
 		// pour les tables de donnees (type_table_id=4)
 		$sql='	SELECT ads.sequence_name, ads.column_name, ads.table_db 

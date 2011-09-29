@@ -858,67 +858,67 @@ return $edit_link;
 function afficheAide($topic) {
 //$topic: le "theme" de l'etape de selection ("taxonomie", "geographie", "periode", "type_exploitation", "type_donnees", "exp", "art", "campagnes", "engins", "secteurs", "agglomerations", "periodes_enquete", "grands_types_engins", "type_stats", "stats_agglo", "stats_gen", "secteurs2", "filieres")
 $hint='<div class="hint clear"><span class="hint_label"><a href="#" onclick="toggleAide(\'aide_'.$topic.'\');return false;">aide &gt;&gt;</a></span><div class="hint_text" id="aide_'.$topic.'" style="display:none;">';
-$hint_multiple='vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e<br />pour effectuer une s&eacute;lection continue, cliquez sur la premi&egrave;re valeur puis sur la derni&egrave;re valeur en maintenant la touche MAJ enfonc&eacute;e';
+$hint_multiple='Vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs &eacute;l&eacute;ments en cliquant dessus tout en maintenant la touche &quot;CTRL&quot; (Windows, Linux) ou &quot;CMD&quot; (Mac) enfonc&eacute;e.<br>Pour effectuer une s&eacute;lection continue, cliquez sur la premi&egrave;re valeur puis sur la derni&egrave;re valeur en maintenant la touche MAJ enfonc&eacute;e.';
 $hint_empty='';
 	switch ($topic) {
 	case "taxonomie":
-		$hint.="s&eacute;lectionnez les familles et/ou esp&egrave;ces qui vous int&eacute;ressent<br />";
+		$hint.="S&eacute;lectionnez les familles et/ou esp&egrave;ces qui vous int&eacute;ressent.<br />";
 		$hint.=$hint_empty;
 		$hint.=$hint_multiple;
 	break;
 	case "geographie":
-		$hint.="pour s&eacute;lectionner les syst&egrave;mes qui vous int&eacute;ressent, commencez par s&eacute;lectionner un ou plusieurs pays, puis s&eacute;lectionnez un ou plusieurs syst&egrave;mes parmi la liste qui s&rsquo;affiche alors dans la colonne de droite<br />";
+		$hint.="Pour s&eacute;lectionner les syst&egrave;mes qui vous int&eacute;ressent, commencez par s&eacute;lectionner un ou plusieurs pays, puis s&eacute;lectionnez un ou plusieurs syst&egrave;mes parmi la liste qui s&rsquo;affiche alors dans la colonne de droite.<br>";
 		$hint.=$hint_empty;
-		$hint.="cliquez alors sur &quot;ajouter et passer &agrave; la s&eacute;lection temporelle&quot;<br />";
+		$hint.="Cliquez alors sur &quot;ajouter et passer &agrave; la s&eacute;lection temporelle&quot;.<br />";
 		$hint.=$hint_multiple;
 	break;
 	case "periode":
-		$hint.="s&eacute;lectionnez les ann&eacute;es et mois de d&eacute;but et de fin de la p&eacute;riode qui vous int&eacute;resse";
+		$hint.="S&eacute;lectionnez les ann&eacute;es et mois de d&eacute;but et de fin de la p&eacute;riode qui vous int&eacute;resse.";
 	break;
 	case "type_exploitation":
-		$hint.="choisissez le type d&#x27;exploitation que vous voulez appliquer aux donn&eacute;es s&eacute;lectionn&eacute;es";
+		$hint.="Choisissez le type d&#x27;exploitation que vous voulez appliquer aux donn&eacute;es s&eacute;lectionn&eacute;es.";
 	break;
 	case "type_donnees":
-		$hint.="choisissez le type de donn&eacute;es &agrave; extraire";
+		$hint.="Choisissez le type de donn&eacute;es &agrave; extraire.";
 	break;
 	case "secteurs":
-		$hint.="s&eacute;lectionnez les secteurs qui vous int&eacute;ressent<br />";
+		$hint.="S&eacute;lectionnez les secteurs qui vous int&eacute;ressent.<br />";
 		$hint.=$hint_empty;
 		$hint.=$hint_multiple;
 	break;
 	case "campagnes":
-		$hint.="s&eacute;lectionnez les campagnes de p&ecirc;che exp&eacute;rimentale qui vous int&eacute;ressent<br />";
+		$hint.="S&eacute;lectionnez les campagnes de p&ecirc;che exp&eacute;rimentale qui vous int&eacute;ressent.<br />";
 		$hint.=$hint_empty;
 		$hint.=$hint_multiple;
 	break;
 	case "engins":
-		$hint.="s&eacute;lectionnez les engins de p&ecirc;che qui vous int&eacute;ressent<br />";
+		$hint.="S&eacute;lectionnez les engins de p&ecirc;che qui vous int&eacute;ressent.<br />";
 		$hint.=$hint_empty;
 		$hint.=$hint_multiple;
 	break;
 	case "filieres":
-		$hint.="votre s&eacute;lection est termin&eacute;e, vous allez maintenant choisir une fili&egrave;re d&#x27;extraction";
+		$hint.="Votre s&eacute;lection est termin&eacute;e, vous allez maintenant choisir une fili&egrave;re d&#x27;extraction.";
 	break;
 	case "agglomerations":
-		$hint.="s&eacute;lectionnez les agglomérations qui vous int&eacute;ressent<br />";
+		$hint.="S&eacute;lectionnez les agglomérations qui vous int&eacute;ressent.<br />";
 		$hint.=$hint_empty;
 		$hint.=$hint_multiple;
 	break;
 	case "periodes_enquete":
-		$hint.="s&eacute;lectionnez les p&eacute;riodes d&#x27;enqu&ecirc;te qui vous int&eacute;ressent<br />";
+		$hint.="S&eacute;lectionnez les p&eacute;riodes d&#x27;enqu&ecirc;te qui vous int&eacute;ressent.<br />";
 		$hint.=$hint_empty;
 		$hint.=$hint_multiple;
 	break;
 	case "grands_types_engins":
-		$hint.="s&eacute;lectionnez les grands types d&#x27;engins qui vous int&eacute;ressent<br />";
+		$hint.="S&eacute;lectionnez les grands types d&#x27;engins qui vous int&eacute;ressent.<br />";
 		$hint.=$hint_empty;
 		$hint.=$hint_multiple;
 	break;
 	case "type_stats":
-		$hint.="choisissez le type de statistiques qui vous int&eacute;ressent";
+		$hint.="Choisissez le type de statistiques qui vous int&eacute;ressent.";
 	break;
 	case "stats":
-		$hint.="votre s&eacute;lection est termin&eacute;e, vous allez maintenant pouvoir choisir les statistiques &agrave; extraire";
+		$hint.="Votre s&eacute;lection est termin&eacute;e, vous allez maintenant pouvoir choisir les statistiques &agrave; extraire.";
 	break;
 		
 	default:
@@ -939,7 +939,7 @@ if (empty($_GET["step"])) {$step=1;} else {$step=$_GET["step"];}
 // si l'on en est a la premiere etape, on affiche le choix
 if ($step==1) {
 	echo('<div id="step_1">');
-	echo("<h2>voulez-vous commencer par s&eacute;lectionner des esp&egrave;ces?</h2>");
+	echo("<h2>Voulez-vous commencer par s&eacute;lectionner des esp&egrave;ces ?</h2>");
 	echo('<p><a href="/extraction/selection/selection.php?choix_especes=1&step=2" class="">oui</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/extraction/selection/selection.php?choix_especes=0&step=3" class="">non</a></p>');
 	echo('</div>');
 
@@ -1924,7 +1924,7 @@ if ($_GET["step"]>9) {
 	
 	$url='/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"];
 	
-	echo('<p>le processus de s&eacute;lection des donn&eacute;es est termin&eacute;, cliquez sur le lien ci-dessous pour choisir les variables dont vous voulez exporter les valeurs</p>vous pouvez &eacute;galement revoir ou modifier votre s&eacute;lection en cliquant sur l&#x27;un des liens [modifier ma s&eacute;lection]<p>');
+	echo('<p>Le processus de s&eacute;lection des donn&eacute;es est termin&eacute;, cliquez sur le lien ci-dessous pour choisir les variables dont vous voulez exporter les valeurs.</p>Vous pouvez &eacute;galement revoir ou modifier votre s&eacute;lection en cliquant sur l&#x27;un des liens [modifier ma s&eacute;lection].<p>');
 	echo('<div id="choix_filiere" class="clear"><a id="link_filieres" href="#" class="last_step" onclick="javascript:goToChoixFilieres(\''.$url.'\');return false;">choisir une fili&egrave;re d&#x27;exploitation...</a><br /><br />');
 // on affiche le texte d'aide
 afficheAide("filieres");
@@ -2225,7 +2225,7 @@ if ($_GET["step"]==$theNextStep) {
 echo('</div></div>');}
 if ($_GET["step"]>$theStep) {
 echo('<div id="choix_tables_stats">');
-		echo('<p>le processus de s&eacute;lection des donn&eacute;es est termin&eacute;, cliquez sur le lien ci-dessous pour choisir les variables dont vous voulez exporter les valeurs<br />vous pouvez &eacute;galement revoir ou modifier votre s&eacute;lection en cliquant sur l&#x27;un des liens [modifier ma s&eacute;lection]<p>');
+		echo('<p>Le processus de s&eacute;lection des donn&eacute;es est termin&eacute;, cliquez sur le lien ci-dessous pour choisir les variables dont vous voulez exporter les valeurs.<br />Vous pouvez &eacute;galement revoir ou modifier votre s&eacute;lection en cliquant sur l&#x27;un des liens [modifier ma s&eacute;lection].<p>');
 		switch ($exploit) {
 			case "donnees" : 
 			echo('<a id="link_filieres" class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;extraction...</a>');

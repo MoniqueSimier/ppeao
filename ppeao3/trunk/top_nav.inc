@@ -14,6 +14,8 @@ $administration="";
 $journal="";
 $documentation="";
 $export="";
+//ajout liens
+$liens="";
 // adds " active" to the style of each menu entry to highlight the current one in the navigation menu
 switch ($section) {
 	case "home" : $home=" active";
@@ -26,6 +28,9 @@ switch ($section) {
 	break;
 	case "sinformer" : $sinformer=" active";
 	break;
+	//ajout de case liens
+	case "liens" : $liens=" active"; 
+	break;
 }
 
 
@@ -33,7 +38,7 @@ switch ($section) {
 
 <!-- le menu de navigation horizontal -->
 <div id="nav_container">
-	<div id="nav_menu"><a href="/index.php" class="menu<?php echo($home)?>">accueil</a><a href="/extraction/selection/selection.php" class="menu<?php echo($consulter)?>">consulter</a><a href="/gerer.php" class="menu <?php echo($gerer)?>">g&eacute;rer</a><a href="/apropos.php" class="menu<?php echo($sinformer)?>">s&#x27;informer</a><a href="/contact.php" class="menu<?php echo($contacter)?>">contacter</a>
+	<div id="nav_menu"><a href="/index.php" class="menu<?php echo($home)?>">accueil</a><a href="/extraction/selection/selection.php" class="menu<?php echo($consulter)?>">consulter</a><a href="/gerer.php" class="menu <?php echo($gerer)?>">g&eacute;rer</a><a href="/apropos.php" class="menu<?php echo($sinformer)?>">s&#x27;informer</a><a href="/liens.php" class="menu<?php echo($liens)?>">liens</a><a href="/contact.php" class="menu<?php echo($contacter)?>">contacter</a>
 	</div> <!-- end div id="nav_menu" -->
 </div> <!-- end div id="nav_container" -->
 

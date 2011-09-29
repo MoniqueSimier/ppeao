@@ -123,14 +123,14 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		$logComp = fopen($nomFicLogComp , "a+");
 		if (! $logComp ) {
 			$messageGen = " erreur de cr&eacute;ation du fichier de log";
-			logWriteTo(8,"error","Erreur de creation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php","","","0");
+			logWriteTo(8,"error","Erreur de cr&eacute;ation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php","","","0");
 			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 			exit;		
 		}
 	}
 	// Test de la connexion à la BD de ref (pour log entre autre)
 	if (!$connectPPEAOACCESS) { 
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es bdppeao pour maj des logs</div>" ; exit;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion &agrave; la base de donn&eacute;es bdppeao pour maj des logs</div>" ; exit;
 	}
 	
 	// Début du traitement de comparaison par table.
@@ -167,19 +167,35 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		WriteCompLog ($logComp, "*- DEBUT lancement Zip peche ".$nomPeche,$pasdefichier);
 		WriteCompLog ($logComp, "*------------------------------------------------------",$pasdefichier);
 	}
-	//0.a.mise à jour des tables a partir de fichiers EXCEL (Ajout Lot 5 YL 01-03-2001)
+	
+	
+	//0.a. Exécution de scripts complémentaires avant le ZIP (Ajout Lot 5 YL 01-03-2001)
 	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "*- MAJ de tables a partir de fichiers excel",$pasdefichier);
+		WriteCompLog ($logComp, "*- Exécution de scripts complémentaires",$pasdefichier);
 	}
+	$CRexecution .= "Avec execution de scripts SQL<br/>";
 	// test de connexion a la base de travail
 	$connectAccessTravail = odbc_connect($BDACCESSTravail,'Administrateurs','',SQL_CUR_USE_ODBC);
 	if (!$connectAccessTravail) {
 		if ($EcrireLogComp ) {
 			WriteCompLog ($logComp, "Erreur de la connection à la base ACCESS de travail".$BDACCESSTravail,$pasdefichier);
 		}
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base ACCESS de travail ".$BDACCESSTravail."</div>" ; exit;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion &agrave; la base ACCESS de travail ".$BDACCESSTravail."</div>" ; exit;
 	}
 
+	// lecture du fichier
+	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/conf/".$fileSQLSup;
+	$fileSQLopen=fopen($fileSQL,'r');
+	$erreurSQLSup = executeSQLFichier($fileSQLopen,$connectAccessTravail,$EcrireLogComp,$logComp,$pasdefichier);
+
+	if ($erreurSQLSup !="") {
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur &agrave; l'execution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
+	} 
+	// 
+	//0.b.mise à jour des tables a partir de fichiers EXCEL (Ajout Lot 5 YL 01-03-2001)
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "*- MAJ de tables a partir de fichiers excel",$pasdefichier);
+	}
 	$CRexecution .= "Avec MAJ de tables a partir de fichiers excel<br/>";
 	$TableSFichierS = explode(",",$fileMAJExcel);
 	$nbrFichiers = count($TableSFichierS)-1;
@@ -219,17 +235,14 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 					// Analyse de la ligne et des types associés pour construire la liste des valeurs
 					for ($cptVal = 0;$cptVal <= $NbValeur;$cptVal++) {
 						if ($typeChampTA[$cptVal] == "text") {
-							$valReplace = str_replace ("'","''",$listeValeurs[$cptVal]);
-							$ValAAjouter = "'".$valReplace."'";	
+							$ValAAjouter = "'".$listeValeurs[$cptVal]."'";	
 						} else {
-							$valReplace = str_replace (",",".",$listeValeurs[$cptVal]);
-							$ValAAjouter = $valReplace;
+							$ValAAjouter = $listeValeurs[$cptVal];
 						}
 						if ($listeValeursSQL == "") { $listeValeursSQL = $ValAAjouter; } else {$listeValeursSQL .= ",".$ValAAjouter;}
 					}
 					// Construction du SQL
 					$SQL = "insert into ".$nomTableAccess." (".$listeColonnes .") values (".$listeValeursSQL.");";
-					//echo $SQL."<br/>";
 					// On exécute le SQL
 					$ResultSQL = odbc_exec($connectAccessTravail,$SQL);
 					$erreurSQL = odbc_errormsg($connectAccessTravail); //
@@ -246,25 +259,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	}// fin du for ($cptFic = 0;$cptFic <= $nbrFichiers;$cptFic++)
 	if ($erreurSQLSup !="") {
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur a l'execution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
-	}	
-	
-	//0.b. Exécution de scripts complémentaires avant le ZIP (Ajout Lot 5 YL 01-03-2001)
-	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "*- Exécution de scripts complémentaires",$pasdefichier);
 	}
-	$CRexecution .= "Avec execution de scripts SQL<br/>";
-
-
-	// lecture du fichier
-	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/conf/".$fileSQLSup;
-	$fileSQLopen=fopen($fileSQL,'r');
-	$erreurSQLSup = executeSQLFichier($fileSQLopen,$connectAccessTravail,$EcrireLogComp,$logComp,$pasdefichier);
-
-	if ($erreurSQLSup !="") {
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur a l'execution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
-	} 
-	// 
-
 	//1. copier et renomer la base de travail
 
 	// On va utiliser un repertoire temp pour preparer l'archive
@@ -284,7 +279,6 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		$erreurProcess = true;
 	} else {
 		$nouveauNomFic = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/temp/".$BDACCESS.".mdb";
-		//echo $BDfic." - ".$nouveauNomFic."<br/>";
 		if (copy($BDfic,$nouveauNomFic)) {
 			if ($EcrireLogComp ) {
 				WriteCompLog ($logComp,"Fichier de travail ".$BDACCESS."_travail renomme en ".$BDACCESS.".mdb",$pasdefichier);
@@ -294,7 +288,6 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			$erreurProcess = true;
 		}
 	}
-
 	if (!$erreurProcess) {
 		//2.ajouter cette base au fichier compresse
 		//compression du fichier pour le telechargement

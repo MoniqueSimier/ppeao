@@ -74,9 +74,9 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				<h1>Import / recalcul de données automatique dit &quot;Portage Automatique&quot;</h1>
 				<br/>
 				<p>Ce processus permet un portage automatique des bases issues des bases access dans la base principale PPEAO.</p>
-				<p class="portageInfo">Les diff&eacute;rents traitements sont d&eacute;taill&eacute;s ci-dessous. Vous pouvez choisir de lancer tout ou partie des traitements.<br/>
+				<p>Les diff&eacute;rents traitements sont d&eacute;taill&eacute;s ci-dessous. Vous pouvez choisir de lancer tout ou partie des traitements.<br/>
 				Une erreur sur un traitement entra&icirc;ne l'arr&ecirc;t de l'ensemble du processus.<br/>
-				Une base de sauvegarde est cr&eacute;&eacute;e en d&eacute;but de traitement. Elle peut &ecirc;tre utilis&eacute;e pour restaurer la base de r&eacute;f&eacute;rence en cas de probl&egrave;mes. <br/>
+				Une base de sauvegarde est cr&eacute;&eacute;e en d&eacute;but de traitement. Elle peut &ecirc;tre utilis&eacute;e pour restaurer la base de r&eacute;f&eacute;rence en cas de probl&egrave;me. <br/>
 				Un fichier de log compl&eacute;mentaire permet d'avoir l'ensemble des avertissements ou informations sur le traitement. </p>
 				<br/>
 				<?php // get the help/documentation for this page 
@@ -112,18 +112,18 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				<div id="sauvegarde">
 					<div id="sauvegarde_img"><img src="/assets/incomplete.png" alt=""/></div>
 					<div id="sauvegarde_txt">Sauvegarde.</div>
-					<div id="sauvegarde_chk">Lancer sauvegarde&nbsp;<input type="checkbox" id="svgcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
+					<div id="sauvegarde_chk">Lancer sauvegarde.&nbsp;<input type="checkbox" id="svgcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 					<?php 	$navbarLevel = 1;
-							$texteDiv = "Compte rendu de sauvegarde.";	
+							$texteDiv = "Compte-rendu de sauvegarde.";	
 							include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 				</div>
 
 				<div id="comparaison">
 					<div id="comparaison_img"><img src="/assets/incomplete.png" alt=""/></div>
 					<div id="comparaison_txt">Comparaison r&eacute;f&eacute;rentiel et param&eacute;trage.</div>
-					<div id="comparaison_chk">Lancer comp. param / ref&nbsp;<input type="checkbox" id="compcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
+					<div id="comparaison_chk">Lancer comp. param / ref.&nbsp;<input type="checkbox" id="compcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 					<?php 	$navbarLevel = 2;
-							$texteDiv = "Compte rendu de comparaison r&eacute;f&eacute;rentiel et param&eacute;trage";	
+							$texteDiv = "Compte-rendu de comparaison r&eacute;f&eacute;rentiel et param&eacute;trage.";	
 							include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 				</div>
 
@@ -132,7 +132,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 					<div id="comparaisonInv_txt">Comparaison du param&eacute;trage p&ecirc;ches artisanales avec la base de r&eacute;f&eacute;rence.</div>
 					<div id="comparaisonInv_chk">Lancer comp. param. art.&nbsp;<input type="checkbox" id="compinvcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 					<?php 	$navbarLevel = 3;
-							$texteDiv = "Compte rendu de comparaison r&eacute;f&eacute;rentiel et param&eacute;trage";	
+							$texteDiv = "Compte-rendu de comparaison r&eacute;f&eacute;rentiel et param&eacute;trage.";	
 							include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 	
 				</div>
@@ -142,7 +142,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 					<div id="copieScientifique_txt">Copie des p&ecirc;ches scientifiques.</div>
 					<div id="copieScientifique_chk">Lancer copie p&ecirc;ches scient.&nbsp;<input type="checkbox" id="majsccheck" checked="checked" /></div>
 					<?php 	$navbarLevel = 4;
-							$texteDiv = "Compte rendu de copie des p&ecirc;ches scientifiques.";	
+							$texteDiv = "Compte-rendu de copie des p&ecirc;ches scientifiques.";	
 							include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 
 				</div>
@@ -152,7 +152,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 					<div id="processAutoRec_txt">Process recomposition donn&eacute;es.</div>
 					<div id="processAutoRec_chk">Lancer recomp. donn&eacute;es.&nbsp;<input type="checkbox" id="reccheck" checked="checked"/></div>
 					<?php 	$navbarLevel = 5;
-						$texteDiv = "Compte rendu de recomposition donn&eacute;es.";	
+						$texteDiv = "Compte-rendu de recomposition donn&eacute;es.";	
 						include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>				
 				</div>
 
@@ -161,25 +161,25 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 					<div id="processAutoStat_txt">Process calcul statistiques.</div>
 					<div id="processAutoStat_chk">Lancer calcul stat.&nbsp;<input type="checkbox" id="statcheck" checked="checked"/></div>
 					<?php 	$navbarLevel = 6;
-						$texteDiv = "Compte rendu du calcul statistiques.";	
+						$texteDiv = "Compte-rendu du calcul statistiques.";	
 						include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 				</div>
 
 				<div id="copieRecomp">
 					<div id="copieRecomp_img"><img src="/assets/incomplete.png" alt=""/></div>
 					<div id="copieRecomp_txt">Copie des donn&eacute;es p&ecirc;ches artisanales.</div>
-					<div id="copieRecomp_chk">Lancer copie p&ecirc;ches art..<input type="checkbox" id="majreccheck" checked="checked"/></div>
+					<div id="copieRecomp_chk">Lancer copie p&ecirc;ches art.<input type="checkbox" id="majreccheck" checked="checked"/></div>
 					<?php 	$navbarLevel = 7;
-						$texteDiv = "Compte rendu de la copie des p&ecirc;ches artisanales.";	
+						$texteDiv = "Compte-rendu de la copie des p&ecirc;ches artisanales.";	
 						include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 				</div>
-				<div id="portageOK"><div id="portageOK_img"><img src="/assets/incomplete.png" alt=""/></div><div id="portageOK_txt">Status du portage automatique.</div></div>
+				<div id="portageOK"><div id="portageOK_img"><img src="/assets/incomplete.png" alt=""/></div><div id="portageOK_txt">Statut du portage automatique.</div></div>
 				<div id="purge"><div id="purge_img"><img src="/assets/incomplete.png" alt=""/></div>
 				<div id="purge_txt">Purge des donn&eacute;es.</div>
-				<div id="purge_chk">Lancer purge donn&eacute;es&nbsp;<input type="checkbox" id="purgecheck" checked="checked" <?php echo $boutDisabled;?>/></div>
+				<div id="purge_chk">Lancer purge donn&eacute;es.&nbsp;<input type="checkbox" id="purgecheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 									
 				<?php 	$navbarLevel = 8;
-						$texteDiv = "Compte rendu de la purge des donn&eacute;es.";	
+						$texteDiv = "Compte-rendu de la purge des donn&eacute;es.";	
 						include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 				</div>
 				<?php // Un formulaire bidon pour renvoyer l'etat du traitement au javascript*/ ?>

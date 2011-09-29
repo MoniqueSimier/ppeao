@@ -113,7 +113,7 @@ if ($valid=='valid') {
 	}
 	
 	else {
-		$message= '<!--[CDATA[Une erreur est survenue lors de l\'enregistrement la table '.$table.' : '.pg_last_error().']]-->';
+		$message= '<!--[CDATA[Une erreur est survenue lors de l\'enregistrement de la table '.$table.' : '.pg_last_error().']]-->';
 		$valid='invalid';
 	}
 }

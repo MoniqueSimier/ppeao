@@ -50,7 +50,7 @@ if ($step>1) {
 ?>
 </h1>
 <?php if ($step<1) { ?>
-<p>pour extraire des donn&eacute;es ou des statistiques de p&ecirc;ches exp&eacute;rimentales ou artisanales, suivez le processus de s&eacute;lection ci-dessous. vous pourrez &agrave; tout moment modifier les valeurs choisies lors d&#x27;une des &eacute;tapes de votre s&eacute;lection.</p>
+<br><p>Pour extraire des donn&eacute;es ou des statistiques de p&ecirc;ches exp&eacute;rimentales ou artisanales, suivez le processus de s&eacute;lection ci-dessous. Vous pourrez &agrave; tout moment modifier les valeurs choisies lors d&#x27;une des &eacute;tapes de votre s&eacute;lection.</p>
 <?php } ?>
 <!-- extraction de donnees et de stats -->
 <?php
@@ -186,9 +186,9 @@ echo('</div>'); // find div id=ex_selection
 // si l'utilisateur n'est pas connecte, on le lui signale et on affiche le formulaire de login
 else {
 	if ($_GET["step"]!='' && $_GET["step"]>4) {
-	echo('<div  class="alerte"><p class="error">vous devez &ecirc;tre connect&eacute; pour pouvoir poursuivre l&#x27;extraction des donn&eacute;es.<br /> si vous avez un compte, connectez-vous en utilisant le formulaire ci-dessus.</p>');
+	echo('<div  class="alerte"><p class="error">Vous devez &ecirc;tre connect&eacute; pour pouvoir poursuivre l&#x27;extraction des donn&eacute;es.<br /> Si vous avez un compte, connectez-vous en utilisant le formulaire ci-dessus.</p>');
 		
-	echo('<p class="error">si vous n&#x27;avez pas de compte, vous pouvez en demander un en <a href="/contact.php">contactant les responsables du site</a>.</p></div>');}
+	echo('<p class="error">Si vous n&#x27;avez pas de compte, vous pouvez en demander un en <a href="/contact.php">contactant les responsables du site</a>.</p></div>');}
 }
 
 // le script pour afficher ou masquer la selection

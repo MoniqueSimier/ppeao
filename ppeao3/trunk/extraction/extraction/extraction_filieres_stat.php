@@ -164,7 +164,7 @@ Des s&eacute;lections d'esp&egrave;ces ou des regroupements d'esp&egrave;ces peu
 					echo "<h2>Statistiques g&eacute;n&eacute;rales</h2>";
 				}
 				echo "<span class=\"showHide\">
-<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier ma s&eacute;lection]</a></span>";
+<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la la s&eacute;lection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier ma s&eacute;lection]</a></span>";
 				echo "<div id=\"selection_precedente\">";
 				if (!($_SESSION["selection_url"] =="")) {
 					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."&amp;open=1\" >modifier la s&eacute;lection en cours...</a></span>";

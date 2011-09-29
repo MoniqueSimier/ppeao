@@ -33,7 +33,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 <h1>Bienvenue &agrave; PPEAO</h1>
 <h2>Système d'informations sur les Peuplements de poissons et la P&ecirc;che artisanale des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d&rsquo;Afrique de l&rsquo;Ouest</h2>
-
+<br>
 <?php
 
 // on teste à quelle zone l'utilisateur a accès
@@ -51,8 +51,8 @@ nettoieLogExport();
 <p class="texte">La base PPEAO archive des informations sur les poissons, leur &eacute;cologie et leur exploitation par la p&ecirc;che artisanale de nombreux &eacute;cosyst&egrave;mes aquatiques de l&rsquo;Afrique de l&rsquo;Ouest.
 </p>
 
-<p class="texte"><em>Elle a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;IRD (Institut de Recherches pour le D&eacute;veloppement).</em></p>
-<p class="texte"><em>Elle est accessible via le portail de l&rsquo;&eacute;coscope du CRH (Centre de Recherches Halieutiques de S&egrave;te, France)</em>.</p>
+<p class="texte">Elle a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;IRD (Institut de Recherches pour le D&eacute;veloppement).</p>
+<p class="texte">Elle est accessible via le portail de l&rsquo;&eacute;coscope du CRH (Centre de Recherches Halieutiques de S&egrave;te, France).</p>
 
 
 

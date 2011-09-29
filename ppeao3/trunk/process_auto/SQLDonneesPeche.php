@@ -249,9 +249,9 @@ if (!$ArretTimeOut) {
 				$sqlUpdate='SELECT pg_catalog.setval(\''.$seq["sequence_name"].'\','.$maxVal.',true);';
 				if ($resultUpdate=pg_query($connectPPEAO,$sqlUpdate)) {$ok=true;} else {$success=false;}			
 				if ($success) {
-					$CRexecution = $CRexecution." mise-&agrave;-jour avec succ&egrave;s des s&eacute;quences des tables de donn&eacute;es <br/>";
+					$CRexecution = $CRexecution." mise &agrave; jour avec succ&egrave;s des s&eacute;quences des tables de donn&eacute;es <br/>";
 				} else {
-					$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp; erreur sur la mise-&agrave;-jour des s&eacute;quences des tables de donn&eacute;es <br/>";
+					$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp; erreur sur la mise &agrave; jour des s&eacute;quences des tables de donn&eacute;es <br/>";
 				}
 			}
 		}

@@ -41,7 +41,7 @@ switch ($action) {
 			// Selection complementaire pour savoir quel type d'export de la base bdppeoa l'utilisateur veut faire
 		$contenu = "<div id=\"selComp\"><form ><h2>Que voulez-vous faire ?</h2><br/>
 		<input id=\"choixExport2\" checked=\"checked\" name=\"choixExport\" type=\"radio\" value=\"2\" />Exporter une base pour la saisie de nouvelles informations ?<br/>		
-		<input id=\"choixExport1\"  name=\"choixExport\" type=\"radio\" value=\"1\" />Exporter la base bdppeao compl&egrave;te (<b>attention, l'op&eacute;ration pourra prendre un certain temps!</b>) ?<br/>
+		<input id=\"choixExport1\"  name=\"choixExport\" type=\"radio\" value=\"1\" />Exporter la base bdppeao compl&egrave;te (<b>attention, l'op&eacute;ration pourra prendre un certain temps !</b>) ?<br/>
 		<input id=\"choixExport3\" name=\"choixExport\" type=\"radio\" value=\"3\" />Exporter une base partielle apr&egrave;s avoir s&eacute;lectionn&eacute; le ou les &eacute;cosyst&egrave;me(s) &agrave; extraire ?<br/>
 		<br/>
 		&nbsp;<input type=\"button\" value=\"Valider mon choix\" onclick=\"javascript:doExportSelect('exportBaseRef','non');\"/>
@@ -58,11 +58,11 @@ switch ($action) {
 					$erreur  = initializeTempExtraction($connectPPEAO);
 					// Extraction du referentiel, du parametrage et des données
 					if ($erreur == "") {
-						$erreur  = getSQLExport("","","Tout",$connectPPEAO,"n");
+						$erreur  = getSQLExport("","","Tout",$connectPPEAO);
 					} 
 					// Création du fichier SQL
 					if ($erreur == "") {
-						$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO,"n");
+						$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO);
 					}
 					$delaiExec = number_format(timer() - $timer_debut,1);
 					if ($erreur == "") {
@@ -82,11 +82,11 @@ switch ($action) {
 					$erreur  = initializeTempExtraction($connectPPEAO);
 					// Extraction du referentiel et du parametrage
 					if ($erreur == "") {
-						$erreur  = getSQLExport("","","RefParam",$connectPPEAO,"n");
+						$erreur  = getSQLExport("","","RefParam",$connectPPEAO);
 					} 
 					// Création du fichier SQL
 					if ($erreur == "") {
-						$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO,"n");
+						$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO);
 					}
 					$delaiExec = number_format(timer() - $timer_debut,1);
 					if ($erreur == "") {
@@ -130,7 +130,7 @@ switch ($action) {
 							pg_free_result($SQLSystemeResult);
 							
 							// Lancement de la creation des SQL maintenant que le pays et les ecosystemes sont sélectionnés
-							$contenu = "<div id=\"selComp\"><form ><h2>Vous voulez s&eacute;lectionner un ou plusieurs &eacute;cosyst&egrave;mes</h2><br/>
+							$contenu = "<div id=\"selComp\"><form ><h2>Vous voulez s&eacute;lectionner un ou plusieurs &eacute;cosyst&egrave;mes.</h2><br/>
 									Les donn&eacute;es ont &eacute;t&eacute; extraites pour les &eacute;cosyst&egrave;mes ".$afficheNomSysteme." du pays ".$nomPays." .
 									<br/>";
 									
@@ -139,11 +139,11 @@ switch ($action) {
 							$erreur  = initializeTempExtraction($connectPPEAO);
 							// Extraction du referentiel et du parametrage
 							if ($erreur == "") {
-								$erreur  = getSQLExport($choixPays,$choixSysteme,"Tout",$connectPPEAO,"n");
+								$erreur  = getSQLExport($choixPays,$choixSysteme,"Tout",$connectPPEAO);
 							} 
 							// Création du fichier SQL
 							if ($erreur == "") {
-								$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO,"n");
+								$erreur  = createSQLFile("bdppeao_a_importer",$connectPPEAO);
 							}
 							// Calcul du temps d'execution
 							$delaiExec = number_format(timer() - $timer_debut,1);
@@ -173,7 +173,7 @@ switch ($action) {
 								$SQLSystemeResult = pg_query($connectPPEAO,$SQLSysteme);
 								$erreurSQL = pg_last_error($connectPPEAO);
 								if ( !$SQLSystemeResult ) { 
-									$erreur = "erreur de lecture des systemes pour le pays  ".$nomPays." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+									$erreur = "erreur de lecture des syst&egrave;mes pour le pays  ".$nomPays." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 									
 								} else {
 									$cptSysteme=0;
@@ -217,7 +217,7 @@ switch ($action) {
 								$SQLSystemeResult = pg_query($connectPPEAO,$SQLSysteme);
 								$erreurSQL = pg_last_error($connectPPEAO);
 								if ( !$SQLSystemeResult ) { 
-									$erreur = "erreur de lecture des systemes pour le pays  ".$row[1]." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
+									$erreur = "erreur de lecture des syst&egrave;mes pour le pays  ".$row[1]." (erreur compl&egrave;te = ".$erreurSQL.")<br/>";
 									
 								} else {
 									if (pg_num_rows($SQLSystemeResult) == 0) {
@@ -247,8 +247,8 @@ switch ($action) {
 	break;
 	case "videbdppeaoPC":
 		$timer_debut = timer();
-		//$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
-		$erreur = emptyDB("Tout",$connectPPEAO);
+		$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
+		$erreur = emptyDB("Tout",$connectPPEAOtest);
 		$delaiExec = number_format(timer() - $timer_debut,1);
 		if ($erreur == "") {
 			$contenu = "<div id=\"videResultat\">La base ".$base_principale." a &eacute;t&eacute; vid&eacute;e avec succ&egrave;s en ".$delaiExec." secondes.";
@@ -267,9 +267,9 @@ switch ($action) {
 	case "majbdppeaoPC":
 			set_time_limit(0);
 			$timer_debut = timer();
-			//$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
+			$connectPPEAOtest = pg_connect("host=".$hostname." port=".$port." dbname=bdppeao_test user=".$username." password=".$password."") or die('Connexion impossible a la base : ' . pg_last_error());
 			$fileSQLname = "bdppeao_a_importer.sql";
-			$erreur = readAndRunSQL($fileSQLname,$connectPPEAO,"y");
+			$erreur = readAndRunSQL($fileSQLname,$connectPPEAOtest);
 			$delaiExec = number_format(timer() - $timer_debut,1);
 			if ($erreur == "") {
 				$contenu = "<div id=\"videResultat\">La base a &eacute;t&eacute; mise &agrave; jour avec succ&egrave;s en ".$delaiExec." secondes.";

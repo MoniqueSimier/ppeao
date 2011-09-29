@@ -319,7 +319,7 @@ $logArray=logRead($date,$userId,$moduleId,$messageBit,0,$messageType,$paginate);
 
 $logBlock='<div id="logMessage"></div>';
 $logBlock.='<div id="logTableDiv">';
-$logBlock.='<a href="javascript:deleteLog();">effacer le journal</a> (une version en sera archiv&eacute;e sur le serveur...)';
+$logBlock.='<a href="javascript:deleteLog();">effacer le journal</a> (une version en sera archiv&eacute;e sur le serveur)';
 $logBlock.=logTable($logArray,'',$paginate);
 $logBlock.='</div>'; // end div id="logTableDiv"
 

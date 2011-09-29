@@ -810,7 +810,7 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 				} else {
 					$OptionRegroupCont .= "<option disabled=\"disabled\">pas d'esp&egrave;ces associ&eacute;es</option>";
 					$selectionComp = "<br/>Pas d'esp&egrave;ces pour ce regroupement";
-					$info .="s&eacute;lectionnez une esp&egrave;ce dans la troisi&egrave;me colonne et cliquez sur <-- pour l'affecter &agrave; ce regroupement";
+					$info .="S&eacute;lectionnez une esp&egrave;ce dans la troisi&egrave;me colonne et cliquez sur <-- pour l'affecter &agrave; ce regroupement.";
 					break;
 				}
 			}
@@ -859,9 +859,9 @@ function AfficheRegroupEsp($typePeche,$typeAction,$numTab,$SQLEspeces,$RegroupEs
 	<span class=\"hint_label\"><a id=\"help_toggle\" href=\"#\" title=\"afficher l'aide sur les regroupements\" onclick=\"javascript:toggleHelpReg();\">aide >></a></span>
 	<div id=\"Aide_regroup\" >
 	<span class=\"hint_text\">
-	Pour commencer, cliquez soit sur \"Ajouter\" sous la colonne des regroupements, soit cliquez sur une esp&egrave;ce puis sur \"garder ces esp&egrave;ces\" pour cr&eacute;er un regroupement d'une seule esp&egrave;ce. <br/>Une fois le regroupement cr&eacute;&eacute;, s&eacute;lectionnez une esp&egrave;ce dans la liste des esp&egrave;ces disponibles puis cliquez sur la fl&ecirc;che <-- pour affecter cette esp&egrave;ce au regroupement s&eacute;lectionn&eacute;.<br/>
+	Pour commencer, cliquez soit sur \"Ajouter\" sous la colonne des regroupements, soit sur une esp&egrave;ce puis sur \"garder ces esp&egrave;ces\" pour cr&eacute;er un regroupement d'une seule esp&egrave;ce. <br/>Une fois le regroupement cr&eacute;&eacute;, s&eacute;lectionnez une esp&egrave;ce dans la liste des esp&egrave;ces disponibles puis cliquez sur la fl&ecirc;che <-- pour affecter cette esp&egrave;ce au regroupement s&eacute;lectionn&eacute;.<br/>
 	Les esp&egrave;ces non s&eacute;lectionn&eacute;es seront regroup&eacute;es dans une fraction DIV (divers, m&eacute;langes d'esp&egrave;ces).<br/>
-	Vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs valeurs en cliquant tout en tenant la touche \"CTRL\" (Windows, Linux) ou \"CMD\" (Mac) enfonc&eacute;e
+	Vous pouvez s&eacute;lectionner ou d&eacute;s&eacute;lectionner plusieurs &eacute;l&eacute;ments en cliquant dessus tout en maintenant la touche \"CTRL\" (Windows, Linux) ou \"CMD\" (Mac) enfonc&eacute;e.
 </span>	</div>
 	</div>
 	</div>";
@@ -954,7 +954,7 @@ function AfficheColonnes($typePeche,$typeAction,$TableEnCours,$numTab,$ListeColo
 	if ($ListeChampTableFac == "") {
 		$ContenuChampTableFac = ""; // ca ne devrait plus etre le cas !!! 
 	} else {
-		$ContenuChampTableFac = "liste des colonnes export&eacute;es pour <b>".$TableEnCours."</b><br/><span class=\"hints_small\">vous pouvez les s&eacute;lectionner en les cochant quand elles ne sont pas gris&eacute;es </span><br/><br/><table id=\"colonneSel\"><tr><td class=\"colitem\">".$ListeChampTableFac."</td></tr></table><br/>";
+		$ContenuChampTableFac = "liste des colonnes export&eacute;es pour <b>".$TableEnCours."</b><br/><span class=\"hints_small\">Vous pouvez les s&eacute;lectionner en les cochant quand elles ne sont pas gris&eacute;es </span><br/><br/><table id=\"colonneSel\"><tr><td class=\"colitem\">".$ListeChampTableFac."</td></tr></table><br/>";
 	}
 	$inputTableEC = "<input type=\"hidden\" id=\"tableEC\" value=\"".$TableEnCours."\"/>";
 	$inputNumDef = "<input type=\"hidden\" id=\"numDef\" value=\"".$NumChampDef."\"/>";

@@ -45,7 +45,7 @@ IEwarning();
 <h2><a href="/portage.php" title="portage">portage d'une base</a></h2>
 <p>vous permet d&#x27;exporter des donn&eacute;es vers bdpeche (application SINTI) et de transf&eacute;rer les donn&eacute;es depuis une base temporaire vers la base principale PPEAO.</p>
 <h2><a href="/edition_maintenance.php" title="maintenance">maintenance de la base</a></h2>
-<p>vous permet d&#x27;effectuer des op&eacute;rations de maintenance sur la base principale PPEAO (mise-&agrave;-jour des s&eacute;quences, VACUUM...).</p>
+<p>vous permet d&#x27;effectuer des op&eacute;rations de maintenance sur la base principale PPEAO (mise &agrave; jour des s&eacute;quences, VACUUM...).</p>
 <h2><a href="/edition_donnees.php" title="gestion des donn&eacute;es">gestion des donn&eacute;es</a></h2>
 <p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables de donn&eacute;es.</p>
 <h2><a href="/edition_reference.php" title="gestion des tables de r&eacute;f&eacute;rence">gestion des tables de référence</a></h2>

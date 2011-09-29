@@ -106,7 +106,7 @@ if (isset($_GET['action'])) {
 <div id="main_container" class="home">
 	<h1>consulter des données : statistiques de p&ecirc;ches</h1>
 	<h2>affichage du r&eacute;sultat</h2>
-	<p class="hint_text">cette section affiche les r&eacute;sultats pour la s&eacute;lection sous forme de tableaux pagin&eacute;s ou de fichiers exportables</p>
+	<p class="hint_text">Cette section affiche les r&eacute;sultats pour la s&eacute;lection sous forme de tableaux pagin&eacute;s ou de fichiers exportables.</p>
     <br/>
     <?php
 // on teste à quelle zone l'utilisateur a accès
@@ -161,7 +161,7 @@ if (isset($_GET['action'])) {
 	$locSelection = AfficherSelection($file); 
 	$SelectionPourFic = $locSelection;
 	echo "<span class=\"showHide\">
-<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier ma s&eacute;lection]</a></span>";
+<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la la s&eacute;lection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier ma s&eacute;lection]</a></span>";
 	echo "<div id=\"selection_precedente\">";
 	if (!($_SESSION["selection_url"] =="")) {
 		echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."&amp;open=1\" >modifier la s&eacute;lection en cours...</a></span>";

@@ -106,7 +106,7 @@ if (!(file_exists($file)) ) {
 	<span class="showHide">
 	<a id="selection_precedente_toggle" href="#" title="afficher l'aide sur l'extraction des peches artisanales" onClick="javascript:toggleHelp();">aide >></a></span>
 	<div id="Aide_pechart">
-		<p class="hint_text">vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran : <br/>
+		<p class="hint_text">Vous pouvez choisir les fili&egrave;res pour finaliser l'exportation des donn&eacute;es sous forme fichier ou d'affichage &agrave; l'&eacute;cran : <br/>
 		Activit&eacute;, liste des enquêtes concernant les activit&eacute;s de p&ecirc;che des unit&eacute;s de p&ecirc;che, collect&eacute;es par p&eacute;riode d'enquête<br/>
 Captures totales, liste de toutes les enquêtes de p&ecirc;che r&eacute;alis&eacute;es au point d'enqu&ecirc;te : unit&eacute; de p&ecirc;che, grand type d'engin de p&ecirc;che, captures totales, caract&eacute;risation de la sortie de p&ecirc;che<br/>
 Nt/Pt, liste des fractions (esp&egrave;ces ou regroupement d'esp&egrave;ces) observ&eacute;es au cours de l'enqu&ecirc;te de p&ecirc;che : caract&eacute;ristiques des espèces, poids, nombre d'individus<br/>
@@ -176,7 +176,7 @@ Engins de pêche, liste des engins de pêche observ&eacute;s au cours de l'enquête
 				$labelSelection = "";
 				$locSelection = AfficherSelection($file,$typeAction);
 				echo "<span class=\"showHide\">
-<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la selection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier ma s&eacute;lection]</a></span>";
+<a id=\"selection_precedente_toggle\" href=\"#\" title=\"afficher ou masquer la s&eacute;lection\" onclick=\"javascript:toggleSelection();\">[afficher/modifier ma s&eacute;lection]</a></span>";
 				echo "<div id=\"selection_precedente\">";
 				if (!($_SESSION["selection_url"] =="")) {
 					echo" <span id=\"changeSel\"><a href=\"".$_SESSION["selection_url"]."&amp;open=1\" >modifier la s&eacute;lection en cours...</a></span>";
