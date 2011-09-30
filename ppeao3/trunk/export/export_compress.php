@@ -73,7 +73,7 @@ if (isset($_GET['log'])) {
 if (isset($_GET['tp'])) {
 	$typePeche =$_GET['tp'];
 } else {
-	echo "erreur pas de parametre tp <br/>";
+	echo "Erreur : pas de parametre tp. <br/>";
 	exit;
 }
 
@@ -84,7 +84,7 @@ if (isset($_GET['tp'])) {
 
 if (isset($_SESSION['s_status_export'])) {
 	if ($_SESSION['s_status_export'] == 'ko') {
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> ARRET du traitement car le processus precedent est en erreur</div>" ;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\"> ARRET du traitement car le processus pr&eacute;c&eacute;dent est en erreur</div>" ;
 		exit;
 	}
 }
@@ -109,8 +109,8 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 // 		Controle répertoire
 	if (! file_exists($dirLog)) {
 		if (! mkdir($dirLog) ) {
-			$messageGen = " erreur de cr&eacute;ation du r&eacute;pertoire de log";
-			logWriteTo(8,"error","Erreur de creation du repertoire de log dans comparaison.php","","","0");
+			$messageGen = " Erreur de cr&eacute;ation du r&eacute;pertoire de log";
+			logWriteTo(8,"error","Erreur de cr&eacute;ation du r&eacute;pertoire de log dans comparaison.php.","","","0");
 			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 			exit;
 		}
@@ -122,8 +122,8 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		$nomLogLien = $nomLogLien."/".date('y\-m\-d')."-".$fileLogComp;
 		$logComp = fopen($nomFicLogComp , "a+");
 		if (! $logComp ) {
-			$messageGen = " erreur de cr&eacute;ation du fichier de log";
-			logWriteTo(8,"error","Erreur de cr&eacute;ation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php","","","0");
+			$messageGen = " Erreur de cr&eacute;ation du fichier de log";
+			logWriteTo(8,"error","Erreur de cr&eacute;ation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php.","","","0");
 			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 			exit;		
 		}
@@ -167,36 +167,20 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		WriteCompLog ($logComp, "*- DEBUT lancement Zip peche ".$nomPeche,$pasdefichier);
 		WriteCompLog ($logComp, "*------------------------------------------------------",$pasdefichier);
 	}
-	
-	
-	//0.a. Exécution de scripts complémentaires avant le ZIP (Ajout Lot 5 YL 01-03-2001)
+	//0.a.mise à jour des tables a partir de fichiers EXCEL (Ajout Lot 5 YL 01-03-2001)
 	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "*- Exécution de scripts complémentaires",$pasdefichier);
+		WriteCompLog ($logComp, "*- MAJ de tables a partir de fichiers excel",$pasdefichier);
 	}
-	$CRexecution .= "Avec execution de scripts SQL<br/>";
 	// test de connexion a la base de travail
 	$connectAccessTravail = odbc_connect($BDACCESSTravail,'Administrateurs','',SQL_CUR_USE_ODBC);
 	if (!$connectAccessTravail) {
 		if ($EcrireLogComp ) {
-			WriteCompLog ($logComp, "Erreur de la connection à la base ACCESS de travail".$BDACCESSTravail,$pasdefichier);
+			WriteCompLog ($logComp, "Erreur de la connexion &agrave; la base ACCESS de travail.".$BDACCESSTravail,$pasdefichier);
 		}
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion &agrave; la base ACCESS de travail ".$BDACCESSTravail."</div>" ; exit;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion &agrave; la base ACCESS de travail. ".$BDACCESSTravail."</div>" ; exit;
 	}
 
-	// lecture du fichier
-	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/conf/".$fileSQLSup;
-	$fileSQLopen=fopen($fileSQL,'r');
-	$erreurSQLSup = executeSQLFichier($fileSQLopen,$connectAccessTravail,$EcrireLogComp,$logComp,$pasdefichier);
-
-	if ($erreurSQLSup !="") {
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur &agrave; l'execution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
-	} 
-	// 
-	//0.b.mise à jour des tables a partir de fichiers EXCEL (Ajout Lot 5 YL 01-03-2001)
-	if ($EcrireLogComp ) {
-		WriteCompLog ($logComp, "*- MAJ de tables a partir de fichiers excel",$pasdefichier);
-	}
-	$CRexecution .= "Avec MAJ de tables a partir de fichiers excel<br/>";
+	$CRexecution .= "Avec MAJ de tables &agrave; partir de fichiers excel<br/>";
 	$TableSFichierS = explode(",",$fileMAJExcel);
 	$nbrFichiers = count($TableSFichierS)-1;
 	$erreurSQLSup = "";
@@ -206,9 +190,9 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		$nomTableAccess = $TableFichier[0];
 		if (! file_exists($fileXLS)) {
 			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp, "-- ERREUR: le fichier ".$TableFichier[1]." n'est pas présent sur le serveur. Arret du traitement.",$pasdefichier);
+				WriteCompLog ($logComp, "-- ERREUR: le fichier ".$TableFichier[1]." n'est pas pr&eacute;sent sur le serveur. Arr&ecirc;t du traitement.",$pasdefichier);
 			}
-			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR le fichier ".$TableFichier[1]." n'est pas pr&eacute;sent sur le serveur. Veuillez contacter votre administrateur.</div>" ;
+			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">--ERREUR : le fichier ".$TableFichier[1]." n'est pas pr&eacute;sent sur le serveur. Veuillez contacter votre administrateur.</div>" ;
 			exit;
 			$erreurProcess = true;
 		} else {
@@ -235,22 +219,25 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 					// Analyse de la ligne et des types associés pour construire la liste des valeurs
 					for ($cptVal = 0;$cptVal <= $NbValeur;$cptVal++) {
 						if ($typeChampTA[$cptVal] == "text") {
-							$ValAAjouter = "'".$listeValeurs[$cptVal]."'";	
+							$valReplace = str_replace ("'","''",$listeValeurs[$cptVal]);
+							$ValAAjouter = "'".$valReplace."'";	
 						} else {
-							$ValAAjouter = $listeValeurs[$cptVal];
+							$valReplace = str_replace (",",".",$listeValeurs[$cptVal]);
+							$ValAAjouter = $valReplace;
 						}
 						if ($listeValeursSQL == "") { $listeValeursSQL = $ValAAjouter; } else {$listeValeursSQL .= ",".$ValAAjouter;}
 					}
 					// Construction du SQL
 					$SQL = "insert into ".$nomTableAccess." (".$listeColonnes .") values (".$listeValeursSQL.");";
+					//echo $SQL."<br/>";
 					// On exécute le SQL
 					$ResultSQL = odbc_exec($connectAccessTravail,$SQL);
 					$erreurSQL = odbc_errormsg($connectAccessTravail); //
 					if (!$ResultSQL) {
 						if ($EcrireLogComp ) {
-							WriteCompLog ($logComp, "Ligne ".$cptLigne." Erreur execution SQL ".$line." - erreur complete = ".$erreurSQL."",$pasdefichier);
+							WriteCompLog ($logComp, "Ligne ".$cptLigne." Erreur ex&eacute;cution SQL ".$line." - erreur compl&egrave;te = ".$erreurSQL."",$pasdefichier);
 						}
-						$erreurSQLSup.="Ligne ".$cptLigne." Erreur execution SQL ".$line." - erreur complete = ".$erreurSQL."<br/>";
+						$erreurSQLSup.="Ligne ".$cptLigne." Erreur ex&eacute;cution SQL ".$line." - erreur compl&egrave;te = ".$erreurSQL."<br/>";
 					} 
 					odbc_free_result($ResultSQL);
 				}// fin du else du if ($cptLigne == 1)
@@ -258,8 +245,26 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		} // fin du if (! file_exists($fileXLS))
 	}// fin du for ($cptFic = 0;$cptFic <= $nbrFichiers;$cptFic++)
 	if ($erreurSQLSup !="") {
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur a l'execution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur &agrave; l'ex&eacute;cution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
+	}	
+	
+	//0.b. Exécution de scripts complémentaires avant le ZIP (Ajout Lot 5 YL 01-03-2001)
+	if ($EcrireLogComp ) {
+		WriteCompLog ($logComp, "*- Ex&eacute;cution de scripts compl&eacute;mentaires",$pasdefichier);
 	}
+	$CRexecution .= "Avec ex&eacute;cution de scripts SQL<br/>";
+
+
+	// lecture du fichier
+	$fileSQL=$_SERVER["DOCUMENT_ROOT"]."/conf/".$fileSQLSup;
+	$fileSQLopen=fopen($fileSQL,'r');
+	$erreurSQLSup = executeSQLFichier($fileSQLopen,$connectAccessTravail,$EcrireLogComp,$logComp,$pasdefichier);
+
+	if ($erreurSQLSup !="") {
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur &agrave; l'execution de script SQL = ".$erreurSQLSup."</div>" ; $erreurProcess = true; exit;
+	} 
+	// 
+
 	//1. copier et renomer la base de travail
 
 	// On va utiliser un repertoire temp pour preparer l'archive
@@ -267,27 +272,29 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	$TempRep = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/temp/";
 	if (! file_exists($TempRep)) {
 		if (! mkdir($TempRep) ) {
-			$messageGen = " erreur de cr&eacute;ation du r&eacute;pertoire temporaire /".$BDrep."/temp/ pour preparation archive";
-			logWriteTo(8,"error","Erreur de creation du repertoire temporaire /".$BDrep."/temp/ pour preparation archive dans comparaison.php","","","0");
+			$messageGen = " Erreur de cr&eacute;ation du r&eacute;pertoire temporaire /".$BDrep."/temp/ pour preparation archive.";
+			logWriteTo(8,"error","Erreur de cr&eacute;ation du r&eacute;pertoire temporaire /".$BDrep."/temp/ pour preparation archive dans comparaison.php","","","0");
 			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 			exit;
 		}
 	}	
 
 	if (!file_exists($BDfic)) {
-		$CRexecution .= "le fichier de base de donnees de references n'existe pas.(".$BDfic.")<br/>";
+		$CRexecution .= "le fichier de base de donn&eacute;es de r&eacute;ference n'existe pas.(".$BDfic.")<br/>";
 		$erreurProcess = true;
 	} else {
 		$nouveauNomFic = $_SERVER["DOCUMENT_ROOT"]."/".$BDrep."/temp/".$BDACCESS.".mdb";
+		//echo $BDfic." - ".$nouveauNomFic."<br/>";
 		if (copy($BDfic,$nouveauNomFic)) {
 			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp,"Fichier de travail ".$BDACCESS."_travail renomme en ".$BDACCESS.".mdb",$pasdefichier);
+				WriteCompLog ($logComp,"Fichier de travail ".$BDACCESS."_travail renomm&eacute; en ".$BDACCESS.".mdb",$pasdefichier);
 			}
 		} else {
 			$CRexecution .= "Impossible de renommer le fichier ".$BDfic." en ".$nouveauNomFic."<br/>";
 			$erreurProcess = true;
 		}
 	}
+
 	if (!$erreurProcess) {
 		//2.ajouter cette base au fichier compresse
 		//compression du fichier pour le telechargement
@@ -333,7 +340,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		echo"<div id=\"vertical_slide4\">".$CRexecution."</div>";
 		logWriteTo(8,"error","**- Traitement en erreur : ".$CRexecution."","","","0");
 		if ($EcrireLogComp ) {
-				WriteCompLog ($logComp, "erreur dans le traitement = ".$CRexecution,$pasdefichier);
+				WriteCompLog ($logComp, "Erreur dans le traitement = ".$CRexecution,$pasdefichier);
 		}
 	}
 	if ($EcrireLogComp ) {
@@ -350,8 +357,8 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		}
 	}
 } else {
-	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Etape de zip non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
-	logWriteTo(8,"error","**- Etape de zip non executee par choix de l'utilisateur","","","0");
+	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">&Eacute;tape de zip non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+	logWriteTo(8,"error","**- Etape de zip non execut&eacute;e par choix de l'utilisateur","","","0");
 } // end if (! $pasdetraitement )
 
 exit;

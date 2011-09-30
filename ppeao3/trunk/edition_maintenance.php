@@ -56,14 +56,14 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 	<li><h2><a href="javascript:doMaintenance('sequences_ref_param');">Mise &agrave; jour des s&eacute;quences des tables de r&eacute;f&eacute;rence et de param&eacute;trage</a></h2>
 	<p>Utilisez cet outil apr&egrave;s avoir import&eacute; en batch des donn&eacute;es de r&eacute;f&eacute;rence et de param&eacute;trage, pour mettre &agrave; jour la prochaine valeur de la s&eacute;quence des tables ayant des identifiants uniques g&eacute;n&eacute;r&eacute;s automatiquement.</p>
 	</li>
-	<li><h2><a href="javascript:doMaintenance('sequences_donnees');">Mise &agrave; jour des s&eacute;quences des tables de données</a></h2>
+	<li><h2><a href="javascript:doMaintenance('sequences_donnees');">Mise &agrave; jour des s&eacute;quences des tables de donn&eacute;es</a></h2>
 	<p>Utilisez cet outil apr&egrave;s avoir import&eacute; en batch des donn&eacute;es de p&ecirc;che artisanale ou exp&eacute;rimentale, pour mettre &agrave; jour la prochaine valeur de la s&eacute;quence des tables ayant des identifiants uniques g&eacute;n&eacute;r&eacute;s automatiquement.</p>
 	</li>
 	<li><h2><a href="javascript:doMaintenance('vacuum');">VACUUM</a></h2>
 	<p>Utilisez cet outil apr&egrave;s avoir effectu&eacute; un grand nombre de suppressions dans la base de donn&eacute;es.</p>
 	</li>
 	<li><h2><a href="javascript:doMaintenance('reindex');">REINDEX</a></h2>
-	<p>Utilisez cet outil pour recréer les index apr&egrave;s avoir effectu&eacute; un grand nombre d&#x27;insertions ou de suppressions dans la base de donn&eacute;es.</p>
+	<p>Utilisez cet outil pour recr&eacute;er les index apr&egrave;s avoir effectu&eacute; un grand nombre d&#x27;insertions ou de suppressions dans la base de donn&eacute;es.</p>
 	</li></ul>
 	<h1>Opérations de maintenance de la base : "BDPeche"</h1>
 	<ul>
@@ -76,10 +76,10 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
     <li><h2><a href="javascript:doMaintenance('empty_bdpeche');">Vider la base BDPeche</a></h2>
     <p>Utilisez cet outil pour vider la base bdpeche en supprimant les contraintes. </p>
     </li>
-    <?php	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {?>
+    <?php	if (!strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {?>
         <li>
         <h2><a href="javascript:doMaintenance('empty_ACCESS');">Vider les bases PostgreSQL au format ACCESS</a></h2>
-        <p>Utilisez cet outil pour vider les bases exp2003_bdd, pechart et les bases pays situées sur le serveur.</p>
+        <p>Utilisez cet outil pour vider les bases exp2003_bdd, pechart et les bases pays situ&eacute;es sur le serveur.</p>
         </li>	
      <?php } ?>
 </ul>	

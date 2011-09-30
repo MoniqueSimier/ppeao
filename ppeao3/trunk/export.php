@@ -58,22 +58,23 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 		  <h2>Op&eacute;rations pour la mise &agrave; jour de la base de r&eacute;f&eacute;rence bdppeao sur le PC</h2>
             <ul>
-              <li><a href="javascript:doExportSelect('exportBaseRef');">Exporter la base de r&eacute;f&eacute;rence apr&egrave;s s&eacute;lection des donn&eacute;es &agrave; extraire pour pr&eacute;parer la mise &agrave; jour de la base de r&eacute;f&eacute;rence sur le PC</a>
-              <div id="exportSelComp"></div>
-              </li>
-               <?php if ($OSType=="WIN") { ?>
-              <li><a href="javascript:doExport('videbdppeaoPC','exportOutputVide','Base cible en cours de nettoyage ...');">Vider la base de r&eacute;f&eacute;rence bdppeao (pour les tests bdppeao_test) du PC pour pr&eacute;parer sa mise &agrave; jour</a>
+			<?php if ($OSType=="WIN") { ?>
+	             <li><a href="javascript:doExport('videbdppeaoPC','exportOutputVide','Base cible en cours de nettoyage ...');">Vider la base de r&eacute;f&eacute;rence bdppeao du PC pour pr&eacute;parer sa mise &agrave; jour</a>
               <div id="exportOutputVide"></div>
               </li>
-              <li><a href="javascript:doExport('majbdppeaoPC','exportOutputInt','Base cible en cours de mise a jour...');">Lancer l'int&eacute;gration des donn&eacute;es de r&eacute;f&eacute;rence dans la base bdppeao (pour les tests bdppeao_test) sur le PC depuis le fichier /work/export/SQL-bdppeao/bdppeao_a_importer.sql</a>
+              <li><a href="javascript:doExport('majbdppeaoPC','exportOutputInt','Base cible en cours de mise a jour...');">Lancer l'int&eacute;gration des donn&eacute;es de r&eacute;f&eacute;rence dans la base bdppeao sur le PC depuis le fichier /work/export/SQL-bdppeao/bdppeao_a_importer.sql</a>
               <div id="exportOutputInt"></div>
               </li>
-              <?php } ?>
             </ul>
-            <?php if ($OSType=="WIN") { ?>
             <h2>Export des donn&eacute;es en format ACCESS</h2>
   Vous pouvez acc&eacute;der &agrave; l'outil d'export des donn&eacute;es ici :<a href="export_process.php" target="_blank"> exporter les donn&eacute;es en format ACCESS</a>.
-			<?php } ?>
+			<?php } else { 
+			// Dans le cas de linux, on ne peut faire que l'export de la base de référence ?>
+              <li><a href="javascript:doExportSelect('exportBaseRef');">Exporter la base de r&eacute;f&eacute;rence apr&egrave;s s&eacute;lection des donn&eacute;es &agrave; extraire pour pr&eacute;parer la mise &agrave; jour de la base de r&eacute;f&eacute;rence sur le PC</a>
+              <div id="exportSelComp"></div>
+              </li>			
+			
+            <?php } ?>
 		<br/>
         <br/>
         <br/>

@@ -91,18 +91,18 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		</div>
 		<div id="copiePPEAO">
 			<div id="copiePPEAO_img"><img src="/assets/incomplete.png" alt=""/></div>
-			<div id="copiePPEAO_txt">Copie des donnees depuis la base PPEAO (postgreSQL) de reference.</div>
+			<div id="copiePPEAO_txt">Copie des donn&eacute;es depuis la base PPEAO (postgreSQL) de r&eacute;f&eacute;rence.</div>
 			<div id="copiePPEAO_chk">Lancer copie PPEAO<input type="checkbox" id="copPPEAOcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 			<?php 	$navbarLevel = 2;
-					$texteDiv = "Compte-rendu de copie depuis base PPEAO de reference.";	
+					$texteDiv = "Compte-rendu de copie depuis base PPEAO de r&eacute;f&eacute;rence.";	
 					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 		</div>
 		<div id="copieACCESS">
 			<div id="copieACCESS_img"><img src="/assets/incomplete.png" alt=""/></div>
-			<div id="copieACCESS_txt">Copie des donnees depuis la base ACCESS de reference.</div>
+			<div id="copieACCESS_txt">Copie des donn&eacute;es depuis la base ACCESS de r&eacute;f&eacute;rence.</div>
 			<div id="copieACCESS_chk">Lancer copie ACCESS<input type="checkbox" id="copAcccheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 			<?php 	$navbarLevel = 3;
-					$texteDiv = "Compte-rendu de copie depuis base ACCESS de reference.";	
+					$texteDiv = "Compte-rendu de copie depuis base ACCESS de r&eacute;f&eacute;rence.";	
 					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 
 		</div>
@@ -121,7 +121,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		} else {
 			// On n'est pas dans le cas d'un systeme windows.
 			// avertissement affiché
-			echo "<p>Attention, vous &ecirc;tes actuellement sur un serveur qui n'est pas un serveur windows. Pour des raisons techniques, l'export des bases en ACCESS n'est pas possible depuis ce serveur.</p>";
+			echo "<p>Attention, vous &ecirc;tes actuellement sur un serveur qui n'est pas un serveur Windows. Pour des raisons techniques, l'export des bases en ACCESS n'est pas possible depuis ce serveur.</p>";
 		}
 
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
