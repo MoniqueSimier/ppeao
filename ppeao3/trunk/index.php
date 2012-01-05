@@ -31,8 +31,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 
 <div id="main_container" class="home">
 
-<h1>Bienvenue &agrave; PPEAO</h1>
-<h2>Système d'informations sur les Peuplements de poissons et la P&ecirc;che artisanale des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d&rsquo;Afrique de l&rsquo;Ouest</h2>
+<h1>Projet PPEAO</h1>
+<h2 style="text-align:center">Système d'informations sur les Peuplements de poissons et la P&ecirc;che artisanale<br> des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d&rsquo;Afrique de l&rsquo;Ouest</h2>
 <br>
 <?php
 
@@ -46,17 +46,18 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 // cette fonction fait le ménage dans les vieux logs des modules d'exportation/extraction	
 nettoieLogExport();
 ?>
-<div id="home_thumbs"><img src="/assets/home/1.jpg" width="120" height="70" alt="1"><img src="/assets/home/2.jpg" width="120" height="70" alt="2"><img src="/assets/home/3.jpg" width="120" height="70" alt="3"><img src="/assets/home/4.jpg" width="120" height="70" alt="4"><img src="/assets/home/5.jpg" width="120" height="70" alt="5"><img src="/assets/home/6.jpg" width="120" height="70" alt="6"></div>
+<div id="home_thumbs"><img src="/assets/home/1.jpg" width="120" height="70" alt="Pirogue de p&ecirc;che artisanale sur le lac de S&eacute;lingu&eacute; (Mali)" title="Pirogue de p&ecirc;che artisanale sur le lac de S&eacute;lingu&eacute; (Mali)">
+<img src="/assets/home/2.jpg" width="120" height="70" alt="Nasses de p&ecirc;che artisanale, lac de S&eacute;lingu&eacute; (Mali)" title="Nasses de p&ecirc;che artisanale, lac de S&eacute;lingu&eacute; (Mali)">
+<img src="/assets/home/3.jpg" width="120" height="70" alt="Paysage de mangrove, Estuaire de la Gambie" title="Paysage de mangrove, Estuaire de la Gambie">
+<img src="/assets/home/4.jpg" width="120" height="70" alt="Lanche du Banc d'Arguin (Mauritanie)" title="Lanche du Banc d'Arguin (Mauritanie)">
+<img src="/assets/home/5.jpg" width="120" height="70" alt="&Eacute;quipe de p&ecirc;che scientifique" title="&Eacute;quipe de p&ecirc;che scientifique">
+<img src="/assets/home/6.jpg" width="120" height="70" alt="Pirogues de p&ecirc;che artisanale" title="Pirogues de p&ecirc;che artisanale"></div>
 <br />
-<p class="texte">La base PPEAO archive des informations sur les poissons, leur &eacute;cologie et leur exploitation par la p&ecirc;che artisanale de nombreux &eacute;cosyst&egrave;mes aquatiques de l&rsquo;Afrique de l&rsquo;Ouest.
+<p class="texte">La base de donn&eacute;s PPEAO archive des informations sur les poissons vivant dans <a href="/info_ecosystemes.php">diff&eacute;rents &eacute;cosyst&egrave;mes aquatiques</a> tant continentaux que lagunaires, estuariens ou c&ocirc;tiers de l&rsquo;Afrique de l&rsquo;Ouest. Les donn&eacute;s collect&eacute;es concernent aussi bien l'&eacute;cologie des esp&egrave;ces que leur exploitation par la p&ecirc;che artisanale.<br>
+<br>Ces informations sont le r&eacute;sultat de programmes de recherche men&eacute;s sur ces &eacute;cosyst&egrave;mes &agrave; partir de 1978.
 </p>
-
-<p class="texte">Elle a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;IRD (Institut de Recherches pour le D&eacute;veloppement).</p>
-<p class="texte">Elle est accessible via le portail de l&rsquo;&eacute;coscope du CRH (Centre de Recherches Halieutiques de S&egrave;te, France).</p>
-
-
-
-
+<br>
+<p class="texte">Cette base de donn&eacute;es a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par l&rsquo;Unit&eacute; de Recherches <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-5" target="_blank">RAP</a> (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherches pour le D&eacute;veloppement).</p>
 
 
 <?php 

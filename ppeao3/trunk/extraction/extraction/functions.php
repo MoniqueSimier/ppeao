@@ -2040,7 +2040,8 @@ function AfficherDonnees($file,$typeAction){
 				} else {
 					$resultatLecture .="<br/><span class=\"titreAff\">Liste des résultats (".$libelleAction.") </span>";	
 				}
-				$resultatLecture .="<table id=\"affresultat\" ><tr class=\"affresultattitre\"><td>";
+				$resultatLecture .="<div id=\"tableauresultats\"><table id=\"affresultat\" ><tr class=\"affresultattitre\"><td>";
+				//ajout de <div id=\"tableauresultats\">
 				// Gestion des regroupements a l'affichage. Attention, non valable pour les statistiques vu qu'on affiche toujours 
 				// art_stat_totale qui ne peut pas avoir de regroupement
 				// *********************** TRI ************
@@ -2281,8 +2282,8 @@ function AfficherDonnees($file,$typeAction){
 					$resultatLecture .="</tr>";
 					$cptNbRow ++;
 				}//fin du while			
-				$resultatLecture .="</table>";		
-			}			
+				$resultatLecture .="</table></div>";		
+			}			//ajout du dernier </div>
 			pg_free_result($SQLfinalResult);
 		} // fin du !$SQLfinalResult
 		// ********************************

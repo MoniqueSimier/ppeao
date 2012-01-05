@@ -76,19 +76,20 @@ select {
 
 	
 h1 {
-font-size:16px;
-margin:0;
-padding:0;
+font-size:18px;
+text-align:center;
+padding-top:6px;
+padding-bottom:24px;
 font-weight:bold;
 margin:12px 0 0 0;
 }
 
 h2 {
 font-size:13px;
-margin:0;
+/*text-align:center;*/
 padding:0;
 font-weight:bold;
-margin:6px 0 0 0;
+margin:6px 0 12px 0;
 }	
 
 h3 {
@@ -240,15 +241,17 @@ color:#7C8781;
 	padding:0;
 }
 
-#sloginform  div {
+#sloginform  div { /*modifié gaspard padding*/
 	float:left;
 	text-align:center;
 	line-height:12px;
+	padding:0 5px 0 5px;
 }
 
 #sloginform  p {
 	padding-top: 9px;
 	display:block;
+	margin: auto;
 }
 
 #sloginform input {
@@ -256,6 +259,17 @@ color:#7C8781;
 	font-size:11px;
 }
 
+#sloginform a {
+	border:2px outset grey;
+	padding:0 10px 2px 10px;
+	margin-left:10px;
+}
+#sloginform a:hover{
+	border:2px outset grey;
+	padding:0 6px 2px 6px;
+	margin-left:10px;
+	font-weight: bold;
+	}
 /* ************************ */
 /* the footer              */
 .inline {
@@ -278,12 +292,12 @@ width:800px;
 
 #main_container {
 min-height:500px;
-margin: 6px;
+margin:24px 6px 6px 18px;
 width:800px;
 }
 
 #main_container.edition {
-width:90%;
+width:800%;
 }
 
 #main_container.edition h1 {
@@ -295,6 +309,8 @@ width:90%;
 /* the login block      */
 
 #login_block {
+width:800px;
+height:26px;
 margin: 0;
 padding:0;
 }
@@ -381,6 +397,8 @@ font-size: 9px;
 
 /* *********************** */
 /* the home page        */
+
+
 
 #home_thumbs img {
 	margin:3px 6px 12px 3px;

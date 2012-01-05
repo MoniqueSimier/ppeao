@@ -67,7 +67,7 @@ if ($section=='gerer') {
 	}
 ?>
 <div id="nav_sousmenu"><a href="/portage.php" title="portage" class="sousmenu<?php echo($portage)?>">portage</a><a href="/edition_maintenance.php" title="maintenance" class="sousmenu<?php echo($maintenance)?>">maintenance</a><a href="/edition_donnees.php" title="donn&eacute;es" class="sousmenu<?php echo($donnees)?>">donn&eacute;es</a><a href="/edition_reference.php" title="tables de r&eacute;f&eacute;rence" class="sousmenu<?php echo($reference)?>">r&eacute;f&eacute;rence</a><a href="/edition_param.php" title="tables de param&eacute;trage" class="sousmenu<?php echo($parametrage)?>">param&eacute;trage</a><a href="/edition_admin.php" title="tables d&#x27;administration" class="sousmenu<?php echo($administration)?>">administration</a><a href="/export.php" title="export" class="sousmenu<?php echo($export)?>">export</a><a href="/journal.php" title="journal" class="sousmenu<?php echo($journal)?>">journal</a><a href="/gestion_doc.php" title="documentation" class="sousmenu<?php echo($documentation)?>">documentation</a>
-</div> <!-- end div id="nav_sousmenu" -->
+<img src="/assets/home/ird-logo2.jpg" width="145" height="25"></div> <!-- end div id="nav_sousmenu" -->
 <?php
 
 }

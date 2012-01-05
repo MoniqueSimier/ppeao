@@ -65,15 +65,15 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 	<li><h2><a href="javascript:doMaintenance('reindex');">REINDEX</a></h2>
 	<p>Utilisez cet outil pour recr&eacute;er les index apr&egrave;s avoir effectu&eacute; un grand nombre d&#x27;insertions ou de suppressions dans la base de donn&eacute;es.</p>
 	</li></ul>
-	<h1>Opérations de maintenance de la base : "BDPeche"</h1>
+	<h1>Opérations de maintenance de la base : "bdpeche"</h1>
 	<ul>
-	<li><h2><a href="javascript:doMaintenance('disable_trigger');">D&eacute;sactiver des contraintes sur BDPeche</a></h2>
-	<p>Utilisez cet outil pour supprimer temporairement les contraintes sur la base (BDPECHE) contenant les donn&eacute;es &agrave; porter dans la base de r&eacute;f&eacute;rence (PPEAO).</p>
+	<li><h2><a href="javascript:doMaintenance('disable_trigger');">D&eacute;sactiver des contraintes sur bdpeche</a></h2>
+	<p>Utilisez cet outil pour supprimer temporairement les contraintes sur la base (bdpeche) contenant les donn&eacute;es &agrave; porter dans la base de r&eacute;f&eacute;rence (bdppeao).</p>
 	</li>
-	<li><h2><a href="javascript:doMaintenance('enable_trigger');">Activer les contraintes sur BDPeche</a></h2>
-	<p>Utilisez cet outil pour r&eacute;activer les contraintes sur la base (BDPECHE) contenant les donn&eacute;es &agrave; porter  dans la base de r&eacute;f&eacute;rence (PPEAO).</p>
+	<li><h2><a href="javascript:doMaintenance('enable_trigger');">Activer les contraintes sur bdpeche</a></h2>
+	<p>Utilisez cet outil pour r&eacute;activer les contraintes sur la base (bdpeche) contenant les donn&eacute;es &agrave; porter  dans la base de r&eacute;f&eacute;rence (bdppeao).</p>
 	</li>	
-    <li><h2><a href="javascript:doMaintenance('empty_bdpeche');">Vider la base BDPeche</a></h2>
+    <li><h2><a href="javascript:doMaintenance('empty_bdpeche');">Vider la base bdpeche</a></h2>
     <p>Utilisez cet outil pour vider la base bdpeche en supprimant les contraintes. </p>
     </li>
     <?php	if (!strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {?>

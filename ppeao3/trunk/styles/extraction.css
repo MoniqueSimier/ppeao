@@ -151,6 +151,11 @@ list-style:none;
 #listeTab{
 
 }
+
+#tableauresultats { /* créé ligne 2043 et 2285 dans extraction/extraction/functions.php*/
+	overflow:auto;
+	}
+	
 /* Poisitionnement des onglets des filieres */
 .criteresgen{
 	display:none;
@@ -388,3 +393,4 @@ a.lienReg2 hover{
 	margin:4px;
 	padding:4px;
 }
+
