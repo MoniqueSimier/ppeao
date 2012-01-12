@@ -39,7 +39,7 @@ padding:0;
 }
 
 a{
-	color				: #7C8781;
+	color				: #2D60DE;
 	text-decoration		: none;
 }
 
@@ -76,7 +76,7 @@ select {
 
 	
 h1 {
-font-size:18px;
+font-size:24px;
 text-align:center;
 padding-top:6px;
 padding-bottom:24px;
@@ -85,7 +85,7 @@ margin:12px 0 0 0;
 }
 
 h2 {
-font-size:13px;
+font-size:17px;
 /*text-align:center;*/
 padding:0;
 font-weight:bold;
@@ -105,7 +105,13 @@ h4 {
 	padding:0;
 	font-weight:bold;
 }
-
+h5 {
+font-size:14px;
+/*text-align:center;*/
+padding:0;
+font-weight:bold;
+margin:6px 0 12px 0;
+}
 pre {
 	font-size:11px;
 	font-family: Courier, "Courrier New", sans-serif;

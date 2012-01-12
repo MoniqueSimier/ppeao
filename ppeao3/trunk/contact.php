@@ -40,7 +40,7 @@ $zone=0; // zone publique (voir table admin_zones)
 	?>
 
 	<div id="main_container" class="home">
-	<h1>Projet PPEAO</h1>
+	<h1>PPEAO</h1>
 			<h2 style="text-align:center">Syst&egrave;me d&#x27;informations sur les Peuplements de poissons et la P&ecirc;che artisanale<br> des &Eacute;cosyst&egrave;mes estuariens, lagunaires ou continentaux d&rsquo;Afrique de l&rsquo;Ouest</h2><br>
 	<div id="home_thumbs"><img src="/assets/home/1.jpg" width="120" height="70" alt="Pirogue de p&ecirc;che artisanale sur le lac de S&eacute;lingu&eacute; (Mali)" title="Pirogue de p&ecirc;che artisanale sur le lac de S&eacute;lingu&eacute; (Mali)">
 <img src="/assets/home/2.jpg" width="120" height="70" alt="Nasses de p&ecirc;che artisanale, lac de S&eacute;lingu&eacute; (Mali)" title="Nasses de p&ecirc;che artisanale, lac de S&eacute;lingu&eacute; (Mali)">
@@ -64,7 +64,7 @@ o='@';o='&#106;&#101;&#97;&#110;-&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#1
 				</ul>
 				</div>
 				<br/>
-				<p class="contact">L'application PPEAO a &eacute;t&eacute; r&eacute;alis&eacute;e gr&acirc;ce aux financements du d&eacute;partement DSI (D&eacute;l&eacute;gation aux Syst&egrave;mes d&rsquo;Information) de l&rsquo;IRD, via les projets Spirales. Elle a &eacute;t&eacute; d&eacute;velopp&eacute;e par <a href="/contactRT.php" >plusieurs partenaires techniques</a>.
+				<p class="contact">L'application PPEAO a &eacute;t&eacute; r&eacute;alis&eacute;e gr&acirc;ce au financement du d&eacute;partement DSI (Direction du Syst&egrave;me d&rsquo;Information) de l&rsquo;IRD, via les projets Spirales. Elle a &eacute;t&eacute; d&eacute;velopp&eacute;e par <a href="/contactRT.php" >plusieurs partenaires techniques</a>.
 				</p>
 				
 			</div>

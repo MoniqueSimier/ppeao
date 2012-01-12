@@ -17,7 +17,7 @@ $zone=0; // zone publique (voir table admin_zones)
 		// les balises head communes  toutes les pages
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
-	<title>ppeao::contact</title>
+	<title>ppeao::liens</title>
 
 	
 </head>
@@ -40,9 +40,10 @@ $zone=0; // zone publique (voir table admin_zones)
 	?>
 
 	<div id="main_container" class="home">
-	<h1>Projet PPEAO</h1>
-	<h2 style="text-align:center">Liens Utiles</h2>
+	<h1>PPEAO</h1>
+	<h2 style="text-align:center">Système d'informations sur les Peuplements de poissons et la P&ecirc;che artisanale<br> des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d&rsquo;Afrique de l&rsquo;Ouest</h2>
 	<br>
+
 <div id="home_thumbs"><img src="/assets/home/1.jpg" width="120" height="70" alt="Pirogue de p&ecirc;che artisanale sur le lac de S&eacute;lingu&eacute; (Mali)" title="Pirogue de p&ecirc;che artisanale sur le lac de S&eacute;lingu&eacute; (Mali)">
 <img src="/assets/home/2.jpg" width="120" height="70" alt="Nasses de p&ecirc;che artisanale, lac de S&eacute;lingu&eacute; (Mali)" title="Nasses de p&ecirc;che artisanale, lac de S&eacute;lingu&eacute; (Mali)">
 <img src="/assets/home/3.jpg" width="120" height="70" alt="Paysage de mangrove, Estuaire de la Gambie" title="Paysage de mangrove, Estuaire de la Gambie">
@@ -56,15 +57,15 @@ $zone=0; // zone publique (voir table admin_zones)
 			
 				</div>
 				<br/>
-				<p class="contact">Ce projet a &eacute;t&eacute; rendu possible gr&acirc;ce aux financements de la <a href="https://www.ird.fr/dsi/" target="_blank">Direction du Système d'Information de l'IRD</a>.
+				<p class="contact">Ce projet a &eacute;t&eacute; rendu possible gr&acirc;ce au financement de la <a href="https://www.ird.fr/dsi/" target="_blank">Direction du Système d'Information de l'IRD</a>.
+				<p class="contact">Il a &eacute;t&eacute; r&eacute;alis&eacute; par l'équipe <a href="http://www-iuem.univ-brest.fr/lemar/recherche/equipe-5/equipe-5-blab-la" target="_blank">RAP</a> composante de l'UMR 6539 <a href="http://www-iuem.univ-brest.fr/UMR6539" target="_blank">LEMAR</a> (Laboratoire des sciences de l'Environnement MARin, UBO/CNRS/IRD/Ifremer).
 				</p><br>
-				<p class="contact">Il a &eacute;t&eacute; r&eacute;alis&eacute; par l'équipe <a href="http://www-iuem.univ-brest.fr/lemar/recherche/equipe-5/equipe-5-blab-la" target="_blank">RAP</a> qui appartient aujourd'hui à l'UMR 6539 <a href="http://www-iuem.univ-brest.fr/UMR6539" target="_blank">LEMAR</a> (Laboratoire des sciences de l'Environnement MARin), une unité mixte de recherches UBO/CNRS/IRD/Ifremer.
 				</p><br>
-				<p class="contact">Pour plus d'informations sur les acteurs de la pêche en Afrique de l'Ouest, vous pouvez consulter le site du <a href="http://www.netvibes.com/reshal" target="_blank">reshal</a>, maintenu par le LEMAR.
+				<p class="contact" style="font-weight:bold">Liens connexes :
 				</p><br>
-				<p class="contact">Les &eacute;cosyst&egrave;mes marins exploit&eacute;s disposent &eacute;galement d'une base de donn&eacute;es g&eacute;r&eacute;e par l'UMR EME : <a href="http://www.ecoscope.org" target="_blank">l'Ecoscope</a>.
-				<br><br>
-				<p class="contact">Un autre site d&eacute;volu &agrave; la cartographie des poissons d&rsquo;eau douce et saum&acirc;tre d&rsquo;Afrique : <a href="http://www.poissons-afrique.ird.fr/faunafri/" target="_blank">Faunafri</a>.
+				<p class="contact" style="padding-left:35px">Base de connaissances sur les écosystèmes marins exploitées : <a href="http://www.ecoscope.org" target="_blank">l'Ecoscope</a>.
+				<p class="contact" style="padding-left:35px">Cartographie de la répartition géographique des poissons d&rsquo;eaux douces et saum&acirc;tres en Afrique : <a href="http://www.poissons-afrique.ird.fr/faunafri/" target="_blank">Faunafri</a>.
+				<p class="contact" style="padding-left:35px">Réseau halieutique et d'écologie aquatique en Afrique de l'Ouest : <a href="http://www.netvibes.com/reshal" target="_blank">reshal</a>.
 			</div>
 		</div>
 	</div> <!-- end div id="main_container"-->

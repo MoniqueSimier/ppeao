@@ -40,7 +40,7 @@ $zone=0; // zone publique (voir table admin_zones)
 	?>
 
 	<div id="main_container" class="home">
-	<h1>Projet PPEAO</h1>
+	<h1>PPEAO</h1>
 		<h2 style="text-align:center">Syst&egrave;me d&#x27;informations sur les Peuplements de poissons et la P&ecirc;che artisanale<br> des &Eacute;cosyst&egrave;mes estuariens, lagunaires ou continentaux d&rsquo;Afrique de l&rsquo;Ouest</h2><br>
 	<div id="home_thumbs"><img src="/assets/home/1.jpg" width="120" height="70" alt="Pirogue de p&ecirc;che artisanale sur le lac de S&eacute;lingu&eacute; (Mali)" title="Pirogue de p&ecirc;che artisanale sur le lac de S&eacute;lingu&eacute; (Mali)">
 <img src="/assets/home/2.jpg" width="120" height="70" alt="Nasses de p&ecirc;che artisanale, lac de S&eacute;lingu&eacute; (Mali)" title="Nasses de p&ecirc;che artisanale, lac de S&eacute;lingu&eacute; (Mali)">
