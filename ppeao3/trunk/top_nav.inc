@@ -33,13 +33,13 @@ switch ($section) {
 	break;
 }
 
-
+// le logo IRD fait 145 par 25 pixels. Il est agrandi ici proportionnellement à 203 par 35 pour remplir
+// le bandeau du haut. Il est aligné à droite avec align='right'
 ?>
-
 <!-- le menu de navigation horizontal -->
 <div id="nav_container">
 	<div id="nav_menu"><a href="/index.php" class="menu<?php echo($home)?>">accueil</a><a href="/extraction/selection/selection.php" class="menu<?php echo($consulter)?>">consulter</a><a href="/gerer.php" class="menu <?php echo($gerer)?>">g&eacute;rer</a><a href="/apropos.php" class="menu<?php echo($sinformer)?>">s&#x27;informer</a><a href="/liens.php" class="menu<?php echo($liens)?>">liens</a><a href="/contact.php" class="menu<?php echo($contacter)?>">contacter</a>
-	</div> <!-- end div id="nav_menu" -->
+	</div><img src="/assets/home/ird-logo2.jpg" width="203" height="35" align="right"> </div> <!-- end div id="nav_menu" -->
 </div> <!-- end div id="nav_container" -->
 
 <!-- le sous-menu de navigation, si besoin -->
@@ -67,7 +67,7 @@ if ($section=='gerer') {
 	}
 ?>
 <div id="nav_sousmenu"><a href="/portage.php" title="portage" class="sousmenu<?php echo($portage)?>">portage</a><a href="/edition_maintenance.php" title="maintenance" class="sousmenu<?php echo($maintenance)?>">maintenance</a><a href="/edition_donnees.php" title="donn&eacute;es" class="sousmenu<?php echo($donnees)?>">donn&eacute;es</a><a href="/edition_reference.php" title="tables de r&eacute;f&eacute;rence" class="sousmenu<?php echo($reference)?>">r&eacute;f&eacute;rence</a><a href="/edition_param.php" title="tables de param&eacute;trage" class="sousmenu<?php echo($parametrage)?>">param&eacute;trage</a><a href="/edition_admin.php" title="tables d&#x27;administration" class="sousmenu<?php echo($administration)?>">administration</a><a href="/export.php" title="export" class="sousmenu<?php echo($export)?>">export</a><a href="/journal.php" title="journal" class="sousmenu<?php echo($journal)?>">journal</a><a href="/gestion_doc.php" title="documentation" class="sousmenu<?php echo($documentation)?>">documentation</a>
-<img src="/assets/home/ird-logo2.jpg" width="145" height="25"></div> <!-- end div id="nav_sousmenu" -->
+</div> <!-- end div id="nav_sousmenu" -->
 <?php
 
 }
