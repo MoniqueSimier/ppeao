@@ -23,7 +23,7 @@ $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["t
 $theHeads=array_keys($cDetails);
 
 
-$theForm='<h1>Ajouter un nouvel enregistrement dans la table "'.iconv('ISO-8859-15','UTF-8',$tablesDefinitions[$editTable]["label"]).'"</h1>';
+$theForm='<h2>Ajouter un nouvel enregistrement dans la table "'.iconv('ISO-8859-15','UTF-8',$tablesDefinitions[$editTable]["label"]).'"</h2>';
 
 // on insère le formulaire d'ajout d'un nouvel enregistrement...
 $theForm.='<form id="add_record_'.$level.'_form">';

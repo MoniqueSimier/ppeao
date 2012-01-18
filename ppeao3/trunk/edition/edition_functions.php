@@ -54,7 +54,7 @@ function buildTableList($typeTableNom)
 		if ($table["type_table_nom"]==$typeTableNom && $table["editable"]=='t') {
 		if ($table["domaine_nom"]!=$previousDomain) {
 			if ($previousDomain!='') {$domain.='</ul>';}
-			$domain.='<h2>'.$table["domaine_description"].'</h2>';
+			$domain.='<h5>'.$table["domaine_description"].'</h5>';
 			$domain.='<ul>';
 			$previousDomain=$table["domaine_nom"];
 			} 
@@ -104,7 +104,7 @@ function createSelector($page) {
 
 
 // le titre
-echo('<h1 class="selector">g&eacute;rer les '.$thisTable["type_table_description"].'&nbsp;: '.$thisTable["domaine_description"].' <span class="showHide"><a href="" id="showHideSelect"></a></span></h1>');
+echo('<h2 class="selector">g&eacute;rer les '.$thisTable["type_table_description"].'&nbsp;: '.$thisTable["domaine_description"].' <span class="showHide"><a href="" id="showHideSelect"></a></span></h2>');
 
 	
 // le sélecteur	

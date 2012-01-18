@@ -15,7 +15,7 @@ $erreurSQL="";
 // Liste des tables de la BD // Ajout YL 07/02/2011
 $listeTablesRef="ref_pays,ref_systeme,ref_secteur,ref_categorie_ecologique,ref_categorie_trophique,ref_ordre,ref_famille,ref_espece,ref_origine_kb,art_categorie_socio_professionnelle,art_etat_ciel";
 $listeTablesParamExp = "exp_contenu,exp_debris,exp_engin,exp_force_courant,exp_position,exp_qualite,exp_remplissage,exp_sediment,exp_sens_courant,exp_sexe,exp_stade,exp_vegetation,exp_station";
-$listeTablesParamArt = "art_grand_type_engin,art_millieu,art_type_activite,art_type_agglomeration,art_type_sortie,art_type_engin,art_vent,art_agglomeration";
+$listeTablesParamArt = "art_grand_type_engin,art_millieu,art_type_activite,art_type_agglomeration,art_type_sortie,art_type_engin,art_vent,art_agglomeration, art_param_type_effort";
 $listeTablesDonneesExp="exp_environnement,exp_campagne,exp_coup_peche,exp_fraction,exp_biologie,exp_trophique";
 $listeTablesDonneesArt="art_unite_peche,art_lieu_de_peche,art_debarquement,art_debarquement_rec,art_engin_peche,art_fraction,art_poisson_mesure,art_activite,art_engin_activite,art_fraction_rec,art_periode_enquete";
 $listeTablesDonneesStat="art_stat_totale,art_stat_gt,art_stat_gt_sp,art_stat_sp,art_taille_gt_sp,art_taille_sp,art_stat_effort";
@@ -331,11 +331,11 @@ switch ($action) {
 
 
 // le début du message de fin de traitement
-$message='<h2>maintenance de la base</h2>';
+$message='<h5>maintenance de la base</h5>';
 
 // on indique si l'operation a eu lieu avec succes ou pas
 if ($success) {
-	$message.="<p>l'op&eacute;ration ".$operation." a &eacute;t&eacute; r&eacute;alis&eacute;e avec succ&egrave;s.".$infoComp."</p>";
+	$message.="<p style="font-size:10px">l'op&eacute;ration ".$operation." a &eacute;t&eacute; r&eacute;alis&eacute;e avec succ&egrave;s.".$infoComp."</p>";
 }
 	else {
 		$message.="<p>une erreur est survenue lors de l'op&eacute;ration de ".$operation." ".$erreurSQL.".</p>";

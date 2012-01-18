@@ -48,7 +48,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 ?>
 
 <div id="main_container" class="selection">
-<h1>g&eacute;rer les droits d&#x27;acc&egrave;s aux donn&eacute;es</h1>
+<h2 style="text-align:center">g&eacute;rer les droits d&#x27;acc&egrave;s aux donn&eacute;es</h2>
 <p>Cette page vous permet d&#x27;accorder &agrave; un utilisateur ou &agrave; un groupe d&#x27;utilisateurs le droit d&#x27;acc&egrave;s &agrave; la totalit&eacute; d&#x27;un jeu de donn&eacute;es pour l&#x27;extraction des donn&eacute;es. Dans le cas contraire, un utilisateur ou groupe aura acc&egrave;s uniquement aux donn&eacute;es &quot;historiques&quot;.</p>
 
 <?php
@@ -118,7 +118,7 @@ if ($_POST["enregistrer"]=='oui') {
 }
 
 if ($acteur_type=='') {
-echo('<h2>g&eacute;rer les droits pour un <a href="?type=g">groupe</a> ou un <a href="?type=u">utilisateur</a></h2>');}
+echo('<h5>g&eacute;rer les droits pour un <a href="?type=g">groupe</a> ou un <a href="?type=u">utilisateur</a></h5>');}
 // si l'on a choisi quel type d'acteur (utilisateur ou groupe) on veut editer
 else {
 	switch ($acteur_type) {
@@ -126,7 +126,7 @@ else {
 		case "g":
 		$typeCode='g';
 		$type="groupe";
-		echo('<h2>g&eacute;rer les droits pour un groupe (changer pour un <a href="?type=u">utilisateur</a>).</h2>');
+		echo('<h5>g&eacute;rer les droits pour un groupe (changer pour un <a href="?type=u">utilisateur</a>).</h5>');
 		echo('<p>Vous pouvez &eacute;galement <a href="/edition/edition_table.php?selector=no&editTable=usergroups" alt="cr&eacute;er un groupe">cr&eacute;er un nouveau groupe</a>.</p>');
 		// choix de l'acteur pour lequel on veut definir des droits
 		// on ne propose pas les groupes "visiteurs" (aucun droit, 0) ni les groupes admin (1), gestionnaires 
@@ -137,7 +137,7 @@ else {
 		default:
 		$typeCode='u';
 		$type="utilisateur";
-		$choix_type_acteur_texte='<h2>g&eacute;rer les droits pour un utilisateur (changer pour un <a href="?type=g">groupe</a>).</h2>';
+		$choix_type_acteur_texte='<h5>g&eacute;rer les droits pour un utilisateur (changer pour un <a href="?type=g">groupe</a>).</h5>';
 			// choix de l'acteur pour lequel on veut definir des droits
 			$sql='SELECT DISTINCT user_id as id, user_longname as name FROM admin_users WHERE user_active AND user_id!=0  ORDER BY user_longname';
 		break;
@@ -150,7 +150,7 @@ else {
 			// cet input stocke le type d'acteur
 			echo('<input type="hidden" id="acteur_type" name="acteur_type" value="'.$typeCode.'"');
 			echo('<div id="choix_acteur">');
-			echo('<h2>'.$type.'s</h2>');
+			echo('<h5>'.$type.'s</h5>');
 	
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 			$array=pg_fetch_all($result);
@@ -188,7 +188,7 @@ else {
 			// si on a choisi un acteur
 			if ($lActeur!='') {
 				echo('<div id="choix_systemes">');
-				echo('<h2>choix des syst&egrave;mes &agrave; autoriser</h2>');
+				echo('<h5>choix des syst&egrave;mes &agrave; autoriser</h5>');
 				// on affiche le selecteur de pays
 				echo('<div id="div_pays" class="level_div">');
 				echo('<p>pays</p>');
@@ -222,7 +222,7 @@ else {
 		echo('<p class="clear" id="add_systemes"></p>');
 		// on affiche la liste des  droits d'acces accordes a cet acteur
 		echo('<div id="droits_acces">');
-		echo('<h2>syst&egrave;mes pour lesquels "'.$lActeur.'" peut consulter la totalit&eacute; des donn&eacute;es</h2>');
+		echo('<h5>syst&egrave;mes pour lesquels "'.$lActeur.'" peut consulter la totalit&eacute; des donn&eacute;es</h5>');
 		// on passe l'id de l'acteur et son type
 		//echo('<input type="hidden" id="acteur" name="acteur" value="'.$acteur_id.'"/>');
 		echo('<input type="hidden" id="type" name="type" value="'.$acteur_type.'"/>');
