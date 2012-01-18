@@ -32,9 +32,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 ?>
 
 <div id="main_container" class="home">
-	<h1>Gestion</h1>
+	<h2 style="text-align:center">Gestion des bases de données de PPEAO</h2>
 
-	<p>Cette section sert à gérer l'ensemble des données de PPEAO.</p>
 <?php
 
 // on teste à quelle zone l'utilisateur a accès
@@ -42,22 +41,22 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 // affiche un avertissement concernant l'utilisation de IE pour les outils d'administration
 IEwarning();
 ?>
-<h5><a href="/portage.php" title="portage">portage d'une base</a></h5>
-<p>vous permet d&#x27;exporter des donn&eacute;es vers bdpeche (application SINTI) et de transf&eacute;rer les donn&eacute;es depuis une base temporaire vers la base principale PPEAO.</p>
+<h5 style="padding-top:20px"><a href="/portage.php" title="portage">portage d'une base</a></h5>
+<p style="padding-left:35px">permet d&#x27;exporter des donn&eacute;es vers bdpeche et de transf&eacute;rer les donn&eacute;es depuis la base temporaire bdpeche vers la base principale bdppeao.</p>
 <h5><a href="/edition_maintenance.php" title="maintenance">maintenance de la base</a></h5>
-<p>vous permet d&#x27;effectuer des op&eacute;rations de maintenance sur la base principale PPEAO (mise &agrave; jour des s&eacute;quences, VACUUM...).</p>
+<p style="padding-left:35px">permet d&#x27;effectuer des op&eacute;rations de maintenance sur les bases bdpeche et bdppeao (mise &agrave; jour des s&eacute;quences, VACUUM...).</p>
 <h5><a href="/edition_donnees.php" title="gestion des donn&eacute;es">gestion des donn&eacute;es</a></h5>
-<p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables de donn&eacute;es.</p>
+<p style="padding-left:35px">permet de modifier, supprimer ou ajouter des valeurs dans les tables de donn&eacute;es.</p>
 <h5><a href="/edition_reference.php" title="gestion des tables de r&eacute;f&eacute;rence">gestion des tables de référence</a></h5>
-<p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables de r&eacute;f&eacute;rence.</p>
+<p style="padding-left:35px">permet de modifier, supprimer ou ajouter des valeurs dans les tables de r&eacute;f&eacute;rence.</p>
 <h5><a href="/edition_param.php" title="gestion des tables de param&eacute;trage">gestion des tables de param&eacute;trage</a></h5>
-<p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables de param&eacute;trage.</p>
+<p style="padding-left:35px">permet de modifier, supprimer ou ajouter des valeurs dans les tables de param&eacute;trage.</p>
 <h5><a href="/edition_admin.php" title="gestion des tables d&#x27;administration">gestion des tables d&#x27;administration</a></h5>
-<p>vous permet de modifier, supprimer ou ajouter des valeurs dans les tables d&#x27;administration.</p>
+<p style="padding-left:35px">permet de modifier, supprimer ou ajouter des valeurs dans les tables d&#x27;administration.</p>
 <h5><a href="/gestion_doc.php" title="gestion de la documentation">gestion de la documentation</a></h5>
-<p>vous permet de g&eacute;rer la documentation sur le projet PPEAO et les donn&eacute;es.</p>
+<p style="padding-left:35px">permet de g&eacute;rer la documentation sur l'application PPEAO et les donn&eacute;es archivées.</p>
 <h5><a href="/journal.php" title="journal des op&eacute;rations">journal des op&eacute;rations</a></h5>
-<p>vous permet de consulter le journal enregistrant l&#x27;ensemble des op&eacute;rations r&eacute;alis&eacute;es sur le site&nbsp;: connexions, interventions sur les donn&eacute;es, messages d&#x27;erreur...</p>
+<p style="padding-left:35px">permet de consulter le journal enregistrant l&#x27;ensemble des op&eacute;rations r&eacute;alis&eacute;es sur le site&nbsp;: connexions, interventions sur les donn&eacute;es, messages d&#x27;erreur...</p>
 <?php 
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
 

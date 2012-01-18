@@ -39,7 +39,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 	?>
 
 		<div id="subContent">
-		<h1>Importation de donn&eacute;es dans la base bdpeche</h1>
+		<h2 style="padding-left:200px">Importation de donn&eacute;es dans la base bdpeche</h2>
 <!-- 		<p>Cette section vous permet d&#x27;acc&eacute;der au module d&#x27;importation de donn&eacute;es dans la base bdpeche (application &quot;SINTI&quot;).</p>
  -->		
 <iframe src="/bienvenue" width="1100px" height="800px" frameborder="0" scrolling="auto">application SINTI</iframe>

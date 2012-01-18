@@ -49,18 +49,18 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		$_SESSION['s_status_export'] = 'ko';
 
 ?>
-		<h1>Export</h1>
+		<h2 style="padding-left:200px">Export</h2>
 		<p>Cette section permet d'exporter les donn&eacute;es en format ACCESS.</p>
-		<br/>
+
         <?php // La fonction d'exportation n'est possible que sous windows.
 			// si on est sous un autre serveur, on affiche un message d'information
 		if ($OSType=="WIN") {
 		?>
-		<p>Ce traitement permet de cr&eacute;er les fichiers ACCESS .mdb qui serviront de sources pour les bases ACCESS d&eacute;ploy&eacute;es sur le terrain. Pour chaque cas (p&ecirc;ches exp&eacute;rimentales ou p&ecirc;ches artisanales), le r&eacute;f&eacute;rentiel et le param&eacute;trage seront mis &agrave; jour et des fichiers zip contenant toutes les bases n&eacute;cessaires aux op&eacute;rateurs sur le terrain seront g&eacute;n&eacute;r&eacute;s. </p>
+		<p>Ce traitement permet de cr&eacute;er les fichiers ACCESS.mdb qui serviront de sources pour les bases ACCESS d&eacute;ploy&eacute;es sur le terrain. Pour chaque cas (p&ecirc;ches exp&eacute;rimentales ou p&ecirc;ches artisanales), le r&eacute;f&eacute;rentiel et le param&eacute;trage seront mis &agrave; jour et des fichiers zip contenant toutes les bases n&eacute;cessaires aux op&eacute;rateurs sur le terrain seront g&eacute;n&eacute;r&eacute;s. </p>
 		<br/>
 		<div id="runProcess">
 		<form id="formProcessAuto">
-			<br/><h2>Choisissez le type de p&ecirc;che à exporter : </h2>
+			<br/><h5>Choisissez le type de p&ecirc;che à exporter : </h5>
 			 <input type="radio" id="typepecheexp" name="typepeche" value="exp" checked="checked" />&nbsp;P&ecirc;ches expérimentales<br />
 			<input type="radio" id="typepecheart" name="typepeche" value="art" />&nbsp;P&ecirc;ches artisanales<br/><br/>
 			<input id="startProcess" type="button" value="Lancer le traitement" onClick="runProcess()"/>
@@ -91,18 +91,18 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		</div>
 		<div id="copiePPEAO">
 			<div id="copiePPEAO_img"><img src="/assets/incomplete.png" alt=""/></div>
-			<div id="copiePPEAO_txt">Copie des donn&eacute;es depuis la base PPEAO (postgreSQL) de r&eacute;f&eacute;rence.</div>
+			<div id="copiePPEAO_txt">Copie des donn&eacute;es depuis la base bdppeao (postgreSQL) de r&eacute;f&eacute;rence.</div>
 			<div id="copiePPEAO_chk">Lancer copie PPEAO<input type="checkbox" id="copPPEAOcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 			<?php 	$navbarLevel = 2;
-					$texteDiv = "Compte-rendu de copie depuis base PPEAO de r&eacute;f&eacute;rence.";	
+					$texteDiv = "Compte-rendu de copie depuis base bdppeao de r&eacute;f&eacute;rence.";	
 					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 		</div>
 		<div id="copieACCESS">
 			<div id="copieACCESS_img"><img src="/assets/incomplete.png" alt=""/></div>
-			<div id="copieACCESS_txt">Copie des donn&eacute;es depuis la base ACCESS de r&eacute;f&eacute;rence.</div>
+			<div id="copieACCESS_txt">Copie des donn&eacute;es depuis les bases ACCESS de r&eacute;f&eacute;rence.</div>
 			<div id="copieACCESS_chk">Lancer copie ACCESS<input type="checkbox" id="copAcccheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 			<?php 	$navbarLevel = 3;
-					$texteDiv = "Compte-rendu de copie depuis base ACCESS de r&eacute;f&eacute;rence.";	
+					$texteDiv = "Compte-rendu de copie depuis bases ACCESS de r&eacute;f&eacute;rence.";	
 					include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 
 		</div>

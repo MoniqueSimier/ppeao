@@ -212,7 +212,7 @@ function doExportSelect(action,changeSelection) {
 	// what to do when the response is received
 	xhr.onreadystatechange = function(){
 			// while waiting for the response, display the loading animation
-		var theLoader='<div align="left"><h2>Operation en cours</h2><br/>&nbsp;<img src="/assets/ajax-loader.gif" alt="Operation en cours..." title="Operation en cours..." valign="center"/></div>';
+		var theLoader='<div align="left"><h5>Operation en cours</h5><br/>&nbsp;<img src="/assets/ajax-loader.gif" alt="Operation en cours..." title="Operation en cours..." valign="center"/></div>';
 		if(xhr.readyState < 4) { outputDiv.innerHTML = theLoader;}
 		// only do something if the whole response has been received and the server says OK
 		if(xhr.readyState == 4 && xhr.status == 200){
@@ -268,7 +268,7 @@ function doExport(action,fenetre,label) {
 	// what to do when the response is received
 	xhr.onreadystatechange = function(){
 			// while waiting for the response, display the loading animation
-		var theLoader='<div align="left"><h2>'+label+'&nbsp;<img src="/assets/ajax-loader.gif" alt="export en cours..." title="export en cours..." valign="center"/></h2></div>';
+		var theLoader='<div align="left"><h5>'+label+'&nbsp;<img src="/assets/ajax-loader.gif" alt="export en cours..." title="export en cours..." valign="center"/></h5></div>';
 		if(xhr.readyState < 4) { outputDiv.innerHTML = theLoader;}
 		// only do something if the whole response has been received and the server says OK
 		if(xhr.readyState == 4 && xhr.status == 200){

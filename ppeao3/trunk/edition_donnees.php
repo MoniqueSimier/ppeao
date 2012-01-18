@@ -40,7 +40,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 // affiche un avertissement concernant l'utilisation de IE pour les outils d'administration
 IEwarning();
 ?>
-<h1>G&eacute;rer les tables de donn&eacute;es</h1>
+<h2 style="padding-left:200px">Gérer les tables de données</h2>
 <!-- édition des tables de référence -->
 
 <?php
@@ -52,7 +52,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 
 
 <!-- on affiche les liens pour supprimer des campagnes ou des périodes d'enquête -->
-<h2>supprimer...</h2>
+<h5>supprimer...</h5>
 <ul>
 	<li><a href="/edition_supprimer.php?domaine=exp">des campagnes</a></li>
 	<li><a href="/edition_supprimer.php?domaine=art">des p&eacute;riodes d&#x27;enqu&ecirc;te</a></li>
@@ -63,7 +63,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 <?php
 // on affiche la liste des tables
 echo('<div id="tables_liste">');
-echo('<h2>&eacute;diter les donn&eacute;es des tables de...</h2>');
+echo('<h5>&eacute;diter les donn&eacute;es des tables de...</h5>');
 	buildTableList("data");
 
 

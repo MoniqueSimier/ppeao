@@ -38,7 +38,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 // affiche un avertissement concernant l'utilisation de IE pour les outils d'administration
 IEwarning();
 ?>
-<h1>G&eacute;rer les tables de r&eacute;f&eacute;rence</h1>
+<h2 style="padding-left:200px">G&eacute;rer les tables de r&eacute;f&eacute;rence</h2>
 <!-- édition des tables de référence -->
 
 <?php

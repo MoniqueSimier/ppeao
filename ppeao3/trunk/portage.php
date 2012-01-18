@@ -101,11 +101,11 @@ zipFileCheck.periodical(10000);
 		// $subsection="home"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
 		</div> -->
 		<div id="subContent">
-		<h1>Import / recalcul de donn&eacute;es <!-- en manuel ou : lancement en automatique--></h1>
+		<h2 style="text-align:center">Import / recalcul de donn&eacute;es <!-- en manuel ou : lancement en automatique--></h2>
 		<br/>
 		<p>Cette section vous permet de lancer les traitements sp&eacute;cifiques sur les bases de donn&eacute;es import&eacute;es.</p>
 		<p>Ce portage est effectué en 3 étapes : Importation d'un fichier Sql_Access_Postgres.zip; Transfert des données vers bdpeche; Portage automatique des données de bdpeche vers bdppeao. </p>
-		<p>Le portage automatique effectue un certain nombre de contr&ocirc;les pour assurer la qualit&eacute; des donn&eacute;es import&eacute;es et lance automatiquement les programmes de recalcul.</p>
+		<p>Le portage automatique effectue un certain nombre de contr&ocirc;les pour assurer la qualit&eacute; des donn&eacute;es import&eacute;es et lance automatiquement les programmes de calcul de statistiques de pêche.</p>
 		<!-- <p>Ces programmes peuvent &ecirc;tre aussi lanc&eacute;s &agrave; la demande depuis le portage manuel.  </p> -->
 		<!--<p>Vous pouvez &eacute;galement acc&eacute;der au module d&#x27;importation de donn&eacute;es dans la base bdpeche (application &quot;SINTI&quot;).</p>-->
 		<ul class="list">

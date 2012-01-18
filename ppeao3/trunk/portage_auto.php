@@ -71,12 +71,13 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				<?php  //$subsection="auto"; include $_SERVER["DOCUMENT_ROOT"].'/left_navbar.inc'; ?>
 			</div>-->
 			<div id="subContent">
-				<h1>Import / recalcul de données automatique dit &quot;Portage Automatique&quot;</h1>
+				<h2 style="padding-left:120px">Import / recalcul automatique de données</h2>
+				<h2 style="padding-left:200px">Portage Automatique</h2>
 				<br/>
-				<p>Ce processus permet un portage automatique des bases issues des bases access dans la base principale PPEAO.</p>
+				<p>Ce processus permet un portage automatique des bases issues des bases Access dans la base principale de l'application PPEAO.</p>
 				<p>Les diff&eacute;rents traitements sont d&eacute;taill&eacute;s ci-dessous. Vous pouvez choisir de lancer tout ou partie des traitements.<br/>
 				Une erreur sur un traitement entra&icirc;ne l'arr&ecirc;t de l'ensemble du processus.<br/>
-				Une base de sauvegarde est cr&eacute;&eacute;e en d&eacute;but de traitement. Elle peut &ecirc;tre utilis&eacute;e pour restaurer la base de r&eacute;f&eacute;rence en cas de probl&egrave;me. <br/>
+				Une base de sauvegarde de bdpeche comme de bdppeao est cr&eacute;&eacute;e en d&eacute;but de traitement. Elle peut &ecirc;tre utilis&eacute;e pour restaurer la base de r&eacute;f&eacute;rence en cas de probl&egrave;me. <br/>
 				Un fichier de log compl&eacute;mentaire permet d'avoir l'ensemble des avertissements ou informations sur le traitement. </p>
 				<br/>
 				<?php // get the help/documentation for this page 

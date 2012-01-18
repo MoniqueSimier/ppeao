@@ -16,7 +16,7 @@ $zone=7; // zone gerer (voir table admin_zones)
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
 	<script src="/js/ajaxExport.js" type="text/javascript" charset="iso-8859-15"></script>
-	<title>ppeao::exporter param&eacute;trage vers ACCESS</title>
+	<title>ppeao::exporter param&eacute;trage et données</title>
 
 </head>
 
@@ -49,14 +49,13 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 		$_SESSION['s_status_export'] = 'ko';
 
 ?>
-		<h1>Export</h1>
-		<p>Cette section permet de pr&eacute;parer et de r&eacute;aliser l'exportation des donn&eacute;es en format ACCESS.</p>
-		<br/>
+		<h2 style="padding-left:200px">Export</h2>
+		<p style="padding-top:15px">Cette section permet de pr&eacute;parer et de r&eacute;aliser l'exportation des donn&eacute;es vers un PC.</p>
 
-		<p>Vous allez pouvoir r&eacute;aliser les op&eacute;rations pr&eacute;paratoires &agrave; l'export des donn&eacute;es en format ACCESS, puis lancer cette export une fois la base de r&eacute;f&eacute;rence mise &agrave; jour.</p>
-		<br/>
+		<p>Trois types d'export sont prévues : export d'une structure pour la saisie de nouvelles données; export de toute l'information concernant un pays; export de toute la base bdppeao (à éviter).</p>
 
-		  <h2>Op&eacute;rations pour la mise &agrave; jour de la base de r&eacute;f&eacute;rence bdppeao sur le PC</h2>
+
+		  <h5 style="padding-top:35px">Op&eacute;rations pour la mise &agrave; jour de la base de r&eacute;f&eacute;rence bdppeao sur le PC</h5>
             <ul>
 			<?php if ($OSType=="WIN") { ?>
 	             <li><a href="javascript:doExport('videbdppeaoPC','exportOutputVide','Base cible en cours de nettoyage ...');">Vider la base de r&eacute;f&eacute;rence bdppeao du PC pour pr&eacute;parer sa mise &agrave; jour</a>
@@ -66,8 +65,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
               <div id="exportOutputInt"></div>
               </li>
             </ul>
-            <h2>Export des donn&eacute;es en format ACCESS</h2>
-  Vous pouvez acc&eacute;der &agrave; l'outil d'export des donn&eacute;es ici :<a href="export_process.php" target="_blank"> exporter les donn&eacute;es en format ACCESS</a>.
+            <h5>Export des donn&eacute;es en format ACCESS</h5>
+  Pour préparer une structure de saisie de nouvelles données :<a href="export_process.php" target="_blank"> exporter les donn&eacute;es en format ACCESS</a>.
 			<?php } else { 
 			// Dans le cas de linux, on ne peut faire que l'export de la base de référence ?>
               <li><a href="javascript:doExportSelect('exportBaseRef');">Exporter la base de r&eacute;f&eacute;rence apr&egrave;s s&eacute;lection des donn&eacute;es &agrave; extraire pour pr&eacute;parer la mise &agrave; jour de la base de r&eacute;f&eacute;rence sur le PC</a>

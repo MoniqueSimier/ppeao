@@ -41,7 +41,7 @@ if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 // affiche un avertissement concernant l'utilisation de IE pour les outils d'administration
 IEwarning();
 ?>
-<h1>G&eacute;rer la documentation sur les données</h1>
+<h2 style="padding-left:200px">G&eacute;rer la documentation sur les données</h2>
 <!-- édition des tables de référence -->
 
 <?php
@@ -65,16 +65,16 @@ include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_functions.php';
 				}
 </script>
 
-<p>Cette page vous permet de g&eacute;rer les documents (textes, figures et cartes) associ&eacute;s &agrave; des unit&eacute;s g&eacute;ographiques.</p>
+<p style="padding-top:20px">Cette page vous permet de g&eacute;rer les documents (textes, figures et cartes) associ&eacute;s &agrave; des unit&eacute;s g&eacute;ographiques.</p>
 <p>Ces documents pourront &ecirc;tre t&eacute;l&eacute;charg&eacute;s par les utilisateurs du module de consultation/extraction des donn&eacute;es.</p>
-<h2>associer des documents à :</h2>
+<h5>associer des documents à :</h5>
 <ul>
 	<li><a href="/edition/edition_table.php?selector=no&editTable=meta_pays">des pays</a></li>
 	<li><a href="/edition/edition_table.php?selector=no&editTable=meta_systemes">des syst&egrave;mes</a></li>
 	<li><a href="/edition/edition_table.php?selector=no&editTable=meta_secteurs">des secteurs</a></li>
 </ul>
-<h3><a href="javascript:BrowseFiles();">acc&eacute;der au gestionnaire de fichiers</a></h3>
-<p>vous permet de g&eacute;rer les fichiers pr&eacute;sents sur le serveur, comme avec l&#x27;explorateur de Windows.</p>
+<h5><a href="javascript:BrowseFiles();">acc&eacute;der au gestionnaire de fichiers</a></h5>
+<p>permet de g&eacute;rer les fichiers pr&eacute;sents sur le serveur, comme avec l&#x27;explorateur de Windows.</p>
 
 
 

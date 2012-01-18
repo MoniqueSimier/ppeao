@@ -45,7 +45,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 ?>
 
 <div id="main_container" class="edition">
-<h1>G&eacute;rer les tables de données : supprimer une <?php echo($domaine_unite); ?></h1>
+<h2 style="padding-left:100px">G&eacute;rer les tables de données : supprimer une <?php echo($domaine_unite); ?></h2>
 <!-- édition des tables de référence -->
 <?php
 // on teste à quelle zone l'utilisateur a accès
@@ -110,7 +110,7 @@ foreach ($suppression_cascades[$domaine] as $critere) {
 
 // on construit le selecteur : pays>systeme>annee (date debut)
 echo('<div id="unite_selecteur">');
-echo('<h2>sélection des '.$domaine_unites.'</h2>');
+echo('<h5>sélection des '.$domaine_unites.'</h5>');
 
 	echo('<div id="selector_content">');
 	echo('<form id="selector_form">');
