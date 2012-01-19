@@ -104,8 +104,8 @@ if (isset($_GET['action'])) {
 ?>
 
 <div id="main_container" class="home">
-	<h1>consulter des données : statistiques de p&ecirc;ches</h1>
-	<h2>affichage du r&eacute;sultat</h2>
+	<h2 style="padding-left:120px">consulter des données : statistiques de p&ecirc;ches</h2>
+	<h5>affichage du r&eacute;sultat</h5>
 	<p class="hint_text">Cette section affiche les r&eacute;sultats pour la s&eacute;lection sous forme de tableaux pagin&eacute;s ou de fichiers exportables.</p>
     <br/>
     <?php

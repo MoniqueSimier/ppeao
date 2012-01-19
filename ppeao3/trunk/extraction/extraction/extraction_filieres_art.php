@@ -95,8 +95,8 @@ if (!(file_exists($file)) ) {
 ?>
 
 <div id="main_container" class="home">
-	<h1>consulter des données : extraction des p&ecirc;ches artisanales</h1>
-    <h2>choix des fili&egrave;res</h2>
+	<h2 style="padding-left:150px">consulter des données : extraction des p&ecirc;ches artisanales</h2>
+    <h5>choix des fili&egrave;res</h5>
     <?php
 
 	// on teste à quelle zone l'utilisateur a accès

@@ -88,8 +88,8 @@ if (!(file_exists($file)) ) {
 // fin de modification par Olivier
 ?>
 <div id="main_container" class="home">
-	<h1>consulter des données : statistiques de p&ecirc;ches</h1>
-    <h2>choix compl&eacute;mentaires</h2>
+	<h2 style="padding-left:120px">consulter des données : statistiques de p&ecirc;ches</h2>
+    <h5>choix compl&eacute;mentaires</h5>
     <?php
 	// on teste à quelle zone l'utilisateur a accès
 	if (userHasAccess($userID,$zone)) {
