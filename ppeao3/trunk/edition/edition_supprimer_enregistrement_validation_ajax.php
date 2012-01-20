@@ -31,7 +31,7 @@ $labelArray=pg_fetch_all($labelResult);
 $label=$labelArray[0][$labelColumn];
 pg_free_result($labelResult);
 
-$theMessage.='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregistrement &quot;'.$label.'&quot; ('.$key.'="'.$record.'")</h1><br /></div>';
+$theMessage.='<div align="center"><h2 id="delete_title">supprimer l&#x27;enregistrement &quot;'.$label.'&quot; ('.$key.'="'.$record.'")</h2><br /></div>';
 
 	// on prépare le calcul du nombre total d'enregistrements supprimés
 	// d'abord on calcule le nombre total d'enregistrements dans les tables utilisateur
