@@ -640,7 +640,7 @@ function modalDialogDeleteRecord(theLevel,theTable,theRecord) {
 		'class': "overlay_content"
 	}
 	);
-	theOverlayContent.innerHTML='<div align="center"><h1 id="delete_title">supprimer l&#x27;enregistrement &quot;'+theRecord+'&quot;</h1><h2>recherche des enregistrements utilisant l&#x27;enregistrement &agrave; supprimer comme cl&eacute; &eacute;trang&egrave;re</h2></div>';
+	theOverlayContent.innerHTML='<div align="center"><h2 id="delete_title">supprimer l&#x27;enregistrement &quot;'+theRecord+'&quot;</h2><h2>recherche des enregistrements utilisant l&#x27;enregistrement &agrave; supprimer comme cl&eacute; &eacute;trang&egrave;re</h2></div>';
 		
 	var theOverlayButtons= new  Element ('div', {
 		'id': "overlay_"+theLevel+"_buttons",
