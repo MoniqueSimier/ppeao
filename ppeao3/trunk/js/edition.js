@@ -726,7 +726,7 @@ xhr.onreadystatechange = function(){
 		theDeleteButton.setStyle("visibility","hidden");
 		theCloseButton.setStyle("visibility","hidden");
 		// en attendant la réponse, on remplace les boutons d'enregistrement/annulation par un loader
-		theLoader.innerHTML='<h1>'+theTitle+'</h1><h2>suppression de l&#x27;enregistrement en cours</h2><br /><p>merci de patienter</p><br /><img src="/assets/ajax-loader.gif" alt="suppression en cours..." title="suppression en cours..." valign="center"/>';
+		theLoader.innerHTML='<h2>'+theTitle+'</h2><h2>suppression de l&#x27;enregistrement en cours</h2><br /><p>merci de patienter</p><br /><img src="/assets/ajax-loader.gif" alt="suppression en cours..." title="suppression en cours..." valign="center"/>';
 		theOverlayContent.innerHTML='';
 	}
 	// only do something if the whole response has been received and the server says OK
