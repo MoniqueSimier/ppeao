@@ -66,7 +66,7 @@ switch ($action) {
 					}
 					$delaiExec = number_format(timer() - $timer_debut,1);
 					if ($erreur == "") {
-						$contenu = "<div id=\"expResultat\">L'export complet de la base a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s en ".$delaiExec." secondes.<br/>(Le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/".$zipFilelien."\">ici</a>.) ";
+						$contenu = "<div id=\"expResultat\">L'export complet de la base a &eacute;t&eacute; r&eacute;alis&eacute; avec succ&egrave;s en ".$delaiExec." secondes.<br/>(Le fichier est disponible au t&eacute;l&eacute;chargement <a href=\"/work/export/SQL-bdppeao/".$zipFilelien."\">ici</a>.) ";
 						if ($EcrireLogComp ) {
 							$contenu .="<br/>(le log se trouve <a href=\"/log/".$nomLogLien."\" target=\"log\">ici</a>) ";
 						}
