@@ -50,7 +50,7 @@ if ($step>1) {
 ?>
 </h2>
 <?php if ($step<1) { ?>
-<br><p>Pour extraire des donn&eacute;es ou des statistiques de p&ecirc;ches exp&eacute;rimentales ou artisanales, suivez le processus de s&eacute;lection ci-dessous. Vous pourrez &agrave; tout moment modifier les valeurs choisies lors d&#x27;une des &eacute;tapes de votre s&eacute;lection.</p>
+<br><p>Pour extraire des donn&eacute;es de p&ecirc;ches exp&eacute;rimentales ou artisanales ou des statistiques de p&ecirc;ches, suivez le processus de s&eacute;lection ci-dessous. Vous pourrez &agrave; tout moment modifier les valeurs choisies lors d&#x27;une des &eacute;tapes de votre s&eacute;lection.</p>
 <?php } ?>
 <!-- extraction de donnees et de stats -->
 <?php
