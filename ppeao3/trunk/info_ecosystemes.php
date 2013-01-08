@@ -53,7 +53,7 @@ $zone=0; // zone publique (voir table admin_zones)
 	<tr align="right">
 		<td>The Gambia</td>
 		<td>Gambia River</td>
-		<td>O4/2001</td>
+		<td>04/2001</td>
 		<td>05/2002</td>
 	</tr>
 	<tr align="right">
@@ -171,9 +171,9 @@ $zone=0; // zone publique (voir table admin_zones)
 	<tr align="right">
 		<td>Senegal</td>
 		<td>Bamboung</td>
-		<td>25</td>
+		<td>29</td>
 		<td>11/03/2003</td>
-		<td>17/03/2011</td>
+		<td>15/06/2012</td>
 	</tr>
 </table>
 

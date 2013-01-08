@@ -58,7 +58,7 @@ $zone=0; // zone publique (voir table admin_zones)
 				</div>
 				<br/>
 				<p class="contact">Ce projet a &eacute;t&eacute; rendu possible gr&acirc;ce au financement de la <a href="https://www.ird.fr/dsi/" target="_blank">Direction du Système d'Information de l'IRD</a>.
-				<p class="contact">Il a &eacute;t&eacute; r&eacute;alis&eacute; par l'équipe <a href="http://www-iuem.univ-brest.fr/lemar/recherche/equipe-5/equipe-5-blab-la" target="_blank">RAP</a> composante de l'UMR 6539 <a href="http://www-iuem.univ-brest.fr/UMR6539" target="_blank">LEMAR</a> (Laboratoire des sciences de l'Environnement MARin, UBO/CNRS/IRD/Ifremer).
+				<p class="contact">Il a &eacute;t&eacute; r&eacute;alis&eacute; par l&rsquo;Unit&eacute; de Recherches <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">RAP</a> (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). Cette unit&eacute; est aujourd'hui int&eacute;gr&eacute;e au sein de <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">l'&eacute;quipe 3</a> du LEMAR (Laboratoire des sciences de l'Environnement MARin - UMR UBO-CNRS-IRD-Ifremer). </p>
 				</p><br>
 				</p><br>
 				<p class="contact" style="font-weight:bold">Liens connexes :
