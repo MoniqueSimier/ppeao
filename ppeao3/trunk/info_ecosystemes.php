@@ -134,6 +134,13 @@ $zone=0; // zone publique (voir table admin_zones)
 		<td>07/04/1993</td>
 	</tr>
 	<tr align="right">
+		<td>Guinea-Bissau</td>
+		<td>Iles Urok</td>
+		<td>2</td>
+		<td>01/11/2011</td>
+		<td>28/11/2012</td>
+	</tr>
+	<tr align="right">
 		<td>Ivory Coast</td>
 		<td>Ebrié</td>
 		<td>73</td>
@@ -171,9 +178,9 @@ $zone=0; // zone publique (voir table admin_zones)
 	<tr align="right">
 		<td>Senegal</td>
 		<td>Bamboung</td>
-		<td>29</td>
+		<td>30</td>
 		<td>11/03/2003</td>
-		<td>15/06/2012</td>
+		<td>16/10/2012</td>
 	</tr>
 </table>
 
