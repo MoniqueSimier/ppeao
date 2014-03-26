@@ -47,7 +47,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 ?>
 
-<div id="main_container" class="selection">
+<div id="main_droits" class="selection">
 <h2 style="text-align:center">g&eacute;rer les droits d&#x27;acc&egrave;s aux donn&eacute;es</h2>
 <p>Cette page vous permet d&#x27;accorder &agrave; un utilisateur ou &agrave; un groupe d&#x27;utilisateurs le droit d&#x27;acc&egrave;s &agrave; la totalit&eacute; d&#x27;un jeu de donn&eacute;es pour l&#x27;extraction des donn&eacute;es. Dans le cas contraire, un utilisateur ou groupe aura acc&egrave;s uniquement aux donn&eacute;es &quot;historiques&quot;.</p>
 
@@ -221,7 +221,7 @@ else {
 		echo('</div></div>');
 		echo('<p class="clear" id="add_systemes"></p>');
 		// on affiche la liste des  droits d'acces accordes a cet acteur
-		echo('<div id="droits_acces">');
+		echo('<div id="droits_consulter">');
 		echo('<h5>syst&egrave;mes pour lesquels "'.$lActeur.'" peut consulter la totalit&eacute; des donn&eacute;es</h5>');
 		// on passe l'id de l'acteur et son type
 		//echo('<input type="hidden" id="acteur" name="acteur" value="'.$acteur_id.'"/>');

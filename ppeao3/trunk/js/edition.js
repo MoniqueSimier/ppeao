@@ -362,7 +362,7 @@ xhr.onreadystatechange = function(){
 
 
 // using GET to send the request
-xhr.open("GET","/edition/edition_enregistrer_modification_ajax.php?&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&newValue="+escape(newValue),true);
+xhr.open("GET","/edition/edition_enregistrer_modification_ajax.php?&editTable="+table+"&editColumn="+column+"&editRecord="+record+"&newValue="+encodeURIComponent(newValue),true);
 xhr.send(null);	
 
 }

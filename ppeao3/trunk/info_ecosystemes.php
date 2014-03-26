@@ -1,6 +1,9 @@
 <?php 
 // Créé par Gaspard BERTRAND, 30/11/2011
 // definit a quelle section appartient la page
+// Modifié pour version dynamique le 26/03/2014 (F.WOEHL)
+
+
 $section="apropos";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
@@ -42,7 +45,10 @@ $zone=0; // zone publique (voir table admin_zones)
 	<div id="main_container" class="home">
 	<h1>PPEAO</h1>
 	<h2 style="text-align:center">Système d'informations sur les Peuplements de poissons et la P&ecirc;che artisanale<br> des Ecosyst&egrave;mes estuariens, lagunaires ou continentaux d&rsquo;Afrique de l&rsquo;Ouest</h2>
-    <br>
+
+<?php 
+/*
+	<br>
 	<h2>P&ecirc;che artisanale</h2>
 	
 <table cellpadding="5" border=1 >
@@ -183,7 +189,163 @@ $zone=0; // zone publique (voir table admin_zones)
 		<td>16/10/2012</td>
 	</tr>
 </table>
+*/
+?>
 
+<?php 
+// VERSION DYNAMIQUE...
+
+	$html = "<div class='info_tbl'>" ;
+
+	$sql = "SELECT COUNT(D.*),P.nom as pays,SY.libelle as systeme,SE.nom as secteur,D.art_agglomeration_id,D.annee,D.mois FROM art_debarquement D " ;
+	$sql .= "INNER JOIN art_agglomeration A ON A.id = D.art_agglomeration_id " ;
+	$sql .= "INNER JOIN ref_secteur SE ON SE.id = A.ref_secteur_id " ;
+	$sql .= "INNER JOIN ref_systeme SY ON SY.id = SE.ref_systeme_id " ;
+	$sql .= "INNER JOIN ref_pays P ON P.id = SY.ref_pays_id " ;
+	$sql .= "GROUP BY P.nom,SY.libelle,SE.nom,D.art_agglomeration_id,D.annee, D.mois " ;
+	$sql .= "ORDER BY pays,systeme,D.annee, D.mois " ;
+	$result = pg_query( $connectPPEAO, $sql ) or die( pg_error( ) ) ;
+	if( $row = pg_fetch_array( $result ) ) {
+		$paysCurrent = $row[ 'pays' ] ;
+		$systemeCurrent = $row[ 'systeme' ] ;
+		$moisCurrent = $row[ 'mois' ] ;
+		$anneeCurrent = $row[ 'annee' ] ;
+		$moisDebut = $moisCurrent ;
+		$anneeDebut = $anneeCurrent ;
+		
+		$html .= "<br/><br/>" ;
+		$html .= "<h2>Pêche artisanale</h2>" ;
+		$html .= "<table border='1'>" ;
+		$html .= "<tr>" ;
+		$html .= "<th>Pays</th>" ;
+		$html .= "<th>Ecosystème</th>" ;
+		$html .= "<th>Début</th>" ;
+		$html .= "<th>Fin</th>" ;
+		$html .= "</tr>" ;
+		
+		do {
+			$pays = $row[ 'pays' ] ;
+			$systeme = $row[ 'systeme' ] ;
+			$mois = $row[ 'mois' ] ;
+			$annee = $row[ 'annee' ] ;
+
+			$break = false ;			
+			
+			if( $systeme != $systemeCurrent ) {
+				$break = true ;
+			}
+			$dateCurrent = ( $anneeCurrent * 12 ) + $moisCurrent ;
+			$date = ( $annee * 12 ) + $mois ;
+			$deltaMois = $date - $dateCurrent ;
+			if( $deltaMois > 6 ) {
+				$break = true ;
+			}
+			if( $break ) {
+				$html .= "<tr>" ;
+				$html .= "<td>$paysCurrent</td>" ;
+				$html .= "<td>$systemeCurrent</td>" ;
+				$html .= "<td>$moisDebut/$anneeDebut</td>" ;
+				$html .= "<td>$moisCurrent/$anneeCurrent</td>" ;
+				$html .= "</tr>" ;
+
+				$paysCurrent = $pays ;
+				$moisDebut = $mois ;
+				$anneeDebut = $annee ;
+			}
+			$systemeCurrent = $systeme ;
+			$moisCurrent = $mois ;
+			$anneeCurrent = $annee ;
+				
+		} while( $row = pg_fetch_array( $result ) ) ;
+		$html .= "<tr>" ;
+		$html .= "<td>$paysCurrent</td>" ;
+		$html .= "<td>$systemeCurrent</td>" ;
+		$html .= "<td>$moisDebut/$anneeDebut</td>" ;
+		$html .= "<td>$moisCurrent/$anneeCurrent</td>" ;
+		$html .= "</tr>" ;
+		$html .= "</table>" ;
+	}	
+	
+	$html .= "<br/><br/>" ;
+	
+	$sql = "SELECT COUNT(C.*) as nb,P.nom as pays,SY.libelle as systeme,EXTRACT(YEAR FROM C.date_debut) as annee,EXTRACT( MONTH FROM C.date_debut) as mois FROM exp_campagne C " ;
+	$sql .= "INNER JOIN ref_systeme SY ON SY.id = C.ref_systeme_id " ;
+	$sql .= "INNER JOIN ref_pays P ON P.id = SY.ref_pays_id " ;
+	$sql .= "GROUP BY P.nom,SY.libelle,annee,mois " ;
+	$sql .= "ORDER BY pays,systeme,annee,mois " ;
+	$result = pg_query( $connectPPEAO, $sql ) or die( pg_error( ) ) ;
+	if( $row = pg_fetch_array( $result ) ) {
+		$paysCurrent = $row[ 'pays' ] ;
+		$systemeCurrent = $row[ 'systeme' ] ;
+		$moisCurrent = $row[ 'mois' ] ;
+		$anneeCurrent = $row[ 'annee' ] ;
+		$moisDebut = $moisCurrent ;
+		$anneeDebut = $anneeCurrent ;
+		
+		$html .= "<h2>P&ecirc;che scientifique</h2>" ;
+		$html .= "<table border='1'>" ;
+		$html .= "<tr>" ;
+		$html .= "<th>Pays</th>" ;
+		$html .= "<th>Ecosystème</th>" ;
+		$html .= "<th>NB Campagnes</th>" ;
+		$html .= "<th>Début</th>" ;
+		$html .= "<th>Fin</th>" ;
+		$html .= "</tr>" ;
+		
+		do {
+			$pays = $row[ 'pays' ] ;
+			$systeme = $row[ 'systeme' ] ;
+			$mois = $row[ 'mois' ] ;
+			$annee = $row[ 'annee' ] ;
+
+			$break = false ;
+				
+			if( $systeme != $systemeCurrent ) {
+				$break = true ;
+			}
+			$dateCurrent = ( $anneeCurrent * 12 ) + $moisCurrent ;
+			$date = ( $annee * 12 ) + $mois ;
+			$deltaMois = $date - $dateCurrent ;
+			if( $deltaMois > 12 ) {
+				$break = true ;
+			}
+			if( $break ) {
+				$html .= "<tr>" ;
+				$html .= "<td>$paysCurrent</td>" ;
+				$html .= "<td>$systemeCurrent</td>" ;
+				$html .= "<td>$nbCurrent</td>" ;
+				$html .= "<td>$moisDebut/$anneeDebut</td>" ;
+				$html .= "<td>$moisCurrent/$anneeCurrent</td>" ;
+				$html .= "</tr>" ;
+
+				$nbCurrent = $row[ 'nb' ] ;
+				$paysCurrent = $pays ;
+				$moisDebut = $mois ;
+				$anneeDebut = $annee ;
+			} else {
+				$nbCurrent += $row[ 'nb'] ;
+			}
+			$systemeCurrent = $systeme ;
+			$moisCurrent = $mois ;
+			$anneeCurrent = $annee ;
+		
+		} while( $row = pg_fetch_array( $result ) ) ;
+		$html .= "<tr>" ;
+		$html .= "<td>$paysCurrent</td>" ;
+		$html .= "<td>$systemeCurrent</td>" ;
+		$html .= "<td>$nbCurrent</td>" ;
+		$html .= "<td>$moisDebut/$anneeDebut</td>" ;
+		$html .= "<td>$moisCurrent/$anneeCurrent</td>" ;
+		$html .= "</tr>" ;
+		$html .= "</table>" ;
+	}	
+	
+	$html .= "</div>" ;	
+	
+	echo $html ;
+
+// VERSION DYNAMIQUE...
+?>
 	
 	</div> <!-- end div id="main_container"-->
 	

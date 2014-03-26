@@ -34,7 +34,6 @@ $oldValue=htmlspecialchars($values[0][$editColumn]);
 
 
 
-
 // on compile les informations sur les colonnes de la table $editTable
 $cDetails=getTableColumnsDetails($connectPPEAO,$tablesDefinitions[$editTable]["table"]);
 $cDetail=$cDetails[$editColumn];

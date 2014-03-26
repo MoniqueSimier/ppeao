@@ -305,6 +305,21 @@ margin:24px 6px 6px 18px;
 width:800px;
 }
 
+#main_droits {
+margin:24px 6px 6px 18px;
+width:800px;
+}
+
+#choix_systemes {
+margin:24px 6px 6px 18px;
+width:800px;
+}
+
+#droits_consulter {
+margin:24px 6px 6px 18px;
+width:800px;
+}
+
 #main_container.edition {
 width:800%;
 }
@@ -381,6 +396,14 @@ padding:0;
 #archives_list {
 margin: 18px 0 0 0;
 font-size: 9px;
+}
+
+/* 	26/03/2014 
+	Pour info_ecosysteme dynamique
+*/
+.info_tbl td {
+	padding: 5px ;
+	text-align: right ;
 }
 
 /* *********************** */

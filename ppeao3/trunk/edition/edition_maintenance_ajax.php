@@ -335,7 +335,7 @@ $message='<h5>maintenance de la base</h5>';
 
 // on indique si l'operation a eu lieu avec succes ou pas
 if ($success) {
-	$message.="<p style="font-size:10px">l'op&eacute;ration ".$operation." a &eacute;t&eacute; r&eacute;alis&eacute;e avec succ&egrave;s.".$infoComp."</p>";
+	$message.="<p style='font-size:10px'>l'op&eacute;ration ".$operation." a &eacute;t&eacute; r&eacute;alis&eacute;e avec succ&egrave;s.".$infoComp."</p>";
 }
 	else {
 		$message.="<p>une erreur est survenue lors de l'op&eacute;ration de ".$operation." ".$erreurSQL.".</p>";
