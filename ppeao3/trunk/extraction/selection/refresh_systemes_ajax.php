@@ -2,6 +2,10 @@
 
 // script appelé via Ajax par la fonction javascript refreshSystemes() pour rafraichir le <select> permettant de sélectionner les systemes des données à extraire
 
+// >>> 01/04/2014 Restriction systemes par user F.WOEHL
+session_start(); // Pour garder le $_SESSION[ "s_ppeao_user_id" ] via ajax
+// <<< 01/04/2014 Restriction systemes par user F.WOEHL
+
 include $_SERVER["DOCUMENT_ROOT"].'/connect.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/edition/edition_config.inc';
 include $_SERVER["DOCUMENT_ROOT"].'/functions_generic.php';

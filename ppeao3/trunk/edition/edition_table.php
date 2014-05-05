@@ -182,6 +182,7 @@ if (isset($_GET[$editTable])) {
 // on construit la requête SQL pour obtenir le nombre total d'enregistrements dans la table
 $countAllSql='	SELECT COUNT(*) FROM '.$tablesDefinitions[$editTable]["table"].'
 				WHERE  TRUE';
+			
 $countAllResult=pg_query($connectPPEAO,$countAllSql) or die('erreur dans la requete : '.$countSql. pg_last_error());
 $countAllRow=pg_fetch_row($countAllResult);
 $countAllTotal=$countAllRow[0];

@@ -751,9 +751,17 @@ function listSelectSystemes($pays,$campagnes_ids,$enquetes_ids) {
 } // end if(!empty($campagnes_ids[0]) || !empty($enquetes_ids[0]))
 		
 	$sql_systemes.=')';
+	
+// >>> 26/03/2014 Restriction systeme par user F.WOEHL
+	$systemeUser = getSystemeUserRight( $_SESSION[ "s_ppeao_user_id" ] );
+	if( !empty( $systemeUser ) ) {
+		$sql_systemes .= ' AND ref_systeme.id IN ( \''.arrayToList($systemeUser,'\',\'','\'').') ' ;
+	}  
+// <<< 26/03/2014 Restriction systeme par user F.WOEHL
+
+	
 	$sql_systemes.=' ORDER BY ref_systeme.libelle';
 	
-
 	$result_systemes=pg_query($connectPPEAO,$sql_systemes) or die('erreur dans la requete : '.$sql_systemes. pg_last_error());
 	$array_systemes=pg_fetch_all($result_systemes);
 	pg_free_result($result_systemes);
@@ -1101,7 +1109,18 @@ echo('</div></div>');}
 
 }
 
+// <<< 26/03/2014 systemes par user by F.WOEHL
+function getSystemeUserRight( $user_id ) {
+ global $connectPPEAO;
 
+ $sql = "SELECT ref_systeme_id FROM admin_acces_users_systemes WHERE user_id=$user_id " ;
+ $result = pg_query( $connectPPEAO, $sql ) or die( 'erreur dans la requete : '.$sql. pg_last_error() ) ;
+ $array = pg_fetch_all( $result ) ;
+ pg_free_result( $result ) ;
+
+ return $array[ 0 ] ;
+}
+// <<< 26/03/2014 systemes par user by F.WOEHL
 
 //******************************************************************************
 // affiche le bloc permettant de selectionner des systemes
@@ -1156,6 +1175,13 @@ switch ($_GET["step"]) {
 			
 $sql_pays.=(')');
 		
+// >>> 26/03/2014 Restriction systeme par user F.WOEHL
+	$systemeUser = getSystemeUserRight( $_SESSION[ "s_ppeao_user_id" ] );
+	if( !empty( $systemeUser ) ) {
+		$sql_pays .= ' AND ref_systeme.id IN ( \''.arrayToList($systemeUser,'\',\'','\'').') ' ;
+	}  
+// <<< 26/03/2014 Restriction systeme par user F.WOEHL
+
 //debug echo('<pre>');print_r($sql_pays);echo('</pre>');
 
 		

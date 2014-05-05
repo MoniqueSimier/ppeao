@@ -68,11 +68,11 @@ nettoieLogExport();
 // si l'utilisateur n'a pas accès ou n'est pas connecté, on affiche un message l'invitant à contacter un administrateur pour obtenir l'accès
 else {userAccessDenied($zone);}
 ?>
-// debugage zones - groupes
 <?php 
- print_r( userGetAuthorizedZones( $_SESSION['s_ppeao_user_id'] )) ;
+// debugage zones - groupes
+// print_r( userGetAuthorizedZones( $_SESSION['s_ppeao_user_id'] )) ;
+// fin
 ?>
-//fin
 </div> <!-- end div id="main_container"-->
 
 <?php 

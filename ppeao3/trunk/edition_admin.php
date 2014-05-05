@@ -58,6 +58,9 @@ echo('<div id="tables_liste">');
 echo('<h5 style="padding-top:25px">contr&ocirc;le de l&#x27;extraction des donn&eacute;es</h5>');
 echo('<ul>');
 echo('<li><a href="/edition/edition_table.php?selector=no&editTable=acces_systemes">d&eacute;finir une date butoir particuli&egrave;re pour un syst&egrave;me</a></li>');
+// 28/03/2014 F.WOEHL systeme par user >>> 
+echo('<li><a href="/edition/edition_table.php?selector=no&editTable=users_systemes">d&eacute;finir une restriction syst&egrave;me par utilisateur</a></li>');
+// 28/03/2014 F.WOEHL systeme par user <<<
 echo('<li><a href="/edition/edition_droits_acces.php">autoriser un utilisateur ou un groupe &agrave; acc&eacute;der &agrave; toutes les donn&eacute;es</a></li>');
 echo('</ul>');
 buildTableList("admin");
