@@ -470,7 +470,7 @@ function RestoreBD($CRexecution,$connectRestaure,$baseRestaure,$baseBackup,$host
 		if ($dropBDResult) {
 			pg_free_result($dropBDResult);
 			$traitementfin = false;
-			$CRexecution .= "Base principale ".$baseRestaure." supprim&eacute;e.<br/>";
+			$CRexecution .= "Base principale ".$baseRestaure." supprimee.<br/>";
 			// On continue le traitement
 			// Copie de la base backup en base principale
 			$createBDSQL = "create database \"".$baseRestaure."\" with template \"".$baseBackup."\"";
@@ -485,14 +485,14 @@ function RestoreBD($CRexecution,$connectRestaure,$baseRestaure,$baseBackup,$host
 				$erreurQuery = pg_last_error($baseBackup);
 				if (!$createBDResult) {
 					$ErreurProcess = true;
-					$CRexecution .= "La base principale ".$baseRestaure." n'a pas pu etre recr&eacute;e au deuxieme essai.<br/> Contactez votre administrateur pour recreer la base.<br/>";
+					$CRexecution .= "La base principale ".$baseRestaure." n'a pas pu etre recree au deuxieme essai.<br/> Contactez votre administrateur pour recreer la base.<br/>";
 				} else {
 					$CRexecution .= "Base principale ".$baseRestaure." recr&eacute;e au deuxieme essai.<br/>";
 					$traitementfin = true;
 				}
 			} else {
 				// On autorise le dernier traitement
-				$CRexecution .= "Base principale ".$baseRestaure." recr&eacute;e.<br/>";
+				$CRexecution .= "Base principale ".$baseRestaure." recree.<br/>";
 				$traitementfin = true;
 			}
 			// Lancement du dernier traitement : drop de la base PPEAO

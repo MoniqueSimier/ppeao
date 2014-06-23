@@ -244,8 +244,8 @@ while (list($key, $val) = each($info_deb))//pour tous les debarquements
 {
 	
 	$numero = $numero+1;
-	//$messageProcess .= "Recomposition de l'enqu&ecirc;te ".$numero . " sur ".$nb_enr." <br/>";
-	//print "Recomposition de l'enquête ".$numero . " sur ".$nb_enr;
+	//$messageProcess .= "Recomposition de l'enquete ".$numero . " sur ".$nb_enr." <br/>";
+	//print "Recomposition de l'enquete ".$numero . " sur ".$nb_enr;
 
 	while (list($key2, $val2) = each($val))			//pour chaque fraction
 		{
@@ -4773,7 +4773,7 @@ while (list($key, $val) = each($info_deb)){
 	// print ("Insertion de l'enquête ".$numero2 . " sur ".$nb_enr ."<br/>");
 	//$messageProcess.="Insertion de l'enqu&ecirc;te ".$numero2 . " sur ".$nb_enr ."<br/>";
 	
-	$messageProcess.="<br/><b>Recomposisiton de l'enqu&ecirc;te ".$numero2 . " sur ".$nb_enr ."</b><br/><br/>";
+	$messageProcess.="<br/><b>Recomposisiton de l'enquete ".$numero2 . " sur ".$nb_enr ."</b><br/><br/>";
 	
 	$Wti =0;
 	while (list($key2, $val2) = each($val)){
@@ -4800,7 +4800,7 @@ while (list($key, $val) = each($info_deb)){
 			
 		}else {
 			
-			$messageProcess.="<font color='blue'>Pb insertion de cette requête</font><br/>";
+			$messageProcess.="<font color='blue'>Pb insertion de cette requete</font><br/>";
 			// traitement d'erreur ? On arrête ou seulement avertissement ?
 		}
 	}
@@ -4828,7 +4828,7 @@ while (list($key, $val) = each($info_deb)){
 		if ( $RunQErreur){
 			
 		} else {
-			$messageProcess.="<font color='blue'>Pb insertion de cette requête</font><br/>";
+			$messageProcess.="<font color='blue'>Pb insertion de cette requete</font><br/>";
 			// traitement d'erreur ? On arrête ou seulement avertissement ?
 		
 		}

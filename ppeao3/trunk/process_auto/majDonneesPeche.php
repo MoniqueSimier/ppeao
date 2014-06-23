@@ -527,14 +527,14 @@ if ($typeAction == "majrec" && $tableEnCours == "" && !$UniqExecSQL ) {
 
 if (!$UniqExecSQL) {
 if (!$cptTableEq ==0) {
-	$CRexecution = $CRexecution."** Nombre de peche ".$tempType." deja existantes = ".$cptTableEq." / ".$cptTableTotal." lues <br/>";
+	$CRexecution = $CRexecution."** Nombre de peches ".$tempType." deja existantes = ".$cptTableEq." / ".$cptTableTotal." lues <br/>";
 	if ($EcrireLogComp ) { 
-		WriteCompLog ($logComp,"Nombre de peche ".$tempType." deja existantes = ".$cptTableEq." / ".$cptTableTotal." lues ",$pasdefichier);
+		WriteCompLog ($logComp,"Nombre de peches ".$tempType." deja existantes = ".$cptTableEq." / ".$cptTableTotal." lues ",$pasdefichier);
 	}
 } else {
-	$CRexecution = $CRexecution."** Nombre de peche ".$tempType." traitees = ".$cptTableTotal."<br/>";
+	$CRexecution = $CRexecution."** Nombre de peches ".$tempType." traitees = ".$cptTableTotal."<br/>";
 	if ($EcrireLogComp ) { 
-		WriteCompLog ($logComp,"Nombre de peche ".$tempType." traitees = ".$cptTableTotal,$pasdefichier);
+		WriteCompLog ($logComp,"Nombre de peches ".$tempType." traitees = ".$cptTableTotal,$pasdefichier);
 	}
 }
 if (! $cptErreurTotal == 0) {

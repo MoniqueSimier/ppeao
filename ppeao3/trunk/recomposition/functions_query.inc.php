@@ -336,7 +336,7 @@ function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 				
 					}else {
 						$messageProcess.="<font color='blue'>Pb insertion de cette requete</font><br/>";
-						// traitement d'erreur ? On arrête ou seulement avertissement ?
+						// traitement d'erreur ? On arrete ou seulement avertissement ?
 					}
 					$messageProcess .= "".$query."<br/>";
 					$Wti += $datas[$key][$key2][8];
@@ -365,7 +365,7 @@ function insert_values_recompose($datas,$afficherMessage,$nb_enr){
 				
 			} else {
 			$messageProcess.="<font color='blue'>Pb insertion de cette requête</font><br/>";
-				// traitement d'erreur ? On arrête ou seulement avertissement ?
+				// traitement d'erreur ? On arrete ou seulement avertissement ?
 			}
 		}
 	}
