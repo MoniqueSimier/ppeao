@@ -39,11 +39,11 @@ $zone=3; // zone portage (voir table admin_zones)
 			</div>
 			<div id="subContent">
 				<div id="formStat">
-					<h1>Calcul des statistiques de p&ecirc;che par agglom&eacute;ration enqu&ecirc;t&eacute;e.</h1>
+					<h1>Calcul des statistiques de peche par agglomeration enquetee.</h1>
 					<form name="form"  >
 					  <p>
 						<br/>
-						Entrez le nom de la base de donn&eacute;es &agrave; traiter.<br>
+						Entrez le nom de la base de donnees &agrave; traiter.<br>
 						<input type="text" name="base" id="base"/>
 						<br/>
 						Entrez une adresse mail.<br>
@@ -52,7 +52,7 @@ $zone=3; // zone portage (voir table admin_zones)
 						<input type="text" name="adresse" id="adresse"/>
 						<br/>
 						Si vous rentrez une adresse valide, 
-						il vous sera envoy&eacute; un mail de confirmation &agrave; la fin de la cr&eacute;ation des statistiques de p&ecirc;che.<br/>
+						il vous sera envoye un mail de confirmation a la fin de la creation des statistiques de peche.<br/>
 						<br/>
 					 <input type="button" value="lancer le calcul" onClick="runStat();"/>
 					  </p>

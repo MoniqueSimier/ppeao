@@ -110,7 +110,7 @@ $ArretTimeOut = false;
 // Connexion à la BD pour maj des logs
 
 if (!$connectPPEAO) { 
-	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion à la base de donn&eacute;es pour maj des logs</div>" ; 
+	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion à la base de donnees pour maj des logs</div>" ; 
 	exit;
 	}
 logWriteTo(7,"notice","**- Debut lancement purge base portage .","","","0");
@@ -130,7 +130,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 	
 	$connectBDPECHE =pg_connect ("host=".$host." dbname=".$bd_peche." user=".$user." password=".$passwd);
 	if (!$connectBDPECHE) { 
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es ".$bd_peche."</div>" ; exit;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donnees ".$bd_peche."</div>" ; exit;
 		}
 
 
@@ -172,7 +172,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$createBDSQL = "drop database ".$BDBackup;
 			$createBDResult = pg_query($connectPPEAO,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
 			if ($createBDResult) {
-				$CRexecution = $CRexecution."Base de sauvegarde ".$BDBackup." supprim&eacute;e.<br/>";
+				$CRexecution = $CRexecution."Base de sauvegarde ".$BDBackup." supprimee.<br/>";
 				if ($EcrireLogComp ) {
 					WriteCompLog ($logComp,"Base de sauvegarde ".$BDBackup." supprimee.",$pasdefichier);
 				}
@@ -187,7 +187,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			$createBDSQL = "drop database ".$BDBackupPortage;
 			$createBDResult = pg_query($connectBDPECHE,$createBDSQL) or die('erreur dans la requete : '.pg_last_error());
 			if ($createBDResult) {
-				$CRexecution = $CRexecution."Base de sauvegarde ".$BDBackupPortage." supprim&eacute;e.<br/>";
+				$CRexecution = $CRexecution."Base de sauvegarde ".$BDBackupPortage." supprimee.<br/>";
 				if ($EcrireLogComp ) {
 					WriteCompLog ($logComp,"Base de sauvegarde ".$BDBackupPortage." supprimee.",$pasdefichier);
 				}
@@ -288,7 +288,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				if ($_SESSION['s_status_process_auto'] == 'ko') {
 					$CRexecution = $CRexecution."Le process etait en erreur, on ne purge pas la base portage.<br/>";
 				} else {
-					$CRexecution = $CRexecution."L'utilisateur a choisi de ne pas vider les table";
+					$CRexecution = $CRexecution."L'utilisateur a choisi de ne pas vider les tables";
 				}
 			} 	//fin du if ($viderTable && ...)  
 		} //fin du if ($_SESSION['s_status_process_auto'] == 'ko' && $_SESSION['s_status_restauration'] == "yes"))
@@ -298,7 +298,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		$resultVacuum=pg_query($connectBDPECHE,$scriptVacuum);
 		if ( $resultVacuum){
 			if ($EcrireLogComp ) {
-				WriteCompLog ($logComp,"Vacuum / Analyze execute avec succes sur BDPECHE ",$pasdefichier);
+				WriteCompLog ($logComp,"Vacuum / Analyze executee avec succes sur BDPECHE ",$pasdefichier);
 			}			
 		} else {
 			$ErreurProcess = true;
@@ -323,8 +323,8 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 			if ($EcrireLogComp ) {
 				WriteCompLog ($logComp,"Nettoyage execute avec succes.",$pasdefichier);
 			}		
-			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Nettoyage ex&eacute;cut&eacute; avec succ&egrave;s.</div><div id=\"purge_chk\">Exec= ".$Labelpasdetraitement."</div>";
-			echo"<div id=\"vertical_slide8\">Un compte rendu plus d&eacute;taill&eacute; est disponible dans le fichier de log : <a href=\"".$nomLogLien."\" target=\"log\">".$nomLogLien."</a><br/>".$CRexecution."</div>"; 
+			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Nettoyage execute avec succes.</div><div id=\"purge_chk\">Exec= ".$Labelpasdetraitement."</div>";
+			echo"<div id=\"vertical_slide8\">Un compte rendu plus detaillee est disponible dans le fichier de log : <a href=\"".$nomLogLien."\" target=\"log\">".$nomLogLien."</a><br/>".$CRexecution."</div>"; 
 		}
 		
 		if ($EcrireLogComp ) {

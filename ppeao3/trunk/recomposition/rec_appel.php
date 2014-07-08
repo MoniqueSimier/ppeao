@@ -14,7 +14,7 @@ $zone=3; // zone portage (voir table admin_zones)
 	// les balises meta communes  toutes les pages
 	//include $_SERVER["DOCUMENT_ROOT"].'meta.inc';
 	?>
-	<title>PPEAO Recomposition des donn&eacute;es : choix BD</title>
+	<title>PPEAO Recomposition des donnees : choix BD</title>
 	<link href="/styles/mainstyles.css" title="mainstyles" rel="stylesheet" type="text/css" />
 	<script src="/js/basic.js" type="text/javascript" charset="utf-8"></script>
 	<script src="/js/ajaxEfface.js"></script>
@@ -37,15 +37,15 @@ $zone=3; // zone portage (voir table admin_zones)
 			
 			<?php  // Code original a mettre à jour ?>
 			<div id='headerinfo'>
-			<h1>Recomposition automatique des donn&eacute;es d'enqu&ecirc;tes.</h1>
+			<h1>Recomposition automatique des donnees d'enquetes.</h1>
 			<br/>
 			</div>
-			Une enqu&ecirc;te de p&ecirc;che est l'op&eacute;ration &eacute;l&eacute;mentaire d'observation des d&eacute;barquements. Dans un cas id&eacute;al, toutes les informations demand&eacute;es sont relev&eacute;es par l'enqu&ecirc;teur. Dans la plupart des cas, une partie de l'information manque.
-			Le but de ce module est de recomposer toutes les enqu&ecirc;tes, une par une, pour obtenir des enqu&ecirc;tes id&eacute;ales. Cette recomposition comprend 3 phases : 
+			Une enquete de peche est l'operation elementaire d'observation des debarquements. Dans un cas ideal, toutes les informations demandees sont relevees par l'enqueteur. Dans la plupart des cas, une partie de l'information manque.
+			Le but de ce module est de recomposer toutes les enqu&etes, une par une, pour obtenir des enquetes ideales. Cette recomposition comprend 3 phases : 
 			<ul>
-				<li>une estimation du nombre et du poids des poissons d'une fraction dite d&eacute;barqu&eacute;e</li>
-				<li>une comparaison des poids des fractions d&eacute;barqu&eacute;es avec le poids total du d&eacute;barquement annonc&eacute; par l'enqu&ecirc;teur</li>
-				<li>la prise en compte &eacute;ventuelle de fractions non observ&eacute;es directement par l'enqu&ecirc;teur.</li>
+				<li>une estimation du nombre et du poids des poissons d'une fraction dite debarquee</li>
+				<li>une comparaison des poids des fractions debarquees avec le poids total du debarquement annonce par l'enqueteur</li>
+				<li>la prise en compte eventuelle de fractions non observ&ees directement par l'enqueteur.</li>
 				<li>Version JME 05 2009.<li>
 			</ul>
 
@@ -70,7 +70,7 @@ $zone=3; // zone portage (voir table admin_zones)
 			// Recuperation du resultat
 			$row= pg_fetch_row($result);
 			$nb_enr = $row[0];
-			print ("<div id='nbEnquete'>".$nb_enr . " enqu&ecirc;tes &agrave; traiter dont");
+			print ("<div id='nbEnquete'>".$nb_enr . " enquetes a traiter dont");
 			$query = "select count(id)
 			 FROM art_debarquement_rec";
 			$result = pg_query($connection, $query);
@@ -78,7 +78,7 @@ $zone=3; // zone portage (voir table admin_zones)
 			$nb_deja_rec = $row[0];
 			if ($nb_deja_rec == 0){print (" ".$nb_deja_rec);}
 			else {print (" ".$nb_deja_rec);}
-			print " enqu&ecirc;tes d&eacute;j&agrave; recompos&eacute;es. </div>";
+			print " enquetes deja recomposees. </div>";
 			
 			pg_close();
 			?>
@@ -94,7 +94,7 @@ $zone=3; // zone portage (voir table admin_zones)
 				<br/>
 				
 				Si vous rentrez une adresse valide, 
-				il vous sera envoy&eacute; un mail de confirmation &agrave; la fin de la recomposition des donn&eacute;es.<br/>
+				il vous sera envoye un mail de confirmation a la fin de la recomposition des donnees.<br/>
 				<br/>
 				
 
