@@ -64,7 +64,7 @@ if ($EcrireLogComp ) {
 	$nomLogLien = $nomLogLien."/".date('y\-m\-d')."-".$fileLogComp;
 	$logComp = fopen($nomFicLogComp , "a+");
 	if (! $logComp ) {
-		$messageGen = " erreur de cr&eacute;ation du fichier de log";
+		$messageGen = " erreur de creation du fichier de log";
 		logWriteTo(7,"error","Erreur de creation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php","","","0");
 		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 		exit;		
@@ -77,13 +77,13 @@ if (isset($_GET['pg'])) {
 		case "rec":
 			// Comparaison du referentiel / parametrage 
 			$nomFenetre = "processAutoRec";
-			$nomAction = "recomposition des donn&eacute;es";
+			$nomAction = "recomposition des donnees";
 			$numFen = 5;
 			 break;
 		case "stat":
 			// Comparaison du parametrage de BDPECHE
 			$nomFenetre = "processAutoStat";
-			$nomAction = "estimation des statistiques de p&ecirc;che";
+			$nomAction = "estimation des statistiques de peche";
 			$numFen = 6;
 			 break;
 	}
@@ -169,17 +169,17 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 				$row= pg_fetch_row($result);
 				$nb_deja_rec = $row[0];
 				if ($nb_deja_rec == 0){
-					$messageinfo .= " pas d'enqu&ecirc;te recompos&eacute;e. ";
+					$messageinfo .= " pas d'enquete recomposee. ";
 				} else {
 					$traitRecompOk = true;
-					$messageinfo .= $nb_deja_rec . " enqu&ecirc;te(s) recompos&eacute;e(s). ";
+					$messageinfo .= $nb_deja_rec . " enquete(s) recomposee(s). ";
 				}
 			}
 			break;
 			
 		case "stat":
 			include $_SERVER["DOCUMENT_ROOT"].'/statistiques/statistiques.php';	
-			$messageinfo .= " Traitement effectu&eacute; (c'est toujours le cas, statistiques.php ne renvoie jamais d'erreur)";
+			$messageinfo .= " Traitement effectue (c'est toujours le cas, statistiques.php ne renvoie jamais d'erreur)";
 			$traitRecompOk = true;
 			break;
 	} 
@@ -190,7 +190,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		</form>";
 	if ($traitRecompOk) {
 		// Traitement OK
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Processus ".$nomAction." ex&eacute;cut&eacute; avec succ&egrave;s : </div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>";	
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/completed.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Processus ".$nomAction." execute avec succes : </div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>";	
 						//echo"<div class=\"marginCR\">Compte Rendu&nbsp;<a id=\"v_slidein".$numFen."\" href=\"#\"> Afficher </a>|<a id=\"v_slideout".$numFen."\" href=\"#\"> Fermer </a>| <strong>status</strong>: <span id=\"vertical_status".$numFen."\">open</span>				</div>";
 		echo"<div id=\"vertical_slide".$numFen."\">".$messageinfo."</div>";
 		if ($EcrireLogComp ) {
@@ -199,7 +199,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 		}
 	} else {
 		// Erreur dans le traitement
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur dans le processus ".$nomAction." des donn&eacute;es </div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur dans le processus ".$nomAction." des donnees </div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 						//echo"<div class=\"marginCR\">Compte Rendu&nbsp;<a id=\"v_slidein".$numFen."\" href=\"#\"> Afficher </a>|<a id=\"v_slideout".$numFen."\" href=\"#\"> Fermer </a>| <strong>status</strong>: <span id=\"vertical_status".$numFen."\">open</span>				</div>";
 		echo"<div id=\"vertical_slide".$numFen."\">".$messageinfo."</div>";
 		
@@ -217,7 +217,7 @@ if (! $pasdetraitement ) { // test pour debug lors du lancement de la chaine com
 
 
 } else {
-	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Etape ".$nomAction." non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>";
+	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Etape ".$nomAction." non executee par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>";
 } // end if (! $pasdetraitement )
 exit;
 

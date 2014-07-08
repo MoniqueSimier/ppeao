@@ -133,7 +133,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 					<div id="comparaisonInv_txt">Comparaison du param&eacute;trage p&ecirc;ches artisanales avec la base de r&eacute;f&eacute;rence.</div>
 					<div id="comparaisonInv_chk">Lancer comp. param. art.&nbsp;<input type="checkbox" id="compinvcheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 					<?php 	$navbarLevel = 3;
-							$texteDiv = "Compte-rendu de comparaison r&eacute;f&eacute;rentiel et param&eacute;trage.";	
+							$texteDiv = "Compte-rendu de comparaison referentiel et parametrage.";	
 							include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 	
 				</div>
@@ -143,7 +143,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 					<div id="copieScientifique_txt">Copie des p&ecirc;ches scientifiques.</div>
 					<div id="copieScientifique_chk">Lancer copie p&ecirc;ches scient.&nbsp;<input type="checkbox" id="majsccheck" checked="checked" /></div>
 					<?php 	$navbarLevel = 4;
-							$texteDiv = "Compte-rendu de copie des p&ecirc;ches scientifiques.";	
+							$texteDiv = "Compte-rendu de copie des peches scientifiques.";	
 							include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 
 				</div>
@@ -153,7 +153,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 					<div id="processAutoRec_txt">Process recomposition donn&eacute;es.</div>
 					<div id="processAutoRec_chk">Lancer recomp. donn&eacute;es.&nbsp;<input type="checkbox" id="reccheck" checked="checked"/></div>
 					<?php 	$navbarLevel = 5;
-						$texteDiv = "Compte-rendu de recomposition donn&eacute;es.";	
+						$texteDiv = "Compte-rendu de recomposition donnees.";	
 						include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>				
 				</div>
 
@@ -180,7 +180,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 				<div id="purge_chk">Lancer purge donn&eacute;es.&nbsp;<input type="checkbox" id="purgecheck" checked="checked" <?php echo $boutDisabled;?>/></div>
 									
 				<?php 	$navbarLevel = 8;
-						$texteDiv = "Compte-rendu de la purge des donn&eacute;es.";	
+						$texteDiv = "Compte-rendu de la purge des donnees.";	
 						include $_SERVER["DOCUMENT_ROOT"].'/process_auto/navbarCR.inc'; ?>
 				</div>
 				<?php // Un formulaire bidon pour renvoyer l'etat du traitement au javascript*/ ?>

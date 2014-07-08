@@ -254,7 +254,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	if (! $pasdefichier) { // Pour test sur serveur linux
 		if (! file_exists($dirLog)) {
 			if (! mkdir($dirLog) ) {
-				$messageGen = " erreur de cr&eacute;ation du r&eacute;pertoire de log";
+				$messageGen = " erreur de creation du repertoire de log";
 				logWriteTo(7,"error","Erreur de creation du repertoire de log dans comparaison.php","","","0");
 				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 				exit;
@@ -267,7 +267,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 			$nomLogLien = $nomLogLien."/".date('y\-m\-d')."-".$fileLogComp;
 			$logComp = fopen($nomFicLogComp , "a+");
 			if (! $logComp ) {
-				$messageGen = " erreur de cr&eacute;ation du fichier de log";
+				$messageGen = " erreur de creation du fichier de log";
 				logWriteTo(7,"error","Erreur de creation du fichier de log ".$dirLog."/".date('y\-m\-d')."-".$fileLogComp." dans comparaison.php","","","0");
 				echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 				exit;		
@@ -277,7 +277,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		$numfic = str_pad($_SESSION['s_num_encours_fichier_SQL'], 3, "0", STR_PAD_LEFT);
 		$SQLComp = fopen($dirLog."/".date('y\-m\-d')."-".$nomFicSQL."-".$numfic.".sql", "a+");
 		if (! $SQLComp ) {
-			$messageGen = " erreur de cr&eacute;ation du fichier SQL contenant les scripts";
+			$messageGen = " erreur de creation du fichier SQL contenant les scripts";
 			logWriteTo(7,"error","Erreur de creation du fichier de SQL dans comparaison.php","","","0");
 			echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 			exit;		
@@ -325,12 +325,12 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 	
 	$connectBDPECHE =pg_connect ("host=".$host." dbname=".$bd_peche." user=".$user." password=".$passwd);
 	if (!$connectBDPECHE) { 
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es ".$bd_peche."</div>" ; exit;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donnees ".$bd_peche."</div>" ; exit;
 		}
 		
 	// Test de la connexion à la BD 
 	if (!$connectPPEAO) { 
-		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donn&eacute;es BD_PPEAO pour maj des logs</div>" ; exit;
+		echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Erreur de connexion a la base de donnees BD_PPEAO pour maj des logs</div>" ; exit;
 	}
 	
 	// Gestion des noms des BD
@@ -517,7 +517,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 						$numfic = str_pad($_SESSION['s_num_encours_fichier_SQL'], 3, "0", STR_PAD_LEFT);
 						$SQLComp = fopen($dirLog."/".date('y\-m\-d').$typeAction."-".$numfic.".sql", "a+");
 						if (! $SQLComp ) {
-							$messageGen = " erreur de cr&eacute;ation du fichier SQL contenant les scripts";
+							$messageGen = " erreur de creation du fichier SQL contenant les scripts";
 							logWriteTo(7,"error","Erreur de creation du fichier de SQL dans comparaison.php","","","0");
 							echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">ERREUR .".$messageGen."</div>" ;
 							exit;		
@@ -666,12 +666,12 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 						$cptTableLignesVidesDiff++;
 					}
 					if ($typeAction == "comp" || $typeAction == "compinv") {
-						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;".$cptChampVide." donn&eacute;es manquantes - ";
+						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;".$cptChampVide." donnees manquantes - ";
 						if ($EcrireLogComp ) {
 							WriteCompLog ($logComp,"   - donnees manquantes = ".$cptChampVide.". ",$pasdefichier);
 						}
 					} else {
-						$CRexecution = $CRexecution." ".$cptChampVide." donn&eacute;es traitees |";
+						$CRexecution = $CRexecution." ".$cptChampVide." donnees traitees |";
 						if ($EcrireLogComp ) {
 							WriteCompLog ($logComp,"   - donnees traitees = ".$cptChampVide.". ",$pasdefichier);
 						}
@@ -683,12 +683,12 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 						$cptTableDiff++;
 					}
 					if ($typeAction == "comp" || $typeAction == "compinv") {
-						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;".$cptChampDiff." donn&eacute;es diff&eacute;rentes - ";
+						$CRexecution = $CRexecution." <img src=\"/assets/warning.gif\" alt=\"Avertissement\"/>&nbsp;".$cptChampDiff." donnees differentes - ";
 						if ($EcrireLogComp ) {
 							WriteCompLog ($logComp,"   - donnees differentes = ".$cptChampDiff." ",$pasdefichier);
 						}
 					} else {
-						$CRexecution = $CRexecution." ".$cptChampDiff." donn&eacute;es modifi&eacute;es -";
+						$CRexecution = $CRexecution." ".$cptChampDiff." donnees modifiees -";
 						if ($EcrireLogComp ) {
 							WriteCompLog ($logComp,"   - donnees modifiees = ".$cptChampDiff." ",$pasdefichier);
 						}					
@@ -778,7 +778,7 @@ if (! $pasdetraitement ) { // Permet de sauter cette étape (choix de l'utilisate
 		
 	
 } else {
-	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Etape de ".$nomAction." non ex&eacute;cut&eacute;e par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
+	echo "<div id=\"".$nomFenetre."_img\"><img src=\"/assets/incomplete.png\" alt=\"\"/></div><div id=\"".$nomFenetre."_txt\">Etape de ".$nomAction." non executee par choix de l'utilisateur</div><div id=\"".$nomFenetre."_chk\">Exec= ".$Labelpasdetraitement."</div>" ;
 	logWriteTo(7,"error","**- En Test Etape de ".$nomAction." non executee par choix de l'utilisateur","","","0");
 } // end if (! $pasdetraitement )
 

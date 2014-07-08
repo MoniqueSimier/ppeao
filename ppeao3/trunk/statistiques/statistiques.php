@@ -90,7 +90,7 @@ print("</Font>");
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//il existe des guillemets dans la bese de données sur les noms de pays et systèmes
+//il existe des guillemets dans la base de données sur les noms de pays et systèmes
 $pays = str_replace("'","\'",$pays);
 $systeme = str_replace("'","\'",$systeme);
 

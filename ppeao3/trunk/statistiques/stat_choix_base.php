@@ -43,7 +43,7 @@ $zone=3; // zone portage (voir table admin_zones)
 					<form name="form"  >
 					  <p>
 						<br/>
-						Entrez le nom de la base de donnees &agrave; traiter.<br>
+						Entrez le nom de la base de donnees a traiter.<br>
 						<input type="text" name="base" id="base"/>
 						<br/>
 						Entrez une adresse mail.<br>
