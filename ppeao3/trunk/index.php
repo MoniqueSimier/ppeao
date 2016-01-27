@@ -53,7 +53,7 @@ nettoieLogExport();
 <img src="/assets/home/5.jpg" width="120" height="70" alt="&Eacute;quipe de p&ecirc;che scientifique" title="&Eacute;quipe de p&ecirc;che scientifique">
 <img src="/assets/home/6.jpg" width="120" height="70" alt="Pirogues de p&ecirc;che artisanale" title="Pirogues de p&ecirc;che artisanale"></div>
 <br />
-<p class="texte">La base de données PPEAO archive des informations sur les poissons vivant dans <a href="/info_ecosystemes.php">diff&eacute;rents &eacute;cosyst&egrave;mes aquatiques</a> tant continentaux que lagunaires, estuariens ou c&ocirc;tiers de l&rsquo;Afrique de l&rsquo;Ouest. Les données collect&eacute;es concernent aussi bien l'&eacute;cologie des esp&egrave;ces que leur exploitation par la p&ecirc;che artisanale.<br>
+<p class="texte">La base de données PPEAO archive des informations sur les poissons vivant dans <a href="/info_ecosystemes.php">diff&eacute;rents &eacute;cosyst&egrave;mes aquatiques</a> tant continentaux que lagunaires, estuariens ou c&ocirc;tiers de l&rsquo;Afrique de l&rsquo;Ouest. Les données collect&eacute;es concernent aussi bien l'&eacute;cologie des <a href='/info_especes.php'>esp&egrave;ces</a> que leur exploitation par la p&ecirc;che artisanale.<br>
 <br>Ces informations sont le r&eacute;sultat de programmes de recherche men&eacute;s sur ces &eacute;cosyst&egrave;mes &agrave; partir de 1978.
 </p>
 <br>

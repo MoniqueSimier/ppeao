@@ -6,7 +6,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 $section="consulter";
 $subsection="";
 
-$zone=0; // zone libre (voir table admin_zones)
+$zone=8; // zone consultation (voir table admin_zones)
 
 
 // on réinitialise la selection stockee dans des variables de session
@@ -42,6 +42,14 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 <div id="main_container" class="selection">
 <h2 style="text-align:center">consulter des donn&eacute;es : s&eacute;lection
 <?php 
+
+// FW 20160120 >>>
+if( !isset( $_GET[ "step" ] ) ) {
+	$_GET[ "step" ] = 3;
+}
+// FW 20160120 <<<
+
+
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
 if (isset($_GET["step"])) {$step=$_GET["step"];} else {$step=0;}
 if ($step>1) {

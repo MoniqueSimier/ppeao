@@ -406,6 +406,42 @@ font-size: 9px;
 	text-align: right ;
 }
 
+.espece_tbl table {
+	width: 100% ;
+	background: #eee ;
+	border-collapse: collapse;
+	border: 2px solid black ;	
+	table-layout: fixed;
+}
+.espece_tbl th {
+	width: 100px ;	
+	border: 1px solid black ;	
+}
+.espece_tbl td {
+	border: 1px solid black ;	
+}
+.espece_tbl  .tht {
+	width: 250px ;
+}
+.espece_tbl  .thp {
+	width: 100px ;
+}
+.espece_tbl  .as {
+	width: 50px ;
+}
+.espece_tbl  .tdea {
+	background: #bbb ;
+	text-align: center ;
+	font-weight: bold ;
+	font-size : 120% ;
+}
+.espece_tbl  .tdee {
+	background: #aaa ;
+	text-align: center ;
+	font-weight: bold ;
+	font-size : 120% ;
+}
+
 /* *********************** */
 /* the doc display        */
 .marginbottom{
