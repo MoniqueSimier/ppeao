@@ -7,7 +7,13 @@ $section="consulter";
 $subsection="";
 
 $zone=8; // zone consultation (voir table admin_zones)
+//$zone=6;  //JME 012016
 
+// FW 20160209 >>>
+// Mode de sélection des espèce 0=Choix oui/non ou 1=continuer
+//	$modeSelectionEspece = 0 ;
+	$modeSelectionEspece = 1 ;
+// <<< FW
 
 // on réinitialise la selection stockee dans des variables de session
  unset ($_SESSION["selection_url"]);
@@ -42,13 +48,6 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 <div id="main_container" class="selection">
 <h2 style="text-align:center">consulter des donn&eacute;es : s&eacute;lection
 <?php 
-
-// FW 20160120 >>>
-if( !isset( $_GET[ "step" ] ) ) {
-	$_GET[ "step" ] = 3;
-}
-// FW 20160120 <<<
-
 
 // si on a depasse la premiere etape, on affiche le lien permettant d'afficher ou masquer la selection
 if (isset($_GET["step"])) {$step=$_GET["step"];} else {$step=0;}
@@ -94,7 +93,7 @@ if ($_GET["step"]>1) {
 	echo('<div id="selection_precedente_contenu">');
 	}
 // on demande si l'utilisateur veut choisir des especes ou pas
-afficheChoixEspeces();
+afficheChoixEspeces( $modeSelectionEspece );
 // on affiche le selecteur de taxonomie
 afficheTaxonomie();
 // on affiche le selecteur de geographie

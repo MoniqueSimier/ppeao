@@ -156,7 +156,6 @@ $zone=0; // zone publique (voir table admin_zones)
 		do {
 			$espece = $row[ 'nom' ] ;
 			if( $espece != $currentEspece ) {
-				$html .= "<tr>" ;
 				foreach( $pays as $aPays ) {
 					if( empty( $line[ "$aPays-nbart" ] ) ) {
 						$line[ "$aPays-nbart" ] = "<td class='tdea' ></td>" ;
@@ -169,28 +168,29 @@ $zone=0; // zone publique (voir table admin_zones)
 						$line[ "$aPays-nbexp" ] = "<td class='tdee' >*</td>" ;
 					}
 				} 
-				foreach( $line as $item ) {
-					if( !empty( $item ) ) {
-						$html .= $item ;
-					} else {
-						$html .= "<td></td>" ;
+				if( substr( $line[ 'famille' ], 0, 8 ) !== "<td>Inco" ) {
+					$html .= "<tr>" ;
+					foreach( $line as $item ) {
+						if( !empty( $item ) ) {
+							$html .= $item ;
+						} else {
+							$html .= "<td></td>" ;
+						}
 					}
+					$html .= "</tr>" ;
 				}
-				$html .= "</tr>" ;
 				foreach( $pays as $aPays ) {
 					$line[ "$aPays-nbart" ] = 0 ;
 					$line[ "$aPays-nbexp" ] = 0 ;
 				} 
 			}
-			if( substr( $row[ 'famille' ], 0, 4 ) !== "Inco" ) {
-				$currentEspece = $row[ 'nom' ] ;
-				$line[ 'famille' ] = '<td>'.$row[ 'famille' ].'</td>' ;
-				$line[ 'espece' ] = "<td>$currentEspece</td>" ;
-				
-				$aPays = $row[ 'pays' ] ;
-				$line[ "$aPays-nbart" ] += $row[ 'nbart' ] ;
-				$line[ "$aPays-nbexp" ] += $row[ 'nbexp' ] ;
-			}
+			$currentEspece = $row[ 'nom' ] ;
+			$line[ 'famille' ] = '<td>'.$row[ 'famille' ].'</td>' ;
+			$line[ 'espece' ] = "<td>$currentEspece</td>" ;
+			
+			$aPays = $row[ 'pays' ] ;
+			$line[ "$aPays-nbart" ] += $row[ 'nbart' ] ;
+			$line[ "$aPays-nbexp" ] += $row[ 'nbexp' ] ;
 			
 		} while( $row = pg_fetch_array( $result ) ) ;
 	}

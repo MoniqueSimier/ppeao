@@ -940,20 +940,26 @@ echo $hint;
 
 //******************************************************************************
 // affiche le bloc permettant d'indiquer si l'on veut choisir ou non des especes
-function afficheChoixEspeces() {
+function afficheChoixEspeces( $mode = 0 ) {
 
 // on determine a quelle etape on en est (si step est vide on suppose que on est au step 1)
 if (empty($_GET["step"])) {$step=1;} else {$step=$_GET["step"];}
 // si l'on en est a la premiere etape, on affiche le choix
+
 if ($step==1) {
-	echo('<div id="step_1">');
-	echo("<h2>Voulez-vous commencer par s&eacute;lectionner des esp&egrave;ces ?</h2>");
-	echo('<p><a href="/extraction/selection/selection.php?choix_especes=1&step=2" class="">oui</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/extraction/selection/selection.php?choix_especes=0&step=3" class="">non</a></p>');
-	echo('</div>');
-
-// on reinitialise les parametres de selection stockes dans la session
-$_SESSION["selection_1"]=array();
-
+	if( $mode == 0 ) {
+		echo('<div id="step_1">');
+		echo("<h2>Voulez-vous commencer par s&eacute;lectionner des esp&egrave;ces ?</h2>");
+		echo('<p><a href="/extraction/selection/selection.php?choix_especes=1&step=2" class="">oui</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/extraction/selection/selection.php?choix_especes=0&step=3" class="">non</a></p>');
+		echo('</div>');
+	} else {
+		echo('<div id="step_1">');
+		echo('<br/>');
+		echo('<p><a href="/extraction/selection/selection.php?choix_especes=0&step=3" class="next_step">Continuer</a></p>');
+		echo('</div>');
+	}
+	// on reinitialise les parametres de selection stockes dans la session
+	$_SESSION["selection_1"]=array();
 }
 
 else {
