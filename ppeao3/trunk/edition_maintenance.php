@@ -6,7 +6,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 $section="gerer";
 $subsection="maintenance";
 
-$zone=1; // zone gerer (voir table admin_zones)
+$zone=2; // zone gerer (voir table admin_zones) changement JME 03 2016
 
 ?>
 

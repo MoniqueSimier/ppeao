@@ -6,7 +6,7 @@ $subsection="";
 // code commun à toutes les pages (demarrage de session, doctype etc.)
 include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 
-$zone=7; // zone gerer (voir table admin_zones)
+$zone=2; // zone gerer (voir table admin_zones) changement JME 03 2016
 ?>
 
 
@@ -37,6 +37,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top_nav.inc';
 <?php
 
 // on teste à quelle zone l'utilisateur a accès
+
 if (userHasAccess($_SESSION['s_ppeao_user_id'],$zone)) {
 // affiche un avertissement concernant l'utilisation de IE pour les outils d'administration
 IEwarning();
@@ -63,7 +64,10 @@ IEwarning();
 ;} // end if (userHasAccess($_SESSION['user_id'],$zone))
 
 // si l'utilisateur n'a pas accès ou n'est pas connecté, on affiche un message l'invitant à contacter un administrateur pour obtenir l'accès
-else {userAccessDenied($zone);}
+
+// suppresion du Message d'erreur à ce niveau; les ME sont gérer par sous section JME 03 2016
+
+//else {userAccessDenied($zone);}
 ?>
 </div> <!-- end div id="main_container"-->
 

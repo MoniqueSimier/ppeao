@@ -14,7 +14,8 @@ Numéro;IdSysteme;CodePays;NomSysteme;SuperficieSysteme;PechexpSYS_NUM;PechexpSYS
 13;12;SG;Casamance;0;12;Casamance;11;
 14;13;GV;Dangara;0;13;Dangara;3;
 15;14;GV;Estuaire de la Fatala;56,3;14;Fatala;5;
-16;15;PU;Archipel des Bijagos;0;15;Bijagos;2;
-17;16;PU;Rio Buba;285;16;RioBuba;6;
-18;17;SG;Bolong Bamboung;0,68;17;Bamboung;8;
-19;18;MR;Banc d'Arguin;6000;18;BancArguin;12;
+16;15;PU;Archipel des Bijagos;0;15;Bijagos;2
+17;16;PU;Rio Buba;285;16;RioBuba;6
+18;17;SG;Bolong Bamboung;0,68;17;Bamboung;8
+19;18;MR;Banc d'Arguin;6000;18;BancArguin;12
+20;19;PU;Iles Urok;0;19;Iles Urok;19

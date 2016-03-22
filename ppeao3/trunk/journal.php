@@ -6,7 +6,7 @@ include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 $section="gerer";
 $subsection="journal";
 
-$zone=4; // zone journal (voir table admin_zones)
+$zone=2; // zone journal (voir table admin_zones) changement JME 03 2016
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">

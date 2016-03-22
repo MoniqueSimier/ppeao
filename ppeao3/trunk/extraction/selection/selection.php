@@ -6,8 +6,8 @@ include $_SERVER["DOCUMENT_ROOT"].'/top.inc';
 $section="consulter";
 $subsection="";
 
-$zone=8; // zone consultation (voir table admin_zones)
-//$zone=6;  //JME 012016
+//$zone=8; // zone consultation (voir table admin_zones)
+$zone=6;  //JME 012016
 
 // FW 20160209 >>>
 // Mode de sélection des espèce 0=Choix oui/non ou 1=continuer
