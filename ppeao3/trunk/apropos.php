@@ -51,7 +51,7 @@ if (userHasAccess($userID,$zone)) {
 <br />
 <div id="main_contact">
 <div id="contentcontact">
-<p class="texte">La base de donn&eacute;es PPEAO archive des informations sur les poissons, leur &eacute;cologie et leur exploitation par la p&ecirc;che artisanale. Les observations sont issues de nombreux &eacute;cosyst&egrave;mes aquatiques tant continentaux que lagunaires, estuariens ou c&ocirc;tiers d&rsquo;Afrique de l&rsquo;Ouest. Cette base de donn&eacute;es renferme des informations collect&eacute;es depuis 1978. Elle est r&eacute;guli&egrave;rement mise &agrave; jour. 
+<p class="texte">La base de donn&eacute;es PPEAO archive des informations sur les poissons, leur &eacute;cologie et leur exploitation par la p&ecirc;che artisanale. Les observations sont issues de nombreux &eacute;cosyst&egrave;mes aquatiques tant continentaux que lagunaires, estuariens ou c&ocirc;tiers d&rsquo;Afrique de l&rsquo;Ouest. 
 </p><br>
 <p class="texte">Les peuplements de poissons de ces &eacute;cosyst&egrave;mes aquatiques ont &eacute;t&eacute; &eacute;chantillonn&eacute;s soit par des techniques de p&ecirc;che scientifique, soit par un suivi des p&ecirc;ches artisanales d&eacute;ploy&eacute;es sur ces milieux. </p>
 <br>
