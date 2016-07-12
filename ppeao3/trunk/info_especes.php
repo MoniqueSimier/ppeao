@@ -19,7 +19,7 @@ $zone=0; // zone publique (voir table admin_zones)
 		// les balises head communes  toutes les pages
 		include $_SERVER["DOCUMENT_ROOT"].'/head.inc';
 	?>
-	<title>ppeao::info_ecosystemes</title>
+	<title>ppeao::info_especes</title>
 
 	
 </head>
