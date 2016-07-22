@@ -2170,6 +2170,8 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 				$array_gte_d=pg_fetch_all($result_gte_d);
 				pg_free_result($result_gte_d);
 				
+				// test sur le nombre d'enquetes d'activites ajoute par Julien Lebranchu le 22/07/16
+				// si nb>0 alors ajout de l'instruction à la requête SQL
 				$activites_ids_sql = "";
 				if(count($compteur["activites_ids"]) > 0){
 					$activites_ids_sql = 'a.id IN (\''.arrayToList($compteur["activites_ids"],'\',\'','\'').') AND';
@@ -2178,7 +2180,8 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 				$sql_gte_a='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_activite a WHERE 
 				'.$activites_ids_sql.' a.art_grand_type_engin_id=g.id
 				ORDER BY g.libelle
-				';				
+				';
+				// fin correction du 22/07/16
 				
 				$result_gte_a=pg_query($connectPPEAO,$sql_gte_a) or die('erreur dans la requete : '.$sql_gte_a. pg_last_error());
 
