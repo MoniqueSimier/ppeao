@@ -2169,10 +2169,14 @@ if ($_GET["stats"]=='gen') {$theStep=8;} else {$theStep=10;}
 
 				$array_gte_d=pg_fetch_all($result_gte_d);
 				pg_free_result($result_gte_d);
-
+				
+				$activites_ids_sql = "";
+				if(count($compteur["activites_ids"]) > 0){
+					$activites_ids_sql = 'a.id IN (\''.arrayToList($compteur["activites_ids"],'\',\'','\'').') AND';
+				}
 				// on recupere la liste des grands types d'engins correspondants aux activites
 				$sql_gte_a='SELECT DISTINCT g.id, g.libelle FROM art_grand_type_engin g, art_activite a WHERE 
-				a.id IN (\''.arrayToList($compteur["activites_ids"],'\',\'','\'').') AND a.art_grand_type_engin_id=g.id
+				'.$activites_ids_sql.' a.art_grand_type_engin_id=g.id
 				ORDER BY g.libelle
 				';				
 				
