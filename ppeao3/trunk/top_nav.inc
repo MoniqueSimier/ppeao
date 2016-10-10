@@ -35,11 +35,14 @@ switch ($section) {
 
 // le logo IRD fait 145 par 25 pixels. Il est agrandi ici proportionnellement à 203 par 35 pour remplir
 // le bandeau du haut. Il est aligné à droite avec align='right'
+
+// 10 octobre 2016 : mise à jour avec le nouveau logo de l'IRD à la place de ird-logo2.jpg
+// Ce logo (logo_IRD_2016_LONGUEUR_FR_COUL.png) est place dans /assets/home/
 ?>
 <!-- le menu de navigation horizontal -->
 <div id="nav_container">
 	<div id="nav_menu"><a href="/index.php" class="menu<?php echo($home)?>">accueil</a><a href="/extraction/selection/selection.php" class="menu<?php echo($consulter)?>">consulter</a><a href="/gerer.php" class="menu <?php echo($gerer)?>">g&eacute;rer</a><a href="/apropos.php" class="menu<?php echo($sinformer)?>">s&#x27;informer</a><a href="/liens.php" class="menu<?php echo($liens)?>">liens</a><a href="/contact.php" class="menu<?php echo($contacter)?>">contacter</a>
-	</div><img src="/assets/home/ird-logo2.jpg" width="203" height="35" align="right"> </div> <!-- end div id="nav_menu" -->
+	</div><img src="/assets/home/logo_IRD_2016_LONGUEUR_FR_COUL.png" width="203" height="35" align="right"> </div> <!-- end div id="nav_menu" -->
 </div> <!-- end div id="nav_container" -->
 
 <!-- le sous-menu de navigation, si besoin -->
