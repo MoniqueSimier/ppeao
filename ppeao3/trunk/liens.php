@@ -58,14 +58,12 @@ $zone=0; // zone publique (voir table admin_zones)
 				</div>
 				<br/>
 				<p class="contact">Ce projet a &eacute;t&eacute; rendu possible gr&acirc;ce au financement de la <a href="https://www.ird.fr/dsi/" target="_blank">Direction du Système d'Information de l'IRD</a>.
-				<p class="contact">Il a &eacute;t&eacute; r&eacute;alis&eacute; par l&rsquo;Unit&eacute; de Recherches <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">RAP</a> (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). Cette unit&eacute; est aujourd'hui int&eacute;gr&eacute;e au sein de <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">l'&eacute;quipe 3</a> du LEMAR (Laboratoire des sciences de l'Environnement MARin - UMR UBO-CNRS-IRD-Ifremer). </p>
+				<p class="contact">Il a &eacute;t&eacute; r&eacute;alis&eacute; par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). Cette unit&eacute; est aujourd'hui int&eacute;gr&eacute;e au sein de <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">l'&eacute;quipe 3</a> du LEMAR (Laboratoire des sciences de l'Environnement MARin - UMR UBO-CNRS-IRD-Ifremer). </p>
 				</p><br>
 				</p><br>
 				<p class="contact" style="font-weight:bold">Liens connexes :
 				</p><br>
-				<p class="contact" style="padding-left:35px">Base de connaissances sur les écosystèmes marins exploitées : <a href="http://www.ecoscope.org" target="_blank">l'Ecoscope</a>.
 				<p class="contact" style="padding-left:35px">Cartographie de la répartition géographique des poissons d&rsquo;eaux douces et saum&acirc;tres en Afrique : <a href="http://www.poissons-afrique.ird.fr/faunafri/" target="_blank">Faunafri</a>.
-				<p class="contact" style="padding-left:35px">Réseau halieutique et d'écologie aquatique en Afrique de l'Ouest : <a href="http://www.netvibes.com/reshal" target="_blank">reshal</a>.
 			</div>
 		</div>
 	</div> <!-- end div id="main_container"-->
@@ -73,6 +71,16 @@ $zone=0; // zone publique (voir table admin_zones)
 	
 	<?php 
 	// note : on termine la boucle testant si l'utilisateur a accès à la page demandée
+	
+// Lien vers RAP supprimé à la ligne 61 car pointe sur même page que equipe 3
+//				<p class="contact">Il a &eacute;t&eacute; r&eacute;alis&eacute; par l&rsquo;Unit&eacute; de Recherches <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">RAP</a> (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). Cette unit&eacute; est aujourd'hui int&eacute;gr&eacute;e au sein de <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">l'&eacute;quipe 3</a> du LEMAR (Laboratoire des sciences de l'Environnement MARin - UMR UBO-CNRS-IRD-Ifremer). </p>
+	
+// Lien vers Ecoscope enlevé à la ligne 66 car site indisponible
+//					<p class="contact" style="padding-left:35px">Base de connaissances sur les écosystèmes marins exploitées : <a href="http://www.ecoscope.org" target="_blank">l'Ecoscope</a>.
+
+// Lien vers reshal enlevé également
+//				<p class="contact" style="padding-left:35px">Réseau halieutique et d'écologie aquatique en Afrique de l'Ouest : <a href="http://www.netvibes.com/reshal" target="_blank">reshal</a>.
+
 	
 	;} // end if (userHasAccess($_SESSION['user_id'],$zone))
 	
