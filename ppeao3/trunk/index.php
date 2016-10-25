@@ -57,13 +57,13 @@ nettoieLogExport();
 <br>Ces informations sont le r&eacute;sultat de programmes de recherche men&eacute;s sur ces &eacute;cosyst&egrave;mes &agrave; partir de 1978.
 </p>
 <br>
-<p class="texte">Cette base de donn&eacute;es a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). Cette unit&eacute; est aujourd'hui int&eacute;gr&eacute;e au LEMAR (UMR UBO-CNRS-IRD-Ifremer) au sein de <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">l'&eacute;quipe 3.</p>
+<p class="texte">Cette base de donn&eacute;es a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). Elle est aujourd'hui sous la responsabilité de l'UMR <a href="http://www-iuem.univ-brest.fr/LEMAR" target="_blank"> LEMAR </a> (UBO-CNRS-IRD-Ifremer) et de l'UMR <a href="http://www.umr-marbec.fr/" target="_blank"> MARBEC </a> (IRD-Ifremer-UM-CNRS).</p>
 
 
 <?php 
 // note : on termine la boucle testant si l'utilisateur a accès à la page demandée
 // ligne 56 avec lien RAP vers equipe 3 : 
-//<p class="texte">Cette base de donn&eacute;es a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par l&rsquo;Unit&eacute; de Recherches <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">RAP</a> (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). Cette unit&eacute; est aujourd'hui int&eacute;gr&eacute;e au LEMAR (UMR UBO-CNRS-IRD-Ifremer) au sein de <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">l'&eacute;quipe 3.</p>
+//<p class="texte">Cette base de donn&eacute;es a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par l&rsquo;Unit&eacute; de Recherches <a href="http://www-iuem.univ-brest.fr/LEMAR" target="_blank">RAP</a> (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). Cette unit&eacute; est aujourd'hui int&eacute;gr&eacute;e au LEMAR (UMR UBO-CNRS-IRD-Ifremer) au sein de <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">l'&eacute;quipe 3.</p>
 
 ;} // end if (userHasAccess($_SESSION['user_id'],$zone))
 

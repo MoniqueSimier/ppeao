@@ -58,7 +58,7 @@ $zone=0; // zone publique (voir table admin_zones)
 				</div>
 				<br/>
 				<p class="contact">Ce projet a &eacute;t&eacute; rendu possible gr&acirc;ce au financement de la <a href="https://www.ird.fr/dsi/" target="_blank">Direction du Système d'Information de l'IRD</a>.
-				<p class="contact">Il a &eacute;t&eacute; r&eacute;alis&eacute; par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). Cette unit&eacute; est aujourd'hui int&eacute;gr&eacute;e au sein de <a href="http://www-iuem.univ-brest.fr/UMR6539/recherche/equipe-3" target="_blank">l'&eacute;quipe 3</a> du LEMAR (Laboratoire des sciences de l'Environnement MARin - UMR UBO-CNRS-IRD-Ifremer). </p>
+				<p class="contact">Il a &eacute;t&eacute; r&eacute;alis&eacute; par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). La base de données est aujourd'hui sous la responsabilité de l'UMR <a href="http://www-iuem.univ-brest.fr/LEMAR" target="_blank"> LEMAR </a> (UBO-CNRS-IRD-Ifremer) et de l'UMR <a href="http://www.umr-marbec.fr/" target="_blank"> MARBEC </a> (IRD-Ifremer-UM-CNRS). </p>
 				</p><br>
 				</p><br>
 				<p class="contact" style="font-weight:bold">Liens connexes :
