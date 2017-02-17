@@ -52,23 +52,20 @@ $zone=0; // zone publique (voir table admin_zones)
 <div id="main_contact">
 
 			<div id="contentcontact">
-				<p class="contact">Pour pouvoir acc&eacute;der librement &agrave; toute ou partie de la base de donn&eacute;s PPEAO, contactez les gestionnaires de la base qui vous fourniront des codes d&rsquo;acc&egrave;s.</p><br/>
-				<div id="listcontact"><h2>contact</h2>
-				<ul class="contact">
-					<li class="contact">Monique Simier : <a href="#" onclick="o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='ird.fr'+'?subject=PPEAO';this.href=o;"><script language="JavaScript"> <!--
-o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o+='ird.fr';document.write(o);//-->
+				<p class="contact">Pour pouvoir acc&eacute;der librement &agrave; tout ou partie de la base de donn&eacute;s PPEAO, contactez les gestionnaires de la base qui vous fourniront des codes d&rsquo;acc&egrave;s.</p><br/>
+				<div id="listcontact">
+				<ul class="contact"> 
+					<li class="contact"> Contacter PPEAO : <a href="#" onclick="o='@';o='&#112;&#112;&#101;&#97;&#111;'+o;o='mailto:'+o;o+='ird.fr'+'?subject=PPEAO';this.href=o;"><script language="JavaScript"> 
+o='@';o='&#112;&#112;&#101;&#97;&#111;'+o;o+='ird.fr';document.write(o);
 </script></a> </li>
-					<li class="contact">Jean-Marc &Eacute;coutin : <a href="#" onclick="o='@';o='&#106;&#101;&#97;&#110;-&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o='mailto:'+o;o+='ird.fr'+'?subject=PPEAO';this.href=o;"><script language="JavaScript"> <!--
-o='@';o='&#106;&#101;&#97;&#110;-&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o+='ird.fr';document.write(o);//-->
-</script></a> </li> 
 				</ul>
 				</div>
 				<br/>
-				<p class="contact">L'application PPEAO a &eacute;t&eacute; r&eacute;alis&eacute;e gr&acirc;ce au financement du d&eacute;partement DSI (Direction du Syst&egrave;me d&rsquo;Information) de l&rsquo;IRD, via les projets Spirales. Elle a &eacute;t&eacute; d&eacute;velopp&eacute;e par <a href="/contactRT.php" >plusieurs partenaires techniques</a>.
+				<p class="contact">L'application PPEAO a &eacute;t&eacute; r&eacute;alis&eacute;e gr&acirc;ce au financement de la DSI (Direction du Syst&egrave;me d&rsquo;Information) de l&rsquo;IRD, via les projets Spirales. Elle a &eacute;t&eacute; d&eacute;velopp&eacute;e par <a href="/contactRT.php" >plusieurs partenaires techniques</a>.
 				</p>
 				
 			</div>
-		</div>
+		</div> 
 	</div> <!-- end div id="main_container"-->
 	
 	
@@ -87,3 +84,15 @@ o='@';o='&#106;&#101;&#97;&#110;-&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#1
 	?>
 </body>
 </html>
+
+/* 17/02/2017 : Suppression des adresses personnelles Simier et Ecoutin au profit de l'adresse générique ppeao
+				<div id="listcontact"><h2>contact</h2>
+				<ul class="contact">
+					<li class="contact">Monique Simier : <a href="#" onclick="o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='ird.fr'+'?subject=PPEAO';this.href=o;"><script language="JavaScript"> <!--
+o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o+='ird.fr';document.write(o);
+</script></a> </li>
+					<li class="contact">Jean-Marc &Eacute;coutin : <a href="#" onclick="o='@';o='&#106;&#101;&#97;&#110;-&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o='mailto:'+o;o+='ird.fr'+'?subject=PPEAO';this.href=o;"><script language="JavaScript"> <!--
+o='@';o='&#106;&#101;&#97;&#110;-&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o+='ird.fr';document.write(o);
+</script></a> </li> 
+				</ul>
+				</div> */
