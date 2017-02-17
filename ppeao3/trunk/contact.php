@@ -85,7 +85,7 @@ o='@';o='&#112;&#112;&#101;&#97;&#111;'+o;o+='ird.fr';document.write(o);
 </body>
 </html>
 
-/* 17/02/2017 : Suppression des adresses personnelles Simier et Ecoutin au profit de l'adresse générique ppeao
+<!-- 17/02/2017 : Suppression des adresses personnelles Simier et Ecoutin au profit de l'adresse générique ppeao
 				<div id="listcontact"><h2>contact</h2>
 				<ul class="contact">
 					<li class="contact">Monique Simier : <a href="#" onclick="o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;&#101;&#114;'+o;o='mailto:'+o;o+='ird.fr'+'?subject=PPEAO';this.href=o;"><script language="JavaScript"> <!--
@@ -95,4 +95,4 @@ o='@';o='&#109;&#111;&#110;&#105;&#113;&#117;&#101;&#46;&#115;&#105;&#109;&#105;
 o='@';o='&#106;&#101;&#97;&#110;-&#109;&#97;&#114;&#99;&#46;&#101;&#99;&#111;&#117;&#116;&#105;&#110;'+o;o+='ird.fr';document.write(o);
 </script></a> </li> 
 				</ul>
-				</div> */
+				</div> -->
