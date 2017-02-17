@@ -1,4 +1,6 @@
 <?php 
+// Mis à jour Monique SIMIER 17-02-2017
+// Accès aux documents techniques et notices
 // Mis à jour par Olivier ROUX, 29-07-2008
 // definit a quelle section appartient la page
 $section="sinformer";
@@ -51,11 +53,17 @@ if (userHasAccess($userID,$zone)) {
 <br />
 <div id="main_contact">
 <div id="contentcontact">
-<p class="texte">La base de donn&eacute;es PPEAO archive des informations sur les poissons, leur &eacute;cologie et leur exploitation par la p&ecirc;che artisanale. Les observations sont issues de nombreux &eacute;cosyst&egrave;mes aquatiques tant continentaux que lagunaires, estuariens ou c&ocirc;tiers d&rsquo;Afrique de l&rsquo;Ouest. 
+<p class="texte">Les donn&eacute;es consultables dans le Syst&egrave;me d&rsquo;Informations PPEAO ont &eacute;t&eacute; recueillies soit par des techniques de <a href="/work/documentation/notices/1-PPEAO_Notice_generale_Pechexp.pdf">p&ecirc;che scientifiques</a>, soit par un suivi des <a href="/work/documentation/notices/2-PPEAO_Notice_generale_Pechart.pdf">p&ecirc;ches artisanales</a> d&eacute;ploy&eacute;es sur les &eacute;cosyst&egrave;mes &eacute;tudi&eacute;s.  
 </p><br>
-<p class="texte">Les peuplements de poissons de ces &eacute;cosyst&egrave;mes aquatiques ont &eacute;t&eacute; &eacute;chantillonn&eacute;s soit par des techniques de p&ecirc;che scientifique, soit par un suivi des p&ecirc;ches artisanales d&eacute;ploy&eacute;es sur ces milieux. </p>
-<br>
-<p class="texte">Le principe de cet archivage est de conserver l&rsquo;information telle qu&rsquo;elle a &eacute;t&eacute; collect&eacute;e et valid&eacute;e sur le terrain. Cependant, pour diminuer les temps de consultation, plusieurs &eacute;tapes de calcul concernant les statistiques de p&ecirc;che artisanale ont été effectu&eacute;es de fa&ccedil;on automatique.
+<p class="texte">Le principe de l&rsquo;archivage est de conserver l&rsquo;information telle qu&rsquo;elle a &eacute;t&eacute; collect&eacute;e et valid&eacute;e sur le terrain. Cependant, pour diminuer les temps de consultation, plusieurs &eacute;tapes de calcul concernant les statistiques de p&ecirc;che artisanale ont été effectu&eacute;es de fa&ccedil;on automatique.
+</p><br>
+<p class="texte">La description de chaque jeu de donn&eacute;es par &eacute;cosyst&egrave;me et par type de collecte est consultable <a href="/datasets.php">ici</a>.
+</p><br>
+<p class="texte">Plusieurs notices techniques d&eacute;crivent la base de donn&eacute;es et son organisation. Il est possible de consulter :
+</p> <p class="texte">  - une notice sur <a href="/work/documentation/notices/3-PPEAO_DocTech01_Installation_PPEAO_v1.pdf">l&rsquo;installation du syst&egrave;me d&rsquo;informations PPEAO sur un PC</a> en local,
+</p> <p class="texte">  - une notice sur <a href="/work/documentation/notices/4-PPEAO_DocTech02_Acquisition_Donnees_PPEAO_v1.pdf">l&rsquo;acquisition de nouvelles donn&eacute;es</a>,
+</p> <p class="texte">  - une description du <a href="/work/documentation/notices/5-PPEAO_DocTech03_Tables PPEAO_v1.pdf">mod&egrave;le conceptuel de donn&eacute;es et un dictionnaire des tables et variables</a>,
+</p> <p class="texte">  - une description des <a href="/work/documentation/notices/6-PPEAO_Estimation_Stats_Pechart.pdf">calculs automatiques permettant l&rsquo;estimation des statistiques de p&ecirc;che</a>.
 </p>
 </div>
 </div>
