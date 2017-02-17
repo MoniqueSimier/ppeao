@@ -53,11 +53,14 @@ nettoieLogExport();
 <img src="/assets/home/5.jpg" width="120" height="70" alt="&Eacute;quipe de p&ecirc;che scientifique" title="&Eacute;quipe de p&ecirc;che scientifique">
 <img src="/assets/home/6.jpg" width="120" height="70" alt="Pirogues de p&ecirc;che artisanale" title="Pirogues de p&ecirc;che artisanale"></div>
 <br />
-<p class="texte">La base de données PPEAO archive des informations sur les poissons vivant dans <a href="/info_ecosystemes.php">diff&eacute;rents &eacute;cosyst&egrave;mes aquatiques</a> tant continentaux que lagunaires, estuariens ou c&ocirc;tiers de l&rsquo;Afrique de l&rsquo;Ouest. Les données collect&eacute;es concernent aussi bien l'&eacute;cologie des <a href='/info_especes.php'>esp&egrave;ces</a> que leur exploitation par la p&ecirc;che artisanale.<br>
-<br>Ces informations sont le r&eacute;sultat de programmes de recherche men&eacute;s sur ces &eacute;cosyst&egrave;mes &agrave; partir de 1978.
+<p class="texte">Le système d'informations PPEAO archive des données sur les poissons vivant dans <a href="/info_ecosystemes.php">diff&eacute;rents &eacute;cosyst&egrave;mes aquatiques</a> tant continentaux que lagunaires, estuariens ou c&ocirc;tiers de l&rsquo;Afrique de l&rsquo;Ouest. Les données collect&eacute;es concernent aussi bien l'&eacute;cologie des <a href='/info_especes.php'>esp&egrave;ces</a> que leur exploitation par la p&ecirc;che artisanale. 
+Ces informations sont le r&eacute;sultat de programmes de recherche men&eacute;s sur ces &eacute;cosyst&egrave;mes &agrave; partir de 1978.
 </p>
 <br>
-<p class="texte">Cette base de donn&eacute;es a &eacute;t&eacute; con&ccedil;ue et r&eacute;alis&eacute;e par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). Elle est aujourd'hui sous la responsabilité de l'UMR <a href="http://www-iuem.univ-brest.fr/LEMAR" target="_blank"> LEMAR </a> (UBO-CNRS-IRD-Ifremer) et de l'UMR <a href="http://www.umr-marbec.fr/" target="_blank"> MARBEC </a> (IRD-Ifremer-UM-CNRS).</p>
+<p class="texte">PPEAO a &eacute;t&eacute; con&ccedil;u et r&eacute;alis&eacute; par l&rsquo;Unit&eacute; de Recherches RAP (R&eacute;ponses adaptatives des populations et peuplements de poissons aux pressions de l&rsquo;environnement) de l&rsquo;<a href="http://www.ird.fr/" target="_blank">IRD</a> (Institut de Recherche pour le D&eacute;veloppement). Elle est aujourd'hui sous la responsabilité de l'UMR <a href="http://www-iuem.univ-brest.fr/LEMAR" target="_blank"> LEMAR </a> (UBO-CNRS-IRD-Ifremer) et de l'UMR <a href="http://www.umr-marbec.fr/" target="_blank"> MARBEC </a> (IRD-Ifremer-UM-CNRS).</p>
+</p>
+<br>
+<p class="texte">A partir de la page  <a href="/apropos.php">s'informer</a>, différentes notices techniques ou documents décrivant PPEAO et son contenu sont proposés en libre accès.</p>
 
 
 <?php 
