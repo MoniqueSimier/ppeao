@@ -1,4 +1,5 @@
 <?php 
+// Modifié le 30-10-2017 Monique SIMIER
 // Créé par Monique SIMIER 17-02-2017
 // Accès aux notices descriptives par écosystème
 $section="sinformer";
@@ -52,25 +53,25 @@ if (userHasAccess($userID,$zone)) {
 <div id="main_contact">
 <div id="contentcontact">
 <p class="texte">Donn&eacute;es concernant les p&ecirc;ches scientifiques :
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechexp_Ebrie.pdf">Lagune Ebri&eacute; (C&ocirc;te d&rsquo;Ivoire) 1979-1982</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechexp_Saloum_1990-1997.pdf">Delta du Sine-Saloum (S&eacute;n&eacute;gal) 1990-1997</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechexp_Guinee_Bissau_1993.pdf">Archipel des Bijagos et Rio Grande de Buba (Guin&eacute;e Bissau) 1993</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechexp_Guinee.pdf">Estuaire de la Fatala et bras de mer de Dangara (Guin&eacute;e) 1993-1994</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechexp_Gambie.pdf">Estuaire de la Gambie (The Gambia) 2000-2003</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechexp_Saloum_2001-2006.pdf">Delta du Sine-Saloum (S&eacute;n&eacute;gal) 2001-2006</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechexp_Mali.pdf">Lacs de Manantali et Selingue (Mali) 2002-2003</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechexp_Bamboung.pdf">AMP du bolon de Bamboung (S&eacute;n&eacute;gal) 2003-2012</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechexp_Arguin.pdf">Parc National du Banc d'Arguin (Mauritanie) 2008-2010</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechexp_Urok.pdf">AMP des Iles Urok (Guin&eacute;e Bissau) 2011-2013</a>.
-</p>
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Ebrie_1979_1982_peches_experimentales.pdf">Lagune Ebri&eacute; (C&ocirc;te d&rsquo;Ivoire) 1979-1982</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Saloum_1990_1997_peches_experimentales.pdf">Delta du Sine-Saloum (S&eacute;n&eacute;gal) 1990-1997</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Guinee_Bissau_1993_peches_experimentales.pdf">Archipel des Bijagos et Rio Grande de Buba (Guin&eacute;e Bissau) 1993</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Guinee_1993_1994_peches_experimentales.pdf">Estuaire de la Fatala et bras de mer de Dangara (Guin&eacute;e) 1993-1994</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Gambie_2000_2003_peches_experimentales.pdf">Estuaire de la Gambie (The Gambia) 2000-2003</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Saloum_2001_2006_peches_experimentales.pdf">Delta du Sine-Saloum (S&eacute;n&eacute;gal) 2001-2006</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Mali_2000_2003_peches_experimentales.pdf">Lacs de Manantali et Selingue (Mali) 2002-2003</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Bamboung_2003_2012_peches_experimentales.pdf">AMP du bolon de Bamboung (S&eacute;n&eacute;gal) 2003-2012</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Arguin_2008_2010_peches_experimentales.pdf">Parc National du Banc d'Arguin (Mauritanie) 2008-2010</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Urok_2011_2013_peches_experimentales.pdf">AMP des Iles Urok (Guin&eacute;e Bissau) 2011-2013</a>.
+</p><br>
 <p class="texte">Donn&eacute;es concernant les p&ecirc;ches artisanales :
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechart_Ebrie.pdf">Lagune Ebri&eacute; (C&ocirc;te d&rsquo;Ivoire) 1978-1987</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechart_Togo.pdf">Lac Togo (Togo) 1983-1984, 1989 et 1995</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechart_DCN.pdf">Delta Central du Niger (Mali) 1990-1992</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechart_Saloum.pdf">Delta du Sine-Saloum (S&eacute;n&eacute;gal) 1990-1993 et 1999-2000</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechart_Lacs_Maliens.pdf">Lacs de Manantali et Selingue (Mali) 1994-1995 et 2002-2003</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechart_Gambie.pdf">Estuaire de la Gambie (The Gambia) 2001-2002</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Pechart_Casamance.pdf">Estuaire de la Casamance (S&eacute;n&eacute;gal) 2005</a>.
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Ebrie_1978_1986_peches_artisanales.pdf">Lagune Ebri&eacute; (C&ocirc;te d&rsquo;Ivoire) 1978-1987</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Lac_Togo_1983_1995_peches_artisanales.pdf">Lac Togo (Togo) 1983-1984, 1989 et 1995</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Delta_Central_Niger_1990_1992_peches_artisanales.pdf">Delta Central du Niger (Mali) 1990-1992</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Saloum_1990_2000_peches_artisanales.pdf">Delta du Sine-Saloum (S&eacute;n&eacute;gal) 1990-1993 et 1999-2000</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Lacs_Mali_2000_2003_peches_artisanales.pdf">Lacs de Manantali et Selingue (Mali) 1994-1995 et 2002-2003</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Gambie_2001_2002_peches_artisanales.pdf">Estuaire de la Gambie (The Gambia) 2001-2002</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Casamance_2005_peches_artisanales.pdf">Estuaire de la Casamance (S&eacute;n&eacute;gal) 2005</a>.
 
 </p>
 </div>

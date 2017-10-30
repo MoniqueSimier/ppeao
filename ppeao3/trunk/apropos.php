@@ -1,4 +1,5 @@
 <?php 
+// Modifié le 30-10-2017 Monique SIMIER
 // Mis à jour Monique SIMIER 17-02-2017
 // Accès aux documents techniques et notices
 // Mis à jour par Olivier ROUX, 29-07-2008
@@ -53,21 +54,22 @@ if (userHasAccess($userID,$zone)) {
 <br />
 <div id="main_contact">
 <div id="contentcontact">
-<p class="texte">Les donn&eacute;es consultables dans le Syst&egrave;me d&rsquo;Informations PPEAO ont &eacute;t&eacute; recueillies soit par des techniques de <a href="/work/documentation/notices/1-PPEAO_Notice_generale_Pechexp.pdf">p&ecirc;che scientifiques</a>, soit par un suivi des <a href="/work/documentation/notices/2-PPEAO_Notice_generale_Pechart.pdf">p&ecirc;ches artisanales</a> d&eacute;ploy&eacute;es sur les &eacute;cosyst&egrave;mes &eacute;tudi&eacute;s.  
+<p class="texte">Les donn&eacute;es consultables dans le Syst&egrave;me d&rsquo;Informations PPEAO ont &eacute;t&eacute; recueillies soit par des techniques de <a href="/work/documentation/notices/Notice_generale_PPEAO_Peches_Experimentales.pdf">p&ecirc;che expérimentale</a>, soit par un suivi des <a href="/work/documentation/notices/Notice_generale_PPEAO_Peches_Artisanales.pdf">p&ecirc;ches artisanales</a> d&eacute;ploy&eacute;es sur les &eacute;cosyst&egrave;mes &eacute;tudi&eacute;s.  
 </p><br>
 <p class="texte">Le principe de l&rsquo;archivage est de conserver l&rsquo;information telle qu&rsquo;elle a &eacute;t&eacute; collect&eacute;e et valid&eacute;e sur le terrain. Cependant, pour diminuer les temps de consultation, plusieurs &eacute;tapes de calcul concernant les statistiques de p&ecirc;che artisanale ont été effectu&eacute;es de fa&ccedil;on automatique.
 </p><br>
-<p class="texte">La description de chaque jeu de donn&eacute;es par &eacute;cosyst&egrave;me et par type de collecte est consultable <a href="/datasets.php">ici</a>.
+<p class="texte">La description de chaque <a href="/datasets.php"> jeu de donn&eacute;es par &eacute;cosyst&egrave;me et par type de collecte</a> est disponible.
 </p><br>
 <p class="texte">Plusieurs notices techniques d&eacute;crivent la base de donn&eacute;es et son organisation. Il est possible de consulter :
-</p> <p class="texte">  - une notice sur <a href="/work/documentation/notices/3-PPEAO_DocTech01_Installation_PPEAO_v1.pdf">l&rsquo;installation du syst&egrave;me d&rsquo;informations PPEAO sur un PC</a> en local,
-</p> <p class="texte">  - une notice sur <a href="/work/documentation/notices/4-PPEAO_DocTech02_Acquisition_Donnees_PPEAO_v1.pdf">l&rsquo;acquisition de nouvelles donn&eacute;es</a>,
-</p> <p class="texte">  - une description du <a href="/work/documentation/notices/5-PPEAO_DocTech03_Tables PPEAO_v1.pdf">mod&egrave;le conceptuel de donn&eacute;es et un dictionnaire des tables et variables</a>,
-</p> <p class="texte">  - une description des <a href="/work/documentation/notices/6-PPEAO_Estimation_Stats_Pechart.pdf">calculs automatiques permettant l&rsquo;estimation des statistiques de p&ecirc;che</a>.
+</p> <p class="texte">  - une notice sur <a href="/work/documentation/notices/PPEAO_DocTech01_Installation_PPEAO_sur_un_ordinateur.pdf">l&rsquo;installation du syst&egrave;me d&rsquo;informations PPEAO sur un PC en local</a>
+</p> <p class="texte">  - une notice sur <a href="/work/documentation/notices/PPEAO_DocTech02_Acquisition_Donnees_PPEAO.pdf">l&rsquo;acquisition de nouvelles donn&eacute;es</a>
+</p> <p class="texte">  - une description du <a href="/work/documentation/notices/PPEAO_DocTech03_Tables_et_MCD.pdf">mod&egrave;le conceptuel de donn&eacute;es et un dictionnaire des tables et variables</a> <!--,
+// </p> <p class="texte">  - une description des <a href="/work/documentation/notices/6-PPEAO_Estimation_Stats_Pechart.pdf">calculs automatiques permettant l&rsquo;estimation des statistiques de p&ecirc;che</a> -->
 </p>
 </div>
 </div>
 </div> <!-- end div id="main_container"-->
+
 
 
 <?php 
