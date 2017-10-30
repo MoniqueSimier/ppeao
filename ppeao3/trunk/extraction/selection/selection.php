@@ -11,8 +11,8 @@ $zone=6;  //JME 012016
 
 // FW 20160209 >>>
 // Mode de sélection des espèce 0=Choix oui/non ou 1=continuer
-//	$modeSelectionEspece = 0 ;
-	$modeSelectionEspece = 1 ;
+	$modeSelectionEspece = 0 ;
+//	$modeSelectionEspece = 1 ;
 // <<< FW
 
 // on réinitialise la selection stockee dans des variables de session
