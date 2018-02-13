@@ -111,6 +111,8 @@ if (isset($_SESSION['s_ppeao_login_status']) && $_SESSION['s_ppeao_login_status'
 if ($compteur["campagnes_total"]!=0 || $compteur["enquetes_total"]!=0) {
 afficheTypeExploitation();} 
 
+set_time_limit( 0 ) ; // FW 20170223 disable PHP time limit for large export
+
 // on poursuit la selection en fonction du type d'exploitation choisi
 switch($_GET["exploit"]) {
 	// extraction de donnees
@@ -245,6 +247,8 @@ if (isset($compteur["filtrees"])) {
 
 // si l'utilisateur n'a pas accès ou n'est pas connecté, on affiche un message l'invitant à contacter un administrateur pour obtenir l'accès
 else {userAccessDenied($zone);}
+
+set_time_limit( 30 ) ; // FW 20170223 re-enable PHP time limit (large export)
 
 ?>
 </div> <!-- end div id="main_container"-->
