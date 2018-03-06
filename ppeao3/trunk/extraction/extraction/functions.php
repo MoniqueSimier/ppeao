@@ -1776,6 +1776,12 @@ function AfficherDonnees($file,$typeAction){
 		WriteCompLog ($logComp, "DEBUG :  synthese champs = ".$listeChampsSel." table = ".$ListeTableSel." where = ".$WhereSel,$pasdefichier);
 	}
 	if ($builQuery) {
+//	echo "listeChampsCom : $listeChampsCom<br/>" ;
+//	echo "listeChampsSpec : $listeChampsSpec<br/>" ;
+//	echo "listeChampsSel : $listeChampsSel<br/>" ;
+//	echo "ListeTableCom : $ListeTableCom<br/>" ;
+//	echo "ListeTableSpec : $ListeTableSpec<br/>" ;
+//	echo "ListeTableSel : $ListeTableSel<br/>" ;
 		$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;
 		$listeTable = $ListeTableCom.$ListeTableSpec.$ListeTableSel; // L'ordre est important pour les join
 		if ($WhereSel == "") {
@@ -3083,12 +3089,26 @@ function analyseColonne($typePeche,$typeAction,$tableStat,$typeStatistiques){
 					}					
 					// Ajout du champ en cours dans la liste des champs supplémentaires
 					$listeChampsSel .= ",".str_replace("-",".",$valTest);
+//echo "valTest $valTest listeChampsSel $listeChampsSel TNomTable $TNomTable TNomLongTable $TNomLongTable<br/><br/>" ; // FW où est passé 'env' ????
+
 					switch ($typePeche) {
 						case "experimentale" :						
 							switch ($TNomTable) {
 								// On peut avoir des valeurs null, on y met un left outer join	
 								// On le fait que si on n'a pas mis de remplissage deja dedans car la selection de remplissage arrive avant.
 								// si l'ordre est changé, ce test doit etre mis a jour (ou non !)
+								case "env" : // FWOEHL 20180213 rajout du case env comprenant tout de meme le decodage des force et sens_courant pour simplifier les 3 cas
+									// on a 3 cas :
+									// - env (sans decodage force sens courant)
+									// - efs (envir + decodage)
+									// - xssc (force et sens id uniquemùent)
+									// Mais on a éventuellement les tables force_courant liées et pour simplifier on va les liéer dans tous les cas env...
+									if (strpos($LeftOuterJoin,"efc.id = env.exp_force_courant_id") == false ) { // FW as xssc because of env case
+										$LeftOuterJoin .= ",(exp_environnement as env left outer join exp_force_courant as efc on efc.id = env.exp_force_courant_id) left outer join exp_sens_courant as xssc on xssc.id = env.exp_sens_courant_id";
+									}
+//									$ListeTableSel = ajoutAuTableSel($ListeTableSel,"exp_environnement", ",exp_environnement as env");
+//									$AjoutWhere = ajouterAuWhere($AjoutWhere," env.id = cph.exp_environnement_id  " ) ; 		
+									break;	
 								case "cate" : 	
 									if (strpos($LeftOuterJoin,"cate.id = esp.ref_categorie_ecologique_id") === false ) {
 										$LeftOuterJoin .= ",(ref_espece as esp left outer join ref_categorie_ecologique as cate on cate.id = esp.ref_categorie_ecologique_id) left outer join ref_categorie_trophique as catt on catt.id = esp.ref_categorie_trophique_id";
@@ -3113,7 +3133,9 @@ function analyseColonne($typePeche,$typeAction,$tableStat,$typeStatistiques){
 									//$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = stat.".$TNomLongTable."_id "); 		
 									break;	
 								case "efc" :
-									$LeftOuterJoin .= ",(exp_environnement as env left outer join exp_force_courant as efc  on efc.id = env.exp_force_courant_id) left outer join exp_sens_courant as xssc  on xssc.id = env.exp_sens_courant_id";
+									if (strpos($LeftOuterJoin,"efc.id = env.exp_force_courant_id") == false ) { // FW as xssc because of env case
+										$LeftOuterJoin .= ",(exp_environnement as env left outer join exp_force_courant as efc on efc.id = env.exp_force_courant_id) left outer join exp_sens_courant as xssc on xssc.id = env.exp_sens_courant_id";
+									}
 									//$TNomLongTable = "exp_force_courant";	
 									//$ListeTableSel = ajoutAuTableSel($ListeTableSel,$TNomLongTable, ", ".$TNomLongTable." as ".$TNomTable);
 									//$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = env.".$TNomLongTable."_id "); 		

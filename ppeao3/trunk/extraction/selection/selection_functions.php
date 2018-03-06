@@ -2703,6 +2703,23 @@ global $connectPPEAO;
 // on n'affiche le div que si des documents sont effectivement disponibles
 $documents=FALSE;
 
+$typeDonnees = $_GET["donnees"];
+
+// FW 20180306 >>>
+// Add ext|art selection of meta_ docs...
+if( $typeDonnees === "exp" ) {
+	$moreMetaPays = ' AND meta_pays.b_exp = TRUE ' ;
+	$moreMetaSecteurs = ' AND meta_secteurs.b_exp = TRUE ' ;
+	$moreMetaSystemes = ' AND meta_systemes.b_exp = TRUE ' ;
+}
+if( $typeDonnees === "art" ) {
+	$moreMetaPays = ' AND meta_pays.b_art = TRUE ' ;
+	$moreMetaSecteurs = ' AND meta_secteurs.b_art = TRUE ' ;
+	$moreMetaSystemes = ' AND meta_systemes.b_art = TRUE ' ;
+}
+// FW 20180306 <<<
+
+
 // on cherche les documents disponibles selon les diverses unites geographiques
 $meta_files=array();
 // on recupere la liste des documents pour les pays selectionnes
@@ -2711,6 +2728,7 @@ if (isset($_GET["pays"])) {$pays=$_GET["pays"];}
 
 if (!empty($pays)) {
 $sql='SELECT DISTINCT meta_id, ref_pays_id, doc_type,file_path,doc_titre,doc_description FROM meta_pays WHERE ref_pays_id IN (\''.arrayToList($pays,'\',\'','\'').')';
+$sql .= $moreMetaPays ; // FW 20180306
 $result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 $array_pays=pg_fetch_all($result);
 pg_free_result($result);
@@ -2734,7 +2752,7 @@ if (isset($_GET["systemes"])) {$systemes=$_GET["systemes"];}
 if (!empty($pays)) {
 // on doit aussi recuperer tous les systemes appartenant aux pays selectionnes
 if (isset($_GET["pays"])) {
-	$sql='SELECT DISTINCT id, ref_pays_id FROM ref_systeme WHERE ref_pays_id IN (\''.arrayToList($pays,'\',\'','\'').')';
+	$sql='SELECT DISTINCT id, ref_pays_id FROM ref_systeme WHERE ref_pays_id IN (\''.arrayToList($pays,'\',\'','\'').')'; // FW add donnees=exp|art (ajout col ref_systeme)
 	$result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 	$array=pg_fetch_all($result);
 	pg_free_result($result);
@@ -2751,6 +2769,7 @@ $sql='SELECT DISTINCT  meta_id, ref_systeme_id, doc_type,file_path,doc_titre,doc
 	WHERE ref_systeme_id IN ('.arrayToList($systemes,',','').') 
 		AND ref_systeme_id=ref_systeme.id
 	';
+$sql .= $moreMetaSystemes ; // FW 20180306
 $result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 $array_systemes=pg_fetch_all($result);
 pg_free_result($result);
@@ -2789,6 +2808,7 @@ if (!empty($array)) {
 
 $sql='SELECT DISTINCT meta_id, ref_secteur_id,doc_type,file_path,doc_titre,doc_description, ref_pays_id, ref_systeme_id, ref_secteur.id FROM ref_systeme, ref_secteur, meta_secteurs WHERE meta_secteurs.ref_secteur_id IN ('.arrayToList($secteurs,',','').') AND ref_systeme.id=ref_secteur.ref_systeme_id AND ref_secteur.id=meta_secteurs.ref_secteur_id
 	';
+$sql .= $moreMetaSecteurs ; // FW 20180306
 $result=pg_query($connectPPEAO,$sql) or die('erreur dans la requete : '.$sql. pg_last_error());
 $array_secteurs=pg_fetch_all($result);
 pg_free_result($result);
