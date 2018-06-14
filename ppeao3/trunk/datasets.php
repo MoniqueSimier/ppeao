@@ -58,7 +58,7 @@ if (userHasAccess($userID,$zone)) {
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Guinee_Bissau_1993_peches_experimentales.pdf">Archipel des Bijagos et Rio Grande de Buba (Guin&eacute;e Bissau) 1993</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Guinee_1993_1994_peches_experimentales.pdf">Estuaire de la Fatala et bras de mer de Dangara (Guin&eacute;e) 1993-1994</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Gambie_2000_2003_peches_experimentales.pdf">Estuaire de la Gambie (The Gambia) 2000-2003</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Saloum_2001_2006_peches_experimentales.pdf">Delta du Sine-Saloum (S&eacute;n&eacute;gal) 2001-2006</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Saloum_2001_2007_peches_experimentales.pdf">Delta du Sine-Saloum (S&eacute;n&eacute;gal) 2001-2007</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Mali_2000_2003_peches_experimentales.pdf">Lacs de Manantali et Selingue (Mali) 2002-2003</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Bamboung_2003_2012_peches_experimentales.pdf">AMP du bolon de Bamboung (S&eacute;n&eacute;gal) 2003-2012</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Arguin_2008_2010_peches_experimentales.pdf">Parc National du Banc d'Arguin (Mauritanie) 2008-2010</a>,
