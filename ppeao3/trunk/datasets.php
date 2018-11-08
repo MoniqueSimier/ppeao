@@ -65,7 +65,7 @@ if (userHasAccess($userID,$zone)) {
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Urok_2011_2013_peches_experimentales.pdf">AMP des Iles Urok (Guin&eacute;e Bissau) 2011-2013</a>.
 </p><br>
 <p class="texte">Donn&eacute;es concernant les p&ecirc;ches artisanales :
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Ebrie_1978_1986_peches_artisanales.pdf">Lagune Ebri&eacute; (C&ocirc;te d&rsquo;Ivoire) 1978-1987</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Ebrie_1978_1985_peches_artisanales.pdf">Lagune Ebri&eacute; (C&ocirc;te d&rsquo;Ivoire) 1978-1985</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Lac_Togo_1983_1995_peches_artisanales.pdf">Lac Togo (Togo) 1983-1984, 1989 et 1995</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Delta_Central_Niger_1990_1992_peches_artisanales.pdf">Delta Central du Niger (Mali) 1990-1992</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Saloum_1990_1993_peches_artisanales.pdf">Delta du Sine-Saloum (S&eacute;n&eacute;gal) 1990-1993</a>,
