@@ -69,7 +69,7 @@ if (userHasAccess($userID,$zone)) {
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Lac_Togo_1983_1995_peches_artisanales.pdf">Lac Togo (Togo) 1983-1984, 1989 et 1995</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Delta_Central_Niger_1990_1992_peches_artisanales.pdf">Delta Central du Niger (Mali) 1990-1992</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Saloum_1990_1993_peches_artisanales.pdf">Delta du Sine-Saloum (S&eacute;n&eacute;gal) 1990-1993</a>,
-</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Lacs_Mali_2002_2003_peches_artisanales.pdf">Lacs de Manantali et Selingue (Mali) 1994-1995 et 2002-2003</a>,
+</p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Lacs_Mali_1994_2003_peches_artisanales.pdf">Lacs de Manantali et Selingue (Mali) 1994-1995 et 2002-2003</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Gambie_2001_2002_peches_artisanales.pdf">Estuaire de la Gambie (The Gambia) 2001-2002</a>,
 </p> <p class="texte">  - <a href="/work/documentation/metadata/files/Descriptif_Casamance_2005_peches_artisanales.pdf">Estuaire de la Casamance (S&eacute;n&eacute;gal) 2005</a>.
 
