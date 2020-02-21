@@ -94,7 +94,6 @@ switch ($selection["exploit"]) {
 	
 	
 }
-
 // on recupere la liste des eventuels documents selectionnes
 $sel='aucune';
 if (true) {$sel='selection';} 

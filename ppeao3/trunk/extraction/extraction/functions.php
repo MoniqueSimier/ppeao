@@ -7,7 +7,11 @@
 //*****************************************
 // Ce fichier contient une serie de fonctions php utilisées dans l'extraction des données
 //*****************************************
-
+// FW 20191125 => modification table exp_coup_peche pour ne pas avoir de exp_environement_id à null
+// => créer exp_environnement id=2337 avec toutes les colonnes à NULL (dernier id + 1)
+// UPDATE exp_coup_peche SET exp_environnement_id = 2337 WHERE exp_environnement_id is null
+//*****************************************
+//
 // Include pour les statistiques générales
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions_statgene.php';
 include $_SERVER["DOCUMENT_ROOT"].'/extraction/extraction/functions_affichage.php';
@@ -1776,12 +1780,12 @@ function AfficherDonnees($file,$typeAction){
 		WriteCompLog ($logComp, "DEBUG :  synthese champs = ".$listeChampsSel." table = ".$ListeTableSel." where = ".$WhereSel,$pasdefichier);
 	}
 	if ($builQuery) {
-//	echo "listeChampsCom : $listeChampsCom<br/>" ;
-//	echo "listeChampsSpec : $listeChampsSpec<br/>" ;
-//	echo "listeChampsSel : $listeChampsSel<br/>" ;
-//	echo "ListeTableCom : $ListeTableCom<br/>" ;
-//	echo "ListeTableSpec : $ListeTableSpec<br/>" ;
-//	echo "ListeTableSel : $ListeTableSel<br/>" ;
+	//echo "listeChampsCom : $listeChampsCom<br/><br/>" ;
+	//echo "listeChampsSpec : $listeChampsSpec<br/><br/>" ;
+	//echo "listeChampsSel : $listeChampsSel<br/><br/>" ;
+	//echo "ListeTableCom : $ListeTableCom<br/><br/>" ;
+	//echo "ListeTableSpec : $ListeTableSpec<br/><br/>" ;
+	//echo "ListeTableSel : $ListeTableSel<br/><br/>" ;
 		$listeChamps = $listeChampsCom.$listeChampsSpec.$listeChampsSel;
 		$listeTable = $ListeTableCom.$ListeTableSpec.$ListeTableSel; // L'ordre est important pour les join
 		if ($WhereSel == "") {
@@ -1799,8 +1803,8 @@ function AfficherDonnees($file,$typeAction){
 			WriteCompLog ($logComp, "DEBUG :  select countfinal = ".$SQLcountfinal,$pasdefichier);
 		}
 	}
-	//echo $SQLfinal."<br/>";
-	//echo $SQLcountfinal."<br/>";
+	//echo "SQL Final $SQLfinal<br/><br/>";
+	//echo "SQL Count $SQLcountfinal<br/><br/>";
 	// Gestion des regroupements / stats generales
 	// A ce niveau, pour gérer les regroupements, il faut passer par une étape intermédiaire d'agrégation
 	// On exécute la requete, on effectue les groupements et enfin on créé des entrées dans la table temporaire temp_extraction
@@ -2468,7 +2472,10 @@ function AfficherDonnees($file,$typeAction){
 			// ********* Fin creation fichier ==> Zip
 			// On contrôle si il existe des documents sélectionnés, si oui, on les extrait
 			// Doc pays
-			$listeDocURL = array();		
+			$listeDocURL = array();	
+// FW TEST
+//echo print_r( $_SESSION )."<br/>" ;		
+// CHERCHER $listeDocSyst (avec le t)... c'est la clé !
 			if (!($_SESSION['listeDocPays'] == "")) {
 				// Appel de la fonction litTableDocument qui renvoie une variable partagée avec les chemins des fichiers à ajouter
 				// Elle renvoie un message d'erreur en cas de probleme, sinon vide.
@@ -2484,6 +2491,8 @@ function AfficherDonnees($file,$typeAction){
 				// Elle renvoie un message d'erreur en cas de probleme, sinon vide.
 				$resultatLecture .= litTableDocument("meta_secteurs",$_SESSION['listeDocSect']);
 			}		
+// FW TEST
+//echo print_r( $listeDocURL ) ;
 			$NbrDoc = count($listeDocURL);
 			if ($NbrDoc>0) {
 				for ($cpt = 1; $cpt <= $NbrDoc; $cpt++) {
@@ -2874,6 +2883,8 @@ function litTableDocument($nomTable,$ListeID) {
 	$messageErreur = "";
 
 	$SQLDoc = "select * from ".$nomTable." where meta_id in (".$ListeID.") order by meta_id asc";
+// FW TEST
+//echo "$SQLDoc<br/>" ;
 	$SQLDocResult = pg_query($connectPPEAO,$SQLDoc);
 	$erreurSQL = pg_last_error($connectPPEAO);
 	if ( !$SQLDocResult ) { 
@@ -3101,8 +3112,9 @@ function analyseColonne($typePeche,$typeAction,$tableStat,$typeStatistiques){
 									// on a 3 cas :
 									// - env (sans decodage force sens courant)
 									// - efs (envir + decodage)
-									// - xssc (force et sens id uniquemùent)
+									// - xssc (force et sens id uniquement)
 									// Mais on a éventuellement les tables force_courant liées et pour simplifier on va les liéer dans tous les cas env...
+//echo "on passe par ce case 'env' (functions.php #3100)" ;
 									if (strpos($LeftOuterJoin,"efc.id = env.exp_force_courant_id") == false ) { // FW as xssc because of env case
 										$LeftOuterJoin .= ",(exp_environnement as env left outer join exp_force_courant as efc on efc.id = env.exp_force_courant_id) left outer join exp_sens_courant as xssc on xssc.id = env.exp_sens_courant_id";
 									}
@@ -3133,6 +3145,7 @@ function analyseColonne($typePeche,$typeAction,$tableStat,$typeStatistiques){
 									//$AjoutWhere = ajouterAuWhere($AjoutWhere," ".$TNomTable.".id = stat.".$TNomLongTable."_id "); 		
 									break;	
 								case "efc" :
+//echo "on passe par ce case 'efc' (functions.php #3137)" ;
 									if (strpos($LeftOuterJoin,"efc.id = env.exp_force_courant_id") == false ) { // FW as xssc because of env case
 										$LeftOuterJoin .= ",(exp_environnement as env left outer join exp_force_courant as efc on efc.id = env.exp_force_courant_id) left outer join exp_sens_courant as xssc on xssc.id = env.exp_sens_courant_id";
 									}

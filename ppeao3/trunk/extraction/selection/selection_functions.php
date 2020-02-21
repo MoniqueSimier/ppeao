@@ -2267,12 +2267,17 @@ echo('<div id="choix_tables_stats">');
 		echo('<p>Le processus de s&eacute;lection des donn&eacute;es est termin&eacute;, cliquez sur le lien ci-dessous pour choisir les variables dont vous voulez exporter les valeurs.<br />Vous pouvez &eacute;galement revoir ou modifier votre s&eacute;lection en cliquant sur l&#x27;un des liens [modifier ma s&eacute;lection].<p>');
 		switch ($exploit) {
 			case "donnees" : 
-			echo('<a id="link_filieres" class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;extraction...</a>');
+			//echo('<a id="link_filieres" class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">choisir une fili&egrave;re d&#x27;extraction...</a>');
+			// FW 20200221 use of goToChoix Filieres oublié dans le cas art
+			$url='/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"];
+			echo('<div id="choix_filiere" class="clear"><a id="link_filieres" href="#" class="last_step" onclick="javascript:goToChoixFilieres(\''.$url.'\');return false;">choisir une fili&egrave;re d&#x27;exploitation...</a><br /><br />');
 		// on affiche le texte d'aide
 		afficheAide("filieres");
 			break;
 			case "stats":
-			echo('<a id="link_filieres"  class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">Affiner les s&eacute;lections pour les statistiques...</a>');
+			$url='/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"];
+			echo('<div id="choix_filiere" class="clear"><a id="link_filieres" href="#" class="last_step" onclick="javascript:goToChoixFilieres(\''.$url.'\');return false;">choisir une fili&egrave;re d&#x27;exploitation...</a><br /><br />');
+			//echo('<a id="link_filieres"  class="last_step"  href="/extraction/selection/selection_finalisation.php?'.$_SERVER["QUERY_STRING"].'">Affiner les s&eacute;lections pour les statistiques...</a>');
 		// on affiche le texte d'aide
 		afficheAide("stats");
 			break;
@@ -2705,6 +2710,10 @@ $documents=FALSE;
 
 $typeDonnees = $_GET["donnees"];
 
+$moreMetaPays = ' AND meta_pays.b_art = TRUE ' ;
+$moreMetaSecteurs = ' AND meta_secteurs.b_art = TRUE ' ;
+$moreMetaSystemes = ' AND meta_systemes.b_art = TRUE ' ;
+
 // FW 20180306 >>>
 // Add ext|art selection of meta_ docs...
 if( $typeDonnees === "exp" ) {
@@ -2914,7 +2923,7 @@ if ($documents) {
 			
 		echo('</form>');
 		
-		echo('</div>'); // div metadataList
+		echo('<br/></div>'); // div metadataList
 		echo('<script type="text/javascript" charset="utf-8">
 	var mySlider3 = new Fx.Slide(\'metadataList\', {duration: 500});
 	mySlider3.hide();
